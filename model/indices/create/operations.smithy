@@ -6,7 +6,9 @@
 
 namespace OpenSearch
 
-// https://opensearch.org/docs/latest/opensearch/rest-api/index-apis/create-index/
+@externalDocumentation(
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/index-apis/create-index/"
+)
 
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}")

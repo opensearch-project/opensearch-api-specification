@@ -6,7 +6,9 @@
 
 namespace OpenSearch
 
-// https://opensearch.org/docs/latest/opensearch/rest-api/put-mapping/
+@externalDocumentation(
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/put-mapping/"
+)
 
 @http(method: "PUT", uri: "/_mapping")
 @suppress(["HttpUriConflict"])
