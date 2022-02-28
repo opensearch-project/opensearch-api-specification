@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: Apache-2.0
+// 
+//  The OpenSearch Contributors require contributions made to
+//  this file be licensed under the Apache-2.0 license or a
+//  compatible open source license.
+
 namespace OpenSearch
 
 //TODO: remove the redundant code in PutIndexMappingWithIndexInput and PutIndexMappingWithInput by using mixins when introduced in Smithy
@@ -6,7 +12,7 @@ structure PutIndexMappingWithIndexInput {
     @required
     index: IndexName,
 
-    // Common options to be removed by mixins start
+    // PutIndexMappingInputCommonParameters Start
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
 
@@ -29,12 +35,13 @@ structure PutIndexMappingWithIndexInput {
     write_index_only: Boolean,
 
     properties: Document
-    // Common options end
+    // PutIndexMappingInputCommonParameters End
 
 }
 
 structure PutIndexMappingInput {
 
+    // PutIndexMappingInputCommonParameters Start
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
 
@@ -57,6 +64,7 @@ structure PutIndexMappingInput {
     write_index_only: Boolean,
 
     properties: Document
+    // PutIndexMappingInputCommonParameters End
 
 }
 
