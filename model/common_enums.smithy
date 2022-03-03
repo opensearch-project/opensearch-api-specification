@@ -65,3 +65,29 @@ string SearchType
      name: "always"}
 ])
 string SuggestMode
+
+@enum([
+    {
+     value: "internal",
+     name: "internal"},
+     {
+     value: "external",
+     name: "external"},
+    {
+     value: "external_gte",
+     name: "external_gte"}
+])
+string VersionType
+
+@enum([
+    {
+     value: "green",
+     name: "green"},
+     {
+     value: "yellow",
+     name: "yellow"},
+    {
+     value: "red",
+     name: "red"}
+])
+string HealthStatus
