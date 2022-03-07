@@ -65,3 +65,16 @@ string SearchType
      name: "always"}
 ])
 string SuggestMode
+
+@enum([
+    {
+     value: "internal",
+     name: "internal"},
+     {
+     value: "external",
+     name: "external"},
+    {
+     value: "external_gte",
+     name: "external_gte"}
+])
+string VersionType
