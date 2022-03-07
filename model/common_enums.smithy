@@ -78,3 +78,16 @@ string SuggestMode
      name: "external_gte"}
 ])
 string VersionType
+
+@enum([
+    {
+     value: "green",
+     name: "green"},
+     {
+     value: "yellow",
+     name: "yellow"},
+    {
+     value: "red",
+     name: "red"}
+])
+string HealthStatus
