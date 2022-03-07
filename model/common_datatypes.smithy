@@ -19,3 +19,11 @@ map UserDefinedValueMap{
 }
 
 document UserDefinedValue
+
+list UserDefinedValueList{
+    member: String
+}
+
+list UserDefinedObjectList{
+    member: Document
+}
