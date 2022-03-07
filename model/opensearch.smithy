@@ -4,6 +4,7 @@
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
 
+
 namespace OpenSearch
 
 use aws.protocols#restJson1
@@ -12,8 +13,9 @@ use aws.protocols#restJson1
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/"
 )
 
+
 @restJson1
 service OpenSearch {
     version: "2021-11-23",
-    operations: [PutIndexMapping, PutIndexMappingWithIndex]
+    operations: [PutIndexMapping, PutIndexMappingWithIndex, PutUpdateClusterSettings, GETClusterSettings]
 }
