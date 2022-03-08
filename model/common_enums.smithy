@@ -78,3 +78,13 @@ string SuggestMode
      name: "red"}
 ])
 string HealthStatus
+
+@enum([
+    {
+     value: "Accurate",
+     name: "eq"},
+     {
+     value: "Lower bound including returned documents",
+     name: "gte"}
+])
+string Relation
