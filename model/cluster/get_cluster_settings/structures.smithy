@@ -26,5 +26,5 @@ structure GETClusterSettingsOutput {
 
     acknowledged:Boolean,
     
-    settings: ClusterSettings // comes from common_datatypes.smithy
+    settings: ClusterSettings
 }

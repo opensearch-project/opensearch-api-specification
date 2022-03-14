@@ -12,7 +12,7 @@ namespace OpenSearch
 
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/settings")
-@documentation("Get Cluster Settings.")
+@documentation("Returns cluster settings.")
 operation GETClusterSettings {
     input: GETClusterSettingsInput,
     output: GETClusterSettingsOutput

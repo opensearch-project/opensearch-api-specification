@@ -12,7 +12,7 @@ namespace OpenSearch
 
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_cluster/settings")
-@documentation("Updates Cluster Setting.")
+@documentation("Updates the cluster settings.")
 operation PutUpdateClusterSettings {
     input: PutUpdateClusterSettingsInput,
     output: PutUpdateClusterSettingsOutput
