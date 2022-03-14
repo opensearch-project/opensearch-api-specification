@@ -43,12 +43,11 @@ structure GetDocumentDocInput {
     @httpQuery("version")
     version: Integer,
 
-    @httpQuery("version_ype")
+    @httpQuery("version_type")
     version_type: VersionType
     // Common options end
 
 }
-
 
 structure GetDocumentDocOutput {
 
@@ -75,8 +74,6 @@ structure GetDocumentDocOutput {
     source: UserDefinedValueMap,
 
 }
-
-
 
 structure GetDocumentSourceInput {
     @httpLabel
@@ -115,13 +112,11 @@ structure GetDocumentSourceInput {
     @httpQuery("version")
     version: Integer,
 
-    @httpQuery("version_ype")
+    @httpQuery("version_type")
     version_type: VersionType
     // Common options end
 
-
 }
-
 
 structure GetDocumentSourceOutput {
 
