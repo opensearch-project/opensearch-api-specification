@@ -80,4 +80,3 @@ structure GetCatIndicesWithIndexOutput {
     body: Document
 
 }
-

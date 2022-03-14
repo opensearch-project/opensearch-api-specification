@@ -13,7 +13,7 @@ namespace OpenSearch
 @readonly
 @http(method: "GET", uri: "/_cat/nodes")
 @suppress(["HttpUriConflict"])
-@documentation("The Cat Nodes API operation lets you know information about a cluster’s nodes.")
+@documentation("Returns basic statistics about performance of cluster nodes.")
 operation GetCatNodes {
     input: GetCatNodesInput,
     output: GetCatNodesOutput,

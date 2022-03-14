@@ -13,7 +13,7 @@ namespace OpenSearch
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_search")
-@documentation("It returns search hits that match the query defined in the request.")
+@documentation("Returns results matching a query.")
 operation GetSearch {
     input: GetSearchInput,
     output: SearchOutput
@@ -22,7 +22,7 @@ operation GetSearch {
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_search")
-@documentation("It returns search hits that match the query and index defined in the request.")
+@documentation("Returns results matching a query.")
 operation GetSearchWithIndex {
     input: GetSearchWithIndexInput,
     output: SearchWithIndexOutput
@@ -30,7 +30,7 @@ operation GetSearchWithIndex {
 
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_search")
-@documentation("API adds data that match the query defined in the request.")
+@documentation("Returns results matching a query.")
 operation PostSearch{
     input: PostSearchInput,
     output: SearchOutput
@@ -38,7 +38,7 @@ operation PostSearch{
 
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_search")
-@documentation("API adds data that match the query and index defined in the request.")
+@documentation("Returns results matching a query.")
 operation PostSearchWithIndex {
     input: PostSearchWithIndexInput,
     output: SearchWithIndexOutput

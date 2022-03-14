@@ -13,7 +13,7 @@ namespace OpenSearch
 @readonly
 @http(method: "GET", uri: "/_cat/indices")
 @suppress(["HttpUriConflict"])
-@documentation("The Cat Indicies API operation lets you read high level information about indices.")
+@documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, etc.")
 operation GetCatIndices {
     input: GetCatIndicesInput,
     output: GetCatIndicesOutput
@@ -23,7 +23,7 @@ operation GetCatIndices {
 @readonly
 @http(method: "GET", uri: "/_cat/indices/{index}")
 @suppress(["HttpUriConflict"])
-@documentation("The Cat Indicies API operation lets you read high level information about indices with index")
+@documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, etc.")
 operation GetCatIndicesWithIndex {
     input: GetCatIndicesWithIndexInput,
     output: GetCatIndicesWithIndexOutput

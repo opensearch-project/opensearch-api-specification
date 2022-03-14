@@ -81,10 +81,12 @@ string HealthStatus
 
 @enum([
     {
-     value: "Accurate",
-     name: "eq"},
+     value: "eq",
+     name: "eq",
+     documentation:"Accurate"},
      {
-     value: "Lower bound including returned documents",
-     name: "gte"}
+     value: "gte",
+     name: "gte",
+     documentation:"Lower bound, including returned documents"}
 ])
 string Relation
