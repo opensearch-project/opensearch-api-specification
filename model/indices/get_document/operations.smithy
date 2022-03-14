@@ -13,7 +13,7 @@ namespace OpenSearch
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_doc/{id}")
-@documentation("The Get document API operation allows to search for document with index [_doc]")
+@documentation("Returns a document")
 operation GetDocumentDoc {
     input: GetDocumentDocInput,
     output: GetDocumentDocOutput
@@ -23,7 +23,7 @@ operation GetDocumentDoc {
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_source/{id}")
-@documentation("The Get document API operation allows to search for document with index [_source]")
+@documentation("Returns a document.")
 operation GetDocumentSource {
     input: GetDocumentSourceInput,
     output: GetDocumentSourceOutput

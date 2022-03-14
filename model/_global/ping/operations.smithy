@@ -9,7 +9,7 @@ namespace OpenSearch
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/")
-@documentation("It checks whether the cluster is up and available to process requests.")
+@documentation("Returns whether the cluster is running.")
 operation GetPingCluster {
     input: GetPingClusterInput,
     output: GetPingClusterOutput

@@ -12,9 +12,10 @@ namespace OpenSearch
 
 @http(method: "DELETE", uri: "/{index}")
 @suppress(["HttpUriConflict"])
-@documentation("This Delete API operation lets you delete an index.")
+@documentation("Removes a document from the index.")
 operation DeleteIndex {
     input: DeleteIndexInput,
     output: DeleteIndexOutput
 }
+
 
