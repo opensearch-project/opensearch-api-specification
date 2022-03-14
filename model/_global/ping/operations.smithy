@@ -14,3 +14,4 @@ operation GetPingCluster {
     input: GetPingClusterInput,
     output: GetPingClusterOutput
 }
+

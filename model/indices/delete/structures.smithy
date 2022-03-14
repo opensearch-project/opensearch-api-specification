@@ -32,3 +32,4 @@ structure DeleteIndexOutput {
 
     acknowledged:Boolean
 }
+

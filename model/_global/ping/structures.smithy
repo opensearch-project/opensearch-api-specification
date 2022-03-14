@@ -16,3 +16,4 @@ structure GetPingClusterOutput {
     acknowledged:Boolean
       
 }
+

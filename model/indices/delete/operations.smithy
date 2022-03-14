@@ -18,4 +18,3 @@ operation DeleteIndex {
     output: DeleteIndexOutput
 }
 
-
