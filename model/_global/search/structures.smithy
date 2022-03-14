@@ -270,13 +270,13 @@ structure PostSearchInput {
 
     // Request-body parameters 
 
-    //////////////////////////////////
-    //                              //
-    //   PARAMETERS: Included       //
-    //   in headers are written     //
-    //   as comment                 //
-    //                              //
-    //////////////////////////////////
+    ///////////////////////////////////////////////////
+    //                                               //
+    //   QueryPARAMETERS that are in-common          //
+    //   with REQUEST-BODY are mentioned             //
+    //   as comment.                                 //
+    //                                               //
+    ///////////////////////////////////////////////////
 
     // docvalue_fields: String,
     // explain: Boolean,
@@ -579,13 +579,13 @@ structure PostSearchWithIndexInput {
 
     // Request-body parameters 
 
-    //////////////////////////////////
-    //                              //
-    //   PARAMETERS: Included       //
-    //   in headers are written     //
-    //   as comment                 //
-    //                              //
-    //////////////////////////////////
+    ///////////////////////////////////////////////////
+    //                                               //
+    //   QueryPARAMETERS that are in-common          //
+    //   with REQUEST-BODY are mentioned             //
+    //   as comment.                                 //
+    //                                               //
+    ///////////////////////////////////////////////////
 
     // docvalue_fields: String,
     // explain: Boolean,
@@ -620,8 +620,3 @@ structure SearchWithIndexOutput {
 
     hits: HitsMetadata,
 }
-
-
-
-
-
