@@ -8,6 +8,7 @@ namespace OpenSearch
 
 @pattern("^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$")
 string IndexName
+
 string IdName 
 
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")

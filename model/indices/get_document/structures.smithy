@@ -15,7 +15,7 @@ structure GetDocumentDocInput {
     @required
     id: IdName,        
 
-    // Common options to be removed by mixins start
+    // GetDocumentInputCommonParameters START
     @httpQuery("preference")
     preference: String,
 
@@ -45,7 +45,8 @@ structure GetDocumentDocInput {
 
     @httpQuery("version_type")
     version_type: VersionType
-    // Common options end
+    
+    // GetDocumentInputCommonParameters END
 
 }
 
@@ -84,7 +85,7 @@ structure GetDocumentSourceInput {
     @required
     id: IdName,        
 
-    // Common options to be removed by mixins start
+    // GetDocumentSourceInputCommonParameters START
     @httpQuery("preference")
     preference: String,
 
@@ -114,7 +115,7 @@ structure GetDocumentSourceInput {
 
     @httpQuery("version_type")
     version_type: VersionType
-    // Common options end
+    // GetDocumentSourceInputCommonParameters END
 
 }
 
