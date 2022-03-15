@@ -8,7 +8,7 @@ namespace OpenSearch
 
 structure GetSearchInput {
 
-    // Common options to be removed by mixins start
+    // GetSearchInputCommonParameters start
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
 
@@ -134,13 +134,13 @@ structure GetSearchInput {
 
     @httpQuery("version")
     version: Boolean,
-    // Common options end
+    // GetSearchInputCommonParameters End
 
 }
 
 structure PostSearchInput {
 
-    // Common options to be removed by mixins start
+    // PostSearchInputCommonParameters Start
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
 
@@ -166,16 +166,16 @@ structure PostSearchInput {
     df: String,
 
     @httpQuery("docvalue_fields")
-    docvalue_fields: String,
+    docvalue_fields_query_parameter: String,
 
     @httpQuery("expand_wildcards")
     expand_wildcards: ExpandWildcards,
 
     @httpQuery("explain")
-    explain: Boolean,
+    explain_query_parameter: Boolean,
 
     @httpQuery("from")
-    from: Integer,
+    from_query_parameter: Integer,
 
     @httpQuery("ignore_throttled")
     ignore_throttled: Boolean,
@@ -214,16 +214,16 @@ structure PostSearchInput {
     search_type: SearchType,
 
     @httpQuery("seq_no_primary_term")
-    seq_no_primary_term: Boolean,
+    seq_no_primary_term_query_parameter: Boolean,
 
     @httpQuery("size")
-    size: Integer,
+    size_query_parameter: Integer,
 
     @httpQuery("sort")
     sort: UserDefinedValueList,
 
     @httpQuery("source")
-    source: String,    
+    source_query_parameter: String,    
 
     @httpQuery("source_excludes")
     source_excludes: UserDefinedValueList,
@@ -232,7 +232,7 @@ structure PostSearchInput {
     source_includes: UserDefinedValueList,
 
     @httpQuery("stats")
-    stats: String,
+    stats_query_parameter: String,
 
     @httpQuery("stored_fields")
     stored_fields: Boolean,
@@ -250,10 +250,10 @@ structure PostSearchInput {
     suggest_text: String,
 
     @httpQuery("terminate_after")
-    terminate_after: Integer,
+    terminate_after_query_parameter: Integer,
 
     @httpQuery("timeout")
-    timeout: Time,  
+    timeout_query_parameter: Time,  
 
     @httpQuery("track_scores")
     track_scores: Boolean,
@@ -265,8 +265,8 @@ structure PostSearchInput {
     typed_keys: Boolean,
 
     @httpQuery("version")
-    version: Boolean,
-    // Common options end
+    version_query_parameter: Boolean,
+    // PostSearchInputCommonParameters End
 
     // Request-body parameters 
 
@@ -314,7 +314,7 @@ structure GetSearchWithIndexInput {
     @required
     index: IndexName,
 
-    // Common options to be removed by mixins start
+    // GetSearchWithIndexInputCommonParameters Start
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
 
@@ -440,7 +440,7 @@ structure GetSearchWithIndexInput {
 
     @httpQuery("version")
     version: Boolean,
-    // Common options end
+    // GetSearchWithIndexInputCommonParameters End
 
 }
 
@@ -449,7 +449,7 @@ structure PostSearchWithIndexInput {
     @required
     index: IndexName,
 
-    // Common options to be removed by mixins start
+    // PostSearchWithIndexInputCommonParameter Start
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
 
@@ -475,16 +475,16 @@ structure PostSearchWithIndexInput {
     df: String,
 
     @httpQuery("docvalue_fields")
-    docvalue_fields: String,
+    docvalue_fields_query_parameter: String,
 
     @httpQuery("expand_wildcards")
     expand_wildcards: ExpandWildcards,
 
     @httpQuery("explain")
-    explain: Boolean,
+    explain_query_parameter: Boolean,
 
     @httpQuery("from")
-    from: Integer,
+    from_query_parameter: Integer,
 
     @httpQuery("ignore_throttled")
     ignore_throttled: Boolean,
@@ -523,16 +523,16 @@ structure PostSearchWithIndexInput {
     search_type: SearchType,
 
     @httpQuery("seq_no_primary_term")
-    seq_no_primary_term: Boolean,
+    seq_no_primary_term_query_parameter: Boolean,
 
     @httpQuery("size")
-    size: Integer,
+    size_query_parameter: Integer,
 
     @httpQuery("sort")
     sort: UserDefinedValueList,
 
     @httpQuery("source")
-    source: String,    
+    source_query_parameter: String,    
 
     @httpQuery("source_excludes")
     source_excludes: UserDefinedValueList,
@@ -541,7 +541,7 @@ structure PostSearchWithIndexInput {
     source_includes: UserDefinedValueList,
 
     @httpQuery("stats")
-    stats: String,
+    stats_query_parameter: String,
 
     @httpQuery("stored_fields")
     stored_fields: Boolean,
@@ -559,10 +559,10 @@ structure PostSearchWithIndexInput {
     suggest_text: String,
 
     @httpQuery("terminate_after")
-    terminate_after: Integer,
+    terminate_after_query_parameter: Integer,
 
     @httpQuery("timeout")
-    timeout: Time,  
+    timeout_query_parameter: Time,  
 
     @httpQuery("track_scores")
     track_scores: Boolean,
@@ -574,8 +574,8 @@ structure PostSearchWithIndexInput {
     typed_keys: Boolean,
 
     @httpQuery("version")
-    version: Boolean,
-    // Common options end
+    version_query_parameter: Boolean,
+    // PostSearchWithIndexInputCommonParameter End
 
     // Request-body parameters 
 

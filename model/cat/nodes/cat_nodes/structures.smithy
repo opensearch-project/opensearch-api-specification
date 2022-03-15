@@ -8,7 +8,7 @@ namespace OpenSearch
 
 structure GetCatNodesInput {
 
-    // Common options to be removed by mixins start
+    // GetCatNodesInput Start
 
     @httpQuery("bytes")
     bytes: Byte,
@@ -28,7 +28,7 @@ structure GetCatNodesInput {
     @httpQuery("include_unloaded_segments")
     include_unloaded_segments: Boolean,
 
-    // Common options end
+    // GetCatNodesInput End
 
 }
 

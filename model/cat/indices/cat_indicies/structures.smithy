@@ -7,7 +7,7 @@
 namespace OpenSearch
 
 structure GetCatIndicesInput {
-    // Common options to be removed by mixins start
+    // GetCatIndicesInputCommonParameters Start
 
     @httpQuery("bytes")
     bytes: Byte,
@@ -29,7 +29,7 @@ structure GetCatIndicesInput {
 
     @httpQuery("timeout")
     timeout: Time,
-    // Common options end
+    // GetCatIndicesInputCommonParameters end
 
 }
 
@@ -45,7 +45,7 @@ structure GetCatIndicesWithIndexInput {
     @required
     index: IndexName,
 
-    // Common options to be removed by mixins start
+    // GetCatIndicesIndexInputCommonParameters Start
 
     @httpQuery("bytes")
     bytes: Byte,
@@ -67,7 +67,7 @@ structure GetCatIndicesWithIndexInput {
 
     @httpQuery("timeout")
     timeout: Time,
-    // Common options end
+    // GetCatIndicesIndexInputCommonParameters End
 
 }
 
