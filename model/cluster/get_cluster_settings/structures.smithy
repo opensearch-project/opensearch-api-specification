@@ -6,7 +6,7 @@
 
 namespace OpenSearch
 
-structure GETClusterSettingsInput {
+structure GetClusterSettingsInput {
     @httpQuery("flat_settings")
     flat_settings: Boolean,
 
@@ -22,7 +22,7 @@ structure GETClusterSettingsInput {
 }
 
 
-structure GETClusterSettingsOutput {
+structure GetClusterSettingsOutput {
 
     acknowledged:Boolean,
     

@@ -25,7 +25,10 @@ document UserDefinedValue
      name: "transient"},
     {
      value: "persistent",
-     name: "persistent"}
+     name: "persistent"},
+    {
+     value: "defaults",
+     name: "defaults"}
 ])
 string SettingType
 
