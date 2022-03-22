@@ -151,7 +151,7 @@ structure PostSearchInput {
     fields: UserDefinedValueList,
     min_score: Integer,
     indices_boost: UserDefinedObjectList,
-    query: Document
+    query: UserDefinedObjectStructure
 
 }
 
@@ -317,7 +317,7 @@ structure PostSearchWithIndexInput {
     fields: UserDefinedValueList,
     min_score: Integer,
     indices_boost: UserDefinedObjectList,
-    query: Document
+    query: UserDefinedObjectStructure,
 
 }
 
