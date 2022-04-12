@@ -21,6 +21,23 @@ map UserDefinedValueMap{
 
 document UserDefinedValue
 
+@enum([
+    {
+     value: "transient",
+     name: "transient"},
+    {
+     value: "persistent",
+     name: "persistent"},
+    {
+     value: "defaults",
+     name: "defaults"}
+])
+string SettingType
+
+map ClusterSettings{
+    key: SettingType,
+    value: UserDefinedValueMap
+}
 list UserDefinedValueList{
     member: String
 }
