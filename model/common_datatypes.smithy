@@ -9,6 +9,8 @@ namespace OpenSearch
 @pattern("^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$")
 string IndexName
 
+string IdName 
+
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 string Time
 
@@ -35,4 +37,11 @@ string SettingType
 map ClusterSettings{
     key: SettingType,
     value: UserDefinedValueMap
+}
+list UserDefinedValueList{
+    member: String
+}
+
+list UserDefinedObjectList{
+    member: Document
 }
