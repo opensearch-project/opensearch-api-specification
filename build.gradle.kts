@@ -17,11 +17,11 @@ repositories {
 
 buildscript {
     dependencies {
-        classpath("software.amazon.smithy:smithy-aws-traits:1.17.0")
+        classpath("software.amazon.smithy:smithy-aws-traits:1.21.0")
     }
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-model:1.17.0")
-    implementation("software.amazon.smithy:smithy-aws-traits:1.17.0")
+    implementation("software.amazon.smithy:smithy-model:1.21.0")
+    implementation("software.amazon.smithy:smithy-aws-traits:1.21.0")
 }
