@@ -34,7 +34,7 @@ structure GetCatNodesInput {
 
 structure GetCatNodesOutput {
 
-    @required
-    body: Document,
+    @httpPayload
+    content: Document,
 
 }

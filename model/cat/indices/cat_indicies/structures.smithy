@@ -35,8 +35,8 @@ structure GetCatIndicesInput {
 
 structure GetCatIndicesOutput {
 
-   @required
-   body:Document
+    @httpPayload
+    content: Document,
 
 }
 
@@ -73,10 +73,8 @@ structure GetCatIndicesWithIndexInput {
 
 
 structure GetCatIndicesWithIndexOutput {
-    @required
-    index: IndexName, 
 
-    @required
-    body: Document
+    @httpPayload
+    content: Document,
 
 }
