@@ -7,6 +7,7 @@
 namespace OpenSearch
 
 structure GetDocumentDocInput {
+    
     @httpLabel
     @required
     index: IndexName,
@@ -53,13 +54,13 @@ structure GetDocumentDocInput {
 structure GetDocumentDocOutput {
 
     @required
-    Index: IndexName,
+    _index: IndexName,
 
     @required
-    type: String,
+    _type: String,
 
     @required
-    id: IdName,           
+    _id: IdName,           
 
     version: Integer,
 
@@ -77,6 +78,7 @@ structure GetDocumentDocOutput {
 }
 
 structure GetDocumentSourceInput {
+
     @httpLabel
     @required
     index: IndexName,
@@ -120,27 +122,5 @@ structure GetDocumentSourceInput {
 }
 
 structure GetDocumentSourceOutput {
-
-    @required
-    Index: IndexName,
-
-    @required
-    type: String,
-
-    @required
-    id: IdName,           
-
-    version: Integer,
-
-    seq_no: Long,
-
-    primary_term: Long,
-
-    @required
-    found: Boolean,
-
-    routing: String,
-
-    source: UserDefinedValueMap,
     
 }
