@@ -26,7 +26,10 @@ structure PutUpdateClusterSettingsInput {
 
 structure PutUpdateClusterSettingsOutput {
 
-    acknowledged:Boolean,
+    acknowledged: Boolean,
     
-    settings: ClusterSettings 
+    persistent: UserDefinedValueMap,
+
+    transient: UserDefinedValueMap,
+    
 }
