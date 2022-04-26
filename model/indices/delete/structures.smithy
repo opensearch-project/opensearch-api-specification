@@ -27,9 +27,5 @@ structure DeleteIndexInput {
 
 structure DeleteIndexOutput {
 
-    @required
-    Index: IndexName,
-
     acknowledged:Boolean
 }
-
