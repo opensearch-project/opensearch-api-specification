@@ -36,10 +36,11 @@ structure PutCreateIndexInput {
 structure PutCreateIndexOutput {
 
     @required
-    Index: IndexName,
+    index: IndexName,
 
     @required
     shards_acknowledged: Boolean,
 
+    @required
     acknowledged:Boolean
 }
