@@ -41,3 +41,7 @@ list UserDefinedValueList{
 list UserDefinedObjectList{
     member: Document
 }
+
+list ListHits{
+    member: Hits
+}

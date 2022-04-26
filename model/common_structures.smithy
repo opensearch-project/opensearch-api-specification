@@ -16,7 +16,7 @@ structure ShardStatistics{
 structure HitsMetadata{
     total: Total,
     max_score: Double,
-    hits: Hits
+    hits: ListHits
 }
 
 structure Total{
