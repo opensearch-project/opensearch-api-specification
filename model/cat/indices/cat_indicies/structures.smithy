@@ -28,15 +28,15 @@ structure GetCatIndicesInput {
     master_timeout: Time,
 
     @httpQuery("timeout")
-    timeout: Time,
+    timeout: Time
     // GetCatIndicesInputCommonParameters end
 
 }
 
 structure GetCatIndicesOutput {
 
-   @required
-   body:Document
+    @httpPayload
+    content: Document
 
 }
 
@@ -66,17 +66,15 @@ structure GetCatIndicesWithIndexInput {
     master_timeout: Time,
 
     @httpQuery("timeout")
-    timeout: Time,
+    timeout: Time
     // GetCatIndicesIndexInputCommonParameters End
 
 }
 
 
 structure GetCatIndicesWithIndexOutput {
-    @required
-    index: IndexName, 
 
-    @required
-    body: Document
+    @httpPayload
+    content: Document
 
 }

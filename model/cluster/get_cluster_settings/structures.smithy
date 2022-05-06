@@ -7,6 +7,7 @@
 namespace OpenSearch
 
 structure GetClusterSettingsInput {
+
     @httpQuery("flat_settings")
     flat_settings: Boolean,
 
@@ -23,8 +24,11 @@ structure GetClusterSettingsInput {
 
 
 structure GetClusterSettingsOutput {
-
-    acknowledged:Boolean,
     
-    settings: ClusterSettings
+    persistent: UserDefinedValueMap,
+
+    transient: UserDefinedValueMap,
+
+    defaults: UserDefinedValueMap,
+
 }

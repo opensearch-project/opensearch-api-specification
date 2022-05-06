@@ -34,14 +34,14 @@ document UserDefinedValue
 ])
 string SettingType
 
-map ClusterSettings{
-    key: SettingType,
-    value: UserDefinedValueMap
-}
 list UserDefinedValueList{
     member: String
 }
 
 list UserDefinedObjectList{
     member: Document
+}
+
+list ListHits{
+    member: Hits
 }
