@@ -20,7 +20,7 @@ structure GetPingClusterOutput {
 
   version: intermediateStructure,
 
-  tagline: String,
+  tagline: String
       
 }
 
@@ -42,6 +42,6 @@ structure intermediateStructure{
 
   minimum_wire_compatibility_version: String,
 
-  minimum_index_compatibility_version: String,
+  minimum_index_compatibility_version: String
 
 }

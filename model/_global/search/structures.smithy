@@ -165,7 +165,7 @@ structure PostSearchOutput {
 
     _shards: ShardStatistics,
 
-    hits: HitsMetadata,
+    hits: HitsMetadata
 }
 
 
@@ -317,7 +317,7 @@ structure PostSearchWithIndexInput {
     fields: UserDefinedValueList,
     min_score: Integer,
     indices_boost: UserDefinedObjectList,
-    query: UserDefinedObjectStructure,
+    query: UserDefinedObjectStructure
 
 }
 
@@ -334,5 +334,5 @@ structure PostSearchWithIndexOutput {
 
     _shards: ShardStatistics,
 
-    hits: HitsMetadata,
+    hits: HitsMetadata
 }

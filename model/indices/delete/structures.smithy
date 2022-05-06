@@ -21,7 +21,7 @@ structure DeleteIndexInput {
     master_timeout: Time,
 
     @httpQuery("timeout")
-    timeout: Time,
+    timeout: Time
 
 }
 

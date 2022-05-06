@@ -18,7 +18,7 @@ structure PutUpdateClusterSettingsInput {
     master_timeout: Time,
 
     @httpQuery("timeout")
-    timeout: Time,
+    timeout: Time
 
 }
 
@@ -29,6 +29,6 @@ structure PutUpdateClusterSettingsOutput {
     
     persistent: UserDefinedValueMap,
 
-    transient: UserDefinedValueMap,
+    transient: UserDefinedValueMap
     
 }

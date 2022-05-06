@@ -73,7 +73,7 @@ structure GetDocumentDocOutput {
 
     routing: String,
 
-    source: UserDefinedValueMap,
+    source: UserDefinedValueMap
 
 }
 

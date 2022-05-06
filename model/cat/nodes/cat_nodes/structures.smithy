@@ -26,7 +26,7 @@ structure GetCatNodesInput {
     timeout: Time,
 
     @httpQuery("include_unloaded_segments")
-    include_unloaded_segments: Boolean,
+    include_unloaded_segments: Boolean
 
     // GetCatNodesInput End
 
@@ -35,6 +35,6 @@ structure GetCatNodesInput {
 structure GetCatNodesOutput {
 
     @httpPayload
-    content: Document,
+    content: Document
 
 }
