@@ -1,0 +1,43 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js 
+      uses: actions/setup-node@v1  
+
+    - name: Installing Dredd
+      run: sudo npm install dredd --global --unsafe-perm=true --allow-root
+
+    - name: Installing node-fetch module
+      run: npm install node-fetch@2
+
+    - name: Installing hooks module  
+      run: npm install hooks
+
+    - name: Installing https module   
+      run: npm install https
+
+    - name: Installing file module 
+      run: npm install fs
+
+    - name: Build the stack
+      run: docker-compose up -d         
+      shell: bash
+      working-directory: ./test  
+
+    - name: Setting up OpenSearch domain 
+      run: python ./.github/workflows/test_url.py
+    
+    - name: Run script file
+      run: |
+          export NODE_TLS_REJECT_UNAUTHORIZED=0
+          python driver-code.py 
+      shell: bash
+      working-directory: ./test
+     
