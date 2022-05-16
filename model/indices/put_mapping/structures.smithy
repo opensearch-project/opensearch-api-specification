@@ -71,3 +71,15 @@ structure PutIndexMappingInput {
 structure PutIndexMappingOutput {
     acknowledged: Boolean
 }
+
+apply PutIndexMappingWithIndex @examples([
+    {
+        title: "Examples for Put Index Mapping with index Operation.",
+        input: {
+            index: "books",
+        },
+        output: {
+            acknowledged: true
+        }
+    }
+])

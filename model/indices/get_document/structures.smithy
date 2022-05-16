@@ -124,3 +124,29 @@ structure GetDocumentSourceInput {
 structure GetDocumentSourceOutput {
     
 }
+
+apply GetDocumentDoc @examples([
+    {
+        title: "Examples for Get document doc Operation.",
+        input: {
+            index: "books",
+            id: "1"
+        },
+        output: {
+            _index: "books",
+            _type: "_doc",
+            _id: "1", 
+            found: true
+        }
+    }
+])
+
+apply GetDocumentSource @examples([
+    {
+        title: "Examples for Get document source Operation.",
+        input: {
+            index: "books",
+            id: "1"
+        }
+    }
+])

@@ -44,3 +44,17 @@ structure PutCreateIndexOutput {
     @required
     acknowledged:Boolean
 }
+
+apply PutCreateIndex @examples([
+    {
+        title: "Examples for Create Index Operation.",
+        input: {
+            index: "books"
+        },
+        output: {
+            index: "books",
+            shards_acknowledged: true,
+            acknowledged: true
+        }
+    }
+])

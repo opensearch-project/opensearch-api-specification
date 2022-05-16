@@ -78,3 +78,12 @@ structure GetCatIndicesWithIndexOutput {
     content: Document
 
 }
+
+apply GetCatIndicesWithIndex @examples([
+    {
+        title: "Examples for Cat indices with Index Operation.",
+        input: {
+            index: "books",
+        }
+    }
+])
