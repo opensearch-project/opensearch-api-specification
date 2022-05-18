@@ -68,3 +68,4 @@ model_openapi_file_obj.close()
 
 # Coverting JSON file to yaml file.
 os.system("openapi-format build/smithyprojections/opensearch-api-specification-1/source/openapi/model.openapi.json -o build/smithyprojections/opensearch-api-specification-1/source/openapi/model.openapi.yaml --no-sort")
+
