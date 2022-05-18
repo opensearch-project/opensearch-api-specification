@@ -41,3 +41,4 @@ apply GetClusterSettings @examples([
         }
     }
 ])
+
