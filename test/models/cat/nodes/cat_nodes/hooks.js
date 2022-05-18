@@ -4,3 +4,4 @@ hooks.before("/_cat/nodes > GET > 200 > application/json",function(transactions,
     transactions.expected.headers['Content-Type'] =  "application/json; charset=UTF-8";
     done();
 });
+

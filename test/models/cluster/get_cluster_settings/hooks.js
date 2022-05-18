@@ -61,3 +61,4 @@ hooks.after("/_cluster/settings > GET > 200 > application/json",function(transac
     }   
     request();
 });  
+
