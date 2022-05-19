@@ -39,6 +39,8 @@ class Dredd:
 
     def dredd_work(self):
         # Walking in test directory tree and runing dredd framework.
+        test_failed_count = 0
+        test_passed_count = 0
         test_failed = []
         test_passed = []
         test_passes = PrettyTable()
@@ -52,15 +54,22 @@ class Dredd:
                     if self.test_name == curr_dir:
                         result = os.system(command)
                         if(result != 0): 
+                            test_failed_count = test_failed_count + 1
                             test_failed.append([curr_dir,dirpath])
                         else:
+                            test_passed_count = test_passed_count + 1
                             test_passed.append([curr_dir,dirpath])                                  
                 else:
                     result = os.system(command)  
                     if(result != 0):
+                        test_failed_count = test_failed_count + 1
                         test_failed.append([curr_dir,dirpath])
                     else:
+                        test_passed_count = test_passed_count + 1
                         test_passed.append([curr_dir,dirpath]) 
+        print("Total number of test cases: ", test_failed_count + test_passed_count )
+        print("Test Passed: ",test_passed_count)
+        print("Test failed: ",test_failed_count)
         if self.test_pass == True:
             test_passes.field_names = ["Model Name", "Directory Path"]
             test_passes.add_rows(test_passed)
