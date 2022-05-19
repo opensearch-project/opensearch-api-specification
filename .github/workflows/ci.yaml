@@ -39,6 +39,7 @@ jobs:
           if [ $(curl -s -o /dev/null --head -w "%{http_code}" 'https://admin:admin@localhost:9200' -H 'Content-Type:application/json' --insecure -v) -ne 200 ]; then
             sleep 30s
           else
+            # Waiting for security plugin to be initialised and become operational.
             echo  "Waiting for addtional 30 seconds.. for Opensearch domain to be up."
             sleep 30s
             break 
@@ -53,6 +54,7 @@ jobs:
    
     - name: Run script file
       run: |
+          #  Disabling TLS certificate verfication as hosted on docker.
           export NODE_TLS_REJECT_UNAUTHORIZED=0
           python driver-code.py 
       shell: bash
