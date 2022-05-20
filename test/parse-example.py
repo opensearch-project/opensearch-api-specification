@@ -36,21 +36,21 @@ def parse_example():
 
 # Opening OpenAPI JSON file for checking operation ID.
 openapi_file_obj = open(
-    "build/smithyprojections/opensearch-api-specification-1/source/openapi/OpenSearch.openapi.json",
+    "../build/smithyprojections/opensearch-api-specification/source/openapi/OpenSearch.openapi.json",
     mode='r',
     encoding='utf-8')
 openapi_data = json.load(openapi_file_obj)
 
 # Opening Model JSON file for checking examples.
 model_file_obj = open(
-    "build/smithyprojections/opensearch-api-specification-1/source/model/model.json",
+    "../build/smithyprojections/opensearch-api-specification/source/model/model.json",
     mode='r',
     encoding='utf-8')
 model_data = json.load(model_file_obj)
 
 # Creating new JSON file for copying existing OpenAPI data and adding examples.
 model_openapi_file_obj = open(
-    "build/smithyprojections/opensearch-api-specification-1/source/openapi/model.openapi.json",
+    "../build/smithyprojections/opensearch-api-specification/source/openapi/model.openapi.json",
     mode='w',
     encoding='utf-8')
 
@@ -67,5 +67,5 @@ model_file_obj.close()
 model_openapi_file_obj.close()
 
 # Coverting JSON file to yaml file.
-os.system("openapi-format build/smithyprojections/opensearch-api-specification-1/source/openapi/model.openapi.json -o build/smithyprojections/opensearch-api-specification-1/source/openapi/model.openapi.yaml --no-sort")
+os.system("openapi-format ../build/smithyprojections/opensearch-api-specification/source/openapi/model.openapi.json -o ../build/smithyprojections/opensearch-api-specification/source/openapi/model.openapi.yaml --no-sort")
 
