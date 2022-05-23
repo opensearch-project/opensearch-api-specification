@@ -12,7 +12,7 @@ namespace OpenSearch
 
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_aliases")
-@documentation("TO CONFIRM.")
+@documentation("Adds or removes index aliases.")
 operation PostAliases {
     input: PostAliasesInput,
     output: PostAliasesOutput
