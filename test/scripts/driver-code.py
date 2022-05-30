@@ -45,9 +45,9 @@ class Dredd:
         test_passed = []
         test_passes = PrettyTable()
         test_fails = PrettyTable()
-        for dirpath, dirnames, files in os.walk("./models"+self.path):
+        for dirpath, dirnames, files in os.walk("../models"+self.path):
             curr_path = dirpath.split('/')
-            curr_dir = curr_path[len(curr_path)-1]         
+            curr_dir = curr_path[len(curr_path)-1]
             if files:
                 command = "dredd " + dirpath +"/"+ files[1]+ " " + self.endpoint+ " --user=" + self.user + " --hookfiles=" + dirpath + "/" + files[0]
                 if self.test_name != "":
