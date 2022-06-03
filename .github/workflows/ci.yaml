@@ -1,0 +1,46 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js 
+      uses: actions/setup-node@v2
+
+    - name: Installing node modules
+      run: npm install
+      working-directory: ./test 
+
+    - name: Installing Dredd
+      run: sudo npm install dredd --global --unsafe-perm=true --allow-root  
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+
+    - name: Install pipenv
+      run: pip install pipenv    
+
+    - name: Installing python modules 
+      run: pipenv install --system
+      working-directory: ./test 
+
+    - name: Build the stack
+      run: docker-compose up -d         
+      shell: bash
+      working-directory: ./test   
+
+    - name: Waiting for OpenSearch domain to be up.
+      run: sh ./.github/workflows/domain-check.sh      
+   
+    - name: Run script file
+      run: |
+          #  Disabling TLS certificate verfication as hosted on docker.
+          export NODE_TLS_REJECT_UNAUTHORIZED=0
+          python driver-code.py 
+      shell: bash
+      working-directory: ./test/scripts
+
