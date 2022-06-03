@@ -18,9 +18,9 @@ function address()
     return (protocol + "://" + auth + "@" + host); 
 }
 
-hooks.before("/{index} > DELETE > 200 > application/json",function(transactions,done){
+hooks.before("/_cluster/settings > PUT > 200 > application/json",function(transactions,done) {
     transactions.expected.headers['Content-Type'] =  "application/json; charset=UTF-8";
-
+  
     const request = async () => {
 
         var url = address();
@@ -33,17 +33,41 @@ hooks.before("/{index} > DELETE > 200 > application/json",function(transactions,
                 index: {
                     number_of_shards:1,
                     number_of_replicas:0
-                   }
+                  }
                 }    
             }),
             headers:{
                 "content-type": "application/json; charset=UTF-8"
             }
         });
- 
+
+        const persistent = {
+            persistent : {
+               cluster : {
+                 max_shards_per_node : 500
+                }
+            }
+        }
+
+        transactions.request.headers['Content-Type'] =  "application/json; charset=UTF-8";
+        transactions.request.body = JSON.stringify(persistent);
         done();
     }
-    request();  
+    request();
 });
+  
+hooks.after("/_cluster/settings > PUT > 200 > application/json",function(transactions, done){
+    
+    const request = async () => {
+      
+        var url = address();
+        
+        // Deleting cluster
+        const del = await fetch(url+'/books',{
+            method: 'DELETE'
+        });
 
-
+        done();
+    }   
+    request();
+});  
