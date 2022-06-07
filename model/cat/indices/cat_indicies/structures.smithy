@@ -38,6 +38,10 @@ structure GetCatIndicesInput {
 
 structure GetCatIndicesOutput {
 
+// In the Cat Indices API, the dot operator is used to name a few fields.
+// Smithy does not yet support this naming standard.
+// It needs to be modified once we have support for the dot operator. 
+
     @httpPayload
     content: Document
 
@@ -79,6 +83,10 @@ structure GetCatIndicesWithIndexInput {
 
 
 structure GetCatIndicesWithIndexOutput {
+
+// In the Cat Indices API, the dot operator is used to name a few fields.
+// Smithy does not yet support this naming standard.
+// It needs to be modified once we have support for the dot operator. 
 
     @httpPayload
     content: Document

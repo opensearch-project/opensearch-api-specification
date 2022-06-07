@@ -80,6 +80,10 @@ class Dredd:
         test_fails.add_rows(test_failed)
         test_fails.align='l'
         print("Results: Test cases failed.",test_fails,sep="\n")
+
+        # Removing temporary-credentials file.
+        os.remove('url.txt')
+
         return len(test_failed)       
 
 
