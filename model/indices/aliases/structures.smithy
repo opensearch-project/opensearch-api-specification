@@ -17,11 +17,11 @@ structure PostAliasesInput {
 
    // Request-body parameters 
 
-    actions: UserDefinedObjectStructureAction
+    actions: ActionObjectStructure
 
 }
 
-structure UserDefinedObjectStructureAction {
+structure ActionObjectStructure {
 
     add: UserDefinedStructure,
 
@@ -37,6 +37,8 @@ structure UserDefinedStructure{
 
     aliases: UserDefinedValueList,
 
+    // Mixins are required for the abstraction of the filter field.
+    // Therefore, this field was defined as a free-form object. 
     filter: Document,
 
     index: String,
@@ -63,7 +65,6 @@ structure PostAliasesOutput {
     acknowledged:Boolean
 
 }
-
 
 apply PostAliases @examples([
     {
