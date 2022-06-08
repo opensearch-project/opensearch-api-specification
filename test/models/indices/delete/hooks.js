@@ -46,4 +46,3 @@ hooks.before("/{index} > DELETE > 200 > application/json",function(transactions,
     request();  
 });
 
-

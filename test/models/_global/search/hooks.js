@@ -17,33 +17,32 @@ function address()
     auth = text[1];
     return (protocol + "://" + auth + "@" + host); 
 }
+
 // POST SEARCH
 
 hooks.before("/_search > POST > 200 > application/json",function(transactions,done) {
-    transactions.expected.headers['Content-Type'] =  "application/json; charset=UTF-8";
-  
-    const request = async () => {
-  
-      hooks.log("CREATE CLUSTER BEFORE POST SEARCH API.");
+  transactions.expected.headers['Content-Type'] =  "application/json; charset=UTF-8";
+    
+  const request = async () => {
+
       var url = address();
-      const response = await fetch(url+'/books',{
-      method: 'PUT',
-      body:JSON.stringify({
+
+      // Create an index with non-default settings.
+      const cluster = await fetch(url+'/books',{
+          method: 'PUT',
+          body:JSON.stringify({
           settings : {
-           index: {
-              number_of_shards:1,
-              number_of_replicas:0
+              index: {
+                  number_of_shards:1,
+                  number_of_replicas:0
               }
-          }    
-      }),
-      headers:{
-          "content-type": "application/json; charset=UTF-8"
-         }
+              }    
+          }),
+          headers:{
+              "content-type": "application/json; charset=UTF-8"
+          }
       });
-      
-      const json = await response.json();
-      hooks.log(json);
-  
+    
       var query = {
         query: {
           match_all: {}
@@ -52,31 +51,77 @@ hooks.before("/_search > POST > 200 > application/json",function(transactions,do
       }
   
       transactions.request.body = JSON.stringify(query);
-      hooks.log(JSON.stringify(query));
       done();
-    }
+  }
+  request();
+});
   
-    request();
-  
-  
-  });
-  
-  hooks.after("/_search > POST > 200 > application/json",function(transactions,done){
+hooks.after("/_search > POST > 200 > application/json",function(transactions,done){
   
     const request = async () => {
       
-      hooks.log("DELETE CLUSTER AFTER COMPLETE VALIDATION POST SEARCH API.");
+      var url = address();
+      // Deleting cluster
+      const del = await fetch(url+'/books',{
+          method: 'DELETE'
+      });
+
+      done();
+  }   
+  request();
+});
+
+// POST SEARCH INDEX API.
+
+hooks.before("/{index}/_search > POST > 200 > application/json",function(transactions,done) {
+  transactions.expected.headers['Content-Type'] =  "application/json; charset=UTF-8";
+    
+  const request = async () => {
+
+      var url = address();
+
+      // Create an index with non-default settings.
+      const cluster = await fetch(url+'/books',{
+          method: 'PUT',
+          body:JSON.stringify({
+          settings : {
+              index: {
+                  number_of_shards:1,
+                  number_of_replicas:0
+              }
+              }    
+          }),
+          headers:{
+              "content-type": "application/json; charset=UTF-8"
+          }
+      });
+    
+      var query = {
+        query: {
+          match_all: {}
+        },
+        fields: ["*"]
+      }
+  
+      transactions.request.body = JSON.stringify(query);
+      done();
+  }
+  request();
+});
+  
+hooks.after("/{index}/_search > POST > 200 > application/json",function(transactions,done){
+  
+    const request = async () => {
       
       var url = address();
-      const response = await fetch(url+'/books',{
-        method: 'DELETE'
+      // Deleting cluster
+      const del = await fetch(url+'/books',{
+          method: 'DELETE'
       });
-  
-      const json = await response.json();
-      hooks.log(json);
+
       done();
-    } 
-    
-    request();
+  }   
+  request();
   
-  });
+});
+

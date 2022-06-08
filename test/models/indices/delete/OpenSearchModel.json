@@ -1,0 +1,97 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+   "title": "OpenSearch",
+   "version": "2021-11-23"
+  },
+  "paths": {
+   "/{index}": {
+    "delete": {
+     "description": "Removes a document from the index.",
+     "operationId": "DeleteIndex",
+     "parameters": [
+      {
+       "name": "index",
+       "in": "path",
+       "schema": {
+        "type": "string",
+        "pattern": "^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$"
+       },
+       "required": true,
+       "example": "books"
+      },
+      {
+       "name": "expand_wildcards",
+       "in": "query",
+       "schema": {
+        "$ref": "#/components/schemas/ExpandWildcards"
+       }
+      },
+      {
+       "name": "ignore_unavailable",
+       "in": "query",
+       "schema": {
+        "type": "boolean",
+        "nullable": true
+       }
+      },
+      {
+       "name": "master_timeout",
+       "in": "query",
+       "schema": {
+        "type": "string",
+        "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$"
+       }
+      },
+      {
+       "name": "timeout",
+       "in": "query",
+       "schema": {
+        "type": "string",
+        "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$"
+       }
+      }
+     ],
+     "responses": {
+      "200": {
+       "description": "DeleteIndex 200 response",
+       "content": {
+        "application/json": {
+         "schema": {
+          "$ref": "#/components/schemas/DeleteIndexResponseContent"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "components": {
+   "schemas": {
+    "DeleteIndexResponseContent": {
+     "type": "object",
+     "properties": {
+      "acknowledged": {
+       "type": "boolean",
+       "nullable": true
+      }
+     },
+     "example": {
+      "acknowledged": true
+     }
+    },
+    "ExpandWildcards": {
+     "type": "string",
+     "enum": [
+      "all",
+      "open",
+      "closed",
+      "hidden",
+      "none"
+     ]
+    }
+   }
+  }
+}
+

@@ -75,4 +75,3 @@ hooks.after("/{index}/_mapping > PUT > 200 > application/json",function(transact
     request();
 });
 
-
