@@ -38,7 +38,7 @@ structure UserDefinedStructure{
     aliases: UserDefinedValueList,
 
     // Mixins are required for the abstraction of the filter field.
-    // Therefore, this field was defined as a free-form object. 
+    // Therefore, this field is defined as a free-form object. 
     filter: Document,
 
     index: String,
