@@ -29,3 +29,16 @@ structure DeleteIndexOutput {
 
     acknowledged:Boolean
 }
+
+apply DeleteIndex @examples([
+    {
+        title: "Examples for Delete Index Operation.",
+        input: {
+            index: "books"
+        },
+        output: {
+            acknowledged: true
+        }
+    }
+])
+

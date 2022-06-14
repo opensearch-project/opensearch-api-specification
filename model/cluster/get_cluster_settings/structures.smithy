@@ -32,3 +32,13 @@ structure GetClusterSettingsOutput {
     defaults: UserDefinedValueMap,
 
 }
+
+apply GetClusterSettings @examples([
+    {
+        title: "Examples for Get cluster settings Operation.",
+        input: {
+            include_defaults: true
+        }
+    }
+])
+
