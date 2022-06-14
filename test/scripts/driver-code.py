@@ -49,6 +49,8 @@ class Dredd:
             curr_path = dirpath.split('/')
             curr_dir = curr_path[len(curr_path)-1]
             if files:
+                print("\n ----------------- \n")
+                print(files)
                 command = "dredd " + dirpath +"/"+ files[1]+ " " + self.endpoint+ " --user=" + self.user + " --hookfiles=" + dirpath + "/" + files[0]
                 if self.test_name != "":
                     if self.test_name == curr_dir:
