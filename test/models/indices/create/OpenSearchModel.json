@@ -1,0 +1,129 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+   "title": "OpenSearch",
+   "version": "2021-11-23"
+  },
+  "paths": {
+   "/{index}": {
+    "put": {
+     "description": "Creates index mappings.",
+     "operationId": "PutCreateIndex",
+     "requestBody": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PutCreateIndexRequestContent"
+        }
+       }
+      }
+     },
+     "parameters": [
+      {
+       "name": "index",
+       "in": "path",
+       "schema": {
+        "type": "string",
+        "pattern": "^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$"
+       },
+       "required": true,
+       "example": "books"
+      },
+      {
+       "name": "include_type_name",
+       "in": "query",
+       "schema": {
+        "type": "boolean",
+        "nullable": true
+       }
+      },
+      {
+       "name": "wait_for_active_shards",
+       "in": "query",
+       "schema": {
+        "type": "string"
+       }
+      },
+      {
+       "name": "master_timeout",
+       "in": "query",
+       "schema": {
+        "type": "string",
+        "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$"
+       }
+      },
+      {
+       "name": "timeout",
+       "in": "query",
+       "schema": {
+        "type": "string",
+        "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$"
+       }
+      }
+     ],
+     "responses": {
+      "200": {
+       "description": "PutCreateIndex 200 response",
+       "content": {
+        "application/json": {
+         "schema": {
+          "$ref": "#/components/schemas/PutCreateIndexResponseContent"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "components": {
+   "schemas": {
+    "PutCreateIndexRequestContent": {
+     "type": "object",
+     "properties": {
+      "aliases": {
+       "$ref": "#/components/schemas/UserDefinedValueMap"
+      },
+      "mapping": {
+       "$ref": "#/components/schemas/UserDefinedValueMap"
+      },
+      "settings": {
+       "$ref": "#/components/schemas/UserDefinedValueMap"
+      }
+     }
+    },
+    "PutCreateIndexResponseContent": {
+     "type": "object",
+     "properties": {
+      "index": {
+       "type": "string",
+       "pattern": "^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$"
+      },
+      "shards_acknowledged": {
+       "type": "boolean",
+       "nullable": true
+      },
+      "acknowledged": {
+       "type": "boolean",
+       "nullable": true
+      }
+     },
+     "required": [
+      "acknowledged",
+      "index",
+      "shards_acknowledged"
+     ],
+     "example": {
+      "index": "books",
+      "shards_acknowledged": true,
+      "acknowledged": true
+     }
+    },
+    "UserDefinedValueMap": {
+     "type": "object",
+     "additionalProperties": {}
+    }
+   }
+  }
+}
+
