@@ -105,4 +105,3 @@ obj.write_file()
 
 # Running dredd
 exit(obj.dredd_work())
-
