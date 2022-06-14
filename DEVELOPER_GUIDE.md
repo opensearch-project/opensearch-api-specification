@@ -9,7 +9,6 @@
     - [File Structure](#file-structure)
     - [Defining the API model](#defining-the-api-model)
   - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
-    - [Pre-requisites](#pre-requisites)
     - [File Structure](#file-structure-for-test-folder)
     - [Defining test-case for API model](#defining-test-case-for-api-model)
   - [Local testing](#local-testing)
@@ -98,25 +97,7 @@ If you are retrospectively adding the API, Then you can refer to the following r
 
 ## Adding a test-case for API definition
 
-Once you've finished with the model API, follow the steps below to create a test-case.
-
-### Pre-requisites
-1. In the *build.gradle.kts* file, include the dependency. 
-
-   ```
-    classpath("software.amazon.smithy:smithy-openapi:1.21.0")
-   ```
-  
-2. In the *smithy-build.json* file, include the plugin. 
-
-    ```
-     "plugins": {
-          "openapi": {
-              "service": "OpenSearch#OpenSearch",
-              "protocol": "aws.protocols#restJson1"
-          }
-      }
-    ```   
+Once you've finished with the model API, follow the steps below to create a test-case. 
 
 ### File Structure for Test-folder
 
@@ -172,6 +153,9 @@ Two files must be defined:
 NOTE: 
 1. The arguments ```--operation``` and ```--output``` are necessary.
 2. For the ```--output``` parameter, provide the full directory path. 
+
+References:  
+If you're having trouble while writing API test cases, check out the [Index Aliases API](https://github.com/opensearch-project/opensearch-api-specification/pull/41). 
 
 ## Local testing
 The procedures outlined here will assist you in ensuring that the API model accurately represents the OpenAPI specification while testing it against the API's backend implementation. To do so, follow the steps below. 
