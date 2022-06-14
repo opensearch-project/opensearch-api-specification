@@ -15,5 +15,5 @@ use aws.protocols#restJson1
 @restJson1
 service OpenSearch {
     version: "2021-11-23",
-    operations: [PutCreateIndex, PutIndexMapping, PutIndexMappingWithIndex, GetCatIndices, GetCatIndicesWithIndex, GetCatNodes, PostSearch, PostSearchWithIndex, DeleteIndex, GetDocumentDoc, GetDocumentSource, GetPingCluster, PutUpdateClusterSettings, GetClusterSettings]
+    operations: [PutCreateIndex, PutIndexMapping, PutIndexMappingWithIndex, GetCatIndices, GetCatIndicesWithIndex, GetCatNodes, PostSearch, PostSearchWithIndex, DeleteIndex, GetDocumentDoc, GetDocumentSource, GetPingCluster, PutUpdateClusterSettings, GetClusterSettings, PostAliases]
 }
