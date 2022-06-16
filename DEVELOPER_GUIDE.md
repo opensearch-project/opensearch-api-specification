@@ -110,11 +110,11 @@ Let's suppose we have test-cases for put mapping and search api at first.
         ├── _global
         │    └── search
         │        ├── hooks.js
-        │        └── OpenSearchModel.js
+        │        └── OpenSearchModel.json
         └── indices
             └── put_mapping
                 ├── hooks.js
-                └── OpenSearchModel.js
+                └── OpenSearchModel.json
   ```
 
 We'd want to include the *Index-Aliases API* now.  
@@ -126,14 +126,14 @@ We'd want to include the *Index-Aliases API* now.
         ├── _global
         │   └── search
         │        ├── hooks.js
-        │        └── OpenSearchModel.js
+        │        └── OpenSearchModel.json
         └── indices
             ├── put_mapping
             │    ├── hooks.js
-            │    └── OpenSearchModel.js
+            │    └── OpenSearchModel.json
             └── aliases
                  ├── hooks.js
-                 └── OpenSearchModel.js     
+                 └── OpenSearchModel.json     
   ```
 
 ### Defining test-case for API model
@@ -146,7 +146,7 @@ Two files must be defined:
      - Run ```python operation-filter.py --operation <operation-id_1,operation-id_2> --output <complete-path>```.  
        In case of the Index-aliases API, for example ```python operation-filter.py --operation PostAliases --output /Users/xxx-xxx/Desktop/```.  
      - When the preceding step is completed successfully, a file named ```model.openapi.json``` will be generated in the defined directory.
-       Copy the contents of the file into the ```OpenSearchModel.js``` file.    
+       Copy the contents of the file into the ```OpenSearchModel.json``` file.    
 
 2. hooks.js: This file contains the API model's setup and teardown procedures.
 
@@ -155,7 +155,7 @@ NOTE:
 2. For the ```--output``` parameter, provide the full directory path. 
 
 References:  
-If you're having trouble while writing API test cases, check out the [Index Aliases API](https://github.com/opensearch-project/opensearch-api-specification/pull/41). 
+If you're having trouble while writing API test cases, check out the [Index Aliases API](https://github.com/opensearch-project/opensearch-api-specification/pull/41/files). 
 
 ## Local testing
 The procedures outlined here will assist you in ensuring that the API model accurately represents the OpenAPI specification while testing it against the API's backend implementation. To do so, follow the steps below. 
