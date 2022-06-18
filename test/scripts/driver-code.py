@@ -76,10 +76,11 @@ class Dredd:
             test_passes.align='l'
             print("Results: Test cases passed.",test_passes,sep="\n")
 
-        test_fails.field_names = ["Model Name", "Directory Path"]
-        test_fails.add_rows(test_failed)
-        test_fails.align='l'
-        print("Results: Test cases failed.",test_fails,sep="\n")
+        if test_failed_count != 0:
+            test_fails.field_names = ["Model Name", "Directory Path"]
+            test_fails.add_rows(test_failed)
+            test_fails.align='l'
+            print("Results: Test cases failed.",test_fails,sep="\n")
 
         # Removing temporary-credentials file.
         os.remove('url.txt')
