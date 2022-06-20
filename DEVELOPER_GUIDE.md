@@ -185,7 +185,6 @@ We are ready with the setup now, for finally testing our API implementation use 
 4. To test API implementation with custom OpenSearch service endpoint and specific APIs.
    - Run ```python driver-code.py --endpoint <ENDPOINT_NAME> --user <USERNAME>:<PASSWORD> --path <TEST_DIRECTORY>```.
 
-_NOTE:_ 
 Arguments supported while testing are mentioned below:
 1. *--endpoint:* (String) To specific the custom OpenSearch service URL for testing.
 2. *--user:* (String) To specify the username and password associated with the endpoint used.
@@ -194,6 +193,7 @@ Arguments supported while testing are mentioned below:
 5. *--testpass:* (Boolean) When this option is set to True, a table of passed test cases will be printed as well.
     (By default, only the table for failed test-cases is printed.) 
 
-
+NOTE:  
+Due to Ubuntu security updates, the version of Ubuntu mentioned in the CI workflow file may not be compatible with the Continuous Integration framework. 
 
 

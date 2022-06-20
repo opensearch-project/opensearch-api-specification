@@ -52,16 +52,14 @@ class Dredd:
                 command = "dredd " + dirpath +"/"+ files[1]+ " " + self.endpoint+ " --user=" + self.user + " --hookfiles=" + dirpath + "/" + files[0]
                 if self.test_name != "":
                     if self.test_name == curr_dir:
-                        result = os.system(command)
-                        if(result != 0): 
+                        if(os.system(command)): 
                             test_failed_count = test_failed_count + 1
                             test_failed.append([curr_dir,dirpath])
                         else:
                             test_passed_count = test_passed_count + 1
                             test_passed.append([curr_dir,dirpath])                                  
                 else:
-                    result = os.system(command)  
-                    if(result != 0):
+                    if(os.system(command)):
                         test_failed_count = test_failed_count + 1
                         test_failed.append([curr_dir,dirpath])
                     else:
