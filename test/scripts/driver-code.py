@@ -52,16 +52,14 @@ class Dredd:
                 command = "dredd " + dirpath +"/"+ files[1]+ " " + self.endpoint+ " --user=" + self.user + " --hookfiles=" + dirpath + "/" + files[0]
                 if self.test_name != "":
                     if self.test_name == curr_dir:
-                        result = os.system(command)
-                        if(result != 0): 
+                        if(os.system(command)): 
                             test_failed_count = test_failed_count + 1
                             test_failed.append([curr_dir,dirpath])
                         else:
                             test_passed_count = test_passed_count + 1
                             test_passed.append([curr_dir,dirpath])                                  
                 else:
-                    result = os.system(command)  
-                    if(result != 0):
+                    if(os.system(command)):
                         test_failed_count = test_failed_count + 1
                         test_failed.append([curr_dir,dirpath])
                     else:
@@ -76,10 +74,11 @@ class Dredd:
             test_passes.align='l'
             print("Results: Test cases passed.",test_passes,sep="\n")
 
-        test_fails.field_names = ["Model Name", "Directory Path"]
-        test_fails.add_rows(test_failed)
-        test_fails.align='l'
-        print("Results: Test cases failed.",test_fails,sep="\n")
+        if test_failed_count != 0:
+            test_fails.field_names = ["Model Name", "Directory Path"]
+            test_fails.add_rows(test_failed)
+            test_fails.align='l'
+            print("Results: Test cases failed.",test_fails,sep="\n")
 
         # Removing temporary-credentials file.
         os.remove('url.txt')

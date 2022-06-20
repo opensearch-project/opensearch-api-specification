@@ -61,8 +61,6 @@ class OperationFilter:
                 op_id = openapi_data['paths'][endpoint][method]['operationId']
                 op_name = title + "#" + op_id
                 if op_name in dict.keys():
-                    print(op_name)
-                    print(dict[op_name])
                     for example in dict[op_name]:
                         # Adding examples for Input params
                         if 'input' in example:
