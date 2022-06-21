@@ -12,7 +12,7 @@ namespace OpenSearch
 
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/{Index}/_settings")
+@http(method: "GET", uri: "/{index}/_settings")
 @documentation("The get settings API operation returns all the settings in your index.")
 operation GetSettingsIndex{
     input: GetSettingsIndexInput,
@@ -22,7 +22,7 @@ operation GetSettingsIndex{
 
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/{Index}/_settings/{setting}")
+@http(method: "GET", uri: "/{index}/_settings/{setting}")
 @documentation("The get settings API operation returns all the settings in your index.")
 operation GetSettingsIndexSetting {
     input: GetSettingsIndexSettingInput,

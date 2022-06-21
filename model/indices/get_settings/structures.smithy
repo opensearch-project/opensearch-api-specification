@@ -10,7 +10,7 @@ structure GetSettingsIndexInput {
     
     @httpLabel
     @required
-    Index: IndexName,
+    index: IndexName,
    
     // GetSettingsIndexInput CommonParameters START
     @httpQuery("allow_no_indices")
@@ -49,7 +49,7 @@ structure GetSettingsIndexSettingInput {
 
     @httpLabel
     @required
-    Index: IndexName,
+    index: IndexName,
 
     @httpLabel
     @required
@@ -93,7 +93,7 @@ apply GetSettingsIndex @examples([
     {
         title: "Examples for Get settings Index Operation.",
         input: {
-            Index: "books"
+            index: "books"
         },
     }
 ])
@@ -102,7 +102,7 @@ apply GetSettingsIndexSetting @examples([
     {
         title: "Examples for Get settings Index-setting Operation.",
         input: {
-            Index: "books",
+            index: "books",
             setting: "index"
         }
     }
