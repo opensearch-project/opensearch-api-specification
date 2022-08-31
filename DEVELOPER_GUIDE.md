@@ -30,7 +30,11 @@ Fork [opensearch-project/opensearch-api-specification](https://github.com/opense
 - If you are editing markdownfiles install [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
 
 ### Build
-``` gradle build ```
+``` ./gradlew build ```
+
+This command generates API specs for Smithy and also converts them to OpenAPI.
+
+The specs can be found under `build/smithyprojections/opensearch-api-specification/source/model` for Smithy specs and `build/smithyprojections/opensearch-api-specification/source/openapi` for OpenAPI specs.
 
 ## Adding a new API definition
 
