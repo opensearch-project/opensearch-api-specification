@@ -4,6 +4,7 @@
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
 
+$version: "2"
 namespace OpenSearch
 
 @pattern("^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$")
@@ -21,18 +22,11 @@ map UserDefinedValueMap{
 
 document UserDefinedValue
 
-@enum([
-    {
-     value: "transient",
-     name: "transient"},
-    {
-     value: "persistent",
-     name: "persistent"},
-    {
-     value: "defaults",
-     name: "defaults"}
-])
-string SettingType
+enum SettingType {
+    TRANSIENT = "transient"
+    PERSISTENT = "persistent"
+    DEFAULTS = "defaults"
+}
 
 list UserDefinedValueList{
     member: String
