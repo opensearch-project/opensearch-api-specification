@@ -9,11 +9,11 @@
     - [File Structure](#file-structure)
     - [Defining the API model](#defining-the-api-model)
   - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
-    - [File Structure](#file-structure-for-test-folder)
+    - [File Structure for Test-folder](#file-structure-for-test-folder)
     - [Defining test-case for API model](#defining-test-case-for-api-model)
   - [Local testing](#local-testing)
-    - [Pre-requisites](#pre-requisite)
-    - [Testing model API](#testing-model-api)    
+    - [Pre-requisite](#pre-requisite)
+    - [Testing model API](#testing-model-api)
   
 # Developer Guide
 Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!

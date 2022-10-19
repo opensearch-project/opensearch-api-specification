@@ -2,6 +2,7 @@
 
 ## OpenSearch API Specification
 
+- [OpenSearch API Specification](#opensearch-api-specification)
 - [Welcome!](#welcome)
 - [Project Resources](#project-resources)
 - [Code of Conduct](#code-of-conduct)
