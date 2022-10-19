@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// 
+//
 //  The OpenSearch Contributors require contributions made to
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
@@ -8,104 +8,103 @@ $version: "2"
 namespace OpenSearch
 
 structure GetSettingsIndexInput {
-    
-    @httpLabel
-    @required
-    index: IndexName,
-   
-    // GetSettingsIndexInput CommonParameters START
-    @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
 
-    @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
+	@httpLabel
+	@required
+	index: IndexName,
 
-    @httpQuery("flat_settings")
-    flat_settings: Boolean,
+	// GetSettingsIndexInput CommonParameters START
+	@httpQuery("allow_no_indices")
+	allow_no_indices: Boolean,
 
-    @httpQuery("include_defaults")
-    include_defaults: String,
+	@httpQuery("expand_wildcards")
+	expand_wildcards: ExpandWildcards,
 
-    @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+	@httpQuery("flat_settings")
+	flat_settings: Boolean,
 
-    @httpQuery("local")
-    local: Boolean,
+	@httpQuery("include_defaults")
+	include_defaults: String,
 
-    @httpQuery("master_timeout")
-    master_timeout: Time,
-    
-    // GetSettingsIndexInput CommonParameters END
+	@httpQuery("ignore_unavailable")
+	ignore_unavailable: Boolean,
+
+	@httpQuery("local")
+	local: Boolean,
+
+	@httpQuery("master_timeout")
+	master_timeout: Time,
+
+	// GetSettingsIndexInput CommonParameters END
 
 }
 
 structure GetSettingsIndexOutput {
 
-    @httpPayload
-    content: Document
+	@httpPayload
+	content: Document
 
 }
 
 structure GetSettingsIndexSettingInput {
 
-    @httpLabel
-    @required
-    index: IndexName,
+	@httpLabel
+	@required
+	index: IndexName,
 
-    @httpLabel
-    @required
-    setting: String,
-   
+	@httpLabel
+	@required
+	setting: String,
 
-    // GetSettingsIndexInput CommonParameters START
-    @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
 
-    @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
+	// GetSettingsIndexInput CommonParameters START
+	@httpQuery("allow_no_indices")
+	allow_no_indices: Boolean,
 
-    @httpQuery("flat_settings")
-    flat_settings: Boolean,
+	@httpQuery("expand_wildcards")
+	expand_wildcards: ExpandWildcards,
 
-    @httpQuery("include_defaults")
-    include_defaults: String,
+	@httpQuery("flat_settings")
+	flat_settings: Boolean,
 
-    @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+	@httpQuery("include_defaults")
+	include_defaults: String,
 
-    @httpQuery("local")
-    local: Boolean,
+	@httpQuery("ignore_unavailable")
+	ignore_unavailable: Boolean,
 
-    @httpQuery("master_timeout")
-    master_timeout: Time,
-    
-    // GetSettingsIndexInput CommonParameters END
+	@httpQuery("local")
+	local: Boolean,
+
+	@httpQuery("master_timeout")
+	master_timeout: Time,
+
+	// GetSettingsIndexInput CommonParameters END
 
 }
 
 structure GetSettingsIndexSettingOutput {
 
-    @httpPayload
-    content: Document
-    
+	@httpPayload
+	content: Document
+
 }
 
 apply GetSettingsIndex @examples([
-    {
-        title: "Examples for Get settings Index Operation.",
-        input: {
-            index: "books"
-        },
-    }
+	{
+		title: "Examples for Get settings Index Operation.",
+		input: {
+			index: "books"
+		},
+	}
 ])
 
 apply GetSettingsIndexSetting @examples([
-    {
-        title: "Examples for Get settings Index-setting Operation.",
-        input: {
-            index: "books",
-            setting: "index"
-        }
-    }
+	{
+		title: "Examples for Get settings Index-setting Operation.",
+		input: {
+			index: "books",
+			setting: "index"
+		}
+	}
 ])
-

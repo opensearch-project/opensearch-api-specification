@@ -31,13 +31,11 @@ dependencies {
 }
 
 spotless {
-format("misc") {
-	// define the files to apply `misc` to
-	target("**/*.smithy", "*.gradle.kts", "*.md", ".gitignore")
+	kotlinGradle {
+		target("**/*.kts", "*.md", "**/*.smithy", ".gitignore")
 
-	// define the steps to apply to those files
-	indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
-	endWithNewline()
-    trimTrailingWhitespace()
-}
+		indentWithTabs()
+		endWithNewline()
+		trimTrailingWhitespace()
+	}
 }
