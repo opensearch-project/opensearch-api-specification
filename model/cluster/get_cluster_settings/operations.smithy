@@ -4,12 +4,14 @@
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
 
+$version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cluster-settings/"
 )
 
+@readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/settings")
 @documentation("Returns cluster settings.")
