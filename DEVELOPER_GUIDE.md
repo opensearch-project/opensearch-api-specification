@@ -4,6 +4,7 @@
 	- [Use an Editor](#use-an-editor)
 		- [Visual Studio Code](#visual-studio-code)
 		- [Build](#build)
+		- [Formatting](#formatting)
 	- [Adding a new API definition](#adding-a-new-api-definition)
 		- [Naming Convention](#naming-convention)
 		- [File Structure](#file-structure)
@@ -35,6 +36,14 @@ Fork [opensearch-project/opensearch-api-specification](https://github.com/opense
 This command generates API specs for Smithy and also converts them to OpenAPI.
 
 The specs can be found under `build/smithyprojections/opensearch-api-specification/source/model` for Smithy specs and `build/smithyprojections/opensearch-api-specification/source/openapi` for OpenAPI specs.
+
+### Formatting
+
+To format the Smithy model files, use
+```
+./gradlew spotlessCheck
+./gradlew spotlessApply
+```
 
 ## Adding a new API definition
 
