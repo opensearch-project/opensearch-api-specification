@@ -10,11 +10,9 @@
 | Harsha Vamsi Kalluri     | [harshavamsi](https://github.com/harshavamsi)          |   Amazon    |
 | Pranav Garg              | [pgtgrly](https://github.com/pgtgrly)                  |   Amazon    |
 | Sachet Alva              | [sachetalva](https://github.com/sachetalva)            |   Amazon    |
-| Sophia Garg              | [SOPHIA2401](https://github.com/SOPHIA2401)            |   Amazon    |
 | Theo Truong              | [nhtruong](https://github.com/nhtruong)                |   Amazon    |
 | Thomas Farr              | [Xtansia](https://github.com/Xtansia)                  |   Amazon    |
 | Vacha Shah               | [VachaShah](https://github.com/VachaShah)              |   Amazon    |
-| Varun Lodaya             | [varun-lodaya](https://github.com/varun-lodaya)        |   Amazon    |
 
 ## Maintainer Responsibilities
 
