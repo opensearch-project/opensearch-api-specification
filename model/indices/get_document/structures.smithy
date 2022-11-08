@@ -72,9 +72,11 @@ structure GetDocumentDocOutput {
     @required
     found: Boolean,
 
-    routing: String,
+    _routing: String,
 
-    source: UserDefinedValueMap
+    _source: UserDefinedValueMap,
+
+    _fields: UserDefinedValueMap
 
 }
 

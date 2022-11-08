@@ -18,9 +18,6 @@ structure GetClusterSettingsInput {
     @httpQuery("master_timeout")
     master_timeout: Time,
 
-    @httpQuery("timeout")
-    timeout: Time,
-
 }
 
 

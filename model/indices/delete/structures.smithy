@@ -12,6 +12,9 @@ structure DeleteIndexInput {
     @required
     index: IndexName,
 
+    @httpQuery("allow_no_indices")
+    allow_no_indices: Boolean,
+
     @httpQuery("expand_wildcards")
     expand_wildcards: ExpandWildcards,
 

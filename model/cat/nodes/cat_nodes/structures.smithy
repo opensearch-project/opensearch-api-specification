@@ -23,8 +23,8 @@ structure GetCatNodesInput {
     @httpQuery("master_timeout")
     master_timeout: Time,
 
-    @httpQuery("timeout")
-    timeout: Time,
+    @httpQuery("time")
+    time: Time,
 
     @httpQuery("include_unloaded_segments")
     include_unloaded_segments: Boolean,

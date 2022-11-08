@@ -28,8 +28,8 @@ structure GetCatIndicesInput {
     @httpQuery("master_timeout")
     master_timeout: Time,
 
-    @httpQuery("timeout")
-    timeout: Time,
+    @httpQuery("time")
+    time: Time,
 
     @httpQuery("format")
     format: String
@@ -73,8 +73,8 @@ structure GetCatIndicesWithIndexInput {
     @httpQuery("master_timeout")
     master_timeout: Time,
 
-    @httpQuery("timeout")
-    timeout: Time,
+    @httpQuery("time")
+    time: Time,
 
     @httpQuery("format")
     format: String

@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/index-apis/delete-index/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/index-apis/delete-index/"
 )
 
 @idempotent
