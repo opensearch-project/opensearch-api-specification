@@ -9,36 +9,36 @@ namespace OpenSearch
 
 structure GetClusterSettingsInput {
 
-	@httpQuery("flat_settings")
-	flat_settings: Boolean,
+    @httpQuery("flat_settings")
+    flat_settings: Boolean,
 
-	@httpQuery("include_defaults")
-	include_defaults: Boolean,
+    @httpQuery("include_defaults")
+    include_defaults: Boolean,
 
-	@httpQuery("master_timeout")
-	master_timeout: Time,
+    @httpQuery("master_timeout")
+    master_timeout: Time,
 
-	@httpQuery("timeout")
-	timeout: Time,
+    @httpQuery("timeout")
+    timeout: Time,
 
 }
 
 
 structure GetClusterSettingsOutput {
 
-	persistent: UserDefinedValueMap,
+    persistent: UserDefinedValueMap,
 
-	transient: UserDefinedValueMap,
+    transient: UserDefinedValueMap,
 
-	defaults: UserDefinedValueMap,
+    defaults: UserDefinedValueMap,
 
 }
 
 apply GetClusterSettings @examples([
-	{
-		title: "Examples for Get cluster settings Operation.",
-		input: {
-			include_defaults: true
-		}
-	}
+    {
+        title: "Examples for Get cluster settings Operation.",
+        input: {
+            include_defaults: true
+        }
+    }
 ])

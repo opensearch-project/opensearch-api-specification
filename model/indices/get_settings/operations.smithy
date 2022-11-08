@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/2.0/opensearch/rest-api/index-apis/get-settings/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/2.0/opensearch/rest-api/index-apis/get-settings/"
 )
 
 @readonly
@@ -16,8 +16,8 @@ namespace OpenSearch
 @http(method: "GET", uri: "/{index}/_settings")
 @documentation("The get settings API operation returns all the settings in your index.")
 operation GetSettingsIndex{
-	input: GetSettingsIndexInput,
-	output: GetSettingsIndexOutput
+    input: GetSettingsIndexInput,
+    output: GetSettingsIndexOutput
 }
 
 
@@ -26,6 +26,6 @@ operation GetSettingsIndex{
 @http(method: "GET", uri: "/{index}/_settings/{setting}")
 @documentation("The get settings API operation returns all the settings in your index.")
 operation GetSettingsIndexSetting {
-	input: GetSettingsIndexSettingInput,
-	output: GetSettingsIndexSettingOutput
+    input: GetSettingsIndexSettingInput,
+    output: GetSettingsIndexSettingOutput
 }

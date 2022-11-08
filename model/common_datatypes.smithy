@@ -16,26 +16,26 @@ string IdName
 string Time
 
 map UserDefinedValueMap{
-	key: String,
-	value: UserDefinedValue
+    key: String,
+    value: UserDefinedValue
 }
 
 document UserDefinedValue
 
 enum SettingType {
-	TRANSIENT = "transient"
-	PERSISTENT = "persistent"
-	DEFAULTS = "defaults"
+    TRANSIENT = "transient"
+    PERSISTENT = "persistent"
+    DEFAULTS = "defaults"
 }
 
 list UserDefinedValueList{
-	member: String
+    member: String
 }
 
 list UserDefinedObjectList{
-	member: Document
+    member: Document
 }
 
 list ListHits{
-	member: Hits
+    member: Hits
 }

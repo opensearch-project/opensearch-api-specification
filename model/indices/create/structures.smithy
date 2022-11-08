@@ -8,54 +8,54 @@ $version: "2"
 namespace OpenSearch
 
 structure PutCreateIndexInput {
-	@httpLabel
-	@required
-	index: IndexName,
+    @httpLabel
+    @required
+    index: IndexName,
 
-	@httpQuery("include_type_name")
-	include_type_name: Boolean,
+    @httpQuery("include_type_name")
+    include_type_name: Boolean,
 
-	@httpQuery("wait_for_active_shards")
-	wait_for_active_shards: String,
+    @httpQuery("wait_for_active_shards")
+    wait_for_active_shards: String,
 
-	@httpQuery("master_timeout")
-	master_timeout: Time,
+    @httpQuery("master_timeout")
+    master_timeout: Time,
 
-	@httpQuery("timeout")
-	timeout: Time,
+    @httpQuery("timeout")
+    timeout: Time,
 
-	//TODO: Placeholders. aliases, mapping and settings need to be updated with proper structures
+    //TODO: Placeholders. aliases, mapping and settings need to be updated with proper structures
 
-	aliases: UserDefinedValueMap,
+    aliases: UserDefinedValueMap,
 
-	mapping: UserDefinedValueMap,
+    mapping: UserDefinedValueMap,
 
-	settings: UserDefinedValueMap
+    settings: UserDefinedValueMap
 
 }
 
 structure PutCreateIndexOutput {
 
-	@required
-	index: IndexName,
+    @required
+    index: IndexName,
 
-	@required
-	shards_acknowledged: Boolean,
+    @required
+    shards_acknowledged: Boolean,
 
-	@required
-	acknowledged:Boolean
+    @required
+    acknowledged:Boolean
 }
 
 apply PutCreateIndex @examples([
-	{
-		title: "Examples for Create Index Operation.",
-		input: {
-			index: "books"
-		},
-		output: {
-			index: "books",
-			shards_acknowledged: true,
-			acknowledged: true
-		}
-	}
+    {
+        title: "Examples for Create Index Operation.",
+        input: {
+            index: "books"
+        },
+        output: {
+            index: "books",
+            shards_acknowledged: true,
+            acknowledged: true
+        }
+    }
 ])

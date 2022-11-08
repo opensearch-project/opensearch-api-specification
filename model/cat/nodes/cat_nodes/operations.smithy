@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-nodes/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-nodes/"
 )
 
 @readonly
@@ -16,6 +16,6 @@ namespace OpenSearch
 @suppress(["HttpUriConflict"])
 @documentation("Returns basic statistics about performance of cluster nodes.")
 operation GetCatNodes {
-	input: GetCatNodesInput,
-	output: GetCatNodesOutput,
+    input: GetCatNodesInput,
+    output: GetCatNodesOutput,
 }

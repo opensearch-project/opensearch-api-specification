@@ -9,29 +9,29 @@ namespace OpenSearch
 
 structure PutUpdateClusterSettingsInput {
 
-	@httpQuery("flat_settings")
-	flat_settings: Boolean,
+    @httpQuery("flat_settings")
+    flat_settings: Boolean,
 
-	@httpQuery("master_timeout")
-	master_timeout: Time,
+    @httpQuery("master_timeout")
+    master_timeout: Time,
 
-	@httpQuery("timeout")
-	timeout: Time,
+    @httpQuery("timeout")
+    timeout: Time,
 
-	// Request-body parameters
-	persistent: UserDefinedValueMap,
+    // Request-body parameters
+    persistent: UserDefinedValueMap,
 
-	transient: UserDefinedValueMap
+    transient: UserDefinedValueMap
 
 }
 
 
 structure PutUpdateClusterSettingsOutput {
 
-	acknowledged: Boolean,
+    acknowledged: Boolean,
 
-	persistent: UserDefinedValueMap,
+    persistent: UserDefinedValueMap,
 
-	transient: UserDefinedValueMap
+    transient: UserDefinedValueMap
 
 }

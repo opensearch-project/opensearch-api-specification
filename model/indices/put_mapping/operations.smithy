@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/put-mapping/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/put-mapping/"
 )
 
 @idempotent
@@ -16,8 +16,8 @@ namespace OpenSearch
 @suppress(["HttpUriConflict"])
 @documentation("The put mapping API operation lets you add new mappings and fields to an index.")
 operation PutIndexMapping {
-	input: PutIndexMappingInput,
-	output: PutIndexMappingOutput
+    input: PutIndexMappingInput,
+    output: PutIndexMappingOutput
 }
 
 @idempotent
@@ -25,6 +25,6 @@ operation PutIndexMapping {
 @suppress(["HttpUriConflict"])
 @documentation("The put mapping API operation lets you add new mappings and fields to an index.")
 operation PutIndexMappingWithIndex {
-	input: PutIndexMappingWithIndexInput,
-	output: PutIndexMappingOutput
+    input: PutIndexMappingWithIndexInput,
+    output: PutIndexMappingOutput
 }

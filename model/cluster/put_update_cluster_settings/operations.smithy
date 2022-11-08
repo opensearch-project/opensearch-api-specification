@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cluster-settings/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cluster-settings/"
 )
 
 @idempotent
@@ -16,6 +16,6 @@ namespace OpenSearch
 @http(method: "PUT", uri: "/_cluster/settings")
 @documentation("Updates the cluster settings.")
 operation PutUpdateClusterSettings {
-	input: PutUpdateClusterSettingsInput,
-	output: PutUpdateClusterSettingsOutput
+    input: PutUpdateClusterSettingsInput,
+    output: PutUpdateClusterSettingsOutput
 }

@@ -12,6 +12,6 @@ namespace OpenSearch
 @http(method: "GET", uri: "/")
 @documentation("Returns whether the cluster is running.")
 operation GetClusterInfo {
-	input: GetClusterInfoInput,
-	output: GetClusterInfoOutput
+    input: GetClusterInfoInput,
+    output: GetClusterInfoOutput
 }

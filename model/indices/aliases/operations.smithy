@@ -8,13 +8,13 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/alias/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/alias/"
 )
 
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_aliases")
 @documentation("Adds or removes index aliases.")
 operation PostAliases {
-	input: PostAliasesInput,
-	output: PostAliasesOutput
+    input: PostAliasesInput,
+    output: PostAliasesOutput
 }

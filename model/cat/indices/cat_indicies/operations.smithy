@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-indices/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cat/cat-indices/"
 )
 
 @readonly
@@ -16,8 +16,8 @@ namespace OpenSearch
 @suppress(["HttpUriConflict"])
 @documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, etc.")
 operation GetCatIndices {
-	input: GetCatIndicesInput,
-	output: GetCatIndicesOutput
+    input: GetCatIndicesInput,
+    output: GetCatIndicesOutput
 }
 
 
@@ -26,6 +26,6 @@ operation GetCatIndices {
 @suppress(["HttpUriConflict"])
 @documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, etc.")
 operation GetCatIndicesWithIndex {
-	input: GetCatIndicesWithIndexInput,
-	output: GetCatIndicesWithIndexOutput
+    input: GetCatIndicesWithIndexInput,
+    output: GetCatIndicesWithIndexOutput
 }

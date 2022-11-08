@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/document-apis/get-documents/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/document-apis/get-documents/"
 )
 
 @readonly
@@ -16,8 +16,8 @@ namespace OpenSearch
 @http(method: "GET", uri: "/{index}/_doc/{id}")
 @documentation("Returns a document")
 operation GetDocumentDoc {
-	input: GetDocumentDocInput,
-	output: GetDocumentDocOutput
+    input: GetDocumentDocInput,
+    output: GetDocumentDocOutput
 }
 
 
@@ -26,6 +26,6 @@ operation GetDocumentDoc {
 @http(method: "GET", uri: "/{index}/_source/{id}")
 @documentation("Returns a document.")
 operation GetDocumentSource {
-	input: GetDocumentSourceInput,
-	output: GetDocumentSourceOutput
+    input: GetDocumentSourceInput,
+    output: GetDocumentSourceOutput
 }

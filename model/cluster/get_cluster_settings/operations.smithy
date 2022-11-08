@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-	"OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cluster-settings/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/cluster-settings/"
 )
 
 @readonly
@@ -16,6 +16,6 @@ namespace OpenSearch
 @http(method: "GET", uri: "/_cluster/settings")
 @documentation("Returns cluster settings.")
 operation GetClusterSettings {
-	input: GetClusterSettingsInput,
-	output: GetClusterSettingsOutput
+    input: GetClusterSettingsInput,
+    output: GetClusterSettingsOutput
 }

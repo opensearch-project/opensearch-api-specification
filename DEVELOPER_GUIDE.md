@@ -1,20 +1,20 @@
 - [Developer Guide](#developer-guide)
-	- [Getting Started](#getting-started)
-		- [Fork and Clone opensearch-api-specification Repo](#fork-and-clone-opensearch-api-specification-repo)
-	- [Use an Editor](#use-an-editor)
-		- [Visual Studio Code](#visual-studio-code)
-		- [Build](#build)
-		- [Formatting](#formatting)
-	- [Adding a new API definition](#adding-a-new-api-definition)
-		- [Naming Convention](#naming-convention)
-		- [File Structure](#file-structure)
-		- [Defining the API model](#defining-the-api-model)
-	- [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
-		- [File Structure for Test-folder](#file-structure-for-test-folder)
-		- [Defining test-case for API model](#defining-test-case-for-api-model)
-	- [Local testing](#local-testing)
-		- [Pre-requisite](#pre-requisite)
-		- [Testing model API](#testing-model-api)
+    - [Getting Started](#getting-started)
+        - [Fork and Clone opensearch-api-specification Repo](#fork-and-clone-opensearch-api-specification-repo)
+    - [Use an Editor](#use-an-editor)
+        - [Visual Studio Code](#visual-studio-code)
+        - [Build](#build)
+        - [Formatting](#formatting)
+    - [Adding a new API definition](#adding-a-new-api-definition)
+        - [Naming Convention](#naming-convention)
+        - [File Structure](#file-structure)
+        - [Defining the API model](#defining-the-api-model)
+    - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
+        - [File Structure for Test-folder](#file-structure-for-test-folder)
+        - [Defining test-case for API model](#defining-test-case-for-api-model)
+    - [Local testing](#local-testing)
+        - [Pre-requisite](#pre-requisite)
+        - [Testing model API](#testing-model-api)
 
 # Developer Guide
 Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
@@ -90,10 +90,10 @@ model
 ├── common_enums.smithy
 ├── common_structures.smithy
 └── indices
-	└── put_mapping
-		├── enums.smithy
-		├── operations.smithy
-		└── structures.smithy
+    └── put_mapping
+        ├── enums.smithy
+        ├── operations.smithy
+        └── structures.smithy
 
 Sample directory tree, may not mirror the ground reality
 ```
@@ -120,14 +120,14 @@ Structure of the test folder's project tree:
 test
 ├── scripts
 └── model
-		├── _global
-		│    └── search
-		│        ├── hooks.js
-		│        └── OpenSearchModel.json
-		└── indices
-			└── put_mapping
-				├── hooks.js
-				└── OpenSearchModel.json
+        ├── _global
+        │    └── search
+        │        ├── hooks.js
+        │        └── OpenSearchModel.json
+        └── indices
+            └── put_mapping
+                ├── hooks.js
+                └── OpenSearchModel.json
 ```
 
 We'd want to include the *Index-Aliases API* now.
@@ -136,17 +136,17 @@ The project-tree structure will be as follows:
 test
 ├── scripts
 └── model
-		├── _global
-		│   └── search
-		│        ├── hooks.js
-		│        └── OpenSearchModel.json
-		└── indices
-			├── put_mapping
-			│    ├── hooks.js
-			│    └── OpenSearchModel.json
-			└── aliases
-				├── hooks.js
-				└── OpenSearchModel.json
+        ├── _global
+        │   └── search
+        │        ├── hooks.js
+        │        └── OpenSearchModel.json
+        └── indices
+            ├── put_mapping
+            │    ├── hooks.js
+            │    └── OpenSearchModel.json
+            └── aliases
+                ├── hooks.js
+                └── OpenSearchModel.json
 ```
 
 ### Defining test-case for API model
@@ -154,12 +154,12 @@ Two files must be defined:
 
 1. OpenSearchModel.js: This is a json file that includes the API model's test-case.
 - The steps to create this file are listed below.
-	- Move to the project-directory.
-	- Run ```cd test/scripts```.
-	- Run ```python operation-filter.py --operation <operation-id_1,operation-id_2> --output <complete-path>```.
-	In case of the Index-aliases API, for example ```python operation-filter.py --operation PostAliases --output /Users/xxx-xxx/Desktop/```.
-	- When the preceding step is completed successfully, a file named ```model.openapi.json``` will be generated in the defined directory.
-	Copy the contents of the file into the ```OpenSearchModel.json``` file.
+    - Move to the project-directory.
+    - Run ```cd test/scripts```.
+    - Run ```python operation-filter.py --operation <operation-id_1,operation-id_2> --output <complete-path>```.
+    In case of the Index-aliases API, for example ```python operation-filter.py --operation PostAliases --output /Users/xxx-xxx/Desktop/```.
+    - When the preceding step is completed successfully, a file named ```model.openapi.json``` will be generated in the defined directory.
+    Copy the contents of the file into the ```OpenSearchModel.json``` file.
 
 2. hooks.js: This file contains the API model's setup and teardown procedures.
 
@@ -204,7 +204,7 @@ Arguments supported while testing are mentioned below:
 3. *--path:* (String) To specify the directory path of specific test to be tested.
 4. *--testname:* (String) To specify the name of API to be tested if not provided then all the tests are run.
 5. *--testpass:* (Boolean) When this option is set to True, a table of passed test cases will be printed as well.
-	(By default, only the table for failed test-cases is printed.)
+    (By default, only the table for failed test-cases is printed.)
 
 NOTE:
 Due to Ubuntu security updates, the version of Ubuntu mentioned in the CI workflow file may not be compatible with the Continuous Integration framework.
