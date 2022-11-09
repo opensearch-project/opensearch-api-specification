@@ -1,20 +1,20 @@
 - [Developer Guide](#developer-guide)
-    - [Getting Started](#getting-started)
-        - [Fork and Clone opensearch-api-specification Repo](#fork-and-clone-opensearch-api-specification-repo)
-    - [Use an Editor](#use-an-editor)
-        - [Visual Studio Code](#visual-studio-code)
-        - [Build](#build)
-        - [Formatting](#formatting)
-    - [Adding a new API definition](#adding-a-new-api-definition)
-        - [Naming Convention](#naming-convention)
-        - [File Structure](#file-structure)
-        - [Defining the API model](#defining-the-api-model)
-    - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
-        - [File Structure for Test-folder](#file-structure-for-test-folder)
-        - [Defining test-case for API model](#defining-test-case-for-api-model)
-    - [Local testing](#local-testing)
-        - [Pre-requisite](#pre-requisite)
-        - [Testing model API](#testing-model-api)
+  - [Getting Started](#getting-started)
+    - [Fork and Clone opensearch-api-specification Repo](#fork-and-clone-opensearch-api-specification-repo)
+  - [Use an Editor](#use-an-editor)
+    - [Visual Studio Code](#visual-studio-code)
+    - [Build](#build)
+    - [Formatting](#formatting)
+  - [Adding a new API definition](#adding-a-new-api-definition)
+    - [Naming Convention](#naming-convention)
+    - [File Structure](#file-structure)
+    - [Defining the API model](#defining-the-api-model)
+  - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
+    - [File Structure for Test-folder](#file-structure-for-test-folder)
+    - [Defining test-case for API model](#defining-test-case-for-api-model)
+  - [Local testing](#local-testing)
+    - [Pre-requisite](#pre-requisite)
+    - [Testing model API](#testing-model-api)
 
 # Developer Guide
 Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
@@ -118,8 +118,8 @@ Let's suppose we have test-cases for put mapping and search api at first.
 Structure of the test folder's project tree:
 ```
 test
-├── scripts
-└── model
+    ├── scripts
+    └── model
         ├── _global
         │    └── search
         │        ├── hooks.js
@@ -134,8 +134,8 @@ We'd want to include the *Index-Aliases API* now.
 The project-tree structure will be as follows:
 ```
 test
-├── scripts
-└── model
+    ├── scripts
+    └── model
         ├── _global
         │   └── search
         │        ├── hooks.js
