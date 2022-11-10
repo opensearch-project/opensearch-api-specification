@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// 
+//
 //  The OpenSearch Contributors require contributions made to
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
@@ -8,14 +8,14 @@ $version: "2"
 namespace OpenSearch
 
 structure GetDocumentDocInput {
-    
+
     @httpLabel
     @required
     index: IndexName,
 
     @httpLabel
     @required
-    id: IdName,        
+    id: IdName,
 
     // GetDocumentInputCommonParameters START
     @httpQuery("preference")
@@ -47,7 +47,7 @@ structure GetDocumentDocInput {
 
     @httpQuery("version_type")
     version_type: VersionType
-    
+
     // GetDocumentInputCommonParameters END
 
 }
@@ -61,7 +61,7 @@ structure GetDocumentDocOutput {
     _type: String,
 
     @required
-    _id: IdName,           
+    _id: IdName,
 
     version: Integer,
 
@@ -86,7 +86,7 @@ structure GetDocumentSourceInput {
 
     @httpLabel
     @required
-    id: IdName,        
+    id: IdName,
 
     // GetDocumentSourceInputCommonParameters START
     @httpQuery("preference")
@@ -123,7 +123,7 @@ structure GetDocumentSourceInput {
 }
 
 structure GetDocumentSourceOutput {
-    
+
 }
 
 apply GetDocumentDoc @examples([
@@ -136,7 +136,7 @@ apply GetDocumentDoc @examples([
         output: {
             _index: "books",
             _type: "_doc",
-            _id: "1", 
+            _id: "1",
             found: true
         }
     }
@@ -151,4 +151,3 @@ apply GetDocumentSource @examples([
         }
     }
 ])
-

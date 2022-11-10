@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// 
+//
 //  The OpenSearch Contributors require contributions made to
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
@@ -16,7 +16,7 @@ structure PostAliasesInput {
     @httpQuery("timeout")
     timeout: Time,
 
-   // Request-body parameters 
+// Request-body parameters
 
     actions: ActionObjectStructure
 
@@ -39,7 +39,7 @@ structure UserDefinedStructure{
     aliases: UserDefinedValueList,
 
     // Mixins are required for the abstraction of the filter field.
-    // Therefore, this field is defined as a free-form object. 
+    // Therefore, this field is defined as a free-form object.
     filter: Document,
 
     index: String,
@@ -75,4 +75,3 @@ apply PostAliases @examples([
         }
     }
 ])
-

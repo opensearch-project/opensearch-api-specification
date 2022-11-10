@@ -8,6 +8,7 @@
 
 plugins {
     id("software.amazon.smithy").version("0.6.0")
+    id("com.diffplug.spotless").version("6.11.0")
 }
 
 repositories {
@@ -17,7 +18,6 @@ repositories {
 
 buildscript {
     dependencies {
-        val smithyVersion = "1.25.2"
         classpath("software.amazon.smithy:smithy-openapi:$smithyVersion")
         classpath("software.amazon.smithy:smithy-aws-traits:$smithyVersion")
         classpath("software.amazon.smithy:smithy-cli:$smithyVersion")
@@ -25,6 +25,17 @@ buildscript {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-model:1.25.2")
-    implementation("software.amazon.smithy:smithy-aws-traits:1.25.2")
+    implementation("software.amazon.smithy:smithy-model:$smithyVersion")
+    implementation("software.amazon.smithy:smithy-linters:$smithyVersion")
+    implementation("software.amazon.smithy:smithy-aws-traits:$smithyVersion")
+}
+
+spotless {
+    kotlinGradle {
+        target("**/*.kts", "*.md", "**/*.smithy", ".gitignore")
+
+        indentWithSpaces()
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
 }

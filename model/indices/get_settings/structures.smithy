@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// 
+//
 //  The OpenSearch Contributors require contributions made to
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
@@ -8,11 +8,11 @@ $version: "2"
 namespace OpenSearch
 
 structure GetSettingsIndexInput {
-    
+
     @httpLabel
     @required
     index: IndexName,
-   
+
     // GetSettingsIndexInput CommonParameters START
     @httpQuery("allow_no_indices")
     allow_no_indices: Boolean,
@@ -34,7 +34,7 @@ structure GetSettingsIndexInput {
 
     @httpQuery("master_timeout")
     master_timeout: Time,
-    
+
     // GetSettingsIndexInput CommonParameters END
 
 }
@@ -55,7 +55,7 @@ structure GetSettingsIndexSettingInput {
     @httpLabel
     @required
     setting: String,
-   
+
 
     // GetSettingsIndexInput CommonParameters START
     @httpQuery("allow_no_indices")
@@ -78,7 +78,7 @@ structure GetSettingsIndexSettingInput {
 
     @httpQuery("master_timeout")
     master_timeout: Time,
-    
+
     // GetSettingsIndexInput CommonParameters END
 
 }
@@ -87,7 +87,7 @@ structure GetSettingsIndexSettingOutput {
 
     @httpPayload
     content: Document
-    
+
 }
 
 apply GetSettingsIndex @examples([
@@ -108,4 +108,3 @@ apply GetSettingsIndexSetting @examples([
         }
     }
 ])
-

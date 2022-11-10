@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// 
+//
 //  The OpenSearch Contributors require contributions made to
 //  this file be licensed under the Apache-2.0 license or a
 //  compatible open source license.
@@ -20,7 +20,7 @@ structure PostSearchInput {
     analyzer: String,
 
     @httpQuery("analyze_wildcard")
-    analyze_wildcard: Boolean,    
+    analyze_wildcard: Boolean,
 
     @httpQuery("batched_reduce_size")
     batched_reduce_size: Integer,
@@ -92,7 +92,7 @@ structure PostSearchInput {
     sort: UserDefinedValueList,
 
     @httpQuery("source")
-    source_query_parameter: String,    
+    source_query_parameter: String,
 
     @httpQuery("source_excludes")
     source_excludes: UserDefinedValueList,
@@ -122,7 +122,7 @@ structure PostSearchInput {
     terminate_after_query_parameter: Integer,
 
     @httpQuery("timeout")
-    timeout_query_parameter: Time,  
+    timeout_query_parameter: Time,
 
     @httpQuery("track_scores")
     track_scores: Boolean,
@@ -137,18 +137,18 @@ structure PostSearchInput {
     version_query_parameter: Boolean,
     // PostSearchInputCommonParameters End
 
-    // Request-body parameters 
+    // Request-body parameters
 
     docvalue_fields: String,
     explain: Boolean,
     from: Integer,
     seq_no_primary_term: Boolean,
     size: Integer,
-    source: String,    
+    source: String,
     stats: String,
     terminate_after: Integer,
-    timeout: Time, 
-    version: Boolean,              
+    timeout: Time,
+    version: Boolean,
     fields: UserDefinedValueList,
     min_score: Integer,
     indices_boost: UserDefinedObjectList,
@@ -186,7 +186,7 @@ structure PostSearchWithIndexInput {
     analyzer: String,
 
     @httpQuery("analyze_wildcard")
-    analyze_wildcard: Boolean,    
+    analyze_wildcard: Boolean,
 
     @httpQuery("batched_reduce_size")
     batched_reduce_size: Integer,
@@ -258,7 +258,7 @@ structure PostSearchWithIndexInput {
     sort: UserDefinedValueList,
 
     @httpQuery("source")
-    source_query_parameter: String,    
+    source_query_parameter: String,
 
     @httpQuery("source_excludes")
     source_excludes: UserDefinedValueList,
@@ -288,7 +288,7 @@ structure PostSearchWithIndexInput {
     terminate_after_query_parameter: Integer,
 
     @httpQuery("timeout")
-    timeout_query_parameter: Time,  
+    timeout_query_parameter: Time,
 
     @httpQuery("track_scores")
     track_scores: Boolean,
@@ -303,18 +303,18 @@ structure PostSearchWithIndexInput {
     version_query_parameter: Boolean,
     // PostSearchWithIndexInputCommonParameter End
 
-    // Request-body parameters 
+    // Request-body parameters
 
     docvalue_fields: String,
     explain: Boolean,
     from: Integer,
     seq_no_primary_term: Boolean,
     size: Integer,
-    source: String,    
+    source: String,
     stats: String,
     terminate_after: Integer,
-    timeout: Time, 
-    version: Boolean,              
+    timeout: Time,
+    version: Boolean,
     fields: UserDefinedValueList,
     min_score: Integer,
     indices_boost: UserDefinedObjectList,
