@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/rest-api/alias/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/alias/"
 )
 
 @suppress(["HttpUriConflict"])

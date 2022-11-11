@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/2.0/opensearch/rest-api/index-apis/get-settings/"
+    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/index-apis/get-settings/"
 )
 
 @readonly
