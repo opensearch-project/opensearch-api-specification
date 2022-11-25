@@ -18,8 +18,12 @@ structure PutCreateIndexInput {
     @httpQuery("wait_for_active_shards")
     wait_for_active_shards: String,
 
+    @deprecated(since: "2.0.0", message: "To promote inclusive language, use 'cluster_manager_timeout' instead.")
     @httpQuery("master_timeout")
     master_timeout: Time,
+
+    @httpQuery("cluster_manager_timeout")
+    cluster_manager_timeout: Time,
 
     @httpQuery("timeout")
     timeout: Time,
