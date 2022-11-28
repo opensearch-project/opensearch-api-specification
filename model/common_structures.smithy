@@ -7,6 +7,17 @@
 $version: "2"
 namespace OpenSearch
 
+@mixin
+structure ClusterManagerTimeout {
+    @deprecated(since: "2.0.0", message: "To promote inclusive language, use 'cluster_manager_timeout' instead.")
+    @httpQuery("master_timeout")
+    master_timeout: Time,
+
+    @since("2.0.0")
+    @httpQuery("cluster_manager_timeout")
+    cluster_manager_timeout: Time,
+}
+
 structure ShardStatistics{
     total: Integer,
     successful: Integer,

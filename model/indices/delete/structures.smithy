@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure DeleteIndexInput {
+structure DeleteIndexInput with [ClusterManagerTimeout] {
     @httpLabel
     @required
     index: IndexName,
@@ -20,13 +20,6 @@ structure DeleteIndexInput {
 
     @httpQuery("ignore_unavailable")
     ignore_unavailable: Boolean,
-
-    @deprecated(since: "2.0.0", message: "To promote inclusive language, use 'cluster_manager_timeout' instead.")
-    @httpQuery("master_timeout")
-    master_timeout: Time,
-
-    @httpQuery("cluster_manager_timeout")
-    cluster_manager_timeout: Time,
 
     @httpQuery("timeout")
     timeout: Time

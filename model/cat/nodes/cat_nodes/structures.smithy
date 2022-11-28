@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure GetCatNodesInput {
+structure GetCatNodesInput with [ClusterManagerTimeout] {
 
     // GetCatNodesInput Start
 
@@ -19,13 +19,6 @@ structure GetCatNodesInput {
 
     @httpQuery("local")
     local: Boolean,
-
-    @deprecated(since: "2.0.0", message: "To promote inclusive language, use 'cluster_manager_timeout' instead.")
-    @httpQuery("master_timeout")
-    master_timeout: Time,
-
-    @httpQuery("cluster_manager_timeout")
-    cluster_manager_timeout: Time,
 
     @httpQuery("time")
     time: Time,
