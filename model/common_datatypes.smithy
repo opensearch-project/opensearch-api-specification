@@ -28,6 +28,10 @@ enum SettingType {
     DEFAULTS = "defaults"
 }
 
+list IndexNameList {
+    member: IndexName
+}
+
 list UserDefinedValueList{
     member: String
 }
