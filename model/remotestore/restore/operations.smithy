@@ -7,6 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
+@unstable
 @externalDocumentation(
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/opensearch/remote/#restoring-from-a-backup"
 )

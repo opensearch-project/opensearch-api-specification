@@ -7,6 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
+@unstable
 structure PostRemoteStoreRestoreInput {
     @httpQuery("cluster_manager_timeout")
     cluster_manager_timeout: Time,
@@ -18,18 +19,21 @@ structure PostRemoteStoreRestoreInput {
     indices: IndexNameList
 }
 
+@unstable
 structure PostRemoteStoreRestoreOutput {
     accepted: Boolean,
 
     remote_store: RemoteStoreRestoreInfo
 }
 
+@unstable
 structure RemoteStoreRestoreInfo {
     snapshot: String,
     indices: IndexNameList,
     shards: RemoteStoreRestoreShardsInfo
 }
 
+@unstable
 structure RemoteStoreRestoreShardsInfo {
     total: Integer,
     failed: Integer,
