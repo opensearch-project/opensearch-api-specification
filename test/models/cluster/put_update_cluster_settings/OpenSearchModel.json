@@ -20,19 +20,27 @@
      },
      "parameters": [
       {
-       "name": "flat_settings",
-       "in": "query",
-       "schema": {
-        "type": "boolean",
-        "nullable": true
-       }
-      },
-      {
        "name": "master_timeout",
        "in": "query",
        "schema": {
         "type": "string",
+        "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$",
+        "deprecated": true
+       }
+      },
+      {
+       "name": "cluster_manager_timeout",
+       "in": "query",
+       "schema": {
+        "type": "string",
         "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$"
+       }
+      },
+      {
+       "name": "flat_settings",
+       "in": "query",
+       "schema": {
+        "type": "boolean"
        }
       },
       {
@@ -76,8 +84,7 @@
      "type": "object",
      "properties": {
       "acknowledged": {
-       "type": "boolean",
-       "nullable": true
+       "type": "boolean"
       },
       "persistent": {
        "$ref": "#/components/schemas/UserDefinedValueMap"
@@ -91,8 +98,18 @@
      "type": "object",
      "additionalProperties": {}
     }
+   },
+   "securitySchemes": {
+    "smithy.api.httpBasicAuth": {
+     "type": "http",
+     "description": "HTTP Basic authentication",
+     "scheme": "Basic"
+    }
    }
-  }
-}
-
-
+  },
+  "security": [
+   {
+    "smithy.api.httpBasicAuth": []
+   }
+  ]
+ }
