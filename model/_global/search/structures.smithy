@@ -323,10 +323,6 @@ structure PostSearchWithIndexInput {
 }
 
 structure PostSearchWithIndexOutput {
-
-    @required
-    index: IndexName,
-
     _scroll_id: String,
 
     took: Long,
@@ -337,3 +333,62 @@ structure PostSearchWithIndexOutput {
 
     hits: HitsMetadata
 }
+
+apply PostSearch @examples([
+    {
+        title: "Examples for Post Search Operation.",
+        input: {
+            scroll: "1d",
+            query: {
+                match_all: {}
+            },
+            fields: ["*"]
+        },
+        output: {
+            timed_out: false,
+            _shards: {
+                total: 1,
+                successful: 1,
+                skipped: 0,
+                failed: 0
+            },
+            hits: {
+                total: {
+                    value: 0,
+                    relation: "eq"
+                },
+                hits: []
+            }
+        }
+    }
+])
+
+apply PostSearchWithIndex @examples([
+    {
+        title: "Examples for Post Search With Index Operation.",
+        input: {
+            index: "books",
+            scroll: "1d",
+            query: {
+                match_all: {}
+            },
+            fields: ["*"]
+        },
+        output: {
+            timed_out: false,
+            _shards: {
+                total: 1,
+                successful: 1,
+                skipped: 0,
+                failed: 0
+            },
+            hits: {
+                total: {
+                    value: 0,
+                    relation: "eq"
+                },
+                hits: []
+            }
+        }
+    }
+])

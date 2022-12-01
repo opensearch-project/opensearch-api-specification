@@ -42,15 +42,7 @@ hooks.before("/_search > POST > 200 > application/json",function(transactions,do
               "content-type": "application/json; charset=UTF-8"
           }
       });
-    
-      var query = {
-        query: {
-          match_all: {}
-        },
-        fields: ["*"]
-      }
-  
-      transactions.request.body = JSON.stringify(query);
+
       done();
   }
   request();
@@ -96,14 +88,6 @@ hooks.before("/{index}/_search > POST > 200 > application/json",function(transac
           }
       });
     
-      var query = {
-        query: {
-          match_all: {}
-        },
-        fields: ["*"]
-      }
-  
-      transactions.request.body = JSON.stringify(query);
       done();
   }
   request();
