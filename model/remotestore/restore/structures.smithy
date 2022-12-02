@@ -22,7 +22,6 @@ structure PostRemoteStoreRestoreInput {
 @unstable
 structure PostRemoteStoreRestoreOutput {
     accepted: Boolean,
-
     remote_store: RemoteStoreRestoreInfo
 }
 
@@ -39,3 +38,22 @@ structure RemoteStoreRestoreShardsInfo {
     failed: Integer,
     successful: Integer
 }
+
+apply PostRemoteStoreRestore @examples([
+    {
+        title: "Examples for Post Remote Storage Restore Operation.",
+        input: {
+            indices: ["books"]
+        },
+        output: {
+            remote_store: {
+                indices: ["books"],
+                shards: {
+                    total: 1,
+                    failed: 0,
+                    successful: 1
+                }
+            }
+        }
+    }
+])
