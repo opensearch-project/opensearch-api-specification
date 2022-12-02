@@ -1,7 +1,7 @@
 version: '3'
 services:
   opensearch-node1:
-    image: opensearchproject/opensearch:latest
+    build: ./opensearch
     container_name: opensearch-node1
     environment:
       - cluster.name=opensearch-cluster
@@ -9,7 +9,8 @@ services:
       - discovery.seed_hosts=opensearch-node1,opensearch-node2
       - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - path.repo=/mnt/snapshots
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m -Dopensearch.experimental.feature.replication_type.enabled=true -Dopensearch.experimental.feature.remote_store.enabled=true"
     ulimits:
       memlock:
         soft: -1
@@ -19,6 +20,7 @@ services:
         hard: 65536
     volumes:
       - opensearch-data1:/usr/share/opensearch/data
+      - opensearch-snapshots:/mnt/snapshots
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
@@ -26,7 +28,7 @@ services:
       - opensearch-net
   
   opensearch-node2:
-    image: opensearchproject/opensearch:latest
+    build: ./opensearch
     container_name: opensearch-node2
     environment:
       - cluster.name=opensearch-cluster
@@ -34,7 +36,8 @@ services:
       - discovery.seed_hosts=opensearch-node1,opensearch-node2
       - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
       - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - path.repo=/mnt/snapshots
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m -Dopensearch.experimental.feature.replication_type.enabled=true -Dopensearch.experimental.feature.remote_store.enabled=true"
     ulimits:
       memlock:
         soft: -1
@@ -44,12 +47,14 @@ services:
         hard: 65536
     volumes:
       - opensearch-data2:/usr/share/opensearch/data
+      - opensearch-snapshots:/mnt/snapshots
     networks:
       - opensearch-net
 
 volumes:
   opensearch-data1:
   opensearch-data2:
+  opensearch-snapshots:
 
 networks:
   opensearch-net:
