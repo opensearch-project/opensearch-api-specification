@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure PutIndexMappingWithIndexInput {
+structure PutIndexMappingWithIndexInput with [ClusterManagerTimeout] {
     @httpLabel
     @required
     index: IndexName,
@@ -24,9 +24,6 @@ structure PutIndexMappingWithIndexInput {
 
     @httpQuery("include_type_name")
     include_type_name: Boolean,
-
-    @httpQuery("master_timeout")
-    master_timeout: Time,
 
     @httpQuery("timeout")
     timeout: Time,

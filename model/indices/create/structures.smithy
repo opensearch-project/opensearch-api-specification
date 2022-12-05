@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure PutCreateIndexInput {
+structure PutCreateIndexInput with [ClusterManagerTimeout] {
     @httpLabel
     @required
     index: IndexName,
@@ -17,9 +17,6 @@ structure PutCreateIndexInput {
 
     @httpQuery("wait_for_active_shards")
     wait_for_active_shards: String,
-
-    @httpQuery("master_timeout")
-    master_timeout: Time,
 
     @httpQuery("timeout")
     timeout: Time,

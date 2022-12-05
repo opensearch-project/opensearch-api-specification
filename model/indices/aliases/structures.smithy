@@ -7,11 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure PostAliasesInput {
-
-
-    @httpQuery("master_timeout")
-    master_timeout: Time,
+structure PostAliasesInput with [ClusterManagerTimeout] {
 
     @httpQuery("timeout")
     timeout: Time,

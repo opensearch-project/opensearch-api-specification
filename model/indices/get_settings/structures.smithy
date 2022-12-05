@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure GetSettingsIndexInput {
+structure GetSettingsIndexInput with [ClusterManagerTimeout] {
 
     @httpLabel
     @required
@@ -32,9 +32,6 @@ structure GetSettingsIndexInput {
     @httpQuery("local")
     local: Boolean,
 
-    @httpQuery("master_timeout")
-    master_timeout: Time,
-
     // GetSettingsIndexInput CommonParameters END
 
 }
@@ -46,7 +43,7 @@ structure GetSettingsIndexOutput {
 
 }
 
-structure GetSettingsIndexSettingInput {
+structure GetSettingsIndexSettingInput with [ClusterManagerTimeout] {
 
     @httpLabel
     @required
@@ -75,9 +72,6 @@ structure GetSettingsIndexSettingInput {
 
     @httpQuery("local")
     local: Boolean,
-
-    @httpQuery("master_timeout")
-    master_timeout: Time,
 
     // GetSettingsIndexInput CommonParameters END
 

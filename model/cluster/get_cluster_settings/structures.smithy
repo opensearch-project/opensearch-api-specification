@@ -7,16 +7,13 @@
 $version: "2"
 namespace OpenSearch
 
-structure GetClusterSettingsInput {
+structure GetClusterSettingsInput with [ClusterManagerTimeout] {
 
     @httpQuery("flat_settings")
     flat_settings: Boolean,
 
     @httpQuery("include_defaults")
     include_defaults: Boolean,
-
-    @httpQuery("master_timeout")
-    master_timeout: Time,
 
 }
 
