@@ -22,7 +22,7 @@ class OperationFilter:
 
         shutil.copyfile(original, target)
 
-        command = 'sed "s/operations:.*$/operations: [' + self.operations + \
+        command = 'sed -e \'1h;2,$H;$!d;g\' -e "s/operations: \[[^]]*\]/operations: [' + self.operations + \
             ']/" opensearch_temp.smithy > ../../model/opensearch.smithy'
         os.system(command)
 

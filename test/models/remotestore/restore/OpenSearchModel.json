@@ -1,0 +1,169 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+     "title": "OpenSearch",
+     "version": "2021-11-23"
+    },
+    "paths": {
+     "/_remotestore/_restore": {
+      "post": {
+       "description": "Restore one or more indices from a remote backup.",
+       "operationId": "PostRemoteStoreRestore",
+       "requestBody": {
+        "content": {
+         "application/json": {
+          "schema": {
+           "$ref": "#/components/schemas/PostRemoteStoreRestoreRequestContent"
+          },
+          "examples": {
+           "PostRemoteStoreRestore_example1": {
+            "summary": "Examples for Post Remote Storage Restore Operation.",
+            "description": "",
+            "value": {
+             "indices": [
+              "books"
+             ]
+            }
+           }
+          }
+         }
+        },
+        "required": true
+       },
+       "parameters": [
+        {
+         "name": "cluster_manager_timeout",
+         "in": "query",
+         "schema": {
+          "type": "string",
+          "pattern": "^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$"
+         }
+        },
+        {
+         "name": "wait_for_completion",
+         "in": "query",
+         "schema": {
+          "type": "boolean"
+         }
+        }
+       ],
+       "responses": {
+        "200": {
+         "description": "PostRemoteStoreRestore 200 response",
+         "content": {
+          "application/json": {
+           "schema": {
+            "$ref": "#/components/schemas/PostRemoteStoreRestoreResponseContent"
+           },
+           "examples": {
+            "PostRemoteStoreRestore_example1": {
+             "summary": "Examples for Post Remote Storage Restore Operation.",
+             "description": "",
+             "value": {
+              "remote_store": {
+               "indices": [
+                "books"
+               ],
+               "shards": {
+                "total": 1,
+                "failed": 0,
+                "successful": 1
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "components": {
+     "schemas": {
+      "PostRemoteStoreRestoreRequestContent": {
+       "type": "object",
+       "properties": {
+        "indices": {
+         "type": "array",
+         "items": {
+          "type": "string",
+          "pattern": "^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$"
+         }
+        }
+       },
+       "required": [
+        "indices"
+       ]
+      },
+      "PostRemoteStoreRestoreResponseContent": {
+       "type": "object",
+       "properties": {
+        "accepted": {
+         "type": "boolean"
+        },
+        "remote_store": {
+         "$ref": "#/components/schemas/RemoteStoreRestoreInfo"
+        }
+       },
+       "example": {
+        "remote_store": {
+         "indices": [
+          "books"
+         ],
+         "shards": {
+          "total": 1,
+          "failed": 0,
+          "successful": 1
+         }
+        }
+       }
+      },
+      "RemoteStoreRestoreInfo": {
+       "type": "object",
+       "properties": {
+        "snapshot": {
+         "type": "string"
+        },
+        "indices": {
+         "type": "array",
+         "items": {
+          "type": "string",
+          "pattern": "^[^+_\\-\\.][^\\\\, /*?\"<>| ,#\\nA-Z]+$"
+         }
+        },
+        "shards": {
+         "$ref": "#/components/schemas/RemoteStoreRestoreShardsInfo"
+        }
+       }
+      },
+      "RemoteStoreRestoreShardsInfo": {
+       "type": "object",
+       "properties": {
+        "total": {
+         "type": "number"
+        },
+        "failed": {
+         "type": "number"
+        },
+        "successful": {
+         "type": "number"
+        }
+       }
+      }
+     },
+     "securitySchemes": {
+      "smithy.api.httpBasicAuth": {
+       "type": "http",
+       "description": "HTTP Basic authentication",
+       "scheme": "Basic"
+      }
+     }
+    },
+    "security": [
+     {
+      "smithy.api.httpBasicAuth": []
+     }
+    ]
+   }
