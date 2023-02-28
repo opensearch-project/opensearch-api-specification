@@ -27,15 +27,15 @@ enum DefaultOperator {
 
 enum SearchType {
     @documentation("Documents are scored using local term and document frequencies for the shard. This is usually faster but less accurate.")
-    QUERY_THEN_FETCH = "0"
+    QUERY_THEN_FETCH = "query_then_fetch"
     @documentation("Documents are scored using global term and document frequencies across all shards. This is usually slower but more accurate.")
-    DFS_QUERY_THEN_FETCH = "1"
+    DFS_QUERY_THEN_FETCH = "dfs_query_then_fetch"
 }
 
 enum SuggestMode {
-    MISSING = "0"
-    POPULAR = "1"
-    ALWAYS = "2"
+    MISSING = "missing"
+    POPULAR = "popular"
+    ALWAYS = "always"
 }
 
 enum VersionType {
