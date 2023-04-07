@@ -6,16 +6,32 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/index-apis/delete-index/"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/delete-index/"
 )
-
+@vendorExtensions(
+    "x-operation-group": "indices.delete",
+    "x-version-added": "1.0"
+)
 @idempotent
-@http(method: "DELETE", uri: "/{index}")
 @suppress(["HttpUriConflict"])
-@documentation("Removes a document from the index.")
-operation DeleteIndex {
-    input: DeleteIndexInput,
-    output: DeleteIndexOutput
+@http(method: "DELETE", uri: "/{index}")
+@documentation("Deletes an index.")
+operation IndicesDelete {
+    input: IndicesDelete_Input,
+    output: IndicesDelete_Output
 }
+
+apply IndicesDelete @examples([
+    {
+        title: "Examples for Delete Index Operation.",
+        input: {
+            index: "books"
+        },
+        output: {
+            acknowledged: true
+        }
+    }
+])

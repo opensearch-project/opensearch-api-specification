@@ -7,15 +7,19 @@
 $version: "2"
 namespace OpenSearch
 
-@mixin
-structure ClusterManagerTimeout {
-    @deprecated(since: "2.0.0", message: "To promote inclusive language, use 'cluster_manager_timeout' instead.")
-    @httpQuery("master_timeout")
-    master_timeout: Time,
+map UserDefinedValueMap{
+    key: String,
+    value: UserDefinedValue
+}
 
-    @since("2.0.0")
-    @httpQuery("cluster_manager_timeout")
-    cluster_manager_timeout: Time,
+document UserDefinedValue
+
+list UserDefinedValueList{
+    member: String
+}
+
+list UserDefinedObjectList{
+    member: Document
 }
 
 structure ShardStatistics{
@@ -32,8 +36,19 @@ structure HitsMetadata{
 }
 
 structure Total{
-    value:Integer,
+    value: Integer,
     relation: Relation,
+}
+
+list ListHits{
+    member: Hits
+}
+
+enum Relation {
+    @documentation("Accurate")
+    EQ = "eq"
+    @documentation("Lower bound, including returned documents")
+    GTE = "gte"
 }
 
 structure Hits{

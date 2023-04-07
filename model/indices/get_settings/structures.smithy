@@ -7,98 +7,70 @@
 $version: "2"
 namespace OpenSearch
 
-structure GetSettingsIndexInput with [ClusterManagerTimeout] {
+@mixin
+structure IndicesGetSettings_QueryParams {
+    @httpQuery("master_timeout")
+    query_master_timeout: MasterTimeout,
 
-    @httpLabel
-    @required
-    index: IndexName,
-
-    // GetSettingsIndexInput CommonParameters START
-    @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
-
-    @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
-
-    @httpQuery("flat_settings")
-    flat_settings: Boolean,
-
-    @httpQuery("include_defaults")
-    include_defaults: String,
+    @httpQuery("cluster_manager_timeout")
+    query_cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+    query_ignore_unavailable: IgnoreUnavailable,
 
-    @httpQuery("local")
-    local: Boolean,
-
-    // GetSettingsIndexInput CommonParameters END
-
-}
-
-structure GetSettingsIndexOutput {
-
-    @httpPayload
-    content: Document
-
-}
-
-structure GetSettingsIndexSettingInput with [ClusterManagerTimeout] {
-
-    @httpLabel
-    @required
-    index: IndexName,
-
-    @httpLabel
-    @required
-    setting: String,
-
-
-    // GetSettingsIndexInput CommonParameters START
     @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
+    query_allow_no_indices: AllowNoIndices,
 
     @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
+    @default("all")
+    query_expand_wildcards: ExpandWildcards,
 
     @httpQuery("flat_settings")
-    flat_settings: Boolean,
-
-    @httpQuery("include_defaults")
-    include_defaults: String,
-
-    @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+    @default(false)
+    query_flat_settings: FlatSettings,
 
     @httpQuery("local")
-    local: Boolean,
+    @default(false)
+    query_local: Local,
 
-    // GetSettingsIndexInput CommonParameters END
-
+    @httpQuery("include_defaults")
+    @documentation("Whether to return all default setting for each of the indices.")
+    @default(false)
+    query_include_defaults: IncludeDefaults,
 }
 
-structure GetSettingsIndexSettingOutput {
 
+@input
+structure IndicesGetSettings_Input with [IndicesGetSettings_QueryParams] {
+}
+
+@input
+structure IndicesGetSettings_WithIndex_Input with [IndicesGetSettings_QueryParams] {
+    @required
+    @httpLabel
+    index: PathIndices,
+}
+
+@input
+structure IndicesGetSettings_WithIndexName_Input with [IndicesGetSettings_QueryParams] {
+    @required
+    @httpLabel
+    index: PathIndices,
+
+    @required
+    @httpLabel
+    name: PathSettingNames,
+}
+
+@input
+structure IndicesGetSettings_WithName_Input with [IndicesGetSettings_QueryParams] {
+    @required
+    @httpLabel
+    name: PathSettingNames,
+}
+
+// TODO: Fill in Output Structure
+structure IndicesGetSettings_Output {
     @httpPayload
     content: Document
-
 }
-
-apply GetSettingsIndex @examples([
-    {
-        title: "Examples for Get settings Index Operation.",
-        input: {
-            index: "books"
-        },
-    }
-])
-
-apply GetSettingsIndexSetting @examples([
-    {
-        title: "Examples for Get settings Index-setting Operation.",
-        input: {
-            index: "books",
-            setting: "index"
-        }
-    }
-])

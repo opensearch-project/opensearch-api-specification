@@ -7,47 +7,50 @@
 $version: "2"
 namespace OpenSearch
 
-structure PutIndexMappingWithIndexInput with [ClusterManagerTimeout] {
-    @httpLabel
-    @required
-    index: IndexName,
+@mixin
+structure IndicesPutMapping_QueryParams {
+    @httpQuery("timeout")
+    query_timeout: Timeout,
 
-    // PutIndexMappingInputCommonParameters Start
-    @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
+    @httpQuery("master_timeout")
+    query_master_timeout: MasterTimeout,
 
-    @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
+    @httpQuery("cluster_manager_timeout")
+    query_cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+    query_ignore_unavailable: IgnoreUnavailable,
 
-    @httpQuery("include_type_name")
-    include_type_name: Boolean,
+    @httpQuery("allow_no_indices")
+    query_allow_no_indices: AllowNoIndices,
 
-    @httpQuery("timeout")
-    timeout: Time,
+    @httpQuery("expand_wildcards")
+    @default("open")
+    query_expand_wildcards: ExpandWildcards,
 
     @httpQuery("write_index_only")
-    write_index_only: Boolean,
-
-    properties: Document
-    // PutIndexMappingInputCommonParameters End
-
+    @default(false)
+    query_write_index_only: WriteIndexOnly,
 }
 
-structure PutIndexMappingWithIndexOutput {
+// TODO: Fill in Body Parameters
+@mixin
+structure IndicesPutMapping_BodyParams {}
+
+@input
+structure IndicesPutMapping_Put_Input with [IndicesPutMapping_QueryParams, IndicesPutMapping_BodyParams] {
+    @required
+    @httpLabel
+    index: PathIndices,
+}
+
+@input
+structure IndicesPutMapping_Post_Input with [IndicesPutMapping_QueryParams, IndicesPutMapping_BodyParams] {
+    @required
+    @httpLabel
+    index: PathIndices,
+}
+
+structure IndicesPutMapping_Output {
     acknowledged: Boolean
 }
-
-apply PutIndexMappingWithIndex @examples([
-    {
-        title: "Examples for Put Index Mapping with index Operation.",
-        input: {
-            index: "books",
-        },
-        output: {
-            acknowledged: true
-        }
-    }
-])

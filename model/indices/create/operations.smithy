@@ -6,16 +6,36 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/index-apis/create-index/"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/create-index/"
 )
 
+@vendorExtensions(
+    "x-operation-group": "indices.create",
+    "x-version-added": "1.0"
+)
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}")
-@documentation("Creates index mappings.")
-operation PutCreateIndex {
-    input: PutCreateIndexInput,
-    output: PutCreateIndexOutput
+@documentation("Creates an index with optional settings and mappings.")
+operation IndicesCreate {
+    input: IndicesCreate_Input,
+    output: IndicesCreate_Output
 }
+
+
+apply IndicesCreate @examples([
+    {
+        title: "Examples for Create Index Operation.",
+        input: {
+            index: "books"
+        },
+        output: {
+            index: "books",
+            shards_acknowledged: true,
+            acknowledged: true
+        }
+    }
+])

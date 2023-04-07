@@ -6,23 +6,117 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/search/"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/search/"
 )
 
+@vendorExtensions(
+    "x-operation-group": "search",
+    "x-version-added": "1.0"
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_search")
+@documentation("Returns results matching a query.")
+operation Search_Get {
+    input: Search_Get_Input,
+    output: Search_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "search",
+    "x-version-added": "1.0"
+)
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_search")
 @documentation("Returns results matching a query.")
-operation PostSearch{
-    input: PostSearchInput,
-    output: PostSearchOutput
+operation Search_Post {
+    input: Search_Post_Input,
+    output: Search_Output
 }
 
+@vendorExtensions(
+    "x-operation-group": "search",
+    "x-version-added": "1.0"
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/{index}/_search")
+@documentation("Returns results matching a query.")
+operation Search_Get_WithIndex {
+    input: Search_Get_WithIndex_Input,
+    output: Search_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "search",
+    "x-version-added": "1.0"
+)
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_search")
 @documentation("Returns results matching a query.")
-operation PostSearchWithIndex {
-    input: PostSearchWithIndexInput,
-    output: PostSearchWithIndexOutput
+operation Search_Post_WithIndex {
+    input: Search_Post_WithIndex_Input,
+    output: Search_Output
 }
+
+apply Search_Post @examples([
+    {
+        title: "Examples for Post Search Operation.",
+        input: {
+            query_scroll: "1d",
+            query: {
+                match_all: {}
+            },
+            fields: ["*"]
+        },
+        output: {
+            timed_out: false,
+            _shards: {
+                total: 1,
+                successful: 1,
+                skipped: 0,
+                failed: 0
+            },
+            hits: {
+                total: {
+                    value: 0,
+                    relation: "eq"
+                },
+                hits: []
+            }
+        }
+    }
+])
+
+apply Search_Post_WithIndex @examples([
+    {
+        title: "Examples for Post Search With Index Operation.",
+        input: {
+            index: "books",
+            query_scroll: "1d",
+            query: {
+                match_all: {}
+            },
+            fields: ["*"]
+        },
+        output: {
+            timed_out: false,
+            _shards: {
+                total: 1,
+                successful: 1,
+                skipped: 0,
+                failed: 0
+            },
+            hits: {
+                total: {
+                    value: 0,
+                    relation: "eq"
+                },
+                hits: []
+            }
+        }
+    }
+])

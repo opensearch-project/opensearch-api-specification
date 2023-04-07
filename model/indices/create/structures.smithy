@@ -7,20 +7,24 @@
 $version: "2"
 namespace OpenSearch
 
-structure PutCreateIndexInput with [ClusterManagerTimeout] {
-    @httpLabel
-    @required
-    index: IndexName,
-
-    @httpQuery("include_type_name")
-    include_type_name: Boolean,
-
+@mixin
+structure IndicesCreate_QueryParams {
     @httpQuery("wait_for_active_shards")
-    wait_for_active_shards: String,
+    @documentation("Set the number of active shards to wait for before the operation returns.")
+    query_wait_for_active_shards: WaitForActiveShards,
 
     @httpQuery("timeout")
-    timeout: Time,
+    query_timeout: Timeout,
 
+    @httpQuery("master_timeout")
+    query_master_timeout: MasterTimeout,
+
+    @httpQuery("cluster_manager_timeout")
+    query_cluster_manager_timeout: ClusterManagerTimeout,
+}
+
+@mixin
+structure IndicesCreate_BodyParams {
     //TODO: Placeholders. aliases, mapping and settings need to be updated with proper structures
 
     aliases: UserDefinedValueMap,
@@ -28,11 +32,17 @@ structure PutCreateIndexInput with [ClusterManagerTimeout] {
     mapping: UserDefinedValueMap,
 
     settings: UserDefinedValueMap
-
 }
 
-structure PutCreateIndexOutput {
+@input
+structure IndicesCreate_Input with [IndicesCreate_QueryParams, IndicesCreate_BodyParams] {
+    @required
+    @httpLabel
+    index: PathIndex,
+}
 
+
+structure IndicesCreate_Output {
     @required
     index: IndexName,
 
@@ -40,19 +50,5 @@ structure PutCreateIndexOutput {
     shards_acknowledged: Boolean,
 
     @required
-    acknowledged:Boolean
+    acknowledged: Boolean
 }
-
-apply PutCreateIndex @examples([
-    {
-        title: "Examples for Create Index Operation.",
-        input: {
-            index: "books"
-        },
-        output: {
-            index: "books",
-            shards_acknowledged: true,
-            acknowledged: true
-        }
-    }
-])
