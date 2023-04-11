@@ -1,22 +1,10 @@
-name: Update OpenAPI specs
-on: 
-  push:
-    branches:
-      - main
+name: Build OpenAPI specs
+on: [push, pull_request]
 
 jobs:
-  update:
-    if: github.repository == 'opensearch-project/opensearch-api-specification'
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: GitHub App token
-        id: github_app_token
-        uses: tibdex/github-app-token@v1.5.0
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          installation_id: 22958780
-
       - name: Checkout the repo
         uses: actions/checkout@v3
 
@@ -26,8 +14,23 @@ jobs:
       - name: Move OpenAPI specs to root
         run: mv build/smithyprojections/opensearch-api-specification/source/openapi/OpenSearch.openapi.json .
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: opensearch-openapi
+          path: ./OpenSearch.openapi.json
+
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.5.0
+        if: github.repository == 'opensearch-project/opensearch-api-specification' && github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
+        if: github.repository == 'opensearch-project/opensearch-api-specification' && github.event_name == 'push' && github.event.ref == 'refs/heads/main'
         with:
           token: ${{ steps.github_app_token.outputs.token }}
           commit-message: Update OpenAPI specs
