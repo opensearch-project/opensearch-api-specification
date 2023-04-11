@@ -108,6 +108,28 @@ If you are retrospectively adding the API, Then you can refer to the following r
 - [OpenSearch Documentation](https://opensearch.org/docs/latest)
 - [Go through the serialisation logic in OpenSearch](https://github.com/opensearch-project/OpenSearch)
 
+### OpenAPI Vendor Extensions
+
+This repository includes a custom Smithy trait `@vendorExtensions` and accompanying build extension to enable adding custom OpenAPI specification extensions to operations in the converted OpenAPI output. It is used to add additional metadata about the operations to track the "namespaced" concept from the OpenSearch server and clients, and to account for when a single API operation being represented by multiple REST operations.
+
+```smithy
+use opensearch.openapi#vendorExtensions
+
+@externalDocumentation(
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-indices/"
+)
+@vendorExtensions(
+    "x-operation-group": "cat.indices",
+    "x-version-added": "1.0"
+)
+@http(method: "GET", uri: "/_cat/indices")
+@documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, ...")
+operation CatIndices {
+    input: CatIndices_Input,
+    output: CatIndices_Output
+}
+```
+
 ## Adding a test-case for API definition
 
 Once you've finished with the model API, follow the steps below to create a test-case.
