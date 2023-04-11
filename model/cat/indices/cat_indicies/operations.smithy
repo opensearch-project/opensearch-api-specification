@@ -7,6 +7,8 @@
 $version: "2"
 namespace OpenSearch
 
+use opensearch.openapi#vendorExtensions
+
 @externalDocumentation(
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/cat/cat-indices/"
 )
@@ -15,6 +17,10 @@ namespace OpenSearch
 @http(method: "GET", uri: "/_cat/indices")
 @suppress(["HttpUriConflict"])
 @documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, etc.")
+@vendorExtensions(
+    "x-namespace": "cat"
+    "x-operation": "indices"
+)
 operation GetCatIndices {
     input: GetCatIndicesInput,
     output: GetCatIndicesOutput
@@ -25,6 +31,10 @@ operation GetCatIndices {
 @http(method: "GET", uri: "/_cat/indices/{index}")
 @suppress(["HttpUriConflict"])
 @documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, etc.")
+@vendorExtensions(
+    "x-namespace": "cat"
+    "x-operation": "indices"
+)
 operation GetCatIndicesWithIndex {
     input: GetCatIndicesWithIndexInput,
     output: GetCatIndicesWithIndexOutput
