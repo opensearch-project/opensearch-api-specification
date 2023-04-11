@@ -1,0 +1,42 @@
+name: Build OpenAPI specs
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: ./gradlew build
+      
+      - name: Move OpenAPI specs to root
+        run: mv build/smithyprojections/opensearch-api-specification/full/openapi/OpenSearch.openapi.json .
+
+      - name: Upload OpenAPI model artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: opensearch-openapi
+          path: ./OpenSearch.openapi.json
+
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.5.0
+        if: github.repository == 'opensearch-project/opensearch-api-specification' && github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        if: github.repository == 'opensearch-project/opensearch-api-specification' && github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          commit-message: Update OpenAPI specs
+          signoff: true
+          title: Update OpenAPI specs
+          body: |
+            I've noticed an update to the models. This pull request updates the OpenAPI specs accordingly.
+          branch: create-pull-request/specs-update
