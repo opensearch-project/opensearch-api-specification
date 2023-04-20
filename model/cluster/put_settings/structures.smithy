@@ -11,19 +11,18 @@ namespace OpenSearch
 structure ClusterPutSettings_QueryParams {
     @httpQuery("flat_settings")
     @default(false)
-    query_flat_settings: FlatSettings,
+    flat_settings: FlatSettings,
 
     @httpQuery("master_timeout")
-    query_master_timeout: MasterTimeout,
+    master_timeout: MasterTimeout,
 
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("timeout")
-    query_timeout: Timeout,
+    timeout: Timeout,
 }
 
-@mixin
 structure ClusterPutSettings_BodyParams {
     persistent: UserDefinedValueMap,
 
@@ -31,7 +30,9 @@ structure ClusterPutSettings_BodyParams {
 }
 
 @input
-structure ClusterPutSettings_Input with [ClusterPutSettings_QueryParams, ClusterPutSettings_BodyParams] {
+structure ClusterPutSettings_Input with [ClusterPutSettings_QueryParams] {
+    @httpPayload
+    content: ClusterPutSettings_BodyParams,
 }
 
 structure ClusterPutSettings_Output {

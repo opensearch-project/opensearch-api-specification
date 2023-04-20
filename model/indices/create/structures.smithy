@@ -11,19 +11,18 @@ namespace OpenSearch
 structure IndicesCreate_QueryParams {
     @httpQuery("wait_for_active_shards")
     @documentation("Set the number of active shards to wait for before the operation returns.")
-    query_wait_for_active_shards: WaitForActiveShards,
+    wait_for_active_shards: WaitForActiveShards,
 
     @httpQuery("timeout")
-    query_timeout: Timeout,
+    timeout: Timeout,
 
     @httpQuery("master_timeout")
-    query_master_timeout: MasterTimeout,
+    master_timeout: MasterTimeout,
 
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 }
 
-@mixin
 structure IndicesCreate_BodyParams {
     //TODO: Placeholders. aliases, mapping and settings need to be updated with proper structures
 
@@ -35,10 +34,12 @@ structure IndicesCreate_BodyParams {
 }
 
 @input
-structure IndicesCreate_Input with [IndicesCreate_QueryParams, IndicesCreate_BodyParams] {
+structure IndicesCreate_Input with [IndicesCreate_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @httpPayload
+    content: IndicesCreate_BodyParams,
 }
 
 

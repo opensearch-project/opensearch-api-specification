@@ -10,21 +10,22 @@ namespace OpenSearch
 @mixin
 structure RemoteStoreRestore_QueryParams {
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("wait_for_completion")
     @default(false)
-    query_wait_for_completion: WaitForCompletionFalse,
+    wait_for_completion: WaitForCompletionFalse,
 }
 
-@mixin
 structure RemoteStoreRestore_BodyParams {
     @required
     indices: IndexNames
 }
 
 @input
-structure RemoteStoreRestore_Input with [RemoteStoreRestore_QueryParams, RemoteStoreRestore_BodyParams] {
+structure RemoteStoreRestore_Input with [RemoteStoreRestore_QueryParams] {
+    @httpPayload
+    content: RemoteStoreRestore_BodyParams,
 }
 
 @unstable

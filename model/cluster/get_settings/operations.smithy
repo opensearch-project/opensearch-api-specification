@@ -29,7 +29,7 @@ apply ClusterGetSettings @examples([
     {
         title: "Examples for Get cluster settings Operation.",
         input: {
-            query_include_defaults: true
+            include_defaults: true
         }
     }
 ])

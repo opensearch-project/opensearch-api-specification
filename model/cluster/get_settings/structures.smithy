@@ -11,21 +11,21 @@ namespace OpenSearch
 structure ClusterGetSettings_QueryParams {
     @httpQuery("flat_settings")
     @default(false)
-    query_flat_settings: FlatSettings,
+    flat_settings: FlatSettings,
 
     @httpQuery("master_timeout")
-    query_master_timeout: MasterTimeout,
+    master_timeout: MasterTimeout,
 
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("timeout")
-    query_timeout: Timeout,
+    timeout: Timeout,
 
     @httpQuery("include_defaults")
     @documentation("Whether to return all default clusters setting.")
     @default(false)
-    query_include_defaults: IncludeDefaults,
+    include_defaults: IncludeDefaults,
 }
 
 

@@ -66,11 +66,13 @@ apply Search_Post @examples([
     {
         title: "Examples for Post Search Operation.",
         input: {
-            query_scroll: "1d",
-            query: {
-                match_all: {}
-            },
-            fields: ["*"]
+            scroll: "1d",
+            content: {
+                query: {
+                    match_all: {}
+                },
+                fields: ["*"]
+            }
         },
         output: {
             timed_out: false,
@@ -96,11 +98,13 @@ apply Search_Post_WithIndex @examples([
         title: "Examples for Post Search With Index Operation.",
         input: {
             index: "books",
-            query_scroll: "1d",
-            query: {
-                match_all: {}
-            },
-            fields: ["*"]
+            scroll: "1d",
+            content: {
+                query: {
+                    match_all: {}
+                },
+                fields: ["*"]
+            }
         },
         output: {
             timed_out: false,

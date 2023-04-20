@@ -11,32 +11,32 @@ namespace OpenSearch
 structure GetSource_QueryParams {
     @httpQuery("preference")
     @default("random")
-    query_preference: Preference,
+    preference: Preference,
 
     @httpQuery("realtime")
-    query_realtime: Realtime,
+    realtime: Realtime,
 
     @httpQuery("refresh")
     @documentation("Refresh the shard containing the document before performing the operation.")
-    query_refresh: RefreshBoolean,
+    refresh: RefreshBoolean,
 
     @httpQuery("routing")
-    query_routing: Routing,
+    routing: Routing,
 
     @httpQuery("_source")
-    query__source: Source,
+    _source: Source,
 
     @httpQuery("_source_excludes")
-    query__source_excludes: SourceExcludes,
+    _source_excludes: SourceExcludes,
 
     @httpQuery("_source_includes")
-    query__source_includes: SourceIncludes,
+    _source_includes: SourceIncludes,
 
     @httpQuery("version")
-    query_version: Version,
+    version: Version,
 
     @httpQuery("version_type")
-    query_version_type: VersionType,
+    version_type: VersionType,
 }
 
 

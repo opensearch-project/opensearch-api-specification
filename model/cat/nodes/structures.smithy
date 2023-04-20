@@ -6,51 +6,46 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @mixin
 structure CatNodes_QueryParams {
     @httpQuery("bytes")
-    query_bytes: Bytes,
+    bytes: Bytes,
 
     @httpQuery("format")
-    query_format: Format,
+    format: Format,
 
     @httpQuery("full_id")
     @default(false)
-    query_full_id: FullId,
+    full_id: FullId,
 
     @httpQuery("local")
     @default(false)
     @deprecated
-    @vendorExtensions(
-        "x-deprecation-message": "",
-        "x-version-deprecated": ""
-    )
-    query_local: Local,
+    local: Local,
 
     @httpQuery("master_timeout")
-    query_master_timeout: MasterTimeout,
+    master_timeout: MasterTimeout,
 
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("h")
-    query_h: H,
+    h: H,
 
     @httpQuery("help")
     @default(false)
-    query_help: Help,
+    help: Help,
 
     @httpQuery("s")
-    query_s: S,
+    s: S,
 
     @httpQuery("time")
-    query_time: Time,
+    time: Time,
 
     @httpQuery("v")
     @default(false)
-    query_v: V,
+    v: V,
 }
 
 

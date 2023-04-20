@@ -10,52 +10,52 @@ namespace OpenSearch
 @mixin
 structure CatIndices_QueryParams {
     @httpQuery("format")
-    query_format: Format,
+    format: Format,
 
     @httpQuery("bytes")
-    query_bytes: Bytes,
+    bytes: Bytes,
 
     @httpQuery("local")
     @default(false)
-    query_local: Local,
+    local: Local,
 
     @httpQuery("master_timeout")
-    query_master_timeout: MasterTimeout,
+    master_timeout: MasterTimeout,
 
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("h")
-    query_h: H,
+    h: H,
 
     @httpQuery("health")
-    query_health: Health,
+    health: Health,
 
     @httpQuery("help")
     @default(false)
-    query_help: Help,
+    help: Help,
 
     @httpQuery("pri")
     @default(false)
-    query_pri: Pri,
+    pri: Pri,
 
     @httpQuery("s")
-    query_s: S,
+    s: S,
 
     @httpQuery("time")
-    query_time: Time,
+    time: Time,
 
     @httpQuery("v")
     @default(false)
-    query_v: V,
+    v: V,
 
     @httpQuery("include_unloaded_segments")
     @default(false)
-    query_include_unloaded_segments: IncludeUnloadedSegments,
+    include_unloaded_segments: IncludeUnloadedSegments,
 
     @httpQuery("expand_wildcards")
     @default("all")
-    query_expand_wildcards: ExpandWildcards,
+    expand_wildcards: ExpandWildcards,
 }
 
 

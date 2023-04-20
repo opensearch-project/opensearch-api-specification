@@ -28,7 +28,9 @@ apply RemoteStoreRestore @examples([
     {
         title: "Examples for Post Remote Storage Restore Operation.",
         input: {
-            indices: ["books"]
+            content: {
+                indices: ["books"]
+            }
         },
         output: {
             remote_store: {

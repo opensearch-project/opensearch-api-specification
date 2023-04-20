@@ -10,17 +10,15 @@ namespace OpenSearch
 @mixin
 structure IndicesUpdateAliases_QueryParams {
     @httpQuery("timeout")
-    query_timeout: Timeout,
+    timeout: Timeout,
 
     @httpQuery("master_timeout")
-    query_master_timeout: MasterTimeout,
+    master_timeout: MasterTimeout,
 
     @httpQuery("cluster_manager_timeout")
-    query_cluster_manager_timeout: ClusterManagerTimeout,
+    cluster_manager_timeout: ClusterManagerTimeout,
 }
 
-// TODO: Fill in Body Parameters
-@mixin
 structure IndicesUpdateAliases_BodyParams {
     actions: ActionObjectStructure
 }
@@ -62,7 +60,9 @@ structure UserDefinedStructure{
 }
 
 @input
-structure IndicesUpdateAliases_Input with [IndicesUpdateAliases_QueryParams, IndicesUpdateAliases_BodyParams] {
+structure IndicesUpdateAliases_Input with [IndicesUpdateAliases_QueryParams] {
+    @httpPayload
+    content: IndicesUpdateAliases_BodyParams,
 }
 
 structure IndicesUpdateAliases_Output {
