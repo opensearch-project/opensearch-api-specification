@@ -1,133 +1,232 @@
 - [Developer Guide](#developer-guide)
   - [Getting Started](#getting-started)
-    - [Fork and Clone opensearch-api-specification Repo](#fork-and-clone-opensearch-api-specification-repo)
-  - [Use an Editor](#use-an-editor)
-    - [Visual Studio Code](#visual-studio-code)
     - [Build](#build)
     - [Formatting](#formatting)
-  - [Adding a new API definition](#adding-a-new-api-definition)
-    - [Naming Convention](#naming-convention)
-    - [File Structure](#file-structure)
-    - [Defining the API model](#defining-the-api-model)
+    - [Use an IDE](#use-an-ide)
+  - [File Structure](#file-structure)
+  - [Defining an API Action](#defining-an-api-action)
+    - [Defining operations](#defining-operations)
+    - [Defining input and output structures](#defining-input-and-output-structures)
+  - [Defining Common Parameters](#defining-common-parameters)
+  - [Smithy Traits](#smithy-traits)
+    - [OpenAPI Vendor Extensions Trait](#openapi-vendor-extensions-trait)] 
   - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
-    - [File Structure for Test-folder](#file-structure-for-test-folder)
-    - [Defining test-case for API model](#defining-test-case-for-api-model)
+  - [File Structure for Test-folder](#file-structure-for-test-folder)
+  - [Defining test-case for API model](#defining-test-case-for-api-model)
   - [Local testing](#local-testing)
-    - [Pre-requisite](#pre-requisite)
-    - [Testing model API](#testing-model-api)
+  - [Pre-requisite](#pre-requisite)
+  - [Testing model API](#testing-model-api)
 
 # Developer Guide
 Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
 
 ## Getting Started
 
-### Fork and Clone opensearch-api-specification Repo
-Fork [opensearch-project/opensearch-api-specification](https://github.com/opensearch-project/opensearch-api-specification) and clone locally, e.g. `git clone https://github.com/[your username]/opensearch-api-specification.git`.
-
-
-## Use an Editor
-### Visual Studio Code
-- Install the [Smithy Plugin](https://github.com/awslabs/smithy-vscode)
-- If you are editing markdownfiles install [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+Fork [opensearch-api-specification](https://github.com/opensearch-project/opensearch-api-specification) repository to your GitHub account and clone it to your local machine.  Whenever you're drafting a change, create a new branch for the change on your fork instead of on the upstream repository.
 
 ### Build
-``` ./gradlew build ```
-
-This command generates API specs for Smithy and also converts them to OpenAPI.
-
-The specs can be found under `build/smithyprojections/opensearch-api-specification/source/model` for Smithy specs and `build/smithyprojections/opensearch-api-specification/source/openapi` for OpenAPI specs.
+You will also need Java Development Kit (JDK) 17 or later to build the project.
+In your terminal, run the following command to build the project:
+```
+./gradlew build
+```   
+This command generates API specs for Smithy and also converts them to OpenAPI specs. The specs can be found at:
+- Smithy specs: `build/smithyprojections/opensearch-api-specification/full/model`
+- OpenAPI specs: `build/smithyprojections/opensearch-api-specification/full/openapi`
 
 ### Formatting
-
 To format the Smithy model files, use
 ```
 ./gradlew spotlessCheck
 ./gradlew spotlessApply
 ```
 
-## Adding a new API definition
+### Use an IDE
+Popular IDEs for Smithy models include Visual Studio Code and IntelliJ, and they both have plugins that improve the editing experience for this project.
+#### Visual Studio Code
+- [Smithy Plugin](https://github.com/awslabs/smithy-vscode)
+- [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
 
-### Naming Convention
-Within OpenSearch a single API can have multiple HTTP methods associated with it. Lets take the example of the search API. The Search API has the following endpoints and HTTP methods:
+#### IntelliJ
+- [Smithy Plugin](https://plugins.jetbrains.com/plugin/18717-smithy)
+- [OpenAPI Specifications](https://plugins.jetbrains.com/plugin/14394-openapi-specifications)
 
-```
-"methods": ["GET","POST" ]
-"paths": ["/_search", "/{index}/_search"]
-```
+## File Structure
+The OpenSearch API is composed of over 300 operations. These operations are grouped into API actions based on the functionality they provide. Each API action is later translated to an API method in each OpenSearch client. For example:
+- The `cat.health` action will turn into `client.cat.health()`
+- While the `index` action will turn into `client.index()`
 
-For this example we will **assume** that the API also supports PUT operation:
+This grouping influences the file structure of the Smithy models:
+- Operations of `cat.health` action will be defined in `model/cat/health` folder
+- Operations of `index` action will be defined in `model/_global/index` folder
 
-```
-"methods": ["GET","POST", "PUT" ]
-"paths": ["/_search", "/{index}/_search"]
-```
+Each action folder contains 2 files
+- `operations.smithy` defines all the operations of that action.
+- `structures.smithy` defines the input and output structures of said operations.
 
-Within an Interface Definition Language (IDL) we define operations, each operation has a unique HTTP method and URI path. Thus we need to define 6 Operations (3 methods x 2 paths) to describe the entire Search API. The search API contains a request body. GET requests usually do not contain request bodies and is not supported by standard IDL. We will thus discard the GET operations here and are left with 4 Operations. These Operations need to be uniquely named.
+The path and querystring parameters are often reused across multiple operations regardless of the action they belong to. These parameters are defined in the root folder, `model/`, and grouped by data-type in files of `common_<data_type>.smithy` format.
 
-The operation name should thus be created using the following:
-
-```[HTTP Method Name][OperationName]with[URLPathParameter1]with[URLPathParameter2] ..```
-
-Thus the operations for the Search API will be named:
-
-* PostSearchOperation
-
-* PostSearchOperationWithIndex
-
-* PutSearchOperation
-
-* PutSearchOperationWithIndex
-
-### File Structure
-
+Overall, the file structure of the Smithy models looks like this:
 ```
 model
 ├── _global
+│   ├── index
+│   │   ├── operations.smithy
+│   │   └── structures.smithy
 │   └── search
 │       ├── operations.smithy
 │       └── structures.smithy
-├── common_datatypes.smithy
-├── common_enums.smithy
-├── common_structures.smithy
-└── indices
-    └── put_mapping
-        ├── enums.smithy
-        ├── operations.smithy
-        └── structures.smithy
-
-Sample directory tree, may not mirror the ground reality
+├── cat
+│   └── health
+│       ├── operations.smithy
+│       └── structures.smithy
+│
+├── common_strings.smithy
+└── common_enums.smithy     
 ```
 
-Let's say you would like to implement the put_mapping API.
-The common datatypes, enums and structures (used by multiple operations) willbe kept in the respective files in ```model/```.
-The datatypes, enums and structures specific to one particular API will be in their respective folders
+## Defining an API Action
 
-### Defining the API model
+As mentioned in the previous section, each API action is composed of multiple operations that are defined in the same `operations.smithy` file. The `search` action, for example, is consisted of 4 operations:
+- `GET /_search`
+- `POST /_search`
+- `GET /{index}/_search`
+- `POST /{index}/_search`
 
-If you are retrospectively adding the API, Then you can refer to the following resources to create a close approximation:
-- [OpenSearch Documentation](https://opensearch.org/docs/latest)
-- [Go through the serialisation logic in OpenSearch](https://github.com/opensearch-project/OpenSearch)
+### Defining operations
 
-### OpenAPI Vendor Extensions
+We name each operation using the following format `[ActionName]_[HttpVerb]_[PathParameters]`
+- ActionName: The name of the action. CamelCase and without the `.` character. E.g. `search -> Search`, `cat.health -> CatHealth`.
+- HttpVerb: The HTTP verb of the operation. E.g. `Get`, `Post`, `Put`, `Delete`. In actions where all operations share the same HTTP verb, we omit the verb from the operation name.
+- PathParameters: This part is prefixed with `With` and is followed by the names of the path parameters. E.g. `WithIndex`, `WithId`, and `WithIndexId`. This part can be omitted if the operation does not have any path parameters, or if all operations of the action share the same path parameters.
 
-This repository includes a custom Smithy trait `@vendorExtensions` and accompanying build extension to enable adding custom OpenAPI specification extensions to operations in the converted OpenAPI output. It is used to add additional metadata about the operations to track the "namespaced" concept from the OpenSearch server and clients, and to account for when a single API operation being represented by multiple REST operations.
+The `search` action mentioned above will have the following operations:
+- `Search_Get`
+- `Search_Post`
+- `Search_Get_WithIndex`
+- `Search_Post_WithIndex`
+
+### Defining input and output structures
+
+Operations of the same API action share:
+- Identical Output structure
+- Similar Input structure:
+  - Identical set of querystring parameters
+  - Identical schema of the request body, if any
+  - Only differ in the path parameters
+
+Due to these characteristics, these operations share the same output structure, and their input structures reuse the same querystring parameters and request body schema. The `search` action, for example, will have the following input and output structures:
+- `Search_Output`
+- `Search_Get_Input`
+- `Search_Post_Input`
+- `Search_Get_WithIndex_Input`
+- `Search_Post_WithIndex_Input`
+
+These structures are defined in the `structures.smithy` file along with the shared querystring parameters and request body schema. The `search` action's `structures.smithy` file will look like this:
+```smithy
+@mixin
+structure Search_QueryParams {
+  ...
+}
+
+structure Search_BodyParams {
+  ...
+}
+
+@input
+structure Search_Get_Input with [Search_QueryParams] {
+}
+
+@input
+structure Search_Post_Input with [Search_QueryParams] {
+  @httpPayload
+  content: Search_BodyParams,
+}
+
+@input
+structure Search_Get_WithIndex_Input with [Search_QueryParams] {
+  @required
+  @httpLabel
+  index: PathIndices,
+}
+
+@input
+structure Search_Post_WithIndex_Input with [Search_QueryParams] {
+  @required
+  @httpLabel
+  index: PathIndices,
+  @httpPayload
+  content: Search_BodyParams,
+}
+
+structure Search_Output {
+  ...
+}
+```
+
+Note that all input structures utilize the `Search_QueryParams` mixin, and The `Search_BodyParams` structure is used as `@httpPayload` for the both POST operations as seen in `Search_Post_Input` and `Search_Post_WithIndex_Input`.
+
+## Defining Common Parameters
+
+Common parameters are defined in the root folder, `model/`, and grouped by data-type in files of `common_<data_type>.smithy` format. There are a few things to note when defining common parameters:
+- All path parameters should be prefixed with `Path` like `PathIndex` and `PathDocumentID`.
+- Smithy doesn't support _enum_ or _list_ as path parameters. We, therefore, have to define such parameters as _string_ and use `x-data-type` vendor extension to denote their actual types (More on this in the traits section).
+- Parameters of type `time` are defined as `string` and has `@pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")` trait to denote that they are in the format of `<number><unit>`. E.g. `1d`, `2h`, `3m`, `4s`, `5ms`, `6micros`, `7nanos`. We use `x-data-type: "time"` vendor extension for this type.
+- Path parameters that are defined as strings must be accompanied by a `@pattern` trait and should be default to `^[^_][\\d\\w-*]*$` to signify that they are not allowed to start with `_` to avoid URI Conflict errors.
+- The `@documentation`, `@default`, and `@deprecation` traits can later be overridden by the operations that use these parameters.
+
+## Smithy Traits
+We use Smithy traits extensively in this project to work around some limitations of Smithy and to deal with some quirks of the OpenSearch API. Here are some of the traits that you should be aware of:
+- `@vendorExtensions`: Used to add metadata that are not supported by Smithy. Check OpenAPI Vendor Extensions section for more details.
+- `@suppress(["HttpUriConflict"])`: Used to suppress the HttpUriConflict error that is thrown when two operations have conflicting URI. Unfortunately, this happens a lot in OpenSearch API. When in doubt, add this trait to the operation.
+- `@pattern("^[^_][\\d\\w-*]*$")`: Required for most Path parameters to avoid URI Conflict errors. This is often used in tandem with the @suppress trait above.
+- `@readonly`: Should accompany most GET operations to denote that they are read-only.
+- `@idempotent`: Should accompany most PUT operations to denote that they are idempotent.
+
+### OpenAPI Vendor Extensions Trait
+
+This repository includes a custom Smithy trait `@vendorExtensions` and accompanying build extension to add metadata that are not supported by Smithy in the form of OpenAPI Vendor Extensions. This trait is used to add the following metadata:
+- `x-operation-group`: Used to group operations into API Actions.
+- `x-version-added`: Denote the version when the operation/parameter was added to OpenSearch.
+- `x-version-removed`: Denote the version when the operation/parameter was removed from OpenSearch.
+- `x-version-deprecated`: Denote the version when the operation/parameter was deprecated in OpenSearch.
+- `x-deprecation-description`: Denote the reason for deprecation of the operation/parameter.
+- `x-data-type`: Denote the actual data-type of the parameter. This extension is used where certain data-type is not supported by Smithy (like `time`), or not supported in certain context (like `enum` and `list` as path parameters).
+- `x-enum-options`: Denote the list of options for an `enum` parameter.
 
 ```smithy
 use opensearch.openapi#vendorExtensions
 
-@externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-indices/"
-)
 @vendorExtensions(
-    "x-operation-group": "cat.indices",
+    "x-operation-group": "search",
     "x-version-added": "1.0"
 )
-@http(method: "GET", uri: "/_cat/indices")
-@documentation("Returns information about indices: number of primaries and replicas, document counts, disk size, ...")
-operation CatIndices {
-    input: CatIndices_Input,
-    output: CatIndices_Output
+@suppress(["HttpUriConflict"])
+@http(method: "POST", uri: "/{index}/_search")
+@documentation("Returns results matching a query.")
+operation Search_Post_WithIndex {
+    input: Search_Post_WithIndex_Input,
+    output: Search_Output
 }
+```
+
+```smithy
+@vendorExtensions(
+    "x-data-type": "list",
+    "x-enum-options": ["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"],
+)
+@pattern("^[^_][\\d\\w-*]*$")
+@documentation("Comma-separated list of metrics you wish returned. Leave empty to return all.")
+string PathNodesInfoMetric
+```
+
+```smithy
+@vendorExtensions(
+    "x-data-type": "time",
+)
+@pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
+@documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
+string WaitForTimeout
 ```
 
 ## Adding a test-case for API definition
