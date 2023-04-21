@@ -9,7 +9,7 @@
     - [Defining input and output structures](#defining-input-and-output-structures)
   - [Defining Common Parameters](#defining-common-parameters)
   - [Smithy Traits](#smithy-traits)
-    - [OpenAPI Vendor Extensions Trait](#openapi-vendor-extensions-trait)] 
+    - [OpenAPI Vendor Extensions Trait](#openapi-vendor-extensions-trait)]
   - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
   - [File Structure for Test-folder](#file-structure-for-test-folder)
   - [Defining test-case for API model](#defining-test-case-for-api-model)
@@ -29,7 +29,7 @@ You will also need Java Development Kit (JDK) 17 or later to build the project.
 In your terminal, run the following command to build the project:
 ```
 ./gradlew build
-```   
+```
 This command generates API specs for Smithy and also converts them to OpenAPI specs. The specs can be found at:
 - Smithy specs: `build/smithyprojections/opensearch-api-specification/full/model`
 - OpenAPI specs: `build/smithyprojections/opensearch-api-specification/full/openapi`
@@ -82,7 +82,7 @@ model
 │       └── structures.smithy
 │
 ├── common_strings.smithy
-└── common_enums.smithy     
+└── common_enums.smithy
 ```
 
 ## Defining an API Action
