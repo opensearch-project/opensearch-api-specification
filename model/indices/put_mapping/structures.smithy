@@ -7,47 +7,53 @@
 $version: "2"
 namespace OpenSearch
 
-structure PutIndexMappingWithIndexInput with [ClusterManagerTimeout] {
-    @httpLabel
-    @required
-    index: IndexName,
+@mixin
+structure IndicesPutMapping_QueryParams {
+    @httpQuery("timeout")
+    timeout: Timeout,
 
-    // PutIndexMappingInputCommonParameters Start
-    @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
+    @httpQuery("master_timeout")
+    master_timeout: MasterTimeout,
 
-    @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
+    @httpQuery("cluster_manager_timeout")
+    cluster_manager_timeout: ClusterManagerTimeout,
 
     @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+    ignore_unavailable: IgnoreUnavailable,
 
-    @httpQuery("include_type_name")
-    include_type_name: Boolean,
+    @httpQuery("allow_no_indices")
+    allow_no_indices: AllowNoIndices,
 
-    @httpQuery("timeout")
-    timeout: Time,
+    @httpQuery("expand_wildcards")
+    @default("open")
+    expand_wildcards: ExpandWildcards,
 
     @httpQuery("write_index_only")
-    write_index_only: Boolean,
-
-    properties: Document
-    // PutIndexMappingInputCommonParameters End
-
+    @default(false)
+    write_index_only: WriteIndexOnly,
 }
 
-structure PutIndexMappingWithIndexOutput {
+// TODO: Fill in Body Parameters
+structure IndicesPutMapping_BodyParams {}
+
+@input
+structure IndicesPutMapping_Put_Input with [IndicesPutMapping_QueryParams] {
+    @required
+    @httpLabel
+    index: PathIndices,
+    @httpPayload
+    content: IndicesPutMapping_BodyParams,
+}
+
+@input
+structure IndicesPutMapping_Post_Input with [IndicesPutMapping_QueryParams] {
+    @required
+    @httpLabel
+    index: PathIndices,
+    @httpPayload
+    content: IndicesPutMapping_BodyParams,
+}
+
+structure IndicesPutMapping_Output {
     acknowledged: Boolean
 }
-
-apply PutIndexMappingWithIndex @examples([
-    {
-        title: "Examples for Put Index Mapping with index Operation.",
-        input: {
-            index: "books",
-        },
-        output: {
-            acknowledged: true
-        }
-    }
-])

@@ -6,16 +6,45 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "OpenSearch Documentation": "https://opensearch.org/docs/latest/api-reference/index-apis/put-mapping/"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/put-mapping/"
 )
 
+@vendorExtensions(
+    "x-operation-group": "indices.put_mapping",
+    "x-version-added": "1.0"
+)
 @idempotent
-@http(method: "PUT", uri: "/{index}/_mapping")
 @suppress(["HttpUriConflict"])
-@documentation("The put mapping API operation lets you add new mappings and fields to an index.")
-operation PutIndexMappingWithIndex {
-    input: PutIndexMappingWithIndexInput,
-    output: PutIndexMappingWithIndexOutput
+@http(method: "PUT", uri: "/{index}/_mapping")
+@documentation("Updates the index mappings.")
+operation IndicesPutMapping_Put {
+    input: IndicesPutMapping_Put_Input,
+    output: IndicesPutMapping_Output
 }
+
+@vendorExtensions(
+    "x-operation-group": "indices.put_mapping",
+    "x-version-added": "1.0"
+)
+@suppress(["HttpUriConflict"])
+@http(method: "POST", uri: "/{index}/_mapping")
+@documentation("Updates the index mappings.")
+operation IndicesPutMapping_Post {
+    input: IndicesPutMapping_Post_Input,
+    output: IndicesPutMapping_Output
+}
+
+apply IndicesPutMapping_Put @examples([
+    {
+        title: "Examples for Put Index Mapping with index Operation.",
+        input: {
+            index: "books",
+        },
+        output: {
+            acknowledged: true
+        }
+    }
+])

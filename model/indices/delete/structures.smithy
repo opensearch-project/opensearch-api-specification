@@ -7,38 +7,36 @@
 $version: "2"
 namespace OpenSearch
 
-structure DeleteIndexInput with [ClusterManagerTimeout] {
-    @httpLabel
-    @required
-    index: IndexName,
+@mixin
+structure IndicesDelete_QueryParams {
+    @httpQuery("timeout")
+    timeout: Timeout,
 
-    @httpQuery("allow_no_indices")
-    allow_no_indices: Boolean,
-
-    @httpQuery("expand_wildcards")
-    expand_wildcards: ExpandWildcards,
+    @httpQuery("master_timeout")
+    master_timeout: MasterTimeout,
 
     @httpQuery("ignore_unavailable")
-    ignore_unavailable: Boolean,
+    @default(false)
+    ignore_unavailable: IgnoreUnavailable,
 
-    @httpQuery("timeout")
-    timeout: Time
+    @httpQuery("allow_no_indices")
+    @default(false)
+    allow_no_indices: AllowNoIndices,
 
+    @httpQuery("expand_wildcards")
+    @default("open")
+    expand_wildcards: ExpandWildcards,
 }
 
-structure DeleteIndexOutput {
 
-    acknowledged:Boolean
+@input
+structure IndicesDelete_Input with [IndicesDelete_QueryParams] {
+    @required
+    @httpLabel
+    @documentation("Comma-separated list of indices to delete; use `_all` or `*` string to delete all indices.")
+    index: PathIndices,
 }
 
-apply DeleteIndex @examples([
-    {
-        title: "Examples for Delete Index Operation.",
-        input: {
-            index: "books"
-        },
-        output: {
-            acknowledged: true
-        }
-    }
-])
+structure IndicesDelete_Output {
+    acknowledged: Boolean
+}
