@@ -19,31 +19,6 @@ use opensearch.openapi#vendorExtensions
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/{index}/_termvectors/{id}")
-@documentation("Returns information and statistics about terms in the fields of a particular document.")
-operation Termvectors_Get_WithId {
-    input: Termvectors_Get_WithId_Input,
-    output: Termvectors_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "termvectors",
-    "x-version-added": "1.0",
-)
-@suppress(["HttpUriConflict"])
-@http(method: "POST", uri: "/{index}/_termvectors/{id}")
-@documentation("Returns information and statistics about terms in the fields of a particular document.")
-operation Termvectors_Post_WithId {
-    input: Termvectors_Post_WithId_Input,
-    output: Termvectors_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "termvectors",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_termvectors")
 @documentation("Returns information and statistics about terms in the fields of a particular document.")
 operation Termvectors_Get {
@@ -60,5 +35,30 @@ operation Termvectors_Get {
 @documentation("Returns information and statistics about terms in the fields of a particular document.")
 operation Termvectors_Post {
     input: Termvectors_Post_Input,
+    output: Termvectors_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "termvectors",
+    "x-version-added": "1.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/{index}/_termvectors/{id}")
+@documentation("Returns information and statistics about terms in the fields of a particular document.")
+operation Termvectors_Get_WithId {
+    input: Termvectors_Get_WithId_Input,
+    output: Termvectors_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "termvectors",
+    "x-version-added": "1.0",
+)
+@suppress(["HttpUriConflict"])
+@http(method: "POST", uri: "/{index}/_termvectors/{id}")
+@documentation("Returns information and statistics about terms in the fields of a particular document.")
+operation Termvectors_Post_WithId {
+    input: Termvectors_Post_WithId_Input,
     output: Termvectors_Output
 }

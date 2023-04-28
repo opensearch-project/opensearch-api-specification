@@ -30,6 +30,14 @@ structure IndicesGetAlias_Input with [IndicesGetAlias_QueryParams] {
 }
 
 @input
+structure IndicesGetAlias_WithIndex_Input with [IndicesGetAlias_QueryParams] {
+    @required
+    @httpLabel
+    @documentation("Comma-separated list of indices to filter aliases.")
+    index: PathIndices,
+}
+
+@input
 structure IndicesGetAlias_WithName_Input with [IndicesGetAlias_QueryParams] {
     @required
     @httpLabel
@@ -46,14 +54,6 @@ structure IndicesGetAlias_WithIndexName_Input with [IndicesGetAlias_QueryParams]
     @required
     @httpLabel
     name: PathAliasNames,
-}
-
-@input
-structure IndicesGetAlias_WithIndex_Input with [IndicesGetAlias_QueryParams] {
-    @required
-    @httpLabel
-    @documentation("Comma-separated list of indices to filter aliases.")
-    index: PathIndices,
 }
 
 // TODO: Fill in Output Structure

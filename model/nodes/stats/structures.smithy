@@ -43,13 +43,6 @@ structure NodesStats_Input with [NodesStats_QueryParams] {
 }
 
 @input
-structure NodesStats_WithNodeId_Input with [NodesStats_QueryParams] {
-    @required
-    @httpLabel
-    node_id: PathNodeId,
-}
-
-@input
 structure NodesStats_WithMetric_Input with [NodesStats_QueryParams] {
     @required
     @httpLabel
@@ -57,11 +50,7 @@ structure NodesStats_WithMetric_Input with [NodesStats_QueryParams] {
 }
 
 @input
-structure NodesStats_WithMetricNodeId_Input with [NodesStats_QueryParams] {
-    @required
-    @httpLabel
-    metric: PathNodesStatsMetric,
-
+structure NodesStats_WithNodeId_Input with [NodesStats_QueryParams] {
     @required
     @httpLabel
     node_id: PathNodeId,
@@ -76,6 +65,17 @@ structure NodesStats_WithIndexMetricMetric_Input with [NodesStats_QueryParams] {
     @required
     @httpLabel
     index_metric: PathIndexMetric,
+}
+
+@input
+structure NodesStats_WithMetricNodeId_Input with [NodesStats_QueryParams] {
+    @required
+    @httpLabel
+    metric: PathNodesStatsMetric,
+
+    @required
+    @httpLabel
+    node_id: PathNodeId,
 }
 
 @input

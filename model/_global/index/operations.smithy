@@ -17,6 +17,18 @@ use opensearch.openapi#vendorExtensions
     "x-operation-group": "index",
     "x-version-added": "1.0",
 )
+@suppress(["HttpUriConflict"])
+@http(method: "POST", uri: "/{index}/_doc")
+@documentation("Creates or updates a document in an index.")
+operation Index_Post {
+    input: Index_Post_Input,
+    output: Index_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "index",
+    "x-version-added": "1.0",
+)
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_doc/{id}")
@@ -35,17 +47,5 @@ operation Index_Put_WithId {
 @documentation("Creates or updates a document in an index.")
 operation Index_Post_WithId {
     input: Index_Post_WithId_Input,
-    output: Index_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "index",
-    "x-version-added": "1.0",
-)
-@suppress(["HttpUriConflict"])
-@http(method: "POST", uri: "/{index}/_doc")
-@documentation("Creates or updates a document in an index.")
-operation Index_Post {
-    input: Index_Post_Input,
     output: Index_Output
 }

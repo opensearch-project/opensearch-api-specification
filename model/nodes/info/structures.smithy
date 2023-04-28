@@ -23,17 +23,17 @@ structure NodesInfo_Input with [NodesInfo_QueryParams] {
 }
 
 @input
-structure NodesInfo_WithNodeId_Input with [NodesInfo_QueryParams] {
-    @required
-    @httpLabel
-    node_id: PathNodeId,
-}
-
-@input
 structure NodesInfo_WithMetric_Input with [NodesInfo_QueryParams] {
     @required
     @httpLabel
     metric: PathNodesInfoMetric,
+}
+
+@input
+structure NodesInfo_WithNodeId_Input with [NodesInfo_QueryParams] {
+    @required
+    @httpLabel
+    node_id: PathNodeId,
 }
 
 @input

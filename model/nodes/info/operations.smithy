@@ -32,10 +32,10 @@ operation NodesInfo {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_nodes/{node_id}")
+@http(method: "GET", uri: "/_nodes/{metric}")
 @documentation("Returns information about nodes in the cluster.")
-operation NodesInfo_WithNodeId {
-    input: NodesInfo_WithNodeId_Input,
+operation NodesInfo_WithMetric {
+    input: NodesInfo_WithMetric_Input,
     output: NodesInfo_Output
 }
 
@@ -45,10 +45,10 @@ operation NodesInfo_WithNodeId {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_nodes/{metric}")
+@http(method: "GET", uri: "/_nodes/{node_id}")
 @documentation("Returns information about nodes in the cluster.")
-operation NodesInfo_WithMetric {
-    input: NodesInfo_WithMetric_Input,
+operation NodesInfo_WithNodeId {
+    input: NodesInfo_WithNodeId_Input,
     output: NodesInfo_Output
 }
 

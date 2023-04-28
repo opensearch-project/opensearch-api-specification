@@ -13,6 +13,38 @@ use opensearch.openapi#vendorExtensions
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
+@deprecated
+@vendorExtensions(
+    "x-operation-group": "nodes.hot_threads",
+    "x-version-added": "1.0",
+    "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
+    "x-version-deprecated": "7.0.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_cluster/nodes/hot_threads")
+@documentation("Returns information about hot threads on each node in the cluster.")
+operation NodesHotThreads {
+    input: NodesHotThreads_Input,
+    output: NodesHotThreads_Output
+}
+
+@deprecated
+@vendorExtensions(
+    "x-operation-group": "nodes.hot_threads",
+    "x-version-added": "1.0",
+    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
+    "x-version-deprecated": "7.0.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_cluster/nodes/hotthreads")
+@documentation("Returns information about hot threads on each node in the cluster.")
+operation NodesHotThreads {
+    input: NodesHotThreads_Input,
+    output: NodesHotThreads_Output
+}
+
 @vendorExtensions(
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
@@ -23,6 +55,54 @@ use opensearch.openapi#vendorExtensions
 @documentation("Returns information about hot threads on each node in the cluster.")
 operation NodesHotThreads {
     input: NodesHotThreads_Input,
+    output: NodesHotThreads_Output
+}
+
+@deprecated
+@vendorExtensions(
+    "x-operation-group": "nodes.hot_threads",
+    "x-version-added": "1.0",
+    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
+    "x-version-deprecated": "7.0.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_nodes/hotthreads")
+@documentation("Returns information about hot threads on each node in the cluster.")
+operation NodesHotThreads {
+    input: NodesHotThreads_Input,
+    output: NodesHotThreads_Output
+}
+
+@deprecated
+@vendorExtensions(
+    "x-operation-group": "nodes.hot_threads",
+    "x-version-added": "1.0",
+    "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
+    "x-version-deprecated": "7.0.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_cluster/nodes/{node_id}/hot_threads")
+@documentation("Returns information about hot threads on each node in the cluster.")
+operation NodesHotThreads_WithNodeId {
+    input: NodesHotThreads_WithNodeId_Input,
+    output: NodesHotThreads_Output
+}
+
+@deprecated
+@vendorExtensions(
+    "x-operation-group": "nodes.hot_threads",
+    "x-version-added": "1.0",
+    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
+    "x-version-deprecated": "7.0.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_cluster/nodes/{node_id}/hotthreads")
+@documentation("Returns information about hot threads on each node in the cluster.")
+operation NodesHotThreads_WithNodeId {
+    input: NodesHotThreads_WithNodeId_Input,
     output: NodesHotThreads_Output
 }
 
@@ -48,87 +128,7 @@ operation NodesHotThreads_WithNodeId {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_cluster/nodes/hotthreads")
-@documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads {
-    input: NodesHotThreads_Input,
-    output: NodesHotThreads_Output
-}
-
-@deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_cluster/nodes/{node_id}/hotthreads")
-@documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads_WithNodeId {
-    input: NodesHotThreads_WithNodeId_Input,
-    output: NodesHotThreads_Output
-}
-
-@deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_nodes/hotthreads")
-@documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads {
-    input: NodesHotThreads_Input,
-    output: NodesHotThreads_Output
-}
-
-@deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/hotthreads")
-@documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads_WithNodeId {
-    input: NodesHotThreads_WithNodeId_Input,
-    output: NodesHotThreads_Output
-}
-
-@deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
-    "x-version-deprecated": "7.0.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_cluster/nodes/hot_threads")
-@documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads {
-    input: NodesHotThreads_Input,
-    output: NodesHotThreads_Output
-}
-
-@deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
-    "x-version-deprecated": "7.0.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_cluster/nodes/{node_id}/hot_threads")
 @documentation("Returns information about hot threads on each node in the cluster.")
 operation NodesHotThreads_WithNodeId {
     input: NodesHotThreads_WithNodeId_Input,

@@ -32,6 +32,19 @@ operation IndicesGetAlias {
 )
 @readonly
 @suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/{index}/_alias")
+@documentation("Returns an alias.")
+operation IndicesGetAlias_WithIndex {
+    input: IndicesGetAlias_WithIndex_Input,
+    output: IndicesGetAlias_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "indices.get_alias",
+    "x-version-added": "1.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_alias/{name}")
 @documentation("Returns an alias.")
 operation IndicesGetAlias_WithName {
@@ -49,18 +62,5 @@ operation IndicesGetAlias_WithName {
 @documentation("Returns an alias.")
 operation IndicesGetAlias_WithIndexName {
     input: IndicesGetAlias_WithIndexName_Input,
-    output: IndicesGetAlias_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "indices.get_alias",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/{index}/_alias")
-@documentation("Returns an alias.")
-operation IndicesGetAlias_WithIndex {
-    input: IndicesGetAlias_WithIndex_Input,
     output: IndicesGetAlias_Output
 }

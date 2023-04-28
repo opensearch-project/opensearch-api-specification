@@ -19,17 +19,17 @@ structure NodesUsage_Input with [NodesUsage_QueryParams] {
 }
 
 @input
-structure NodesUsage_WithNodeId_Input with [NodesUsage_QueryParams] {
-    @required
-    @httpLabel
-    node_id: PathNodeId,
-}
-
-@input
 structure NodesUsage_WithMetric_Input with [NodesUsage_QueryParams] {
     @required
     @httpLabel
     metric: PathNodesUsageMetric,
+}
+
+@input
+structure NodesUsage_WithNodeId_Input with [NodesUsage_QueryParams] {
+    @required
+    @httpLabel
+    node_id: PathNodeId,
 }
 
 @input

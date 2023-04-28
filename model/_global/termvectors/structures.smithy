@@ -56,6 +56,24 @@ structure Termvectors_QueryParams {
 structure Termvectors_BodyParams {}
 
 @input
+structure Termvectors_Get_Input with [Termvectors_QueryParams] {
+    @required
+    @httpLabel
+    @documentation("The index in which the document resides.")
+    index: PathIndex,
+}
+
+@input
+structure Termvectors_Post_Input with [Termvectors_QueryParams] {
+    @required
+    @httpLabel
+    @documentation("The index in which the document resides.")
+    index: PathIndex,
+    @httpPayload
+    content: Termvectors_BodyParams,
+}
+
+@input
 structure Termvectors_Get_WithId_Input with [Termvectors_QueryParams] {
     @required
     @httpLabel
@@ -79,24 +97,6 @@ structure Termvectors_Post_WithId_Input with [Termvectors_QueryParams] {
     @httpLabel
     @documentation("Document Id. When not specified a doc param should be supplied.")
     id: PathId,
-    @httpPayload
-    content: Termvectors_BodyParams,
-}
-
-@input
-structure Termvectors_Get_Input with [Termvectors_QueryParams] {
-    @required
-    @httpLabel
-    @documentation("The index in which the document resides.")
-    index: PathIndex,
-}
-
-@input
-structure Termvectors_Post_Input with [Termvectors_QueryParams] {
-    @required
-    @httpLabel
-    @documentation("The index in which the document resides.")
-    index: PathIndex,
     @httpPayload
     content: Termvectors_BodyParams,
 }

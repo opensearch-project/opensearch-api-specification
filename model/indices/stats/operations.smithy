@@ -32,10 +32,10 @@ operation IndicesStats {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_stats/{metric}")
+@http(method: "GET", uri: "/{index}/_stats")
 @documentation("Provides statistics on operations happening in an index.")
-operation IndicesStats_WithMetric {
-    input: IndicesStats_WithMetric_Input,
+operation IndicesStats_WithIndex {
+    input: IndicesStats_WithIndex_Input,
     output: IndicesStats_Output
 }
 
@@ -45,10 +45,10 @@ operation IndicesStats_WithMetric {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/{index}/_stats")
+@http(method: "GET", uri: "/_stats/{metric}")
 @documentation("Provides statistics on operations happening in an index.")
-operation IndicesStats_WithIndex {
-    input: IndicesStats_WithIndex_Input,
+operation IndicesStats_WithMetric {
+    input: IndicesStats_WithMetric_Input,
     output: IndicesStats_Output
 }
 

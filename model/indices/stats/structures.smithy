@@ -49,17 +49,17 @@ structure IndicesStats_Input with [IndicesStats_QueryParams] {
 }
 
 @input
-structure IndicesStats_WithMetric_Input with [IndicesStats_QueryParams] {
-    @required
-    @httpLabel
-    metric: PathIndicesStatsMetric,
-}
-
-@input
 structure IndicesStats_WithIndex_Input with [IndicesStats_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
+}
+
+@input
+structure IndicesStats_WithMetric_Input with [IndicesStats_QueryParams] {
+    @required
+    @httpLabel
+    metric: PathIndicesStatsMetric,
 }
 
 @input

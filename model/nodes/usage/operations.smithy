@@ -32,10 +32,10 @@ operation NodesUsage {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_nodes/{node_id}/usage")
+@http(method: "GET", uri: "/_nodes/usage/{metric}")
 @documentation("Returns low-level information about REST actions usage on nodes.")
-operation NodesUsage_WithNodeId {
-    input: NodesUsage_WithNodeId_Input,
+operation NodesUsage_WithMetric {
+    input: NodesUsage_WithMetric_Input,
     output: NodesUsage_Output
 }
 
@@ -45,10 +45,10 @@ operation NodesUsage_WithNodeId {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_nodes/usage/{metric}")
+@http(method: "GET", uri: "/_nodes/{node_id}/usage")
 @documentation("Returns low-level information about REST actions usage on nodes.")
-operation NodesUsage_WithMetric {
-    input: NodesUsage_WithMetric_Input,
+operation NodesUsage_WithNodeId {
+    input: NodesUsage_WithNodeId_Input,
     output: NodesUsage_Output
 }
 
