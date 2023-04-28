@@ -6,6 +6,8 @@
 - [Welcome!](#welcome)
 - [Project Resources](#project-resources)
 - [Code of Conduct](#code-of-conduct)
+- [Developer Guide](#developer-guide)
+- [OpenSearch API Specs](#opensearch-api-specs)
 - [Security](#security)
 - [License](#license)
 - [Copyright](#copyright)
@@ -24,13 +26,21 @@ on building and contributing to opensearch-api-specification.
 * [Project Website](https://opensearch.org/)
 * [Downloads](https://opensearch.org/downloads.html)
 * [Documentation](https://opensearch.org/docs/)
-* Need help? Try [Forums](https://discuss.opendistrocommunity.dev/)
+* Need help? Try [Forums](https://forum.opensearch.org/)
 * [Project Principles](https://opensearch.org/#principles)
-* [Contributing guidelines](CONTRIBUTING.md)
+* [Contributing Guidelines](CONTRIBUTING.md)
 
 ## Code of Conduct
 
 This project has adopted the [Amazon Open Source Code of Conduct](CODE_OF_CONDUCT.md). For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq), or contact [opensource-codeofconduct@amazon.com](mailto:opensource-codeofconduct@amazon.com) with any additional questions or comments.
+
+## Developer Guide
+
+See [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md).
+
+## OpenSearch API Specs
+
+OpenSearch API Specs are hosted at https://opensearch-project.github.io/opensearch-api-specification/. See [PUBLISHING_SPECS](PUBLISHING_SPECS.md) for more information.
 
 ## Security
 
@@ -38,8 +48,8 @@ If you discover a potential security issue in this project we ask that you notif
 
 ## License
 
-This project is licensed under the [Apache v2.0 License](LICENSE).
+This project is licensed under the [Apache v2.0 License](LICENSE.txt).
 
 ## Copyright
 
-Copyright OpenSearch Contributors. See [NOTICE](NOTICE) for details.
+Copyright OpenSearch Contributors. See [NOTICE](NOTICE.txt) for details.
