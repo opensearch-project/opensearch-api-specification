@@ -49,7 +49,7 @@ structure IndicesPutAlias_Post_Input with [IndicesPutAlias_QueryParams] {
 }
 
 @input
-structure IndicesPutAlias_Put_Input with [IndicesPutAlias_QueryParams] {
+structure IndicesPutAlias_Put_Plural_Input with [IndicesPutAlias_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
@@ -62,7 +62,7 @@ structure IndicesPutAlias_Put_Input with [IndicesPutAlias_QueryParams] {
 }
 
 @input
-structure IndicesPutAlias_Post_Input with [IndicesPutAlias_QueryParams] {
+structure IndicesPutAlias_Post_Plural_Input with [IndicesPutAlias_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,

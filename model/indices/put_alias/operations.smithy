@@ -46,8 +46,8 @@ operation IndicesPutAlias_Post {
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_aliases/{name}")
 @documentation("Creates or updates an alias.")
-operation IndicesPutAlias_Put {
-    input: IndicesPutAlias_Put_Input,
+operation IndicesPutAlias_Put_Plural {
+    input: IndicesPutAlias_Put_Plural_Input,
     output: IndicesPutAlias_Output
 }
 
@@ -58,7 +58,7 @@ operation IndicesPutAlias_Put {
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_aliases/{name}")
 @documentation("Creates or updates an alias.")
-operation IndicesPutAlias_Post {
-    input: IndicesPutAlias_Post_Input,
+operation IndicesPutAlias_Post_Plural {
+    input: IndicesPutAlias_Post_Plural_Input,
     output: IndicesPutAlias_Output
 }
