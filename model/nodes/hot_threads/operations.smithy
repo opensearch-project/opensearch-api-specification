@@ -24,8 +24,8 @@ use opensearch.openapi#vendorExtensions
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/hot_threads")
 @documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads {
-    input: NodesHotThreads_Input,
+operation NodesHotThreads_DeprecatedDash {
+    input: NodesHotThreads_DeprecatedDash_Input,
     output: NodesHotThreads_Output
 }
 
@@ -40,8 +40,8 @@ operation NodesHotThreads {
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/hotthreads")
 @documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads {
-    input: NodesHotThreads_Input,
+operation NodesHotThreads_DeprecatedCluster {
+    input: NodesHotThreads_DeprecatedCluster_Input,
     output: NodesHotThreads_Output
 }
 
@@ -69,8 +69,8 @@ operation NodesHotThreads {
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/hotthreads")
 @documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads {
-    input: NodesHotThreads_Input,
+operation NodesHotThreads_Deprecated {
+    input: NodesHotThreads_Deprecated_Input,
     output: NodesHotThreads_Output
 }
 
@@ -85,8 +85,8 @@ operation NodesHotThreads {
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/{node_id}/hot_threads")
 @documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads_WithNodeId {
-    input: NodesHotThreads_WithNodeId_Input,
+operation NodesHotThreads_WithNodeId_DeprecatedDash {
+    input: NodesHotThreads_WithNodeId_DeprecatedDash_Input,
     output: NodesHotThreads_Output
 }
 
@@ -101,8 +101,8 @@ operation NodesHotThreads_WithNodeId {
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/{node_id}/hotthreads")
 @documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads_WithNodeId {
-    input: NodesHotThreads_WithNodeId_Input,
+operation NodesHotThreads_WithNodeId_DeprecatedCluster {
+    input: NodesHotThreads_WithNodeId_DeprecatedCluster_Input,
     output: NodesHotThreads_Output
 }
 
@@ -130,7 +130,7 @@ operation NodesHotThreads_WithNodeId {
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/hotthreads")
 @documentation("Returns information about hot threads on each node in the cluster.")
-operation NodesHotThreads_WithNodeId {
-    input: NodesHotThreads_WithNodeId_Input,
+operation NodesHotThreads_WithNodeId_Deprecated {
+    input: NodesHotThreads_WithNodeId_Deprecated_Input,
     output: NodesHotThreads_Output
 }

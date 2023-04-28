@@ -34,7 +34,11 @@ structure NodesHotThreads_QueryParams {
 
 
 @input
-structure NodesHotThreads_Input with [NodesHotThreads_QueryParams] {
+structure NodesHotThreads_DeprecatedDash_Input with [NodesHotThreads_QueryParams] {
+}
+
+@input
+structure NodesHotThreads_DeprecatedCluster_Input with [NodesHotThreads_QueryParams] {
 }
 
 @input
@@ -42,15 +46,18 @@ structure NodesHotThreads_Input with [NodesHotThreads_QueryParams] {
 }
 
 @input
-structure NodesHotThreads_Input with [NodesHotThreads_QueryParams] {
+structure NodesHotThreads_Deprecated_Input with [NodesHotThreads_QueryParams] {
 }
 
 @input
-structure NodesHotThreads_Input with [NodesHotThreads_QueryParams] {
+structure NodesHotThreads_WithNodeId_DeprecatedDash_Input with [NodesHotThreads_QueryParams] {
+    @required
+    @httpLabel
+    node_id: PathNodeId,
 }
 
 @input
-structure NodesHotThreads_WithNodeId_Input with [NodesHotThreads_QueryParams] {
+structure NodesHotThreads_WithNodeId_DeprecatedCluster_Input with [NodesHotThreads_QueryParams] {
     @required
     @httpLabel
     node_id: PathNodeId,
@@ -64,14 +71,7 @@ structure NodesHotThreads_WithNodeId_Input with [NodesHotThreads_QueryParams] {
 }
 
 @input
-structure NodesHotThreads_WithNodeId_Input with [NodesHotThreads_QueryParams] {
-    @required
-    @httpLabel
-    node_id: PathNodeId,
-}
-
-@input
-structure NodesHotThreads_WithNodeId_Input with [NodesHotThreads_QueryParams] {
+structure NodesHotThreads_WithNodeId_Deprecated_Input with [NodesHotThreads_QueryParams] {
     @required
     @httpLabel
     node_id: PathNodeId,
