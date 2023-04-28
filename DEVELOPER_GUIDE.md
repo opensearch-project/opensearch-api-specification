@@ -3,19 +3,21 @@
     - [Build](#build)
     - [Formatting](#formatting)
     - [Use an IDE](#use-an-ide)
+      - [Visual Studio Code](#visual-studio-code)
+      - [IntelliJ](#intellij)
   - [File Structure](#file-structure)
   - [Defining an API Action](#defining-an-api-action)
     - [Defining operations](#defining-operations)
     - [Defining input and output structures](#defining-input-and-output-structures)
   - [Defining Common Parameters](#defining-common-parameters)
   - [Smithy Traits](#smithy-traits)
-    - [OpenAPI Vendor Extensions Trait](#openapi-vendor-extensions-trait)]
+    - [OpenAPI Vendor Extensions Trait](#openapi-vendor-extensions-trait)
   - [Adding a test-case for API definition](#adding-a-test-case-for-api-definition)
-  - [File Structure for Test-folder](#file-structure-for-test-folder)
-  - [Defining test-case for API model](#defining-test-case-for-api-model)
+    - [File Structure for Test-folder](#file-structure-for-test-folder)
+    - [Defining test-case for API model](#defining-test-case-for-api-model)
   - [Local testing](#local-testing)
-  - [Pre-requisite](#pre-requisite)
-  - [Testing model API](#testing-model-api)
+    - [Pre-requisite](#pre-requisite)
+    - [Testing model API](#testing-model-api)
 
 # Developer Guide
 Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
