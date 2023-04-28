@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @mixin
-structure CatClusterManager_QueryParams {
+structure CatMaster_QueryParams {
     @httpQuery("format")
     format: Format,
 
@@ -39,8 +39,8 @@ structure CatClusterManager_QueryParams {
 
 
 @input
-structure CatClusterManager_Input with [CatClusterManager_QueryParams] {
+structure CatMaster_Input with [CatMaster_QueryParams] {
 }
 
 // TODO: Fill in Output Structure
-structure CatClusterManager_Output {}
+structure CatMaster_Output {}
