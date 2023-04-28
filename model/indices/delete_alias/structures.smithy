@@ -32,7 +32,7 @@ structure IndicesDeleteAlias_Input with [IndicesDeleteAlias_QueryParams] {
 }
 
 @input
-structure IndicesDeleteAlias_Input with [IndicesDeleteAlias_QueryParams] {
+structure IndicesDeleteAlias_Plural_Input with [IndicesDeleteAlias_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,

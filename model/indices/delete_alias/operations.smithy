@@ -34,7 +34,7 @@ operation IndicesDeleteAlias {
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/{index}/_aliases/{name}")
 @documentation("Deletes an alias.")
-operation IndicesDeleteAlias {
-    input: IndicesDeleteAlias_Input,
+operation IndicesDeleteAlias_Plural {
+    input: IndicesDeleteAlias_Plural_Input,
     output: IndicesDeleteAlias_Output
 }
