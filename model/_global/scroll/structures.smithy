@@ -13,7 +13,7 @@ structure Scroll_QueryParams {
     scroll: Scroll,
 
     @httpQuery("scroll_id")
-    scroll_id: ScrollId,
+    query_scroll_id: ScrollId,
 
     @httpQuery("rest_total_hits_as_int")
     @default(false)

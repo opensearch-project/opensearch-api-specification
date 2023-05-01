@@ -31,7 +31,7 @@ structure CatFielddata_QueryParams {
 
     @httpQuery("fields")
     @documentation("Comma-separated list of fields to return in the output.")
-    fields: Fields,
+    query_fields: Fields,
 }
 
 

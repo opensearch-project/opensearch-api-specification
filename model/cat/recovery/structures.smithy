@@ -34,7 +34,7 @@ structure CatRecovery_QueryParams {
 
     @httpQuery("index")
     @documentation("Comma-separated list or wildcard expression of index names to limit the returned information.")
-    index: Indices,
+    query_index: Indices,
 
     @httpQuery("s")
     s: S,

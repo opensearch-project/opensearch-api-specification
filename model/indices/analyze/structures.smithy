@@ -11,7 +11,7 @@ namespace OpenSearch
 structure IndicesAnalyze_QueryParams {
     @httpQuery("index")
     @documentation("The name of the index to scope the operation.")
-    index: Index,
+    query_index: Index,
 }
 
 // TODO: Fill in Body Parameters

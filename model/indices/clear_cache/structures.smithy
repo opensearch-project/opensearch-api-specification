@@ -30,7 +30,7 @@ structure IndicesClearCache_QueryParams {
     expand_wildcards: ExpandWildcards,
 
     @httpQuery("index")
-    index: Indices,
+    query_index: Indices,
 
     @httpQuery("request")
     request: Request,
