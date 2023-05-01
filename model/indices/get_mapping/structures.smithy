@@ -28,10 +28,6 @@ structure IndicesGetMapping_QueryParams {
     @httpQuery("local")
     @default(false)
     @deprecated
-    @vendorExtensions(
-        "x-deprecation-message": "",
-        "x-version-deprecated": ""
-    )
     local: Local,
 }
 
