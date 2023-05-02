@@ -32,6 +32,12 @@ string PathComponentTemplateNames
 
 @vendorExtensions(
     "x-data-type": "list",
+)
+@pattern("^[^_][\\d\\w-*]*$")
+string PathFields
+
+@vendorExtensions(
+    "x-data-type": "list",
     "x-enum-options": ["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"],
 )
 @pattern("^[^_][\\d\\w-*]*$")
