@@ -273,7 +273,7 @@ string DocumentType
 @documentation("A short version of the Accept header, e.g. json, yaml.")
 string Format
 
-string IndexName
+string Index
 
 @documentation("Specify the keep alive for point in time.")
 string KeepAlive

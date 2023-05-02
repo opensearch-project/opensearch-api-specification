@@ -45,7 +45,7 @@ structure IndicesCreate_Input with [IndicesCreate_QueryParams] {
 
 structure IndicesCreate_Output {
     @required
-    index: IndexName,
+    index: Index,
 
     @required
     shards_acknowledged: Boolean,
