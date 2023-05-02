@@ -82,8 +82,8 @@ structure Termvectors_Get_WithId_Input with [Termvectors_QueryParams] {
 
     @required
     @httpLabel
-    @documentation("Document Id. When not specified a doc param should be supplied.")
-    id: PathId,
+    @documentation("Document ID. When not specified a doc param should be supplied.")
+    id: PathDocumentId,
 }
 
 @input
@@ -95,8 +95,8 @@ structure Termvectors_Post_WithId_Input with [Termvectors_QueryParams] {
 
     @required
     @httpLabel
-    @documentation("Document Id. When not specified a doc param should be supplied.")
-    id: PathId,
+    @documentation("Document ID. When not specified a doc param should be supplied.")
+    id: PathDocumentId,
     @httpPayload
     content: Termvectors_BodyParams,
 }
