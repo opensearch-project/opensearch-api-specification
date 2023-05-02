@@ -17,7 +17,7 @@ structure IndicesStats_QueryParams {
 
     @httpQuery("fields")
     @documentation("Comma-separated list of fields for `fielddata` and `completion` index metric (supports wildcards).")
-    fields: StatFields,
+    fields: Fields,
 
     @httpQuery("groups")
     groups: Groups,

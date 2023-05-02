@@ -6,6 +6,7 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
 @mixin
 structure IndicesGetMapping_QueryParams {
@@ -28,6 +29,10 @@ structure IndicesGetMapping_QueryParams {
     @httpQuery("local")
     @default(false)
     @deprecated
+    @vendorExtensions(
+        "x-deprecation-message": "This parameter is a no-op and field mappings are always retrieved locally.",
+        "x-version-deprecated": "1.0.0"
+    )
     local: Local,
 }
 
