@@ -30,8 +30,6 @@ structure IndicesOpen_QueryParams {
     wait_for_active_shards: WaitForActiveShards,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesOpen_BodyParams {}
 
 @input
 structure IndicesOpen_Input with [IndicesOpen_QueryParams] {
@@ -39,8 +37,6 @@ structure IndicesOpen_Input with [IndicesOpen_QueryParams] {
     @httpLabel
     @documentation("Comma-separated list of indices to open.")
     index: PathIndices,
-    @httpPayload
-    content: IndicesOpen_BodyParams,
 }
 
 // TODO: Fill in Output Structure

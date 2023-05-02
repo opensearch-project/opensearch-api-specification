@@ -14,8 +14,6 @@ structure UpdateByQueryRethrottle_QueryParams {
     requests_per_second: RequestsPerSecond,
 }
 
-// TODO: Fill in Body Parameters
-structure UpdateByQueryRethrottle_BodyParams {}
 
 @input
 structure UpdateByQueryRethrottle_Input with [UpdateByQueryRethrottle_QueryParams] {
@@ -23,8 +21,6 @@ structure UpdateByQueryRethrottle_Input with [UpdateByQueryRethrottle_QueryParam
     @httpLabel
     @documentation("The task id to rethrottle.")
     task_id: PathTaskId,
-    @httpPayload
-    content: UpdateByQueryRethrottle_BodyParams,
 }
 
 // TODO: Fill in Output Structure

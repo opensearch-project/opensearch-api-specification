@@ -36,13 +36,9 @@ structure IndicesClearCache_QueryParams {
     request: Request,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesClearCache_BodyParams {}
 
 @input
 structure IndicesClearCache_Input with [IndicesClearCache_QueryParams] {
-    @httpPayload
-    content: IndicesClearCache_BodyParams,
 }
 
 @input
@@ -50,8 +46,6 @@ structure IndicesClearCache_WithIndex_Input with [IndicesClearCache_QueryParams]
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: IndicesClearCache_BodyParams,
 }
 
 // TODO: Fill in Output Structure

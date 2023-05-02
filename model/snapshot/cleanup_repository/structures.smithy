@@ -19,16 +19,12 @@ structure SnapshotCleanupRepository_QueryParams {
     timeout: Timeout,
 }
 
-// TODO: Fill in Body Parameters
-structure SnapshotCleanupRepository_BodyParams {}
 
 @input
 structure SnapshotCleanupRepository_Input with [SnapshotCleanupRepository_QueryParams] {
     @required
     @httpLabel
     repository: PathRepository,
-    @httpPayload
-    content: SnapshotCleanupRepository_BodyParams,
 }
 
 // TODO: Fill in Output Structure

@@ -31,8 +31,6 @@ structure SearchShards_QueryParams {
     expand_wildcards: ExpandWildcards,
 }
 
-// TODO: Fill in Body Parameters
-structure SearchShards_BodyParams {}
 
 @input
 structure SearchShards_Get_Input with [SearchShards_QueryParams] {
@@ -40,8 +38,6 @@ structure SearchShards_Get_Input with [SearchShards_QueryParams] {
 
 @input
 structure SearchShards_Post_Input with [SearchShards_QueryParams] {
-    @httpPayload
-    content: SearchShards_BodyParams,
 }
 
 @input
@@ -56,8 +52,6 @@ structure SearchShards_Post_WithIndex_Input with [SearchShards_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: SearchShards_BodyParams,
 }
 
 // TODO: Fill in Output Structure

@@ -19,16 +19,12 @@ structure SnapshotVerifyRepository_QueryParams {
     timeout: Timeout,
 }
 
-// TODO: Fill in Body Parameters
-structure SnapshotVerifyRepository_BodyParams {}
 
 @input
 structure SnapshotVerifyRepository_Input with [SnapshotVerifyRepository_QueryParams] {
     @required
     @httpLabel
     repository: PathRepository,
-    @httpPayload
-    content: SnapshotVerifyRepository_BodyParams,
 }
 
 // TODO: Fill in Output Structure

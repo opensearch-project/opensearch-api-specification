@@ -33,8 +33,6 @@ structure IndicesClose_QueryParams {
     wait_for_active_shards: WaitForActiveShards,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesClose_BodyParams {}
 
 @input
 structure IndicesClose_Input with [IndicesClose_QueryParams] {
@@ -42,8 +40,6 @@ structure IndicesClose_Input with [IndicesClose_QueryParams] {
     @httpLabel
     @documentation("Comma-separated list of indices to close.")
     index: PathIndices,
-    @httpPayload
-    content: IndicesClose_BodyParams,
 }
 
 // TODO: Fill in Output Structure

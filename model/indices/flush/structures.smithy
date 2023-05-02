@@ -27,13 +27,9 @@ structure IndicesFlush_QueryParams {
     expand_wildcards: ExpandWildcards,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesFlush_BodyParams {}
 
 @input
 structure IndicesFlush_Post_Input with [IndicesFlush_QueryParams] {
-    @httpPayload
-    content: IndicesFlush_BodyParams,
 }
 
 @input
@@ -45,8 +41,6 @@ structure IndicesFlush_Post_WithIndex_Input with [IndicesFlush_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: IndicesFlush_BodyParams,
 }
 
 @input

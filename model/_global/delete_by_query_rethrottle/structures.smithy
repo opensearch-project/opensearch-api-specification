@@ -14,8 +14,6 @@ structure DeleteByQueryRethrottle_QueryParams {
     requests_per_second: RequestsPerSecond,
 }
 
-// TODO: Fill in Body Parameters
-structure DeleteByQueryRethrottle_BodyParams {}
 
 @input
 structure DeleteByQueryRethrottle_Input with [DeleteByQueryRethrottle_QueryParams] {
@@ -23,8 +21,6 @@ structure DeleteByQueryRethrottle_Input with [DeleteByQueryRethrottle_QueryParam
     @httpLabel
     @documentation("The task id to rethrottle.")
     task_id: PathTaskId,
-    @httpPayload
-    content: DeleteByQueryRethrottle_BodyParams,
 }
 
 // TODO: Fill in Output Structure

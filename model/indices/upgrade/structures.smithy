@@ -27,13 +27,9 @@ structure IndicesUpgrade_QueryParams {
     only_ancient_segments: OnlyAncientSegments,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesUpgrade_BodyParams {}
 
 @input
 structure IndicesUpgrade_Input with [IndicesUpgrade_QueryParams] {
-    @httpPayload
-    content: IndicesUpgrade_BodyParams,
 }
 
 @input
@@ -41,8 +37,6 @@ structure IndicesUpgrade_WithIndex_Input with [IndicesUpgrade_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: IndicesUpgrade_BodyParams,
 }
 
 // TODO: Fill in Output Structure

@@ -30,13 +30,9 @@ structure IndicesForcemerge_QueryParams {
     only_expunge_deletes: OnlyExpungeDeletes,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesForcemerge_BodyParams {}
 
 @input
 structure IndicesForcemerge_Input with [IndicesForcemerge_QueryParams] {
-    @httpPayload
-    content: IndicesForcemerge_BodyParams,
 }
 
 @input
@@ -44,8 +40,6 @@ structure IndicesForcemerge_WithIndex_Input with [IndicesForcemerge_QueryParams]
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: IndicesForcemerge_BodyParams,
 }
 
 // TODO: Fill in Output Structure

@@ -11,8 +11,6 @@ namespace OpenSearch
 structure ClusterPutDecommissionAwareness_QueryParams {
 }
 
-// TODO: Fill in Body Parameters
-structure ClusterPutDecommissionAwareness_BodyParams {}
 
 @input
 structure ClusterPutDecommissionAwareness_Input with [ClusterPutDecommissionAwareness_QueryParams] {
@@ -23,8 +21,6 @@ structure ClusterPutDecommissionAwareness_Input with [ClusterPutDecommissionAwar
     @required
     @httpLabel
     awareness_attribute_value: PathAwarenessAttributeValue,
-    @httpPayload
-    content: ClusterPutDecommissionAwareness_BodyParams,
 }
 
 // TODO: Fill in Output Structure

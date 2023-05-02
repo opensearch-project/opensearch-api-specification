@@ -29,8 +29,6 @@ structure IndicesAddBlock_QueryParams {
     expand_wildcards: ExpandWildcards,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesAddBlock_BodyParams {}
 
 @input
 structure IndicesAddBlock_Input with [IndicesAddBlock_QueryParams] {
@@ -42,8 +40,6 @@ structure IndicesAddBlock_Input with [IndicesAddBlock_QueryParams] {
     @required
     @httpLabel
     block: PathBlock,
-    @httpPayload
-    content: IndicesAddBlock_BodyParams,
 }
 
 // TODO: Fill in Output Structure

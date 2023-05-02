@@ -23,16 +23,12 @@ structure DanglingIndicesImportDanglingIndex_QueryParams {
     cluster_manager_timeout: ClusterManagerTimeout,
 }
 
-// TODO: Fill in Body Parameters
-structure DanglingIndicesImportDanglingIndex_BodyParams {}
 
 @input
 structure DanglingIndicesImportDanglingIndex_Input with [DanglingIndicesImportDanglingIndex_QueryParams] {
     @required
     @httpLabel
     index_uuid: PathIndexUuid,
-    @httpPayload
-    content: DanglingIndicesImportDanglingIndex_BodyParams,
 }
 
 // TODO: Fill in Output Structure

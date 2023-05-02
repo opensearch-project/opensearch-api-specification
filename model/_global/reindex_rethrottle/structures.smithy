@@ -14,8 +14,6 @@ structure ReindexRethrottle_QueryParams {
     requests_per_second: RequestsPerSecond,
 }
 
-// TODO: Fill in Body Parameters
-structure ReindexRethrottle_BodyParams {}
 
 @input
 structure ReindexRethrottle_Input with [ReindexRethrottle_QueryParams] {
@@ -23,8 +21,6 @@ structure ReindexRethrottle_Input with [ReindexRethrottle_QueryParams] {
     @httpLabel
     @documentation("The task id to rethrottle.")
     task_id: PathTaskId,
-    @httpPayload
-    content: ReindexRethrottle_BodyParams,
 }
 
 // TODO: Fill in Output Structure

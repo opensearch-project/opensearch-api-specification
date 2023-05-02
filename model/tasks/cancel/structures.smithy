@@ -25,13 +25,9 @@ structure TasksCancel_QueryParams {
     wait_for_completion: WaitForCompletionFalse,
 }
 
-// TODO: Fill in Body Parameters
-structure TasksCancel_BodyParams {}
 
 @input
 structure TasksCancel_Input with [TasksCancel_QueryParams] {
-    @httpPayload
-    content: TasksCancel_BodyParams,
 }
 
 @input
@@ -40,8 +36,6 @@ structure TasksCancel_WithTaskId_Input with [TasksCancel_QueryParams] {
     @httpLabel
     @documentation("Cancel the task with specified task id (node_id:task_number).")
     task_id: PathTaskId,
-    @httpPayload
-    content: TasksCancel_BodyParams,
 }
 
 // TODO: Fill in Output Structure

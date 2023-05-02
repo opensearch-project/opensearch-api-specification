@@ -23,16 +23,12 @@ structure CreatePit_QueryParams {
     routing: Routings,
 }
 
-// TODO: Fill in Body Parameters
-structure CreatePit_BodyParams {}
 
 @input
 structure CreatePit_Input with [CreatePit_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: CreatePit_BodyParams,
 }
 
 // TODO: Fill in Output Structure

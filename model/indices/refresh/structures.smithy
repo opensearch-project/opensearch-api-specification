@@ -20,13 +20,9 @@ structure IndicesRefresh_QueryParams {
     expand_wildcards: ExpandWildcards,
 }
 
-// TODO: Fill in Body Parameters
-structure IndicesRefresh_BodyParams {}
 
 @input
 structure IndicesRefresh_Post_Input with [IndicesRefresh_QueryParams] {
-    @httpPayload
-    content: IndicesRefresh_BodyParams,
 }
 
 @input
@@ -38,8 +34,6 @@ structure IndicesRefresh_Post_WithIndex_Input with [IndicesRefresh_QueryParams] 
     @required
     @httpLabel
     index: PathIndices,
-    @httpPayload
-    content: IndicesRefresh_BodyParams,
 }
 
 @input

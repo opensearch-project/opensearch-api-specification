@@ -11,16 +11,12 @@ namespace OpenSearch
 structure ClusterPutWeightedRouting_QueryParams {
 }
 
-// TODO: Fill in Body Parameters
-structure ClusterPutWeightedRouting_BodyParams {}
 
 @input
 structure ClusterPutWeightedRouting_Input with [ClusterPutWeightedRouting_QueryParams] {
     @required
     @httpLabel
     attribute: PathAttribute,
-    @httpPayload
-    content: ClusterPutWeightedRouting_BodyParams,
 }
 
 // TODO: Fill in Output Structure

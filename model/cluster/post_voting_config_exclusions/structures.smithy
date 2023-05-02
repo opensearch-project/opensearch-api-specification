@@ -19,13 +19,9 @@ structure ClusterPostVotingConfigExclusions_QueryParams {
     timeout: Timeout,
 }
 
-// TODO: Fill in Body Parameters
-structure ClusterPostVotingConfigExclusions_BodyParams {}
 
 @input
 structure ClusterPostVotingConfigExclusions_Input with [ClusterPostVotingConfigExclusions_QueryParams] {
-    @httpPayload
-    content: ClusterPostVotingConfigExclusions_BodyParams,
 }
 
 // TODO: Fill in Output Structure
