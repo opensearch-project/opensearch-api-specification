@@ -6,6 +6,7 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
 @mixin
 structure MsearchTemplate_QueryParams {
@@ -28,6 +29,9 @@ structure MsearchTemplate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@vendorExtensions(
+    "x-serialize": "bulk"
+)
 structure MsearchTemplate_BodyParams {}
 
 @input
