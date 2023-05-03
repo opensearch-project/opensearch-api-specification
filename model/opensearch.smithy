@@ -250,7 +250,6 @@ service OpenSearch {
         NodesHotThreads_WithNodeId_DeprecatedCluster,
         NodesHotThreads_WithNodeId_DeprecatedDash,
         NodesInfo,
-        NodesInfo_WithMetric,
         NodesInfo_WithMetricNodeId,
         NodesInfo_WithNodeId,
         NodesReloadSecureSettings,

@@ -32,19 +32,6 @@ operation NodesInfo {
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_nodes/{metric}")
-@documentation("Returns information about nodes in the cluster.")
-operation NodesInfo_WithMetric {
-    input: NodesInfo_WithMetric_Input,
-    output: NodesInfo_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "nodes.info",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}")
 @documentation("Returns information about nodes in the cluster.")
 operation NodesInfo_WithNodeId {
