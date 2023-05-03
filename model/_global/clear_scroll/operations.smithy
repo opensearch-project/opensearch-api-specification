@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @idempotent
-@suppress(["HttpUriConflict"])
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_search/scroll")
 @documentation("Explicitly clears the search context for a scroll.")
 operation ClearScroll {
@@ -34,7 +34,7 @@ operation ClearScroll {
     "x-version-deprecated": "7.0.0",
 )
 @idempotent
-@suppress(["HttpUriConflict"])
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_search/scroll/{scroll_id}")
 @documentation("Explicitly clears the search context for a scroll.")
 operation ClearScroll_WithScrollId {

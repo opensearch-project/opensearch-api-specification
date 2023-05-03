@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @idempotent
-@suppress(["HttpUriConflict"])
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_search/point_in_time")
 @documentation("Deletes one or more point in time searches based on the IDs passed.")
 operation DeletePit {
