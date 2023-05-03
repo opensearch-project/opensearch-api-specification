@@ -11,9 +11,13 @@ namespace OpenSearch
 structure ClearScroll_QueryParams {
 }
 
+// TODO: Fill in Body Parameters
+structure ClearScroll_BodyParams {}
 
 @input
 structure ClearScroll_Input with [ClearScroll_QueryParams] {
+    @httpPayload
+    content: ClearScroll_BodyParams,
 }
 
 @input
@@ -21,6 +25,8 @@ structure ClearScroll_WithScrollId_Input with [ClearScroll_QueryParams] {
     @required
     @httpLabel
     scroll_id: PathScrollIds,
+    @httpPayload
+    content: ClearScroll_BodyParams,
 }
 
 // TODO: Fill in Output Structure

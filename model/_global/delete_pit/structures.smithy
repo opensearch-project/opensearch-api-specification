@@ -11,9 +11,13 @@ namespace OpenSearch
 structure DeletePit_QueryParams {
 }
 
+// TODO: Fill in Body Parameters
+structure DeletePit_BodyParams {}
 
 @input
 structure DeletePit_Input with [DeletePit_QueryParams] {
+    @httpPayload
+    content: DeletePit_BodyParams,
 }
 
 // TODO: Fill in Output Structure
