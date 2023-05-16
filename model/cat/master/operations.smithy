@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
     "x-operation-group": "cat.master",
     "x-version-added": "1.0",
     "x-deprecation-message": "To promote inclusive language, please use '/_cat/cluster_manager' instead.",
-    "x-version-deprecated": "2.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])

@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -34,7 +34,7 @@ operation NodesHotThreads_DeprecatedDash {
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -63,7 +63,7 @@ operation NodesHotThreads {
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -79,7 +79,7 @@ operation NodesHotThreads_Deprecated {
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -95,7 +95,7 @@ operation NodesHotThreads_WithNodeId_DeprecatedDash {
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -124,7 +124,7 @@ operation NodesHotThreads_WithNodeId {
     "x-operation-group": "nodes.hot_threads",
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])

@@ -31,7 +31,7 @@ operation ClearScroll {
     "x-operation-group": "clear_scroll",
     "x-version-added": "1.0",
     "x-deprecation-message": "A scroll id can be quite large and should be specified as part of the body",
-    "x-version-deprecated": "7.0.0",
+    "x-version-deprecated": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])

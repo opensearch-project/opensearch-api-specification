@@ -25,7 +25,7 @@ structure CatNodes_QueryParams {
     @deprecated
     @vendorExtensions(
         "x-deprecation-message": "This parameter does not cause this API to act locally.",
-        "x-version-deprecated": "1.0.0",
+        "x-version-deprecated": "1.0",
     )
     local: Local,
 
