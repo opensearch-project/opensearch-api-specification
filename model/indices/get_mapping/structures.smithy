@@ -31,7 +31,7 @@ structure IndicesGetMapping_QueryParams {
     @deprecated
     @vendorExtensions(
         "x-deprecation-message": "This parameter is a no-op and field mappings are always retrieved locally.",
-        "x-version-deprecated": "1.0.0"
+        "x-version-deprecated": "1.0.0",
     )
     local: Local,
 }
