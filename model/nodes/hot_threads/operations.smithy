@@ -19,6 +19,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
     "x-version-deprecated": "1.0",
+    "x-ignorable": "true",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -35,6 +36,7 @@ operation NodesHotThreads_DeprecatedDash {
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
     "x-version-deprecated": "1.0",
+    "x-ignorable": "true",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -64,6 +66,7 @@ operation NodesHotThreads {
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
     "x-version-deprecated": "1.0",
+    "x-ignorable": "true",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -80,6 +83,7 @@ operation NodesHotThreads_Deprecated {
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
     "x-version-deprecated": "1.0",
+    "x-ignorable": "true",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -96,6 +100,7 @@ operation NodesHotThreads_WithNodeId_DeprecatedDash {
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
     "x-version-deprecated": "1.0",
+    "x-ignorable": "true",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -125,6 +130,7 @@ operation NodesHotThreads_WithNodeId {
     "x-version-added": "1.0",
     "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
     "x-version-deprecated": "1.0",
+    "x-ignorable": "true",
 )
 @readonly
 @suppress(["HttpUriConflict"])
