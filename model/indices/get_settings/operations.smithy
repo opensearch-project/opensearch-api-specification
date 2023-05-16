@@ -14,7 +14,7 @@ use opensearch.openapi#vendorExtensions
 
 @vendorExtensions(
     "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0"
+    "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -27,7 +27,7 @@ operation IndicesGetSettings {
 
 @vendorExtensions(
     "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0"
+    "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -40,20 +40,7 @@ operation IndicesGetSettings_WithIndex {
 
 @vendorExtensions(
     "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0"
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/{index}/_settings/{name}")
-@documentation("Returns settings for one or more indices.")
-operation IndicesGetSettings_WithIndexName {
-    input: IndicesGetSettings_WithIndexName_Input,
-    output: IndicesGetSettings_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0"
+    "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
@@ -61,6 +48,19 @@ operation IndicesGetSettings_WithIndexName {
 @documentation("Returns settings for one or more indices.")
 operation IndicesGetSettings_WithName {
     input: IndicesGetSettings_WithName_Input,
+    output: IndicesGetSettings_Output
+}
+
+@vendorExtensions(
+    "x-operation-group": "indices.get_settings",
+    "x-version-added": "1.0",
+)
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/{index}/_settings/{name}")
+@documentation("Returns settings for one or more indices.")
+operation IndicesGetSettings_WithIndexName {
+    input: IndicesGetSettings_WithIndexName_Input,
     output: IndicesGetSettings_Output
 }
 

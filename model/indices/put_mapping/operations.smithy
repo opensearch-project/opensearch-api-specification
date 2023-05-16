@@ -14,7 +14,7 @@ use opensearch.openapi#vendorExtensions
 
 @vendorExtensions(
     "x-operation-group": "indices.put_mapping",
-    "x-version-added": "1.0"
+    "x-version-added": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict"])
@@ -27,7 +27,7 @@ operation IndicesPutMapping_Put {
 
 @vendorExtensions(
     "x-operation-group": "indices.put_mapping",
-    "x-version-added": "1.0"
+    "x-version-added": "1.0",
 )
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_mapping")
