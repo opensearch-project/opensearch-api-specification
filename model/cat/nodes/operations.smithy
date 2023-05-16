@@ -14,7 +14,7 @@ use opensearch.openapi#vendorExtensions
 
 @vendorExtensions(
     "x-operation-group": "cat.nodes",
-    "x-version-added": "1.0"
+    "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])

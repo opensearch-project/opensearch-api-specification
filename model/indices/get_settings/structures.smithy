@@ -52,6 +52,13 @@ structure IndicesGetSettings_WithIndex_Input with [IndicesGetSettings_QueryParam
 }
 
 @input
+structure IndicesGetSettings_WithName_Input with [IndicesGetSettings_QueryParams] {
+    @required
+    @httpLabel
+    name: PathSettingNames,
+}
+
+@input
 structure IndicesGetSettings_WithIndexName_Input with [IndicesGetSettings_QueryParams] {
     @required
     @httpLabel
@@ -62,15 +69,5 @@ structure IndicesGetSettings_WithIndexName_Input with [IndicesGetSettings_QueryP
     name: PathSettingNames,
 }
 
-@input
-structure IndicesGetSettings_WithName_Input with [IndicesGetSettings_QueryParams] {
-    @required
-    @httpLabel
-    name: PathSettingNames,
-}
-
 // TODO: Fill in Output Structure
-structure IndicesGetSettings_Output {
-    @httpPayload
-    content: Document
-}
+structure IndicesGetSettings_Output {}
