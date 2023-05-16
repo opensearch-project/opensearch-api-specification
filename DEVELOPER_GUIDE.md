@@ -193,10 +193,11 @@ This repository includes a custom Smithy trait `@vendorExtensions` and accompany
 - `x-version-deprecated`: OpenSearch Version when the operation/parameter was deprecated.
 - `x-deprecation-description`: Reason for deprecation and guidance on how to prepare for the next major version.
 - `x-serialize: "bulk"`: Denotes that request body should be serialized as bulk data.
-- `x-data-type`: Denote the actual data-type of the parameter. This extension is used where certain data-type is not supported by Smithy (like `time`), or not supported in certain context (like `enum` and `list` as **path** parameters).
+- `x-data-type`: Denotes the actual data-type of the parameter. This extension is used where certain data-type is not supported by Smithy (like `time`), or not supported in certain context (like `enum` and `list` as **path** parameters).
 - `x-enum-options`: List of options for an `enum` **path** parameter.
 - `x-string-pattern`: Actual regex pattern for a **path** parameter. This is used to override the pattern used to circumvent URI Conflict errors.
-- `x-overloaded-param`: Denotes that the parameter is overloaded with another parameter. This is used in `/_nodes/{node_id}` operation where you can also treat `{node_id}` as `{metric}`. Future operations should avoid this situation because it is bad API design.
+- `x-overloaded-param`: Denotes that the parameter is overloaded with another parameter. This is used in `/_nodes/{node_id}` operation where you can also treat `{node_id}` as `{metric}`. Future operations should avoid this situation because it is bad API design. See [Client Generator Guide](./CLIENT_GENERATOR_GUIDE.md#overloaded-name) for more info.
+- `x-ignorable: "true"`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 
 ```smithy
 use opensearch.openapi#vendorExtensions
