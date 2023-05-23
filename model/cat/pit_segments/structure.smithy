@@ -54,12 +54,13 @@ structure PitSegments {
 @input
 structure GetAllPitSegments_Input {
     @documentation("The PIT IDs of the PITs whose segments are to be listed.")
+    @httpQuery("pitId")
     pit_id: String
 }
 
 
-
+@output
 structure GetAllPitSegments_Output {
     @documentation("Information about the active point-in-time segments.")
-    list: PitSegments
+    lists: PitSegments
 }
