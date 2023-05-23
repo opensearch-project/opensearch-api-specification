@@ -57,7 +57,7 @@ structure Get_Input with [Get_QueryParams] {
 structure Get_Output {
 
     @required
-    _index: IndexName,
+    _index: Index,
 
     _type: String,
 

@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-openapi:1.26.0")
+    implementation("software.amazon.smithy:smithy-openapi:1.31.0")
 }
 
 spotless {

@@ -180,8 +180,9 @@ Common parameters are defined in the root folder, `model/`, and grouped by data-
 ## Smithy Traits
 We use Smithy traits extensively in this project to work around some limitations of Smithy and to deal with some quirks of the OpenSearch API. Here are some of the traits that you should be aware of:
 - `@vendorExtensions`: Used to add metadata that are not supported by Smithy. Check OpenAPI Vendor Extensions section for more details.
+- `@suppress(["HttpMethodSemantics.UnexpectedPayload"])`: Used in DELETE operations with request body to suppress the UnexpectedPayload error.
 - `@suppress(["HttpUriConflict"])`: Used to suppress the HttpUriConflict error that is thrown when two operations have conflicting URI. Unfortunately, this happens a lot in OpenSearch API. When in doubt, add this trait to the operation.
-- `@pattern("^[^_][\\d\\w-*]*$")`: Required for most Path parameters to avoid URI Conflict errors. This is often used in tandem with the @suppress trait above.
+- `@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")`: Required for most Path parameters to avoid URI Conflict errors. This is often used in tandem with the @suppress trait above. To denote the actual pattern of the parameter, use `x-string-pattern` vendor extension.
 - `@readonly`: Should accompany most GET operations to denote that they are read-only.
 - `@idempotent`: Should accompany most PUT operations to denote that they are idempotent.
 
@@ -189,12 +190,16 @@ We use Smithy traits extensively in this project to work around some limitations
 
 This repository includes a custom Smithy trait `@vendorExtensions` and accompanying build extension to add metadata that are not supported by Smithy in the form of OpenAPI Vendor Extensions. This trait is used to add the following metadata:
 - `x-operation-group`: Used to group operations into API Actions.
-- `x-version-added`: Denote the version when the operation/parameter was added to OpenSearch.
-- `x-version-removed`: Denote the version when the operation/parameter was removed from OpenSearch.
-- `x-version-deprecated`: Denote the version when the operation/parameter was deprecated in OpenSearch.
-- `x-deprecation-description`: Denote the reason for deprecation of the operation/parameter.
-- `x-data-type`: Denote the actual data-type of the parameter. This extension is used where certain data-type is not supported by Smithy (like `time`), or not supported in certain context (like `enum` and `list` as path parameters).
-- `x-enum-options`: Denote the list of options for an `enum` parameter.
+- `x-version-added`: OpenSearch version when the operation/parameter was added.
+- `x-version-removed`: OpenSearch version when the operation/parameter was removed.
+- `x-version-deprecated`: OpenSearch Version when the operation/parameter was deprecated.
+- `x-deprecation-description`: Reason for deprecation and guidance on how to prepare for the next major version.
+- `x-serialize: "bulk"`: Denotes that request body should be serialized as bulk data.
+- `x-data-type`: Denotes the actual data-type of the parameter. This extension is used where certain data-type is not supported by Smithy (like `time`), or not supported in certain context (like `enum` and `list` as **path** parameters).
+- `x-enum-options`: List of options for an `enum` **path** parameter.
+- `x-string-pattern`: Actual regex pattern for a **path** parameter. This is used to override the pattern used to circumvent URI Conflict errors.
+- `x-overloaded-param`: Denotes that the parameter is overloaded with another parameter. This is used in `/_nodes/{node_id}` operation where you can also treat `{node_id}` as `{metric}`. Future operations should avoid this situation because it is bad API design. See [Client Generator Guide](./CLIENT_GENERATOR_GUIDE.md#overloaded-name) for more info.
+- `x-ignorable: "true"`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 
 ```smithy
 use opensearch.openapi#vendorExtensions
@@ -217,7 +222,7 @@ operation Search_Post_WithIndex {
     "x-data-type": "list",
     "x-enum-options": ["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"],
 )
-@pattern("^[^_][\\d\\w-*]*$")
+@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of metrics you wish returned. Leave empty to return all.")
 string PathNodesInfoMetric
 ```
