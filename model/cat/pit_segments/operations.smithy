@@ -37,4 +37,3 @@ operation GetPitSegments {
     input: GetPitSegments_Input,
     output: GetPitSegments_Output
 }
-
