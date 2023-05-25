@@ -376,3 +376,15 @@ string Timeout
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout
+
+@documentation("The IP address of the node where the segment resides.")
+string IpAddress
+
+@documentation("The segment ID.")
+string SegmentId
+
+@documentation("The size of the segment on disk.")
+string SizeSegment
+
+@documentation("The version")
+string VersionString
