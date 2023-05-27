@@ -16,5 +16,5 @@ structure DeleteAllPits_Input with [DeleteAllPits_QueryParams] {
 }
 
 structure DeleteAllPits_Output {
-    pits: Pits
+    pits: PitsDeleteAll
 }

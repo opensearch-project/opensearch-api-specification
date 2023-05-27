@@ -60,11 +60,11 @@ structure Hits{
     fields: Document
 }
 
-structure PitsDetails{
+structure PitsDetailsDeleteAll{
     successful: Boolean,
     pit_id: String
 }
 
-list Pits{
-    member: PitsDetails
+list PitsDeleteAll{
+    member: PitsDetailsDeleteAll
 }
