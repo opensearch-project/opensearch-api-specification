@@ -59,3 +59,12 @@ structure Hits{
     _source: Document,
     fields: Document
 }
+
+structure PitsDetails{
+    successful: Boolean,
+    pit_id: String
+}
+
+list Pits{
+    member: PitsDetails
+}
