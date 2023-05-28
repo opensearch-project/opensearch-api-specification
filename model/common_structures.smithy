@@ -59,3 +59,25 @@ structure Hits{
     _source: Document,
     fields: Document
 }
+
+structure PitDetail{
+    pitId: String,
+    creation_time: Long,
+    keep_alive: Long
+}
+
+list ListPitDetail{
+    member: PitDetail
+}
+
+structure PitInfo {
+    @documentation("Flag indicating the success of the deletion operation.")
+    successful: Boolean,
+
+    @documentation("The PIT ID.")
+    pit_id: String
+}
+
+list PitInfoList {
+    member: PitInfo
+}

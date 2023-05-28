@@ -7,14 +7,10 @@
 $version: "2"
 namespace OpenSearch
 
-@mixin
-structure GetAllPits_QueryParams {
-}
-
-
 @input
-structure GetAllPits_Input with [GetAllPits_QueryParams] {
+structure GetAllPits_Input {
 }
 
-// TODO: Fill in Output Structure
-structure GetAllPits_Output {}
+structure GetAllPits_Output {
+    pits: ListPitDetail
+}
