@@ -376,3 +376,15 @@ string Timeout
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout
+
+@documentation("The current password.")
+string CurrentPassword
+
+@documentation("The new password.")
+string NewPassword
+
+@documentation("The status of the update operation.")
+string ChangeStatus
+
+@documentation("The message indicating the updated user.")
+string Message
