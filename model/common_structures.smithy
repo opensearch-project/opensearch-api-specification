@@ -59,3 +59,45 @@ structure Hits{
     _source: Document,
     fields: Document
 }
+
+list UserList {
+    member: User
+}
+
+structure User {
+    hash: String,
+    reserved: Boolean,
+    hidden: Boolean,
+    backend_roles: BackendRolesList,
+    attributes: AttributeMap,
+    description: String,
+    opendistro_security_roles: OpendistroSecurityRolesList,
+    static: Boolean
+}
+
+map AttributeMap {
+    key: String,
+    value: String
+}
+
+list BackendRolesList {
+    member: String
+}
+
+list OpendistroSecurityRolesList {
+    member: String
+}
+structure UserResponse{
+    status: String,
+    message: String
+}
+
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}
