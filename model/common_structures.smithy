@@ -59,3 +59,29 @@ structure Hits{
     _source: Document,
     fields: Document
 }
+
+structure Tenant{
+    reserved: Boolean,
+    hidden: Boolean,
+    description: String,
+    static: Boolean
+}
+
+list TenantList{
+    member: Tenant
+}
+
+map AttributeMap {
+    key: String,
+    value: String
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}
+
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
