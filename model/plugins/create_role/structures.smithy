@@ -21,5 +21,3 @@ structure CreateRole_Input{
 structure CreateRole_Output {
     content: RoleResponse
 }
-
-

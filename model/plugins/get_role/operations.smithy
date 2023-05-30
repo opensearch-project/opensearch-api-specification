@@ -17,7 +17,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @readonly
-@suppress(["HttpUriConflict"], "HttpMethodSemantics.UnexpectedPayload"])
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/roles/{role}")
 @documentation("Retrieves one role.")
 operation GetRole {

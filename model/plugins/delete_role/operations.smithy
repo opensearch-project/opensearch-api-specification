@@ -24,4 +24,3 @@ operation DeleteRole {
     input: DeleteRole_Input,
     output: DeleteRole_Output
 }
-

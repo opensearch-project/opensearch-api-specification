@@ -24,4 +24,3 @@ operation CreateRole {
     input: CreateRole_Input,
     output: CreateRole_Output
 }
-

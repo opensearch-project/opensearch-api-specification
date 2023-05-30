@@ -27,4 +27,3 @@ structure GetAllRoles_Input {}
 structure GetAllRoles_Output {
     content: RolesList
 }
-

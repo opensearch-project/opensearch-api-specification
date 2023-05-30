@@ -31,4 +31,3 @@ structure PatchRoles_Input {
 structure PatchRoles_Output {
     content: RoleResponse
 }
-

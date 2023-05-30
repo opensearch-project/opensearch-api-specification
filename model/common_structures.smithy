@@ -88,6 +88,11 @@ structure PatchOperation {
     value: AttributeMap
 }
 
+map AttributeMap {
+    key: String,
+    value: String
+}
+
 list PatchOperationList{
     member: PatchOperation
 }

@@ -19,5 +19,3 @@ structure DeleteRole_Input{
 structure DeleteRole_Output {
     content: RoleResponse
 }
-
-
