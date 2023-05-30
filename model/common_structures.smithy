@@ -59,3 +59,35 @@ structure Hits{
     _source: Document,
     fields: Document
 }
+
+structure IndexPermission {
+    index_patterns: IndexPatterns
+    fls: Fls
+    masked_fields: MaskedFields
+    allowed_actions: AllowedActions
+}
+
+structure Role{
+    reserved: Boolean
+    hidden: Boolean
+    description: String
+    cluster_permission: ClusterPermission
+    index_permission: IndexPermission
+    tenant_permissions: TenantPermission
+    static: Boolean
+}
+
+structure RoleResponse{
+    status: String
+    message: String
+}
+
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}
