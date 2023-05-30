@@ -281,6 +281,9 @@ string KeepAlive
 @documentation("The script language.")
 string Lang
 
+@documentation("The message indicating the information of action of the model.")
+string Message
+
 @documentation("Comma-separated list of the persistent ids of the nodes to exclude from the voting configuration. If specified, you may not also specify ?node_names.")
 string NodeIds
 
