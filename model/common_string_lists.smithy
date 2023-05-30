@@ -108,3 +108,8 @@ list StoredFields {
 list Types {
     member: String
 }
+
+@documentation("Comma-separated list of all allowed actions.")
+list AllowedActions {
+    member: String
+}
