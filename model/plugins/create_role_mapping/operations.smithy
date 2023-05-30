@@ -6,28 +6,21 @@
 
 $version: "2"
 namespace OpenSearch
+use opensearch.openapi#vendorExtensions
 
+@externalDocumentation(
+    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#create-role-mapping"
+)
 
-@input
-structure PatchRole_Input{
-    @required
-    @httpLabel
-    role: String
-
-    role_patch: PatchOperationList
-}
-
-@output
-structure PatchRole_Output {
-    content: RoleResponse
-}
-
-@input
-structure PatchRoles_Input {
-    role_patch: PatchOperationList
-}
-
-@output
-structure PatchRoles_Output {
-    content: RoleResponse
+@vendorExtensions(
+    "x-operation-group": "create_role_mapping",
+    "x-version-added": "1.0"
+)
+@idempotent
+@suppress(["HttpUriConflict"])
+@http(method: "PUT", uri: "/_plugins/_security/api/rolesmapping/{role}")
+@documentation("Creates or replaces the specified role mapping.")
+operation CreateRoleMapping {
+    input: CreateRoleMapping_Input,
+    output: CreateRoleMapping_Output
 }
