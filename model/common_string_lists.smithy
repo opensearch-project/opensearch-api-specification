@@ -108,3 +108,7 @@ list StoredFields {
 list Types {
     member: String
 }
+
+list DistinguishedNamesDetails{
+    member: String
+}

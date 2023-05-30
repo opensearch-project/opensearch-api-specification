@@ -59,3 +59,11 @@ structure Hits{
     _source: Document,
     fields: Document
 }
+
+structure DistinguishedName{
+    nodes_dn: DistinguishedNamesDetails
+}
+
+list DistinguishedNamesList{
+    member:DistinguishedName
+}
