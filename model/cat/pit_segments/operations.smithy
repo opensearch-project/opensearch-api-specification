@@ -26,7 +26,7 @@ operation GetAllPitSegments {
 }
 
 @vendorExtensions(
-    "x-operation-group": "pit_segments",
+    "x-operation-group": "cat.pit_segments",
     "x-version-added": "2.4",
 )
 @readonly
