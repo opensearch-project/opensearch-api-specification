@@ -7,6 +7,10 @@
 $version: "2"
 namespace OpenSearch
 
+list CertificatesList {
+    member: CertificatesDetail
+}
+
 @input
 structure GetCertificates_Input {}
 

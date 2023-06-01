@@ -67,7 +67,3 @@ structure CertificatesDetail {
     not_before: String,
     not_after: String
 }
-
-list CertificatesList {
-    member: CertificatesDetail
-}

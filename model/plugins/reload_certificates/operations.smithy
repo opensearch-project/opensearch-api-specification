@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "reload_transport_certificates",
+    "x-operation-group": "security.reload_transport_certificates",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation ReloadTransportCertificates {
 }
 
 @vendorExtensions(
-    "x-operation-group": "reload_http_certificates",
+    "x-operation-group": "security.reload_http_certificates",
     "x-version-added": "1.0",
 )
 @readonly

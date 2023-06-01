@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_certificates",
+    "x-operation-group": "security.get_certificates",
     "x-version-added": "1.0",
 )
 @idempotent
