@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "delete_distinguished_name",
+    "x-operation-group": "security.delete_distinguished_name",
     "x-version-added": "1.0",
 )
 @idempotent

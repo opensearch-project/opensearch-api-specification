@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_distinguished_names",
+    "x-operation-group": "security.get_distinguished_names",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation GetDistinguishedNames {
 }
 
 @vendorExtensions(
-    "x-operation-group": "get_distinguished_name",
+    "x-operation-group": "security.get_distinguished_name",
     "x-version-added": "1.0",
 )
 @readonly

@@ -14,7 +14,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "update_distinguished_name",
+    "x-operation-group": "security.update_distinguished_name",
     "x-version-added": "1.0",
 )
 @idempotent
