@@ -59,36 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-list ActionGroupsList{
-    member: Action_Group
-}
-
-structure Action_Group{
-    reserved: Boolean,
-    hidden: Boolean,
-    allowed_actions: AllowedActions,
-    type: String,
-    description: String,
-    static: Boolean
-}
-
-structure ActionGroupResponse{
-    status: Boolean,
-    message: String
-}
-
-map AttributeMap {
-    key: String,
-    value: String
-}
-
-list PatchOperationList{
-    member: PatchOperation
-}
-
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
-}

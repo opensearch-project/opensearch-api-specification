@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_action_groups",
+    "x-operation-group": "security.get_action_groups",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation GetActionGroups {
 }
 
 @vendorExtensions(
-    "x-operation-group": "get_action_group",
+    "x-operation-group": "security.get_action_group",
     "x-version-added": "1.0",
 )
 @readonly

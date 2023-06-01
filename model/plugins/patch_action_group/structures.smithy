@@ -7,6 +7,21 @@
 $version: "2"
 namespace OpenSearch
 
+map AttributeMap {
+    key: String,
+    value: String
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}
+
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
+
 structure PatchActionGroupParams{
     actiongroupPatch: PatchOperation
 }

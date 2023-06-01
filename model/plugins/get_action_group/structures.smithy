@@ -7,6 +7,19 @@
 $version: "2"
 namespace OpenSearch
 
+list ActionGroupsList{
+    member: Action_Group
+}
+
+structure Action_Group{
+    reserved: Boolean,
+    hidden: Boolean,
+    allowed_actions: AllowedActions,
+    type: String,
+    description: String,
+    static: Boolean
+}
+
 @input
 structure GetActionGroups_Input {}
 

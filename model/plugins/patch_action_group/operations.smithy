@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "patch_action_group",
+    "x-operation-group": "security.patch_action_group",
     "x-version-added": "1.0",
 )
 @idempotent
@@ -26,7 +26,7 @@ operation PatchActionGroup {
 }
 
 @vendorExtensions(
-    "x-operation-group": "patch_action_groups",
+    "x-operation-group": "security.patch_action_groups",
     "x-version-added": "1.0",
 )
 @idempotent

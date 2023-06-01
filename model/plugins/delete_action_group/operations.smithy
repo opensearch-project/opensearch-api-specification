@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "delete_action_group",
+    "x-operation-group": "security.delete_action_group",
     "x-version-added": "1.0",
 )
 @readonly
