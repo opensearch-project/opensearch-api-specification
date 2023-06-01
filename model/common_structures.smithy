@@ -59,9 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-structure HealthResponse{
-    message: String
-    mode: String
-    status: String
-}
