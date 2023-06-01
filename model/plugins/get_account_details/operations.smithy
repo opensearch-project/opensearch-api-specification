@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#account"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/"
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_account_details",
+    "x-operation-group": "security.get_account_details",
     "x-version-added": "1.0",
 )
 @readonly

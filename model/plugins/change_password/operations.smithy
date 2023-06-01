@@ -9,14 +9,14 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#account"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/"
 )
 
 @vendorExtensions(
-    "x-operation-group": "change_password",
+    "x-operation-group": "security.change_password",
     "x-version-added": "1.0",
 )
-@readonly
+@idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_plugins/_security/api/account")
 @documentation("Changes the password for the current user.")
