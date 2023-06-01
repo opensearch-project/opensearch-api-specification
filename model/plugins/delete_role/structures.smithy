@@ -17,5 +17,5 @@ structure DeleteRole_Input{
 
 @output
 structure DeleteRole_Output {
-    content: RoleResponse
+    content: Response
 }

@@ -7,6 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}
 
 @input
 structure PatchRole_Input{
@@ -19,7 +28,7 @@ structure PatchRole_Input{
 
 @output
 structure PatchRole_Output {
-    content: RoleResponse
+    content: Response
 }
 
 @input
@@ -29,5 +38,5 @@ structure PatchRoles_Input {
 
 @output
 structure PatchRoles_Output {
-    content: RoleResponse
+    content: Response
 }

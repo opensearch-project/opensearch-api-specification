@@ -132,7 +132,3 @@ list MaskedFields{
 list AllowedActions{
     member: String
 }
-
-list RolesList{
-    member: Role
-}

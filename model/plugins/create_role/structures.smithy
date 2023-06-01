@@ -19,5 +19,5 @@ structure CreateRole_Input{
 
 @output
 structure CreateRole_Output {
-    content: RoleResponse
+    content: Response
 }

@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#get-role"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-role"
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_role",
+    "x-operation-group": "security.get_role",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation GetRole {
 }
 
 @vendorExtensions(
-    "x-operation-group": "get_roles",
+    "x-operation-group": "security.get_roles",
     "x-version-added": "1.0",
 )
 @readonly

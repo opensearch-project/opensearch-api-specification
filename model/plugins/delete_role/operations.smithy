@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#delete-role"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#delete-role"
 )
 
 @vendorExtensions(
-    "x-operation-group": "delete_role",
+    "x-operation-group": "security.delete_role",
     "x-version-added": "1.0"
 )
 @idempotent

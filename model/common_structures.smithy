@@ -77,22 +77,16 @@ structure Role{
     static: Boolean
 }
 
-structure RoleResponse{
-    status: String
-    message: String
+list RolesList{
+    member: Role
 }
 
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
+structure Response{
+    status: String
+    message: String
 }
 
 map AttributeMap {
     key: String,
     value: String
-}
-
-list PatchOperationList{
-    member: PatchOperation
 }

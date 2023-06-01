@@ -15,6 +15,10 @@ structure GetRole_Input{
     role: String
 }
 
+list RolesList{
+    member: Role
+}
+
 @output
 structure GetRole_Output {
     content: Role
