@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "create_tenant",
+    "x-operation-group": "security.create_tenant",
     "x-version-added": "1.0",
 )
 @idempotent

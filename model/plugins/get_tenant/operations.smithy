@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_tenants",
+    "x-operation-group": "security.get_tenants",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation GetTenants {
 }
 
 @vendorExtensions(
-    "x-operation-group": "get_tenant",
+    "x-operation-group": "security.get_tenant",
     "x-version-added": "1.0",
 )
 @readonly

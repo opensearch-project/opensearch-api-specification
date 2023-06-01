@@ -7,6 +7,17 @@
 $version: "2"
 namespace OpenSearch
 
+structure Tenant{
+    reserved: Boolean,
+    hidden: Boolean,
+    description: String,
+    static: Boolean
+}
+
+list TenantList{
+    member: Tenant
+}
+
 @input
 structure GetTenants_Input {}
 
