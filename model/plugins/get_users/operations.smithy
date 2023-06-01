@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/"
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_users",
+    "x-operation-group": "security.get_users",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation GetAllUsers {
 }
 
 @vendorExtensions(
-    "x-operation-group": "get_user",
+    "x-operation-group": "security.get_user",
     "x-version-added": "1.0",
 )
 @readonly

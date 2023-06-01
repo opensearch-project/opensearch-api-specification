@@ -17,5 +17,5 @@ structure DeleteUser_Input {
 
 @output
 structure DeleteUser_Output {
-    response: UserResponse
+    response: Response
 }

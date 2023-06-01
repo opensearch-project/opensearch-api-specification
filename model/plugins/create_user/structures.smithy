@@ -13,10 +13,13 @@ structure CreateUser_Input {
     @required
     @httpLabel
     username: String
+
+    @required
+    @httpPayload
     user: User
 }
 
 @output
 structure CreateUser_Output {
-    content: UserResponse
+    content: Response
 }

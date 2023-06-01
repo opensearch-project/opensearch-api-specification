@@ -7,6 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}
 
 @input
 structure PatchUser_Input {
@@ -14,21 +23,24 @@ structure PatchUser_Input {
     @httpLabel
     username: String
 
+    @required
     @httpPayload
     userPatch: PatchOperationList
 }
 
 @output
 structure PatchUser_Output {
-    content: UserResponse
+    content: Response
 }
 
 @input
 structure PatchUsers_Input{
-    userPatches: PatchOperation
+    @required
+    @httpPayload
+    userPatches: PatchOperationList
 }
 
 @output
 structure PatchUsers_Output {
-    content: UserResponse
+    content: Response
 }

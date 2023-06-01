@@ -80,24 +80,7 @@ map AttributeMap {
     value: String
 }
 
-list BackendRolesList {
-    member: String
-}
-
-list OpendistroSecurityRolesList {
-    member: String
-}
-structure UserResponse{
+structure Response{
     status: String,
     message: String
-}
-
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
-}
-
-list PatchOperationList{
-    member: PatchOperation
 }

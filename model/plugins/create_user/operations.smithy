@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#create-user"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#create-user"
 )
 
 @vendorExtensions(
-    "x-operation-group": "create_user",
+    "x-operation-group": "security.create_user",
     "x-version-added": "1.0",
 )
 @idempotent
