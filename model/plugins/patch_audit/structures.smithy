@@ -7,8 +7,16 @@
 $version: "2"
 namespace OpenSearch
 
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: AttributeMap
+}
+
 @input
 structure PatchAudit_Input{
+    @required
+    @httpPayload
     content: PatchOperation
 }
 

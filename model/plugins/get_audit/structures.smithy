@@ -7,6 +7,11 @@
 $version: "2"
 namespace OpenSearch
 
+structure Audit{
+    _readonly: ReadOnlyList
+    config: Config
+}
+
 @input
 structure GetAudit_Input{
 }

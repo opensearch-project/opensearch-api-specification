@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#audit-logs"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#audit-logs"
 )
 
 @vendorExtensions(
-    "x-operation-group": "put_audit",
+    "x-operation-group": "security.put_audit",
     "x-version-added": "1.0",
 )
 @idempotent

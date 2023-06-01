@@ -60,19 +60,10 @@ structure Hits{
     fields: Document
 }
 
-structure Audit{
-    _readonly: ReadOnlyList
-    config: Config
-}
-
 structure Config{
     compliance: Compliance
     enabled: Boolean
     audit: AuditLogs
-}
-
-list ReadOnlyList{
-    member: String
 }
 
 structure AuditLogs{
@@ -106,43 +97,7 @@ map AttributeMap {
     value: String
 }
 
-list IgnoreUsersList{
-    member: String
-}
-
-list IgnoreRequests{
-    member: String
-}
-
-list DisabledRestCategories{
-    member: String
-}
-
-list DisabledTransportCategories{
-    member: String
-}
-
-list WriteWatchedIndices{
-    member: String
-}
-
-list WriteIgnoreUsers{
-    member: String
-}
-
-structure AuditConfig{
-    enabled: Boolean
-    audit: AuditLogs
-    compliance: Compliance
-}
-
-structure AuditResponse{
+structure Response{
     status: String
     message: String
-}
-
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
 }
