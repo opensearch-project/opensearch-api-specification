@@ -8,26 +8,34 @@ $version: "2"
 namespace OpenSearch
 
 
+list PatchOperationList{
+    member: PatchOperation
+}
+
 @input
 structure PatchRoleMapping_Input{
     @required
     @httpLabel
     role: String
 
+    @required
+    @httpPayload
     role_mapping_patch: PatchOperationList
 }
 
 @output
 structure PatchRoleMapping_Output {
-    content: RoleMappingResponse
+    content: Response
 }
 
 @input
 structure PatchRolesMapping_Input {
+    @required
+    @httpPayload
     role_patch: PatchOperationList
 }
 
 @output
 structure PatchRolesMapping_Output {
-    content: RoleMappingResponse
+    content: Response
 }

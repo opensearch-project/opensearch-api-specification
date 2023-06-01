@@ -17,5 +17,5 @@ structure DeleteRoleMapping_Input{
 
 @output
 structure DeleteRoleMapping_Output {
-    content: RoleMappingResponse
+    content: Response
 }

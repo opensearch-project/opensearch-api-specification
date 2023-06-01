@@ -60,7 +60,6 @@ structure Hits{
     fields: Document
 }
 
-
 structure RoleMapping{
     hosts: Hosts
     users: Users
@@ -71,7 +70,7 @@ structure RoleMapping{
     description: String
 }
 
-structure RoleMappingResponse{
+structure Response{
     status: String
     message: String
 }

@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#get-role-mapping"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-role-mapping"
 )
 
 @vendorExtensions(
-    "x-operation-group": "get_role_mapping",
+    "x-operation-group": "security.get_role_mapping",
     "x-version-added": "1.0",
 )
 @readonly
@@ -26,7 +26,7 @@ operation GetRoleMapping {
 }
 
 @vendorExtensions(
-    "x-operation-group": "get_roles_mapping",
+    "x-operation-group": "security.get_roles_mapping",
     "x-version-added": "1.0",
 )
 @readonly

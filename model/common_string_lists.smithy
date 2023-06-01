@@ -124,10 +124,3 @@ list BackendRoles{
 list AndBackendRoles{
     member: String
 }
-list RolesMappingList{
-    member: RoleMapping
-}
-
-list PatchOperationList{
-    member: PatchOperation
-}

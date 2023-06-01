@@ -7,6 +7,10 @@
 $version: "2"
 namespace OpenSearch
 
+list RolesMappingList{
+    member: RoleMapping
+}
+
 @input
 structure GetRoleMapping_Input{
     @required

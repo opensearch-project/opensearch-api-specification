@@ -14,10 +14,12 @@ structure CreateRoleMapping_Input{
     @httpLabel
     role: String
 
+    @required
+    @httpPayload
     content: RoleMapping
 }
 
 @output
 structure CreateRoleMapping_Output {
-    content: RoleMappingResponse
+    content: Response
 }
