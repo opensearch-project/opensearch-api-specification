@@ -24,7 +24,7 @@ structure CreatePit_QueryParams {
 
     @httpQuery("expand_wildcards")
     @default("open")
-    expand_wildcards:ExpandWildcards
+    expand_wildcards: ExpandWildcards
 }
 
 @input

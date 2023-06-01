@@ -59,12 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-structure PitsDetailsDeleteAll{
-    successful: Boolean,
-    pit_id: String
-}
-
-list PitsDeleteAll{
-    member: PitsDetailsDeleteAll
-}

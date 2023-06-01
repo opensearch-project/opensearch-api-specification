@@ -7,9 +7,17 @@
 $version: "2"
 namespace OpenSearch
 
-@mixin
-structure DeleteAllPits_QueryParams {
+structure PitsDetailsDeleteAll{
+    successful: Boolean,
+    pit_id: String
 }
+
+list PitsDeleteAll{
+    member: PitsDetailsDeleteAll
+}
+
+@mixin
+structure DeleteAllPits_QueryParams {}
 
 @input
 structure DeleteAllPits_Input with [DeleteAllPits_QueryParams] {
