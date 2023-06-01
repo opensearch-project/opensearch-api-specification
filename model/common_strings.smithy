@@ -378,5 +378,5 @@ string Timeout
 string WaitForTimeout
 
 @documentation("The IP address of the node where the segment resides.")
-// TODO: Provide pattern for IP Address 
+// TODO: Provide pattern for IP Address
 string IpAddress
