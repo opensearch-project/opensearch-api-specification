@@ -23,6 +23,7 @@ structure DeleteAllPits_QueryParams {}
 structure DeleteAllPits_Input with [DeleteAllPits_QueryParams] {
 }
 
+@output
 structure DeleteAllPits_Output {
     pits: PitsDeleteAll
 }

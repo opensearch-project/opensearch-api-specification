@@ -34,6 +34,7 @@ structure CreatePit_Input with [CreatePit_QueryParams] {
     index: PathIndices,
 }
 
+@output
 structure CreatePit_Output {
     pit_id: String,
     _shard: ShardStatistics,
