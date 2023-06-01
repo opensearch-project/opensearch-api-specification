@@ -16,15 +16,15 @@ structure PitSegments {
 
     ip: IpAddress,
 
-    segment: SegmentId,
+    segment: String ,
 
-    generation: GenerationNumber,
+    generation: Integer,
 
-    docs_count: DocsCount,
+    docs_count: Integer,
 
-    docs_deleted: DocsDeleted,
+    docs_deleted: Integer,
 
-    size: SizeSegment,
+    size: String,
 
     size_memory: Size,
 
@@ -32,9 +32,13 @@ structure PitSegments {
 
     searchable: Boolean,
 
-    version: VersionString,
+    version: String,
 
     compound: Boolean,
+}
+
+list PitIds{
+    member: String
 }
 
 @input

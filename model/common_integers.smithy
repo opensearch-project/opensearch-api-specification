@@ -70,12 +70,3 @@ integer WaitForMetadataVersion
 
 @documentation("The shard number.")
 integer ShardNumber
-
-@documentation("The generation number of the segment.")
-integer GenerationNumber
-
-@documentation("The number of documents in the segment.")
-integer DocsCount
-
-@documentation("The number of deleted documents in the segment.")
-integer DocsDeleted

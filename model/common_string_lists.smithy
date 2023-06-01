@@ -108,8 +108,3 @@ list StoredFields {
 list Types {
     member: String
 }
-
-@documentation("The PIT IDs of the PITs whose segments are to be listed.")
-list PitIds{
-    member: String
-}

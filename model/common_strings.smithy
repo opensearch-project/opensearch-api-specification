@@ -378,13 +378,5 @@ string Timeout
 string WaitForTimeout
 
 @documentation("The IP address of the node where the segment resides.")
+// TODO: Provide pattern for IP Address 
 string IpAddress
-
-@documentation("The segment ID.")
-string SegmentId
-
-@documentation("The size of the segment on disk.")
-string SizeSegment
-
-@documentation("The version")
-string VersionString
