@@ -209,12 +209,3 @@ boolean WithVersion
 
 @documentation("When true, applies mappings only to the write index of an alias or data stream.")
 boolean WriteIndexOnly
-
-@documentation("The committed status of the segment.")
-boolean Commit
-
-@documentation("The searchable status of the segment.")
-boolean Search
-
-@documentation("The compound status of the segment.")
-boolean Compound

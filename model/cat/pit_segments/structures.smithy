@@ -7,6 +7,35 @@
 $version: "2"
 namespace OpenSearch
 
+structure PitSegments {
+    index: Index,
+
+    shard: ShardNumber,
+
+    prirep: Pri,
+
+    ip: IpAddress,
+
+    segment: SegmentId,
+
+    generation: GenerationNumber,
+
+    docs_count: DocsCount,
+
+    docs_deleted: DocsDeleted,
+
+    size: SizeSegment,
+
+    size_memory: Size,
+
+    committed: Boolean,
+
+    searchable: Boolean,
+
+    version: VersionString,
+
+    compound: Boolean,
+}
 
 @input
 structure GetAllPitSegments_Input {
@@ -14,17 +43,17 @@ structure GetAllPitSegments_Input {
 
 @output
 structure GetAllPitSegments_Output {
-    @documentation("Information about the active point-in-time segments.")
     content: PitSegments
 }
 
 @input
 structure GetPitSegments_Input{
+    @required
+    @httpPayload
     pit_id: PitIds
 }
 
 @output
 structure GetPitSegments_Output {
-    @documentation("Information about segments for one or several PITs.")
     content: PitSegments
 }

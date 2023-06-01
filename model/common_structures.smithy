@@ -59,34 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-
-structure PitSegments {
-    index: Index,
-
-    shard: ShardNumber,
-
-    prirep: Pri,
-
-    ip: IpAddress,
-
-    segment: SegmentId,
-
-    generation: GenerationNumber,
-
-    docs_count: DocsCount,
-
-    docs_deleted: DocsDeleted,
-
-    size: SizeSegment,
-
-    size_memory: Size,
-
-    committed: Commit,
-
-    searchable: Search,
-
-    version: VersionString,
-
-    compound: Compound,
-}
