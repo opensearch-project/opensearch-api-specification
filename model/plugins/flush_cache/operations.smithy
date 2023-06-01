@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "flush_cache",
+    "x-operation-group": "security.flush_cache",
     "x-version-added": "1.0",
 )
 @suppress(["HttpUriConflict"])
