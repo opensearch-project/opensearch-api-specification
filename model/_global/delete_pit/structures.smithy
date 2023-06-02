@@ -16,10 +16,15 @@ list PitInfoList {
     member: PitInfo
 }
 
-@input
-structure DeletePit_Input {
+structure DeletePit_BodyParams {
     @required
     pit_id: PitIds
+}
+
+@input
+structure DeletePit_Input {
+    @httpPayload
+    content: DeletePit_BodyParams
 }
 
 @output
