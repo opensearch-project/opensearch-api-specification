@@ -30,7 +30,7 @@ structure PatchUser_Input {
 
 @output
 structure PatchUser_Output {
-    content: Response
+    content: GeneralResponse
 }
 
 @input
@@ -42,5 +42,5 @@ structure PatchUsers_Input{
 
 @output
 structure PatchUsers_Output {
-    content: Response
+    content: GeneralResponse
 }
