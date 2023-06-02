@@ -21,5 +21,5 @@ structure CreateUser_Input {
 
 @output
 structure CreateUser_Output {
-    content: GeneralResponse
+    content: GenericResponse
 }

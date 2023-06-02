@@ -17,5 +17,5 @@ structure DeleteUser_Input {
 
 @output
 structure DeleteUser_Output {
-    content: GeneralResponse
+    content: GenericResponse
 }

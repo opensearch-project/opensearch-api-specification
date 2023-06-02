@@ -80,7 +80,7 @@ map AttributeMap {
     value: String
 }
 
-structure GeneralResponse{
+structure GenericResponse{
     status: String,
     message: String
 }
