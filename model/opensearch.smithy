@@ -110,6 +110,7 @@ service OpenSearch {
         FieldCaps_Get_WithIndex,
         FieldCaps_Post,
         FieldCaps_Post_WithIndex,
+        Flush_Cache,
         Get,
         GetAllPits,
         GetScript,
