@@ -16,7 +16,7 @@ structure DistinguishedName{
 }
 
 list DistinguishedNamesList{
-    member:DistinguishedName
+    member: DistinguishedName
 }
 
 @input
