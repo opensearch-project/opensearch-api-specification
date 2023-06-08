@@ -7,10 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-structure CreateTenantParams{
-    description: String
-}
-
 @input
 structure CreateTenant_Input {
     @required
@@ -24,4 +20,8 @@ structure CreateTenant_Input {
 structure CreateTenant_Output {
     status: MessageStatus,
     message: Message
+}
+
+structure CreateTenantParams{
+    description: String
 }
