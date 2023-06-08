@@ -7,23 +7,12 @@
 $version: "2"
 namespace OpenSearch
 
-structure Tenant{
-    reserved: Boolean,
-    hidden: Boolean,
-    description: String,
-    static: Boolean
-}
-
-list TenantList{
-    member: Tenant
-}
-
 @input
 structure GetTenants_Input {}
 
 @output
 structure GetTenants_Output {
-    content: TenantList
+    tenantlist: TenantList
 }
 
 @input
@@ -36,4 +25,15 @@ structure GetTenant_Input{
 @output
 structure GetTenant_Output {
     tenant: Tenant
+}
+
+structure Tenant{
+    reserved: Boolean,
+    hidden: Boolean,
+    description: String,
+    static: Boolean
+}
+
+list TenantList{
+    member: Tenant
 }

@@ -7,6 +7,37 @@
 $version: "2"
 namespace OpenSearch
 
+@input
+structure PatchTenant_Input {
+    @required
+    @httpLabel
+    tenant: String
+    @httpPayload
+    content: PatchTenantParams
+}
+
+@output
+structure PatchTenant_Output {
+    status: MessageStatus,
+    message: Message
+}
+
+@input
+structure PatchTenants_Input{
+    @httpPayload
+    content: PatchTenantsParams
+}
+
+@output
+structure PatchTenants_Output {
+    status: MessageStatus,
+    message: Message
+}
+
+structure PatchTenantsParams{
+    tenantsPatch: PatchOperationList
+}
+
 map AttributeMap {
     key: String,
     value: String
@@ -24,35 +55,4 @@ structure PatchOperation {
 
 structure PatchTenantParams{
     tenantPatch: PatchOperation
-}
-
-@input
-structure PatchTenant_Input {
-    @required
-    @httpLabel
-    tenant: String
-
-    @httpPayload
-    content: PatchTenantParams
-}
-
-@output
-structure PatchTenant_Output {
-    status: MessageStatus,
-    message: Message
-}
-
-structure PatchTenantsParams{
-    tenantsPatch: PatchOperationList
-}
-
-@input
-structure PatchTenants_Input{
-    content: PatchTenantsParams
-}
-
-@output
-structure PatchTenants_Output {
-    status: MessageStatus,
-    message: Message
 }
