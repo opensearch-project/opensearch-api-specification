@@ -7,15 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-structure PitsDetailsDeleteAll{
-    successful: Boolean,
-    pit_id: String
-}
-
-list PitsDeleteAll{
-    member: PitsDetailsDeleteAll
-}
-
 @mixin
 structure DeleteAllPits_QueryParams {}
 
@@ -26,4 +17,13 @@ structure DeleteAllPits_Input with [DeleteAllPits_QueryParams] {
 @output
 structure DeleteAllPits_Output {
     pits: PitsDeleteAll
+}
+
+structure PitsDetailsDeleteAll{
+    successful: Boolean,
+    pit_id: String
+}
+
+list PitsDeleteAll{
+    member: PitsDetailsDeleteAll
 }
