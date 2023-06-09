@@ -8,13 +8,13 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure GetTenant_Input{
-    @required
-    @httpLabel
-    tenant: String
-}
+structure GetTenants_Input {}
 
 @output
-structure GetTenant_Output {
-    tenant: Tenant
+structure GetTenants_Output {
+    tenantlist: TenantList
+}
+
+list TenantList{
+    member: Tenant
 }

@@ -13,26 +13,13 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.get_tenants",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_security/api/tenants/")
-@documentation("List of all tenants.")
-operation GetTenants {
-    input: GetTenants_Input,
-    output: GetTenants_Output
-}
-
-@vendorExtensions(
     "x-operation-group": "security.get_tenant",
     "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/tenants/{tenant}")
-@documentation("Returns information about given tenant.")
+@documentation("Retrieves one tenant.")
 operation GetTenant {
     input: GetTenant_Input,
     output: GetTenant_Output

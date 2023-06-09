@@ -8,20 +8,21 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure PatchTenant_Input {
-    @required
-    @httpLabel
-    tenant: String
+structure PatchTenants_Input{
     @httpPayload
-    content: PatchTenantParams
+    content: PatchTenantsParams
 }
 
 @output
-structure PatchTenant_Output {
+structure PatchTenants_Output {
     status: MessageStatus,
     message: Message
 }
 
-structure PatchTenantParams{
-    tenantPatch: PatchOperation
+structure PatchTenantsParams{
+    tenantsPatch: PatchOperationList
+}
+
+list PatchOperationList{
+    member: PatchOperation
 }
