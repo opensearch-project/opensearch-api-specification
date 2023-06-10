@@ -21,7 +21,3 @@ structure PatchTenant_Output {
     status: MessageStatus,
     message: Message
 }
-
-structure PatchTenantParams{
-    tenantPatch: PatchOperation
-}

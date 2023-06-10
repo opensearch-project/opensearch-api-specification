@@ -24,3 +24,19 @@ structure Tenant{
     description: String,
     static: Boolean
 }
+
+list TenantList{
+    member: Tenant
+}
+
+structure PatchTenantParams{
+    tenantPatch: PatchOperation
+}
+
+structure PatchTenantsParams{
+    tenantsPatch: PatchOperationList
+}
+
+list PatchOperationList{
+    member: PatchOperation
+}

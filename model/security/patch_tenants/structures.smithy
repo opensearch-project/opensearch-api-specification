@@ -18,11 +18,3 @@ structure PatchTenants_Output {
     status: MessageStatus,
     message: Message
 }
-
-structure PatchTenantsParams{
-    tenantsPatch: PatchOperationList
-}
-
-list PatchOperationList{
-    member: PatchOperation
-}

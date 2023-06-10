@@ -14,7 +14,3 @@ structure GetTenants_Input {}
 structure GetTenants_Output {
     tenantlist: TenantList
 }
-
-list TenantList{
-    member: Tenant
-}
