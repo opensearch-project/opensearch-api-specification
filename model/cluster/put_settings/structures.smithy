@@ -31,6 +31,7 @@ structure ClusterPutSettings_BodyParams {
 
 @input
 structure ClusterPutSettings_Input with [ClusterPutSettings_QueryParams] {
+    @required
     @httpPayload
     content: ClusterPutSettings_BodyParams,
 }

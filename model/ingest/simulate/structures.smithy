@@ -24,6 +24,7 @@ structure IngestSimulate_Get_Input with [IngestSimulate_QueryParams] {
 
 @input
 structure IngestSimulate_Post_Input with [IngestSimulate_QueryParams] {
+    @required
     @httpPayload
     content: IngestSimulate_BodyParams,
 }
@@ -40,6 +41,7 @@ structure IngestSimulate_Post_WithId_Input with [IngestSimulate_QueryParams] {
     @required
     @httpLabel
     id: PathPipelineId,
+    @required
     @httpPayload
     content: IngestSimulate_BodyParams,
 }
