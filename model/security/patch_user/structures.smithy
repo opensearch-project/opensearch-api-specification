@@ -7,19 +7,18 @@
 $version: "2"
 namespace OpenSearch
 
-
 @input
-structure CreateUser_Input {
+structure PatchUser_Input {
     @required
     @httpLabel
     username: String
-
     @required
     @httpPayload
-    user: User
+    content: PatchUserParams
 }
 
 @output
-structure CreateUser_Output {
-    content: GenericResponse
+structure PatchUser_Output {
+    status: MessageStatus,
+    message: Message
 }

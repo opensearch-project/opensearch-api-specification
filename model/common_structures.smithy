@@ -59,28 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-list UserList {
-    member: User
-}
-
-structure User {
-    hash: String,
-    reserved: Boolean,
-    hidden: Boolean,
-    backend_roles: BackendRolesList,
-    attributes: AttributeMap,
-    description: String,
-    opendistro_security_roles: OpendistroSecurityRolesList,
-    static: Boolean
-}
-
-map AttributeMap {
-    key: String,
-    value: String
-}
-
-structure GenericResponse{
-    status: String,
-    message: String
-}

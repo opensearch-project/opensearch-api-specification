@@ -17,5 +17,6 @@ structure DeleteUser_Input {
 
 @output
 structure DeleteUser_Output {
-    content: GenericResponse
+    status: MessageStatus,
+    message: Message
 }

@@ -9,14 +9,6 @@ namespace OpenSearch
 
 
 @input
-structure GetAllUsers_Input {}
-
-@output
-structure GetAllUsers_Output {
-    content: UserList
-}
-
-@input
 structure GetUser_Input{
     @required
     @httpLabel

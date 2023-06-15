@@ -13,19 +13,6 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.get_users",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_security/api/internalusers")
-@documentation("Lists of all internal users.")
-operation GetAllUsers {
-    input: GetAllUsers_Input,
-    output: GetAllUsers_Output
-}
-
-@vendorExtensions(
     "x-operation-group": "security.get_user",
     "x-version-added": "1.0",
 )

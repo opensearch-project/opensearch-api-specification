@@ -24,16 +24,3 @@ operation PatchUser {
     input: PatchUser_Input,
     output: PatchUser_Output
 }
-
-@vendorExtensions(
-    "x-operation-group": "security.patch_users",
-    "x-version-added": "1.0",
-)
-@idempotent
-@suppress(["HttpUriConflict"])
-@http(method: "PATCH", uri: "/_plugins/_security/api/internalusers")
-@documentation("Creates, updates, or deletes multiple internal users in a single call.")
-operation PatchUsers {
-    input: PatchUsers_Input,
-    output: PatchUsers_Output
-}

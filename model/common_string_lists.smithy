@@ -108,11 +108,3 @@ list StoredFields {
 list Types {
     member: String
 }
-
-list BackendRolesList {
-    member: String
-}
-
-list OpendistroSecurityRolesList {
-    member: String
-}
