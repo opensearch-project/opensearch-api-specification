@@ -63,6 +63,7 @@ structure SearchTemplate_Get_Input with [SearchTemplate_QueryParams] {
 
 @input
 structure SearchTemplate_Post_Input with [SearchTemplate_QueryParams] {
+    @required
     @httpPayload
     content: SearchTemplate_BodyParams,
 }
@@ -79,6 +80,7 @@ structure SearchTemplate_Post_WithIndex_Input with [SearchTemplate_QueryParams] 
     @required
     @httpLabel
     index: PathIndices,
+    @required
     @httpPayload
     content: SearchTemplate_BodyParams,
 }

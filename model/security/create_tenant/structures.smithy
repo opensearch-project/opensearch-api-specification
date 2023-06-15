@@ -7,19 +7,21 @@
 $version: "2"
 namespace OpenSearch
 
-@mixin
-structure DeletePit_QueryParams {
-}
-
-// TODO: Fill in Body Parameters
-structure DeletePit_BodyParams {}
-
 @input
-structure DeletePit_Input with [DeletePit_QueryParams] {
+structure CreateTenant_Input {
     @required
+    @httpLabel
+    tenant: String
     @httpPayload
-    content: DeletePit_BodyParams,
+    content: CreateTenantParams
 }
 
-// TODO: Fill in Output Structure
-structure DeletePit_Output {}
+@output
+structure CreateTenant_Output {
+    status: MessageStatus,
+    message: Message
+}
+
+structure CreateTenantParams{
+    description: String
+}

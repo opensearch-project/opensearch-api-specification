@@ -32,6 +32,7 @@ structure SnapshotClone_Input with [SnapshotClone_QueryParams] {
     @required
     @httpLabel
     target_snapshot: PathTargetSnapshot,
+    @required
     @httpPayload
     content: SnapshotClone_BodyParams,
 }

@@ -64,6 +64,7 @@ structure Update_Input with [Update_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Update_BodyParams,
 }

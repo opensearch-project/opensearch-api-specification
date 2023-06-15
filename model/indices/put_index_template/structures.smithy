@@ -33,6 +33,7 @@ structure IndicesPutIndexTemplate_Put_Input with [IndicesPutIndexTemplate_QueryP
     @required
     @httpLabel
     name: PathTemplateName,
+    @required
     @httpPayload
     content: IndicesPutIndexTemplate_BodyParams,
 }
@@ -42,6 +43,7 @@ structure IndicesPutIndexTemplate_Post_Input with [IndicesPutIndexTemplate_Query
     @required
     @httpLabel
     name: PathTemplateName,
+    @required
     @httpPayload
     content: IndicesPutIndexTemplate_BodyParams,
 }
