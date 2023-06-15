@@ -28,6 +28,7 @@ structure IndicesSplit_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The configuration for the target index (`settings` and `aliases`)")
 structure IndicesSplit_BodyParams {}
 
 @input

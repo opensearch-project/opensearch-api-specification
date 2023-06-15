@@ -15,6 +15,7 @@ structure IndicesAnalyze_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Define analyzer/tokenizer parameters and the text on which the analysis should be performed")
 structure IndicesAnalyze_BodyParams {}
 
 @input

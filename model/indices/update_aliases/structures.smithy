@@ -19,6 +19,7 @@ structure IndicesUpdateAliases_QueryParams {
     cluster_manager_timeout: ClusterManagerTimeout,
 }
 
+@documentation("The definition of `actions` to perform")
 structure IndicesUpdateAliases_BodyParams {
     actions: ActionObjectStructure
 }

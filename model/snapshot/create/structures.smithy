@@ -21,6 +21,7 @@ structure SnapshotCreate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The snapshot definition")
 structure SnapshotCreate_BodyParams {}
 
 @input

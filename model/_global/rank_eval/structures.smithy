@@ -24,6 +24,7 @@ structure RankEval_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The ranking evaluation search definition, including search requests, document ratings and ranking metric definition.")
 structure RankEval_BodyParams {}
 
 @input

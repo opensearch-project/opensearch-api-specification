@@ -20,6 +20,7 @@ structure PutScript_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The document")
 structure PutScript_BodyParams {}
 
 @input
