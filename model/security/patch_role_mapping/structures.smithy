@@ -7,35 +7,18 @@
 $version: "2"
 namespace OpenSearch
 
-
-list PatchOperationList{
-    member: PatchOperation
-}
-
 @input
 structure PatchRoleMapping_Input{
     @required
     @httpLabel
     role: String
-
     @required
     @httpPayload
-    role_mapping_patch: PatchOperationList
+    content: PatchRoleMappingParams
 }
 
 @output
 structure PatchRoleMapping_Output {
-    content: Response
-}
-
-@input
-structure PatchRolesMapping_Input {
-    @required
-    @httpPayload
-    role_patch: PatchOperationList
-}
-
-@output
-structure PatchRolesMapping_Output {
-    content: Response
+    status: MessageStatus,
+    message: Message
 }

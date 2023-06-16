@@ -59,29 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-structure RoleMapping{
-    hosts: Hosts
-    users: Users
-    reserved: Boolean
-    hidden: Boolean
-    backend_roles: BackendRoles
-    and_backend_roles: AndBackendRoles
-    description: String
-}
-
-structure Response{
-    status: String
-    message: String
-}
-
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
-}
-
-map AttributeMap {
-    key: String,
-    value: String
-}

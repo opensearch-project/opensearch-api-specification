@@ -108,19 +108,3 @@ list StoredFields {
 list Types {
     member: String
 }
-
-list Hosts{
-    member: String
-}
-
-list Users{
-    member: String
-}
-
-list BackendRoles{
-    member: String
-}
-
-list AndBackendRoles{
-    member: String
-}

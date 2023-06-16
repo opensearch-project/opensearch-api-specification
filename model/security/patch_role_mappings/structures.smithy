@@ -7,19 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
-
 @input
-structure CreateRoleMapping_Input{
-    @required
-    @httpLabel
-    role: String
-
+structure PatchRoleMappings_Input {
     @required
     @httpPayload
-    content: RoleMapping
+    content: PatchRoleMappingsParams
 }
 
 @output
-structure CreateRoleMapping_Output {
-    content: Response
+structure PatchRoleMappings_Output {
+    status: MessageStatus,
+    message: Message
 }

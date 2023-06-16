@@ -13,27 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.patch_role_mapping",
-    "x-version-added": "1.0",
-)
-@idempotent
-@suppress(["HttpUriConflict"])
-@http(method: "PATCH", uri: "/_plugins/_security/api/rolesmapping/{role}")
-@documentation("Updates individual attributes of a role mapping.")
-operation PatchRoleMapping {
-    input: PatchRoleMapping_Input,
-    output: PatchRoleMapping_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "security.patch_role_mappings",
+    "x-operation-group": "security.patch_roles_mappings",
     "x-version-added": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PATCH", uri: "/_plugins/_security/api/rolesmapping")
 @documentation("Creates or updates multiple role mappings in a single call.")
-operation PatchRolesMapping {
-    input: PatchRolesMapping_Input,
-    output: PatchRolesMapping_Output
+operation PatchRoleMappings {
+    input: PatchRoleMappings_Input,
+    output: PatchRoleMappings_Output
 }

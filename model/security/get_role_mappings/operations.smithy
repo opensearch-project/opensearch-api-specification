@@ -13,19 +13,6 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.get_role_mapping",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
-@http(method: "GET", uri: "/_plugins/_security/api/rolesmapping/{role}")
-@documentation("Retrieves one role mapping.")
-operation GetRoleMapping {
-    input: GetRoleMapping_Input,
-    output: GetRoleMapping_Output
-}
-
-@vendorExtensions(
     "x-operation-group": "security.get_roles_mapping",
     "x-version-added": "1.0",
 )
@@ -33,7 +20,7 @@ operation GetRoleMapping {
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/api/rolesmapping")
 @documentation("Retrieves all role mappings.")
-operation GetAllRolesMapping {
-    input: GetAllRolesMapping_Input,
-    output: GetAllRolesMapping_Output
+operation GetRoleMappings {
+    input: GetRoleMappings_Input,
+    output: GetRoleMappings_Output
 }
