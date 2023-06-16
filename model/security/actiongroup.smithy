@@ -7,6 +7,27 @@
 $version: "2"
 namespace OpenSearch
 
+structure CreateActionGroupParams{
+    allowed_actions: AllowedActions
+}
+
+list AllowedActions {
+    member: String
+}
+
+list ActionGroupsList{
+    member: Action_Group
+}
+
+structure Action_Group{
+    reserved: Boolean,
+    hidden: Boolean,
+    allowed_actions: AllowedActions,
+    type: String,
+    description: String,
+    static: Boolean
+}
+
 map AttributeMap {
     key: String,
     value: String
@@ -26,33 +47,6 @@ structure PatchActionGroupParams{
     actiongroupPatch: PatchOperation
 }
 
-@input
-structure PatchActionGroup_Input {
-    @required
-    @httpLabel
-    action_group: String
-
-    @httpPayload
-    content: PatchActionGroupParams
-}
-
-@output
-structure PatchActionGroup_Output {
-    status: MessageStatus,
-    message: Message
-}
-
 structure PatchActionGroupsParams{
     actiongroupPatch: PatchOperationList
-}
-
-@input
-structure PatchActionGroups_Input{
-    content: PatchActionGroupsParams
-}
-
-@output
-structure PatchActionGroups_Output {
-    status: MessageStatus,
-    message: Message
 }

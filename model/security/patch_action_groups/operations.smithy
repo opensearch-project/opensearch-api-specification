@@ -9,21 +9,8 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#patch-action-group"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#patch-action-groups"
 )
-
-@vendorExtensions(
-    "x-operation-group": "security.patch_action_group",
-    "x-version-added": "1.0",
-)
-@idempotent
-@suppress(["HttpUriConflict"])
-@http(method: "PATCH", uri: "/_plugins/_security/api/actiongroups/{action_group}")
-@documentation("Updates individual attributes of an action group.")
-operation PatchActionGroup {
-    input: PatchActionGroup_Input,
-    output: PatchActionGroup_Output
-}
 
 @vendorExtensions(
     "x-operation-group": "security.patch_action_groups",

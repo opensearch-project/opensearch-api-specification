@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-action-group"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-action-groups"
 )
 
 @vendorExtensions(
@@ -23,17 +23,4 @@ use opensearch.openapi#vendorExtensions
 operation GetActionGroups {
     input: GetActionGroups_Input,
     output: GetActionGroups_Output
-}
-
-@vendorExtensions(
-    "x-operation-group": "security.get_action_group",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
-@http(method: "GET", uri: "/_plugins/_security/api/actiongroups/{action_group}")
-@documentation("Providing information about given action group.")
-operation GetActionGroup {
-    input: GetActionGroup_Input,
-    output: GetActionGroup_Output
 }

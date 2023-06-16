@@ -7,25 +7,17 @@
 $version: "2"
 namespace OpenSearch
 
-list AllowedActions {
-    member: String
-}
-
-structure CreateActionGroupParams{
-    allowed_actions: AllowedActions
-}
-
 @input
-structure CreateActionGroup_Input {
+structure PatchActionGroup_Input {
     @required
     @httpLabel
     action_group: String
     @httpPayload
-    content: CreateActionGroupParams
+    content: PatchActionGroupParams
 }
 
 @output
-structure CreateActionGroup_Output {
+structure PatchActionGroup_Output {
     status: MessageStatus,
     message: Message
 }
