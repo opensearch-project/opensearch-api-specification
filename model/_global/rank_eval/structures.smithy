@@ -32,6 +32,7 @@ structure RankEval_Get_Input with [RankEval_QueryParams] {
 
 @input
 structure RankEval_Post_Input with [RankEval_QueryParams] {
+    @required
     @httpPayload
     content: RankEval_BodyParams,
 }
@@ -48,6 +49,7 @@ structure RankEval_Post_WithIndex_Input with [RankEval_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
+    @required
     @httpPayload
     content: RankEval_BodyParams,
 }
