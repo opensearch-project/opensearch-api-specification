@@ -7,26 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-list DistinguishedNamesDetails{
-    member: String
-}
-
-structure DistinguishedName{
-    nodes_dn: DistinguishedNamesDetails
-}
-
-list DistinguishedNamesList{
-    member: DistinguishedName
-}
-
-@input
-structure GetDistinguishedNames_Input {}
-
-@output
-structure GetDistinguishedNames_Output {
-    content: DistinguishedNamesList
-}
-
 @input
 structure GetDistinguishedName_Input{
     @required
@@ -36,5 +16,5 @@ structure GetDistinguishedName_Input{
 
 @output
 structure GetDistinguishedName_Output {
-    content: DistinguishedName
+    distinguishedname: DistinguishedName
 }

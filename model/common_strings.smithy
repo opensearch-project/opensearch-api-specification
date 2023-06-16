@@ -9,14 +9,14 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of alias names.")
 string PathAliasNames
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
     "x-enum-options": ["_all", "blocks", "metadata", "nodes", "routing_table", "routing_nodes", "master_node", "cluster_manager_node", "version"],
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
@@ -24,20 +24,20 @@ string PathAliasNames
 string PathClusterStateMetric
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("The Comma-separated names of the component templates.")
 string PathComponentTemplateNames
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 string PathFields
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
     "x-enum-options": ["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"],
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
@@ -45,21 +45,21 @@ string PathFields
 string PathIndexMetric
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of names or wildcard expressions.")
 string PathIndexNames
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of indices; use `_all` or empty string to perform the operation on all indices.")
 string PathIndices
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
     "x-enum-options": ["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"],
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
@@ -67,21 +67,21 @@ string PathIndices
 string PathIndicesStatsMetric
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of aliases to delete (supports wildcards); use `_all` to delete all aliases for the specified indices.")
 string PathName
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.")
 string PathNodeId
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
     "x-enum-options": ["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"],
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
@@ -89,7 +89,7 @@ string PathNodeId
 string PathNodesInfoMetric
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
     "x-enum-options": ["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure"],
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
@@ -97,7 +97,7 @@ string PathNodesInfoMetric
 string PathNodesStatsMetric
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
     "x-enum-options": ["_all", "rest_actions"],
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
@@ -105,14 +105,14 @@ string PathNodesStatsMetric
 string PathNodesUsageMetric
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of pipeline ids. Wildcards supported.")
 string PathPipelineIds
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of repository names.")
@@ -120,42 +120,42 @@ string PathRepositories
 
 @deprecated
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of scroll IDs to clear.")
 string PathScrollIds
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of settings.")
 string PathSettingNames
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of snapshot names.")
 string PathSnapshots
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of data streams; use `_all` or empty string to perform the operation on all data streams.")
 string PathStreamNames
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated names of the index templates.")
 string PathTemplateNames
 
 @vendorExtensions(
-    "x-data-type": "list",
+    "x-data-type": "array",
 )
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of regular-expressions to filter the thread pools in the output.")
@@ -280,12 +280,6 @@ string KeepAlive
 
 @documentation("The script language.")
 string Lang
-
-@documentation("The message indicating the information of action of the model.")
-string Message
-
-@documentation("Informing of request's status.")
-string MessageStatus
 
 @documentation("Comma-separated list of the persistent ids of the nodes to exclude from the voting configuration. If specified, you may not also specify ?node_names.")
 string NodeIds

@@ -7,21 +7,17 @@
 $version: "2"
 namespace OpenSearch
 
-structure CreateDistinguishedNameParams{
-    nodes_dn: DistinguishedNamesDetails
-}
-
 @input
-structure CreateDistinguishedName_Input {
+structure PatchTenant_Input {
     @required
     @httpLabel
-    cluster_name: String
+    tenant: String
     @httpPayload
-    content: CreateDistinguishedNameParams
+    content: PatchTenantParams
 }
 
 @output
-structure CreateDistinguishedName_Output {
+structure PatchTenant_Output {
     status: MessageStatus,
     message: Message
 }

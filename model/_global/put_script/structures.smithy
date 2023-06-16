@@ -27,6 +27,7 @@ structure PutScript_Put_Input with [PutScript_QueryParams] {
     @required
     @httpLabel
     id: PathScriptId,
+    @required
     @httpPayload
     content: PutScript_BodyParams,
 }
@@ -36,6 +37,7 @@ structure PutScript_Post_Input with [PutScript_QueryParams] {
     @required
     @httpLabel
     id: PathScriptId,
+    @required
     @httpPayload
     content: PutScript_BodyParams,
 }
@@ -49,6 +51,7 @@ structure PutScript_Put_WithContext_Input with [PutScript_QueryParams] {
     @required
     @httpLabel
     context: PathContext,
+    @required
     @httpPayload
     content: PutScript_BodyParams,
 }
@@ -62,6 +65,7 @@ structure PutScript_Post_WithContext_Input with [PutScript_QueryParams] {
     @required
     @httpLabel
     context: PathContext,
+    @required
     @httpPayload
     content: PutScript_BodyParams,
 }

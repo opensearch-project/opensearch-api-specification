@@ -46,6 +46,7 @@ structure Create_Put_Input with [Create_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Create_BodyParams,
 }
@@ -59,6 +60,7 @@ structure Create_Post_Input with [Create_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Create_BodyParams,
 }

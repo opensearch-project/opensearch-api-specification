@@ -30,6 +30,7 @@ structure SnapshotCreateRepository_Put_Input with [SnapshotCreateRepository_Quer
     @required
     @httpLabel
     repository: PathRepository,
+    @required
     @httpPayload
     content: SnapshotCreateRepository_BodyParams,
 }
@@ -39,6 +40,7 @@ structure SnapshotCreateRepository_Post_Input with [SnapshotCreateRepository_Que
     @required
     @httpLabel
     repository: PathRepository,
+    @required
     @httpPayload
     content: SnapshotCreateRepository_BodyParams,
 }

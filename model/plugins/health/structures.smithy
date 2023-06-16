@@ -7,17 +7,16 @@
 $version: "2"
 namespace OpenSearch
 
-
-@input
-structure DeleteDistinguishedName_Input {
-    @required
-    @httpLabel
-    cluster_name: String
+structure HealthResponse{
+    message: String
+    mode: String
+    status: String
 }
 
-@output
-structure DeleteDistinguishedName_Output {
-    status: MessageStatus,
-    message: Message
+@input
+structure HealthCheck_Input {
+}
 
+structure HealthCheck_Output {
+    content: HealthResponse
 }
