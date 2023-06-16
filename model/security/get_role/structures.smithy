@@ -7,17 +7,14 @@
 $version: "2"
 namespace OpenSearch
 
-
 @input
-structure CreateRole_Input{
+structure GetRole_Input{
     @required
     @httpLabel
     role: String
-
-    content: Role
 }
 
 @output
-structure CreateRole_Output {
-    content: Response
+structure GetRole_Output {
+    role: Role
 }

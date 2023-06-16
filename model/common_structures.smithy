@@ -59,34 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-structure IndexPermission {
-    index_patterns: IndexPatterns
-    fls: Fls
-    masked_fields: MaskedFields
-    allowed_actions: AllowedActions
-}
-
-structure Role{
-    reserved: Boolean
-    hidden: Boolean
-    description: String
-    cluster_permission: ClusterPermission
-    index_permission: IndexPermission
-    tenant_permissions: TenantPermission
-    static: Boolean
-}
-
-list RolesList{
-    member: Role
-}
-
-structure Response{
-    status: String
-    message: String
-}
-
-map AttributeMap {
-    key: String,
-    value: String
-}

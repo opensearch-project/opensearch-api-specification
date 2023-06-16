@@ -24,16 +24,3 @@ operation PatchRole {
     input: PatchRole_Input,
     output: PatchRole_Output
 }
-
-@vendorExtensions(
-    "x-operation-group": "security.patch_roles",
-    "x-version-added": "1.0",
-)
-@idempotent
-@suppress(["HttpUriConflict"])
-@http(method: "PATCH", uri: "/_plugins/_security/api/roles")
-@documentation("Creates, updates, or deletes multiple roles in a single call.")
-operation PatchRoles {
-    input: PatchRoles_Input,
-    output: PatchRoles_Output
-}

@@ -9,13 +9,17 @@ namespace OpenSearch
 
 
 @input
-structure DeleteRole_Input{
+structure CreateRole_Input{
     @required
     @httpLabel
     role: String
+    @required
+    @httpPayload
+    content: Role
 }
 
 @output
-structure DeleteRole_Output {
-    content: Response
+structure CreateRole_Output {
+    status: MessageStatus,
+    message: Message
 }

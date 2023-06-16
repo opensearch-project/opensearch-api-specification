@@ -24,16 +24,3 @@ operation GetRole {
     input: GetRole_Input,
     output: GetRole_Output
 }
-
-@vendorExtensions(
-    "x-operation-group": "security.get_roles",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_security/api/roles/")
-@documentation("Retrieves all roles.")
-operation GetAllRoles {
-    input: GetAllRoles_Input,
-    output: GetAllRoles_Output
-}

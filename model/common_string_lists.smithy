@@ -108,27 +108,3 @@ list StoredFields {
 list Types {
     member: String
 }
-
-list ClusterPermission {
-    member: String
-}
-
-list TenantPermission {
-    member: String
-}
-
-list IndexPatterns{
-    member: String
-}
-
-list Fls{
-    member: String
-}
-
-list MaskedFields{
-    member: String
-}
-
-list AllowedActions{
-    member: String
-}

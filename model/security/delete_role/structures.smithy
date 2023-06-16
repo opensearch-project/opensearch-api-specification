@@ -7,27 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
-
 @input
-structure GetRole_Input{
+structure DeleteRole_Input{
     @required
     @httpLabel
     role: String
 }
 
-list RolesList{
-    member: Role
-}
-
 @output
-structure GetRole_Output {
-    content: Role
-}
-
-@input
-structure GetAllRoles_Input {}
-
-@output
-structure GetAllRoles_Output {
-    content: RolesList
+structure DeleteRole_Output {
+    status: MessageStatus,
+    message: Message
 }
