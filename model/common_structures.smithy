@@ -59,4 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-

@@ -14,4 +14,3 @@ structure ReloadHttpCertificates_Input {}
 structure ReloadHttpCertificates_Output {
     message: Message
 }
-
