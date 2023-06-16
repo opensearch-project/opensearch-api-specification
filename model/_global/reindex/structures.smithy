@@ -46,6 +46,7 @@ structure Reindex_BodyParams {}
 
 @input
 structure Reindex_Input with [Reindex_QueryParams] {
+    @required
     @httpPayload
     content: Reindex_BodyParams,
 }

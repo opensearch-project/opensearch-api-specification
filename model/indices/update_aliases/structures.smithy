@@ -61,6 +61,7 @@ structure UserDefinedStructure{
 
 @input
 structure IndicesUpdateAliases_Input with [IndicesUpdateAliases_QueryParams] {
+    @required
     @httpPayload
     content: IndicesUpdateAliases_BodyParams,
 }
