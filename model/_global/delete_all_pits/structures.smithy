@@ -19,11 +19,11 @@ structure DeleteAllPits_Output {
     pits: PitsDeleteAll
 }
 
+list PitsDeleteAll{
+    member: PitsDetailsDeleteAll
+}
+
 structure PitsDetailsDeleteAll{
     successful: Boolean,
     pit_id: String
-}
-
-list PitsDeleteAll{
-    member: PitsDetailsDeleteAll
 }
