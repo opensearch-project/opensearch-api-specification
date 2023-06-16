@@ -162,11 +162,35 @@ structure Search_Post_WithIndex_Input with [Search_QueryParams] {
 }
 
 structure Search_Output {
-  ...
+  _scroll_id: String,
+  took: Long,
+  timed_out: Boolean,
+  _shards: ShardStatistics,
+  hits: HitsMetadata
 }
 ```
 
 Note that all input structures utilize the `Search_QueryParams` mixin, and The `Search_BodyParams` structure is used as `@httpPayload` for the both POST operations as seen in `Search_Post_Input` and `Search_Post_WithIndex_Input`.
+
+## Defining Request and Response Bodies
+The bodies of request and response are also defined inside the `structures.smithy` file. The request body is a member (usually named `content`) of the input structure and MUST be accompanied by the `@httpPayload` trait. It is also often accompanied by the `@required` trait since most operations that accept a request body also require it. The response body, on the other hand, is the output structure itself.
+
+```smithy
+@input
+structure Operation_Input {
+  @required
+  @httpPayload
+  content: Search_BodyParams,
+}
+
+structure Request_Body {
+  // Request body members are defined here
+}
+
+structure Operation_Output {
+  // Response body members are defined here
+}
+```
 
 ## Defining Common Parameters
 

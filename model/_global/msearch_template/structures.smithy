@@ -40,6 +40,7 @@ structure MsearchTemplate_Get_Input with [MsearchTemplate_QueryParams] {
 
 @input
 structure MsearchTemplate_Post_Input with [MsearchTemplate_QueryParams] {
+    @required
     @httpPayload
     content: MsearchTemplate_BodyParams,
 }
@@ -58,6 +59,7 @@ structure MsearchTemplate_Post_WithIndex_Input with [MsearchTemplate_QueryParams
     @httpLabel
     @documentation("Comma-separated list of indices to use as default.")
     index: PathIndices,
+    @required
     @httpPayload
     content: MsearchTemplate_BodyParams,
 }

@@ -27,6 +27,7 @@ structure IngestPutPipeline_Input with [IngestPutPipeline_QueryParams] {
     @required
     @httpLabel
     id: PathPipelineId,
+    @required
     @httpPayload
     content: IngestPutPipeline_BodyParams,
 }

@@ -132,6 +132,7 @@ structure DeleteByQuery_Input with [DeleteByQuery_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
+    @required
     @httpPayload
     content: DeleteByQuery_BodyParams,
 }
