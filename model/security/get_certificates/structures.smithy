@@ -12,5 +12,5 @@ structure GetCertificates_Input {}
 
 @output
 structure GetCertificates_Output {
-    content: CertificatesList
+    certificateslist: CertificatesList
 }
