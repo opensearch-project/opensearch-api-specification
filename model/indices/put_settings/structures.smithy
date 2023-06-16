@@ -42,6 +42,7 @@ structure IndicesPutSettings_BodyParams {}
 
 @input
 structure IndicesPutSettings_Input with [IndicesPutSettings_QueryParams] {
+    @required
     @httpPayload
     content: IndicesPutSettings_BodyParams,
 }
@@ -51,6 +52,7 @@ structure IndicesPutSettings_WithIndex_Input with [IndicesPutSettings_QueryParam
     @required
     @httpLabel
     index: PathIndices,
+    @required
     @httpPayload
     content: IndicesPutSettings_BodyParams,
 }
