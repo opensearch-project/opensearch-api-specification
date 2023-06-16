@@ -55,6 +55,7 @@ structure Index_Post_Input with [Index_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Index_BodyParams,
 }
@@ -68,6 +69,7 @@ structure Index_Put_WithId_Input with [Index_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Index_BodyParams,
 }
@@ -81,6 +83,7 @@ structure Index_Post_WithId_Input with [Index_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Index_BodyParams,
 }

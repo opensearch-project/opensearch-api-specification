@@ -7,14 +7,16 @@
 $version: "2"
 namespace OpenSearch
 
-list CertificatesList {
-    member: CertificatesDetail
+structure HealthResponse{
+    message: String
+    mode: String
+    status: String
 }
 
 @input
-structure GetCertificates_Input {}
+structure HealthCheck_Input {
+}
 
-@output
-structure GetCertificates_Output {
-    content: CertificatesList
+structure HealthCheck_Output {
+    content: HealthResponse
 }

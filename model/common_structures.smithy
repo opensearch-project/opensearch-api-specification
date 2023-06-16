@@ -60,10 +60,3 @@ structure Hits{
     fields: Document
 }
 
-structure CertificatesDetail {
-    issuer_dn: String,
-    subject_dn: String,
-    san: String,
-    not_before: String,
-    not_after: String
-}

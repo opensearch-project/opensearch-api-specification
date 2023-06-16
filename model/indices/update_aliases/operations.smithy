@@ -23,12 +23,3 @@ operation IndicesUpdateAliases {
     input: IndicesUpdateAliases_Input,
     output: IndicesUpdateAliases_Output
 }
-
-apply IndicesUpdateAliases @examples([
-    {
-        title: "Examples for Post Aliases Operation.",
-        output:{
-            acknowledged: true
-        }
-    }
-])

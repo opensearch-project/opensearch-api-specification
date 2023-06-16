@@ -15,10 +15,3 @@ structure ReloadHttpCertificates_Output {
     message: Message
 }
 
-@input
-structure ReloadTransportCertificates_Input {}
-
-@output
-structure ReloadTransportCertificates_Output {
-    message: Message
-}

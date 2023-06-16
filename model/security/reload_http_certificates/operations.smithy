@@ -13,19 +13,6 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.reload_transport_certificates",
-    "x-version-added": "1.0",
-)
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "PUT", uri: "/_opendistro/_security/api/ssl/transport/reloadcerts")
-@documentation("Reloads SSL certificates that are about to expire without restarting the OpenSearch node.")
-operation ReloadTransportCertificates {
-    input: ReloadTransportCertificates_Input,
-    output: ReloadTransportCertificates_Output
-}
-
-@vendorExtensions(
     "x-operation-group": "security.reload_http_certificates",
     "x-version-added": "1.0",
 )

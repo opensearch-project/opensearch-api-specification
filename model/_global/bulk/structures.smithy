@@ -57,12 +57,14 @@ structure Bulk_BodyParams {}
 
 @input
 structure Bulk_Post_Input with [Bulk_QueryParams] {
+    @required
     @httpPayload
     content: Bulk_BodyParams,
 }
 
 @input
 structure Bulk_Put_Input with [Bulk_QueryParams] {
+    @required
     @httpPayload
     content: Bulk_BodyParams,
 }
@@ -73,6 +75,7 @@ structure Bulk_Post_WithIndex_Input with [Bulk_QueryParams] {
     @httpLabel
     @documentation("Default index for items which don't provide one.")
     index: PathIndex,
+    @required
     @httpPayload
     content: Bulk_BodyParams,
 }
@@ -83,6 +86,7 @@ structure Bulk_Put_WithIndex_Input with [Bulk_QueryParams] {
     @httpLabel
     @documentation("Default index for items which don't provide one.")
     index: PathIndex,
+    @required
     @httpPayload
     content: Bulk_BodyParams,
 }
