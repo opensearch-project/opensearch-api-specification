@@ -36,15 +36,3 @@ operation IndicesPutMapping_Post {
     input: IndicesPutMapping_Post_Input,
     output: IndicesPutMapping_Output
 }
-
-apply IndicesPutMapping_Put @examples([
-    {
-        title: "Examples for Put Index Mapping with index Operation.",
-        input: {
-            index: "books",
-        },
-        output: {
-            acknowledged: true
-        }
-    }
-])
