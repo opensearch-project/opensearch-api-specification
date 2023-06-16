@@ -116,6 +116,7 @@ service OpenSearch {
         FieldCaps_Post_WithIndex,
         Get,
         GetAllPits,
+        GetAudit,
         GetScript,
         GetScriptContext,
         GetScriptLanguages,
@@ -272,6 +273,7 @@ service OpenSearch {
         NodesUsage_WithMetric,
         NodesUsage_WithMetricNodeId,
         NodesUsage_WithNodeId,
+        PatchAudit,
         PatchTenant,
         PatchTenants,
         PatchUser,
@@ -335,6 +337,7 @@ service OpenSearch {
         Termvectors_Post,
         Termvectors_Post_WithId,
         Update,
+        UpdateAudit,
         UpdateByQuery,
         UpdateByQueryRethrottle,
     ]

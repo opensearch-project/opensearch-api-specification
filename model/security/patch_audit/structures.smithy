@@ -7,16 +7,13 @@
 $version: "2"
 namespace OpenSearch
 
-structure Audit{
-    _readonly: ReadOnlyList
-    config: Config
-}
-
 @input
-structure GetAudit_Input{
+structure PatchAudit_Input{
+    @required
+    @httpPayload
+    content: PatchOperation
 }
 
 @output
-structure GetAudit_Output {
-    content: Audit
+structure PatchAudit_Output {
 }

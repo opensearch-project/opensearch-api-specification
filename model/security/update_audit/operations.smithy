@@ -13,14 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.put_audit",
+    "x-operation-group": "security.update_audit",
     "x-version-added": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_opendistro/_security/api/audit/config")
 @documentation("A PUT call updates the audit configuration.")
-operation PutAudit {
-    input: PutAudit_Input,
-    output: PutAudit_Output
+operation UpdateAudit {
+    input: UpdateAudit_Input,
+    output: UpdateAudit_Output
 }

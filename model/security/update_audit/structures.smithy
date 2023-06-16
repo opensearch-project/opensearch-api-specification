@@ -7,19 +7,21 @@
 $version: "2"
 namespace OpenSearch
 
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
+structure AuditConfig{
+    enabled: Boolean
+    audit: AuditLogs
+    compliance: Compliance
 }
 
 @input
-structure PatchAudit_Input{
+structure UpdateAudit_Input{
     @required
     @httpPayload
-    content: PatchOperation
+    content: AuditConfig
 }
 
 @output
-structure PatchAudit_Output {
+structure UpdateAudit_Output {
+    status: MessageStatus,
+    message: Message
 }

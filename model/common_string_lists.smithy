@@ -108,31 +108,3 @@ list StoredFields {
 list Types {
     member: String
 }
-
-list IgnoreUsersList{
-    member: String
-}
-
-list IgnoreRequests{
-    member: String
-}
-
-list DisabledRestCategories{
-    member: String
-}
-
-list DisabledTransportCategories{
-    member: String
-}
-
-list WriteWatchedIndices{
-    member: String
-}
-
-list WriteIgnoreUsers{
-    member: String
-}
-
-list ReadOnlyList{
-    member: String
-}
