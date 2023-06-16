@@ -45,6 +45,7 @@ structure Mget_Get_Input with [Mget_QueryParams] {
 
 @input
 structure Mget_Post_Input with [Mget_QueryParams] {
+    @required
     @httpPayload
     content: Mget_BodyParams,
 }
@@ -61,6 +62,7 @@ structure Mget_Post_WithIndex_Input with [Mget_QueryParams] {
     @required
     @httpLabel
     index: PathIndex,
+    @required
     @httpPayload
     content: Mget_BodyParams,
 }

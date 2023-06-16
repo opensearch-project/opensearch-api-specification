@@ -31,6 +31,7 @@ structure ClusterPutComponentTemplate_Put_Input with [ClusterPutComponentTemplat
     @required
     @httpLabel
     name: PathTemplateName,
+    @required
     @httpPayload
     content: ClusterPutComponentTemplate_BodyParams,
 }
@@ -40,6 +41,7 @@ structure ClusterPutComponentTemplate_Post_Input with [ClusterPutComponentTempla
     @required
     @httpLabel
     name: PathTemplateName,
+    @required
     @httpPayload
     content: ClusterPutComponentTemplate_BodyParams,
 }

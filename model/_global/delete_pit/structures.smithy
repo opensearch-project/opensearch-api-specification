@@ -16,6 +16,7 @@ structure DeletePit_BodyParams {}
 
 @input
 structure DeletePit_Input with [DeletePit_QueryParams] {
+    @required
     @httpPayload
     content: DeletePit_BodyParams,
 }
