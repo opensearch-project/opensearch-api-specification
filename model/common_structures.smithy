@@ -59,8 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-structure Response{
-    status: String
-    message: String
-}

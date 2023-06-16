@@ -11,12 +11,12 @@ namespace OpenSearch
 structure ChangePassword_Input{
     @required
     current_password: String
-
     @required
     password: String
 }
 
 @output
 structure ChangePassword_Output{
-    content: Response
+    status: MessageStatus,
+    message: Message
 }

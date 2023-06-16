@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure GetUser_Output {
+structure AccountDetails {
     user_name: String,
     is_reserved: Boolean,
     is_hidden: Boolean,
@@ -17,10 +17,6 @@ structure GetUser_Output {
     custom_attribute_names: CustomAttributeNamesList,
     tenants: UserTenants,
     roles: UserRolesList
-}
-
-list BackendRolesList {
-    member: String
 }
 
 list CustomAttributeNamesList {
@@ -35,12 +31,4 @@ structure UserTenants {
 
 list UserRolesList {
     member: String
-}
-
-@input
-structure GetAccountDetails_Input{}
-
-@output
-structure GetAccountDetails_Output {
-    content: GetUser_Output
 }
