@@ -67,6 +67,3 @@ integer Version
 
 @documentation("Wait for the metadata version to be equal or greater than the specified metadata version.")
 integer WaitForMetadataVersion
-
-@documentation("The shard number.")
-integer ShardNumber

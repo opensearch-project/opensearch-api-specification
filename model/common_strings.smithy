@@ -376,7 +376,3 @@ string Timeout
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout
-
-@documentation("The IP address of the node where the segment resides.")
-// TODO: Provide pattern for IP Address
-string IpAddress

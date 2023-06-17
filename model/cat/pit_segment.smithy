@@ -7,57 +7,19 @@
 $version: "2"
 namespace OpenSearch
 
-structure PitSegments {
+structure PitSegment {
     index: Index,
-
-    shard: ShardNumber,
-
+    shard: Integer,
     prirep: Pri,
-
-    ip: IpAddress,
-
+    ip: String,
     segment: String ,
-
     generation: Integer,
-
     docs_count: Integer,
-
     docs_deleted: Integer,
-
     size: String,
-
     size_memory: Size,
-
     committed: Boolean,
-
     searchable: Boolean,
-
     version: String,
-
     compound: Boolean,
-}
-
-list PitIds{
-    member: String
-}
-
-@input
-structure GetAllPitSegments_Input {
-}
-
-@output
-structure GetAllPitSegments_Output {
-    content: PitSegments
-}
-
-@input
-structure GetPitSegments_Input{
-    @required
-    @httpPayload
-    pit_id: PitIds
-}
-
-@output
-structure GetPitSegments_Output {
-    content: PitSegments
 }
