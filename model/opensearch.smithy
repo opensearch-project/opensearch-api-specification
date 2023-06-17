@@ -112,6 +112,8 @@ service OpenSearch {
         FieldCaps_Post_WithIndex,
         Get,
         GetAllPits,
+        GetPitSegment,
+        GetPitSegments,
         GetScript,
         GetScriptContext,
         GetScriptLanguages,
