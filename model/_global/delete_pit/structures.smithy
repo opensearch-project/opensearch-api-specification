@@ -7,14 +7,19 @@
 $version: "2"
 namespace OpenSearch
 
+list PitInfoList {
+    member: PitInfo
+}
+
 structure PitInfo {
     successful: Boolean,
     pit_id: String
 }
 
-list PitInfoList {
-    member: PitInfo
+list PitIds{
+    member: String
 }
+
 
 structure DeletePit_BodyParams {
     @required

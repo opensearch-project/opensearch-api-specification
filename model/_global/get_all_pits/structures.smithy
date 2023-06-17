@@ -13,7 +13,7 @@ structure PitDetail{
     keep_alive: Long
 }
 
-list ListPitDetail{
+list PitDetailList{
     member: PitDetail
 }
 
@@ -23,5 +23,5 @@ structure GetAllPits_Input {
 
 @output
 structure GetAllPits_Output {
-    pits: ListPitDetail
+    pits: PitDetailList
 }
