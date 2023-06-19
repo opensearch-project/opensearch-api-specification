@@ -18,6 +18,7 @@ use aws.protocols#restJson1
 service OpenSearch {
     version: "2021-11-23",
     operations: [
+        AllPitSegments,
         Bulk_Post,
         Bulk_Post_WithIndex,
         Bulk_Put,
@@ -265,7 +266,6 @@ service OpenSearch {
         NodesUsage_WithMetricNodeId,
         NodesUsage_WithNodeId,
         Ping,
-        PitSegment,
         PitSegments,
         PutScript_Post,
         PutScript_Post_WithContext,

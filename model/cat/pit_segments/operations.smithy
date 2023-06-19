@@ -17,9 +17,9 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "2.4",
 )
 @readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_cat/pit_segments/_all")
-@documentation("Lists all active point-in-time segments.")
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
+@http(method: "GET", uri: "/_cat/pit_segments")
+@documentation("List segments for one or several PITs.")
 operation PitSegments {
     input: PitSegments_Input,
     output: PitSegments_Output
