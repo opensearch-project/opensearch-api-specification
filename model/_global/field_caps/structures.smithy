@@ -29,6 +29,7 @@ structure FieldCaps_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("An index filter specified with the Query DSL")
 structure FieldCaps_BodyParams {}
 
 @input

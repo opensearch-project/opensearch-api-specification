@@ -57,6 +57,7 @@ structure Count_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Query to restrict the results specified with the Query DSL (optional)")
 structure Count_BodyParams {}
 
 @input

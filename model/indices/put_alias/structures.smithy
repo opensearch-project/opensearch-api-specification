@@ -20,6 +20,7 @@ structure IndicesPutAlias_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The settings for the alias, such as `routing` or `filter`")
 structure IndicesPutAlias_BodyParams {}
 
 @input

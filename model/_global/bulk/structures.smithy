@@ -53,6 +53,7 @@ structure Bulk_QueryParams {
 @vendorExtensions(
     "x-serialize": "bulk"
 )
+@documentation("The operation definition and data (action-data pairs), separated by newlines")
 structure Bulk_BodyParams {}
 
 @input

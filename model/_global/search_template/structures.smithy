@@ -55,6 +55,7 @@ structure SearchTemplate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The search definition template and its params")
 structure SearchTemplate_BodyParams {}
 
 @input

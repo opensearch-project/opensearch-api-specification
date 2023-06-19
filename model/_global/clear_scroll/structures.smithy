@@ -12,6 +12,7 @@ structure ClearScroll_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Comma-separated list of scroll IDs to clear if none was specified via the scroll_id parameter")
 structure ClearScroll_BodyParams {}
 
 @input

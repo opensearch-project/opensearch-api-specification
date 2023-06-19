@@ -19,6 +19,7 @@ structure ClusterAllocationExplain_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The index, shard, and primary flag to explain. Empty means 'explain the first unassigned shard'")
 structure ClusterAllocationExplain_BodyParams {}
 
 @input

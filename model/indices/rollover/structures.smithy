@@ -28,6 +28,7 @@ structure IndicesRollover_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The conditions that needs to be met for executing rollover")
 structure IndicesRollover_BodyParams {}
 
 @input
