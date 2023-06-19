@@ -13,14 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "cat.get_pit_segment",
+    "x-operation-group": "cat.pit_segments",
     "x-version-added": "2.4",
 )
 @readonly
-@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
-@http(method: "GET", uri: "/_cat/pit_segments")
-@documentation("List segments for one or several PITs.")
-operation GetPitSegment {
-    input: GetPitSegment_Input,
-    output: GetPitSegment_Output
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_cat/pit_segments/_all")
+@documentation("Lists all active point-in-time segments.")
+operation PitSegments {
+    input: PitSegments_Input,
+    output: PitSegments_Output
 }

@@ -8,10 +8,10 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure GetPitSegments_Input {
+structure PitSegments_Input {
 }
 
 @output
-structure GetPitSegments_Output {
-    content: PitSegment
+structure PitSegments_Output {
+    content: PitSegmentTable
 }

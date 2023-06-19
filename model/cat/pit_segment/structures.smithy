@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure GetPitSegment_BodyParams {
+structure PitSegment_BodyParams {
     @required
     pit_id: PitIds
 }
@@ -17,12 +17,12 @@ list PitIds{
 }
 
 @input
-structure GetPitSegment_Input{
+structure PitSegment_Input{
     @httpPayload
-    pit_id: GetPitSegment_BodyParams
+    pit_id: PitSegment_BodyParams
 }
 
 @output
-structure GetPitSegment_Output {
-    content: PitSegment
+structure PitSegment_Output {
+    content: PitSegmentTable
 }
