@@ -48,6 +48,7 @@ structure Index_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The document")
 structure Index_BodyParams {}
 
 @input

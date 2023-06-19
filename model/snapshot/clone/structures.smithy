@@ -17,6 +17,7 @@ structure SnapshotClone_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The snapshot clone definition")
 structure SnapshotClone_BodyParams {}
 
 @input

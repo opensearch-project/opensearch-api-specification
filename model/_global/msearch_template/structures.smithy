@@ -32,6 +32,7 @@ structure MsearchTemplate_QueryParams {
 @vendorExtensions(
     "x-serialize": "bulk"
 )
+@documentation("The request definitions (metadata-search request definition pairs), separated by newlines")
 structure MsearchTemplate_BodyParams {}
 
 @input

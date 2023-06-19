@@ -128,6 +128,7 @@ structure UpdateByQuery_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The search definition using the Query DSL")
 structure UpdateByQuery_BodyParams {}
 
 @input

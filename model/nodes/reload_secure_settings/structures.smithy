@@ -14,6 +14,7 @@ structure NodesReloadSecureSettings_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("An object containing the password for the opensearch keystore")
 structure NodesReloadSecureSettings_BodyParams {}
 
 @input
