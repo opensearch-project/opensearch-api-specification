@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-settings/"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-settings/"
 )
 
 @vendorExtensions(

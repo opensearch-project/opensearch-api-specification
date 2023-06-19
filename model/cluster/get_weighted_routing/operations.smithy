@@ -10,7 +10,7 @@ use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-getting-weights-for-all-zones"
 )
 
 @vendorExtensions(
