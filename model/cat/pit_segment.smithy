@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure PitSegment {
+structure CatPitSegment {
     index: Index,
     shard: Integer,
     prirep: Pri,

@@ -20,7 +20,7 @@ use opensearch.openapi#vendorExtensions
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/pit_segments/_all")
 @documentation("Lists all active point-in-time segments.")
-operation AllPitSegments {
-    input: AllPitSegments_Input,
-    output: AllPitSegments_Output
+operation CatAllPitSegments {
+    input: CatAllPitSegments_Input,
+    output: CatAllPitSegments_Output
 }

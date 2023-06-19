@@ -20,7 +20,7 @@ use opensearch.openapi#vendorExtensions
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_cat/pit_segments")
 @documentation("List segments for one or several PITs.")
-operation PitSegments {
-    input: PitSegments_Input,
-    output: PitSegments_Output
+operation CatPitSegments {
+    input: CatPitSegments_Input,
+    output: CatPitSegments_Output
 }
