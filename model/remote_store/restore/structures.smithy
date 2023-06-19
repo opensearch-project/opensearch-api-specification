@@ -24,6 +24,7 @@ structure RemoteStoreRestore_BodyParams {
 
 @input
 structure RemoteStoreRestore_Input with [RemoteStoreRestore_QueryParams] {
+    @required
     @httpPayload
     content: RemoteStoreRestore_BodyParams,
 }

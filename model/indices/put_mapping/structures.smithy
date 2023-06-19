@@ -41,6 +41,7 @@ structure IndicesPutMapping_Put_Input with [IndicesPutMapping_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
+    @required
     @httpPayload
     content: IndicesPutMapping_BodyParams,
 }
@@ -50,6 +51,7 @@ structure IndicesPutMapping_Post_Input with [IndicesPutMapping_QueryParams] {
     @required
     @httpLabel
     index: PathIndices,
+    @required
     @httpPayload
     content: IndicesPutMapping_BodyParams,
 }

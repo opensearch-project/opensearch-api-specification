@@ -196,12 +196,8 @@ structure Search_Post_WithIndex_Input with [Search_QueryParams] {
 
 structure Search_Output {
     _scroll_id: String,
-
     took: Long,
-
     timed_out: Boolean,
-
     _shards: ShardStatistics,
-
     hits: HitsMetadata
 }
