@@ -24,6 +24,7 @@ structure IndicesPutTemplate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The template definition")
 structure IndicesPutTemplate_BodyParams {}
 
 @input

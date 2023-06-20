@@ -53,6 +53,7 @@ structure Update_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The request definition requires either `script` or partial `doc`")
 structure Update_BodyParams {}
 
 @input

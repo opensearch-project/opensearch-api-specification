@@ -12,6 +12,7 @@ structure RenderSearchTemplate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The search definition template and its params")
 structure RenderSearchTemplate_BodyParams {}
 
 @input

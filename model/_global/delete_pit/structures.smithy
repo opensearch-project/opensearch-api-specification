@@ -12,6 +12,7 @@ structure DeletePit_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Comma-separated list of pit IDs to clear")
 structure DeletePit_BodyParams {}
 
 @input
