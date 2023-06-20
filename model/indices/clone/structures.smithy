@@ -24,6 +24,7 @@ structure IndicesClone_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The configuration for the target index (`settings` and `aliases`)")
 structure IndicesClone_BodyParams {}
 
 @input

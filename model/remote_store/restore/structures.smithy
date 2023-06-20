@@ -17,6 +17,7 @@ structure RemoteStoreRestore_QueryParams {
     wait_for_completion: WaitForCompletionFalse,
 }
 
+@documentation("Comma-separated list of index IDs")
 structure RemoteStoreRestore_BodyParams {
     @required
     indices: IndexNames

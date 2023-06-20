@@ -63,6 +63,7 @@ structure Mtermvectors_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Define ids, documents, parameters or a list of parameters per document here. You must at least provide a list of document ids. See documentation.")
 structure Mtermvectors_BodyParams {}
 
 @input

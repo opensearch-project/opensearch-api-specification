@@ -23,6 +23,7 @@ structure SnapshotCreateRepository_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The repository definition")
 structure SnapshotCreateRepository_BodyParams {}
 
 @input

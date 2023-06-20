@@ -8,14 +8,13 @@ $version: "2"
 namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
-// TODO: Fill in API Reference URL
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest"
+    "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/#create-a-pit"
 )
 
 @vendorExtensions(
     "x-operation-group": "create_pit",
-    "x-version-added": "1.0",
+    "x-version-added": "2.4",
 )
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_search/point_in_time")
