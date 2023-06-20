@@ -37,6 +37,7 @@ structure Mget_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Document identifiers; can be either `docs` (containing full document information) or `ids` (when index is provided in the URL.")
 structure Mget_BodyParams {}
 
 @input

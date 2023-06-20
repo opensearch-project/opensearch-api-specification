@@ -23,6 +23,7 @@ structure ClusterPutSettings_QueryParams {
     timeout: Timeout,
 }
 
+@documentation("The settings to be updated. Can be either `transient` or `persistent` (survives cluster restart).")
 structure ClusterPutSettings_BodyParams {
     persistent: UserDefinedValueMap,
 

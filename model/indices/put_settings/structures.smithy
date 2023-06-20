@@ -38,6 +38,7 @@ structure IndicesPutSettings_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The index settings to be updated")
 structure IndicesPutSettings_BodyParams {}
 
 @input

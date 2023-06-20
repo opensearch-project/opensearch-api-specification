@@ -42,6 +42,7 @@ structure Reindex_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The search definition using the Query DSL and the prototype for the index request.")
 structure Reindex_BodyParams {}
 
 @input

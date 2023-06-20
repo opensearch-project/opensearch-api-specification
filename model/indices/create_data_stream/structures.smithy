@@ -12,6 +12,7 @@ structure IndicesCreateDataStream_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The data stream definition")
 structure IndicesCreateDataStream_BodyParams {}
 
 @input

@@ -21,8 +21,11 @@ structure CreatePit_QueryParams {
 
     @httpQuery("routing")
     routing: Routings,
-}
 
+    @httpQuery("expand_wildcards")
+    @default("open")
+    expand_wildcards: ExpandWildcards
+}
 
 @input
 structure CreatePit_Input with [CreatePit_QueryParams] {
@@ -31,5 +34,9 @@ structure CreatePit_Input with [CreatePit_QueryParams] {
     index: PathIndices,
 }
 
-// TODO: Fill in Output Structure
-structure CreatePit_Output {}
+@output
+structure CreatePit_Output {
+    pit_id: String,
+    _shard: ShardStatistics,
+    creation_time: Long
+}

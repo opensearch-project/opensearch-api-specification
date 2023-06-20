@@ -20,6 +20,7 @@ structure IngestPutPipeline_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The ingest definition")
 structure IngestPutPipeline_BodyParams {}
 
 @input
