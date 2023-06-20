@@ -39,6 +39,8 @@ service OpenSearch {
         CatNodeattrs,
         CatNodes,
         CatPendingTasks,
+        CatAllPitSegments,
+        CatPitSegments,
         CatPlugins,
         CatRecovery,
         CatRecovery_WithIndex,
