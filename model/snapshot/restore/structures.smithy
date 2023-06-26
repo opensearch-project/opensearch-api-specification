@@ -21,6 +21,7 @@ structure SnapshotRestore_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Details of what to restore")
 structure SnapshotRestore_BodyParams {}
 
 @input

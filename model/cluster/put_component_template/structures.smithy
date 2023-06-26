@@ -24,6 +24,7 @@ structure ClusterPutComponentTemplate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The template definition")
 structure ClusterPutComponentTemplate_BodyParams {}
 
 @input

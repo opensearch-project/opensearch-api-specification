@@ -14,7 +14,7 @@ use opensearch.openapi#vendorExtensions
 
 @vendorExtensions(
     "x-operation-group": "delete_all_pits",
-    "x-version-added": "1.0",
+    "x-version-added": "2.4",
 )
 @idempotent
 @suppress(["HttpUriConflict"])

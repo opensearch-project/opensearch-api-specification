@@ -151,6 +151,7 @@ structure Search_QueryParams {
     rest_total_hits_as_int: RestTotalHitsAsInt,
 }
 
+@documentation("The search definition using the Query DSL")
 structure Search_BodyParams {
     docvalue_fields: String,
     explain: Boolean,

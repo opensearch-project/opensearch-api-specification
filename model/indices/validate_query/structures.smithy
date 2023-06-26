@@ -51,6 +51,7 @@ structure IndicesValidateQuery_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The query definition specified with the Query DSL")
 structure IndicesValidateQuery_BodyParams {}
 
 @input
