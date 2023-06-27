@@ -12,5 +12,6 @@ structure GetCertificates_Input {}
 
 @output
 structure GetCertificates_Output {
-    certificateslist: CertificatesList
+    http_certificates_list: CertificatesList,
+    transport_certificates_list: CertificatesList
 }
