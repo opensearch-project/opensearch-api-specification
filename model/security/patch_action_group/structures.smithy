@@ -13,7 +13,7 @@ structure PatchActionGroup_Input {
     @httpLabel
     action_group: String
     @httpPayload
-    content: PatchActionGroupParams
+    content: PatchOperationList
 }
 
 @output

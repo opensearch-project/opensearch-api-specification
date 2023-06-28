@@ -27,26 +27,3 @@ structure Action_Group{
     description: String,
     static: Boolean
 }
-
-map AttributeMap {
-    key: String,
-    value: String
-}
-
-list PatchOperationList{
-    member: PatchOperation
-}
-
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
-}
-
-structure PatchActionGroupParams{
-    actiongroupPatch: PatchOperation
-}
-
-structure PatchActionGroupsParams{
-    actiongroupPatch: PatchOperationList
-}
