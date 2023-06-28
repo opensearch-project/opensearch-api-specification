@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 structure PitDetail{
-    pitId: String,
+    pit_id: String,
     creation_time: Long,
     keep_alive: Long
 }

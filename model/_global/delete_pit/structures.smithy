@@ -7,11 +7,11 @@
 $version: "2"
 namespace OpenSearch
 
-list PitInfoList {
-    member: PitInfo
+list DeletedPitList {
+    member: DeletedPit
 }
 
-structure PitInfo {
+structure DeletedPit {
     successful: Boolean,
     pit_id: String
 }
@@ -34,5 +34,5 @@ structure DeletePit_Input {
 
 @output
 structure DeletePit_Output {
-    pits: PitInfoList
+    pits: DeletedPitList
 }
