@@ -14,8 +14,12 @@ structure GetRoleMapping_Input{
     role: String
 }
 
+structure GetRoleMappingStructure{
+    content: RoleMappings
+}
+
 @output
 structure GetRoleMapping_Output {
     @httpPayload
-    content: RoleMappings
+    content: GetRoleMappingStructure
 }

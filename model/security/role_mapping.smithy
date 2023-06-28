@@ -40,3 +40,8 @@ structure PatchRoleMappingParams{
 structure PatchRoleMappingsParams{
     usersPatch: PatchOperationList
 }
+
+map RoleMappings {
+    key: String,
+    value: RoleMapping
+}

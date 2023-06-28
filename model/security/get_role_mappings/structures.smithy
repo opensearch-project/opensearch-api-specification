@@ -7,9 +7,8 @@
 $version: "2"
 namespace OpenSearch
 
-map RoleMappings {
-    key: String,
-    value: RoleMapping
+structure GetRoleMappingsOutputStructure{
+    content: RoleMappings
 }
 
 @input
@@ -18,5 +17,5 @@ structure GetRoleMappings_Input {}
 @output
 structure GetRoleMappings_Output {
     @httpPayload
-    content: RoleMappings
+    content: GetRoleMappingsOutputStructure
 }
