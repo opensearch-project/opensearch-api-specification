@@ -14,7 +14,7 @@ structure PatchRoleMapping_Input{
     role: String
     @required
     @httpPayload
-    content: PatchRoleMappingParams
+    content: PatchOperationList
 }
 
 @output
