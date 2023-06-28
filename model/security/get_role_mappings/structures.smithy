@@ -16,5 +16,6 @@ structure GetRoleMappings_Input {}
 
 @output
 structure GetRoleMappings_Output {
-    content: RoleMappingsList
+    @httpPayload
+    content: RoleMappings
 }
