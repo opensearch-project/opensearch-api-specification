@@ -7,8 +7,9 @@
 $version: "2"
 namespace OpenSearch
 
-list RoleMappingsList{
-    member: RoleMapping
+map RoleMappings {
+    key: String,
+    value: RoleMapping
 }
 
 @input
