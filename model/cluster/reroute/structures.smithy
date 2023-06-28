@@ -33,6 +33,7 @@ structure ClusterReroute_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The definition of `commands` to perform (`move`, `cancel`, `allocate`)")
 structure ClusterReroute_BodyParams {}
 
 @input

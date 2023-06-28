@@ -16,6 +16,7 @@ structure IngestSimulate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The simulate definition")
 structure IngestSimulate_BodyParams {}
 
 @input

@@ -35,6 +35,7 @@ structure Create_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The document")
 structure Create_BodyParams {}
 
 @input

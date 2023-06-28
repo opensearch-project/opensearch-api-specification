@@ -125,6 +125,7 @@ structure DeleteByQuery_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The search definition using the Query DSL")
 structure DeleteByQuery_BodyParams {}
 
 @input
