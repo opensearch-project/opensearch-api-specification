@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#get-distinguished-names"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names"
 )
 
 @vendorExtensions(
