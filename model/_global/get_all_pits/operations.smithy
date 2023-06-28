@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/"
+    "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/#list-all-pits"
 )
 
 @vendorExtensions(
