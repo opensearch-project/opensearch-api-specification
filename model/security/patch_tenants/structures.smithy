@@ -9,8 +9,9 @@ namespace OpenSearch
 
 @input
 structure PatchTenants_Input{
+    @required
     @httpPayload
-    content: PatchTenantsParams
+    content: PatchOperationList
 }
 
 @output

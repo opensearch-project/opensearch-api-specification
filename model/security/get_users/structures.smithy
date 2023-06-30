@@ -12,5 +12,6 @@ structure GetUsers_Input {}
 
 @output
 structure GetUsers_Output {
-    content: UserList
+    @httpPayload
+    content: UsersMap
 }

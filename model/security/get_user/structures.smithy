@@ -17,5 +17,6 @@ structure GetUser_Input{
 
 @output
 structure GetUser_Output {
-    user: User
+    @httpPayload
+    content: UsersMap
 }
