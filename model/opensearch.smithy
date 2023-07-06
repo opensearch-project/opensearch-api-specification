@@ -122,7 +122,7 @@ service OpenSearch {
         Get,
         GetAccountDetails,
         GetAllPits,
-        GetAudit,
+        GetAuditConfig,
         GetScript,
         GetScriptContext,
         GetScriptLanguages,
