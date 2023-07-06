@@ -347,7 +347,7 @@ service OpenSearch {
         Termvectors_Post,
         Termvectors_Post_WithId,
         Update,
-        UpdateAudit,
+        UpdateAuditConfig,
         UpdateByQuery,
         UpdateByQueryRethrottle,
     ]
