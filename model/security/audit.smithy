@@ -7,22 +7,13 @@
 $version: "2"
 namespace OpenSearch
 
-structure Audit{
-    _readonly: ReadOnlyList
-    config: Config
-}
-
-list ReadOnlyList{
-    member: String
-}
-
-structure Config{
-    compliance: Compliance
+structure AuditConfig {
+    compliance: ComplianceConfig
     enabled: Boolean
-    audit: AuditLogs
+    audit: AuditLogsConfig
 }
 
-structure Compliance{
+structure ComplianceConfig {
     enabled: Boolean
     write_log_diffs: Boolean
     read_watched_fields: AttributeMap
@@ -35,7 +26,7 @@ structure Compliance{
     internal_config: Boolean
 }
 
-structure AuditLogs{
+structure AuditLogsConfig {
     ignore_users: IgnoreUsersList
     ignore_requests: IgnoreRequests
     disabled_rest_categories: DisabledRestCategories
