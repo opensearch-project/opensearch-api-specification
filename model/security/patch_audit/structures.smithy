@@ -15,5 +15,5 @@ structure PatchAuditConfig_Input {
 }
 
 @output
-structure PatchAudit_Output {
+structure PatchAuditConfig_Output {
 }
