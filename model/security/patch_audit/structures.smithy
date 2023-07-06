@@ -11,7 +11,7 @@ namespace OpenSearch
 structure PatchAudit_Input{
     @required
     @httpPayload
-    content: PatchOperation
+    content: PatchOperationList
 }
 
 @output
