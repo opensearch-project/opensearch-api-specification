@@ -8,10 +8,20 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure GetAudit_Input{
+structure GetAuditConfig_Input{
 }
 
 @output
-structure GetAudit_Output {
-    content: Audit
+structure GetAuditConfig_Output {
+    @httpPayload
+    content: GetAuditConfigResponse
+}
+
+structure GetAuditConfigResponse {
+    _readonly: AuditConfigReadOnlyList,
+    config: AuditConfig
+}
+
+list AuditConfigReadOnlyList {
+    member: String
 }
