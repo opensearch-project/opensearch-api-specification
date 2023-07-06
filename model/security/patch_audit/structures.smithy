@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure PatchAudit_Input{
+structure PatchAuditConfig_Input {
     @required
     @httpPayload
     content: PatchOperationList
