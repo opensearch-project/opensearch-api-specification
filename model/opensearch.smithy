@@ -281,7 +281,7 @@ service OpenSearch {
         NodesUsage_WithMetric,
         NodesUsage_WithMetricNodeId,
         NodesUsage_WithNodeId,
-        PatchAudit,
+        PatchAuditConfig,
         PatchRole,
         PatchRoles,
         PatchTenant,
