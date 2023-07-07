@@ -33,14 +33,6 @@ list AndBackendRoles{
     member: String
 }
 
-structure PatchRoleMappingParams{
-    userPatch: PatchOperation
-}
-
-structure PatchRoleMappingsParams{
-    usersPatch: PatchOperationList
-}
-
 map RoleMappings {
     key: String,
     value: RoleMapping
