@@ -118,7 +118,7 @@ service OpenSearch {
         FieldCaps_Post_WithIndex,
         Get,
         GetAllPits,
-        GetDistinguishedName,
+        GetDistinguishedNameWithClusterName,
         GetDistinguishedNames,
         GetScript,
         GetScriptContext,
