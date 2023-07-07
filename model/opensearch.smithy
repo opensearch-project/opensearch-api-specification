@@ -340,5 +340,6 @@ service OpenSearch {
         Update,
         UpdateByQuery,
         UpdateByQueryRethrottle,
+        UpdateDistinguishedNames
     ]
 }
