@@ -20,7 +20,7 @@ use opensearch.openapi#vendorExtensions
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")
 @documentation("Returns the distinguished names from a specific cluster’s or node’s allow list.")
-operation GetDistinguishedName {
+operation GetDistinguishedNameWithClusterName {
     input: GetDistinguishedName_Input,
     output: GetDistinguishedName_Output
 }
