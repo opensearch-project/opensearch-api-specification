@@ -7,21 +7,14 @@
 $version: "2"
 namespace OpenSearch
 
-structure PitDetail{
-    pit_id: String,
-    creation_time: Long,
-    keep_alive: Long
+list CertificatesList {
+    member: CertificatesDetail
 }
 
-list PitDetailList{
-    member: PitDetail
-}
-
-@input
-structure GetAllPits_Input {
-}
-
-@output
-structure GetAllPits_Output {
-    pits: PitDetailList
+structure CertificatesDetail {
+    issuer_dn: String,
+    subject_dn: String,
+    san: String,
+    not_before: String,
+    not_after: String
 }
