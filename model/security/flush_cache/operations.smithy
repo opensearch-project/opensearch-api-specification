@@ -9,18 +9,17 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-cluster_manager/"
+    "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#flush-cache"
 )
 
 @vendorExtensions(
-    "x-operation-group": "cat.cluster_manager",
+    "x-operation-group": "security.flush_cache",
     "x-version-added": "1.0",
 )
-@readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_cat/cluster_manager")
-@documentation("Returns information about the cluster-manager node.")
-operation CatClusterManager {
-    input: CatClusterManager_Input,
-    output: CatClusterManager_Output
+@http(method: "DELETE", uri: "/_plugins/_security/api/cache")
+@documentation("Flushes the Security plugin user, authentication, and authorization cache.")
+operation Flush_Cache {
+    input: Flush_Cache_Input,
+    output: Flush_Cache_Output
 }

@@ -9,18 +9,18 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/api-reference/snapshots/delete-snapshot/"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-certificates"
 )
 
 @vendorExtensions(
-    "x-operation-group": "snapshot.delete",
+    "x-operation-group": "security.get_certificates",
     "x-version-added": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "DELETE", uri: "/_snapshot/{repository}/{snapshot}")
-@documentation("Deletes a snapshot.")
-operation SnapshotDelete {
-    input: SnapshotDelete_Input,
-    output: SnapshotDelete_Output
+@http(method: "GET", uri: "/_plugins/_security/api/ssl/certs")
+@documentation("Returns the cluster’s security certificates.")
+operation GetCertificates {
+    input: GetCertificates_Input,
+    output: GetCertificates_Output
 }
