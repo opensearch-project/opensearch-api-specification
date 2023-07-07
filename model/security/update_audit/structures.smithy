@@ -7,21 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
-structure AuditConfig{
-    enabled: Boolean
-    audit: AuditLogs
-    compliance: Compliance
-}
-
 @input
-structure UpdateAudit_Input{
+structure UpdateAuditConfig_Input{
     @required
     @httpPayload
     content: AuditConfig
 }
 
 @output
-structure UpdateAudit_Output {
+structure UpdateAuditConfig_Output {
     status: MessageStatus,
     message: Message
 }
