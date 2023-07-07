@@ -119,6 +119,7 @@ service OpenSearch {
         Get,
         GetAllPits,
         GetDistinguishedName,
+        GetDistinguishedNames,
         GetScript,
         GetScriptContext,
         GetScriptLanguages,
