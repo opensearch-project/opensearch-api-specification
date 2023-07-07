@@ -90,7 +90,6 @@ service OpenSearch {
         Count_Get_WithIndex,
         Count_Post,
         Count_Post_WithIndex,
-        CreateDistinguishedName,
         CreatePit,
         CreateTenant,
         CreateUser,

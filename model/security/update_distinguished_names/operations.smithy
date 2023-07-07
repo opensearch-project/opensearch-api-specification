@@ -21,7 +21,7 @@ use opensearch.openapi#vendorExtensions
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")
 @documentation("Adds or updates the specified distinguished names in the cluster’s or node’s allow list.")
-operation CreateDistinguishedName {
-    input: CreateDistinguishedName_Input,
-    output: CreateDistinguishedName_Output
+operation UpdateDistinguishedNames {
+    input: UpdateDistinguishedNames_Input,
+    output: UpdateDistinguishedNames_Output
 }

@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure CreateDistinguishedName_Input {
+structure UpdateDistinguishedNames_Input {
     @required
     @httpLabel
     cluster_name: String
@@ -17,7 +17,7 @@ structure CreateDistinguishedName_Input {
 }
 
 @output
-structure CreateDistinguishedName_Output {
+structure UpdateDistinguishedNames_Output {
     status: MessageStatus,
     message: Message
 }
