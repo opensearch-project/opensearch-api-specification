@@ -7,10 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-structure PatchRoleMappingStructure{
-    content: PatchOperationList
-}
-
 @input
 structure PatchRoleMapping_Input{
     @required
@@ -18,7 +14,7 @@ structure PatchRoleMapping_Input{
     role: String
     @required
     @httpPayload
-    content: PatchRoleMappingStructure
+    content: PatchOperationList
 }
 
 @output
