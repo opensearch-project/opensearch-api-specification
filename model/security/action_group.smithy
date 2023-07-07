@@ -19,6 +19,10 @@ list ActionGroupsList{
     member: Action_Group
 }
 
+list test{
+    member:String
+}
+
 structure Action_Group{
     reserved: Boolean,
     hidden: Boolean,
