@@ -52,6 +52,7 @@ structure Explain_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The query definition using the Query DSL")
 structure Explain_BodyParams {}
 
 @input

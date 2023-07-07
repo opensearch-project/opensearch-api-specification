@@ -23,6 +23,7 @@ structure IndicesCreate_QueryParams {
     cluster_manager_timeout: ClusterManagerTimeout,
 }
 
+@documentation("The configuration for the index (`settings` and `mappings`)")
 structure IndicesCreate_BodyParams {
     //TODO: Placeholders. aliases, mapping and settings need to be updated with proper structures
 

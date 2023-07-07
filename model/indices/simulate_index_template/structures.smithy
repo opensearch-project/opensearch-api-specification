@@ -26,6 +26,7 @@ structure IndicesSimulateIndexTemplate_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("New index template definition, which will be included in the simulation, as if it already exists in the system")
 structure IndicesSimulateIndexTemplate_BodyParams {}
 
 @input

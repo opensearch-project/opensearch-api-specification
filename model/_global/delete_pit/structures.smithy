@@ -7,19 +7,32 @@
 $version: "2"
 namespace OpenSearch
 
-@mixin
-structure DeletePit_QueryParams {
+list DeletedPitList {
+    member: DeletedPit
 }
 
-// TODO: Fill in Body Parameters
-structure DeletePit_BodyParams {}
+structure DeletedPit {
+    successful: Boolean,
+    pit_id: String
+}
+
+list PitIds{
+    member: String
+}
+
+
+structure DeletePit_BodyParams {
+    @required
+    pit_id: PitIds
+}
 
 @input
-structure DeletePit_Input with [DeletePit_QueryParams] {
-    @required
+structure DeletePit_Input {
     @httpPayload
-    content: DeletePit_BodyParams,
+    content: DeletePit_BodyParams
 }
 
-// TODO: Fill in Output Structure
-structure DeletePit_Output {}
+@output
+structure DeletePit_Output {
+    pits: DeletedPitList
+}

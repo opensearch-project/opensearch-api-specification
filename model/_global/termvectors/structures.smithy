@@ -53,6 +53,7 @@ structure Termvectors_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("Define parameters and or supply a document to get termvectors for. See documentation.")
 structure Termvectors_BodyParams {}
 
 @input

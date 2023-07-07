@@ -21,6 +21,7 @@ structure Scroll_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The scroll ID if not passed by URL or query parameter.")
 structure Scroll_BodyParams {}
 
 @input
