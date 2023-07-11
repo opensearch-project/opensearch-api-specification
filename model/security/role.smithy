@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure Role{
+structure Role {
     reserved: Boolean
     hidden: Boolean
     description: String
@@ -28,34 +28,27 @@ structure IndexPermission {
     allowed_actions: AllowedActions
 }
 
-list RolesList{
-    member: Role
-}
-
 list TenantPermission {
     member: String
 }
 
-list IndexPatterns{
+list IndexPatterns {
     member: String
 }
 
-list Fls{
+list Fls {
     member: String
 }
 
-list MaskedFields{
+list MaskedFields {
     member: String
 }
 
-list AllowedActions{
+list AllowedActions {
     member: String
 }
 
-structure PatchRoleParams{
-    rolePatch: PatchOperation
-}
-
-structure PatchRolesParams{
-    rolesPatch: PatchOperationList
+map RolesMap {
+    key: String
+    value: Role
 }

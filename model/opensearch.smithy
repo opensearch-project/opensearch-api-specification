@@ -7,14 +7,14 @@
 $version: "2"
 namespace OpenSearch
 
-use aws.protocols#restJson1
+use opensearch.openapi#restJson
 
 @externalDocumentation(
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/"
 )
 
 @httpBasicAuth
-@restJson1
+@restJson
 service OpenSearch {
     version: "2021-11-23",
     operations: [
