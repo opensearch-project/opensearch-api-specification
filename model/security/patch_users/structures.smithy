@@ -11,7 +11,7 @@ namespace OpenSearch
 structure PatchUsers_Input{
     @required
     @httpPayload
-    content: PatchUsersParams
+    content: PatchOperationList
 }
 
 @output

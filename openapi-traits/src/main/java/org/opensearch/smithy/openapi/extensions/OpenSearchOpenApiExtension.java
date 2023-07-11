@@ -2,13 +2,21 @@ package org.opensearch.smithy.openapi.extensions;
 
 import org.opensearch.smithy.openapi.extensions.mappers.VendorExtensionsJsonSchemaMapper;
 import org.opensearch.smithy.openapi.extensions.mappers.VendorExtensionsOpenApiMapper;
+import org.opensearch.smithy.openapi.protocols.OpenSearchRestJsonProtocol;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
 import software.amazon.smithy.openapi.fromsmithy.Smithy2OpenApiExtension;
 
 import java.util.List;
 
-public class VendorExtensionsExtension implements Smithy2OpenApiExtension {
+public class OpenSearchOpenApiExtension implements Smithy2OpenApiExtension {
+    @Override
+    public List<OpenApiProtocol<? extends Trait>> getProtocols() {
+        return List.of(new OpenSearchRestJsonProtocol());
+    }
+
     @Override
     public List<JsonSchemaMapper> getJsonSchemaMappers() {
         return List.of(new VendorExtensionsJsonSchemaMapper());

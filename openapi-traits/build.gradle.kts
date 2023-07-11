@@ -11,7 +11,12 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-openapi:1.31.0")
+    implementation("software.amazon.smithy:smithy-openapi:1.33.0")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 spotless {
