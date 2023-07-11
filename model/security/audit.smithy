@@ -16,7 +16,7 @@ structure AuditConfig {
 structure ComplianceConfig {
     enabled: Boolean
     write_log_diffs: Boolean
-    read_watched_fields: AttributeMap
+    read_watched_fields: AttributesMap
     read_ignore_users: IgnoreUsersList
     write_watched_indices: WriteWatchedIndices
     write_ignore_users: WriteIgnoreUsers
