@@ -11,7 +11,7 @@ namespace OpenSearch
 structure PatchRoles_Input {
     @required
     @httpPayload
-    role_patch: PatchRolesParams
+    content: PatchOperationList
 }
 
 @output

@@ -12,8 +12,9 @@ structure PatchTenant_Input {
     @required
     @httpLabel
     tenant: String
+    @required
     @httpPayload
-    content: PatchTenantParams
+    content: PatchOperationList
 }
 
 @output

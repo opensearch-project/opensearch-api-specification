@@ -7,36 +7,14 @@
 $version: "2"
 namespace OpenSearch
 
-map AttributeMap {
-    key: String,
-    value: String
-}
-
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: AttributeMap
-}
-
-structure Tenant{
+structure Tenant {
     reserved: Boolean,
     hidden: Boolean,
     description: String,
     static: Boolean
 }
 
-list TenantList{
-    member: Tenant
-}
-
-structure PatchTenantParams{
-    tenantPatch: PatchOperation
-}
-
-structure PatchTenantsParams{
-    tenantsPatch: PatchOperationList
-}
-
-list PatchOperationList{
-    member: PatchOperation
+map TenantsMap {
+    key: String,
+    value: Tenant
 }

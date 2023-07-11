@@ -7,15 +7,12 @@
 $version: "2"
 namespace OpenSearch
 
-@input
-structure PatchUsers_Input{
-    @required
-    @httpPayload
-    content: PatchOperationList
+structure PatchOperation {
+    op: String,
+    path: String,
+    value: Document
 }
 
-@output
-structure PatchUsers_Output {
-    status: MessageStatus,
-    message: Message
+list PatchOperationList {
+    member: PatchOperation
 }
