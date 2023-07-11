@@ -14,7 +14,7 @@ structure PatchUser_Input {
     username: String
     @required
     @httpPayload
-    content: PatchUserParams
+    content: PatchOperationList
 }
 
 @output
