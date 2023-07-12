@@ -31,3 +31,8 @@ structure Action_Group{
     description: String,
     static: Boolean
 }
+
+map ActionGroupsMap {
+     key: String,
+     value: Tenant
+ }

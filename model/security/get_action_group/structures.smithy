@@ -16,5 +16,6 @@ structure GetActionGroup_Input{
 
 @output
 structure GetActionGroup_Output {
-    action_group: Action_Group
+    @httpPayload
+    content: ActionGroupsMap
 }
