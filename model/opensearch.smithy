@@ -123,6 +123,7 @@ service OpenSearch {
         Get,
         GetAccountDetails,
         GetAllPits,
+        GetAuditConfig,
         GetCertificates,
         GetScript,
         GetScriptContext,
@@ -282,6 +283,7 @@ service OpenSearch {
         NodesUsage_WithMetric,
         NodesUsage_WithMetricNodeId,
         NodesUsage_WithNodeId,
+        PatchAuditConfig,
         PatchRole,
         PatchRoles,
         PatchTenant,
@@ -349,6 +351,7 @@ service OpenSearch {
         Termvectors_Post,
         Termvectors_Post_WithId,
         Update,
+        UpdateAuditConfig,
         UpdateByQuery,
         UpdateByQueryRethrottle,
     ]
