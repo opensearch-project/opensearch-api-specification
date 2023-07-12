@@ -127,6 +127,7 @@ service OpenSearch {
         GetAllPits,
         GetActionGroup,
         GetActionGroups,
+        GetAuditConfig,
         GetCertificates,
         GetScript,
         GetScriptContext,
@@ -288,6 +289,7 @@ service OpenSearch {
         NodesUsage_WithNodeId,
         PatchActionGroup,
         PatchActionGroups,
+        PatchAuditConfig,
         PatchRole,
         PatchRoles,
         PatchTenant,
@@ -355,6 +357,7 @@ service OpenSearch {
         Termvectors_Post,
         Termvectors_Post_WithId,
         Update,
+        UpdateAuditConfig,
         UpdateByQuery,
         UpdateByQueryRethrottle,
     ]
