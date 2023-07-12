@@ -12,5 +12,6 @@ structure GetAccountDetails_Input{}
 
 @output
 structure GetAccountDetails_Output {
+    @httpPayload
     content: AccountDetails
 }

@@ -16,5 +16,6 @@ structure GetRole_Input{
 
 @output
 structure GetRole_Output {
-    role: Role
+    @httpPayload
+    content: RolesMap
 }

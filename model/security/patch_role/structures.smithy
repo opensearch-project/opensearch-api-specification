@@ -14,7 +14,7 @@ structure PatchRole_Input{
     role: String
     @required
     @httpPayload
-    role_patch: PatchRoleParams
+    content: PatchOperationList
 }
 
 @output

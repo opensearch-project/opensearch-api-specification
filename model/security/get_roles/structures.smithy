@@ -7,14 +7,11 @@
 $version: "2"
 namespace OpenSearch
 
-list RolesList{
-    member: Role
-}
-
 @input
 structure GetRoles_Input {}
 
 @output
 structure GetRoles_Output {
-    content: RolesList
+    @httpPayload
+    content: RolesMap
 }
