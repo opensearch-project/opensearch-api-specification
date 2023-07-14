@@ -24,5 +24,6 @@ structure IndicesCreateDataStream_Input with [IndicesCreateDataStream_QueryParam
     content: IndicesCreateDataStream_BodyParams,
 }
 
-// TODO: Fill in Output Structure
-structure IndicesCreateDataStream_Output {}
+structure IndicesCreateDataStream_Output {
+    acknowledged: Boolean
+}

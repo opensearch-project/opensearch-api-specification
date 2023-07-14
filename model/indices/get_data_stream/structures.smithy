@@ -11,7 +11,6 @@ namespace OpenSearch
 structure IndicesGetDataStream_QueryParams {
 }
 
-
 @input
 structure IndicesGetDataStream_Input with [IndicesGetDataStream_QueryParams] {
 }
@@ -23,5 +22,7 @@ structure IndicesGetDataStream_WithName_Input with [IndicesGetDataStream_QueryPa
     name: PathStreamNames,
 }
 
-// TODO: Fill in Output Structure
-structure IndicesGetDataStream_Output {}
+structure IndicesGetDataStream_Output {
+    @httpPayload
+    content: DataStreamMap
+}

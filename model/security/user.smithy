@@ -22,11 +22,6 @@ list BackendRolesList {
     member: String
 }
 
-map AttributesMap {
-    key: String,
-    value: String
-}
-
 list OpendistroSecurityRolesList {
     member: String
 }
