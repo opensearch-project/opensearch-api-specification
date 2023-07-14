@@ -12,5 +12,6 @@ structure GetTenants_Input {}
 
 @output
 structure GetTenants_Output {
-    tenantlist: TenantList
+    @httpPayload
+    content: TenantsMap
 }

@@ -34,6 +34,7 @@ structure IndicesPutMapping_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The mapping definition")
 structure IndicesPutMapping_BodyParams {}
 
 @input

@@ -7,16 +7,12 @@
 $version: "2"
 namespace OpenSearch
 
-list UserList {
-    member: User
-}
-
 structure User {
     hash: String,
     reserved: Boolean,
     hidden: Boolean,
     backend_roles: BackendRolesList,
-    attributes: AttributeMap,
+    attributes: AttributesMap,
     description: String,
     opendistro_security_roles: OpendistroSecurityRolesList,
     static: Boolean
@@ -26,14 +22,16 @@ list BackendRolesList {
     member: String
 }
 
+map AttributesMap {
+    key: String,
+    value: String
+}
+
 list OpendistroSecurityRolesList {
     member: String
 }
 
-structure PatchUserParams{
-    userPatch: PatchOperation
-}
-
-structure PatchUsersParams{
-    usersPatch: PatchOperationList
+map UsersMap {
+    key: String,
+    value: User
 }

@@ -12,6 +12,7 @@ structure ScriptsPainlessExecute_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
+@documentation("The script to execute")
 structure ScriptsPainlessExecute_BodyParams {}
 
 @input

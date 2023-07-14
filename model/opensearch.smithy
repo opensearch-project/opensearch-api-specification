@@ -7,14 +7,14 @@
 $version: "2"
 namespace OpenSearch
 
-use aws.protocols#restJson1
+use opensearch.openapi#restJson
 
 @externalDocumentation(
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/"
 )
 
 @httpBasicAuth
-@restJson1
+@restJson
 service OpenSearch {
     version: "2021-11-23",
     operations: [
@@ -39,6 +39,8 @@ service OpenSearch {
         CatNodeattrs,
         CatNodes,
         CatPendingTasks,
+        CatAllPitSegments,
+        CatPitSegments,
         CatPlugins,
         CatRecovery,
         CatRecovery_WithIndex,
@@ -56,6 +58,7 @@ service OpenSearch {
         CatTemplates_WithName,
         CatThreadPool,
         CatThreadPool_WithThreadPoolPatterns,
+        ChangePassword,
         ClearScroll,
         ClearScroll_WithScrollId,
         ClusterAllocationExplain_Get,
@@ -91,6 +94,8 @@ service OpenSearch {
         Count_Post,
         Count_Post_WithIndex,
         CreatePit,
+        CreateRole,
+        CreateRoleMapping,
         CreateTenant,
         CreateUser,
         Create_Post,
@@ -103,6 +108,8 @@ service OpenSearch {
         DeleteByQuery,
         DeleteByQueryRethrottle,
         DeletePit,
+        DeleteRole,
+        DeleteRoleMapping,
         DeleteScript,
         DeleteTenant,
         DeleteUser,
@@ -114,12 +121,20 @@ service OpenSearch {
         FieldCaps_Get_WithIndex,
         FieldCaps_Post,
         FieldCaps_Post_WithIndex,
+        Flush_Cache,
         Get,
+        GetAccountDetails,
         GetAllPits,
+        GetAuditConfig,
+        GetCertificates,
         GetScript,
         GetScriptContext,
         GetScriptLanguages,
         GetSource,
+        GetRole,
+        GetRoles,
+        GetRoleMapping,
+        GetRoleMappings,
         GetTenant,
         GetTenants,
         GetUser,
@@ -272,8 +287,13 @@ service OpenSearch {
         NodesUsage_WithMetric,
         NodesUsage_WithMetricNodeId,
         NodesUsage_WithNodeId,
+        PatchAuditConfig,
+        PatchRole,
+        PatchRoles,
         PatchTenant,
         PatchTenants,
+        PatchRoleMapping,
+        PatchRoleMappings,
         PatchUser,
         PatchUsers,
         Ping,
@@ -287,6 +307,8 @@ service OpenSearch {
         RankEval_Post_WithIndex,
         Reindex,
         ReindexRethrottle,
+        ReloadHttpCertificates,
+        ReloadTransportCertificates,
         RemoteStoreRestore,
         RenderSearchTemplate_Get,
         RenderSearchTemplate_Get_WithId,
@@ -336,6 +358,7 @@ service OpenSearch {
         Termvectors_Post,
         Termvectors_Post_WithId,
         Update,
+        UpdateAuditConfig,
         UpdateByQuery,
         UpdateByQueryRethrottle,
     ]
