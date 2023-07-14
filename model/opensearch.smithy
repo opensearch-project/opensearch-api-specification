@@ -310,6 +310,7 @@ service OpenSearch {
         Search_Get_WithIndex,
         Search_Post,
         Search_Post_WithIndex,
+        SecurityHealth,
         SnapshotCleanupRepository,
         SnapshotClone,
         SnapshotCreateRepository_Post,
