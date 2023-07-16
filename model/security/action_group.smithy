@@ -15,14 +15,6 @@ list AllowedActions {
     member: String
 }
 
-list ActionGroupsList{
-    member: Action_Group
-}
-
-list test{
-    member:String
-}
-
 structure Action_Group{
     reserved: Boolean,
     hidden: Boolean,
@@ -34,5 +26,5 @@ structure Action_Group{
 
 map ActionGroupsMap {
      key: String,
-     value: Tenant
+     value: Action_Group
  }
