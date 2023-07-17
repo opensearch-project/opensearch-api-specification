@@ -1,1 +1,1 @@
-const val smithyVersion = "1.33.0"
+const val smithyVersion = "1.35.0"
