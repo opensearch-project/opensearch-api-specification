@@ -8,16 +8,26 @@ $version: "2"
 namespace OpenSearch
 
 structure DataStream{
-    name:String,
-    timestamp_field:AttributesMap,
-    indices: IndicesList
+    name: String,
+    timestamp_field: DataStreamTimestampField,
+    indices: DataStreamIndices,
     generation: Integer,
     status: String,
     template: String
 }
 
-list IndicesList{
-    member: AttributesMap
+list DataStreamIndices {
+    member: DataStreamIndex
+}
+
+structure DataStreamIndex {
+  index_name: String,
+  index_uuid: String
+}
+
+map DataStreamTimestampField {
+  key: String
+  value: String
 }
 
 map DataStreamMap {
