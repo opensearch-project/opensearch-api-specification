@@ -13,14 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.health_check",
+    "x-operation-group": "security.health",
     "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/health")
 @documentation("Checks to see if the Security plugin is up and running.")
-operation HealthCheck {
-    input: HealthCheck_Input,
-    output: HealthCheck_Output
+operation SecurityHealth {
+    input: SecurityHealth_Input,
+    output: SecurityHealth_Output
 }
