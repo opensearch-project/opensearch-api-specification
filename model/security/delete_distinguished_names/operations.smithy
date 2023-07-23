@@ -13,14 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.delete_distinguished_name",
+    "x-operation-group": "security.delete_distinguished_names",
     "x-version-added": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")
 @documentation("Deletes all distinguished names in the specified cluster’s or node’s allow list.")
-operation DeleteDistinguishedName {
-    input: DeleteDistinguishedName_Input,
-    output: DeleteDistinguishedName_Output
+operation DeleteDistinguishedNames {
+    input: DeleteDistinguishedNames_Input,
+    output: DeleteDistinguishedNames_Output
 }

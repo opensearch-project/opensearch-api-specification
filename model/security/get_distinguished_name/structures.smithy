@@ -8,13 +8,14 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure GetDistinguishedName_Input{
+structure GetDistinguishedNamesWithClusterName_Input{
     @required
     @httpLabel
     cluster_name: String
 }
 
 @output
-structure GetDistinguishedName_Output {
-    distinguishedname: DistinguishedName
+structure GetDistinguishedNamesWithClusterName_Output {
+    @httpPayload
+    content: DistinguishedNamesMap
 }

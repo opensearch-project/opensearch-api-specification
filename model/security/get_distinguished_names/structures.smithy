@@ -12,5 +12,6 @@ structure GetDistinguishedNames_Input {}
 
 @output
 structure GetDistinguishedNames_Output {
-    distinguishednameslist: DistinguishedNamesList
+    @httpPayload
+    content: DistinguishedNamesMap
 }

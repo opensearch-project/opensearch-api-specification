@@ -13,14 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.get_distinguished_name",
+    "x-operation-group": "security.get_distinguished_names",
     "x-version-added": "1.0",
 )
 @readonly
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")
 @documentation("Returns the distinguished names from a specific cluster’s or node’s allow list.")
-operation GetDistinguishedNameWithClusterName {
-    input: GetDistinguishedName_Input,
-    output: GetDistinguishedName_Output
+operation GetDistinguishedNamesWithClusterName {
+    input: GetDistinguishedNamesWithClusterName_Input,
+    output: GetDistinguishedNamesWithClusterName_Output
 }

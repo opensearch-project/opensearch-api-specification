@@ -13,7 +13,7 @@ structure UpdateDistinguishedNames_Input {
     @httpLabel
     cluster_name: String
     @httpPayload
-    content: CreateDistinguishedNameParams
+    content: DistinguishedNames
 }
 
 @output

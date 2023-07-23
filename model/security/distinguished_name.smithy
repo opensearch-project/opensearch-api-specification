@@ -7,18 +7,13 @@
 $version: "2"
 namespace OpenSearch
 
-structure CreateDistinguishedNameParams{
-    nodes_dn: DistinguishedNamesDetails
+structure DistinguishedNames {
+    nodes_dn: NodesDn
 }
-
-list DistinguishedNamesDetails{
+list NodesDn {
     member: String
 }
-
-structure DistinguishedName{
-    nodes_dn: DistinguishedNamesDetails
-}
-
-list DistinguishedNamesList{
-    member: DistinguishedName
+map DistinguishedNamesMap {
+    key: String,
+    value: DistinguishedNames
 }

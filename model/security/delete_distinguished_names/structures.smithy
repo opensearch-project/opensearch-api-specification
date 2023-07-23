@@ -8,14 +8,14 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure DeleteDistinguishedName_Input {
+structure DeleteDistinguishedNames_Input {
     @required
     @httpLabel
     cluster_name: String
 }
 
 @output
-structure DeleteDistinguishedName_Output {
+structure DeleteDistinguishedNames_Output {
     status: MessageStatus,
     message: Message
 }
