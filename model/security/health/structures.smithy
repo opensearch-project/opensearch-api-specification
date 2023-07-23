@@ -7,16 +7,12 @@
 $version: "2"
 namespace OpenSearch
 
-structure HealthResponse{
+@input
+structure SecurityHealth_Input {
+}
+
+structure SecurityHealth_Output {
     message: String
     mode: String
     status: String
-}
-
-@input
-structure HealthCheck_Input {
-}
-
-structure HealthCheck_Output {
-    content: HealthResponse
 }
