@@ -18,6 +18,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @suppress(["HttpUriConflict"])
+@readonly
 @http(method: "HEAD", uri: "/_template/{name}")
 @documentation("Returns information about whether a particular index template exists.")
 operation IndicesExistsTemplate {

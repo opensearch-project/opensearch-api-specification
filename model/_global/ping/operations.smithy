@@ -18,6 +18,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @suppress(["HttpUriConflict"])
+@readonly
 @http(method: "HEAD", uri: "/")
 @documentation("Returns whether the cluster is running.")
 operation Ping {

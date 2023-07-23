@@ -17,6 +17,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @suppress(["HttpUriConflict"])
+@idempotent
 @http(method: "DELETE", uri: "/_plugins/_security/api/cache")
 @documentation("Flushes the Security plugin user, authentication, and authorization cache.")
 operation Flush_Cache {
