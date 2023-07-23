@@ -7,10 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-structure CreateActionGroupParams{
-    allowed_actions: AllowedActions
-}
-
 list AllowedActions {
     member: String
 }

@@ -13,7 +13,7 @@ structure CreateActionGroup_Input {
     @httpLabel
     action_group: String
     @httpPayload
-    content: CreateActionGroupParams
+    content: Action_Group
 }
 
 @output
