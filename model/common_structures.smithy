@@ -59,8 +59,3 @@ structure Hits{
     _source: Document,
     fields: Document
 }
-
-map AttributesMap {
-    key: String,
-    value: String
-}
