@@ -109,6 +109,7 @@ service OpenSearch {
         DeleteAllPits,
         DeleteByQuery,
         DeleteByQueryRethrottle,
+        DeleteDistinguishedNames,
         DeletePit,
         DeleteRole,
         DeleteRoleMapping,
@@ -131,6 +132,8 @@ service OpenSearch {
         GetActionGroups,
         GetAuditConfig,
         GetCertificates,
+        GetDistinguishedNames,
+        GetDistinguishedNamesWithClusterName,
         GetScript,
         GetScriptContext,
         GetScriptLanguages,
@@ -367,5 +370,6 @@ service OpenSearch {
         UpdateAuditConfig,
         UpdateByQuery,
         UpdateByQueryRethrottle,
+        UpdateDistinguishedNames,
     ]
 }
