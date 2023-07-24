@@ -16,7 +16,7 @@ use opensearch.openapi#vendorExtensions
     "x-operation-group": "security.get_certificates",
     "x-version-added": "1.0",
 )
-@idempotent
+@readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/api/ssl/certs")
 @documentation("Returns the cluster’s security certificates.")

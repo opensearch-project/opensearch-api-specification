@@ -16,7 +16,7 @@ use opensearch.openapi#vendorExtensions
     "x-operation-group": "security.delete_tenant",
     "x-version-added": "1.0",
 )
-@readonly
+@idempotent
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_plugins/_security/api/tenants/{tenant}")
 @documentation("Delete the specified tenant.")

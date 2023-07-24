@@ -17,6 +17,7 @@ use opensearch.openapi#vendorExtensions
     "x-version-added": "1.0",
 )
 @suppress(["HttpUriConflict"])
+@readonly
 @http(method: "HEAD", uri: "/{index}/_doc/{id}")
 @documentation("Returns information about whether a document exists in an index.")
 operation Exists {

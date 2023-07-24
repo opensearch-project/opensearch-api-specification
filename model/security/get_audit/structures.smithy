@@ -14,10 +14,10 @@ structure GetAuditConfig_Input{
 @output
 structure GetAuditConfig_Output {
     @httpPayload
-    content: GetAuditConfigResponse
+    content: AuditConfigWithReadOnly
 }
 
-structure GetAuditConfigResponse {
+structure AuditConfigWithReadOnly {
     _readonly: AuditConfigReadOnlyList,
     config: AuditConfig
 }
