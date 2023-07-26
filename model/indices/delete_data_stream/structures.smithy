@@ -19,5 +19,6 @@ structure IndicesDeleteDataStream_Input with [IndicesDeleteDataStream_QueryParam
     name: PathStreamNames,
 }
 
-// TODO: Fill in Output Structure
-structure IndicesDeleteDataStream_Output {}
+structure IndicesDeleteDataStream_Output {
+    acknowledged: Boolean
+}
