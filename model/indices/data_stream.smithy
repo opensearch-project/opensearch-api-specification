@@ -7,12 +7,12 @@
 $version: "2"
 namespace OpenSearch
 
-structure DataStream{
+structure DataStream {
     name: String,
     timestamp_field: DataStreamTimestampField,
     indices: DataStreamIndices,
-    generation: Integer,
-    status: String,
+    generation: Long,
+    status: DataStreamStatus,
     template: String
 }
 
@@ -25,14 +25,14 @@ structure DataStreamIndex {
   index_uuid: String
 }
 
-map DataStreamTimestampField {
-  key: String
-  value: String
+structure DataStreamTimestampField {
+  name: String
 }
 
-map DataStreamMap {
-    key: String
-    value: DataStreamList
+enum DataStreamStatus {
+    GREEN = "green"
+    YELLOW = "yellow"
+    RED = "red"
 }
 
 list DataStreamList {
