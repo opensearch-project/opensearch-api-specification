@@ -23,6 +23,5 @@ structure IndicesGetDataStream_WithName_Input with [IndicesGetDataStream_QueryPa
 }
 
 structure IndicesGetDataStream_Output {
-    @httpPayload
-    content: DataStreamMap
+    data_streams: DataStreamList
 }
