@@ -1,4 +1,4 @@
-package org.opensearch.smithy.openapi.protocols;
+package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import java.util.List;
 import java.util.Set;
@@ -11,21 +11,20 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.protocols.AbstractOSRestProtocol;
 
-public final class OpenSearchRestJsonProtocol extends AbstractOSRestProtocol<RestJsonTrait> {
+public final class OpenSearchRestJsonProtocol extends AbstractRestProtocol<RestJsonTrait> {
     @Override
     public Class<RestJsonTrait> getProtocolType() {
         return RestJsonTrait.class;
     }
 
     @Override
-    protected String getDocumentMediaType(Context<RestJsonTrait> context, Shape operationOrError, OSMessageType message) {
+    protected String getDocumentMediaType(Context<RestJsonTrait> context, Shape operationOrError, MessageType message) {
         return context.getConfig().getJsonContentType();
     }
 
     @Override
-    protected Schema createDocumentSchema(Context<RestJsonTrait> context, Shape operationOrError, List<HttpBinding> bindings, OSMessageType messageType) {
+    protected Schema createDocumentSchema(Context<RestJsonTrait> context, Shape operationOrError, List<HttpBinding> bindings, MessageType messageType) {
         if (bindings.isEmpty()) {
             return Schema.builder().type("object").build();
         }

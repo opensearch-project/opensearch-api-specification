@@ -1,7 +1,6 @@
 package org.opensearch.smithy.openapi.traits;
 
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -22,7 +21,6 @@ public class RestJsonTrait extends AbstractTrait implements ToSmithyBuilder<Rest
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            ObjectNode node = value.expectObjectNode();
             RestJsonTrait trait = builder().sourceLocation(value).build();
             trait.setNodeCache(value);
             return trait;

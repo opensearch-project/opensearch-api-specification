@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("software.amazon.smithy:smithy-openapi:1.33.0")
+    implementation("software.amazon.smithy:smithy-openapi:1.35.0")
 }
 
 java {
