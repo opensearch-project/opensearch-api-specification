@@ -8,9 +8,8 @@ $version: "2"
 namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
-// TODO: Fill in API Reference URL
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest"
+    "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-decommission/#example-decommissioning-and-recommissioning-a-zone"
 )
 
 @vendorExtensions(
