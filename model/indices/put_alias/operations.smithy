@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/field-types/supported-field-types/alias/"
+    "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-alias/#create-aliases"
 )
 
 @vendorExtensions(

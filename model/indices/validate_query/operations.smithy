@@ -8,8 +8,9 @@ $version: "2"
 namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
+// TODO: Fill in API Reference URL
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/observing-your-data/ad/api/#validate-detector"
+    "API Reference": "https://opensearch.org/docs/latest"
 )
 
 @vendorExtensions(
