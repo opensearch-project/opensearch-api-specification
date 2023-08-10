@@ -16,6 +16,6 @@ structure DeleteRole_Input{
 
 @output
 structure DeleteRole_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/api/ssl/certs")
-@documentation("Returns the cluster’s security certificates.")
+@documentation("Retrieves the cluster’s security certificates.")
 operation GetCertificates {
     input: GetCertificates_Input,
     output: GetCertificates_Output

@@ -8,10 +8,10 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure Flush_Cache_Input {}
+structure FlushCache_Input {}
 
 @output
-structure Flush_Cache_Output {
-    status: MessageStatus,
-    message: Message
+structure FlushCache_Output {
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

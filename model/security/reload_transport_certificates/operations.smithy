@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#reload-certificates"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#reload-transport-certificates"
 )
 
 @vendorExtensions(
@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_opendistro/_security/api/ssl/transport/reloadcerts")
-@documentation("Reloads SSL certificates that are about to expire without restarting the OpenSearch node.")
+@documentation("Reload transport layer communication certificates.")
 operation ReloadTransportCertificates {
     input: ReloadTransportCertificates_Input,
     output: ReloadTransportCertificates_Output

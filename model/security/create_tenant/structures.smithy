@@ -18,8 +18,8 @@ structure CreateTenant_Input {
 
 @output
 structure CreateTenant_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }
 
 structure CreateTenantParams{

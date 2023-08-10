@@ -20,6 +20,6 @@ structure CreateRoleMapping_Input{
 
 @output
 structure CreateRoleMapping_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

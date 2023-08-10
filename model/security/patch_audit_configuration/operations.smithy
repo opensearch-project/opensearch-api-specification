@@ -13,14 +13,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.get_audit_config",
+    "x-operation-group": "security.patch_audit_configuration",
     "x-version-added": "1.0",
 )
-@readonly
+@idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_opendistro/_security/api/audit")
-@documentation("A GET call retrieves the audit configuration.")
-operation GetAuditConfig {
-    input: GetAuditConfig_Input,
-    output: GetAuditConfig_Output
+@http(method: "PATCH", uri: "/_opendistro/_security/api/audit")
+@documentation("A PATCH call is used to update specified fields in the audit configuration.")
+operation PatchAuditConfiguration {
+    input: PatchAuditConfiguration_Input,
+    output: PatchAuditConfiguration_Output
 }

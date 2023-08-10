@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#health"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#health-check"
 )
 
 @vendorExtensions(

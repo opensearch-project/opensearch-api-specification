@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/api/actiongroups/")
-@documentation("Lists of all action groups.")
+@documentation("Retrieves all action groups.")
 operation GetActionGroups {
     input: GetActionGroups_Input,
     output: GetActionGroups_Output

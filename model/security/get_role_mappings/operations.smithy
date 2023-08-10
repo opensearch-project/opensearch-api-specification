@@ -13,7 +13,7 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.get_roles_mapping",
+    "x-operation-group": "security.get_role_mappings",
     "x-version-added": "1.0",
 )
 @readonly

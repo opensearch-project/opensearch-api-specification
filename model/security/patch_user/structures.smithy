@@ -19,6 +19,6 @@ structure PatchUser_Input {
 
 @output
 structure PatchUser_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

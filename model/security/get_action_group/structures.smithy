@@ -11,6 +11,7 @@ namespace OpenSearch
 structure GetActionGroup_Input{
     @required
     @httpLabel
+    @documentation("Action group to retrieve.")
     action_group: String
 }
 

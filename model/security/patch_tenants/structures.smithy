@@ -16,6 +16,6 @@ structure PatchTenants_Input{
 
 @output
 structure PatchTenants_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

@@ -7,6 +7,11 @@
 $version: "2"
 namespace OpenSearch
 
+map RoleMappings {
+    key: String,
+    value: RoleMapping
+}
+
 structure RoleMapping{
     hosts: Hosts
     users: Users
@@ -31,9 +36,4 @@ list BackendRoles{
 
 list AndBackendRoles{
     member: String
-}
-
-map RoleMappings {
-    key: String,
-    value: RoleMapping
 }

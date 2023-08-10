@@ -8,12 +8,14 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure PatchActionGroups_Input {
+structure UpdateAuditConfiguration_Input{
+    @required
     @httpPayload
-    content: PatchOperationList
+    content: AuditConfig
 }
+
 @output
-structure PatchActionGroups_Output {
+structure UpdateAuditConfiguration_Output {
     status: SecurityOperationStatus,
     message: SecurityOperationMessage
 }

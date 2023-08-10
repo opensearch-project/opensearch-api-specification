@@ -16,6 +16,6 @@ structure DeleteTenant_Input{
 
 @output
 structure DeleteTenant_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

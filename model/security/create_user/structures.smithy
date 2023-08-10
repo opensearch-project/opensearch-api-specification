@@ -20,6 +20,6 @@ structure CreateUser_Input {
 
 @output
 structure CreateUser_Output {
-    status: MessageStatus
-    message: Message
+    status: SecurityOperationStatus
+    message: SecurityOperationMessage
 }

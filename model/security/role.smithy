@@ -7,6 +7,11 @@
 $version: "2"
 namespace OpenSearch
 
+map RolesMap {
+    key: String
+    value: Role
+}
+
 structure Role {
     reserved: Boolean
     hidden: Boolean
@@ -46,9 +51,4 @@ list MaskedFields {
 
 list AllowedActions {
     member: String
-}
-
-map RolesMap {
-    key: String
-    value: Role
 }

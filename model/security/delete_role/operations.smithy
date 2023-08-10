@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_plugins/_security/api/roles/{role}")
-@documentation("Delete role.")
+@documentation("Delete the specified role.")
 operation DeleteRole {
     input: DeleteRole_Input,
     output: DeleteRole_Output

@@ -12,5 +12,6 @@ structure ReloadTransportCertificates_Input {}
 
 @output
 structure ReloadTransportCertificates_Output {
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

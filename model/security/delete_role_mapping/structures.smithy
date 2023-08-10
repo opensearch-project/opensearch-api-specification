@@ -7,7 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-
 @input
 structure DeleteRoleMapping_Input{
     @required
@@ -17,6 +16,6 @@ structure DeleteRoleMapping_Input{
 
 @output
 structure DeleteRoleMapping_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

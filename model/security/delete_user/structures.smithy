@@ -17,6 +17,6 @@ structure DeleteUser_Input {
 
 @output
 structure DeleteUser_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

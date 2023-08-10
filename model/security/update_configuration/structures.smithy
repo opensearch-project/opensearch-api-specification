@@ -16,6 +16,6 @@ structure UpdateConfiguration_Input{
 
 @output
 structure UpdateConfiguration_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

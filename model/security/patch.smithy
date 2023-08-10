@@ -7,12 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
-structure PatchOperation {
-    op: String,
-    path: String,
-    value: Document
-}
-
 list PatchOperationList {
     member: PatchOperation
+}
+
+structure PatchOperation {
+    @documentation("The operation to perform. Possible values: remove,add, replace, move, copy, test.")
+    @required
+    op: String,@documentation("The path to the resource.")
+    @required
+    path: String,@documentation("The new values used for the update.")
+    value: Document
 }
