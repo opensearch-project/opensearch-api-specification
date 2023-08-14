@@ -196,6 +196,7 @@ service OpenSearch {
         GetActionGroups,
         GetAuditConfig,
         GetCertificates,
+        GetConfiguration,
         GetDistinguishedNames,
         GetDistinguishedNamesWithClusterName,
         GetScript,
@@ -361,6 +362,7 @@ service OpenSearch {
         PatchActionGroup,
         PatchActionGroups,
         PatchAuditConfig,
+        PatchConfiguration,
         PatchRole,
         PatchRoles,
         PatchTenant,
@@ -434,6 +436,7 @@ service OpenSearch {
         UpdateAuditConfig,
         UpdateByQuery,
         UpdateByQueryRethrottle,
+        UpdateConfiguration,
         UpdateDistinguishedNames,
     ]
 }
