@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
 )
 @idempotent
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
-@http(method: "PUT", uri: "/_opendistro/_security/api/ssl/http/reloadcerts")
+@http(method: "PUT", uri: "/_plugins/_security/api/ssl/http/reloadcerts")
 @documentation("Reload HTTP layer communication certificates.")
 operation ReloadHttpCertificates {
     input: ReloadHttpCertificates_Input,

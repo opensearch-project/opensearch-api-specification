@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
 )
 @idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "PUT", uri: "/_opendistro/_security/api/audit/config")
+@http(method: "PUT", uri: "/_plugins/_security/api/audit/config")
 @documentation("Updates the audit configuration.")
 operation UpdateAuditConfiguration {
     input: UpdateAuditConfiguration_Input,

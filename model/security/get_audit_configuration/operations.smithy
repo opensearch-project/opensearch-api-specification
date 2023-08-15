@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
 )
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_opendistro/_security/api/audit")
+@http(method: "GET", uri: "/_plugins/_security/api/audit")
 @documentation("Retrieves the audit configuration.")
 operation GetAuditConfiguration {
     input: GetAuditConfiguration_Input,

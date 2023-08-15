@@ -18,7 +18,7 @@ use opensearch.openapi#vendorExtensions
 )
 @idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "PATCH", uri: "/_opendistro/_security/api/audit")
+@http(method: "PATCH", uri: "/_plugins/_security/api/audit")
 @documentation("A PATCH call is used to update specified fields in the audit configuration.")
 operation PatchAuditConfiguration {
     input: PatchAuditConfiguration_Input,
