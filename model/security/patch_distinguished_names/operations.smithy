@@ -14,14 +14,14 @@ use opensearch.openapi#vendorExtensions
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.update_all_distinguished_names",
+    "x-operation-group": "security.patch_distinguished_names",
     "x-version-added": "1.0",
 )
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PATCH", uri: "/_plugins/_security/api/nodesdn")
 @documentation("Bulk update of distinguished names.")
-operation UpdateAllDistinguishedNames {
-    input: UpdateAllDistinguishedNames_Input,
-    output: UpdateAllDistinguishedNames_Output
+operation PatchDistinguishedNames {
+    input: PatchDistinguishedNames_Input,
+    output: PatchDistinguishedNames_Output
 }

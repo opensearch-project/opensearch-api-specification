@@ -8,14 +8,14 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure UpdateAllDistinguishedNames_Input {
+structure PatchDistinguishedNames_Input {
     @required
     @httpPayload
     content: PatchOperationList
 }
 
 @output
-structure UpdateAllDistinguishedNames_Output {
+structure PatchDistinguishedNames_Output {
     status: SecurityOperationStatus,
     message: SecurityOperationMessage
 }
