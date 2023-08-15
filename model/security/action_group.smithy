@@ -7,11 +7,12 @@
 $version: "2"
 namespace OpenSearch
 
-list AllowedActions {
-    member: String
+map ActionGroupsMap {
+  key: String,
+  value: Action_Group
 }
 
-structure Action_Group{
+structure Action_Group {
     reserved: Boolean,
     hidden: Boolean,
     allowed_actions: AllowedActions,
@@ -20,7 +21,6 @@ structure Action_Group{
     static: Boolean
 }
 
-map ActionGroupsMap {
-     key: String,
-     value: Action_Group
+list AllowedActions {
+  member: String
 }

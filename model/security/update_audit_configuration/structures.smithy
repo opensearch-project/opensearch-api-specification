@@ -8,14 +8,14 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure GetDistinguishedNamesWithClusterName_Input{
+structure UpdateAuditConfiguration_Input{
     @required
-    @httpLabel
-    cluster_name: String
+    @httpPayload
+    content: AuditConfig
 }
 
 @output
-structure GetDistinguishedNamesWithClusterName_Output {
-    @httpPayload
-    content: DistinguishedNamesMap
+structure UpdateAuditConfiguration_Output {
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

@@ -10,13 +10,15 @@ namespace OpenSearch
 @input
 structure ChangePassword_Input{
     @required
+    @documentation("The current password")
     current_password: String
     @required
+    @documentation("The new password to set")
     password: String
 }
 
 @output
 structure ChangePassword_Output{
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

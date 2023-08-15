@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @readonly
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/actiongroups/{action_group}")
-@documentation("Providing information about given action group.")
+@documentation("Retrieves one action group.")
 operation GetActionGroup {
     input: GetActionGroup_Input,
     output: GetActionGroup_Output

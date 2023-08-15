@@ -11,6 +11,7 @@ namespace OpenSearch
 structure CreateActionGroup_Input {
     @required
     @httpLabel
+    @documentation("The name of the action group to create or replace")
     action_group: String
     @httpPayload
     content: Action_Group
@@ -18,6 +19,6 @@ structure CreateActionGroup_Input {
 
 @output
 structure CreateActionGroup_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

@@ -16,6 +16,6 @@ structure PatchConfiguration_Input {
 
 @output
 structure PatchConfiguration_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

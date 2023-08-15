@@ -20,6 +20,6 @@ structure CreateRole_Input{
 
 @output
 structure CreateRole_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

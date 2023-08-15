@@ -11,11 +11,12 @@ namespace OpenSearch
 structure DeleteActionGroup_Input{
     @required
     @httpLabel
+    @documentation("Action group to delete.")
     action_group: String
 }
 
 @output
 structure DeleteActionGroup_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

@@ -10,8 +10,21 @@ namespace OpenSearch
 @input
 structure GetDistinguishedNames_Input {}
 
+@input
+structure GetDistinguishedNamesWithClusterName_Input{
+    @required
+    @httpLabel
+    cluster_name: String
+}
+
 @output
 structure GetDistinguishedNames_Output {
+    @httpPayload
+    content: DistinguishedNamesMap
+}
+
+@output
+structure GetDistinguishedNamesWithClusterName_Output {
     @httpPayload
     content: DistinguishedNamesMap
 }

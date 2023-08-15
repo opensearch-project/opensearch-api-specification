@@ -12,5 +12,6 @@ structure ReloadHttpCertificates_Input {}
 
 @output
 structure ReloadHttpCertificates_Output {
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

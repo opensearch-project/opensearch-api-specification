@@ -9,11 +9,11 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#patch-role-mapping"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#patch-role-mappings"
 )
 
 @vendorExtensions(
-    "x-operation-group": "security.patch_roles_mappings",
+    "x-operation-group": "security.patch_role_mappings",
     "x-version-added": "1.0",
 )
 @idempotent

@@ -7,8 +7,8 @@
 $version: "2"
 namespace OpenSearch
 
-@documentation("The message indicating the information of action of the model.")
-string Message
+@documentation("Security Operation Message")
+string SecurityOperationMessage
 
-@documentation("Informing of request's status.")
-string MessageStatus
+@documentation("Security Operation Status")
+string SecurityOperationStatus

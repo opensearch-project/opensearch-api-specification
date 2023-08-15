@@ -19,6 +19,6 @@ structure PatchRoleMapping_Input{
 
 @output
 structure PatchRoleMapping_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

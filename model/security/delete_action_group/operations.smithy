@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @readonly
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_plugins/_security/api/actiongroups/{action_group}")
-@documentation("Delete specified action group.")
+@documentation("Delete a specified action group.")
 operation DeleteActionGroup {
     input: DeleteActionGroup_Input,
     output: DeleteActionGroup_Output

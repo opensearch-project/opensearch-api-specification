@@ -7,13 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
-structure DistinguishedNames {
-    nodes_dn: NodesDn
-}
-list NodesDn {
-    member: String
-}
 map DistinguishedNamesMap {
     key: String,
     value: DistinguishedNames
+}
+
+structure DistinguishedNames {
+    nodes_dn: NodesDn
+}
+
+list NodesDn {
+    member: String
 }

@@ -18,6 +18,6 @@ structure UpdateDistinguishedNames_Input {
 
 @output
 structure UpdateDistinguishedNames_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

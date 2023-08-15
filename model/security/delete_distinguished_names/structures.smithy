@@ -16,6 +16,6 @@ structure DeleteDistinguishedNames_Input {
 
 @output
 structure DeleteDistinguishedNames_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

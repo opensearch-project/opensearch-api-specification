@@ -14,6 +14,6 @@ structure PatchActionGroups_Input {
 }
 @output
 structure PatchActionGroups_Output {
-    status: MessageStatus,
-    message: Message
+    status: SecurityOperationStatus,
+    message: SecurityOperationMessage
 }

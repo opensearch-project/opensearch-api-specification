@@ -7,6 +7,15 @@
 $version: "2"
 namespace OpenSearch
 
+structure AuditConfigWithReadOnly {
+    _readonly: AuditConfigReadOnlyList,
+    config: AuditConfig
+}
+
+list AuditConfigReadOnlyList {
+    member: String
+}
+
 structure AuditConfig {
     compliance: ComplianceConfig
     enabled: Boolean
@@ -16,7 +25,7 @@ structure AuditConfig {
 structure ComplianceConfig {
     enabled: Boolean
     write_log_diffs: Boolean
-    read_watched_fields: AttributesMap
+    read_watched_fields: Document
     read_ignore_users: IgnoreUsersList
     write_watched_indices: WriteWatchedIndices
     write_ignore_users: WriteIgnoreUsers

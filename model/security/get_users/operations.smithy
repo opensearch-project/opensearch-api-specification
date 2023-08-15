@@ -9,7 +9,7 @@ namespace OpenSearch
 use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/"
+    "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-users"
 )
 
 @vendorExtensions(
@@ -19,7 +19,7 @@ use opensearch.openapi#vendorExtensions
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/api/internalusers")
-@documentation("Lists of all internal users.")
+@documentation("Retrieve all internal users.")
 operation GetUsers {
     input: GetUsers_Input,
     output: GetUsers_Output
