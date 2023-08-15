@@ -24,3 +24,16 @@ operation GetDistinguishedNames {
     input: GetDistinguishedNames_Input,
     output: GetDistinguishedNames_Output
 }
+
+@vendorExtensions(
+    "x-operation-group": "security.get_distinguished_names",
+    "x-version-added": "1.0",
+)
+@readonly
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
+@http(method: "GET", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")
+@documentation("Retrieve distinguished names of a specified cluster.")
+operation GetDistinguishedNamesWithClusterName {
+    input: GetDistinguishedNamesWithClusterName_Input,
+    output: GetDistinguishedNamesWithClusterName_Output
+}
