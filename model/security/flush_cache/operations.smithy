@@ -20,7 +20,7 @@ use opensearch.openapi#vendorExtensions
 @idempotent
 @http(method: "DELETE", uri: "/_plugins/_security/api/cache")
 @documentation("Flushes the Security plugin user, authentication, and authorization cache.")
-operation Flush_Cache {
+operation FlushCache {
     input: FlushCache_Input,
     output: FlushCache_Output
 }
