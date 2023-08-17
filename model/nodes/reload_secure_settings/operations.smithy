@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-reload-secure/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "nodes.reload_secure_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.reload_secure_settings")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_nodes/reload_secure_settings")
 @documentation("Reloads secure settings.")
@@ -24,10 +21,8 @@ operation NodesReloadSecureSettings {
     output: NodesReloadSecureSettings_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.reload_secure_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.reload_secure_settings")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_nodes/{node_id}/reload_secure_settings")
 @documentation("Reloads secure settings.")

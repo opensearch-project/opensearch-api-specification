@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.get_distinguished_names",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.get_distinguished_names")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_security/api/nodesdn")
@@ -25,10 +22,8 @@ operation GetDistinguishedNames {
     output: GetDistinguishedNames_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "security.get_distinguished_names",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.get_distinguished_names")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")

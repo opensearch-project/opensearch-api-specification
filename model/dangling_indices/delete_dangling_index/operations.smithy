@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/dangling-index/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "dangling_indices.delete_dangling_index",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("dangling_indices.delete_dangling_index")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_dangling/{index_uuid}")

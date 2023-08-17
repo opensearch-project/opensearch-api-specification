@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/scroll/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "clear_scroll",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("clear_scroll")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_search/scroll")
@@ -26,12 +23,10 @@ operation ClearScroll {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "clear_scroll",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "A scroll id can be quite large and should be specified as part of the body",
-    "x-version-deprecated": "1.0",
-)
+@xOperationGroup("clear_scroll")
+@xVersionAdded("1.0")
+@xDeprecationMessage("A scroll id can be quite large and should be specified as part of the body")
+@xVersionDeprecated("1.0")
 @idempotent
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "DELETE", uri: "/_search/scroll/{scroll_id}")

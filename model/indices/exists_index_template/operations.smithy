@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-templates/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.exists_index_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.exists_index_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @readonly
 @http(method: "HEAD", uri: "/_index_template/{name}")

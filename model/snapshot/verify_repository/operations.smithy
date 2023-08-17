@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/snapshots/verify-snapshot-repository/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.verify_repository",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.verify_repository")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_snapshot/{repository}/_verify")
 @documentation("Verifies a repository.")

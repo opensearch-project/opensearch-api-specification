@@ -6,7 +6,6 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @mixin
 structure NodesInfo_QueryParams {
@@ -27,9 +26,7 @@ structure NodesInfo_Input with [NodesInfo_QueryParams] {
 structure NodesInfo_WithNodeId_Input with [NodesInfo_QueryParams] {
     @required
     @httpLabel
-    @vendorExtensions(
-        "x-overloaded-param": "metric",
-    )
+    @xOverloadedParam("metric")
     node_id: PathNodeId,
 }
 

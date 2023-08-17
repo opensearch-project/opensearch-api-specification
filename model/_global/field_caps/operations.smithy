@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/field-types/supported-field-types/alias/#using-aliases-in-field-capabilities-api-operations"
 )
 
-@vendorExtensions(
-    "x-operation-group": "field_caps",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("field_caps")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_field_caps")
@@ -25,10 +22,8 @@ operation FieldCaps_Get {
     output: FieldCaps_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "field_caps",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("field_caps")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_field_caps")
 @documentation("Returns the information about the capabilities of fields among multiple indices.")
@@ -37,10 +32,8 @@ operation FieldCaps_Post {
     output: FieldCaps_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "field_caps",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("field_caps")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_field_caps")
@@ -50,10 +43,8 @@ operation FieldCaps_Get_WithIndex {
     output: FieldCaps_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "field_caps",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("field_caps")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_field_caps")
 @documentation("Returns the information about the capabilities of fields among multiple indices.")

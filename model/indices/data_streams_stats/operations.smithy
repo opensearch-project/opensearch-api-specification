@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/data-streams/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.data_streams_stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.data_streams_stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_data_stream/_stats")
@@ -25,10 +22,8 @@ operation IndicesDataStreamsStats {
     output: IndicesDataStreamsStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.data_streams_stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.data_streams_stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_data_stream/{name}/_stats")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#flush-cache"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.flush_cache",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.flush_cache")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @idempotent
 @http(method: "DELETE", uri: "/_plugins/_security/api/cache")

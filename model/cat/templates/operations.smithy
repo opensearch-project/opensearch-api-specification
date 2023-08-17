@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-templates/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.templates",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.templates")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/templates")
@@ -25,10 +22,8 @@ operation CatTemplates {
     output: CatTemplates_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.templates",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.templates")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/templates/{name}")

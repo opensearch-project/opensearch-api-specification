@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "search_shards",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("search_shards")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_search_shards")
@@ -26,10 +23,8 @@ operation SearchShards_Get {
     output: SearchShards_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "search_shards",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("search_shards")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_search_shards")
 @documentation("Returns information about the indices and shards that a search request would be executed against.")
@@ -38,10 +33,8 @@ operation SearchShards_Post {
     output: SearchShards_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "search_shards",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("search_shards")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_search_shards")
@@ -51,10 +44,8 @@ operation SearchShards_Get_WithIndex {
     output: SearchShards_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "search_shards",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("search_shards")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_search_shards")
 @documentation("Returns information about the indices and shards that a search request would be executed against.")

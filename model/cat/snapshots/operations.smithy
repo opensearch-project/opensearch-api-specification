@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-snapshots/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.snapshots",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.snapshots")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/snapshots")
@@ -25,10 +22,8 @@ operation CatSnapshots {
     output: CatSnapshots_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.snapshots",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.snapshots")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/snapshots/{repository}")

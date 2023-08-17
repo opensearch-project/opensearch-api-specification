@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#get-role"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.get_role",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.get_role")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_security/api/roles/{role}")

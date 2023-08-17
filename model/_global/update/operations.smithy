@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/document-apis/update-document/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "update",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("update")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_update/{id}")
 @documentation("Updates a document with a script or partial document.")

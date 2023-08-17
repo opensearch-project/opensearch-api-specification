@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-thread-pool/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.thread_pool",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.thread_pool")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/thread_pool")
@@ -26,10 +23,8 @@ operation CatThreadPool {
     output: CatThreadPool_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.thread_pool",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.thread_pool")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/thread_pool/{thread_pool_patterns}")

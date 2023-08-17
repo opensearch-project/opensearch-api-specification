@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/snapshots/delete-snapshot/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.delete",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.delete")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_snapshot/{repository}/{snapshot}")

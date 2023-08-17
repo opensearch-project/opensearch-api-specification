@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/search/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "search",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("search")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_search")
@@ -25,10 +22,8 @@ operation Search_Get {
     output: Search_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "search",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("search")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_search")
 @documentation("Returns results matching a query.")
@@ -37,10 +32,8 @@ operation Search_Post {
     output: Search_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "search",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("search")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_search")
@@ -50,10 +43,8 @@ operation Search_Get_WithIndex {
     output: Search_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "search",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("search")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_search")
 @documentation("Returns results matching a query.")

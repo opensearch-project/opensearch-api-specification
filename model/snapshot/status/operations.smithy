@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/snapshots/get-snapshot-status/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.status",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.status")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_snapshot/_status")
@@ -25,10 +22,8 @@ operation SnapshotStatus {
     output: SnapshotStatus_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.status",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.status")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_snapshot/{repository}/_status")
@@ -38,10 +33,8 @@ operation SnapshotStatus_WithRepository {
     output: SnapshotStatus_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.status",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.status")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_snapshot/{repository}/{snapshot}/_status")

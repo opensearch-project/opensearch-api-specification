@@ -6,7 +6,6 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @mixin
 structure CatNodes_QueryParams {
@@ -23,10 +22,8 @@ structure CatNodes_QueryParams {
     @httpQuery("local")
     @default(false)
     @deprecated
-    @vendorExtensions(
-        "x-deprecation-message": "This parameter does not cause this API to act locally.",
-        "x-version-deprecated": "1.0",
-    )
+    @xDeprecationMessage("This parameter does not cause this API to act locally.")
+    @xVersionDeprecated("1.0")
     local: Local,
 
     @httpQuery("master_timeout")

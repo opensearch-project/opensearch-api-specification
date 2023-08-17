@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-alias/#create-aliases"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_alias")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_alias/{name}")
@@ -25,10 +22,8 @@ operation IndicesPutAlias_Put {
     output: IndicesPutAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_alias")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_alias/{name}")
 @documentation("Creates or updates an alias.")
@@ -37,10 +32,8 @@ operation IndicesPutAlias_Post {
     output: IndicesPutAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_alias")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_aliases/{name}")
@@ -50,10 +43,8 @@ operation IndicesPutAlias_Put_Plural {
     output: IndicesPutAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_alias")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_aliases/{name}")
 @documentation("Creates or updates an alias.")

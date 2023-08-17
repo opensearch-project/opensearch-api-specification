@@ -6,157 +6,114 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of alias names.")
 string PathAliasNames
 
-@vendorExtensions(
-    "x-data-type": "array",
-    "x-enum-options": ["_all", "blocks", "metadata", "nodes", "routing_table", "routing_nodes", "master_node", "cluster_manager_node", "version"],
-)
+@xDataType("array")
+@xEnumOptions(["_all", "blocks", "metadata", "nodes", "routing_table", "routing_nodes", "master_node", "cluster_manager_node", "version"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned to the specified metrics.")
 string PathClusterStateMetric
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("The Comma-separated names of the component templates.")
 string PathComponentTemplateNames
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 string PathFields
 
-@vendorExtensions(
-    "x-data-type": "array",
-    "x-enum-options": ["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"],
-)
+@xDataType("array")
+@xEnumOptions(["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned for `indices` metric to the specific index metrics. Isn't used if `indices` (or `all`) metric isn't specified.")
 string PathIndexMetric
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of names or wildcard expressions.")
 string PathIndexNames
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of indices; use `_all` or empty string to perform the operation on all indices.")
 string PathIndices
 
-@vendorExtensions(
-    "x-data-type": "array",
-    "x-enum-options": ["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"],
-)
+@xDataType("array")
+@xEnumOptions(["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned the specific metrics.")
 string PathIndicesStatsMetric
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of aliases to delete (supports wildcards); use `_all` to delete all aliases for the specified indices.")
 string PathName
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.")
 string PathNodeId
 
-@vendorExtensions(
-    "x-data-type": "array",
-    "x-enum-options": ["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"],
-)
+@xDataType("array")
+@xEnumOptions(["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of metrics you wish returned. Leave empty to return all.")
 string PathNodesInfoMetric
 
-@vendorExtensions(
-    "x-data-type": "array",
-    "x-enum-options": ["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure"],
-)
+@xDataType("array")
+@xEnumOptions(["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned to the specified metrics.")
 string PathNodesStatsMetric
 
-@vendorExtensions(
-    "x-data-type": "array",
-    "x-enum-options": ["_all", "rest_actions"],
-)
+@xDataType("array")
+@xEnumOptions(["_all", "rest_actions"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned to the specified metrics.")
 string PathNodesUsageMetric
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of pipeline ids. Wildcards supported.")
 string PathPipelineIds
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of repository names.")
 string PathRepositories
 
 @deprecated
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of scroll IDs to clear.")
 string PathScrollIds
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of settings.")
 string PathSettingNames
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of snapshot names.")
 string PathSnapshots
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of data streams; use `_all` or empty string to perform the operation on all data streams.")
 string PathStreamNames
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated names of the index templates.")
 string PathTemplateNames
 
-@vendorExtensions(
-    "x-data-type": "array",
-)
+@xDataType("array")
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Comma-separated list of regular-expressions to filter the thread pools in the output.")
 string PathThreadPoolPatterns
@@ -318,61 +275,45 @@ string WaitForActiveShards
 @documentation("Wait until the specified number of nodes is available.")
 string WaitForNodes
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Time each individual bulk request should wait for shards that are unavailable.")
 string BulkTimeout
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Operation timeout for connection to cluster-manager node.")
 string ClusterManagerTimeout
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The interval for the second sampling of threads.")
 string Interval
 
 @deprecated
-@vendorExtensions(
-    "x-data-type": "time",
-    "x-deprecation-message": "To promote inclusive language, use 'cluster_manager_timeout' instead.",
-    "x-version-deprecated": "2.0.0",
-)
+@xDataType("time")
+@xDeprecationMessage("To promote inclusive language, use 'cluster_manager_timeout' instead.")
+@xVersionDeprecated("2.0.0")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Operation timeout for connection to master node.")
 string MasterTimeout
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Specify how long a consistent view of the index should be maintained for scrolled search.")
 string Scroll
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Explicit timeout for each search request. Defaults to no timeout.")
 string SearchTimeout
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Operation timeout.")
 string Timeout
 
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout

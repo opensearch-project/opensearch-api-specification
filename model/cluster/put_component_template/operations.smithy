@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-templates/#use-component-templates-to-create-an-index-template"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.put_component_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.put_component_template")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_component_template/{name}")
@@ -25,10 +22,8 @@ operation ClusterPutComponentTemplate_Put {
     output: ClusterPutComponentTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cluster.put_component_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.put_component_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_component_template/{name}")
 @documentation("Creates or updates a component template.")

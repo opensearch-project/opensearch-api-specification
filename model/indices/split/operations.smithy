@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/split/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.split",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.split")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_split/{target}")
@@ -25,10 +22,8 @@ operation IndicesSplit_Put {
     output: IndicesSplit_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.split",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.split")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_split/{target}")
 @documentation("Allows you to split an existing index into a new index with more primary shards.")

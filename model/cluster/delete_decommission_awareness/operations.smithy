@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-decommission/#example-decommissioning-and-recommissioning-a-zone"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.delete_decommission_awareness",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.delete_decommission_awareness")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_cluster/decommission/awareness/")

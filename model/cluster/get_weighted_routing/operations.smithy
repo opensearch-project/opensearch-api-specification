@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-getting-weights-for-all-zones"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.get_weighted_routing",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.get_weighted_routing")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/routing/awareness/{attribute}/weights")

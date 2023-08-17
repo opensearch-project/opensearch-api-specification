@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.forcemerge",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.forcemerge")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_forcemerge")
 @documentation("Performs the force merge operation on one or more indices.")
@@ -25,10 +22,8 @@ operation IndicesForcemerge {
     output: IndicesForcemerge_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.forcemerge",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.forcemerge")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_forcemerge")
 @documentation("Performs the force merge operation on one or more indices.")

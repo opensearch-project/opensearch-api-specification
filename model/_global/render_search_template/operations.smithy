@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/search-template/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "render_search_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("render_search_template")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_render/template")
@@ -25,10 +22,8 @@ operation RenderSearchTemplate_Get {
     output: RenderSearchTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "render_search_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("render_search_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_render/template")
 @documentation("Allows to use the Mustache language to pre-render a search definition.")
@@ -37,10 +32,8 @@ operation RenderSearchTemplate_Post {
     output: RenderSearchTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "render_search_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("render_search_template")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_render/template/{id}")
@@ -50,10 +43,8 @@ operation RenderSearchTemplate_Get_WithId {
     output: RenderSearchTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "render_search_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("render_search_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_render/template/{id}")
 @documentation("Allows to use the Mustache language to pre-render a search definition.")

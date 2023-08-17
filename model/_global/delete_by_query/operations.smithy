@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/document-apis/delete-by-query/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "delete_by_query",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("delete_by_query")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_delete_by_query")
 @documentation("Deletes documents matching the provided query.")

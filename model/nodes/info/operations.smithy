@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-info/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "nodes.info",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.info")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes")
@@ -25,10 +22,8 @@ operation NodesInfo {
     output: NodesInfo_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.info",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.info")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}")
@@ -38,10 +33,8 @@ operation NodesInfo_WithNodeId {
     output: NodesInfo_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.info",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.info")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/{metric}")

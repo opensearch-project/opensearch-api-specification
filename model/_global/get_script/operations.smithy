@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/script-apis/get-stored-script/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "get_script",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("get_script")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_scripts/{id}")

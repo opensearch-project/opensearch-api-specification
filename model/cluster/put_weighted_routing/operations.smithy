@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-weighted-round-robin-search"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.put_weighted_routing",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.put_weighted_routing")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_cluster/routing/awareness/{attribute}/weights")

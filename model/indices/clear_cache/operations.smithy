@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/clear-index-cache/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.clear_cache",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.clear_cache")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_cache/clear")
 @documentation("Clears all or specific caches for one or more indices.")
@@ -24,10 +21,8 @@ operation IndicesClearCache {
     output: IndicesClearCache_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.clear_cache",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.clear_cache")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_cache/clear")
 @documentation("Clears all or specific caches for one or more indices.")

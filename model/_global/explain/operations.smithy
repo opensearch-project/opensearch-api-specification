@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/explain/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "explain",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("explain")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_explain/{id}")
@@ -25,10 +22,8 @@ operation Explain_Get {
     output: Explain_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "explain",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("explain")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_explain/{id}")
 @documentation("Returns information about why a specific matches (or doesn't match) a query.")

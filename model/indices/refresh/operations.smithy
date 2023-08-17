@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/tuning-your-cluster/availability-and-recovery/remote-store/index/#refresh-level-and-request-level-durability"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.refresh",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.refresh")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_refresh")
 @documentation("Performs the refresh operation in one or more indices.")
@@ -24,10 +21,8 @@ operation IndicesRefresh_Post {
     output: IndicesRefresh_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.refresh",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.refresh")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_refresh")
@@ -37,10 +32,8 @@ operation IndicesRefresh_Get {
     output: IndicesRefresh_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.refresh",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.refresh")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_refresh")
 @documentation("Performs the refresh operation in one or more indices.")
@@ -49,10 +42,8 @@ operation IndicesRefresh_Post_WithIndex {
     output: IndicesRefresh_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.refresh",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.refresh")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_refresh")

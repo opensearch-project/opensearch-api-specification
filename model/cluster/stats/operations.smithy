@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/stats")
@@ -25,10 +22,8 @@ operation ClusterStats {
     output: ClusterStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cluster.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/stats/nodes/{node_id}")

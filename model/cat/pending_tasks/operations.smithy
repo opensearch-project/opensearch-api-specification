@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-pending-tasks/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.pending_tasks",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.pending_tasks")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/pending_tasks")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/document-apis/update-by-query/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "update_by_query",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("update_by_query")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_update_by_query")
 @documentation("Performs an update on every document in the index without changing the source,

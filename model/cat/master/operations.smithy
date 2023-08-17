@@ -6,19 +6,16 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-cluster_manager/"
 )
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "cat.master",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "To promote inclusive language, please use '/_cat/cluster_manager' instead.",
-    "x-version-deprecated": "1.0",
-)
+@xOperationGroup("cat.master")
+@xVersionAdded("1.0")
+@xDeprecationMessage("To promote inclusive language, please use '/_cat/cluster_manager' instead.")
+@xVersionDeprecated("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/master")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/scroll/#path-and-http-methods"
 )
 
-@vendorExtensions(
-    "x-operation-group": "scroll",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("scroll")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_search/scroll")
@@ -25,10 +22,8 @@ operation Scroll_Get {
     output: Scroll_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "scroll",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("scroll")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_search/scroll")
 @documentation("Allows to retrieve a large numbers of results from a single search request.")
@@ -38,12 +33,10 @@ operation Scroll_Post {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "scroll",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "A scroll id can be quite large and should be specified as part of the body",
-    "x-version-deprecated": "1.0",
-)
+@xOperationGroup("scroll")
+@xVersionAdded("1.0")
+@xDeprecationMessage("A scroll id can be quite large and should be specified as part of the body")
+@xVersionDeprecated("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_search/scroll/{scroll_id}")
@@ -54,12 +47,10 @@ operation Scroll_Get_WithScrollId {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "scroll",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "A scroll id can be quite large and should be specified as part of the body",
-    "x-version-deprecated": "1.0",
-)
+@xOperationGroup("scroll")
+@xVersionAdded("1.0")
+@xDeprecationMessage("A scroll id can be quite large and should be specified as part of the body")
+@xVersionDeprecated("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_search/scroll/{scroll_id}")
 @documentation("Allows to retrieve a large numbers of results from a single search request.")

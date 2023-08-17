@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.allocation",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.allocation")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/allocation")
@@ -25,10 +22,8 @@ operation CatAllocation {
     output: CatAllocation_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.allocation",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.allocation")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/allocation/{node_id}")

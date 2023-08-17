@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/document-apis/multi-get/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "mget",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("mget")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_mget")
@@ -25,10 +22,8 @@ operation Mget_Get {
     output: Mget_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "mget",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("mget")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_mget")
 @documentation("Allows to get multiple documents in one request.")
@@ -37,10 +32,8 @@ operation Mget_Post {
     output: Mget_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "mget",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("mget")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_mget")
@@ -50,10 +43,8 @@ operation Mget_Get_WithIndex {
     output: Mget_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "mget",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("mget")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_mget")
 @documentation("Allows to get multiple documents in one request.")

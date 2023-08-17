@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/reindex-data/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "reindex",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("reindex")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_reindex")
 @documentation("Allows to copy documents from one index to another, optionally filtering the source

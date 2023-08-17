@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.all_pit_segments",
-    "x-version-added": "2.4",
-)
+@xOperationGroup("cat.all_pit_segments")
+@xVersionAdded("2.4")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/pit_segments/_all")

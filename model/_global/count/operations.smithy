@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/count/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "count",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("count")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_count")
 @documentation("Returns number of documents matching a query.")
@@ -24,10 +21,8 @@ operation Count_Post {
     output: Count_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "count",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("count")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_count")
@@ -37,10 +32,8 @@ operation Count_Get {
     output: Count_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "count",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("count")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_count")
 @documentation("Returns number of documents matching a query.")
@@ -49,10 +42,8 @@ operation Count_Post_WithIndex {
     output: Count_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "count",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("count")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_count")

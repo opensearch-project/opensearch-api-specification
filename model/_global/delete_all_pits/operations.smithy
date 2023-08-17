@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/#delete-pits"
 )
 
-@vendorExtensions(
-    "x-operation-group": "delete_all_pits",
-    "x-version-added": "2.4",
-)
+@xOperationGroup("delete_all_pits")
+@xVersionAdded("2.4")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_search/point_in_time/_all")

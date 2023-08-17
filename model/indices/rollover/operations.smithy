@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/dashboards/im-dashboards/rollover/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.rollover",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.rollover")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{alias}/_rollover")
 @documentation("Updates an alias to point to a new index when the existing index
@@ -25,10 +22,8 @@ operation IndicesRollover {
     output: IndicesRollover_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.rollover",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.rollover")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{alias}/_rollover/{new_index}")
 @documentation("Updates an alias to point to a new index when the existing index

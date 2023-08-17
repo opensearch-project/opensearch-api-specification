@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/multi-search/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "msearch",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_msearch")
@@ -25,10 +22,8 @@ operation Msearch_Get {
     output: Msearch_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "msearch",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_msearch")
 @documentation("Allows to execute several search operations in one request.")
@@ -37,10 +32,8 @@ operation Msearch_Post {
     output: Msearch_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "msearch",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_msearch")
@@ -50,10 +43,8 @@ operation Msearch_Get_WithIndex {
     output: Msearch_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "msearch",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_msearch")
 @documentation("Allows to execute several search operations in one request.")

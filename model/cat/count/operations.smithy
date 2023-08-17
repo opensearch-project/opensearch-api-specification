@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-count/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.count",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.count")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/count")
@@ -25,10 +22,8 @@ operation CatCount {
     output: CatCount_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.count",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.count")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/count/{index}")

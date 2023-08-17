@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/script-apis/exec-script/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "scripts_painless_execute",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("scripts_painless_execute")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_scripts/painless/_execute")
@@ -25,10 +22,8 @@ operation ScriptsPainlessExecute_Get {
     output: ScriptsPainlessExecute_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "scripts_painless_execute",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("scripts_painless_execute")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_scripts/painless/_execute")
 @documentation("Allows an arbitrary script to be executed and a result to be returned.")

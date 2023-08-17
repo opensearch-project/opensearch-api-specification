@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/snapshots/get-snapshot-repository/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.get_repository",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.get_repository")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_snapshot")
@@ -25,10 +22,8 @@ operation SnapshotGetRepository {
     output: SnapshotGetRepository_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.get_repository",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.get_repository")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_snapshot/{repository}")

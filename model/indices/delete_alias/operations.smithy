@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-alias/#delete-aliases"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.delete_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.delete_alias")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/{index}/_alias/{name}")
@@ -25,10 +22,8 @@ operation IndicesDeleteAlias {
     output: IndicesDeleteAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.delete_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.delete_alias")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/{index}/_aliases/{name}")
