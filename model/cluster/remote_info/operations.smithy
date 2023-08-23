@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/remote-info/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.remote_info",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.remote_info")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_remote/info")

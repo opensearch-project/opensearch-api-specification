@@ -6,7 +6,6 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @mixin
 structure Msearch_QueryParams {
@@ -37,9 +36,7 @@ structure Msearch_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
-@vendorExtensions(
-    "x-serialize": "bulk"
-)
+@xSerialize("bulk")
 @documentation("The request definitions (metadata-search request definition pairs), separated by newlines")
 structure Msearch_BodyParams {}
 

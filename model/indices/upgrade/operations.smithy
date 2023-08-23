@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.upgrade",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.upgrade")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_upgrade")
 @documentation("The _upgrade API is no longer useful and will be removed.")
@@ -25,10 +22,8 @@ operation IndicesUpgrade {
     output: IndicesUpgrade_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.upgrade",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.upgrade")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_upgrade")
 @documentation("The _upgrade API is no longer useful and will be removed.")

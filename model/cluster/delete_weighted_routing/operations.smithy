@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-deleting-weights"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.delete_weighted_routing",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.delete_weighted_routing")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_cluster/routing/awareness/weights")

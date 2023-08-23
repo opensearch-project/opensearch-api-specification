@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/field-types/index/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_field_mapping",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_field_mapping")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_mapping/field/{fields}")
@@ -25,10 +22,8 @@ operation IndicesGetFieldMapping {
     output: IndicesGetFieldMapping_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_field_mapping",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_field_mapping")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_mapping/field/{fields}")

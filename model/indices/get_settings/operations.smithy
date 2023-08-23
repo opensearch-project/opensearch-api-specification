@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/get-settings/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_settings")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_settings")
@@ -25,10 +22,8 @@ operation IndicesGetSettings {
     output: IndicesGetSettings_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_settings")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_settings")
@@ -38,10 +33,8 @@ operation IndicesGetSettings_WithIndex {
     output: IndicesGetSettings_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_settings")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_settings/{name}")
@@ -51,10 +44,8 @@ operation IndicesGetSettings_WithName {
     output: IndicesGetSettings_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_settings")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_settings/{name}")

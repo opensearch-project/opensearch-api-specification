@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/dangling-index/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "dangling_indices.list_dangling_indices",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("dangling_indices.list_dangling_indices")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_dangling")

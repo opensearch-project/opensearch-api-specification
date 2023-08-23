@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.cleanup_repository",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.cleanup_repository")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_snapshot/{repository}/_cleanup")
 @documentation("Removes stale data from repository.")

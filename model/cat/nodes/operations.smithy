@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-nodes/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.nodes",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.nodes")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/nodes")

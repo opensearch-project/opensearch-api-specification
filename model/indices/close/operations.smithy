@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/close-index/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.close",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.close")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_close")
 @documentation("Closes an index.")

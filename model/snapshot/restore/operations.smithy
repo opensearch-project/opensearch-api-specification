@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/snapshots/restore-snapshot/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "snapshot.restore",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("snapshot.restore")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_snapshot/{repository}/{snapshot}/_restore")
 @documentation("Restores a snapshot.")

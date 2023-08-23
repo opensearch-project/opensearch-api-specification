@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/tasks/#task-canceling"
 )
 
-@vendorExtensions(
-    "x-operation-group": "tasks.cancel",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("tasks.cancel")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_tasks/_cancel")
 @documentation("Cancels a task, if it can be cancelled through an API.")
@@ -24,10 +21,8 @@ operation TasksCancel {
     output: TasksCancel_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "tasks.cancel",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("tasks.cancel")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_tasks/{task_id}/_cancel")
 @documentation("Cancels a task, if it can be cancelled through an API.")

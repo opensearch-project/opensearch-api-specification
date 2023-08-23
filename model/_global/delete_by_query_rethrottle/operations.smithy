@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "delete_by_query_rethrottle",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("delete_by_query_rethrottle")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_delete_by_query/{task_id}/_rethrottle")
 @documentation("Changes the number of requests per second for a particular Delete By Query operation.")

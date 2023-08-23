@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#delete-distinguished-names"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.delete_distinguished_names",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.delete_distinguished_names")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_plugins/_security/api/nodesdn/{cluster_name}")

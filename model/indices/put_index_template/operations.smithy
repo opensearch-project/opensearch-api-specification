@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-templates/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_index_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_index_template")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_index_template/{name}")
@@ -26,10 +23,8 @@ operation IndicesPutIndexTemplate_Put {
     output: IndicesPutIndexTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_index_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_index_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_index_template/{name}")
 @documentation("Creates or updates an index template.")

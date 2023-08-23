@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#patch-role-mappings"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.patch_role_mappings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.patch_role_mappings")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PATCH", uri: "/_plugins/_security/api/rolesmapping")

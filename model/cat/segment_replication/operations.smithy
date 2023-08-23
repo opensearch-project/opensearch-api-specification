@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-segment-replication/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.segment_replication",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.segment_replication")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/segment_replication")
@@ -25,10 +22,8 @@ operation CatSegmentReplication {
     output: CatSegmentReplication_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.segment_replication",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.segment_replication")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/segment_replication/{index}")

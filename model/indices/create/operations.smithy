@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/create-index/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.create",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("indices.create")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}")

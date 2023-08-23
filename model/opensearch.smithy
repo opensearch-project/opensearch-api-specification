@@ -5,80 +5,16 @@
 //  compatible open source license.
 
 $version: "2"
-
-metadata suppressions = [
-    {
-        id: "DeprecatedShape.OpenSearch#MasterTimeout",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#CatMaster",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#ClearScroll_WithScrollId",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#NodesHotThreads_Deprecated",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#NodesHotThreads_DeprecatedCluster",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#NodesHotThreads_DeprecatedDash",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#NodesHotThreads_WithNodeId_Deprecated",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#NodesHotThreads_WithNodeId_DeprecatedCluster",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#NodesHotThreads_WithNodeId_DeprecatedDash",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#PathScrollIds",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#Scroll_Get_WithScrollId",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-    {
-        id: "DeprecatedShape.OpenSearch#Scroll_Post_WithScrollId",
-        namespace: "OpenSearch",
-        reason: "Deprecated for downstream use, not worried about warnings inside Smithy"
-    },
-]
-
 namespace OpenSearch
 
-use opensearch.openapi#restJson
+use aws.protocols#restJson1
 
 @externalDocumentation(
     "OpenSearch Documentation": "https://opensearch.org/docs/latest/"
 )
 
 @httpBasicAuth
-@restJson
+@restJson1
 service OpenSearch {
     version: "2021-11-23",
     operations: [

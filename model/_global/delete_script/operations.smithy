@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/script-apis/delete-script/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "delete_script",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("delete_script")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_scripts/{id}")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/index-alias/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_alias")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_alias")
@@ -25,10 +22,8 @@ operation IndicesGetAlias {
     output: IndicesGetAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_alias")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_alias")
@@ -38,10 +33,8 @@ operation IndicesGetAlias_WithIndex {
     output: IndicesGetAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_alias")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_alias/{name}")
@@ -51,10 +44,8 @@ operation IndicesGetAlias_WithName {
     output: IndicesGetAlias_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.get_alias",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.get_alias")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_alias/{name}")

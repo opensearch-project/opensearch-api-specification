@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/document-apis/index-document/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "create",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("create")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_create/{id}")
@@ -27,10 +24,8 @@ operation Create_Put {
     output: Create_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "create",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("create")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_create/{id}")
 @documentation("Creates a new document in the index.

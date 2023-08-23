@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/search-template/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "msearch_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch_template")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_msearch/template")
@@ -25,10 +22,8 @@ operation MsearchTemplate_Get {
     output: MsearchTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "msearch_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_msearch/template")
 @documentation("Allows to execute several search template operations in one request.")
@@ -37,10 +32,8 @@ operation MsearchTemplate_Post {
     output: MsearchTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "msearch_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch_template")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_msearch/template")
@@ -50,10 +43,8 @@ operation MsearchTemplate_Get_WithIndex {
     output: MsearchTemplate_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "msearch_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("msearch_template")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_msearch/template")
 @documentation("Allows to execute several search template operations in one request.")

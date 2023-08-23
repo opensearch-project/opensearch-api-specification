@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-settings/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.get_settings",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("cluster.get_settings")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/settings")

@@ -6,7 +6,6 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @mixin
 structure Bulk_QueryParams {
@@ -50,9 +49,7 @@ structure Bulk_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
-@vendorExtensions(
-    "x-serialize": "bulk"
-)
+@xSerialize("bulk")
 @documentation("The operation definition and data (action-data pairs), separated by newlines")
 structure Bulk_BodyParams {}
 

@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.delete_component_template",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.delete_component_template")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_component_template/{name}")

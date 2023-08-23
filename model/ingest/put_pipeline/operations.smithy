@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/ingest-apis/create-update-ingest/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "ingest.put_pipeline",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("ingest.put_pipeline")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_ingest/pipeline/{id}")

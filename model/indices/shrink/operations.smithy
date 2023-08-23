@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/shrink-index/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.shrink",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.shrink")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_shrink/{target}")
@@ -25,10 +22,8 @@ operation IndicesShrink_Put {
     output: IndicesShrink_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.shrink",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.shrink")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_shrink/{target}")
 @documentation("Allow to shrink an existing index into a new index with fewer primary shards.")

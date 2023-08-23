@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#patch-action-group"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.patch_action_group",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.patch_action_group")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PATCH", uri: "/_plugins/_security/api/actiongroups/{action_group}")

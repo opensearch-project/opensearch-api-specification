@@ -6,20 +6,17 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-hot-threads/"
 )
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
-    "x-version-deprecated": "1.0",
-    "x-ignorable": "true",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
+@xDeprecationMessage("The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons")
+@xVersionDeprecated("1.0")
+@xIgnorable(true)
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/hot_threads")
@@ -30,13 +27,11 @@ operation NodesHotThreads_DeprecatedDash {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "1.0",
-    "x-ignorable": "true",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
+@xDeprecationMessage("The hot threads API accepts `hotthreads` but only `hot_threads` is documented")
+@xVersionDeprecated("1.0")
+@xIgnorable(true)
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/hotthreads")
@@ -46,10 +41,8 @@ operation NodesHotThreads_DeprecatedCluster {
     output: NodesHotThreads_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/hot_threads")
@@ -60,13 +53,11 @@ operation NodesHotThreads {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "1.0",
-    "x-ignorable": "true",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
+@xDeprecationMessage("The hot threads API accepts `hotthreads` but only `hot_threads` is documented")
+@xVersionDeprecated("1.0")
+@xIgnorable(true)
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/hotthreads")
@@ -77,13 +68,11 @@ operation NodesHotThreads_Deprecated {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons",
-    "x-version-deprecated": "1.0",
-    "x-ignorable": "true",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
+@xDeprecationMessage("The hot accepts /_cluster/nodes as prefix for backwards compatibility reasons")
+@xVersionDeprecated("1.0")
+@xIgnorable(true)
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/{node_id}/hot_threads")
@@ -94,13 +83,11 @@ operation NodesHotThreads_WithNodeId_DeprecatedDash {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "1.0",
-    "x-ignorable": "true",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
+@xDeprecationMessage("The hot threads API accepts `hotthreads` but only `hot_threads` is documented")
+@xVersionDeprecated("1.0")
+@xIgnorable(true)
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/nodes/{node_id}/hotthreads")
@@ -110,10 +97,8 @@ operation NodesHotThreads_WithNodeId_DeprecatedCluster {
     output: NodesHotThreads_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/hot_threads")
@@ -124,13 +109,11 @@ operation NodesHotThreads_WithNodeId {
 }
 
 @deprecated
-@vendorExtensions(
-    "x-operation-group": "nodes.hot_threads",
-    "x-version-added": "1.0",
-    "x-deprecation-message": "The hot threads API accepts `hotthreads` but only `hot_threads` is documented",
-    "x-version-deprecated": "1.0",
-    "x-ignorable": "true",
-)
+@xOperationGroup("nodes.hot_threads")
+@xVersionAdded("1.0")
+@xDeprecationMessage("The hot threads API accepts `hotthreads` but only `hot_threads` is documented")
+@xVersionDeprecated("1.0")
+@xIgnorable(true)
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/hotthreads")

@@ -7,16 +7,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#update-configuration"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.update_configuration",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.update_configuration")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_plugins/_security/api/securityconfig/config")

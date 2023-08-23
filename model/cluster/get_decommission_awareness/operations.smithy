@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-decommission/#example-getting-zone-decommission-status"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.get_decommission_awareness",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.get_decommission_awareness")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/decommission/awareness/{awareness_attribute_name}/_status")

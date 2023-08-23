@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-usage/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "nodes.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/stats")
@@ -25,10 +22,8 @@ operation NodesStats {
     output: NodesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/stats/{metric}")
@@ -38,10 +33,8 @@ operation NodesStats_WithMetric {
     output: NodesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/stats")
@@ -51,10 +44,8 @@ operation NodesStats_WithNodeId {
     output: NodesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/stats/{metric}/{index_metric}")
@@ -64,10 +55,8 @@ operation NodesStats_WithIndexMetricMetric {
     output: NodesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/stats/{metric}")
@@ -77,10 +66,8 @@ operation NodesStats_WithMetricNodeId {
     output: NodesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "nodes.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("nodes.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_nodes/{node_id}/stats/{metric}/{index_metric}")

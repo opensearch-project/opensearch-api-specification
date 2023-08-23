@@ -210,28 +210,22 @@ We use Smithy traits extensively in this project to work around some limitations
 - `@readonly`: Should accompany most GET operations to denote that they are read-only.
 - `@idempotent`: Should accompany most PUT operations to denote that they are idempotent.
 
-### OpenAPI Vendor Extensions Trait
+### OpenAPI Specification Extension Traits
 
-This repository includes a custom Smithy trait `@vendorExtensions` and accompanying build extension to add metadata that are not supported by Smithy in the form of OpenAPI Vendor Extensions. This trait is used to add the following metadata:
-- `x-operation-group`: Used to group operations into API Actions.
-- `x-version-added`: OpenSearch version when the operation/parameter was added.
-- `x-version-removed`: OpenSearch version when the operation/parameter was removed.
-- `x-version-deprecated`: OpenSearch Version when the operation/parameter was deprecated.
-- `x-deprecation-description`: Reason for deprecation and guidance on how to prepare for the next major version.
-- `x-serialize: "bulk"`: Denotes that request body should be serialized as bulk data.
-- `x-data-type`: Denotes the actual data-type of the parameter. This extension is used where certain data-type is not supported by Smithy (like `time`), or not supported in certain context (like `enum` and `list` as **path** parameters).
-- `x-enum-options`: List of options for an `enum` **path** parameter.
-- `x-string-pattern`: Actual regex pattern for a **path** parameter. This is used to override the pattern used to circumvent URI Conflict errors.
-- `x-overloaded-param`: Denotes that the parameter is overloaded with another parameter. This is used in `/_nodes/{node_id}` operation where you can also treat `{node_id}` as `{metric}`. Future operations should avoid this situation because it is bad API design. See [Client Generator Guide](./CLIENT_GENERATOR_GUIDE.md#overloaded-name) for more info.
-- `x-ignorable: "true"`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
+This repository includes several custom Smithy traits that map to OpenAPI Specification Extensions to fill in any metadata not directly supported by Smithy or OpenAPI. These traits are used to add the following metadata:
+- `@xOperationGroup("{namespace}.{operation}")`: Used to group operations into API actions.
+- `@xVersionAdded("{version}")`: OpenSearch version when the operation/parameter was added.
+- `@xVersionDeprecated("{version}")`: OpenSearch version when the operation/parameter was deprecated.
+- `@xDeprecationDescription("{description}")`: Reason for deprecation and guidance on how to prepare for the next major version.
+- `@xSerialize("bulk")`: Denotes that the request body should be serialized as bulk data.
+- `@xDataType("{type}")`: Denotes the actual data-type of the parameters. This extension is used where a certain data-type is not supported by Smithy/OpenAPI (like `time`), or not supported in a certain context (like `enum` and `list` as **path** parameters).
+- `@xEnumOptions(["{opt1}", "{opt2}", ...])`: List of options for an `enum` **path** parameter.
+- `@xOverloadedParam("{param}")`: Denotes that the parameter is overloaded with another parameter. This is used in the `/_nodes/{node_id}` operation where you can also treat `{node_id}` as `{metric}`. Future operations should avoid this situation because it is bad API design. See [Client Generator Guide](./CLIENT_GENERATOR_GUIDE.md#overloaded-name) for more info.
+- `@xIgnorable(true)`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 
 ```smithy
-use opensearch.openapi#vendorExtensions
-
-@vendorExtensions(
-    "x-operation-group": "search",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("search")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_search")
 @documentation("Returns results matching a query.")
@@ -242,19 +236,15 @@ operation Search_Post_WithIndex {
 ```
 
 ```smithy
-@vendorExtensions(
-    "x-data-type": "list",
-    "x-enum-options": ["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"],
-)
+@xDataType("list")
+@xEnumOptions(["settings", "os", "process", "jvm", "thread_pool", "transport", "http", "plugins", "ingest"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")
 @documentation("Comma-separated list of metrics you wish returned. Leave empty to return all.")
 string PathNodesInfoMetric
 ```
 
 ```smithy
-@vendorExtensions(
-    "x-data-type": "time",
-)
+@xDataType("time")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout

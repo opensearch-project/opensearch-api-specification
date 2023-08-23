@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/rank-eval/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "rank_eval",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("rank_eval")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_rank_eval")
@@ -25,10 +22,8 @@ operation RankEval_Get {
     output: RankEval_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "rank_eval",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("rank_eval")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_rank_eval")
 @documentation("Allows to evaluate the quality of ranked search results over a set of typical search queries.")
@@ -37,10 +32,8 @@ operation RankEval_Post {
     output: RankEval_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "rank_eval",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("rank_eval")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_rank_eval")
@@ -50,10 +43,8 @@ operation RankEval_Get_WithIndex {
     output: RankEval_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "rank_eval",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("rank_eval")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_rank_eval")
 @documentation("Allows to evaluate the quality of ranked search results over a set of typical search queries.")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/document-apis/get-documents/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "exists_source",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("exists_source")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @readonly
 @http(method: "HEAD", uri: "/{index}/_source/{id}")

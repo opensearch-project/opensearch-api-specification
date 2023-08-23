@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/opensearch/remote/#restoring-from-a-backup"
 )
 
-@vendorExtensions(
-    "x-operation-group": "remote_store.restore",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("remote_store.restore")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_remotestore/_restore")
 @documentation("Restores from remote store.")

@@ -12,16 +12,15 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
 buildscript {
     dependencies {
         classpath("software.amazon.smithy:smithy-openapi:$smithyVersion")
+        classpath("software.amazon.smithy:smithy-openapi-traits:$smithyVersion")
         classpath("software.amazon.smithy:smithy-aws-traits:$smithyVersion")
         classpath("software.amazon.smithy:smithy-cli:$smithyVersion")
-        classpath("org.opensearch.smithy:openapi-traits") // Can't have a buildscript classpath dependency on a project, so need to use composite build & substitution
     }
 }
 
@@ -29,7 +28,7 @@ dependencies {
     implementation("software.amazon.smithy:smithy-model:$smithyVersion")
     implementation("software.amazon.smithy:smithy-linters:$smithyVersion")
     implementation("software.amazon.smithy:smithy-aws-traits:$smithyVersion")
-    implementation("org.opensearch.smithy:openapi-traits")
+    implementation("software.amazon.smithy:smithy-openapi-traits:$smithyVersion")
 }
 
 spotless {

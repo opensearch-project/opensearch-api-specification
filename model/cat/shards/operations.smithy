@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-shards/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.shards",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.shards")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/shards")
@@ -25,10 +22,8 @@ operation CatShards {
     output: CatShards_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.shards",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.shards")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/shards/{index}")

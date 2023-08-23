@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-allocation/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cluster.allocation_explain",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.allocation_explain")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cluster/allocation/explain")
@@ -25,10 +22,8 @@ operation ClusterAllocationExplain_Get {
     output: ClusterAllocationExplain_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cluster.allocation_explain",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cluster.allocation_explain")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_cluster/allocation/explain")
 @documentation("Provides explanations for shard allocations in the cluster.")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/clone/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.clone",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.clone")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_clone/{target}")
@@ -25,10 +22,8 @@ operation IndicesClone_Put {
     output: IndicesClone_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.clone",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.clone")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_clone/{target}")
 @documentation("Clones an index.")

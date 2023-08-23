@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/cat/cat-field-data/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "cat.fielddata",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.fielddata")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/fielddata")
@@ -25,10 +22,8 @@ operation CatFielddata {
     output: CatFielddata_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "cat.fielddata",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("cat.fielddata")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/fielddata/{fields}")

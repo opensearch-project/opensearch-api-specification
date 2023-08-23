@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/alias/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.update_aliases",
-    "x-version-added": "1.0"
-)
+@xOperationGroup("indices.update_aliases")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_aliases")
 @documentation("Updates index aliases.")

@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/security/access-control/api/#reload-http-certificates"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.reload_http_certificates",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.reload_http_certificates")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "PUT", uri: "/_plugins/_security/api/ssl/http/reloadcerts")

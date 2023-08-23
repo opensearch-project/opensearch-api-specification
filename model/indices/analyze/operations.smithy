@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/analyze-apis/perform-text-analysis/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.analyze",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.analyze")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_analyze")
@@ -25,10 +22,8 @@ operation IndicesAnalyze_Get {
     output: IndicesAnalyze_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.analyze",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.analyze")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_analyze")
 @documentation("Performs the analysis process on a text and return the tokens breakdown of the text.")
@@ -37,10 +32,8 @@ operation IndicesAnalyze_Post {
     output: IndicesAnalyze_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.analyze",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.analyze")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_analyze")
@@ -50,10 +43,8 @@ operation IndicesAnalyze_Get_WithIndex {
     output: IndicesAnalyze_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.analyze",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.analyze")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_analyze")
 @documentation("Performs the analysis process on a text and return the tokens breakdown of the text.")

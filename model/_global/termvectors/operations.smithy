@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "termvectors",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("termvectors")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_termvectors")
@@ -26,10 +23,8 @@ operation Termvectors_Get {
     output: Termvectors_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "termvectors",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("termvectors")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_termvectors")
 @documentation("Returns information and statistics about terms in the fields of a particular document.")
@@ -38,10 +33,8 @@ operation Termvectors_Post {
     output: Termvectors_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "termvectors",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("termvectors")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_termvectors/{id}")
@@ -51,10 +44,8 @@ operation Termvectors_Get_WithId {
     output: Termvectors_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "termvectors",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("termvectors")
+@xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/{index}/_termvectors/{id}")
 @documentation("Returns information and statistics about terms in the fields of a particular document.")

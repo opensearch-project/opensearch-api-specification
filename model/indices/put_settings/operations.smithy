@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/api-reference/index-apis/update-settings/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_settings")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_settings")
@@ -25,10 +22,8 @@ operation IndicesPutSettings {
     output: IndicesPutSettings_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.put_settings",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.put_settings")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/{index}/_settings")

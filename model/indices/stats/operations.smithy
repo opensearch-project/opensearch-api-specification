@@ -6,17 +6,14 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 // TODO: Fill in API Reference URL
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_stats")
@@ -26,10 +23,8 @@ operation IndicesStats {
     output: IndicesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_stats")
@@ -39,10 +34,8 @@ operation IndicesStats_WithIndex {
     output: IndicesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_stats/{metric}")
@@ -52,10 +45,8 @@ operation IndicesStats_WithMetric {
     output: IndicesStats_Output
 }
 
-@vendorExtensions(
-    "x-operation-group": "indices.stats",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.stats")
+@xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/{index}/_stats/{metric}")

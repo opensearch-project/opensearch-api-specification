@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/2.7/security/access-control/api/#create-tenant"
 )
 
-@vendorExtensions(
-    "x-operation-group": "security.create_tenant",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("security.create_tenant")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_plugins/_security/api/tenants/{tenant}")

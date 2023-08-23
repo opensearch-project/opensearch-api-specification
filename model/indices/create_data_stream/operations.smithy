@@ -6,16 +6,13 @@
 
 $version: "2"
 namespace OpenSearch
-use opensearch.openapi#vendorExtensions
 
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/im-plugin/data-streams/"
 )
 
-@vendorExtensions(
-    "x-operation-group": "indices.create_data_stream",
-    "x-version-added": "1.0",
-)
+@xOperationGroup("indices.create_data_stream")
+@xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_data_stream/{name}")
