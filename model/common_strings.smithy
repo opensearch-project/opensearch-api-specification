@@ -281,6 +281,7 @@ string WaitForNodes
 string BulkTimeout
 
 @xDataType("time")
+@xVersionAdded("2.0.0")
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Operation timeout for connection to cluster-manager node.")
 string ClusterManagerTimeout
