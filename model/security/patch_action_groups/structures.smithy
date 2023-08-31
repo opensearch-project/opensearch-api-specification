@@ -9,6 +9,7 @@ namespace OpenSearch
 
 @input
 structure PatchActionGroups_Input {
+    @required
     @httpPayload
     content: PatchOperationList
 }
