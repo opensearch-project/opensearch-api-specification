@@ -13,6 +13,7 @@ structure CreateActionGroup_Input {
     @httpLabel
     @documentation("The name of the action group to create or replace")
     action_group: String
+    @required
     @httpPayload
     content: Action_Group
 }
