@@ -28,7 +28,26 @@ string PathComponentTemplateNames
 string PathFields
 
 @xDataType("array")
-@xEnumOptions(["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"])
+@xEnumOptions([
+    "_all",
+    "store",
+    "indexing",
+    "get",
+    "search",
+    "merge",
+    "flush",
+    "refresh",
+    "query_cache",
+    "fielddata",
+    "docs",
+    "warmer",
+    "completion",
+    "segments",
+    "translog",
+    "suggest",
+    "request_cache",
+    "recovery"
+])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned for `indices` metric to the specific index metrics. Isn't used if `indices` (or `all`) metric isn't specified.")
 string PathIndexMetric
@@ -44,7 +63,26 @@ string PathIndexNames
 string PathIndices
 
 @xDataType("array")
-@xEnumOptions(["_all", "completion", "docs", "fielddata", "query_cache", "flush", "get", "indexing", "merge", "request_cache", "refresh", "search", "segments", "store", "warmer", "suggest"])
+@xEnumOptions([
+    "_all",
+    "store",
+    "indexing",
+    "get",
+    "search",
+    "merge",
+    "flush",
+    "refresh",
+    "query_cache",
+    "fielddata",
+    "docs",
+    "warmer",
+    "completion",
+    "segments",
+    "translog",
+    "suggest",
+    "request_cache",
+    "recovery"
+])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned the specific metrics.")
 string PathIndicesStatsMetric
