@@ -16,8 +16,8 @@ structure Role {
     reserved: Boolean
     hidden: Boolean
     description: String
-    cluster_permission: ClusterPermission
-    index_permission: IndexPermission
+    cluster_permissions: ClusterPermission
+    index_permissions: IndexPermission
     tenant_permissions: TenantPermission
     static: Boolean
 }
