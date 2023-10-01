@@ -17,7 +17,7 @@ structure Role {
     hidden: Boolean
     description: String
     cluster_permissions: ClusterPermission
-    index_permissions: IndexPermission
+    index_permissions: IndexPermissionList
     tenant_permissions: TenantPermission
     static: Boolean
 }
@@ -31,6 +31,10 @@ structure IndexPermission {
     fls: Fls
     masked_fields: MaskedFields
     allowed_actions: AllowedActions
+}
+
+list IndexPermissionList {
+    member: IndexPermission
 }
 
 list TenantPermission {
