@@ -28,6 +28,7 @@ list ClusterPermission {
 
 structure IndexPermission {
     index_patterns: IndexPatterns
+    dls: String
     fls: Fls
     masked_fields: MaskedFields
     allowed_actions: AllowedActions
