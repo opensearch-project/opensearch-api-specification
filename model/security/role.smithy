@@ -16,9 +16,9 @@ structure Role {
     reserved: Boolean
     hidden: Boolean
     description: String
-    cluster_permission: ClusterPermission
-    index_permission: IndexPermission
-    tenant_permissions: TenantPermission
+    cluster_permissions: ClusterPermission
+    index_permissions: IndexPermissionList
+    tenant_permissions: TenantPermissionList
     static: Boolean
 }
 
@@ -28,12 +28,26 @@ list ClusterPermission {
 
 structure IndexPermission {
     index_patterns: IndexPatterns
+    dls: String
     fls: Fls
     masked_fields: MaskedFields
     allowed_actions: AllowedActions
 }
 
-list TenantPermission {
+list IndexPermissionList {
+    member: IndexPermission
+}
+
+structure TenantPermission {
+    tenant_patterns: TenantPatterns
+    allowed_actions: AllowedActions
+}
+
+list TenantPermissionList {
+    member: TenantPermission
+}
+
+list TenantPatterns {
     member: String
 }
 
