@@ -21,6 +21,7 @@ list PitIds{
 }
 
 
+@documentation("The point-in-time ids to be deleted")
 structure DeletePit_BodyParams {
     @required
     pit_id: PitIds
