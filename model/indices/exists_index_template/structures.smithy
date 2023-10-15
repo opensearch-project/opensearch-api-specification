@@ -16,6 +16,9 @@ structure IndicesExistsIndexTemplate_QueryParams {
     @httpQuery("master_timeout")
     master_timeout: MasterTimeout,
 
+    @httpQuery("cluster_manager_timeout")
+    cluster_manager_timeout: ClusterManagerTimeout,
+
     @httpQuery("local")
     @default(false)
     local: Local,

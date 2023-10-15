@@ -25,6 +25,9 @@ structure IndicesOpen_QueryParams {
     @default("closed")
     expand_wildcards: ExpandWildcards,
 
+    @httpQuery("cluster_manager_timeout")
+    cluster_manager_timeout: ClusterManagerTimeout,
+
     @httpQuery("wait_for_active_shards")
     @documentation("Sets the number of active shards to wait for before the operation returns.")
     wait_for_active_shards: WaitForActiveShards,
