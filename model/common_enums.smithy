@@ -84,7 +84,7 @@ enum NodesStatLevel {
     SHARDS = "shards"
 }
 
-@documentation("Explicit operation type. Defaults to `index` for requests with an explicit document ID, and to `create`for requests without an explicit document ID.")
+@documentation("Explicit operation type. Defaults to `index` for requests with an explicit document ID, and to `create` for requests without an explicit document ID.")
 enum OpType {
     INDEX = "index"
     CREATE = "create"
