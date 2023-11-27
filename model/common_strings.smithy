@@ -270,6 +270,8 @@ string Format
 
 string Index
 
+@xDataType("time")
+@pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("Specify the keep alive for point in time.")
 string KeepAlive
 
