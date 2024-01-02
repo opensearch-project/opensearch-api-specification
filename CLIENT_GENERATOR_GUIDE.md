@@ -32,12 +32,12 @@ def search(self, index=None, body=None):
         path = "/_search"
     else:
         path = f"/{index}/_search"
-    
+
     if body is None:
         method = "GET"
     else:
         method = "POST"
-        
+
     return self.perform_request(method, path, body=body)
 ```
 
