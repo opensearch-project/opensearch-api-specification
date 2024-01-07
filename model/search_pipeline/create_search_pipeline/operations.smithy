@@ -11,7 +11,7 @@ namespace OpenSearch
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/search-pipelines/creating-search-pipeline/"
 )
 
-@xOperationGroup("create_search_pipeline")
+@xOperationGroup("search_pipeline.create_search_pipeline")
 @xVersionAdded("2.9")
 @idempotent
 @suppress(["HttpUriConflict"])
