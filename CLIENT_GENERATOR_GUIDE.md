@@ -23,21 +23,22 @@ In the [OpenAPI spec](./OpenSearch.openapi.json), this grouping is denoted by `x
 - If two operations have identical HTTP methods, but different paths: use the path that best matches the path parameters provided.
 - If two operations have identical path, but different HTTP methods:
     - GET/POST: if the request body is provided then use POST, otherwise use GET
-    - PUT/POST: Either works, but PUT is preferred.
+    - PUT/POST: Either works, but PUT is preferred when an optional path parameter is provided.
 
 The psuedo-code that combines the `search` operations into a single API method is as follows:
 ```python
 def search(self, index=None, body=None):
     if index is None:
-        if body is None:
-            return self.perform_request("GET", "/_search")
-        else:
-            return self.perform_request("POST", "/_search", body=body)
+        path = "/_search"
     else:
-        if body is None:
-            return self.perform_request("GET", f"/{index}/_search")
-        else:
-            return self.perform_request("POST", f"/{index}/_search", body=body)
+        path = f"/{index}/_search"
+
+    if body is None:
+        method = "GET"
+    else:
+        method = "POST"
+
+    return self.perform_request(method, path, body=body)
 ```
 
 ## Handling Path Parameters
