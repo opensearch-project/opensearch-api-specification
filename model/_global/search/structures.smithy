@@ -149,6 +149,9 @@ structure Search_QueryParams {
     @httpQuery("rest_total_hits_as_int")
     @default(false)
     rest_total_hits_as_int: RestTotalHitsAsInt,
+
+    @httpQuery("search_pipeline")
+    search_pipeline: SearchPipeline
 }
 
 @documentation("The search definition using the Query DSL")

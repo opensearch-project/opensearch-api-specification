@@ -104,7 +104,7 @@ string PathNodeId
 string PathNodesInfoMetric
 
 @xDataType("array")
-@xEnumOptions(["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure"])
+@xEnumOptions(["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure", "search_pipeline"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned to the specified metrics.")
 string PathNodesStatsMetric
@@ -288,6 +288,9 @@ string ParentTaskId
 
 @documentation("The pipeline id to preprocess incoming documents with.")
 string Pipeline
+
+@documentation("Customizable sequence of processing stages applied to search queries.")
+string SearchPipeline
 
 @documentation("Specify the node or shard the operation should be performed on.")
 string Preference
