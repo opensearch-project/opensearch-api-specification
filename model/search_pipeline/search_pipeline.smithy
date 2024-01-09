@@ -7,7 +7,7 @@
 $version: "2"
 namespace OpenSearch
 
-structure SearchPipeline{
+structure SearchPipelineStructure{
     version: Integer,
     request_processors: RequestProcessorsList,
     response_processors: ResponseProcessorsList

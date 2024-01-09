@@ -15,7 +15,7 @@ structure CreateSearchPipeline_Input{
     pipeline: String
     @required
     @httpPayload
-    content: SearchPipeline
+    content: SearchPipelineStructure
 }
 
 @output

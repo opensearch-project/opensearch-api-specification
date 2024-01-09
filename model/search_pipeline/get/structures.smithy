@@ -16,5 +16,5 @@ structure GetSearchPipeline_Input {
 
 structure GetSearchPipeline_Output {
     @httpPayload
-    content: SearchPipeline
+    content: SearchPipelineStructure
 }
