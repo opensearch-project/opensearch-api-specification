@@ -15,7 +15,7 @@ namespace OpenSearch
 @xOperationGroup("cat.master")
 @xVersionAdded("1.0")
 @xDeprecationMessage("To promote inclusive language, please use '/_cat/cluster_manager' instead.")
-@xVersionDeprecated("1.0")
+@xVersionDeprecated("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/master")
