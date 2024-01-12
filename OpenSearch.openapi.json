@@ -11756,6 +11756,62 @@
                 "x-version-added": "1.0"
             }
         },
+        "/_plugins/_notifications/configs": {
+            "get": {
+                "description": "Retrieves all notification configurations.",
+                "externalDocs": {
+                    "description": "API Reference",
+                    "url": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/#list-all-notification-configurations"
+                },
+                "operationId": "NotificationsConfigs_Get",
+                "responses": {
+                    "200": {
+                        "description": "NotificationsConfigs_Get 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationsConfigs"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-operation-group": "notifications.configs",
+                "x-version-added": "2.2"
+            },
+            "post": {
+                "description": "Creates a notification channel configuration.",
+                "externalDocs": {
+                    "description": "API Reference",
+                    "url": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/#create-channel-configuration"
+                },
+                "operationId": "NotificationsConfigs_Post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NotificationsConfig"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "NotificationsConfigs 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChangePasswordResponseContent"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-operation-group": "notifications.configs",
+                "x-version-added": "2.2"
+            }
+        },
         "/_plugins/_security/api/account": {
             "get": {
                 "description": "Returns account details for the current user.",
@@ -31511,6 +31567,91 @@
                     "node",
                     "shards"
                 ]
+            },
+            "NotificationsConfig": {
+                "type": "object",
+                "properties": {
+                    "config_id": {
+                        "type": "string"
+                    },
+                    "last_updated_time_ms": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "created_time_ms": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "config": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "config_type": {
+                            "type": "string",
+                            "description": "list of all supported notification configuration types.",
+                            "enum": [
+                                "slack",
+                                "chime",
+                                "microsoft_teams",
+                                "webhook",
+                                "email",
+                                "sns",
+                                "ses_account",
+                                "smtp_account",
+                                "email_group"
+                            ]
+                        },
+                        "is_enabled": {
+                            "type": "boolean"
+                        },
+                        "email_group": {
+                            "type": "object",
+                            "properties": {
+                                "recipient_list": {
+                                    "type": "array",
+                                    "items": {
+                                        "recipient": {
+                                          "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "slack": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "NotificationsConfigs": {
+                "type": "object",
+                "properties": {
+                    "start_index": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "total_hits": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "total_hit_relation": {
+                        "type": "string"
+                    },
+                    "config_list": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/NotificationsConfig"
+                        }
+                    }
+                }
             },
             "OpType": {
                 "type": "string",

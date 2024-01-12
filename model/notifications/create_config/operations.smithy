@@ -11,18 +11,7 @@ namespace OpenSearch
     "API Reference": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/"
 )
 
-@xOperationGroup("notifications.configs")
-@xVersionAdded("2.2")
-@readonly
-@suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_notifications/configs")
-@documentation("Retrieves all notification configurations.")
-operation NotificationsConfigs_Get {
-    input: NotificationsConfigs_Get_Input,
-    output: NotificationsConfigs_Get_Output
-}
-
-@xOperationGroup("notifications.configs")
+@xOperationGroup("notifications.create_config")
 @xVersionAdded("2.2")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_notifications/configs")

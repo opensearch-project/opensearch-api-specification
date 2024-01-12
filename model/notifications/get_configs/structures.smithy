@@ -18,15 +18,3 @@ structure NotificationsConfigs_Get_Output {
     total_hit_relation: String,
     config_list: NotificationsConfigsList
 }
-
-@input
-structure NotificationsConfigs_Post_Input {
-    @required
-    @httpPayload
-    content: NotificationsConfig
-}
-
-@output
-structure NotificationsConfigs_Post_Output {
-    config_id: String
-}
