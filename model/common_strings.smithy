@@ -361,3 +361,8 @@ string Timeout
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout
+
+@xDataType("time")
+@pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
+@documentation("Explicit task execution timeout, only useful when wait_for_completion is false, defaults to 1h.")
+string TaskExecutionTimeout
