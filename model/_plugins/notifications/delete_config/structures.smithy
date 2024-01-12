@@ -25,7 +25,7 @@ structure NotificationsConfigs_Delete_WithParams_Input {
 structure NotificationsConfigs_Delete_Input {
     @required
     @httpLabel
-    target: String
+    config_id: String
 }
 
 // TODO: Fill in Output Structure (delete_response_list: object)

@@ -15,7 +15,7 @@ namespace OpenSearch
 @xVersionAdded("2.2")
 @idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "DELETE", uri: "/_plugins/_notifications/configs/{target}")
+@http(method: "DELETE", uri: "/_plugins/_notifications/configs/{config_id}")
 @documentation("Deletes a notification channel configuration.")
 operation NotificationsConfigs_Delete {
     input: NotificationsConfigs_Delete_Input,
