@@ -299,6 +299,7 @@ service OpenSearch {
         NotificationsConfigs_Get,
         NotificationsConfigsItem_Get
         NotificationsConfigs_Post,
+        NotificationsConfigs_Put,
         NotificationsFeatures_Get,
         PatchActionGroup,
         PatchActionGroups,

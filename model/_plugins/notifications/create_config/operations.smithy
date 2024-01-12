@@ -18,5 +18,16 @@ namespace OpenSearch
 @documentation("Creates a notification channel configuration.")
 operation NotificationsConfigs_Post {
     input: NotificationsConfigs_Post_Input,
-    output: NotificationsConfigs_Post_Output
+    output: NotificationsConfigs_Output
+}
+
+@xOperationGroup("notifications.create_config")
+@xVersionAdded("2.2")
+@idempotent
+@suppress(["HttpUriConflict"])
+@http(method: "PUT", uri: "/_plugins/_notifications/configs/{config_id}")
+@documentation("Creates a notification channel configuration.")
+operation NotificationsConfigs_Put {
+    input: NotificationsConfigs_Put_Input,
+    output: NotificationsConfigs_Output
 }

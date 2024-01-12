@@ -14,11 +14,20 @@ structure NotificationsConfigs_Post_Input {
     content: NotificationsConfig
 }
 
-@output
-structure NotificationsConfigs_Post_Output {
-    config_id: String
+@input
+structure NotificationsConfigs_Put_Input {
+    @required
+    @httpLabel
+    config_id: String,
+
+    @required
+    @httpPayload
+    content: NotificationsConfig
 }
 
+structure NotificationsConfigs_Output {
+    config_id: String
+}
 
 structure NotificationsConfig {
     config_id: String,
