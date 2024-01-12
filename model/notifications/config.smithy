@@ -35,3 +35,26 @@ structure NotificationsConfigsOutputItem {
 list NotificationsConfigsList {
     member: NotificationsConfigsOutputItem
 }
+
+@xDataType("array")
+@xEnumOptions([
+    "slack",
+    "chime",
+    "microsoft_teams",
+    "webhook",
+    "email",
+    "sns",
+    "ses_account",
+    "smtp_account",
+    "email_group"
+])
+@documentation("Limit the information for notifications features list.")
+string NotificationsFeaturesListItem
+
+list NotificationsFeaturesList {
+    member: NotificationsFeaturesListItem
+}
+
+structure NotificationsPluginFeatures {
+    tooltip_support: Boolean
+}
