@@ -8,13 +8,17 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure NotificationsConfigs_Post_Input {
+structure NotificationsConfigs_Put_Input {
+    @required
+    @httpLabel
+    config_id: String,
+
     @required
     @httpPayload
     content: NotificationsConfig
 }
 
 @output
-structure NotificationsConfigs_Post_Output {
+structure NotificationsConfigs_Put_Output {
     config_id: String
 }

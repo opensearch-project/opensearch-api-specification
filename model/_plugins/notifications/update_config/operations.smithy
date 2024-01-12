@@ -11,12 +11,13 @@ namespace OpenSearch
     "API Reference": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/"
 )
 
-@xOperationGroup("notifications.create_config")
+@xOperationGroup("notifications.update_config")
 @xVersionAdded("2.2")
+@idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "POST", uri: "/_plugins/_notifications/configs")
-@documentation("Creates a notification channel configuration.")
-operation NotificationsConfigs_Post {
-    input: NotificationsConfigs_Post_Input,
-    output: NotificationsConfigs_Post_Output
+@http(method: "PUT", uri: "/_plugins/_notifications/configs/{config_id}")
+@documentation("Updates a notification channel configuration.")
+operation NotificationsConfigs_Put {
+    input: NotificationsConfigs_Put_Input,
+    output: NotificationsConfigs_Put_Output
 }
