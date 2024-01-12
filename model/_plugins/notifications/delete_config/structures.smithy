@@ -7,15 +7,27 @@
 $version: "2"
 namespace OpenSearch
 
+@xDataType("array")
+@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
+@documentation("Comma-separated list of notifications channels ids.")
+string PathNotificationsChannelsIds
+
+@input
+structure NotificationsConfigs_Delete_WithParams_Input {
+    @httpQuery("config_id")
+    config_id: String,
+
+    @httpQuery("config_id_list")
+    config_id_list: PathNotificationsChannelsIds
+}
+
 @input
 structure NotificationsConfigs_Delete_Input {
     @required
     @httpLabel
     target: String
-
 }
 
 // TODO: Fill in Output Structure (delete_response_list: object)
-@output
 structure NotificationsConfigs_Delete_Output {
 }

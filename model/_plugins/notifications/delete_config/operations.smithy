@@ -21,3 +21,14 @@ operation NotificationsConfigs_Delete {
     input: NotificationsConfigs_Delete_Input,
     output: NotificationsConfigs_Delete_Output
 }
+
+@xOperationGroup("notifications.delete_config")
+@xVersionAdded("2.2")
+@idempotent
+@suppress(["HttpUriConflict"])
+@http(method: "DELETE", uri: "/_plugins/_notifications/configs")
+@documentation("Deletes a notification channel configuration.")
+operation NotificationsConfigs_Delete_WithParams {
+    input: NotificationsConfigs_Delete_WithParams_Input,
+    output: NotificationsConfigs_Delete_Output
+}
