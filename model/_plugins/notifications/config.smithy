@@ -7,11 +7,6 @@
 $version: "2"
 namespace OpenSearch
 
-structure NotificationsConfig {
-    config_id: String,
-    name: String,
-    config: NotificationsConfigItem
-}
 
 structure NotificationsConfigItem {
     name: String,
@@ -23,38 +18,4 @@ structure NotificationsConfigItem {
 
 structure SlackItem {
     url: String
-}
-
-structure NotificationsConfigsOutputItem {
-    config_id: String,
-    last_updated_time_ms: Integer,
-    created_time_ms: Integer,
-    config: NotificationsConfigItem
-}
-
-list NotificationsConfigsList {
-    member: NotificationsConfigsOutputItem
-}
-
-@xDataType("array")
-@xEnumOptions([
-    "slack",
-    "chime",
-    "microsoft_teams",
-    "webhook",
-    "email",
-    "sns",
-    "ses_account",
-    "smtp_account",
-    "email_group"
-])
-@documentation("Limit the information for notifications features list.")
-string NotificationsFeaturesListItem
-
-list NotificationsFeaturesList {
-    member: NotificationsFeaturesListItem
-}
-
-structure NotificationsPluginFeatures {
-    tooltip_support: Boolean
 }

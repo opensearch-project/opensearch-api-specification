@@ -18,3 +18,10 @@ structure NotificationsConfigs_Post_Input {
 structure NotificationsConfigs_Post_Output {
     config_id: String
 }
+
+
+structure NotificationsConfig {
+    config_id: String,
+    name: String,
+    config: NotificationsConfigItem
+}

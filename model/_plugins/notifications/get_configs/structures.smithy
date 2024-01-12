@@ -11,10 +11,27 @@ namespace OpenSearch
 structure NotificationsConfigs_Get_Input {
 }
 
-@output
+@input
+structure NotificationsConfigsItem_Get_Input {
+    @required
+    @httpLabel
+    config_id: String
+}
+
 structure NotificationsConfigs_Get_Output {
     start_index: Integer,
     total_hits: Integer,
     total_hit_relation: String,
     config_list: NotificationsConfigsList
+}
+
+list NotificationsConfigsList {
+    member: NotificationsConfigsOutputItem
+}
+
+structure NotificationsConfigsOutputItem {
+    config_id: String,
+    last_updated_time_ms: Integer,
+    created_time_ms: Integer,
+    config: NotificationsConfigItem
 }
