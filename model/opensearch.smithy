@@ -301,6 +301,8 @@ service OpenSearch {
         NotificationsConfigs_Post,
         NotificationsConfigs_Put,
         NotificationsFeatures_Get,
+        NotificationsFeatureTest_Get,
+        NotificationsFeatureTest_Post,
         PatchActionGroup,
         PatchActionGroups,
         PatchAuditConfiguration,
