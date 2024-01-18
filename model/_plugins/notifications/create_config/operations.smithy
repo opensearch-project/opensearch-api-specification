@@ -15,7 +15,7 @@ namespace OpenSearch
 @xVersionAdded("2.2")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_notifications/configs")
-@documentation("Creates a notification channel configuration.")
+@documentation("Create channel configuration.")
 operation NotificationsConfigs_Post {
     input: NotificationsConfigs_Post_Input,
     output: NotificationsConfigs_Post_Output

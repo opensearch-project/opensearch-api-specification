@@ -16,7 +16,7 @@ namespace OpenSearch
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_notifications/configs")
-@documentation("Retrieves information about notification configurations.")
+@documentation("Get channel configuration.")
 operation NotificationsConfigs_Get {
     input: NotificationsConfigs_Get_Input,
     output: NotificationsConfigs_Get_Output
@@ -27,7 +27,7 @@ operation NotificationsConfigs_Get {
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_notifications/configs/{config_id}")
-@documentation("Retrieves information about notification configurations.")
+@documentation("Get channel configuration.")
 operation NotificationsConfigsItem_Get {
     input: NotificationsConfigsItem_Get_Input,
     output: NotificationsConfigs_Get_Output
