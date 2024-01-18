@@ -12,7 +12,7 @@ namespace OpenSearch
 )
 
 @xOperationGroup("notifications.delete_config")
-@xVersionAdded("2.2")
+@xVersionAdded("2.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_plugins/_notifications/configs/{config_id}")

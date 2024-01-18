@@ -12,7 +12,7 @@ namespace OpenSearch
 )
 
 @xOperationGroup("notifications.feature.test")
-@xVersionAdded("2.2")
+@xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_notifications/feature/test/{config_id}")
@@ -23,7 +23,7 @@ operation NotificationsFeatureTest_Get {
 }
 
 @xOperationGroup("notifications.feature.test")
-@xVersionAdded("2.2")
+@xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_notifications/feature/test/{config_id}")

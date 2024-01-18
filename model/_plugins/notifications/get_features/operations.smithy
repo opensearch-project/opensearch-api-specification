@@ -12,7 +12,7 @@ namespace OpenSearch
 )
 
 @xOperationGroup("notifications.features")
-@xVersionAdded("2.2")
+@xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_notifications/features")

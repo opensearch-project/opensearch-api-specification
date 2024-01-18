@@ -12,11 +12,11 @@ namespace OpenSearch
 )
 
 @xOperationGroup("notifications.update_config")
-@xVersionAdded("2.2")
+@xVersionAdded("2.0")
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "PUT", uri: "/_plugins/_notifications/configs/{config_id}")
-@documentation("Updates a notification channel configuration.")
+@documentation("Update channel configuration.")
 operation NotificationsConfigs_Put {
     input: NotificationsConfigs_Put_Input,
     output: NotificationsConfigs_Put_Output
