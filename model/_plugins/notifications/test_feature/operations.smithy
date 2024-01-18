@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @externalDocumentation(
-    "API Reference": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/"
+    "API Reference": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/#send-test-notification"
 )
 
 @xOperationGroup("notifications.feature.test")

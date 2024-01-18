@@ -13,5 +13,6 @@ structure NotificationsFeatureTest_Input {
     config_id: String
 }
 
+// TODO: Fill in Output Structure
 structure NotificationsFeatureTest_Output {
 }
