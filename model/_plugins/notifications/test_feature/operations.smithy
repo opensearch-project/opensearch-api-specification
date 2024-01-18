@@ -16,7 +16,7 @@ namespace OpenSearch
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_notifications/feature/test/{config_id}")
-@documentation("send a test notification.")
+@documentation("Send a test notification.")
 operation NotificationsFeatureTest_Get {
     input: NotificationsFeatureTest_Input,
     output: NotificationsFeatureTest_Output

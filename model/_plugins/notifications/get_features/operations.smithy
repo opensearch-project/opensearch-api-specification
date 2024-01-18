@@ -16,7 +16,7 @@ namespace OpenSearch
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_notifications/features")
-@documentation("Retrieve a list of all supported notification configuration types.")
+@documentation("List supported channel configurations.")
 operation NotificationsFeatures_Get {
     input: NotificationsFeatures_Get_Input,
     output: NotificationsFeatures_Get_Output
