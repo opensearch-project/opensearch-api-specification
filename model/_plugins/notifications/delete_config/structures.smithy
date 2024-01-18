@@ -13,19 +13,19 @@ namespace OpenSearch
 string PathNotificationsChannelsIds
 
 @input
-structure NotificationsConfigs_Delete_WithParams_Input {
+structure NotificationsConfigs_Delete_WithPathParams_Input {
+    @required
+    @httpLabel
+    config_id: String
+}
+
+@input
+structure NotificationsConfigs_Delete_WithQueryParams_Input {
     @httpQuery("config_id")
     config_id: String,
 
     @httpQuery("config_id_list")
     config_id_list: PathNotificationsChannelsIds
-}
-
-@input
-structure NotificationsConfigs_Delete_Input {
-    @required
-    @httpLabel
-    config_id: String
 }
 
 // TODO: Fill in Output Structure (delete_response_list: object)

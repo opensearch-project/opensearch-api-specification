@@ -295,8 +295,8 @@ service OpenSearch {
         NodesUsage_WithMetric,
         NodesUsage_WithMetricNodeId,
         NodesUsage_WithNodeId,
-        NotificationsConfigs_Delete,
-        NotificationsConfigs_Delete_WithParams
+        NotificationsConfigs_Delete_WithPathParams,
+        NotificationsConfigs_Delete_WithQueryParams
         NotificationsConfigs_Get,
         NotificationsConfigsItem_Get
         NotificationsConfigs_Post,

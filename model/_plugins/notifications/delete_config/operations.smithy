@@ -16,9 +16,9 @@ namespace OpenSearch
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_plugins/_notifications/configs/{config_id}")
-@documentation("Deletes a notification channel configuration.")
-operation NotificationsConfigs_Delete {
-    input: NotificationsConfigs_Delete_Input,
+@documentation("Delete channel configuration.")
+operation NotificationsConfigs_Delete_WithPathParams {
+    input: NotificationsConfigs_Delete_WithPathParams_Input,
     output: NotificationsConfigs_Delete_Output
 }
 
@@ -27,8 +27,8 @@ operation NotificationsConfigs_Delete {
 @idempotent
 @suppress(["HttpUriConflict"])
 @http(method: "DELETE", uri: "/_plugins/_notifications/configs")
-@documentation("Deletes a notification channel configuration.")
-operation NotificationsConfigs_Delete_WithParams {
-    input: NotificationsConfigs_Delete_WithParams_Input,
+@documentation("Delete channel configuration.")
+operation NotificationsConfigs_Delete_WithQueryParams {
+    input: NotificationsConfigs_Delete_WithQueryParams_Input,
     output: NotificationsConfigs_Delete_Output
 }
