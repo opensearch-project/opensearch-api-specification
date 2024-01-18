@@ -28,6 +28,10 @@ structure IndicesForcemerge_QueryParams {
 
     @httpQuery("only_expunge_deletes")
     only_expunge_deletes: OnlyExpungeDeletes,
+
+    @httpQuery("wait_for_completion")
+    @default(true)
+    wait_for_completion: WaitForCompletionTrue,
 }
 
 
