@@ -28,22 +28,34 @@ jobs:
       - name: Checkout OpenSearch
         uses: actions/checkout@v2
         with:
-          repository: 'dblock/OpenSearch'
+          repository: 'opensearch-project/OpenSearch'
           path: OpenSearch
-          ref: ${{ env.OPENSEARCH_VERSION }}-api-plugin
-      - name: Build API Plugin
+          ref: ${{ env.OPENSEARCH_VERSION }}
+      - name: Build OpenSearch
         working-directory: ./OpenSearch
         run: |
+          git fetch origin 2.x
+          git cherry-pick -n c0581a0a3ca37a97bfdffc90f78a7e1b2afd7029 --strategy-option theirs
           ./gradlew :server:assemble -Dbuild.snapshot=false
           ./gradlew :libs:opensearch-core:assemble -Dbuild.snapshot=false
-          ./gradlew :plugins:api:assemble -Dbuild.snapshot=false
+          ./gradlew publishToMavenLocal -Dbuild.snapshot=false
+      - name: Checkout OpenSearch API Plugin
+        uses: actions/checkout@v2
+        with:
+          repository: 'dblock/opensearch-api'
+          path: opensearch-api
+          ref: 2.x
+      - name: Build API Plugin
+        working-directory: ./opensearch-api
+        run: |
+          ./gradlew assemble -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} -Dbuild.snapshot=false
       - name: Install API Plugin
         run: |
           echo "FROM opensearchproject/opensearch:${{ env.OPENSEARCH_VERSION }}" >> Dockerfile
-          echo "ADD ./OpenSearch/plugins/api/build/distributions/api-${{ env.OPENSEARCH_VERSION }}.zip /tmp/" >> Dockerfile
           echo "COPY ./OpenSearch/server/build/distributions/opensearch-${{ env.OPENSEARCH_VERSION }}.jar /usr/share/opensearch/lib/" >> Dockerfile
           echo "COPY ./OpenSearch/libs/core/build/distributions/opensearch-core-${{ env.OPENSEARCH_VERSION }}.jar /usr/share/opensearch/lib/" >> Dockerfile
-          echo "RUN /usr/share/opensearch/bin/opensearch-plugin install --batch file:/tmp/api-${{ env.OPENSEARCH_VERSION }}.zip" >> Dockerfile
+          echo "ADD ./opensearch-api/build/distributions/opensearch-api-${{ env.OPENSEARCH_VERSION }}.0.zip /tmp/" >> Dockerfile
+          echo "RUN /usr/share/opensearch/bin/opensearch-plugin install --batch file:/tmp/opensearch-api-${{ env.OPENSEARCH_VERSION }}.0.zip" >> Dockerfile
           cat Dockerfile
       - name: Build and Run Docker Container
         run: |
