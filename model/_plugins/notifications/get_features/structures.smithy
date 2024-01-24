@@ -21,20 +21,18 @@ list NotificationsFeaturesList {
     member: NotificationsFeaturesListItem
 }
 
-@xDataType("array")
-@xEnumOptions([
-    "slack",
-    "chime",
-    "microsoft_teams",
-    "webhook",
-    "email",
-    "sns",
-    "ses_account",
-    "smtp_account",
-    "email_group"
-])
 @documentation("Limit the information for notifications features list.")
-string NotificationsFeaturesListItem
+enum NotificationsFeaturesListItem {
+    SLACK = "slack",
+    CHIME = "chime",
+    MICROSOFT_TEAMS = "microsoft_teams",
+    WEBHOOK = "webhook",
+    EMAIL = "email",
+    SNS = "sns",
+    SES_ACCOUNT = "ses_account",
+    SMTP_ACCOUNT = "smtp_account",
+    EMAIL_GROUP = "email_group"
+}
 
 structure NotificationsPluginFeatures {
     tooltip_support: Boolean
