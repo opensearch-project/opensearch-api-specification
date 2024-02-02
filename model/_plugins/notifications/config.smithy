@@ -24,3 +24,52 @@ structure NotificationsConfigItem {
 structure SlackItem {
     url: String
 }
+
+structure SnsItem {
+    topic_arn: String,
+    role_arn: String
+}
+
+structure Chime {
+    url: String
+}
+
+structure Webhook {
+    url: String
+}
+
+structure SmtpAccount {
+    host: String,
+    port: Integer,
+    method: String,
+    from_addess: String
+}
+
+structure SesAccount {
+    region: String,
+    role_arn: String,
+    from_addess: String
+}
+
+structure EmailGroup {
+    recipient_list: RecipientList,
+    role_arn: String,
+    from_addess: String
+}
+
+list RecipientList {
+    member: RecipientListItem
+}
+
+structure RecipientListItem {
+    recipient: String
+}
+
+structure EmailGroupIdListItem {
+    recipient: String
+}
+
+structure Email {
+    email_account_id: String,
+    recipient_list: RecipientList
+}
