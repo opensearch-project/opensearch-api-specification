@@ -13,12 +13,23 @@ structure NotificationsConfig {
     config: NotificationsConfigItem
 }
 
+union NotificationConfigDetails {
+    sns: SnsItem,
+    slack: SlackItem,
+    chime: Chime,
+    webhook: Webhook,
+    smtp_account: SmtpAccount,
+    ses_account: SesAccount,
+    email_group: EmailGroup,
+    email: Email
+}
+
 structure NotificationsConfigItem {
     name: String,
     description: String,
     config_type: String,
     is_enabled: Boolean,
-    slack: SlackItem
+    details: NotificationConfigDetails
 }
 
 structure SlackItem {
