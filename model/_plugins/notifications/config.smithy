@@ -13,6 +13,14 @@ structure NotificationsConfig {
     config: NotificationsConfigItem
 }
 
+structure NotificationsConfigItem {
+    name: String,
+    description: String,
+    config_type: String,
+    is_enabled: Boolean,
+    details: NotificationConfigDetails
+}
+
 union NotificationConfigDetails {
     sns: SnsItem,
     slack: SlackItem,
@@ -22,14 +30,6 @@ union NotificationConfigDetails {
     ses_account: SesAccount,
     email_group: EmailGroup,
     email: Email
-}
-
-structure NotificationsConfigItem {
-    name: String,
-    description: String,
-    config_type: String,
-    is_enabled: Boolean,
-    details: NotificationConfigDetails
 }
 
 structure SlackItem {
@@ -68,19 +68,15 @@ structure EmailGroup {
     from_addess: String
 }
 
+structure Email {
+    email_account_id: String,
+    recipient_list: RecipientList
+}
+
 list RecipientList {
     member: RecipientListItem
 }
 
 structure RecipientListItem {
     recipient: String
-}
-
-structure EmailGroupIdListItem {
-    recipient: String
-}
-
-structure Email {
-    email_account_id: String,
-    recipient_list: RecipientList
 }
