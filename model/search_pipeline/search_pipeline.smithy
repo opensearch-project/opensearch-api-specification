@@ -7,10 +7,16 @@
 $version: "2"
 namespace OpenSearch
 
+map SearchPipelineMap{
+    key: String,
+    value: SearchPipelineStructure
+}
+
 structure SearchPipelineStructure{
     version: Integer,
     request_processors: RequestProcessorsList,
-    response_processors: ResponseProcessorsList
+    response_processors: ResponseProcessorsList,
+    phase_results_processors: PhaseResultsProcessorsList
 }
 
 list RequestProcessorsList {
@@ -21,6 +27,9 @@ list ResponseProcessorsList {
     member: RequestProcessors
 }
 
+list PhaseResultsProcessorsList {
+    member: PhaseResultsProcessors
+}
 
 structure RequestProcessors {
     filter_query: FilterQuery,
@@ -31,6 +40,27 @@ structure RequestProcessors {
 structure ResponseProcessors {
     personalize_search_ranking: PersonalizeSearchRanking,
     rename_field: RenameField,
+}
+
+structure PhaseResultsProcessors {
+    normalization: ScoreNormalization,
+    combination: ScoreCombination,
+    tag: String,
+    description: String,
+    ignore_failure: Boolean
+}
+
+structure ScoreNormalization{
+    technique: String
+}
+
+structure ScoreCombination{
+    technique: String,
+    parameters: ScoreWeights
+}
+
+list ScoreWeights{
+    member: Float
 }
 
 structure FilterQuery {

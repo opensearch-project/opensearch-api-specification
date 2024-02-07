@@ -15,6 +15,17 @@ namespace OpenSearch
 @xVersionAdded("2.9")
 @readonly
 @suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_search/pipeline")
+@documentation("Retrieves information about search pipelines.")
+operation GetSearchPipelines {
+    input: GetSearchPipelines_Input,
+    output: GetSearchPipelines_Output
+}
+
+@xOperationGroup("search_pipeline.get")
+@xVersionAdded("2.9")
+@readonly
+@suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_search/pipeline/{pipeline}")
 @documentation("Retrieves information about a specified search pipeline.")
 operation GetSearchPipeline {

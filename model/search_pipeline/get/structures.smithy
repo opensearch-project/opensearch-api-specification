@@ -8,13 +8,24 @@ $version: "2"
 namespace OpenSearch
 
 @input
+structure GetSearchPipelines_Input {
+}
+
+@output
+structure GetSearchPipelines_Output {
+    @httpPayload
+    content: SearchPipelineMap
+}
+
+@input
 structure GetSearchPipeline_Input {
     @required
     @httpLabel
     pipeline: String,
 }
 
+@output
 structure GetSearchPipeline_Output {
     @httpPayload
-    content: SearchPipelineStructure
+    content: SearchPipelineMap
 }
