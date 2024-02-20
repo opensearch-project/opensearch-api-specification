@@ -1,9 +1,11 @@
 - [Developer Guide](#developer-guide)
   - [Getting Started](#getting-started)
   - [File Structure](#file-structure)
-  - [Defining an API Action](#defining-an-api-action)
-  - [Defining Common Parameters](#defining-common-parameters)
-  - [Smithy Traits](#smithy-traits)
+  - [Grouping Operations](#grouping-operations)
+  - [Grouping Schemas](#grouping-schemas)
+  - [OpenAPI Extensions](#openapi-extensions)
+  - [Linting](#linting)
+  - [Single-File OpenAPI](#single-file-openapi)
 
 # Developer Guide
 Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
@@ -75,10 +77,10 @@ This repository includes several penAPI Specification Extensions to fill in any 
 - `x-deprecation-message`: Reason for deprecation and guidance on how to prepare for the next major version.
 - `x-ignorable`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 
-## Linting [WIP]
-
+## Linting 
+[WORK IN PROGRESS]
 We are working on a linter that will validate every `yaml` file as a valid OpenAPI 3 Document as well as assuring that they follow the guidelines mentioned above.
 
-## Single-File OpenAPI [WIP]
-
+## Single-File OpenAPI 
+[WORK IN PROGRESS]
 We are working on a tool that will merge all the `yaml` files into a single OpenAPI 3 Document. This will make it the spec easier to be consumed programmatically, especially by the client generators and OpenAPI parsing tools that cannot handle multi-file specs.
