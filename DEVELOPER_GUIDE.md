@@ -83,4 +83,4 @@ We are working on a linter that will validate every `yaml` file as a valid OpenA
 
 ## Single-File OpenAPI 
 [WORK IN PROGRESS]
-We are working on a tool that will merge all the `yaml` files into a single OpenAPI 3 Document. This will make it the spec easier to be consumed programmatically, especially by the client generators and OpenAPI parsing tools that cannot handle multi-file specs.
+We are working on a tool that will merge all the `yaml` files into a single OpenAPI 3 Document in the root folder ([OpenSearch.openapi.yaml](./Opensearch.openapi.yaml])). This will make the spec easier to be consumed programmatically, especially by the client generators and OpenAPI parsing tools that cannot handle multi-file specs.
