@@ -1,0 +1,75 @@
+openapi: 3.1.0
+info:
+  title: Schemas of cat.segments category
+  description: Schemas of cat.segments category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    SegmentsRecord:
+      type: object
+      properties:
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        shard:
+          description: The shard name.
+          type: string
+        prirep:
+          description: 'The shard type: `primary` or `replica`.'
+          type: string
+        ip:
+          description: The IP address of the node where it lives.
+          type: string
+        id:
+          $ref: '_common.yaml#/components/schemas/NodeId'
+        segment:
+          description: The segment name, which is derived from the segment generation and used internally to create file names in
+            the directory of the shard.
+          type: string
+        generation:
+          description: >-
+            The segment generation number.
+
+            Opensearch increments this generation number for each segment written then uses this number to derive the segment name.
+          type: string
+        docs.count:
+          description: |-
+            The number of documents in the segment.
+            This excludes deleted documents and counts any nested documents separately from their parents.
+            It also excludes documents which were indexed recently and do not yet belong to a segment.
+          type: string
+        docs.deleted:
+          description: >-
+            The number of deleted documents in the segment, which might be higher or lower than the number of delete
+            operations you have performed.
+
+            This number excludes deletes that were performed recently and do not yet belong to a segment.
+
+            Deleted documents are cleaned up by the automatic merge process if it makes sense to do so.
+
+            Also, Opensearch creates extra deleted documents to internally track the recent history of operations on a shard.
+          type: string
+        size:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        size.memory:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        committed:
+          description: >-
+            If `true`, the segment is synced to disk.
+
+            Segments that are synced can survive a hard reboot.
+
+            If `false`, the data from uncommitted segments is also stored in the transaction log so that Opensearch is able to replay changes on the next start.
+          type: string
+        searchable:
+          description: |-
+            If `true`, the segment is searchable.
+            If `false`, the segment has most likely been written to disk but needs a refresh to be searchable.
+          type: string
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        compound:
+          description: |-
+            If `true`, the segment is stored in a compound file.
+            This means Lucene merged all files from the segment in a single file to save file descriptors.
+          type: string

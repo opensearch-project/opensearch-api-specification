@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: Schemas of _core.field_caps category
+  description: Schemas of _core.field_caps category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    FieldCapability:
+      type: object
+      properties:
+        aggregatable:
+          description: Whether this field can be aggregated on all indices.
+          type: boolean
+        indices:
+          $ref: '_common.yaml#/components/schemas/Indices'
+        meta:
+          $ref: '_common.yaml#/components/schemas/Metadata'
+        non_aggregatable_indices:
+          $ref: '_common.yaml#/components/schemas/Indices'
+        non_searchable_indices:
+          $ref: '_common.yaml#/components/schemas/Indices'
+        searchable:
+          description: Whether this field is indexed for search on all indices.
+          type: boolean
+        type:
+          type: string
+        metadata_field:
+          description: Whether this field is registered as a metadata field.
+          type: boolean
+        time_series_dimension:
+          description: Whether this field is used as a time series dimension.
+          type: boolean
+        time_series_metric:
+          $ref: '_common.mapping.yaml#/components/schemas/TimeSeriesMetricType'
+        non_dimension_indices:
+          description: |-
+            If this list is present in response then some indices have the
+            field marked as a dimension and other indices, the ones in this list, do not.
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/IndexName'
+        metric_conflicts_indices:
+          description: |-
+            The list of indices where this field is present if these indices
+            don’t have the same `time_series_metric` value for this field.
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/IndexName'
+      required:
+        - aggregatable
+        - searchable
+        - type

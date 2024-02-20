@@ -1,0 +1,2179 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schemas of _common.mapping category",
+    "description": "Schemas of _common.mapping category",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "RuntimeFields": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/components/schemas/RuntimeField"
+        }
+      },
+      "RuntimeField": {
+        "type": "object",
+        "properties": {
+          "fetch_fields": {
+            "description": "For type `lookup`",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuntimeFieldFetchFields"
+            }
+          },
+          "format": {
+            "description": "A custom format for `date` type runtime fields.",
+            "type": "string"
+          },
+          "input_field": {
+            "$ref": "_common.json#/components/schemas/Field"
+          },
+          "target_field": {
+            "$ref": "_common.json#/components/schemas/Field"
+          },
+          "target_index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          },
+          "script": {
+            "$ref": "_common.json#/components/schemas/Script"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RuntimeFieldType"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "RuntimeFieldFetchFields": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "$ref": "_common.json#/components/schemas/Field"
+          },
+          "format": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "field"
+        ]
+      },
+      "RuntimeFieldType": {
+        "type": "string",
+        "enum": [
+          "boolean",
+          "date",
+          "double",
+          "geo_point",
+          "ip",
+          "keyword",
+          "long",
+          "lookup"
+        ]
+      },
+      "TypeMapping": {
+        "type": "object",
+        "properties": {
+          "all_field": {
+            "$ref": "#/components/schemas/AllField"
+          },
+          "date_detection": {
+            "type": "boolean"
+          },
+          "dynamic": {
+            "$ref": "#/components/schemas/DynamicMapping"
+          },
+          "dynamic_date_formats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dynamic_templates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/DynamicTemplate"
+              }
+            }
+          },
+          "_field_names": {
+            "$ref": "#/components/schemas/FieldNamesField"
+          },
+          "index_field": {
+            "$ref": "#/components/schemas/IndexField"
+          },
+          "_meta": {
+            "$ref": "_common.json#/components/schemas/Metadata"
+          },
+          "numeric_detection": {
+            "type": "boolean"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Property"
+            }
+          },
+          "_routing": {
+            "$ref": "#/components/schemas/RoutingField"
+          },
+          "_size": {
+            "$ref": "#/components/schemas/SizeField"
+          },
+          "_source": {
+            "$ref": "#/components/schemas/SourceField"
+          },
+          "runtime": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RuntimeField"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "_data_stream_timestamp": {
+            "$ref": "#/components/schemas/DataStreamTimestamp"
+          }
+        }
+      },
+      "AllField": {
+        "type": "object",
+        "properties": {
+          "analyzer": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "omit_norms": {
+            "type": "boolean"
+          },
+          "search_analyzer": {
+            "type": "string"
+          },
+          "similarity": {
+            "type": "string"
+          },
+          "store": {
+            "type": "boolean"
+          },
+          "store_term_vector_offsets": {
+            "type": "boolean"
+          },
+          "store_term_vector_payloads": {
+            "type": "boolean"
+          },
+          "store_term_vector_positions": {
+            "type": "boolean"
+          },
+          "store_term_vectors": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "analyzer",
+          "enabled",
+          "omit_norms",
+          "search_analyzer",
+          "similarity",
+          "store",
+          "store_term_vector_offsets",
+          "store_term_vector_payloads",
+          "store_term_vector_positions",
+          "store_term_vectors"
+        ]
+      },
+      "DynamicMapping": {
+        "type": "string",
+        "enum": [
+          "strict",
+          "runtime",
+          "true",
+          "false"
+        ]
+      },
+      "DynamicTemplate": {
+        "type": "object",
+        "properties": {
+          "mapping": {
+            "$ref": "#/components/schemas/Property"
+          },
+          "match": {
+            "type": "string"
+          },
+          "match_mapping_type": {
+            "type": "string"
+          },
+          "match_pattern": {
+            "$ref": "#/components/schemas/MatchType"
+          },
+          "path_match": {
+            "type": "string"
+          },
+          "path_unmatch": {
+            "type": "string"
+          },
+          "unmatch": {
+            "type": "string"
+          }
+        }
+      },
+      "Property": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BinaryProperty"
+          },
+          {
+            "$ref": "#/components/schemas/BooleanProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DynamicProperty"
+          },
+          {
+            "$ref": "#/components/schemas/JoinProperty"
+          },
+          {
+            "$ref": "#/components/schemas/KeywordProperty"
+          },
+          {
+            "$ref": "#/components/schemas/MatchOnlyTextProperty"
+          },
+          {
+            "$ref": "#/components/schemas/PercolatorProperty"
+          },
+          {
+            "$ref": "#/components/schemas/RankFeatureProperty"
+          },
+          {
+            "$ref": "#/components/schemas/RankFeaturesProperty"
+          },
+          {
+            "$ref": "#/components/schemas/SearchAsYouTypeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/TextProperty"
+          },
+          {
+            "$ref": "#/components/schemas/VersionProperty"
+          },
+          {
+            "$ref": "#/components/schemas/WildcardProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DateNanosProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DateProperty"
+          },
+          {
+            "$ref": "#/components/schemas/AggregateMetricDoubleProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DenseVectorProperty"
+          },
+          {
+            "$ref": "#/components/schemas/SparseVectorProperty"
+          },
+          {
+            "$ref": "#/components/schemas/FlattenedProperty"
+          },
+          {
+            "$ref": "#/components/schemas/NestedProperty"
+          },
+          {
+            "$ref": "#/components/schemas/ObjectProperty"
+          },
+          {
+            "$ref": "#/components/schemas/CompletionProperty"
+          },
+          {
+            "$ref": "#/components/schemas/ConstantKeywordProperty"
+          },
+          {
+            "$ref": "#/components/schemas/FieldAliasProperty"
+          },
+          {
+            "$ref": "#/components/schemas/HistogramProperty"
+          },
+          {
+            "$ref": "#/components/schemas/IpProperty"
+          },
+          {
+            "$ref": "#/components/schemas/Murmur3HashProperty"
+          },
+          {
+            "$ref": "#/components/schemas/TokenCountProperty"
+          },
+          {
+            "$ref": "#/components/schemas/GeoPointProperty"
+          },
+          {
+            "$ref": "#/components/schemas/GeoShapeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/PointProperty"
+          },
+          {
+            "$ref": "#/components/schemas/ShapeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/ByteNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DoubleNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/FloatNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/HalfFloatNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/IntegerNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/LongNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/ScaledFloatNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/ShortNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/UnsignedLongNumberProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DateRangeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/DoubleRangeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/FloatRangeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/IntegerRangeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/IpRangeProperty"
+          },
+          {
+            "$ref": "#/components/schemas/LongRangeProperty"
+          }
+        ]
+      },
+      "BinaryProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "binary"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "DocValuesPropertyBase": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CorePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "doc_values": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "CorePropertyBase": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "copy_to": {
+                "$ref": "_common.json#/components/schemas/Fields"
+              },
+              "similarity": {
+                "type": "string"
+              },
+              "store": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "PropertyBase": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "description": "Metadata about the field.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Property"
+            }
+          },
+          "ignore_above": {
+            "type": "number"
+          },
+          "dynamic": {
+            "$ref": "#/components/schemas/DynamicMapping"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Property"
+            }
+          }
+        }
+      },
+      "BooleanProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "fielddata": {
+                "$ref": "indices._common.json#/components/schemas/NumericFielddata"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "boolean"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "DynamicProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "{dynamic_property}"
+                ]
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/FieldValue"
+              },
+              "boost": {
+                "type": "number"
+              },
+              "coerce": {
+                "type": "boolean"
+              },
+              "script": {
+                "$ref": "_common.json#/components/schemas/Script"
+              },
+              "on_script_error": {
+                "$ref": "#/components/schemas/OnScriptError"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "time_series_metric": {
+                "$ref": "#/components/schemas/TimeSeriesMetricType"
+              },
+              "analyzer": {
+                "type": "string"
+              },
+              "eager_global_ordinals": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "index_options": {
+                "$ref": "#/components/schemas/IndexOptions"
+              },
+              "index_phrases": {
+                "type": "boolean"
+              },
+              "index_prefixes": {
+                "$ref": "#/components/schemas/TextIndexPrefixes"
+              },
+              "norms": {
+                "type": "boolean"
+              },
+              "position_increment_gap": {
+                "type": "number"
+              },
+              "search_analyzer": {
+                "type": "string"
+              },
+              "search_quote_analyzer": {
+                "type": "string"
+              },
+              "term_vector": {
+                "$ref": "#/components/schemas/TermVectorOption"
+              },
+              "format": {
+                "type": "string"
+              },
+              "precision_step": {
+                "type": "number"
+              },
+              "locale": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "OnScriptError": {
+        "type": "string",
+        "enum": [
+          "fail",
+          "continue"
+        ]
+      },
+      "TimeSeriesMetricType": {
+        "type": "string",
+        "enum": [
+          "gauge",
+          "counter",
+          "summary",
+          "histogram",
+          "position"
+        ]
+      },
+      "IndexOptions": {
+        "type": "string",
+        "enum": [
+          "docs",
+          "freqs",
+          "positions",
+          "offsets"
+        ]
+      },
+      "TextIndexPrefixes": {
+        "type": "object",
+        "properties": {
+          "max_chars": {
+            "type": "number"
+          },
+          "min_chars": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "max_chars",
+          "min_chars"
+        ]
+      },
+      "TermVectorOption": {
+        "type": "string",
+        "enum": [
+          "no",
+          "yes",
+          "with_offsets",
+          "with_positions",
+          "with_positions_offsets",
+          "with_positions_offsets_payloads",
+          "with_positions_payloads"
+        ]
+      },
+      "JoinProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "relations": {
+                "type": "object",
+                "additionalProperties": {
+                  "oneOf": [
+                    {
+                      "$ref": "_common.json#/components/schemas/RelationName"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "_common.json#/components/schemas/RelationName"
+                      }
+                    }
+                  ]
+                }
+              },
+              "eager_global_ordinals": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "join"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "KeywordProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "eager_global_ordinals": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "index_options": {
+                "$ref": "#/components/schemas/IndexOptions"
+              },
+              "normalizer": {
+                "type": "string"
+              },
+              "norms": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "type": "string"
+              },
+              "split_queries_on_whitespace": {
+                "type": "boolean"
+              },
+              "time_series_dimension": {
+                "description": "For internal use by Opensearch only. Marks the field as a time series dimension. Defaults to false.",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "keyword"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "MatchOnlyTextProperty": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "match_only_text"
+            ]
+          },
+          "fields": {
+            "description": "Multi-fields allow the same string value to be indexed in multiple ways for different purposes, such as one\nfield for search and a multi-field for sorting and aggregations, or the same string value analyzed by different analyzers.",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Property"
+            }
+          },
+          "meta": {
+            "description": "Metadata about the field.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "copy_to": {
+            "$ref": "_common.json#/components/schemas/Fields"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "PercolatorProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "percolator"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "RankFeatureProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "positive_score_impact": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "rank_feature"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "RankFeaturesProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "rank_features"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "SearchAsYouTypeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CorePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "analyzer": {
+                "type": "string"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "index_options": {
+                "$ref": "#/components/schemas/IndexOptions"
+              },
+              "max_shingle_size": {
+                "type": "number"
+              },
+              "norms": {
+                "type": "boolean"
+              },
+              "search_analyzer": {
+                "type": "string"
+              },
+              "search_quote_analyzer": {
+                "type": "string"
+              },
+              "term_vector": {
+                "$ref": "#/components/schemas/TermVectorOption"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "search_as_you_type"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "TextProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CorePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "analyzer": {
+                "type": "string"
+              },
+              "boost": {
+                "type": "number"
+              },
+              "eager_global_ordinals": {
+                "type": "boolean"
+              },
+              "fielddata": {
+                "type": "boolean"
+              },
+              "fielddata_frequency_filter": {
+                "$ref": "indices._common.json#/components/schemas/FielddataFrequencyFilter"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "index_options": {
+                "$ref": "#/components/schemas/IndexOptions"
+              },
+              "index_phrases": {
+                "type": "boolean"
+              },
+              "index_prefixes": {
+                "$ref": "#/components/schemas/TextIndexPrefixes"
+              },
+              "norms": {
+                "type": "boolean"
+              },
+              "position_increment_gap": {
+                "type": "number"
+              },
+              "search_analyzer": {
+                "type": "string"
+              },
+              "search_quote_analyzer": {
+                "type": "string"
+              },
+              "term_vector": {
+                "$ref": "#/components/schemas/TermVectorOption"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "text"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "VersionProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "version"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "WildcardProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "wildcard"
+                ]
+              },
+              "null_value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "DateNanosProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "format": {
+                "type": "string"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/DateTime"
+              },
+              "precision_step": {
+                "type": "number"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "date_nanos"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "DateProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "fielddata": {
+                "$ref": "indices._common.json#/components/schemas/NumericFielddata"
+              },
+              "format": {
+                "type": "string"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/DateTime"
+              },
+              "precision_step": {
+                "type": "number"
+              },
+              "locale": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "date"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "AggregateMetricDoubleProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "aggregate_metric_double"
+                ]
+              },
+              "default_metric": {
+                "type": "string"
+              },
+              "metrics": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "time_series_metric": {
+                "$ref": "#/components/schemas/TimeSeriesMetricType"
+              }
+            },
+            "required": [
+              "type",
+              "default_metric",
+              "metrics"
+            ]
+          }
+        ]
+      },
+      "DenseVectorProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "dense_vector"
+                ]
+              },
+              "dims": {
+                "type": "number"
+              },
+              "similarity": {
+                "type": "string"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "index_options": {
+                "$ref": "#/components/schemas/DenseVectorIndexOptions"
+              }
+            },
+            "required": [
+              "type",
+              "dims"
+            ]
+          }
+        ]
+      },
+      "DenseVectorIndexOptions": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "m": {
+            "type": "number"
+          },
+          "ef_construction": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type",
+          "m",
+          "ef_construction"
+        ]
+      },
+      "SparseVectorProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sparse_vector"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "FlattenedProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "depth_limit": {
+                "type": "number"
+              },
+              "doc_values": {
+                "type": "boolean"
+              },
+              "eager_global_ordinals": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "index_options": {
+                "$ref": "#/components/schemas/IndexOptions"
+              },
+              "null_value": {
+                "type": "string"
+              },
+              "similarity": {
+                "type": "string"
+              },
+              "split_queries_on_whitespace": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "flattened"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "NestedProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CorePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "include_in_parent": {
+                "type": "boolean"
+              },
+              "include_in_root": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "nested"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "ObjectProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CorePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CompletionProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "analyzer": {
+                "type": "string"
+              },
+              "contexts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SuggestContext"
+                }
+              },
+              "max_input_length": {
+                "type": "number"
+              },
+              "preserve_position_increments": {
+                "type": "boolean"
+              },
+              "preserve_separators": {
+                "type": "boolean"
+              },
+              "search_analyzer": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "completion"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "SuggestContext": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "_common.json#/components/schemas/Name"
+          },
+          "path": {
+            "$ref": "_common.json#/components/schemas/Field"
+          },
+          "type": {
+            "type": "string"
+          },
+          "precision": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
+      "ConstantKeywordProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "object"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "constant_keyword"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "FieldAliasProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "$ref": "_common.json#/components/schemas/Field"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "alias"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "HistogramProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "histogram"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "IpProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "type": "string"
+              },
+              "on_script_error": {
+                "$ref": "#/components/schemas/OnScriptError"
+              },
+              "script": {
+                "$ref": "_common.json#/components/schemas/Script"
+              },
+              "time_series_dimension": {
+                "description": "For internal use by Opensearch only. Marks the field as a time series dimension. Defaults to false.",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "ip"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "Murmur3HashProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "murmur3"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "TokenCountProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "analyzer": {
+                "type": "string"
+              },
+              "boost": {
+                "type": "number"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "type": "number"
+              },
+              "enable_position_increments": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "token_count"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "GeoPointProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "ignore_z_value": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/GeoLocation"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "geo_point"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "GeoShapeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coerce": {
+                "type": "boolean"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "ignore_z_value": {
+                "type": "boolean"
+              },
+              "orientation": {
+                "$ref": "#/components/schemas/GeoOrientation"
+              },
+              "strategy": {
+                "$ref": "#/components/schemas/GeoStrategy"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "geo_shape"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "GeoOrientation": {
+        "type": "string",
+        "enum": [
+          "right",
+          "left"
+        ]
+      },
+      "GeoStrategy": {
+        "type": "string",
+        "enum": [
+          "recursive",
+          "term"
+        ]
+      },
+      "PointProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "ignore_z_value": {
+                "type": "boolean"
+              },
+              "null_value": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "point"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "ShapeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coerce": {
+                "type": "boolean"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "ignore_z_value": {
+                "type": "boolean"
+              },
+              "orientation": {
+                "$ref": "#/components/schemas/GeoOrientation"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "shape"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "ByteNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "byte"
+                ]
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/byte"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "NumberPropertyBase": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "coerce": {
+                "type": "boolean"
+              },
+              "ignore_malformed": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              },
+              "on_script_error": {
+                "$ref": "#/components/schemas/OnScriptError"
+              },
+              "script": {
+                "$ref": "_common.json#/components/schemas/Script"
+              },
+              "time_series_metric": {
+                "$ref": "#/components/schemas/TimeSeriesMetricType"
+              },
+              "time_series_dimension": {
+                "description": "For internal use by Opensearch only. Marks the field as a time series dimension. Defaults to false.",
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "DoubleNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "double"
+                ]
+              },
+              "null_value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "FloatNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "float"
+                ]
+              },
+              "null_value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "HalfFloatNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "half_float"
+                ]
+              },
+              "null_value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "IntegerNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "integer"
+                ]
+              },
+              "null_value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "LongNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "long"
+                ]
+              },
+              "null_value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "ScaledFloatNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "scaled_float"
+                ]
+              },
+              "null_value": {
+                "type": "number"
+              },
+              "scaling_factor": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "ShortNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "short"
+                ]
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/short"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "UnsignedLongNumberProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NumberPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "unsigned_long"
+                ]
+              },
+              "null_value": {
+                "$ref": "_common.json#/components/schemas/ulong"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "DateRangeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RangePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "date_range"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "RangePropertyBase": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DocValuesPropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "boost": {
+                "type": "number"
+              },
+              "coerce": {
+                "type": "boolean"
+              },
+              "index": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "DoubleRangeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RangePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "double_range"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "FloatRangeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RangePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "float_range"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "IntegerRangeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RangePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "integer_range"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "IpRangeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RangePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "ip_range"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "LongRangeProperty": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RangePropertyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "long_range"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
+      "MatchType": {
+        "type": "string",
+        "enum": [
+          "simple",
+          "regex"
+        ]
+      },
+      "FieldNamesField": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "IndexField": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "RoutingField": {
+        "type": "object",
+        "properties": {
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "required"
+        ]
+      },
+      "SizeField": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "SourceField": {
+        "type": "object",
+        "properties": {
+          "compress": {
+            "type": "boolean"
+          },
+          "compress_threshold": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "excludes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mode": {
+            "$ref": "#/components/schemas/SourceFieldMode"
+          }
+        }
+      },
+      "SourceFieldMode": {
+        "type": "string",
+        "enum": [
+          "disabled",
+          "stored",
+          "synthetic"
+        ]
+      },
+      "DataStreamTimestamp": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "FieldMapping": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "mapping": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Property"
+            },
+            "minProperties": 1,
+            "maxProperties": 1
+          }
+        },
+        "required": [
+          "full_name",
+          "mapping"
+        ]
+      }
+    }
+  }
+}

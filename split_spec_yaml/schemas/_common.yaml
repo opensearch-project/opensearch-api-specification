@@ -1,0 +1,1804 @@
+openapi: 3.1.0
+info:
+  title: Schemas of _common category
+  description: Schemas of _common category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Id:
+      type: string
+    AcknowledgedResponseBase:
+      type: object
+      properties:
+        acknowledged:
+          description: For a successful response, this value is always true. On failure, an exception is returned instead.
+          type: boolean
+      required:
+        - acknowledged
+    Duration:
+      description: |-
+        A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
+        `d` (days). Also accepts "0" without a unit and "-1" to indicate an unspecified value.
+      x-data-type: time
+      pattern: ^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$
+      type: string
+    Metadata:
+      type: object
+      additionalProperties:
+        type: object
+    GeoBounds:
+      description: |-
+        A geo bounding box. It can be represented in various ways:
+        - as 4 top/bottom/left/right coordinates
+        - as 2 top_left / bottom_right points
+        - as 2 top_right / bottom_left points
+        - as a WKT bounding box
+      oneOf:
+        - $ref: '#/components/schemas/CoordsGeoBounds'
+        - $ref: '#/components/schemas/TopLeftBottomRightGeoBounds'
+        - $ref: '#/components/schemas/TopRightBottomLeftGeoBounds'
+        - $ref: '#/components/schemas/WktGeoBounds'
+    CoordsGeoBounds:
+      type: object
+      properties:
+        top:
+          type: number
+        bottom:
+          type: number
+        left:
+          type: number
+        right:
+          type: number
+      required:
+        - top
+        - bottom
+        - left
+        - right
+    TopLeftBottomRightGeoBounds:
+      type: object
+      properties:
+        top_left:
+          $ref: '#/components/schemas/GeoLocation'
+        bottom_right:
+          $ref: '#/components/schemas/GeoLocation'
+      required:
+        - top_left
+        - bottom_right
+    GeoLocation:
+      description: |-
+        A latitude/longitude as a 2 dimensional point. It can be represented in various ways:
+        - as a `{lat, long}` object
+        - as a geo hash value
+        - as a `[lon, lat]` array
+        - as a string in `"<lat>, <lon>"` or WKT point formats
+      oneOf:
+        - $ref: '#/components/schemas/LatLonGeoLocation'
+        - $ref: '#/components/schemas/GeoHashLocation'
+        - type: array
+          items:
+            type: number
+        - type: string
+    LatLonGeoLocation:
+      type: object
+      properties:
+        lat:
+          description: Latitude
+          type: number
+        lon:
+          description: Longitude
+          type: number
+      required:
+        - lat
+        - lon
+    GeoHashLocation:
+      type: object
+      properties:
+        geohash:
+          $ref: '#/components/schemas/GeoHash'
+      required:
+        - geohash
+    GeoHash:
+      type: string
+    TopRightBottomLeftGeoBounds:
+      type: object
+      properties:
+        top_right:
+          $ref: '#/components/schemas/GeoLocation'
+        bottom_left:
+          $ref: '#/components/schemas/GeoLocation'
+      required:
+        - top_right
+        - bottom_left
+    WktGeoBounds:
+      type: object
+      properties:
+        wkt:
+          type: string
+      required:
+        - wkt
+    EpochTimeUnitMillis:
+      allOf:
+        - $ref: '#/components/schemas/UnitMillis'
+    UnitMillis:
+      description: Time unit for milliseconds
+      type: number
+    DurationLarge:
+      description: >-
+        A date histogram interval. Similar to `Duration` with additional units: `w` (week), `M` (month), `q` (quarter)
+        and
+
+        `y` (year)
+      type: string
+    FieldValue:
+      description: A field value.
+      oneOf:
+        - type: number
+        - type: number
+        - type: string
+        - type: boolean
+        - nullable: true
+          type: string
+        - type: object
+    Void:
+      description: |-
+        The absence of any type. This is commonly used in APIs that don't return a body.
+
+        Although "void" is generally used for the unit type that has only one value, this is to be interpreted as
+        the bottom type that has no value at all. Most languages have a unit type, but few have a bottom type.
+
+        See https://en.m.wikipedia.org/wiki/Unit_type and https://en.m.wikipedia.org/wiki/Bottom_type
+      type: object
+    GeoTile:
+      description: A map tile reference, represented as `{zoom}/{x}/{y}`
+      type: string
+    GeoHexCell:
+      description: A map hex cell (H3) reference
+      type: string
+    IndexName:
+      type: string
+    Field:
+      description: Path to field or array of paths. Some API's support wildcards in the path to select multiple fields.
+      type: string
+    SequenceNumber:
+      type: number
+    VersionNumber:
+      type: number
+    SortResults:
+      type: array
+      items:
+        $ref: '#/components/schemas/FieldValue'
+    GeoLine:
+      type: object
+      properties:
+        type:
+          description: Always `"LineString"`
+          type: string
+        coordinates:
+          description: Array of `[lon, lat]` coordinates
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+      required:
+        - type
+        - coordinates
+    ClusterStatistics:
+      type: object
+      properties:
+        skipped:
+          type: number
+        successful:
+          type: number
+        total:
+          type: number
+        running:
+          type: number
+        partial:
+          type: number
+        failed:
+          type: number
+        details:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClusterDetails'
+      required:
+        - skipped
+        - successful
+        - total
+        - running
+        - partial
+        - failed
+    ClusterDetails:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ClusterSearchStatus'
+        indices:
+          type: string
+        took:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        timed_out:
+          type: boolean
+        _shards:
+          $ref: '#/components/schemas/ShardStatistics'
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardFailure'
+      required:
+        - status
+        - indices
+        - timed_out
+    ClusterSearchStatus:
+      type: string
+      enum:
+        - running
+        - successful
+        - partial
+        - skipped
+        - failed
+    DurationValueUnitMillis:
+      allOf:
+        - $ref: '#/components/schemas/UnitMillis'
+    ShardStatistics:
+      type: object
+      properties:
+        failed:
+          $ref: '#/components/schemas/uint'
+        successful:
+          $ref: '#/components/schemas/uint'
+        total:
+          $ref: '#/components/schemas/uint'
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardFailure'
+        skipped:
+          $ref: '#/components/schemas/uint'
+      required:
+        - failed
+        - successful
+        - total
+    uint:
+      type: number
+    ShardFailure:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/IndexName'
+        node:
+          type: string
+        reason:
+          $ref: '#/components/schemas/ErrorCause'
+        shard:
+          type: number
+        status:
+          type: string
+      required:
+        - reason
+        - shard
+    ErrorCause:
+      type: object
+      properties:
+        type:
+          description: The type of error
+          type: string
+        reason:
+          description: A human-readable explanation of the error, in english
+          type: string
+        stack_trace:
+          description: The server stack trace. Present only if the `error_trace=true` parameter was sent with the request.
+          type: string
+        caused_by:
+          $ref: '#/components/schemas/ErrorCause'
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+      required:
+        - type
+    DurationValueUnitNanos:
+      allOf:
+        - $ref: '#/components/schemas/UnitNanos'
+    UnitNanos:
+      description: Time unit for nanoseconds
+      type: number
+    ScrollId:
+      type: string
+    Routing:
+      type: string
+    DateTime:
+      description: |-
+        A date and time, either as a string whose format can depend on the context (defaulting to ISO 8601), or a
+        number of milliseconds since the Epoch. Opensearch accepts both as input, but will generally output a string
+        representation.
+      oneOf:
+        - type: string
+        - $ref: '#/components/schemas/EpochTimeUnitMillis'
+    Indices:
+      oneOf:
+        - $ref: '#/components/schemas/IndexName'
+        - type: array
+          items:
+            $ref: '#/components/schemas/IndexName'
+    Fields:
+      oneOf:
+        - $ref: '#/components/schemas/Field'
+        - type: array
+          items:
+            $ref: '#/components/schemas/Field'
+    ExpandWildcards:
+      oneOf:
+        - $ref: '#/components/schemas/ExpandWildcard'
+        - type: array
+          items:
+            $ref: '#/components/schemas/ExpandWildcard'
+    ExpandWildcard:
+      type: string
+      enum:
+        - all
+        - open
+        - closed
+        - hidden
+        - none
+    VersionString:
+      type: string
+    SearchType:
+      type: string
+      enum:
+        - query_then_fetch
+        - dfs_query_then_fetch
+    SuggestMode:
+      type: string
+      enum:
+        - missing
+        - popular
+        - always
+    MinimumShouldMatch:
+      description: The minimum number of terms that should match as integer, percentage or range
+      oneOf:
+        - type: number
+        - type: string
+    Distance:
+      type: string
+    DateMath:
+      type: string
+    Script:
+      oneOf:
+        - $ref: '#/components/schemas/InlineScript'
+        - $ref: '#/components/schemas/StoredScriptId'
+    InlineScript:
+      allOf:
+        - $ref: '#/components/schemas/ScriptBase'
+        - type: object
+          properties:
+            lang:
+              $ref: '#/components/schemas/ScriptLanguage'
+            options:
+              type: object
+              additionalProperties:
+                type: string
+            source:
+              description: The script source.
+              type: string
+          required:
+            - source
+    ScriptLanguage:
+      type: string
+      enum:
+        - painless
+        - expression
+        - mustache
+        - java
+    ScriptBase:
+      type: object
+      properties:
+        params:
+          description: |-
+            Specifies any named parameters that are passed into the script as variables.
+            Use parameters instead of hard-coded values to decrease compile time.
+          type: object
+          additionalProperties:
+            type: object
+    StoredScriptId:
+      allOf:
+        - $ref: '#/components/schemas/ScriptBase'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/Id'
+          required:
+            - id
+    MultiTermQueryRewrite:
+      type: string
+    Fuzziness:
+      oneOf:
+        - type: string
+        - type: number
+    GeoDistanceType:
+      type: string
+      enum:
+        - arc
+        - plane
+    Name:
+      type: string
+    ScriptField:
+      type: object
+      properties:
+        script:
+          $ref: '#/components/schemas/Script'
+        ignore_failure:
+          type: boolean
+      required:
+        - script
+    Sort:
+      oneOf:
+        - $ref: '#/components/schemas/SortCombinations'
+        - type: array
+          items:
+            $ref: '#/components/schemas/SortCombinations'
+    SortCombinations:
+      oneOf:
+        - $ref: '#/components/schemas/Field'
+        - $ref: '#/components/schemas/SortOptions'
+    SortOptions:
+      type: object
+      properties:
+        _score:
+          $ref: '#/components/schemas/ScoreSort'
+        _doc:
+          $ref: '#/components/schemas/ScoreSort'
+        _geo_distance:
+          $ref: '#/components/schemas/GeoDistanceSort'
+        _script:
+          $ref: '#/components/schemas/ScriptSort'
+      minProperties: 1
+      maxProperties: 1
+    ScoreSort:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/SortOrder'
+    SortOrder:
+      type: string
+      enum:
+        - asc
+        - desc
+    GeoDistanceSort:
+      type: object
+      properties:
+        mode:
+          $ref: '#/components/schemas/SortMode'
+        distance_type:
+          $ref: '#/components/schemas/GeoDistanceType'
+        ignore_unmapped:
+          type: boolean
+        order:
+          $ref: '#/components/schemas/SortOrder'
+        unit:
+          $ref: '#/components/schemas/DistanceUnit'
+    SortMode:
+      type: string
+      enum:
+        - min
+        - max
+        - sum
+        - avg
+        - median
+    DistanceUnit:
+      type: string
+      enum:
+        - in
+        - ft
+        - yd
+        - mi
+        - nmi
+        - km
+        - m
+        - cm
+        - mm
+    ScriptSort:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/SortOrder'
+        script:
+          $ref: '#/components/schemas/Script'
+        type:
+          $ref: '#/components/schemas/ScriptSortType'
+        mode:
+          $ref: '#/components/schemas/SortMode'
+        nested:
+          $ref: '#/components/schemas/NestedSortValue'
+      required:
+        - script
+    ScriptSortType:
+      type: string
+      enum:
+        - string
+        - number
+        - version
+    NestedSortValue:
+      type: object
+      properties:
+        filter:
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        max_children:
+          type: number
+        nested:
+          $ref: '#/components/schemas/NestedSortValue'
+        path:
+          $ref: '#/components/schemas/Field'
+      required:
+        - path
+    RelationName:
+      type: string
+    Ids:
+      oneOf:
+        - $ref: '#/components/schemas/Id'
+        - type: array
+          items:
+            $ref: '#/components/schemas/Id'
+    VersionType:
+      type: string
+      enum:
+        - internal
+        - external
+        - external_gte
+        - force
+    TimeZone:
+      type: string
+    DateFormat:
+      type: string
+    PipeSeparatedFlagsSimpleQueryStringFlag:
+      description: |-
+        A set of flags that can be represented as a single enum value or a set of values that are encoded
+        as a pipe-separated string
+
+        Depending on the target language, code generators can use this hint to generate language specific
+        flags enum constructs and the corresponding (de-)serialization code.
+      oneOf:
+        - $ref: '_common.query_dsl.yaml#/components/schemas/SimpleQueryStringFlag'
+        - type: string
+    GeoHashPrecision:
+      description: A precision that can be expressed as a geohash length between 1 and 12, or a distance measure like "1km", "10m".
+      oneOf:
+        - type: number
+        - type: string
+    GeoTilePrecision:
+      type: number
+    EmptyObject:
+      type: object
+    KnnQuery:
+      type: object
+      properties:
+        field:
+          $ref: '#/components/schemas/Field'
+        query_vector:
+          $ref: '#/components/schemas/QueryVector'
+        query_vector_builder:
+          $ref: '#/components/schemas/QueryVectorBuilder'
+        k:
+          description: The final number of nearest neighbors to return as top hits
+          type: number
+        num_candidates:
+          description: The number of nearest neighbor candidates to consider per shard
+          type: number
+        boost:
+          description: Boost value to apply to kNN scores
+          type: number
+        filter:
+          description: Filters for the kNN search query
+          oneOf:
+            - $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+            - type: array
+              items:
+                $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        similarity:
+          description: The minimum similarity for a vector to be considered a match
+          type: number
+      required:
+        - field
+        - k
+        - num_candidates
+    QueryVector:
+      type: array
+      items:
+        type: number
+    QueryVectorBuilder:
+      type: object
+      properties:
+        text_embedding:
+          $ref: '#/components/schemas/TextEmbedding'
+      minProperties: 1
+      maxProperties: 1
+    TextEmbedding:
+      type: object
+      properties:
+        model_id:
+          type: string
+        model_text:
+          type: string
+      required:
+        - model_id
+        - model_text
+    SlicedScroll:
+      type: object
+      properties:
+        field:
+          $ref: '#/components/schemas/Field'
+        id:
+          $ref: '#/components/schemas/Id'
+        max:
+          type: number
+      required:
+        - id
+        - max
+    NodeName:
+      type: string
+    Refresh:
+      type: string
+      enum:
+        - 'true'
+        - 'false'
+        - wait_for
+    WaitForActiveShards:
+      oneOf:
+        - type: number
+        - $ref: '#/components/schemas/WaitForActiveShardOptions'
+    WaitForActiveShardOptions:
+      type: string
+      enum:
+        - all
+        - index-setting
+    InlineGetDictUserDefined:
+      type: object
+      properties:
+        fields:
+          type: object
+          additionalProperties:
+            type: object
+        found:
+          type: boolean
+        _seq_no:
+          $ref: '#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: number
+        _routing:
+          $ref: '#/components/schemas/Routing'
+        _source:
+          type: object
+          additionalProperties:
+            type: object
+      required:
+        - found
+        - _source
+    Names:
+      oneOf:
+        - $ref: '#/components/schemas/Name'
+        - type: array
+          items:
+            $ref: '#/components/schemas/Name'
+    NodeIds:
+      oneOf:
+        - $ref: '#/components/schemas/NodeId'
+        - type: array
+          items:
+            $ref: '#/components/schemas/NodeId'
+    NodeId:
+      type: string
+    Bytes:
+      type: string
+      enum:
+        - b
+        - kb
+        - mb
+        - gb
+        - tb
+        - pb
+    ByteSize:
+      oneOf:
+        - type: number
+        - type: string
+    Percentage:
+      oneOf:
+        - type: string
+        - type: number
+    Host:
+      type: string
+    Ip:
+      type: string
+    StringifiedEpochTimeUnitSeconds:
+      description: |-
+        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
+        is used to capture this behavior while keeping the semantics of the field type.
+
+        Depending on the target language, code generators can keep the union or remove it and leniently parse
+        strings to the target type.
+      oneOf:
+        - $ref: '#/components/schemas/EpochTimeUnitSeconds'
+        - type: string
+    EpochTimeUnitSeconds:
+      allOf:
+        - $ref: '#/components/schemas/UnitSeconds'
+    UnitSeconds:
+      description: Time unit for seconds
+      type: number
+    TimeOfDay:
+      description: Time of day, expressed as HH:MM:SS
+      type: string
+    TimeUnit:
+      type: string
+      enum:
+        - nanos
+        - micros
+        - ms
+        - s
+        - m
+        - h
+        - d
+    HealthStatus:
+      type: string
+      enum:
+        - green
+        - yellow
+        - red
+    Uuid:
+      type: string
+    ScrollIds:
+      oneOf:
+        - $ref: '#/components/schemas/ScrollId'
+        - type: array
+          items:
+            $ref: '#/components/schemas/ScrollId'
+    TransportAddress:
+      type: string
+    Stringifiedinteger:
+      description: |-
+        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
+        is used to capture this behavior while keeping the semantics of the field type.
+
+        Depending on the target language, code generators can keep the union or remove it and leniently parse
+        strings to the target type.
+      oneOf:
+        - type: number
+        - type: string
+    Stringifiedboolean:
+      description: |-
+        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
+        is used to capture this behavior while keeping the semantics of the field type.
+
+        Depending on the target language, code generators can keep the union or remove it and leniently parse
+        strings to the target type.
+      oneOf:
+        - type: boolean
+        - type: string
+    PipelineName:
+      type: string
+    StringifiedEpochTimeUnitMillis:
+      description: |-
+        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
+        is used to capture this behavior while keeping the semantics of the field type.
+
+        Depending on the target language, code generators can keep the union or remove it and leniently parse
+        strings to the target type.
+      oneOf:
+        - $ref: '#/components/schemas/EpochTimeUnitMillis'
+        - type: string
+    DFIIndependenceMeasure:
+      type: string
+      enum:
+        - standardized
+        - saturated
+        - chisquared
+    DFRAfterEffect:
+      type: string
+      enum:
+        - no
+        - b
+        - l
+    DFRBasicModel:
+      type: string
+      enum:
+        - be
+        - d
+        - g
+        - if
+        - in
+        - ine
+        - p
+    Normalization:
+      type: string
+      enum:
+        - no
+        - h1
+        - h2
+        - h3
+        - z
+    IBDistribution:
+      type: string
+      enum:
+        - ll
+        - spl
+    IBLambda:
+      type: string
+      enum:
+        - df
+        - ttf
+    byte:
+      type: number
+    short:
+      type: number
+    ulong:
+      type: number
+    Level:
+      type: string
+      enum:
+        - cluster
+        - indices
+        - shards
+    WaitForEvents:
+      type: string
+      enum:
+        - immediate
+        - urgent
+        - high
+        - normal
+        - low
+        - languid
+    DataStreamName:
+      type: string
+    Metrics:
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
+    CompletionStats:
+      type: object
+      properties:
+        size_in_bytes:
+          description: Total amount, in bytes, of memory used for completion across all shards assigned to selected nodes.
+          type: number
+        size:
+          $ref: '#/components/schemas/ByteSize'
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/FieldSizeUsage'
+      required:
+        - size_in_bytes
+    FieldSizeUsage:
+      type: object
+      properties:
+        size:
+          $ref: '#/components/schemas/ByteSize'
+        size_in_bytes:
+          type: number
+      required:
+        - size_in_bytes
+    DocStats:
+      type: object
+      properties:
+        count:
+          description: |-
+            Total number of non-deleted documents across all primary shards assigned to selected nodes.
+            This number is based on documents in Lucene segments and may include documents from nested fields.
+          type: number
+        deleted:
+          description: |-
+            Total number of deleted documents across all primary shards assigned to selected nodes.
+            This number is based on documents in Lucene segments.
+            Opensearch reclaims the disk space of deleted Lucene documents when a segment is merged.
+          type: number
+      required:
+        - count
+    FielddataStats:
+      type: object
+      properties:
+        evictions:
+          type: number
+        memory_size:
+          $ref: '#/components/schemas/ByteSize'
+        memory_size_in_bytes:
+          type: number
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/FieldMemoryUsage'
+      required:
+        - memory_size_in_bytes
+    FieldMemoryUsage:
+      type: object
+      properties:
+        memory_size:
+          $ref: '#/components/schemas/ByteSize'
+        memory_size_in_bytes:
+          type: number
+      required:
+        - memory_size_in_bytes
+    QueryCacheStats:
+      type: object
+      properties:
+        cache_count:
+          description: |-
+            Total number of entries added to the query cache across all shards assigned to selected nodes.
+            This number includes current and evicted entries.
+          type: number
+        cache_size:
+          description: Total number of entries currently in the query cache across all shards assigned to selected nodes.
+          type: number
+        evictions:
+          description: Total number of query cache evictions across all shards assigned to selected nodes.
+          type: number
+        hit_count:
+          description: Total count of query cache hits across all shards assigned to selected nodes.
+          type: number
+        memory_size:
+          $ref: '#/components/schemas/ByteSize'
+        memory_size_in_bytes:
+          description: Total amount, in bytes, of memory used for the query cache across all shards assigned to selected nodes.
+          type: number
+        miss_count:
+          description: Total count of query cache misses across all shards assigned to selected nodes.
+          type: number
+        total_count:
+          description: Total count of hits and misses in the query cache across all shards assigned to selected nodes.
+          type: number
+      required:
+        - cache_count
+        - cache_size
+        - evictions
+        - hit_count
+        - memory_size_in_bytes
+        - miss_count
+        - total_count
+    SegmentsStats:
+      type: object
+      properties:
+        count:
+          description: Total number of segments across all shards assigned to selected nodes.
+          type: number
+        doc_values_memory:
+          $ref: '#/components/schemas/ByteSize'
+        doc_values_memory_in_bytes:
+          description: Total amount, in bytes, of memory used for doc values across all shards assigned to selected nodes.
+          type: number
+        file_sizes:
+          description: |-
+            This object is not populated by the cluster stats API.
+            To get information on segment files, use the node stats API.
+          type: object
+          additionalProperties:
+            $ref: 'indices.stats.yaml#/components/schemas/ShardFileSizeInfo'
+        fixed_bit_set:
+          $ref: '#/components/schemas/ByteSize'
+        fixed_bit_set_memory_in_bytes:
+          description: Total amount of memory, in bytes, used by fixed bit sets across all shards assigned to selected nodes.
+          type: number
+        index_writer_memory:
+          $ref: '#/components/schemas/ByteSize'
+        index_writer_max_memory_in_bytes:
+          type: number
+        index_writer_memory_in_bytes:
+          description: Total amount, in bytes, of memory used by all index writers across all shards assigned to selected nodes.
+          type: number
+        max_unsafe_auto_id_timestamp:
+          description: Unix timestamp, in milliseconds, of the most recently retried indexing request.
+          type: number
+        memory:
+          $ref: '#/components/schemas/ByteSize'
+        memory_in_bytes:
+          description: Total amount, in bytes, of memory used for segments across all shards assigned to selected nodes.
+          type: number
+        norms_memory:
+          $ref: '#/components/schemas/ByteSize'
+        norms_memory_in_bytes:
+          description: Total amount, in bytes, of memory used for normalization factors across all shards assigned to selected
+            nodes.
+          type: number
+        points_memory:
+          $ref: '#/components/schemas/ByteSize'
+        points_memory_in_bytes:
+          description: Total amount, in bytes, of memory used for points across all shards assigned to selected nodes.
+          type: number
+        stored_memory:
+          $ref: '#/components/schemas/ByteSize'
+        stored_fields_memory_in_bytes:
+          description: Total amount, in bytes, of memory used for stored fields across all shards assigned to selected nodes.
+          type: number
+        terms_memory_in_bytes:
+          description: Total amount, in bytes, of memory used for terms across all shards assigned to selected nodes.
+          type: number
+        terms_memory:
+          $ref: '#/components/schemas/ByteSize'
+        term_vectory_memory:
+          $ref: '#/components/schemas/ByteSize'
+        term_vectors_memory_in_bytes:
+          description: Total amount, in bytes, of memory used for term vectors across all shards assigned to selected nodes.
+          type: number
+        version_map_memory:
+          $ref: '#/components/schemas/ByteSize'
+        version_map_memory_in_bytes:
+          description: Total amount, in bytes, of memory used by all version maps across all shards assigned to selected nodes.
+          type: number
+      required:
+        - count
+        - doc_values_memory_in_bytes
+        - file_sizes
+        - fixed_bit_set_memory_in_bytes
+        - index_writer_memory_in_bytes
+        - max_unsafe_auto_id_timestamp
+        - memory_in_bytes
+        - norms_memory_in_bytes
+        - points_memory_in_bytes
+        - stored_fields_memory_in_bytes
+        - terms_memory_in_bytes
+        - term_vectors_memory_in_bytes
+        - version_map_memory_in_bytes
+    StoreStats:
+      type: object
+      properties:
+        size:
+          $ref: '#/components/schemas/ByteSize'
+        size_in_bytes:
+          description: Total size, in bytes, of all shards assigned to selected nodes.
+          type: number
+        reserved:
+          $ref: '#/components/schemas/ByteSize'
+        reserved_in_bytes:
+          description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer
+            recoveries, restoring snapshots, and similar activities.
+          type: number
+        total_data_set_size:
+          $ref: '#/components/schemas/ByteSize'
+        total_data_set_size_in_bytes:
+          description: >-
+            Total data set size, in bytes, of all shards assigned to selected nodes.
+
+            This includes the size of shards not stored fully on the nodes, such as the cache for partially mounted indices.
+          type: number
+      required:
+        - size_in_bytes
+        - reserved_in_bytes
+    PluginStats:
+      type: object
+      properties:
+        classname:
+          type: string
+        description:
+          type: string
+        extended_plugins:
+          type: array
+          items:
+            type: string
+        has_native_controller:
+          type: boolean
+        java_version:
+          $ref: '#/components/schemas/VersionString'
+        name:
+          $ref: '#/components/schemas/Name'
+        version:
+          $ref: '#/components/schemas/VersionString'
+        licensed:
+          type: boolean
+        opensearch_version:
+          $ref: '#/components/schemas/VersionString'
+      required:
+        - classname
+        - description
+        - opensearch_version
+        - extended_plugins
+        - has_native_controller
+        - java_version
+        - name
+        - version
+        - licensed
+    NodeStatistics:
+      type: object
+      properties:
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        total:
+          description: Total number of nodes selected by the request.
+          type: number
+        successful:
+          description: Number of nodes that responded successfully to the request.
+          type: number
+        failed:
+          description: Number of nodes that rejected the request or failed to respond. If this value is not 0, a reason for the
+            rejection or failure is included in the response.
+          type: number
+      required:
+        - total
+        - successful
+        - failed
+    WriteResponseBase:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/Id'
+        _index:
+          $ref: '#/components/schemas/IndexName'
+        _primary_term:
+          type: number
+        result:
+          $ref: '#/components/schemas/Result'
+        _seq_no:
+          $ref: '#/components/schemas/SequenceNumber'
+        _shards:
+          $ref: '#/components/schemas/ShardStatistics'
+        _version:
+          $ref: '#/components/schemas/VersionNumber'
+        forced_refresh:
+          type: boolean
+      required:
+        - _id
+        - _index
+        - _primary_term
+        - result
+        - _seq_no
+        - _shards
+        - _version
+    Result:
+      type: string
+      enum:
+        - created
+        - updated
+        - deleted
+        - not_found
+        - noop
+    Conflicts:
+      type: string
+      enum:
+        - abort
+        - proceed
+    Slices:
+      description: Slices configuration used to parallelize a process.
+      oneOf:
+        - type: number
+        - $ref: '#/components/schemas/SlicesCalculation'
+    SlicesCalculation:
+      type: string
+      enum:
+        - auto
+    BulkIndexByScrollFailure:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ErrorCause'
+        id:
+          $ref: '#/components/schemas/Id'
+        index:
+          $ref: '#/components/schemas/IndexName'
+        status:
+          type: number
+        type:
+          type: string
+      required:
+        - cause
+        - id
+        - index
+        - status
+        - type
+    Retries:
+      type: object
+      properties:
+        bulk:
+          type: number
+        search:
+          type: number
+      required:
+        - bulk
+        - search
+    TaskId:
+      oneOf:
+        - type: string
+        - type: number
+    TaskFailure:
+      type: object
+      properties:
+        task_id:
+          type: number
+        node_id:
+          $ref: '#/components/schemas/NodeId'
+        status:
+          type: string
+        reason:
+          $ref: '#/components/schemas/ErrorCause'
+      required:
+        - task_id
+        - node_id
+        - status
+        - reason
+    InlineGet:
+      type: object
+      properties:
+        fields:
+          type: object
+          additionalProperties:
+            type: object
+        found:
+          type: boolean
+        _seq_no:
+          $ref: '#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: number
+        _routing:
+          $ref: '#/components/schemas/Routing'
+        _source:
+          type: object
+      required:
+        - found
+        - _source
+    IndexAlias:
+      type: string
+    ErrorResponseBase:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorCause'
+        status:
+          type: number
+      required:
+        - error
+        - status
+    StoredScript:
+      type: object
+      properties:
+        lang:
+          $ref: '#/components/schemas/ScriptLanguage'
+        options:
+          type: object
+          additionalProperties:
+            type: string
+        source:
+          description: The script source.
+          type: string
+      required:
+        - lang
+        - source
+    OpType:
+      type: string
+      enum:
+        - index
+        - create
+    ShardsOperationResponseBase:
+      type: object
+      properties:
+        _shards:
+          $ref: '#/components/schemas/ShardStatistics'
+      required:
+        - _shards
+    IndicesResponseBase:
+      allOf:
+        - $ref: '#/components/schemas/AcknowledgedResponseBase'
+        - type: object
+          properties:
+            _shards:
+              $ref: '#/components/schemas/ShardStatistics'
+    DataStreamNames:
+      oneOf:
+        - $ref: '#/components/schemas/DataStreamName'
+        - type: array
+          items:
+            $ref: '#/components/schemas/DataStreamName'
+    FlushStats:
+      type: object
+      properties:
+        periodic:
+          type: number
+        total:
+          type: number
+        total_time:
+          $ref: '#/components/schemas/Duration'
+        total_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+      required:
+        - periodic
+        - total
+        - total_time_in_millis
+    GetStats:
+      type: object
+      properties:
+        current:
+          type: number
+        exists_time:
+          $ref: '#/components/schemas/Duration'
+        exists_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        exists_total:
+          type: number
+        missing_time:
+          $ref: '#/components/schemas/Duration'
+        missing_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        missing_total:
+          type: number
+        time:
+          $ref: '#/components/schemas/Duration'
+        time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        total:
+          type: number
+      required:
+        - current
+        - exists_time_in_millis
+        - exists_total
+        - missing_time_in_millis
+        - missing_total
+        - time_in_millis
+        - total
+    IndexingStats:
+      type: object
+      properties:
+        index_current:
+          type: number
+        delete_current:
+          type: number
+        delete_time:
+          $ref: '#/components/schemas/Duration'
+        delete_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        delete_total:
+          type: number
+        is_throttled:
+          type: boolean
+        noop_update_total:
+          type: number
+        throttle_time:
+          $ref: '#/components/schemas/Duration'
+        throttle_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        index_time:
+          $ref: '#/components/schemas/Duration'
+        index_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        index_total:
+          type: number
+        index_failed:
+          type: number
+        types:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IndexingStats'
+        write_load:
+          type: number
+      required:
+        - index_current
+        - delete_current
+        - delete_time_in_millis
+        - delete_total
+        - is_throttled
+        - noop_update_total
+        - throttle_time_in_millis
+        - index_time_in_millis
+        - index_total
+        - index_failed
+    MergesStats:
+      type: object
+      properties:
+        current:
+          type: number
+        current_docs:
+          type: number
+        current_size:
+          type: string
+        current_size_in_bytes:
+          type: number
+        total:
+          type: number
+        total_auto_throttle:
+          type: string
+        total_auto_throttle_in_bytes:
+          type: number
+        total_docs:
+          type: number
+        total_size:
+          type: string
+        total_size_in_bytes:
+          type: number
+        total_stopped_time:
+          $ref: '#/components/schemas/Duration'
+        total_stopped_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        total_throttled_time:
+          $ref: '#/components/schemas/Duration'
+        total_throttled_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        total_time:
+          $ref: '#/components/schemas/Duration'
+        total_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+      required:
+        - current
+        - current_docs
+        - current_size_in_bytes
+        - total
+        - total_auto_throttle_in_bytes
+        - total_docs
+        - total_size_in_bytes
+        - total_stopped_time_in_millis
+        - total_throttled_time_in_millis
+        - total_time_in_millis
+    RecoveryStats:
+      type: object
+      properties:
+        current_as_source:
+          type: number
+        current_as_target:
+          type: number
+        throttle_time:
+          $ref: '#/components/schemas/Duration'
+        throttle_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+      required:
+        - current_as_source
+        - current_as_target
+        - throttle_time_in_millis
+    RefreshStats:
+      type: object
+      properties:
+        external_total:
+          type: number
+        external_total_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        listeners:
+          type: number
+        total:
+          type: number
+        total_time:
+          $ref: '#/components/schemas/Duration'
+        total_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+      required:
+        - external_total
+        - external_total_time_in_millis
+        - listeners
+        - total
+        - total_time_in_millis
+    RequestCacheStats:
+      type: object
+      properties:
+        evictions:
+          type: number
+        hit_count:
+          type: number
+        memory_size:
+          type: string
+        memory_size_in_bytes:
+          type: number
+        miss_count:
+          type: number
+      required:
+        - evictions
+        - hit_count
+        - memory_size_in_bytes
+        - miss_count
+    SearchStats:
+      type: object
+      properties:
+        fetch_current:
+          type: number
+        fetch_time:
+          $ref: '#/components/schemas/Duration'
+        fetch_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        fetch_total:
+          type: number
+        open_contexts:
+          type: number
+        query_current:
+          type: number
+        query_time:
+          $ref: '#/components/schemas/Duration'
+        query_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        query_total:
+          type: number
+        scroll_current:
+          type: number
+        scroll_time:
+          $ref: '#/components/schemas/Duration'
+        scroll_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        scroll_total:
+          type: number
+        suggest_current:
+          type: number
+        suggest_time:
+          $ref: '#/components/schemas/Duration'
+        suggest_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        suggest_total:
+          type: number
+        groups:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/SearchStats'
+      required:
+        - fetch_current
+        - fetch_time_in_millis
+        - fetch_total
+        - query_current
+        - query_time_in_millis
+        - query_total
+        - scroll_current
+        - scroll_time_in_millis
+        - scroll_total
+        - suggest_current
+        - suggest_time_in_millis
+        - suggest_total
+    TranslogStats:
+      type: object
+      properties:
+        earliest_last_modified_age:
+          type: number
+        operations:
+          type: number
+        size:
+          type: string
+        size_in_bytes:
+          type: number
+        uncommitted_operations:
+          type: number
+        uncommitted_size:
+          type: string
+        uncommitted_size_in_bytes:
+          type: number
+      required:
+        - earliest_last_modified_age
+        - operations
+        - size_in_bytes
+        - uncommitted_operations
+        - uncommitted_size_in_bytes
+    WarmerStats:
+      type: object
+      properties:
+        current:
+          type: number
+        total:
+          type: number
+        total_time:
+          $ref: '#/components/schemas/Duration'
+        total_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+      required:
+        - current
+        - total
+        - total_time_in_millis
+    BulkStats:
+      type: object
+      properties:
+        total_operations:
+          type: number
+        total_time:
+          $ref: '#/components/schemas/Duration'
+        total_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        total_size:
+          $ref: '#/components/schemas/ByteSize'
+        total_size_in_bytes:
+          type: number
+        avg_time:
+          $ref: '#/components/schemas/Duration'
+        avg_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        avg_size:
+          $ref: '#/components/schemas/ByteSize'
+        avg_size_in_bytes:
+          type: number
+      required:
+        - total_operations
+        - total_time_in_millis
+        - total_size_in_bytes
+        - avg_time_in_millis
+        - avg_size_in_bytes
+    GeoShapeRelation:
+      type: string
+      enum:
+        - intersects
+        - disjoint
+        - within
+        - contains
+    StringifiedVersionNumber:
+      description: |-
+        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
+        is used to capture this behavior while keeping the semantics of the field type.
+
+        Depending on the target language, code generators can keep the union or remove it and leniently parse
+        strings to the target type.
+      oneOf:
+        - $ref: '#/components/schemas/VersionNumber'
+        - type: string
+    NodeAttributes:
+      type: object
+      properties:
+        attributes:
+          description: Lists node attributes.
+          type: object
+          additionalProperties:
+            type: string
+        ephemeral_id:
+          $ref: '#/components/schemas/Id'
+        id:
+          $ref: '#/components/schemas/NodeId'
+        name:
+          $ref: '#/components/schemas/NodeName'
+        transport_address:
+          $ref: '#/components/schemas/TransportAddress'
+        roles:
+          $ref: '#/components/schemas/NodeRoles'
+        external_id:
+          type: string
+      required:
+        - attributes
+        - ephemeral_id
+        - name
+        - transport_address
+    NodeRoles:
+      description: '* @doc_id node-roles'
+      type: array
+      items:
+        $ref: '#/components/schemas/NodeRole'
+    NodeRole:
+      type: string
+      enum:
+        - master
+        - data
+        - data_cold
+        - data_content
+        - data_frozen
+        - data_hot
+        - data_warm
+        - client
+        - ingest
+        - ml
+        - voting_only
+        - transform
+        - remote_cluster_client
+        - coordinating_only
+    HttpHeaders:
+      type: object
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+    ThreadType:
+      type: string
+      enum:
+        - cpu
+        - wait
+        - block
+        - gpu
+        - mem
+    Password:
+      type: string
+    Username:
+      type: string
+    BaseNode:
+      type: object
+      properties:
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+        host:
+          $ref: '#/components/schemas/Host'
+        ip:
+          $ref: '#/components/schemas/Ip'
+        name:
+          $ref: '#/components/schemas/Name'
+        roles:
+          $ref: '#/components/schemas/NodeRoles'
+        transport_address:
+          $ref: '#/components/schemas/TransportAddress'
+      required:
+        - attributes
+        - host
+        - ip
+        - name
+        - transport_address
+    RankContainer:
+      type: object
+      properties:
+        rrf:
+          $ref: '#/components/schemas/RrfRank'
+      minProperties: 1
+      maxProperties: 1
+    RrfRank:
+      allOf:
+        - $ref: '#/components/schemas/RankBase'
+        - type: object
+          properties:
+            rank_constant:
+              description: How much influence documents in individual result sets per query have over the final ranked result set
+              type: number
+            window_size:
+              description: Size of the individual result sets per query
+              type: number
+    RankBase:
+      type: object
+    NodeShard:
+      type: object
+      properties:
+        state:
+          $ref: 'indices.stats.yaml#/components/schemas/ShardRoutingState'
+        primary:
+          type: boolean
+        node:
+          $ref: '#/components/schemas/NodeName'
+        shard:
+          type: number
+        index:
+          $ref: '#/components/schemas/IndexName'
+        allocation_id:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Id'
+        recovery_source:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Id'
+        unassigned_info:
+          $ref: 'cluster.allocation_explain.yaml#/components/schemas/UnassignedInformation'
+        relocating_node:
+          oneOf:
+            - $ref: '#/components/schemas/NodeId'
+            - nullable: true
+              type: string
+        relocation_failure_info:
+          $ref: '#/components/schemas/RelocationFailureInfo'
+      required:
+        - state
+        - primary
+        - shard
+        - index
+    RelocationFailureInfo:
+      type: object
+      properties:
+        failed_attempts:
+          type: number
+      required:
+        - failed_attempts
+    OpensearchVersionInfo:
+      type: object
+      properties:
+        build_date:
+          $ref: '#/components/schemas/DateTime'
+        build_flavor:
+          type: string
+        build_hash:
+          type: string
+        build_snapshot:
+          type: boolean
+        build_type:
+          type: string
+        lucene_version:
+          $ref: '#/components/schemas/VersionString'
+        minimum_index_compatibility_version:
+          $ref: '#/components/schemas/VersionString'
+        minimum_wire_compatibility_version:
+          $ref: '#/components/schemas/VersionString'
+        number:
+          type: string
+      required:
+        - build_date
+        - build_flavor
+        - build_hash
+        - build_snapshot
+        - build_type
+        - lucene_version
+        - minimum_index_compatibility_version
+        - minimum_wire_compatibility_version
+        - number

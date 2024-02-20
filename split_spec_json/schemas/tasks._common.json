@@ -1,0 +1,178 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schemas of tasks._common category",
+    "description": "Schemas of tasks._common category",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "TaskListResponseBase": {
+        "type": "object",
+        "properties": {
+          "node_failures": {
+            "type": "array",
+            "items": {
+              "$ref": "_common.json#/components/schemas/ErrorCause"
+            }
+          },
+          "task_failures": {
+            "type": "array",
+            "items": {
+              "$ref": "_common.json#/components/schemas/TaskFailure"
+            }
+          },
+          "nodes": {
+            "description": "Task information grouped by node, if `group_by` was set to `node` (the default).",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NodeTasks"
+            }
+          },
+          "tasks": {
+            "$ref": "#/components/schemas/TaskInfos"
+          }
+        }
+      },
+      "NodeTasks": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "_common.json#/components/schemas/NodeId"
+          },
+          "transport_address": {
+            "$ref": "_common.json#/components/schemas/TransportAddress"
+          },
+          "host": {
+            "$ref": "_common.json#/components/schemas/Host"
+          },
+          "ip": {
+            "$ref": "_common.json#/components/schemas/Ip"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "tasks": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TaskInfo"
+            }
+          }
+        },
+        "required": [
+          "tasks"
+        ]
+      },
+      "TaskInfo": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "cancellable": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "number"
+          },
+          "node": {
+            "$ref": "_common.json#/components/schemas/NodeId"
+          },
+          "running_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "running_time_in_nanos": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitNanos"
+          },
+          "start_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/EpochTimeUnitMillis"
+          },
+          "status": {
+            "description": "Task status information can vary wildly from task to task.",
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          },
+          "parent_task_id": {
+            "$ref": "_common.json#/components/schemas/TaskId"
+          }
+        },
+        "required": [
+          "action",
+          "cancellable",
+          "headers",
+          "id",
+          "node",
+          "running_time_in_nanos",
+          "start_time_in_millis",
+          "type"
+        ]
+      },
+      "TaskInfos": {
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskInfo"
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ParentTaskInfo"
+            }
+          }
+        ]
+      },
+      "ParentTaskInfo": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TaskInfo"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "children": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TaskInfo"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "GroupBy": {
+        "type": "string",
+        "enum": [
+          "nodes",
+          "parents",
+          "none"
+        ]
+      }
+    }
+  }
+}

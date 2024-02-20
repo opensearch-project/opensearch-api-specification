@@ -1,0 +1,220 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schemas of _core.bulk category",
+    "description": "Schemas of _core.bulk category",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "OperationContainer": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "$ref": "#/components/schemas/IndexOperation"
+          },
+          "create": {
+            "$ref": "#/components/schemas/CreateOperation"
+          },
+          "update": {
+            "$ref": "#/components/schemas/UpdateOperation"
+          },
+          "delete": {
+            "$ref": "#/components/schemas/DeleteOperation"
+          }
+        },
+        "minProperties": 1,
+        "maxProperties": 1
+      },
+      "IndexOperation": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WriteOperation"
+          },
+          {
+            "type": "object"
+          }
+        ]
+      },
+      "WriteOperation": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OperationBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dynamic_templates": {
+                "description": "A map from the full name of fields to the name of dynamic templates.\nDefaults to an empty map.\nIf a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template.\nIf a field is already defined in the mapping, then this parameter won’t be used.",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "pipeline": {
+                "description": "ID of the pipeline to use to preprocess incoming documents.\nIf the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request.\nIf a final pipeline is configured it will always run, regardless of the value of this parameter.",
+                "type": "string"
+              },
+              "require_alias": {
+                "description": "If `true`, the request’s actions must target an index alias.",
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "OperationBase": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "_index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          },
+          "routing": {
+            "$ref": "_common.json#/components/schemas/Routing"
+          },
+          "if_primary_term": {
+            "type": "number"
+          },
+          "if_seq_no": {
+            "$ref": "_common.json#/components/schemas/SequenceNumber"
+          },
+          "version": {
+            "$ref": "_common.json#/components/schemas/VersionNumber"
+          },
+          "version_type": {
+            "$ref": "_common.json#/components/schemas/VersionType"
+          }
+        }
+      },
+      "CreateOperation": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WriteOperation"
+          },
+          {
+            "type": "object"
+          }
+        ]
+      },
+      "UpdateOperation": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OperationBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "require_alias": {
+                "description": "If `true`, the request’s actions must target an index alias.",
+                "type": "boolean"
+              },
+              "retry_on_conflict": {
+                "type": "number"
+              }
+            }
+          }
+        ]
+      },
+      "DeleteOperation": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OperationBase"
+          },
+          {
+            "type": "object"
+          }
+        ]
+      },
+      "UpdateAction": {
+        "type": "object",
+        "properties": {
+          "detect_noop": {
+            "description": "Set to false to disable setting 'result' in the response\nto 'noop' if no change to the document occurred.",
+            "type": "boolean"
+          },
+          "doc": {
+            "description": "A partial update to an existing document.",
+            "type": "object"
+          },
+          "doc_as_upsert": {
+            "description": "Set to true to use the contents of 'doc' as the value of 'upsert'",
+            "type": "boolean"
+          },
+          "script": {
+            "$ref": "_common.json#/components/schemas/Script"
+          },
+          "scripted_upsert": {
+            "description": "Set to true to execute the script whether or not the document exists.",
+            "type": "boolean"
+          },
+          "_source": {
+            "$ref": "_core.search.json#/components/schemas/SourceConfig"
+          },
+          "upsert": {
+            "description": "If the document does not already exist, the contents of 'upsert' are inserted as a\nnew document. If the document exists, the 'script' is executed.",
+            "type": "object"
+          }
+        }
+      },
+      "ResponseItem": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "The document ID associated with the operation.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "nullable": true,
+                "type": "string"
+              }
+            ]
+          },
+          "_index": {
+            "description": "Name of the index associated with the operation.\nIf the operation targeted a data stream, this is the backing index into which the document was written.",
+            "type": "string"
+          },
+          "status": {
+            "description": "HTTP status code returned for the operation.",
+            "type": "number"
+          },
+          "error": {
+            "$ref": "_common.json#/components/schemas/ErrorCause"
+          },
+          "_primary_term": {
+            "description": "The primary term assigned to the document for the operation.",
+            "type": "number"
+          },
+          "result": {
+            "description": "Result of the operation.\nSuccessful values are `created`, `deleted`, and `updated`.",
+            "type": "string"
+          },
+          "_seq_no": {
+            "$ref": "_common.json#/components/schemas/SequenceNumber"
+          },
+          "_shards": {
+            "$ref": "_common.json#/components/schemas/ShardStatistics"
+          },
+          "_version": {
+            "$ref": "_common.json#/components/schemas/VersionNumber"
+          },
+          "forced_refresh": {
+            "type": "boolean"
+          },
+          "get": {
+            "$ref": "_common.json#/components/schemas/InlineGetDictUserDefined"
+          }
+        },
+        "required": [
+          "_index",
+          "status"
+        ]
+      }
+    }
+  }
+}

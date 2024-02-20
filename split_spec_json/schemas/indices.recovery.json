@@ -1,0 +1,331 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schemas of indices.recovery category",
+    "description": "Schemas of indices.recovery category",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "RecoveryStatus": {
+        "type": "object",
+        "properties": {
+          "shards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShardRecovery"
+            }
+          }
+        },
+        "required": [
+          "shards"
+        ]
+      },
+      "ShardRecovery": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "index": {
+            "$ref": "#/components/schemas/RecoveryIndexStatus"
+          },
+          "primary": {
+            "type": "boolean"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RecoveryOrigin"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "start": {
+            "$ref": "#/components/schemas/RecoveryStartStatus"
+          },
+          "start_time": {
+            "$ref": "_common.json#/components/schemas/DateTime"
+          },
+          "start_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/EpochTimeUnitMillis"
+          },
+          "stop_time": {
+            "$ref": "_common.json#/components/schemas/DateTime"
+          },
+          "stop_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/EpochTimeUnitMillis"
+          },
+          "target": {
+            "$ref": "#/components/schemas/RecoveryOrigin"
+          },
+          "total_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "total_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          },
+          "translog": {
+            "$ref": "#/components/schemas/TranslogStatus"
+          },
+          "type": {
+            "type": "string"
+          },
+          "verify_index": {
+            "$ref": "#/components/schemas/VerifyIndex"
+          }
+        },
+        "required": [
+          "id",
+          "index",
+          "primary",
+          "source",
+          "stage",
+          "start_time_in_millis",
+          "target",
+          "total_time_in_millis",
+          "translog",
+          "type",
+          "verify_index"
+        ]
+      },
+      "RecoveryIndexStatus": {
+        "type": "object",
+        "properties": {
+          "bytes": {
+            "$ref": "#/components/schemas/RecoveryBytes"
+          },
+          "files": {
+            "$ref": "#/components/schemas/RecoveryFiles"
+          },
+          "size": {
+            "$ref": "#/components/schemas/RecoveryBytes"
+          },
+          "source_throttle_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "source_throttle_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          },
+          "target_throttle_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "target_throttle_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          },
+          "total_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "total_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          }
+        },
+        "required": [
+          "files",
+          "size",
+          "source_throttle_time_in_millis",
+          "target_throttle_time_in_millis",
+          "total_time_in_millis"
+        ]
+      },
+      "RecoveryBytes": {
+        "type": "object",
+        "properties": {
+          "percent": {
+            "$ref": "_common.json#/components/schemas/Percentage"
+          },
+          "recovered": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "recovered_in_bytes": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "recovered_from_snapshot": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "recovered_from_snapshot_in_bytes": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "reused": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "reused_in_bytes": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "total": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          },
+          "total_in_bytes": {
+            "$ref": "_common.json#/components/schemas/ByteSize"
+          }
+        },
+        "required": [
+          "percent",
+          "recovered_in_bytes",
+          "reused_in_bytes",
+          "total_in_bytes"
+        ]
+      },
+      "RecoveryFiles": {
+        "type": "object",
+        "properties": {
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileDetails"
+            }
+          },
+          "percent": {
+            "$ref": "_common.json#/components/schemas/Percentage"
+          },
+          "recovered": {
+            "type": "number"
+          },
+          "reused": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "percent",
+          "recovered",
+          "reused",
+          "total"
+        ]
+      },
+      "FileDetails": {
+        "type": "object",
+        "properties": {
+          "length": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "recovered": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "length",
+          "name",
+          "recovered"
+        ]
+      },
+      "RecoveryOrigin": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string"
+          },
+          "host": {
+            "$ref": "_common.json#/components/schemas/Host"
+          },
+          "transport_address": {
+            "$ref": "_common.json#/components/schemas/TransportAddress"
+          },
+          "id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "ip": {
+            "$ref": "_common.json#/components/schemas/Ip"
+          },
+          "name": {
+            "$ref": "_common.json#/components/schemas/Name"
+          },
+          "bootstrap_new_history_uuid": {
+            "type": "boolean"
+          },
+          "repository": {
+            "$ref": "_common.json#/components/schemas/Name"
+          },
+          "snapshot": {
+            "$ref": "_common.json#/components/schemas/Name"
+          },
+          "version": {
+            "$ref": "_common.json#/components/schemas/VersionString"
+          },
+          "restoreUUID": {
+            "$ref": "_common.json#/components/schemas/Uuid"
+          },
+          "index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          }
+        }
+      },
+      "RecoveryStartStatus": {
+        "type": "object",
+        "properties": {
+          "check_index_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "check_index_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          },
+          "total_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "total_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          }
+        },
+        "required": [
+          "check_index_time_in_millis",
+          "total_time_in_millis"
+        ]
+      },
+      "TranslogStatus": {
+        "type": "object",
+        "properties": {
+          "percent": {
+            "$ref": "_common.json#/components/schemas/Percentage"
+          },
+          "recovered": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "total_on_start": {
+            "type": "number"
+          },
+          "total_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "total_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          }
+        },
+        "required": [
+          "percent",
+          "recovered",
+          "total",
+          "total_on_start",
+          "total_time_in_millis"
+        ]
+      },
+      "VerifyIndex": {
+        "type": "object",
+        "properties": {
+          "check_index_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "check_index_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          },
+          "total_time": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          },
+          "total_time_in_millis": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitMillis"
+          }
+        },
+        "required": [
+          "check_index_time_in_millis",
+          "total_time_in_millis"
+        ]
+      }
+    }
+  }
+}

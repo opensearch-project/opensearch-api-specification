@@ -1,0 +1,1337 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schemas of _core.search category",
+    "description": "Schemas of _core.search category",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "HitsMetadata": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "description": "Total hit count information, present only if `track_total_hits` wasn't `false` in the search request.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TotalHits"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hit"
+            }
+          },
+          "max_score": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "nullable": true,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "hits"
+        ]
+      },
+      "TotalHits": {
+        "type": "object",
+        "properties": {
+          "relation": {
+            "$ref": "#/components/schemas/TotalHitsRelation"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "relation",
+          "value"
+        ]
+      },
+      "TotalHitsRelation": {
+        "type": "string",
+        "enum": [
+          "eq",
+          "gte"
+        ]
+      },
+      "Hit": {
+        "type": "object",
+        "properties": {
+          "_index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          },
+          "_id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "_score": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "nullable": true,
+                "type": "string"
+              }
+            ]
+          },
+          "_explanation": {
+            "$ref": "_core.explain.json#/components/schemas/Explanation"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "highlight": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "inner_hits": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/InnerHitsResult"
+            }
+          },
+          "matched_queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "_nested": {
+            "$ref": "#/components/schemas/NestedIdentity"
+          },
+          "_ignored": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ignored_field_values": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "_shard": {
+            "type": "string"
+          },
+          "_node": {
+            "type": "string"
+          },
+          "_routing": {
+            "type": "string"
+          },
+          "_source": {
+            "type": "object"
+          },
+          "_seq_no": {
+            "$ref": "_common.json#/components/schemas/SequenceNumber"
+          },
+          "_primary_term": {
+            "type": "number"
+          },
+          "_version": {
+            "$ref": "_common.json#/components/schemas/VersionNumber"
+          },
+          "sort": {
+            "$ref": "_common.json#/components/schemas/SortResults"
+          }
+        },
+        "required": [
+          "_index",
+          "_id"
+        ]
+      },
+      "InnerHitsResult": {
+        "type": "object",
+        "properties": {
+          "hits": {
+            "$ref": "#/components/schemas/HitsMetadata"
+          }
+        },
+        "required": [
+          "hits"
+        ]
+      },
+      "NestedIdentity": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "$ref": "_common.json#/components/schemas/Field"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "_nested": {
+            "$ref": "#/components/schemas/NestedIdentity"
+          }
+        },
+        "required": [
+          "field",
+          "offset"
+        ]
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "shards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShardProfile"
+            }
+          }
+        },
+        "required": [
+          "shards"
+        ]
+      },
+      "ShardProfile": {
+        "type": "object",
+        "properties": {
+          "aggregations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregationProfile"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "searches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchProfile"
+            }
+          },
+          "fetch": {
+            "$ref": "#/components/schemas/FetchProfile"
+          }
+        },
+        "required": [
+          "aggregations",
+          "id",
+          "searches"
+        ]
+      },
+      "AggregationProfile": {
+        "type": "object",
+        "properties": {
+          "breakdown": {
+            "$ref": "#/components/schemas/AggregationBreakdown"
+          },
+          "description": {
+            "type": "string"
+          },
+          "time_in_nanos": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitNanos"
+          },
+          "type": {
+            "type": "string"
+          },
+          "debug": {
+            "$ref": "#/components/schemas/AggregationProfileDebug"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregationProfile"
+            }
+          }
+        },
+        "required": [
+          "breakdown",
+          "description",
+          "time_in_nanos",
+          "type"
+        ]
+      },
+      "AggregationBreakdown": {
+        "type": "object",
+        "properties": {
+          "build_aggregation": {
+            "type": "number"
+          },
+          "build_aggregation_count": {
+            "type": "number"
+          },
+          "build_leaf_collector": {
+            "type": "number"
+          },
+          "build_leaf_collector_count": {
+            "type": "number"
+          },
+          "collect": {
+            "type": "number"
+          },
+          "collect_count": {
+            "type": "number"
+          },
+          "initialize": {
+            "type": "number"
+          },
+          "initialize_count": {
+            "type": "number"
+          },
+          "post_collection": {
+            "type": "number"
+          },
+          "post_collection_count": {
+            "type": "number"
+          },
+          "reduce": {
+            "type": "number"
+          },
+          "reduce_count": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "build_aggregation",
+          "build_aggregation_count",
+          "build_leaf_collector",
+          "build_leaf_collector_count",
+          "collect",
+          "collect_count",
+          "initialize",
+          "initialize_count",
+          "reduce",
+          "reduce_count"
+        ]
+      },
+      "AggregationProfileDebug": {
+        "type": "object",
+        "properties": {
+          "segments_with_multi_valued_ords": {
+            "type": "number"
+          },
+          "collection_strategy": {
+            "type": "string"
+          },
+          "segments_with_single_valued_ords": {
+            "type": "number"
+          },
+          "total_buckets": {
+            "type": "number"
+          },
+          "built_buckets": {
+            "type": "number"
+          },
+          "result_strategy": {
+            "type": "string"
+          },
+          "has_filter": {
+            "type": "boolean"
+          },
+          "delegate": {
+            "type": "string"
+          },
+          "delegate_debug": {
+            "$ref": "#/components/schemas/AggregationProfileDebug"
+          },
+          "chars_fetched": {
+            "type": "number"
+          },
+          "extract_count": {
+            "type": "number"
+          },
+          "extract_ns": {
+            "type": "number"
+          },
+          "values_fetched": {
+            "type": "number"
+          },
+          "collect_analyzed_ns": {
+            "type": "number"
+          },
+          "collect_analyzed_count": {
+            "type": "number"
+          },
+          "surviving_buckets": {
+            "type": "number"
+          },
+          "ordinals_collectors_used": {
+            "type": "number"
+          },
+          "ordinals_collectors_overhead_too_high": {
+            "type": "number"
+          },
+          "string_hashing_collectors_used": {
+            "type": "number"
+          },
+          "numeric_collectors_used": {
+            "type": "number"
+          },
+          "empty_collectors_used": {
+            "type": "number"
+          },
+          "deferred_aggregators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "segments_with_doc_count_field": {
+            "type": "number"
+          },
+          "segments_with_deleted_docs": {
+            "type": "number"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregationProfileDelegateDebugFilter"
+            }
+          },
+          "segments_counted": {
+            "type": "number"
+          },
+          "segments_collected": {
+            "type": "number"
+          },
+          "map_reducer": {
+            "type": "string"
+          }
+        }
+      },
+      "AggregationProfileDelegateDebugFilter": {
+        "type": "object",
+        "properties": {
+          "results_from_metadata": {
+            "type": "number"
+          },
+          "query": {
+            "type": "string"
+          },
+          "specialized_for": {
+            "type": "string"
+          },
+          "segments_counted_in_constant_time": {
+            "type": "number"
+          }
+        }
+      },
+      "SearchProfile": {
+        "type": "object",
+        "properties": {
+          "collector": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Collector"
+            }
+          },
+          "query": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueryProfile"
+            }
+          },
+          "rewrite_time": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "collector",
+          "query",
+          "rewrite_time"
+        ]
+      },
+      "Collector": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "time_in_nanos": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitNanos"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Collector"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "reason",
+          "time_in_nanos"
+        ]
+      },
+      "QueryProfile": {
+        "type": "object",
+        "properties": {
+          "breakdown": {
+            "$ref": "#/components/schemas/QueryBreakdown"
+          },
+          "description": {
+            "type": "string"
+          },
+          "time_in_nanos": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitNanos"
+          },
+          "type": {
+            "type": "string"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueryProfile"
+            }
+          }
+        },
+        "required": [
+          "breakdown",
+          "description",
+          "time_in_nanos",
+          "type"
+        ]
+      },
+      "QueryBreakdown": {
+        "type": "object",
+        "properties": {
+          "advance": {
+            "type": "number"
+          },
+          "advance_count": {
+            "type": "number"
+          },
+          "build_scorer": {
+            "type": "number"
+          },
+          "build_scorer_count": {
+            "type": "number"
+          },
+          "create_weight": {
+            "type": "number"
+          },
+          "create_weight_count": {
+            "type": "number"
+          },
+          "match": {
+            "type": "number"
+          },
+          "match_count": {
+            "type": "number"
+          },
+          "shallow_advance": {
+            "type": "number"
+          },
+          "shallow_advance_count": {
+            "type": "number"
+          },
+          "next_doc": {
+            "type": "number"
+          },
+          "next_doc_count": {
+            "type": "number"
+          },
+          "score": {
+            "type": "number"
+          },
+          "score_count": {
+            "type": "number"
+          },
+          "compute_max_score": {
+            "type": "number"
+          },
+          "compute_max_score_count": {
+            "type": "number"
+          },
+          "set_min_competitive_score": {
+            "type": "number"
+          },
+          "set_min_competitive_score_count": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "advance",
+          "advance_count",
+          "build_scorer",
+          "build_scorer_count",
+          "create_weight",
+          "create_weight_count",
+          "match",
+          "match_count",
+          "shallow_advance",
+          "shallow_advance_count",
+          "next_doc",
+          "next_doc_count",
+          "score",
+          "score_count",
+          "compute_max_score",
+          "compute_max_score_count",
+          "set_min_competitive_score",
+          "set_min_competitive_score_count"
+        ]
+      },
+      "FetchProfile": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "time_in_nanos": {
+            "$ref": "_common.json#/components/schemas/DurationValueUnitNanos"
+          },
+          "breakdown": {
+            "$ref": "#/components/schemas/FetchProfileBreakdown"
+          },
+          "debug": {
+            "$ref": "#/components/schemas/FetchProfileDebug"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchProfile"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "description",
+          "time_in_nanos",
+          "breakdown"
+        ]
+      },
+      "FetchProfileBreakdown": {
+        "type": "object",
+        "properties": {
+          "load_source": {
+            "type": "number"
+          },
+          "load_source_count": {
+            "type": "number"
+          },
+          "load_stored_fields": {
+            "type": "number"
+          },
+          "load_stored_fields_count": {
+            "type": "number"
+          },
+          "next_reader": {
+            "type": "number"
+          },
+          "next_reader_count": {
+            "type": "number"
+          },
+          "process_count": {
+            "type": "number"
+          },
+          "process": {
+            "type": "number"
+          }
+        }
+      },
+      "FetchProfileDebug": {
+        "type": "object",
+        "properties": {
+          "stored_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fast_path": {
+            "type": "number"
+          }
+        }
+      },
+      "Suggest": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CompletionSuggest"
+          },
+          {
+            "$ref": "#/components/schemas/PhraseSuggest"
+          },
+          {
+            "$ref": "#/components/schemas/TermSuggest"
+          }
+        ]
+      },
+      "CompletionSuggest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuggestBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "options": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CompletionSuggestOption"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompletionSuggestOption"
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "options"
+            ]
+          }
+        ]
+      },
+      "CompletionSuggestOption": {
+        "type": "object",
+        "properties": {
+          "collate_match": {
+            "type": "boolean"
+          },
+          "contexts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Context"
+              }
+            }
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "_id": {
+            "type": "string"
+          },
+          "_index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          },
+          "_routing": {
+            "$ref": "_common.json#/components/schemas/Routing"
+          },
+          "_score": {
+            "type": "number"
+          },
+          "_source": {
+            "type": "object"
+          },
+          "text": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "Context": {
+        "description": "Text or location that we want similar documents for or a lookup to a document's field for the text.",
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "_common.json#/components/schemas/GeoLocation"
+          }
+        ]
+      },
+      "SuggestBase": {
+        "type": "object",
+        "properties": {
+          "length": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "length",
+          "offset",
+          "text"
+        ]
+      },
+      "PhraseSuggest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuggestBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "options": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PhraseSuggestOption"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PhraseSuggestOption"
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "options"
+            ]
+          }
+        ]
+      },
+      "PhraseSuggestOption": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "highlighted": {
+            "type": "string"
+          },
+          "collate_match": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "score"
+        ]
+      },
+      "TermSuggest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuggestBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "options": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/TermSuggestOption"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/TermSuggestOption"
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "options"
+            ]
+          }
+        ]
+      },
+      "TermSuggestOption": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "freq": {
+            "type": "number"
+          },
+          "highlighted": {
+            "type": "string"
+          },
+          "collate_match": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "score",
+          "freq"
+        ]
+      },
+      "TrackHits": {
+        "description": "Number of hits matching the query to count accurately. If true, the exact\nnumber of hits is returned at the cost of some performance. If false, the\nresponse does not include the total number of hits matching the query.\nDefaults to 10,000 hits.",
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "SourceConfigParam": {
+        "description": "Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.\nUsed as a query parameter along with the `_source_includes` and `_source_excludes` parameters.",
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "$ref": "_common.json#/components/schemas/Fields"
+          }
+        ]
+      },
+      "InnerHits": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "_common.json#/components/schemas/Name"
+          },
+          "size": {
+            "description": "The maximum number of hits to return per `inner_hits`.",
+            "type": "number"
+          },
+          "from": {
+            "description": "Inner hit starting document offset.",
+            "type": "number"
+          },
+          "collapse": {
+            "$ref": "#/components/schemas/FieldCollapse"
+          },
+          "docvalue_fields": {
+            "type": "array",
+            "items": {
+              "$ref": "_common.query_dsl.json#/components/schemas/FieldAndFormat"
+            }
+          },
+          "explain": {
+            "type": "boolean"
+          },
+          "highlight": {
+            "$ref": "#/components/schemas/Highlight"
+          },
+          "ignore_unmapped": {
+            "type": "boolean"
+          },
+          "script_fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "_common.json#/components/schemas/ScriptField"
+            }
+          },
+          "seq_no_primary_term": {
+            "type": "boolean"
+          },
+          "fields": {
+            "$ref": "_common.json#/components/schemas/Fields"
+          },
+          "sort": {
+            "$ref": "_common.json#/components/schemas/Sort"
+          },
+          "_source": {
+            "$ref": "#/components/schemas/SourceConfig"
+          },
+          "stored_field": {
+            "$ref": "_common.json#/components/schemas/Fields"
+          },
+          "track_scores": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "boolean"
+          }
+        }
+      },
+      "FieldCollapse": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "$ref": "_common.json#/components/schemas/Field"
+          },
+          "inner_hits": {
+            "description": "The number of inner hits and their sort order",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InnerHits"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/InnerHits"
+                }
+              }
+            ]
+          },
+          "max_concurrent_group_searches": {
+            "description": "The number of concurrent requests allowed to retrieve the inner_hits per group",
+            "type": "number"
+          },
+          "collapse": {
+            "$ref": "#/components/schemas/FieldCollapse"
+          }
+        },
+        "required": [
+          "field"
+        ]
+      },
+      "Highlight": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HighlightBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "encoder": {
+                "$ref": "#/components/schemas/HighlighterEncoder"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/HighlightField"
+                }
+              }
+            },
+            "required": [
+              "fields"
+            ]
+          }
+        ]
+      },
+      "HighlighterEncoder": {
+        "type": "string",
+        "enum": [
+          "default",
+          "html"
+        ]
+      },
+      "HighlightField": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HighlightBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "fragment_offset": {
+                "type": "number"
+              },
+              "matched_fields": {
+                "$ref": "_common.json#/components/schemas/Fields"
+              },
+              "analyzer": {
+                "$ref": "_common.analysis.json#/components/schemas/Analyzer"
+              }
+            }
+          }
+        ]
+      },
+      "HighlightBase": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/HighlighterType"
+          },
+          "boundary_chars": {
+            "description": "A string that contains each boundary character.",
+            "type": "string"
+          },
+          "boundary_max_scan": {
+            "description": "How far to scan for boundary characters.",
+            "type": "number"
+          },
+          "boundary_scanner": {
+            "$ref": "#/components/schemas/BoundaryScanner"
+          },
+          "boundary_scanner_locale": {
+            "description": "Controls which locale is used to search for sentence and word boundaries.\nThis parameter takes a form of a language tag, for example: `\"en-US\"`, `\"fr-FR\"`, `\"ja-JP\"`.",
+            "type": "string"
+          },
+          "force_source": {
+            "deprecated": true,
+            "type": "boolean"
+          },
+          "fragmenter": {
+            "$ref": "#/components/schemas/HighlighterFragmenter"
+          },
+          "fragment_size": {
+            "description": "The size of the highlighted fragment in characters.",
+            "type": "number"
+          },
+          "highlight_filter": {
+            "type": "boolean"
+          },
+          "highlight_query": {
+            "$ref": "_common.query_dsl.json#/components/schemas/QueryContainer"
+          },
+          "max_fragment_length": {
+            "type": "number"
+          },
+          "max_analyzed_offset": {
+            "description": "If set to a non-negative value, highlighting stops at this defined maximum limit.\nThe rest of the text is not processed, thus not highlighted and no error is returned\nThe `max_analyzed_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which prevails when it’s set to lower value than the query setting.",
+            "type": "number"
+          },
+          "no_match_size": {
+            "description": "The amount of text you want to return from the beginning of the field if there are no matching fragments to highlight.",
+            "type": "number"
+          },
+          "number_of_fragments": {
+            "description": "The maximum number of fragments to return.\nIf the number of fragments is set to `0`, no fragments are returned.\nInstead, the entire field contents are highlighted and returned.\nThis can be handy when you need to highlight short texts such as a title or address, but fragmentation is not required.\nIf `number_of_fragments` is `0`, `fragment_size` is ignored.",
+            "type": "number"
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "order": {
+            "$ref": "#/components/schemas/HighlighterOrder"
+          },
+          "phrase_limit": {
+            "description": "Controls the number of matching phrases in a document that are considered.\nPrevents the `fvh` highlighter from analyzing too many phrases and consuming too much memory.\nWhen using `matched_fields`, `phrase_limit` phrases per matched field are considered. Raising the limit increases query time and consumes more memory.\nOnly supported by the `fvh` highlighter.",
+            "type": "number"
+          },
+          "post_tags": {
+            "description": "Use in conjunction with `pre_tags` to define the HTML tags to use for the highlighted text.\nBy default, highlighted text is wrapped in `<em>` and `</em>` tags.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pre_tags": {
+            "description": "Use in conjunction with `post_tags` to define the HTML tags to use for the highlighted text.\nBy default, highlighted text is wrapped in `<em>` and `</em>` tags.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "require_field_match": {
+            "description": "By default, only fields that contains a query match are highlighted.\nSet to `false` to highlight all fields.",
+            "type": "boolean"
+          },
+          "tags_schema": {
+            "$ref": "#/components/schemas/HighlighterTagsSchema"
+          }
+        }
+      },
+      "HighlighterType": {
+        "type": "string",
+        "enum": [
+          "plain",
+          "fvh",
+          "unified"
+        ]
+      },
+      "BoundaryScanner": {
+        "type": "string",
+        "enum": [
+          "chars",
+          "sentence",
+          "word"
+        ]
+      },
+      "HighlighterFragmenter": {
+        "type": "string",
+        "enum": [
+          "simple",
+          "span"
+        ]
+      },
+      "HighlighterOrder": {
+        "type": "string",
+        "enum": [
+          "score"
+        ]
+      },
+      "HighlighterTagsSchema": {
+        "type": "string",
+        "enum": [
+          "styled"
+        ]
+      },
+      "SourceConfig": {
+        "description": "Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.",
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/components/schemas/SourceFilter"
+          }
+        ]
+      },
+      "SourceFilter": {
+        "type": "object",
+        "properties": {
+          "excludes": {
+            "$ref": "_common.json#/components/schemas/Fields"
+          },
+          "includes": {
+            "$ref": "_common.json#/components/schemas/Fields"
+          }
+        }
+      },
+      "Rescore": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/RescoreQuery"
+          },
+          "window_size": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "RescoreQuery": {
+        "type": "object",
+        "properties": {
+          "rescore_query": {
+            "$ref": "_common.query_dsl.json#/components/schemas/QueryContainer"
+          },
+          "query_weight": {
+            "description": "Relative importance of the original query versus the rescore query.",
+            "type": "number"
+          },
+          "rescore_query_weight": {
+            "description": "Relative importance of the rescore query versus the original query.",
+            "type": "number"
+          },
+          "score_mode": {
+            "$ref": "#/components/schemas/ScoreMode"
+          }
+        },
+        "required": [
+          "rescore_query"
+        ]
+      },
+      "ScoreMode": {
+        "type": "string",
+        "enum": [
+          "avg",
+          "max",
+          "min",
+          "multiply",
+          "total"
+        ]
+      },
+      "Suggester": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "description": "Global suggest text, to avoid repetition when the same text is used in several suggesters",
+            "type": "string"
+          }
+        }
+      },
+      "PointInTimeReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "keep_alive": {
+            "$ref": "_common.json#/components/schemas/Duration"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ResponseBody": {
+        "type": "object",
+        "properties": {
+          "took": {
+            "type": "number"
+          },
+          "timed_out": {
+            "type": "boolean"
+          },
+          "_shards": {
+            "$ref": "_common.json#/components/schemas/ShardStatistics"
+          },
+          "hits": {
+            "$ref": "#/components/schemas/HitsMetadata"
+          },
+          "aggregations": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "_common.aggregations.json#/components/schemas/Aggregate"
+            }
+          },
+          "_clusters": {
+            "$ref": "_common.json#/components/schemas/ClusterStatistics"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "max_score": {
+            "type": "number"
+          },
+          "num_reduce_phases": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "pit_id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "_scroll_id": {
+            "$ref": "_common.json#/components/schemas/ScrollId"
+          },
+          "suggest": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Suggest"
+              }
+            }
+          },
+          "terminated_early": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "took",
+          "timed_out",
+          "_shards",
+          "hits"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schemas of ingest.simulate category",
+    "description": "Schemas of ingest.simulate category",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Document": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "_index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          },
+          "_source": {
+            "description": "JSON body for the document.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "_source"
+        ]
+      },
+      "PipelineSimulation": {
+        "type": "object",
+        "properties": {
+          "doc": {
+            "$ref": "#/components/schemas/DocumentSimulation"
+          },
+          "processor_results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PipelineSimulation"
+            }
+          },
+          "tag": {
+            "type": "string"
+          },
+          "processor_type": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "watcher._common.json#/components/schemas/ActionStatusOptions"
+          }
+        }
+      },
+      "DocumentSimulation": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "_common.json#/components/schemas/Id"
+          },
+          "_index": {
+            "$ref": "_common.json#/components/schemas/IndexName"
+          },
+          "_ingest": {
+            "$ref": "#/components/schemas/Ingest"
+          },
+          "_routing": {
+            "description": "Value used to send the document to a specific primary shard.",
+            "type": "string"
+          },
+          "_source": {
+            "description": "JSON body for the document.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "_version": {
+            "$ref": "_common.json#/components/schemas/StringifiedVersionNumber"
+          },
+          "_version_type": {
+            "$ref": "_common.json#/components/schemas/VersionType"
+          }
+        },
+        "required": [
+          "_id",
+          "_index",
+          "_ingest",
+          "_source"
+        ]
+      },
+      "Ingest": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "$ref": "_common.json#/components/schemas/DateTime"
+          },
+          "pipeline": {
+            "$ref": "_common.json#/components/schemas/Name"
+          }
+        },
+        "required": [
+          "timestamp"
+        ]
+      }
+    }
+  }
+}
