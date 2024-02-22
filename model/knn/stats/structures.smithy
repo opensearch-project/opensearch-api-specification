@@ -28,7 +28,7 @@ structure KNNStats_WithNodeId_Input with [KNNStats_QueryParams] {
 structure KNNStats_WithStat_Input with [KNNStats_QueryParams] {
     @required
     @httpLabel
-    stat: PathStat,
+    stat: PathStats,
 }
 
 @input
