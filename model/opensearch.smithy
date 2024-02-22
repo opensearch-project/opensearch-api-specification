@@ -256,6 +256,7 @@ service OpenSearch {
         IngestSimulate_Get_WithId,
         IngestSimulate_Post,
         IngestSimulate_Post_WithId,
+        KNNWarmup,
         Mget_Get,
         Mget_Get_WithIndex,
         Mget_Post,
