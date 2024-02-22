@@ -13,7 +13,6 @@ namespace OpenSearch
 
 @xOperationGroup("knn.train_model")
 @xVersionAdded("1.0")
-@readonly
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_knn/models/_train")
 @documentation("Create and train a model that can be used for initializing k-NN native library indexes during indexing.")
@@ -24,7 +23,6 @@ operation KNNTrainModel {
 
 @xOperationGroup("knn.train_model")
 @xVersionAdded("1.0")
-@readonly
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_knn/models/{model_id}/_train")
 @documentation("Create and train a model that can be used for initializing k-NN native library indexes during indexing.")
