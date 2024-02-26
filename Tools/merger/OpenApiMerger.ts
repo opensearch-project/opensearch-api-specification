@@ -93,10 +93,14 @@ export default class OpenApiMerger {
     }
 
     sort(): void {
-        this.spec.paths = _.fromPairs(Object.entries(this.spec.paths).sort());
         this.spec.components.schemas = _.fromPairs(Object.entries(this.spec.components.schemas).sort());
         this.spec.components.parameters = _.fromPairs(Object.entries(this.spec.components.parameters).sort());
         this.spec.components.responses = _.fromPairs(Object.entries(this.spec.components.responses).sort());
         this.spec.components.requestBodies = _.fromPairs(Object.entries(this.spec.components.requestBodies).sort());
+
+        this.spec.paths = _.fromPairs(Object.entries(this.spec.paths).sort());
+        Object.entries(this.spec.paths).forEach(([path, pathItem]) => {
+            this.spec.paths[path] = _.fromPairs(Object.entries(pathItem!).sort());
+        });
     }
 }
