@@ -1,8 +1,10 @@
-import OpenApiValidator from "./OpenApiValidator";
+import NamespaceFileValidator from './NamespaceFileValidator'
 
 
 async function lint() {
-    await OpenApiValidator.validate();
+    const validator = new NamespaceFileValidator('../spec/namespaces/_core.yaml');
+    validator.validate();
+    console.log(validator.errors);
 }
 
 lint();

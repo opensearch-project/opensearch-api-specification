@@ -3,6 +3,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import yaml from 'yaml';
 
+// Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
     root_path: string;
     root_folder: string;
@@ -24,20 +25,21 @@ export default class OpenApiMerger {
     }
 
     merge(output_path: string | null): OpenAPIV3.Document {
-        this.resolve_namespaces();
-        this.resolve_schemas();
-        this.sort();
+        this.#merge_namespaces();
+        this.#merge_schemas();
+        this.#sort_spec_keys();
 
         if(output_path) fs.writeFileSync(output_path, yaml.stringify(this.spec, {lineWidth: 120, singleQuote: true}))
         return this.spec as OpenAPIV3.Document;
     }
 
-    resolve_namespaces(): void {
+    // Merge files from <spec_root>/namespaces folder.
+    #merge_namespaces(): void {
         const folder = `${this.root_folder}/namespaces`;
         fs.readdirSync(folder).forEach(file => {
             const spec = yaml.parse(fs.readFileSync(`${folder}/${file}`, 'utf8'));
-            this.redirect_refs_in_namespace(spec);
             const namespace = file.split('.yaml')[0];
+            this.redirect_refs_in_namespace(spec);
             this.paths[namespace] = spec['paths'];
             this.spec.components.parameters = {...this.spec.components.parameters, ...spec['components']['parameters']};
             this.spec.components.responses = {...this.spec.components.responses, ...spec['components']['responses']};
@@ -51,6 +53,7 @@ export default class OpenApiMerger {
         });
     }
 
+    // Redirect schema references in namespace files to local references in single-file spec.
     redirect_refs_in_namespace(obj: Record<string, any>): void {
         const ref = obj.$ref;
         if(ref?.startsWith('../schemas/'))
@@ -61,7 +64,8 @@ export default class OpenApiMerger {
                 this.redirect_refs_in_namespace(obj[key]);
     }
 
-    resolve_schemas(): void {
+    // Merge files from <spec_root>/schemas folder.
+    #merge_schemas(): void {
         const folder = `${this.root_folder}/schemas`;
         fs.readdirSync(folder).forEach(file => {
             const spec = yaml.parse(fs.readFileSync(`${folder}/${file}`, 'utf8'));
@@ -77,6 +81,7 @@ export default class OpenApiMerger {
         });
     }
 
+    // Redirect schema references in schema files to local references in single-file spec.
     redirect_refs_in_schema(category: string, obj: Record<string, any>): void {
         const ref = obj.$ref;
         if(ref)
@@ -92,7 +97,8 @@ export default class OpenApiMerger {
                 this.redirect_refs_in_schema(category, obj[key]);
     }
 
-    sort(): void {
+    // Sort keys in the spec to make it easier to read and compare.
+    #sort_spec_keys(): void {
         this.spec.components.schemas = _.fromPairs(Object.entries(this.spec.components.schemas).sort());
         this.spec.components.parameters = _.fromPairs(Object.entries(this.spec.components.parameters).sort());
         this.spec.components.responses = _.fromPairs(Object.entries(this.spec.components.responses).sort());
