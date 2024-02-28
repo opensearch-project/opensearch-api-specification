@@ -11,7 +11,7 @@ namespace OpenSearch
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/knn/api/#search-model"
 )
 
-@xOperationGroup("knn.search_model")
+@xOperationGroup("knn.search_models")
 @xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
@@ -22,7 +22,7 @@ operation KNNSearchModel_Get {
     output: KNNSearchModel_Output
 }
 
-@xOperationGroup("knn.search_model")
+@xOperationGroup("knn.search_models")
 @xVersionAdded("1.0")
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_knn/models/_search")
