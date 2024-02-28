@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @mixin
-structure KNNSearchModel_QueryParams {
+structure KNNSearchModels_QueryParams {
     @httpQuery("analyzer")
     analyzer: Analyzer,
 
@@ -152,16 +152,16 @@ structure KNNSearchModel_QueryParams {
 }
 
 // TODO: Fill in Body Parameters
-structure KNNSearchModel_BodyParams {}
+structure KNNSearchModels_BodyParams {}
 
 @input
-structure KNNSearchModel_Get_Input with [KNNSearchModel_QueryParams] {}
+structure KNNSearchModels_Get_Input with [KNNSearchModels_QueryParams] {}
 
 @input
-structure KNNSearchModel_Post_Input with [KNNSearchModel_QueryParams] {
+structure KNNSearchModels_Post_Input with [KNNSearchModels_QueryParams] {
     @httpPayload
-    content: KNNSearchModel_BodyParams,
+    content: KNNSearchModels_BodyParams,
 }
 
 // TODO: Fill in Output Structure
-structure KNNSearchModel_Output {}
+structure KNNSearchModels_Output {}

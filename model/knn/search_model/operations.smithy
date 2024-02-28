@@ -17,9 +17,9 @@ namespace OpenSearch
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_plugins/_knn/models/_search")
 @documentation("Use an OpenSearch query to search for models in the index.")
-operation KNNSearchModel_Get {
-    input: KNNSearchModel_Get_Input,
-    output: KNNSearchModel_Output
+operation KNNSearchModels_Get {
+    input: KNNSearchModels_Get_Input,
+    output: KNNSearchModels_Output
 }
 
 @xOperationGroup("knn.search_models")
@@ -27,7 +27,7 @@ operation KNNSearchModel_Get {
 @suppress(["HttpUriConflict"])
 @http(method: "POST", uri: "/_plugins/_knn/models/_search")
 @documentation("Use an OpenSearch query to search for models in the index.")
-operation KNNSearchModel_Post {
-    input: KNNSearchModel_Post_Input,
-    output: KNNSearchModel_Output
+operation KNNSearchModels_Post {
+    input: KNNSearchModels_Post_Input,
+    output: KNNSearchModels_Output
 }
