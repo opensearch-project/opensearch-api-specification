@@ -10,6 +10,8 @@ env:
 jobs:
   coverage:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -24,7 +26,7 @@ jobs:
         run: |
           docker build . --tag opensearch-with-api-plugin
           docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="${{ env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}" opensearch-with-api-plugin
-          sleep 30
+          sleep 15
       - name: Display OpenSearch Info
         run: |
           curl -u admin:${{ env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }} --insecure https://localhost:9200/ | jq
@@ -38,4 +40,22 @@ jobs:
           cat diff.json | jq '.newEndpoints | group_by(.pathUrl)[] | .[0].pathUrl + ": " + (map(.method) | tostring)' --raw-output
           echo "-------- Legacy APIs"
           cat diff.json | jq '.missingEndpoints | group_by(.pathUrl)[] | .[0].pathUrl + ": " + (map(.method) | tostring)' --raw-output
-
+      - name: Gather Coverage
+        id: coverage
+        shell: bash
+        run: |
+          echo "current=`cat OpenSearch.openapi.json | jq '.paths | keys[]' | wc -l`" >> $GITHUB_OUTPUT
+          echo "total=`cat OpenSearch.auto.openapi.json | jq '.paths | keys[]' | wc -l`" >> $GITHUB_OUTPUT
+      - name: Calculate Percent
+        id: math
+        shell: bash
+        run: |
+          echo "percent=$((${{ steps.coverage.outputs.current }}*100/${{ steps.coverage.outputs.total }}))" >> $GITHUB_OUTPUT
+      - name: Report Coverage
+        shell: bash
+        run: |
+          echo "API specs implemented for ${{ steps.coverage.outputs.current }}/${{ steps.coverage.outputs.total }} (${{ steps.math.outputs.percent }}%) APIs."
+      # - uses: mshick/add-pr-comment@v2
+      #   with:
+      #     message: |
+      #       API specs implemented for ${{ steps.coverage.outputs.current }}/${{ steps.coverage.outputs.total }} (${{ steps.math.outputs.percent }}%) APIs.
