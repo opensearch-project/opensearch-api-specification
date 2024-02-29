@@ -33,5 +33,10 @@ test('validate_operations', () => {
             location: 'Operation: PUT /{index}/_bulk',
             message: 'Invalid operationId "bulk-10". Must be in <x-operation-group>.<number> format'
         },
+        {
+            file: 'namespaces/_core.yaml',
+            location: 'Operation: POST /{index}/_bulk',
+            message: 'The requestBody must be a reference object to requestBodies component with the same name as the operation group'
+        }
     ]);
 })

@@ -1,4 +1,5 @@
 import {OperationSpec, ValidationError} from "../types";
+import {OpenAPIV3} from "openapi-types";
 
 export default class OperationValidator {
     readonly GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z_]*[a-z]+)$/;
@@ -16,8 +17,9 @@ export default class OperationValidator {
     }
 
     validate(): void {
-        if(this.validate_group())
-            this.validate_operation_id();
+        if(!this.validate_group()) return;
+        this.validate_operation_id();
+        this.validate_request_body();
     }
 
     validate_group(): true | void {
@@ -46,5 +48,13 @@ export default class OperationValidator {
             this.errors.push(`Missing "operationId" property`);
         else if(!id.match(operationId_regex))
             this.errors.push(`Invalid operationId "${id}". Must be in <x-operation-group>.<number> format`);
+    }
+
+    validate_request_body(): void {
+        const body = this.spec.requestBody as OpenAPIV3.ReferenceObject;
+        if(!body) return;
+        if(body.$ref !== `#/components/requestBodies/${this.group}`)
+            this.errors.push('The requestBody must be a reference object to ' +
+                'requestBodies component with the same name as the operation group');
     }
 }
