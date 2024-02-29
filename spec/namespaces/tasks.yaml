@@ -11,16 +11,16 @@ paths:
         url: https://opensearch.org/docs/latest/api-reference/tasks/
       operationId: tasks.list.0
       parameters:
-        - $ref: '#/components/parameters/tasks.list#query:nodes'
-        - $ref: '#/components/parameters/tasks.list#query:actions'
-        - $ref: '#/components/parameters/tasks.list#query:detailed'
-        - $ref: '#/components/parameters/tasks.list#query:parent_task_id'
-        - $ref: '#/components/parameters/tasks.list#query:wait_for_completion'
-        - $ref: '#/components/parameters/tasks.list#query:group_by'
-        - $ref: '#/components/parameters/tasks.list#query:timeout'
+        - $ref: '#/components/parameters/tasks.list::query.nodes'
+        - $ref: '#/components/parameters/tasks.list::query.actions'
+        - $ref: '#/components/parameters/tasks.list::query.detailed'
+        - $ref: '#/components/parameters/tasks.list::query.parent_task_id'
+        - $ref: '#/components/parameters/tasks.list::query.wait_for_completion'
+        - $ref: '#/components/parameters/tasks.list::query.group_by'
+        - $ref: '#/components/parameters/tasks.list::query.timeout'
       responses:
         '200':
-          $ref: '#/components/responses/tasks.list#200'
+          $ref: '#/components/responses/tasks.list@200'
       x-operation-group: tasks.list
       x-version-added: '1.0'
   /_tasks/_cancel:
@@ -30,13 +30,13 @@ paths:
         url: https://opensearch.org/docs/latest/api-reference/tasks/#task-canceling
       operationId: tasks.cancel.0
       parameters:
-        - $ref: '#/components/parameters/tasks.cancel#query:nodes'
-        - $ref: '#/components/parameters/tasks.cancel#query:actions'
-        - $ref: '#/components/parameters/tasks.cancel#query:parent_task_id'
-        - $ref: '#/components/parameters/tasks.cancel#query:wait_for_completion'
+        - $ref: '#/components/parameters/tasks.cancel::query.nodes'
+        - $ref: '#/components/parameters/tasks.cancel::query.actions'
+        - $ref: '#/components/parameters/tasks.cancel::query.parent_task_id'
+        - $ref: '#/components/parameters/tasks.cancel::query.wait_for_completion'
       responses:
         '200':
-          $ref: '#/components/responses/tasks.cancel#200'
+          $ref: '#/components/responses/tasks.cancel@200'
       x-operation-group: tasks.cancel
       x-version-added: '1.0'
   /_tasks/{task_id}:
@@ -46,12 +46,12 @@ paths:
         url: https://opensearch.org/docs/latest/api-reference/tasks/
       operationId: tasks.get.0
       parameters:
-        - $ref: '#/components/parameters/tasks.get#path:task_id'
-        - $ref: '#/components/parameters/tasks.get#query:wait_for_completion'
-        - $ref: '#/components/parameters/tasks.get#query:timeout'
+        - $ref: '#/components/parameters/tasks.get::path.task_id'
+        - $ref: '#/components/parameters/tasks.get::query.wait_for_completion'
+        - $ref: '#/components/parameters/tasks.get::query.timeout'
       responses:
         '200':
-          $ref: '#/components/responses/tasks.get#200'
+          $ref: '#/components/responses/tasks.get@200'
       x-operation-group: tasks.get
       x-version-added: '1.0'
   /_tasks/{task_id}/_cancel:
@@ -59,32 +59,32 @@ paths:
       description: Cancels a task, if it can be cancelled through an API.
       operationId: tasks.cancel.1
       parameters:
-        - $ref: '#/components/parameters/tasks.cancel#path:task_id'
-        - $ref: '#/components/parameters/tasks.cancel#query:nodes'
-        - $ref: '#/components/parameters/tasks.cancel#query:actions'
-        - $ref: '#/components/parameters/tasks.cancel#query:parent_task_id'
-        - $ref: '#/components/parameters/tasks.cancel#query:wait_for_completion'
+        - $ref: '#/components/parameters/tasks.cancel::path.task_id'
+        - $ref: '#/components/parameters/tasks.cancel::query.nodes'
+        - $ref: '#/components/parameters/tasks.cancel::query.actions'
+        - $ref: '#/components/parameters/tasks.cancel::query.parent_task_id'
+        - $ref: '#/components/parameters/tasks.cancel::query.wait_for_completion'
       responses:
         '200':
-          $ref: '#/components/responses/tasks.cancel#200'
+          $ref: '#/components/responses/tasks.cancel@200'
       x-operation-group: tasks.cancel
       x-version-added: '1.0'
 components:
   requestBodies: {}
   responses:
-    tasks.cancel#200:
+    tasks.list@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/tasks._common.yaml#/components/schemas/TaskListResponseBase'
-    tasks.list#200:
+    tasks.cancel@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/tasks._common.yaml#/components/schemas/TaskListResponseBase'
-    tasks.get#200:
+    tasks.get@200:
       description: ''
       content:
         application/json:
@@ -103,7 +103,7 @@ components:
               - completed
               - task
   parameters:
-    tasks.list#query:nodes:
+    tasks.list::query.nodes:
       name: nodes
       in: query
       description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return
@@ -116,7 +116,7 @@ components:
         description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return
           information from the node you're connecting to, leave empty to get information from all nodes.
       explode: true
-    tasks.list#query:actions:
+    tasks.list::query.actions:
       in: query
       name: actions
       description: Comma-separated list or wildcard expression of actions used to limit the request.
@@ -127,14 +127,14 @@ components:
             items:
               type: string
       style: form
-    tasks.list#query:detailed:
+    tasks.list::query.detailed:
       in: query
       name: detailed
       description: If `true`, the response includes detailed information about shard recoveries.
       schema:
         type: boolean
       style: form
-    tasks.list#query:parent_task_id:
+    tasks.list::query.parent_task_id:
       in: query
       name: parent_task_id
       description: Parent task ID used to limit returned information. To return all tasks, omit this parameter or use a value
@@ -142,21 +142,21 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
       style: form
-    tasks.list#query:wait_for_completion:
+    tasks.list::query.wait_for_completion:
       in: query
       name: wait_for_completion
       description: If `true`, the request blocks until the operation is complete.
       schema:
         type: boolean
       style: form
-    tasks.list#query:group_by:
+    tasks.list::query.group_by:
       in: query
       name: group_by
       description: Key used to group tasks in the response.
       schema:
         $ref: '../schemas/tasks._common.yaml#/components/schemas/GroupBy'
       style: form
-    tasks.list#query:timeout:
+    tasks.list::query.timeout:
       in: query
       name: timeout
       description: Period to wait for a response. If no response is received before the timeout expires, the request fails and
@@ -164,7 +164,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-    tasks.cancel#query:nodes:
+    tasks.cancel::query.nodes:
       in: query
       name: nodes
       description: Comma-separated list of node IDs or names used to limit the request.
@@ -173,7 +173,7 @@ components:
         items:
           type: string
       style: form
-    tasks.cancel#query:actions:
+    tasks.cancel::query.actions:
       in: query
       name: actions
       description: Comma-separated list or wildcard expression of actions used to limit the request.
@@ -184,14 +184,14 @@ components:
             items:
               type: string
       style: form
-    tasks.cancel#query:parent_task_id:
+    tasks.cancel::query.parent_task_id:
       in: query
       name: parent_task_id
       description: Parent task ID used to limit the tasks.
       schema:
         type: string
       style: form
-    tasks.cancel#query:wait_for_completion:
+    tasks.cancel::query.wait_for_completion:
       in: query
       name: wait_for_completion
       description: Should the request block until the cancellation of the task and its descendant tasks is completed. Defaults
@@ -199,7 +199,7 @@ components:
       schema:
         type: boolean
       style: form
-    tasks.get#path:task_id:
+    tasks.get::path.task_id:
       in: path
       name: task_id
       description: ID of the task.
@@ -207,14 +207,14 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
       style: simple
-    tasks.get#query:wait_for_completion:
+    tasks.get::query.wait_for_completion:
       in: query
       name: wait_for_completion
       description: If `true`, the request blocks until the task has completed.
       schema:
         type: boolean
       style: form
-    tasks.get#query:timeout:
+    tasks.get::query.timeout:
       in: query
       name: timeout
       description: |-
@@ -223,7 +223,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-    tasks.cancel#path:task_id:
+    tasks.cancel::path.task_id:
       in: path
       name: task_id
       description: ID of the task.
