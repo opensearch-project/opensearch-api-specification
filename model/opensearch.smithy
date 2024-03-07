@@ -266,6 +266,7 @@ service OpenSearch {
         KNNStats_WithStatNodeId,
         KNNTrainModel,
         KNNTrainModel_WithModelId,
+        KNNWarmup,
         Mget_Get,
         Mget_Get_WithIndex,
         Mget_Post,
