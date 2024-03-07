@@ -247,6 +247,12 @@ string PathTaskId
 @documentation("The name of the template.")
 string PathTemplateName
 
+@xDataType("array")
+@xEnumOptions(["circuit_breaker_triggered", "total_load_time", "eviction_count", "hit_count", "miss_count", "graph_memory_usage", "graph_memory_usage_percentage", "graph_index_requests", "graph_index_errors", "graph_query_requests", "graph_query_errors", "knn_query_requests", "cache_capacity_reached", "load_success_count", "load_exception_count", "indices_in_cache", "script_compilations", "script_compilation_errors", "script_query_requests", "script_query_errors", "nmslib_initialized", "faiss_initialized", "model_index_status", "indexing_from_model_degraded", "training_requests", "training_errors", "training_memory_usage", "training_memory_usage_percentage"])
+@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
+@documentation("Comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.")
+string PathStats
+
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("The id of the model.")
 string PathModelId
