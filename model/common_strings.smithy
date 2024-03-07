@@ -247,6 +247,10 @@ string PathTaskId
 @documentation("The name of the template.")
 string PathTemplateName
 
+@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
+@documentation("The id of the model.")
+string PathModelId
+
 @documentation("The analyzer to use for the query string.")
 string Analyzer
 
@@ -280,6 +284,9 @@ string Lang
 
 @documentation("Comma-separated list of the persistent ids of the nodes to exclude from the voting configuration. If specified, you may not also specify ?node_names.")
 string NodeIds
+
+@documentation("Preferred node to execute training.")
+string NodeId
 
 @documentation("Comma-separated list of the names of the nodes to exclude from the voting configuration. If specified, you may not also specify ?node_ids.")
 string NodeNames
