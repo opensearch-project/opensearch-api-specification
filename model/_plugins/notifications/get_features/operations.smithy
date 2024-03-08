@@ -11,7 +11,7 @@ namespace OpenSearch
     "API Reference": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/#list-supported-channel-configurations"
 )
 
-@xOperationGroup("notifications.features")
+@xOperationGroup("notifications.list_features")
 @xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])

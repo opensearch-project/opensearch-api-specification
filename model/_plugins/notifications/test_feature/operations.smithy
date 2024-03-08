@@ -15,6 +15,9 @@ namespace OpenSearch
 @xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
+@deprecated
+@xDeprecationMessage("Use the POST method instead.")
+@xVersionDeprecated("2.3")
 @http(method: "GET", uri: "/_plugins/_notifications/feature/test/{config_id}")
 @documentation("Send a test notification.")
 operation NotificationsFeatureTest_Get {
@@ -22,7 +25,7 @@ operation NotificationsFeatureTest_Get {
     output: NotificationsFeatureTest_Output
 }
 
-@xOperationGroup("notifications.feature.test")
+@xOperationGroup("notifications.send_test")
 @xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])

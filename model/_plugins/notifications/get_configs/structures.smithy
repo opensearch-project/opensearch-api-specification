@@ -19,8 +19,8 @@ structure NotificationsConfigsItem_Get_Input {
 }
 
 structure NotificationsConfigs_Get_Output {
-    start_index: Integer,
-    total_hits: Integer,
+    start_index: Long,
+    total_hits: Long,
     total_hit_relation: String,
     config_list: NotificationsConfigsList
 }
@@ -31,7 +31,7 @@ list NotificationsConfigsList {
 
 structure NotificationsConfigsOutputItem {
     config_id: String,
-    last_updated_time_ms: Integer,
-    created_time_ms: Integer,
+    last_updated_time_ms: Long,
+    created_time_ms: Long,
     config: NotificationsConfigItem
 }
