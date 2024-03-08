@@ -9,7 +9,6 @@ namespace OpenSearch
 
 structure NotificationsConfig {
     config_id: String,
-    name: String,
     config: NotificationsConfigItem
 }
 
