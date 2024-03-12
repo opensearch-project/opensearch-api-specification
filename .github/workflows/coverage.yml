@@ -1,6 +1,6 @@
 name: API Coverage
 
-on: [push, pull_request]
+on: [push, pull_request_target]
 
 env:
   JAVA_VERSION: 11
@@ -8,12 +8,14 @@ env:
 
 jobs:
   coverage:
-    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Build and Run Docker Container
         run: |
           docker build coverage --tag opensearch-with-api-plugin
@@ -40,3 +42,14 @@ jobs:
           total=`jq -r '.paths | keys | length' OpenSearch.auto.openapi.json`
           percent=$((current * 100 / total))
           echo "API specs implemented for $current/$total ($percent%) APIs."
+          cat >>"$GITHUB_OUTPUT" <<EOL
+          current=$current
+          total=$total
+          percent=$percent
+          EOL
+      - uses: peter-evans/create-or-update-comment@v4
+        if: github.event_name == 'pull_request_target'
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            API specs implemented for ${{ steps.coverage.outputs.current }}/${{ steps.coverage.outputs.total }} (${{ steps.coverage.outputs.percent }}%) APIs.
