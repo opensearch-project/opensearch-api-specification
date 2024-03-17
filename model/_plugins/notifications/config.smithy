@@ -21,14 +21,10 @@ string NotificationConfigType
 structure NotificationsConfigItem {
     @required
     name: String,
-    description: String,
+    description: String
     @required
     config_type: NotificationConfigType,
     is_enabled: Boolean,
-    details: NotificationConfigDetails
-}
-
-union NotificationConfigDetails {
     sns: SnsItem,
     slack: SlackItem,
     chime: Chime,
