@@ -18,10 +18,15 @@ structure NotificationsConfigsItem_Get_Input {
     config_id: String
 }
 
+@xDataType("array")
+@xEnumOptions(["eq", "gte"])
+@documentation("The relation between the total_hits and the actual hits returned in the response.")
+string TotalHitRelation
+
 structure NotificationsConfigs_Get_Output {
     start_index: Long,
     total_hits: Long,
-    total_hit_relation: String,
+    total_hit_relation: TotalHitRelation,
     config_list: NotificationsConfigsList
 }
 
