@@ -65,10 +65,11 @@ structure Chime {
     url: String
 }
 
-@xDataType("array")
-@xEnumOptions(["POST", "PUT", "PATCH"])
-@documentation("The HTTP method used to send the webhook.")
-string HttpMethodType
+enum HttpMethodType {
+    POST = "POST",
+    PUT = "PUT",
+    PATCH = "PATCH"
+}
 
 map HeaderParamsMap {
     key: String
@@ -82,10 +83,11 @@ structure Webhook {
     header_params: HeaderParamsMap,
 }
 
-@xDataType("array")
-@xEnumOptions(["ssl", "start_tls", "none"])
-@documentation("The email encryption method.")
-string EmailEncryptionMethod
+enum EmailEncryptionMethod {
+    SSL = "ssl",
+    START_TLS = "start_tls",
+    NONE = "none"
+}
 
 structure SmtpAccount {
     @required
