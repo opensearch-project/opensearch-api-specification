@@ -18,20 +18,7 @@ structure NotificationsFeatures_Get_Output {
 }
 
 list NotificationsFeaturesList {
-    member: NotificationsFeaturesListItem
-}
-
-@documentation("Limit the information for notifications features list.")
-enum NotificationsFeaturesListItem {
-    SLACK = "slack",
-    CHIME = "chime",
-    MICROSOFT_TEAMS = "microsoft_teams",
-    WEBHOOK = "webhook",
-    EMAIL = "email",
-    SNS = "sns",
-    SES_ACCOUNT = "ses_account",
-    SMTP_ACCOUNT = "smtp_account",
-    EMAIL_GROUP = "email_group"
+    member: NotificationConfigType
 }
 
 structure NotificationsPluginFeatures {
