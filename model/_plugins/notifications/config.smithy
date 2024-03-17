@@ -86,15 +86,8 @@ structure SesAccount {
     from_addess: String
 }
 
-structure EmailGroup {
-    @required
-    recipient_list: RecipientList
-}
-
-structure Email {
-    @required
-    email_account_id: String,
-    recipient_list: RecipientList
+list EmailGroupIdList {
+    member: String
 }
 
 list RecipientList {
@@ -103,4 +96,16 @@ list RecipientList {
 
 structure RecipientListItem {
     recipient: String
+}
+
+structure EmailGroup {
+    @required
+    recipient_list: RecipientList,
+    email_group_id_list: EmailGroupIdList
+}
+
+structure Email {
+    @required
+    email_account_id: String,
+    recipient_list: RecipientList
 }
