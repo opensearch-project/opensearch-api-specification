@@ -13,12 +13,17 @@ structure NotificationsConfig {
     config: NotificationsConfigItem
 }
 
+@xDataType("array")
+@xEnumOptions(["slack", "chime", "microsoft_teams", "webhook", "email",  "sns", "ses_account", "smtp_account", "email_group"])
+@documentation("Type of notification configuration")
+string NotificationConfigType
+
 structure NotificationsConfigItem {
     @required
     name: String,
     description: String,
     @required
-    config_type: String,
+    config_type: NotificationConfigType,
     is_enabled: Boolean,
     details: NotificationConfigDetails
 }
