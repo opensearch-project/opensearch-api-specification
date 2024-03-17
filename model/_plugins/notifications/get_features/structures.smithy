@@ -14,13 +14,14 @@ structure NotificationsFeatures_Get_Input {
 @output
 structure NotificationsFeatures_Get_Output {
     allowed_config_type_list: NotificationsFeaturesList,
-    plugin_features: NotificationsPluginFeatures
+    plugin_features: NotificationsPluginFeaturesMap
 }
 
 list NotificationsFeaturesList {
     member: NotificationConfigType
 }
 
-structure NotificationsPluginFeatures {
-    tooltip_support: Boolean
+map NotificationsPluginFeaturesMap {
+    key: String,
+    value: String
 }
