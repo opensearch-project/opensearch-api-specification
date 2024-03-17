@@ -13,6 +13,50 @@ structure NotificationsFeatureTest_Input {
     config_id: String
 }
 
-// TODO: Fill in Output Structure
 structure NotificationsFeatureTest_Output {
+    event_source: EventSource,
+    status_list: StatusList
+}
+
+structure EventSource {
+    title: String,
+    reference_id: String,
+    severity: SeverityType,
+    tags: TagsList
+}
+
+enum SeverityType {
+    HIGH = "high",
+    INFO = "info",
+    CRITICAL = "critical"
+}
+
+list TagsList {
+    member: String
+}
+
+list StatusList {
+    member: EventStatus
+}
+
+structure EventStatus {
+    config_id: String,
+    config_name: String,
+    config_type: NotificationConfigType,
+    email_recipient_status: EmailRecipientStatusList,
+    delivery_status: DeliveryStatus
+}
+
+list EmailRecipientStatusList {
+    member: EmailRecipientStatus
+}
+
+structure EmailRecipientStatus {
+    recipient: String,
+    delivery_status: DeliveryStatus
+}
+
+structure DeliveryStatus {
+    status_code: String,
+    status_text: String
 }
