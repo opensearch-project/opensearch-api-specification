@@ -62,13 +62,18 @@ structure Webhook {
     url: String
 }
 
+@xDataType("array")
+@xEnumOptions(["ssl", "start_tls", "none"])
+@documentation("The email encryption method.")
+string EmailEncryptionMethod
+
 structure SmtpAccount {
     @required
     host: String,
     @required
     port: Integer,
     @required
-    method: String,
+    method: EmailEncryptionMethod,
     @required
     from_addess: String
 }
