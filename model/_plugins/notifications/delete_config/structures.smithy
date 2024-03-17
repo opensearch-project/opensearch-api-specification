@@ -25,6 +25,31 @@ structure NotificationsConfigs_Delete_WithQueryParams_Input {
     config_id_list: String
 }
 
-// TODO: Fill in Output Structure (delete_response_list: object)
 structure NotificationsConfigs_Delete_Output {
+    delete_response_list: DeleteResponseList
+}
+
+map DeleteResponseList {
+    key: String
+    value: RestStatus
+}
+
+enum RestStatus {
+    CONTINUE = "continue",
+    SWITCHING_PROTOCOLS = "switching_protocols",
+    OK = "ok",
+    CREATED = "created",
+    ACCEPTED = "accepted",
+    NON_AUTHORITATIVE_INFORMATION = "non_authoritative_information",
+    NO_CONTENT = "no_content",
+    RESET_CONTENT = "reset_content",
+    PARTIAL_CONTENT = "partial_content",
+    MULTI_STATUS = "multi_status",
+    MULTIPLE_CHOICES = "multiple_choices",
+    MOVED_PERMANENTLY = "moved_permanently",
+    FOUND = "found",
+    SEE_OTHER = "see_other",
+    NOT_MODIFIED = "not_modified",
+    USE_PROXY = "use_proxy",
+    TEMPORARY_REDIRECT = "temporary_redirect"
 }
