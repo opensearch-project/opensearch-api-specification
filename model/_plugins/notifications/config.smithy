@@ -57,9 +57,21 @@ structure Chime {
     url: String
 }
 
+@xDataType("array")
+@xEnumOptions(["POST", "PUT", "PATCH"])
+@documentation("The HTTP method used to send the webhook.")
+string HttpMethodType
+
+map HeaderParamsMap {
+    key: String
+    value: Integer
+}
+
 structure Webhook {
     @required
-    url: String
+    url: String,
+    method: HttpMethodType,
+    header_params: HeaderParamsMap,
 }
 
 @xDataType("array")
