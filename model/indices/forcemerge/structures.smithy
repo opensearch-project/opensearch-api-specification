@@ -13,6 +13,10 @@ structure IndicesForcemerge_QueryParams {
     @default(true)
     flush: Flush,
 
+    @httpQuery("primary_only")
+    @default(false)
+    primary_only: PrimaryOnly,
+
     @httpQuery("ignore_unavailable")
     ignore_unavailable: IgnoreUnavailable,
 
