@@ -26,7 +26,7 @@ operation KNNStats {
 @xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_knn/{nodeId}/stats")
+@http(method: "GET", uri: "/_plugins/_knn/{node_id}/stats")
 @documentation("Provides information about the current status of the k-NN plugin.")
 operation KNNStats_WithNodeId {
     input: KNNStats_WithNodeId_Input,
@@ -48,7 +48,7 @@ operation KNNStats_WithStat {
 @xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_knn/{nodeId}/stats/{stat}")
+@http(method: "GET", uri: "/_plugins/_knn/{node_id}/stats/{stat}")
 @documentation("Provides information about the current status of the k-NN plugin.")
 operation KNNStats_WithStatNodeId {
     input: KNNStats_WithStatNodeId_Input,

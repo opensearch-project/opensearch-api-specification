@@ -21,7 +21,7 @@ structure KNNStats_Input with [KNNStats_QueryParams] {
 structure KNNStats_WithNodeId_Input with [KNNStats_QueryParams] {
     @required
     @httpLabel
-    nodeId: PathNodeId,
+    node_id: PathNodeId,
 }
 
 @input
@@ -35,7 +35,7 @@ structure KNNStats_WithStat_Input with [KNNStats_QueryParams] {
 structure KNNStats_WithStatNodeId_Input with [KNNStats_QueryParams] {
     @required
     @httpLabel
-    nodeId: PathNodeId,
+    node_id: PathNodeId,
 
     @required
     @httpLabel

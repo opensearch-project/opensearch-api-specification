@@ -151,7 +151,11 @@ structure Search_QueryParams {
     rest_total_hits_as_int: RestTotalHitsAsInt,
 
     @httpQuery("search_pipeline")
-    search_pipeline: SearchPipeline
+    search_pipeline: SearchPipeline,
+
+    @httpQuery("include_named_queries_score")
+    @default(false)
+    include_named_queries_score: IncludeNamedQueriesScore
 }
 
 @documentation("The search definition using the Query DSL")
