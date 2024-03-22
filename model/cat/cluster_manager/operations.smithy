@@ -12,7 +12,7 @@ namespace OpenSearch
 )
 
 @xOperationGroup("cat.cluster_manager")
-@xVersionAdded("1.0")
+@xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/cluster_manager")

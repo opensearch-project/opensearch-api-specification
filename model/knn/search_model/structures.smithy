@@ -8,7 +8,7 @@ $version: "2"
 namespace OpenSearch
 
 @mixin
-structure Search_QueryParams {
+structure KNNSearchModels_QueryParams {
     @httpQuery("analyzer")
     analyzer: Analyzer,
 
@@ -149,63 +149,19 @@ structure Search_QueryParams {
     @httpQuery("rest_total_hits_as_int")
     @default(false)
     rest_total_hits_as_int: RestTotalHitsAsInt,
-
-    @httpQuery("search_pipeline")
-    search_pipeline: SearchPipeline,
-
-    @httpQuery("include_named_queries_score")
-    @default(false)
-    include_named_queries_score: IncludeNamedQueriesScore
 }
 
-@documentation("The search definition using the Query DSL")
-structure Search_BodyParams {
-    docvalue_fields: String,
-    explain: Boolean,
-    from: Integer,
-    seq_no_primary_term: Boolean,
-    size: Integer,
-    source: String,
-    stats: String,
-    terminate_after: Integer,
-    timeout: Time,
-    version: Boolean,
-    fields: UserDefinedValueList,
-    min_score: Integer,
-    indices_boost: UserDefinedObjectList,
-    query: UserDefinedObjectStructure
-}
+// TODO: Fill in Body Parameters
+structure KNNSearchModels_BodyParams {}
 
 @input
-structure Search_Get_Input with [Search_QueryParams] {
-}
+structure KNNSearchModels_Get_Input with [KNNSearchModels_QueryParams] {}
 
 @input
-structure Search_Post_Input with [Search_QueryParams] {
+structure KNNSearchModels_Post_Input with [KNNSearchModels_QueryParams] {
     @httpPayload
-    content: Search_BodyParams,
+    content: KNNSearchModels_BodyParams,
 }
 
-@input
-structure Search_Get_WithIndex_Input with [Search_QueryParams] {
-    @required
-    @httpLabel
-    index: PathIndices,
-}
-
-@input
-structure Search_Post_WithIndex_Input with [Search_QueryParams] {
-    @required
-    @httpLabel
-    index: PathIndices,
-    @httpPayload
-    content: Search_BodyParams,
-}
-
-structure Search_Output {
-    _scroll_id: String,
-    took: Long,
-    timed_out: Boolean,
-    _shards: ShardStatistics,
-    hits: HitsMetadata
-}
+// TODO: Fill in Output Structure
+structure KNNSearchModels_Output {}

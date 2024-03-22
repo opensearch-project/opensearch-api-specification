@@ -8,13 +8,11 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure PatchActionGroups_Input {
+structure KNNWarmup_Input {
     @required
-    @httpPayload
-    content: PatchOperationList
+    @httpLabel
+    index: PathIndices,
 }
-@output
-structure PatchActionGroups_Output {
-    status: SecurityOperationStatus,
-    message: SecurityOperationMessage
-}
+
+// TODO: Fill in Output Structure
+structure KNNWarmup_Output{}

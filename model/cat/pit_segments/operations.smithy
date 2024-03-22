@@ -10,7 +10,6 @@ namespace OpenSearch
 @externalDocumentation(
     "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/"
 )
-
 @xOperationGroup("cat.pit_segments")
 @xVersionAdded("2.4")
 @readonly
@@ -20,4 +19,18 @@ namespace OpenSearch
 operation CatPitSegments {
     input: CatPitSegments_Input,
     output: CatPitSegments_Output
+}
+
+@externalDocumentation(
+    "API Reference": "https://opensearch.org/docs/latest/search-plugins/point-in-time-api/"
+)
+@xOperationGroup("cat.all_pit_segments")
+@xVersionAdded("2.4")
+@readonly
+@suppress(["HttpUriConflict"])
+@http(method: "GET", uri: "/_cat/pit_segments/_all")
+@documentation("Lists all active point-in-time segments.")
+operation CatAllPitSegments {
+    input: CatAllPitSegments_Input,
+    output: CatAllPitSegments_Output
 }

@@ -12,7 +12,7 @@ namespace OpenSearch
 )
 
 @xOperationGroup("cat.segment_replication")
-@xVersionAdded("1.0")
+@xVersionAdded("2.6.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/segment_replication")
@@ -23,7 +23,7 @@ operation CatSegmentReplication {
 }
 
 @xOperationGroup("cat.segment_replication")
-@xVersionAdded("1.0")
+@xVersionAdded("2.6.0")
 @readonly
 @suppress(["HttpUriConflict"])
 @http(method: "GET", uri: "/_cat/segment_replication/{index}")

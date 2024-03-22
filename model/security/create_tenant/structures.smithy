@@ -12,6 +12,7 @@ structure CreateTenant_Input {
     @required
     @httpLabel
     tenant: String
+    @required
     @httpPayload
     content: CreateTenantParams
 }

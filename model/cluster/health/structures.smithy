@@ -51,10 +51,6 @@ structure ClusterHealth_QueryParams {
 
     @httpQuery("awareness_attribute")
     awareness_attribute: AwarenessAttribute,
-
-    @httpQuery("ensure_node_commissioned")
-    @default(false)
-    ensure_node_commissioned: EnsureNodeCommissioned,
 }
 
 

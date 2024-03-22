@@ -8,13 +8,11 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure PatchActionGroups_Input {
+structure KNNGetModel_Input {
     @required
-    @httpPayload
-    content: PatchOperationList
+    @httpLabel
+    model_id: PathModelId,
 }
-@output
-structure PatchActionGroups_Output {
-    status: SecurityOperationStatus,
-    message: SecurityOperationMessage
-}
+
+// TODO: Fill in Output Structure
+structure KNNGetModel_Output {}

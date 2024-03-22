@@ -13,6 +13,10 @@ structure IndicesForcemerge_QueryParams {
     @default(true)
     flush: Flush,
 
+    @httpQuery("primary_only")
+    @default(false)
+    primary_only: PrimaryOnly,
+
     @httpQuery("ignore_unavailable")
     ignore_unavailable: IgnoreUnavailable,
 
@@ -28,6 +32,10 @@ structure IndicesForcemerge_QueryParams {
 
     @httpQuery("only_expunge_deletes")
     only_expunge_deletes: OnlyExpungeDeletes,
+
+    @httpQuery("wait_for_completion")
+    @default(true)
+    wait_for_completion: WaitForCompletionTrue,
 }
 
 

@@ -37,6 +37,6 @@ structure CreatePit_Input with [CreatePit_QueryParams] {
 @output
 structure CreatePit_Output {
     pit_id: String,
-    _shard: ShardStatistics,
+    _shards: ShardStatistics,
     creation_time: Long
 }

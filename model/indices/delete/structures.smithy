@@ -23,6 +23,9 @@ structure IndicesDelete_QueryParams {
     @default(false)
     allow_no_indices: AllowNoIndices,
 
+    @httpQuery("cluster_manager_timeout")
+    cluster_manager_timeout: ClusterManagerTimeout,
+
     @httpQuery("expand_wildcards")
     @default("open")
     expand_wildcards: ExpandWildcards,

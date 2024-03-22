@@ -12,6 +12,7 @@ structure PatchActionGroup_Input {
     @required
     @httpLabel
     action_group: String
+    @required
     @httpPayload
     content: PatchOperationList
 }

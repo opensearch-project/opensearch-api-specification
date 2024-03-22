@@ -89,6 +89,9 @@ boolean IncludeDefaults
 @documentation("Return information about disk usage and shard sizes.")
 boolean IncludeDiskInfo
 
+@documentation("Indicates whether hit.matched_queries should be rendered as a map that includes the name of the matched query associated with its score (true) or as an array containing the name of the matched queries (false)")
+boolean IncludeNamedQueriesScore
+
 @documentation("Whether to report the aggregated disk usage of each one of the Lucene index files (only applies if segment stats are requested).")
 boolean IncludeSegmentFileSizes
 
@@ -130,6 +133,9 @@ boolean PreserveExisting
 
 @documentation("Set to true to return stats only for primary shards.")
 boolean Pri
+
+@documentation("Specify whether the operation should only perform on primary shards. Defaults to false.")
+boolean PrimaryOnly
 
 @documentation("Specify whether to profile the query execution.")
 boolean Profile

@@ -54,7 +54,7 @@ Popular IDEs for Smithy models include Visual Studio Code and IntelliJ, and they
 - [OpenAPI Specifications](https://plugins.jetbrains.com/plugin/14394-openapi-specifications)
 
 ## File Structure
-The OpenSearch API is composed of over 300 operations. These operations are grouped into API actions based on the functionality they provide. Each API action is later translated to an API method in each OpenSearch client. For example:
+The OpenSearch API is composed of over 300 operations. These operations are grouped into API actions based on the functionality they provide (This grouping is done through the `@xOperationGroup` Smithy trait). Each API action is later translated to an API method in each OpenSearch client. For example:
 - The `cat.health` action will turn into `client.cat.health()`
 - While the `index` action will turn into `client.index()`
 
@@ -94,6 +94,9 @@ As mentioned in the previous section, each API action is composed of multiple op
 - `POST /_search`
 - `GET /{index}/_search`
 - `POST /{index}/_search`
+
+To group these operations together in the `search` action, we mark them with the `@xOperationGroup` trait with the same value of `search`. Note that this trait tells the client generators that these operations serve identical purpose and should be grouped together in the same API method. The `xOperationGroup` trait also tells the generators the namespace and the name of the API method. For example, operations with `xOperationGroup` trait value of `indicies.create` will result in `client.indices.create()` method to be generated.
+
 
 ### Defining operations
 
@@ -194,16 +197,17 @@ structure Operation_Output {
 
 ## Defining Common Parameters
 
-Common parameters are defined in the root folder, `model/`, and grouped by data-type in files of `common_<data_type>.smithy` format. There are a few things to note when defining common parameters:
+Common parameters that are used across OpenSearch namespaces are defined in the root folder, `model/`, and grouped by data-type in files of `common_<data_type>.smithy` format. There are a few things to note when defining global common parameters:
 - All path parameters should be prefixed with `Path` like `PathIndex` and `PathDocumentID`.
 - Smithy doesn't support _enum_ or _list_ as path parameters. We, therefore, have to define such parameters as _string_ and use `x-data-type` vendor extension to denote their actual types (More on this in the traits section).
 - Parameters of type `time` are defined as `string` and has `@pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")` trait to denote that they are in the format of `<number><unit>`. E.g. `1d`, `2h`, `3m`, `4s`, `5ms`, `6micros`, `7nanos`. We use `x-data-type: "time"` vendor extension for this type.
 - Path parameters that are defined as strings must be accompanied by a `@pattern` trait and should be default to `^[^_][\\d\\w-*]*$` to signify that they are not allowed to start with `_` to avoid URI Conflict errors.
 - The `@documentation`, `@default`, and `@deprecation` traits can later be overridden by the operations that use these parameters.
 
+Common parameters that are used within a namespace, especially namespaces representing plugins like `security` are defined in the namespace folder (e.g. `model/security`)
+
 ## Smithy Traits
 We use Smithy traits extensively in this project to work around some limitations of Smithy and to deal with some quirks of the OpenSearch API. Here are some of the traits that you should be aware of:
-- `@vendorExtensions`: Used to add metadata that are not supported by Smithy. Check OpenAPI Vendor Extensions section for more details.
 - `@suppress(["HttpMethodSemantics.UnexpectedPayload"])`: Used in DELETE operations with request body to suppress the UnexpectedPayload error.
 - `@suppress(["HttpUriConflict"])`: Used to suppress the HttpUriConflict error that is thrown when two operations have conflicting URI. Unfortunately, this happens a lot in OpenSearch API. When in doubt, add this trait to the operation.
 - `@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless)")`: Required for most Path parameters to avoid URI Conflict errors. This is often used in tandem with the @suppress trait above. To denote the actual pattern of the parameter, use `x-string-pattern` vendor extension.
