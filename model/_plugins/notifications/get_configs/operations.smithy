@@ -14,7 +14,7 @@ namespace OpenSearch
 @xOperationGroup("notifications.get_config")
 @xVersionAdded("2.0")
 @readonly
-@suppress(["HttpUriConflict"])
+@suppress(["HttpUriConflict", "HttpMethodSemantics.UnexpectedPayload"])
 @http(method: "GET", uri: "/_plugins/_notifications/configs")
 @documentation("Get channel configuration.")
 operation NotificationsConfigs_Get {
