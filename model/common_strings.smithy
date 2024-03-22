@@ -104,7 +104,7 @@ string PathNodeId
 string PathNodesInfoMetric
 
 @xDataType("array")
-@xEnumOptions(["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure"])
+@xEnumOptions(["_all", "breaker", "fs", "http", "indices", "jvm", "os", "process", "thread_pool", "transport", "discovery", "indexing_pressure", "search_pipeline"])
 @pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
 @documentation("Limit the information returned to the specified metrics.")
 string PathNodesStatsMetric
@@ -247,6 +247,16 @@ string PathTaskId
 @documentation("The name of the template.")
 string PathTemplateName
 
+@xDataType("array")
+@xEnumOptions(["circuit_breaker_triggered", "total_load_time", "eviction_count", "hit_count", "miss_count", "graph_memory_usage", "graph_memory_usage_percentage", "graph_index_requests", "graph_index_errors", "graph_query_requests", "graph_query_errors", "knn_query_requests", "cache_capacity_reached", "load_success_count", "load_exception_count", "indices_in_cache", "script_compilations", "script_compilation_errors", "script_query_requests", "script_query_errors", "nmslib_initialized", "faiss_initialized", "model_index_status", "indexing_from_model_degraded", "training_requests", "training_errors", "training_memory_usage", "training_memory_usage_percentage"])
+@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
+@documentation("Comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.")
+string PathStats
+
+@pattern("^(?!_|template|query|field|point|clear|usage|stats|hot|reload|painless).+$")
+@documentation("The id of the model.")
+string PathModelId
+
 @documentation("The analyzer to use for the query string.")
 string Analyzer
 
@@ -281,6 +291,9 @@ string Lang
 @documentation("Comma-separated list of the persistent ids of the nodes to exclude from the voting configuration. If specified, you may not also specify ?node_names.")
 string NodeIds
 
+@documentation("Preferred node to execute training.")
+string NodeId
+
 @documentation("Comma-separated list of the names of the nodes to exclude from the voting configuration. If specified, you may not also specify ?node_ids.")
 string NodeNames
 
@@ -288,6 +301,9 @@ string ParentTaskId
 
 @documentation("The pipeline id to preprocess incoming documents with.")
 string Pipeline
+
+@documentation("Customizable sequence of processing stages applied to search queries.")
+string SearchPipeline
 
 @documentation("Specify the node or shard the operation should be performed on.")
 string Preference
@@ -358,3 +374,8 @@ string Timeout
 @pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
 @documentation("The maximum time to wait for wait_for_metadata_version before timing out.")
 string WaitForTimeout
+
+@xDataType("time")
+@pattern("^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$")
+@documentation("Explicit task execution timeout, only useful when wait_for_completion is false, defaults to 1h.")
+string TaskExecutionTimeout

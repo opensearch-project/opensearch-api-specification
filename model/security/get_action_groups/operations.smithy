@@ -15,7 +15,7 @@ namespace OpenSearch
 @xVersionAdded("1.0")
 @readonly
 @suppress(["HttpUriConflict"])
-@http(method: "GET", uri: "/_plugins/_security/api/actiongroups/")
+@http(method: "GET", uri: "/_plugins/_security/api/actiongroups")
 @documentation("Retrieves all action groups.")
 operation GetActionGroups {
     input: GetActionGroups_Input,

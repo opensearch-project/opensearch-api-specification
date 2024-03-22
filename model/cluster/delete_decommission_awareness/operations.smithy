@@ -15,7 +15,7 @@ namespace OpenSearch
 @xVersionAdded("1.0")
 @idempotent
 @suppress(["HttpUriConflict"])
-@http(method: "DELETE", uri: "/_cluster/decommission/awareness/")
+@http(method: "DELETE", uri: "/_cluster/decommission/awareness")
 @documentation("Delete any existing decommission.")
 operation ClusterDeleteDecommissionAwareness {
     input: ClusterDeleteDecommissionAwareness_Input,

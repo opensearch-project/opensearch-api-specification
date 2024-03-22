@@ -25,6 +25,13 @@ structure IndicesShrink_QueryParams {
     @httpQuery("wait_for_active_shards")
     @documentation("Set the number of active shards to wait for on the shrunken index before the operation returns.")
     wait_for_active_shards: WaitForActiveShards,
+
+    @httpQuery("wait_for_completion")
+    @default(true)
+    wait_for_completion: WaitForCompletionTrue,
+
+    @httpQuery("task_execution_timeout")
+    task_execution_timeout: TaskExecutionTimeout,
 }
 
 // TODO: Fill in Body Parameters

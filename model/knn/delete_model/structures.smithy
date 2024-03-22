@@ -8,10 +8,11 @@ $version: "2"
 namespace OpenSearch
 
 @input
-structure CatAllPitSegments_Input {
+structure KNNDeleteModel_Input {
+    @required
+    @httpLabel
+    model_id: PathModelId,
 }
 
-@output
-structure CatAllPitSegments_Output {
-    content: CatPitSegment
-}
+// TODO: Fill in Output Structure
+structure KNNDeleteModel_Output {}
