@@ -201,4 +201,3 @@ structure ScoreCombinationParameters {
 list ScoreWeights {
     member: Float
 }
-
