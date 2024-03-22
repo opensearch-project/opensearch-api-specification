@@ -11,7 +11,7 @@ namespace OpenSearch
     "API Reference": "https://opensearch.org/docs/latest/observing-your-data/notifications/api/#send-test-notification"
 )
 
-@xOperationGroup("notifications.feature.test")
+@xOperationGroup("notifications.send_test")
 @xVersionAdded("2.0")
 @readonly
 @suppress(["HttpUriConflict"])
