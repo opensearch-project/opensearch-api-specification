@@ -15,7 +15,7 @@
 ## Welcome!
 
 `opensearch-api-specification` is an open source, community-driven collection of API model specifications for
-[OpenSearch](https://github.com/opensearch-project/OpenSearch) APIs. The API models are created using the [Smithy](https://awslabs.github.io/smithy/) Interface Definition Language (IDL). Smithy is an open source IDL which is protocol agnostic, extensible and supports code generation.
+[OpenSearch](https://github.com/opensearch-project/OpenSearch) APIs. The API models are written in OpenAPI format and are used to generate client libraries and documentation.
 
 To contribute to this project or to track the developments head over to [Projects](https://github.com/opensearch-project/opensearch-api-specification/projects)
 board. Follow the [Developer guide](DEVELOPER_GUIDE.md) and [Contributing guidelines](CONTRIBUTING.md) for instructions

@@ -1,0 +1,73 @@
+openapi: 3.1.0
+info:
+  title: Schemas of cluster.remote_info category
+  description: Schemas of cluster.remote_info category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ClusterRemoteInfo:
+      discriminator:
+        propertyName: mode
+      oneOf:
+        - $ref: '#/components/schemas/ClusterRemoteSniffInfo'
+        - $ref: '#/components/schemas/ClusterRemoteProxyInfo'
+    ClusterRemoteSniffInfo:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+            - sniff
+        connected:
+          type: boolean
+        max_connections_per_cluster:
+          type: number
+        num_nodes_connected:
+          type: number
+        initial_connect_timeout:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        skip_unavailable:
+          type: boolean
+        seeds:
+          type: array
+          items:
+            type: string
+      required:
+        - mode
+        - connected
+        - max_connections_per_cluster
+        - num_nodes_connected
+        - initial_connect_timeout
+        - skip_unavailable
+        - seeds
+    ClusterRemoteProxyInfo:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+            - proxy
+        connected:
+          type: boolean
+        initial_connect_timeout:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        skip_unavailable:
+          type: boolean
+        proxy_address:
+          type: string
+        server_name:
+          type: string
+        num_proxy_sockets_connected:
+          type: number
+        max_proxy_socket_connections:
+          type: number
+      required:
+        - mode
+        - connected
+        - initial_connect_timeout
+        - skip_unavailable
+        - proxy_address
+        - server_name
+        - num_proxy_sockets_connected
+        - max_proxy_socket_connections

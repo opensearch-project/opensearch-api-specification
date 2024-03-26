@@ -1,0 +1,129 @@
+openapi: 3.1.0
+info:
+  title: Schemas of cluster.health category
+  description: Schemas of cluster.health category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    HealthResponseBody:
+      type: object
+      properties:
+        active_primary_shards:
+          description: The number of active primary shards.
+          type: number
+        active_shards:
+          description: The total number of active primary and replica shards.
+          type: number
+        active_shards_percent_as_number:
+          $ref: '_common.yaml#/components/schemas/Percentage'
+        cluster_name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        delayed_unassigned_shards:
+          description: The number of shards whose allocation has been delayed by the timeout settings.
+          type: number
+        indices:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IndexHealthStats'
+        initializing_shards:
+          description: The number of shards that are under initialization.
+          type: number
+        number_of_data_nodes:
+          description: The number of nodes that are dedicated data nodes.
+          type: number
+        number_of_in_flight_fetch:
+          description: The number of unfinished fetches.
+          type: number
+        number_of_nodes:
+          description: The number of nodes within the cluster.
+          type: number
+        number_of_pending_tasks:
+          description: The number of cluster-level changes that have not yet been executed.
+          type: number
+        relocating_shards:
+          description: The number of shards that are under relocation.
+          type: number
+        status:
+          $ref: '_common.yaml#/components/schemas/HealthStatus'
+        task_max_waiting_in_queue:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        task_max_waiting_in_queue_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        timed_out:
+          description: If false the response returned within the period of time that is specified by the timeout parameter (30s by
+            default)
+          type: boolean
+        unassigned_shards:
+          description: The number of shards that are not allocated.
+          type: number
+      required:
+        - active_primary_shards
+        - active_shards
+        - active_shards_percent_as_number
+        - cluster_name
+        - delayed_unassigned_shards
+        - initializing_shards
+        - number_of_data_nodes
+        - number_of_in_flight_fetch
+        - number_of_nodes
+        - number_of_pending_tasks
+        - relocating_shards
+        - status
+        - task_max_waiting_in_queue_millis
+        - timed_out
+        - unassigned_shards
+    IndexHealthStats:
+      type: object
+      properties:
+        active_primary_shards:
+          type: number
+        active_shards:
+          type: number
+        initializing_shards:
+          type: number
+        number_of_replicas:
+          type: number
+        number_of_shards:
+          type: number
+        relocating_shards:
+          type: number
+        shards:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ShardHealthStats'
+        status:
+          $ref: '_common.yaml#/components/schemas/HealthStatus'
+        unassigned_shards:
+          type: number
+      required:
+        - active_primary_shards
+        - active_shards
+        - initializing_shards
+        - number_of_replicas
+        - number_of_shards
+        - relocating_shards
+        - status
+        - unassigned_shards
+    ShardHealthStats:
+      type: object
+      properties:
+        active_shards:
+          type: number
+        initializing_shards:
+          type: number
+        primary_active:
+          type: boolean
+        relocating_shards:
+          type: number
+        status:
+          $ref: '_common.yaml#/components/schemas/HealthStatus'
+        unassigned_shards:
+          type: number
+      required:
+        - active_shards
+        - initializing_shards
+        - primary_active
+        - relocating_shards
+        - status
+        - unassigned_shards

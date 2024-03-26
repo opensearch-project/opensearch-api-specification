@@ -1,0 +1,729 @@
+openapi: 3.1.0
+info:
+  title: Schemas of cluster.stats category
+  description: Schemas of cluster.stats category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    StatsResponseBase:
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            cluster_uuid:
+              $ref: '_common.yaml#/components/schemas/Uuid'
+            indices:
+              $ref: '#/components/schemas/ClusterIndices'
+            nodes:
+              $ref: '#/components/schemas/ClusterNodes'
+            status:
+              $ref: '_common.yaml#/components/schemas/HealthStatus'
+            timestamp:
+              description: Unix timestamp, in milliseconds, for the last time the cluster statistics were refreshed.
+              type: number
+          required:
+            - cluster_name
+            - cluster_uuid
+            - indices
+            - nodes
+            - status
+            - timestamp
+    ClusterIndices:
+      type: object
+      properties:
+        analysis:
+          $ref: '#/components/schemas/CharFilterTypes'
+        completion:
+          $ref: '_common.yaml#/components/schemas/CompletionStats'
+        count:
+          description: Total number of indices with shards assigned to selected nodes.
+          type: number
+        docs:
+          $ref: '_common.yaml#/components/schemas/DocStats'
+        fielddata:
+          $ref: '_common.yaml#/components/schemas/FielddataStats'
+        query_cache:
+          $ref: '_common.yaml#/components/schemas/QueryCacheStats'
+        segments:
+          $ref: '_common.yaml#/components/schemas/SegmentsStats'
+        shards:
+          $ref: '#/components/schemas/ClusterIndicesShards'
+        store:
+          $ref: '_common.yaml#/components/schemas/StoreStats'
+        mappings:
+          $ref: '#/components/schemas/FieldTypesMappings'
+        versions:
+          description: Contains statistics about analyzers and analyzer components used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/IndicesVersions'
+      required:
+        - analysis
+        - completion
+        - count
+        - docs
+        - fielddata
+        - query_cache
+        - segments
+        - shards
+        - store
+        - mappings
+    CharFilterTypes:
+      type: object
+      properties:
+        analyzer_types:
+          description: Contains statistics about analyzer types used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        built_in_analyzers:
+          description: Contains statistics about built-in analyzers used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        built_in_char_filters:
+          description: Contains statistics about built-in character filters used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        built_in_filters:
+          description: Contains statistics about built-in token filters used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        built_in_tokenizers:
+          description: Contains statistics about built-in tokenizers used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        char_filter_types:
+          description: Contains statistics about character filter types used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        filter_types:
+          description: Contains statistics about token filter types used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        tokenizer_types:
+          description: Contains statistics about tokenizer types used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+      required:
+        - analyzer_types
+        - built_in_analyzers
+        - built_in_char_filters
+        - built_in_filters
+        - built_in_tokenizers
+        - char_filter_types
+        - filter_types
+        - tokenizer_types
+    FieldTypes:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        count:
+          description: The number of occurrences of the field type in selected nodes.
+          type: number
+        index_count:
+          description: The number of indices containing the field type in selected nodes.
+          type: number
+        indexed_vector_count:
+          description: For dense_vector field types, number of indexed vector types in selected nodes.
+          type: number
+        indexed_vector_dim_max:
+          description: For dense_vector field types, the maximum dimension of all indexed vector types in selected nodes.
+          type: number
+        indexed_vector_dim_min:
+          description: For dense_vector field types, the minimum dimension of all indexed vector types in selected nodes.
+          type: number
+        script_count:
+          description: The number of fields that declare a script.
+          type: number
+      required:
+        - name
+        - count
+        - index_count
+    ClusterIndicesShards:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/ClusterIndicesShardsIndex'
+        primaries:
+          description: Number of primary shards assigned to selected nodes.
+          type: number
+        replication:
+          description: Ratio of replica shards to primary shards across all selected nodes.
+          type: number
+        total:
+          description: Total number of shards assigned to selected nodes.
+          type: number
+    ClusterIndicesShardsIndex:
+      type: object
+      properties:
+        primaries:
+          $ref: '#/components/schemas/ClusterShardMetrics'
+        replication:
+          $ref: '#/components/schemas/ClusterShardMetrics'
+        shards:
+          $ref: '#/components/schemas/ClusterShardMetrics'
+      required:
+        - primaries
+        - replication
+        - shards
+    ClusterShardMetrics:
+      type: object
+      properties:
+        avg:
+          description: Mean number of shards in an index, counting only shards assigned to selected nodes.
+          type: number
+        max:
+          description: Maximum number of shards in an index, counting only shards assigned to selected nodes.
+          type: number
+        min:
+          description: Minimum number of shards in an index, counting only shards assigned to selected nodes.
+          type: number
+      required:
+        - avg
+        - max
+        - min
+    FieldTypesMappings:
+      type: object
+      properties:
+        field_types:
+          description: Contains statistics about field data types used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldTypes'
+        runtime_field_types:
+          description: Contains statistics about runtime field data types used in selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/RuntimeFieldTypes'
+        total_field_count:
+          description: Total number of fields in all non-system indices.
+          type: number
+        total_deduplicated_field_count:
+          description: Total number of fields in all non-system indices, accounting for mapping deduplication.
+          type: number
+        total_deduplicated_mapping_size:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        total_deduplicated_mapping_size_in_bytes:
+          description: Total size of all mappings, in bytes, after deduplication and compression.
+          type: number
+      required:
+        - field_types
+    RuntimeFieldTypes:
+      type: object
+      properties:
+        chars_max:
+          description: Maximum number of characters for a single runtime field script.
+          type: number
+        chars_total:
+          description: Total number of characters for the scripts that define the current runtime field data type.
+          type: number
+        count:
+          description: Number of runtime fields mapped to the field data type in selected nodes.
+          type: number
+        doc_max:
+          description: Maximum number of accesses to doc_values for a single runtime field script
+          type: number
+        doc_total:
+          description: Total number of accesses to doc_values for the scripts that define the current runtime field data type.
+          type: number
+        index_count:
+          description: Number of indices containing a mapping of the runtime field data type in selected nodes.
+          type: number
+        lang:
+          description: Script languages used for the runtime fields scripts.
+          type: array
+          items:
+            type: string
+        lines_max:
+          description: Maximum number of lines for a single runtime field script.
+          type: number
+        lines_total:
+          description: Total number of lines for the scripts that define the current runtime field data type.
+          type: number
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        scriptless_count:
+          description: Number of runtime fields that don’t declare a script.
+          type: number
+        shadowed_count:
+          description: Number of runtime fields that shadow an indexed field.
+          type: number
+        source_max:
+          description: Maximum number of accesses to _source for a single runtime field script.
+          type: number
+        source_total:
+          description: Total number of accesses to _source for the scripts that define the current runtime field data type.
+          type: number
+      required:
+        - chars_max
+        - chars_total
+        - count
+        - doc_max
+        - doc_total
+        - index_count
+        - lang
+        - lines_max
+        - lines_total
+        - name
+        - scriptless_count
+        - shadowed_count
+        - source_max
+        - source_total
+    IndicesVersions:
+      type: object
+      properties:
+        index_count:
+          type: number
+        primary_shard_count:
+          type: number
+        total_primary_bytes:
+          type: number
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+      required:
+        - index_count
+        - primary_shard_count
+        - total_primary_bytes
+        - version
+    ClusterNodes:
+      type: object
+      properties:
+        count:
+          $ref: '#/components/schemas/ClusterNodeCount'
+        discovery_types:
+          description: Contains statistics about the discovery types used by selected nodes.
+          type: object
+          additionalProperties:
+            type: number
+        fs:
+          $ref: '#/components/schemas/ClusterFileSystem'
+        indexing_pressure:
+          $ref: '#/components/schemas/IndexingPressure'
+        ingest:
+          $ref: '#/components/schemas/ClusterIngest'
+        jvm:
+          $ref: '#/components/schemas/ClusterJvm'
+        network_types:
+          $ref: '#/components/schemas/ClusterNetworkTypes'
+        os:
+          $ref: '#/components/schemas/ClusterOperatingSystem'
+        packaging_types:
+          description: Contains statistics about Opensearch distributions installed on selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/NodePackagingType'
+        plugins:
+          description: |-
+            Contains statistics about installed plugins and modules by selected nodes.
+            If no plugins or modules are installed, this array is empty.
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/PluginStats'
+        process:
+          $ref: '#/components/schemas/ClusterProcess'
+        versions:
+          description: Array of Opensearch versions used on selected nodes.
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/VersionString'
+      required:
+        - count
+        - discovery_types
+        - fs
+        - indexing_pressure
+        - ingest
+        - jvm
+        - network_types
+        - os
+        - packaging_types
+        - plugins
+        - process
+        - versions
+    ClusterNodeCount:
+      type: object
+      properties:
+        coordinating_only:
+          type: number
+        data:
+          type: number
+        data_cold:
+          type: number
+        data_content:
+          type: number
+        data_frozen:
+          type: number
+        data_hot:
+          type: number
+        data_warm:
+          type: number
+        ingest:
+          type: number
+        master:
+          type: number
+        ml:
+          type: number
+        remote_cluster_client:
+          type: number
+        total:
+          type: number
+        transform:
+          type: number
+        voting_only:
+          type: number
+      required:
+        - coordinating_only
+        - data
+        - data_cold
+        - data_content
+        - data_hot
+        - data_warm
+        - ingest
+        - master
+        - ml
+        - remote_cluster_client
+        - total
+        - transform
+        - voting_only
+    ClusterFileSystem:
+      type: object
+      properties:
+        available_in_bytes:
+          description: >-
+            Total number of bytes available to JVM in file stores across all selected nodes.
+
+            Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
+
+            This is the actual amount of free disk space the selected Opensearch nodes can use.
+          type: number
+        free_in_bytes:
+          description: Total number of unallocated bytes in file stores across all selected nodes.
+          type: number
+        total_in_bytes:
+          description: Total size, in bytes, of all file stores across all selected nodes.
+          type: number
+      required:
+        - available_in_bytes
+        - free_in_bytes
+        - total_in_bytes
+    IndexingPressure:
+      type: object
+      properties:
+        memory:
+          $ref: '#/components/schemas/IndexingPressureMemory'
+      required:
+        - memory
+    IndexingPressureMemory:
+      type: object
+      properties:
+        current:
+          $ref: '#/components/schemas/IndexingPressureMemorySummary'
+        limit_in_bytes:
+          type: number
+        total:
+          $ref: '#/components/schemas/IndexingPressureMemorySummary'
+      required:
+        - current
+        - limit_in_bytes
+        - total
+    IndexingPressureMemorySummary:
+      type: object
+      properties:
+        all_in_bytes:
+          type: number
+        combined_coordinating_and_primary_in_bytes:
+          type: number
+        coordinating_in_bytes:
+          type: number
+        coordinating_rejections:
+          type: number
+        primary_in_bytes:
+          type: number
+        primary_rejections:
+          type: number
+        replica_in_bytes:
+          type: number
+        replica_rejections:
+          type: number
+      required:
+        - all_in_bytes
+        - combined_coordinating_and_primary_in_bytes
+        - coordinating_in_bytes
+        - primary_in_bytes
+        - replica_in_bytes
+    ClusterIngest:
+      type: object
+      properties:
+        number_of_pipelines:
+          type: number
+        processor_stats:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClusterProcessor'
+      required:
+        - number_of_pipelines
+        - processor_stats
+    ClusterProcessor:
+      type: object
+      properties:
+        count:
+          type: number
+        current:
+          type: number
+        failed:
+          type: number
+        time:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+      required:
+        - count
+        - current
+        - failed
+        - time_in_millis
+    ClusterJvm:
+      type: object
+      properties:
+        max_uptime_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        mem:
+          $ref: '#/components/schemas/ClusterJvmMemory'
+        threads:
+          description: Number of active threads in use by JVM across all selected nodes.
+          type: number
+        versions:
+          description: Contains statistics about the JVM versions used by selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterJvmVersion'
+      required:
+        - max_uptime_in_millis
+        - mem
+        - threads
+        - versions
+    ClusterJvmMemory:
+      type: object
+      properties:
+        heap_max_in_bytes:
+          description: Maximum amount of memory, in bytes, available for use by the heap across all selected nodes.
+          type: number
+        heap_used_in_bytes:
+          description: Memory, in bytes, currently in use by the heap across all selected nodes.
+          type: number
+      required:
+        - heap_max_in_bytes
+        - heap_used_in_bytes
+    ClusterJvmVersion:
+      type: object
+      properties:
+        bundled_jdk:
+          description: Always `true`. All distributions come with a bundled Java Development Kit (JDK).
+          type: boolean
+        count:
+          description: Total number of selected nodes using JVM.
+          type: number
+        using_bundled_jdk:
+          description: If `true`, a bundled JDK is in use by JVM.
+          type: boolean
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        vm_name:
+          description: Name of the JVM.
+          type: string
+        vm_vendor:
+          description: Vendor of the JVM.
+          type: string
+        vm_version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+      required:
+        - bundled_jdk
+        - count
+        - using_bundled_jdk
+        - version
+        - vm_name
+        - vm_vendor
+        - vm_version
+    ClusterNetworkTypes:
+      type: object
+      properties:
+        http_types:
+          description: Contains statistics about the HTTP network types used by selected nodes.
+          type: object
+          additionalProperties:
+            type: number
+        transport_types:
+          description: Contains statistics about the transport network types used by selected nodes.
+          type: object
+          additionalProperties:
+            type: number
+      required:
+        - http_types
+        - transport_types
+    ClusterOperatingSystem:
+      type: object
+      properties:
+        allocated_processors:
+          description: >-
+            Number of processors used to calculate thread pool size across all selected nodes.
+
+            This number can be set with the processors setting of a node and defaults to the number of processors reported by the operating system.
+
+            In both cases, this number will never be larger than 32.
+          type: number
+        architectures:
+          description: Contains statistics about processor architectures (for example, x86_64 or aarch64) used by selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterOperatingSystemArchitecture'
+        available_processors:
+          description: Number of processors available to JVM across all selected nodes.
+          type: number
+        mem:
+          $ref: '#/components/schemas/OperatingSystemMemoryInfo'
+        names:
+          description: Contains statistics about operating systems used by selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterOperatingSystemName'
+        pretty_names:
+          description: Contains statistics about operating systems used by selected nodes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterOperatingSystemPrettyName'
+      required:
+        - allocated_processors
+        - available_processors
+        - mem
+        - names
+        - pretty_names
+    ClusterOperatingSystemArchitecture:
+      type: object
+      properties:
+        arch:
+          description: Name of an architecture used by one or more selected nodes.
+          type: string
+        count:
+          description: Number of selected nodes using the architecture.
+          type: number
+      required:
+        - arch
+        - count
+    OperatingSystemMemoryInfo:
+      type: object
+      properties:
+        adjusted_total_in_bytes:
+          description: Total amount, in bytes, of memory across all selected nodes, but using the value specified using the
+            `es.total_memory_bytes` system property instead of measured total memory for those nodes where that system
+            property was set.
+          type: number
+        free_in_bytes:
+          description: Amount, in bytes, of free physical memory across all selected nodes.
+          type: number
+        free_percent:
+          description: Percentage of free physical memory across all selected nodes.
+          type: number
+        total_in_bytes:
+          description: Total amount, in bytes, of physical memory across all selected nodes.
+          type: number
+        used_in_bytes:
+          description: Amount, in bytes, of physical memory in use across all selected nodes.
+          type: number
+        used_percent:
+          description: Percentage of physical memory in use across all selected nodes.
+          type: number
+      required:
+        - free_in_bytes
+        - free_percent
+        - total_in_bytes
+        - used_in_bytes
+        - used_percent
+    ClusterOperatingSystemName:
+      type: object
+      properties:
+        count:
+          description: Number of selected nodes using the operating system.
+          type: number
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+      required:
+        - count
+        - name
+    ClusterOperatingSystemPrettyName:
+      type: object
+      properties:
+        count:
+          description: Number of selected nodes using the operating system.
+          type: number
+        pretty_name:
+          $ref: '_common.yaml#/components/schemas/Name'
+      required:
+        - count
+        - pretty_name
+    NodePackagingType:
+      type: object
+      properties:
+        count:
+          description: Number of selected nodes using the distribution flavor and file type.
+          type: number
+        flavor:
+          description: Type of Opensearch distribution. This is always `default`.
+          type: string
+        type:
+          description: File type (such as `tar` or `zip`) used for the distribution package.
+          type: string
+      required:
+        - count
+        - flavor
+        - type
+    ClusterProcess:
+      type: object
+      properties:
+        cpu:
+          $ref: '#/components/schemas/ClusterProcessCpu'
+        open_file_descriptors:
+          $ref: '#/components/schemas/ClusterProcessOpenFileDescriptors'
+      required:
+        - cpu
+        - open_file_descriptors
+    ClusterProcessCpu:
+      type: object
+      properties:
+        percent:
+          description: |-
+            Percentage of CPU used across all selected nodes.
+            Returns `-1` if not supported.
+          type: number
+      required:
+        - percent
+    ClusterProcessOpenFileDescriptors:
+      type: object
+      properties:
+        avg:
+          description: |-
+            Average number of concurrently open file descriptors.
+            Returns `-1` if not supported.
+          type: number
+        max:
+          description: |-
+            Maximum number of concurrently open file descriptors allowed across all selected nodes.
+            Returns `-1` if not supported.
+          type: number
+        min:
+          description: |-
+            Minimum number of concurrently open file descriptors across all selected nodes.
+            Returns -1 if not supported.
+          type: number
+      required:
+        - avg
+        - max
+        - min
