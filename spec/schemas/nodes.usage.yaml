@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: Schemas of nodes.usage category
+  description: Schemas of nodes.usage category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ResponseBase:
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodeUsage'
+          required:
+            - cluster_name
+            - nodes
+    NodeUsage:
+      type: object
+      properties:
+        rest_actions:
+          type: object
+          additionalProperties:
+            type: number
+        since:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        timestamp:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        aggregations:
+          type: object
+          additionalProperties:
+            type: object
+      required:
+        - rest_actions
+        - since
+        - timestamp
+        - aggregations

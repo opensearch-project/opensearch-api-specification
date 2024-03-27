@@ -1,0 +1,763 @@
+openapi: 3.1.0
+info:
+  title: Schemas of nodes.info category
+  description: Schemas of nodes.info category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ResponseBase:
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodeInfo'
+          required:
+            - cluster_name
+            - nodes
+    NodeInfo:
+      type: object
+      properties:
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+        build_flavor:
+          type: string
+        build_hash:
+          description: Short hash of the last git commit in this release.
+          type: string
+        build_type:
+          type: string
+        host:
+          $ref: '_common.yaml#/components/schemas/Host'
+        http:
+          $ref: '#/components/schemas/NodeInfoHttp'
+        ip:
+          $ref: '_common.yaml#/components/schemas/Ip'
+        jvm:
+          $ref: '#/components/schemas/NodeJvmInfo'
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        network:
+          $ref: '#/components/schemas/NodeInfoNetwork'
+        os:
+          $ref: '#/components/schemas/NodeOperatingSystemInfo'
+        plugins:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/PluginStats'
+        process:
+          $ref: '#/components/schemas/NodeProcessInfo'
+        roles:
+          $ref: '_common.yaml#/components/schemas/NodeRoles'
+        settings:
+          $ref: '#/components/schemas/NodeInfoSettings'
+        thread_pool:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NodeThreadPoolInfo'
+        total_indexing_buffer:
+          description: Total heap allowed to be used to hold recently indexed documents before they must be written to disk. This
+            size is a shared pool across all shards on this node, and is controlled by Indexing Buffer settings.
+          type: number
+        total_indexing_buffer_in_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        transport:
+          $ref: '#/components/schemas/NodeInfoTransport'
+        transport_address:
+          $ref: '_common.yaml#/components/schemas/TransportAddress'
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        modules:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/PluginStats'
+        ingest:
+          $ref: '#/components/schemas/NodeInfoIngest'
+        aggregations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoAggregation'
+      required:
+        - attributes
+        - build_flavor
+        - build_hash
+        - build_type
+        - host
+        - ip
+        - name
+        - roles
+        - transport_address
+        - version
+    NodeInfoHttp:
+      type: object
+      properties:
+        bound_address:
+          type: array
+          items:
+            type: string
+        max_content_length:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        max_content_length_in_bytes:
+          type: number
+        publish_address:
+          type: string
+      required:
+        - bound_address
+        - max_content_length_in_bytes
+        - publish_address
+    NodeJvmInfo:
+      type: object
+      properties:
+        gc_collectors:
+          type: array
+          items:
+            type: string
+        mem:
+          $ref: '#/components/schemas/NodeInfoJvmMemory'
+        memory_pools:
+          type: array
+          items:
+            type: string
+        pid:
+          type: number
+        start_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        vm_name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        vm_vendor:
+          type: string
+        vm_version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        using_bundled_jdk:
+          type: boolean
+        using_compressed_ordinary_object_pointers:
+          oneOf:
+            - type: boolean
+            - type: string
+        input_arguments:
+          type: array
+          items:
+            type: string
+      required:
+        - gc_collectors
+        - mem
+        - memory_pools
+        - pid
+        - start_time_in_millis
+        - version
+        - vm_name
+        - vm_vendor
+        - vm_version
+        - using_bundled_jdk
+        - input_arguments
+    NodeInfoJvmMemory:
+      type: object
+      properties:
+        direct_max:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        direct_max_in_bytes:
+          type: number
+        heap_init:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        heap_init_in_bytes:
+          type: number
+        heap_max:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        heap_max_in_bytes:
+          type: number
+        non_heap_init:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        non_heap_init_in_bytes:
+          type: number
+        non_heap_max:
+          $ref: '_common.yaml#/components/schemas/ByteSize'
+        non_heap_max_in_bytes:
+          type: number
+      required:
+        - direct_max_in_bytes
+        - heap_init_in_bytes
+        - heap_max_in_bytes
+        - non_heap_init_in_bytes
+        - non_heap_max_in_bytes
+    NodeInfoNetwork:
+      type: object
+      properties:
+        primary_interface:
+          $ref: '#/components/schemas/NodeInfoNetworkInterface'
+        refresh_interval:
+          type: number
+      required:
+        - primary_interface
+        - refresh_interval
+    NodeInfoNetworkInterface:
+      type: object
+      properties:
+        address:
+          type: string
+        mac_address:
+          type: string
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+      required:
+        - address
+        - mac_address
+        - name
+    NodeOperatingSystemInfo:
+      type: object
+      properties:
+        arch:
+          description: 'Name of the JVM architecture (ex: amd64, x86)'
+          type: string
+        available_processors:
+          description: Number of processors available to the Java virtual machine
+          type: number
+        allocated_processors:
+          description: The number of processors actually used to calculate thread pool size. This number can be set with the
+            node.processors setting of a node and defaults to the number of processors reported by the OS.
+          type: number
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        pretty_name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        refresh_interval_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        cpu:
+          $ref: '#/components/schemas/NodeInfoOSCPU'
+        mem:
+          $ref: '#/components/schemas/NodeInfoMemory'
+        swap:
+          $ref: '#/components/schemas/NodeInfoMemory'
+      required:
+        - arch
+        - available_processors
+        - name
+        - pretty_name
+        - refresh_interval_in_millis
+        - version
+    NodeInfoOSCPU:
+      type: object
+      properties:
+        cache_size:
+          type: string
+        cache_size_in_bytes:
+          type: number
+        cores_per_socket:
+          type: number
+        mhz:
+          type: number
+        model:
+          type: string
+        total_cores:
+          type: number
+        total_sockets:
+          type: number
+        vendor:
+          type: string
+      required:
+        - cache_size
+        - cache_size_in_bytes
+        - cores_per_socket
+        - mhz
+        - model
+        - total_cores
+        - total_sockets
+        - vendor
+    NodeInfoMemory:
+      type: object
+      properties:
+        total:
+          type: string
+        total_in_bytes:
+          type: number
+      required:
+        - total
+        - total_in_bytes
+    NodeProcessInfo:
+      type: object
+      properties:
+        id:
+          description: Process identifier (PID)
+          type: number
+        mlockall:
+          description: Indicates if the process address space has been successfully locked in memory
+          type: boolean
+        refresh_interval_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+      required:
+        - id
+        - mlockall
+        - refresh_interval_in_millis
+    NodeInfoSettings:
+      type: object
+      properties:
+        cluster:
+          $ref: '#/components/schemas/NodeInfoSettingsCluster'
+        node:
+          $ref: '#/components/schemas/NodeInfoSettingsNode'
+        path:
+          $ref: '#/components/schemas/NodeInfoPath'
+        repositories:
+          $ref: '#/components/schemas/NodeInfoRepositories'
+        discovery:
+          $ref: '#/components/schemas/NodeInfoDiscover'
+        action:
+          $ref: '#/components/schemas/NodeInfoAction'
+        client:
+          $ref: '#/components/schemas/NodeInfoClient'
+        http:
+          $ref: '#/components/schemas/NodeInfoSettingsHttp'
+        bootstrap:
+          $ref: '#/components/schemas/NodeInfoBootstrap'
+        transport:
+          $ref: '#/components/schemas/NodeInfoSettingsTransport'
+        network:
+          $ref: '#/components/schemas/NodeInfoSettingsNetwork'
+        xpack:
+          $ref: '#/components/schemas/NodeInfoXpack'
+        script:
+          $ref: '#/components/schemas/NodeInfoScript'
+        search:
+          $ref: '#/components/schemas/NodeInfoSearch'
+        ingest:
+          $ref: '#/components/schemas/NodeInfoSettingsIngest'
+      required:
+        - cluster
+        - node
+        - path
+        - client
+        - http
+        - transport
+    NodeInfoSettingsCluster:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        routing:
+          $ref: 'indices._common.yaml#/components/schemas/IndexRouting'
+        election:
+          $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
+        initial_master_nodes:
+          type: string
+        deprecation_indexing:
+          $ref: '#/components/schemas/DeprecationIndexing'
+      required:
+        - name
+        - election
+    NodeInfoSettingsClusterElection:
+      type: object
+      properties:
+        strategy:
+          $ref: '_common.yaml#/components/schemas/Name'
+      required:
+        - strategy
+    DeprecationIndexing:
+      type: object
+      properties:
+        enabled:
+          oneOf:
+            - type: boolean
+            - type: string
+      required:
+        - enabled
+    NodeInfoSettingsNode:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        attr:
+          type: object
+          additionalProperties:
+            type: object
+        max_local_storage_nodes:
+          type: string
+      required:
+        - name
+        - attr
+    NodeInfoPath:
+      type: object
+      properties:
+        logs:
+          type: string
+        home:
+          type: string
+        repo:
+          type: array
+          items:
+            type: string
+        data:
+          type: array
+          items:
+            type: string
+      required:
+        - logs
+        - home
+        - repo
+    NodeInfoRepositories:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/NodeInfoRepositoriesUrl'
+      required:
+        - url
+    NodeInfoRepositoriesUrl:
+      type: object
+      properties:
+        allowed_urls:
+          type: string
+      required:
+        - allowed_urls
+    NodeInfoDiscover:
+      type: object
+      properties:
+        seed_hosts:
+          type: string
+      required:
+        - seed_hosts
+    NodeInfoAction:
+      type: object
+      properties:
+        destructive_requires_name:
+          type: string
+      required:
+        - destructive_requires_name
+    NodeInfoClient:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    NodeInfoSettingsHttp:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/NodeInfoSettingsHttpType'
+        type.default:
+          type: string
+        compression:
+          oneOf:
+            - type: boolean
+            - type: string
+        port:
+          oneOf:
+            - type: number
+            - type: string
+      required:
+        - type
+    NodeInfoSettingsHttpType:
+      type: object
+      properties:
+        default:
+          type: string
+      required:
+        - default
+    NodeInfoBootstrap:
+      type: object
+      properties:
+        memory_lock:
+          type: string
+      required:
+        - memory_lock
+    NodeInfoSettingsTransport:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/NodeInfoSettingsTransportType'
+        type.default:
+          type: string
+        features:
+          $ref: '#/components/schemas/NodeInfoSettingsTransportFeatures'
+      required:
+        - type
+    NodeInfoSettingsTransportType:
+      type: object
+      properties:
+        default:
+          type: string
+      required:
+        - default
+    NodeInfoSettingsTransportFeatures:
+      type: object
+      properties:
+        x-pack:
+          type: string
+      required:
+        - x-pack
+    NodeInfoSettingsNetwork:
+      type: object
+      properties:
+        host:
+          $ref: '_common.yaml#/components/schemas/Host'
+      required:
+        - host
+    NodeInfoXpack:
+      type: object
+      properties:
+        license:
+          $ref: '#/components/schemas/NodeInfoXpackLicense'
+        security:
+          $ref: '#/components/schemas/NodeInfoXpackSecurity'
+        notification:
+          type: object
+          additionalProperties:
+            type: object
+      required:
+        - security
+    NodeInfoXpackLicense:
+      type: object
+      properties:
+        self_generated:
+          $ref: '#/components/schemas/NodeInfoXpackLicenseType'
+      required:
+        - self_generated
+    NodeInfoXpackLicenseType:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    NodeInfoXpackSecurity:
+      type: object
+      properties:
+        http:
+          $ref: '#/components/schemas/NodeInfoXpackSecuritySsl'
+        enabled:
+          type: string
+        transport:
+          $ref: '#/components/schemas/NodeInfoXpackSecuritySsl'
+        authc:
+          $ref: '#/components/schemas/NodeInfoXpackSecurityAuthc'
+      required:
+        - http
+        - enabled
+    NodeInfoXpackSecuritySsl:
+      type: object
+      properties:
+        ssl:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - ssl
+    NodeInfoXpackSecurityAuthc:
+      type: object
+      properties:
+        realms:
+          $ref: '#/components/schemas/NodeInfoXpackSecurityAuthcRealms'
+        token:
+          $ref: '#/components/schemas/NodeInfoXpackSecurityAuthcToken'
+      required:
+        - realms
+        - token
+    NodeInfoXpackSecurityAuthcRealms:
+      type: object
+      properties:
+        file:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoXpackSecurityAuthcRealmsStatus'
+        native:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoXpackSecurityAuthcRealmsStatus'
+        pki:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoXpackSecurityAuthcRealmsStatus'
+    NodeInfoXpackSecurityAuthcRealmsStatus:
+      type: object
+      properties:
+        enabled:
+          type: string
+        order:
+          type: string
+      required:
+        - order
+    NodeInfoXpackSecurityAuthcToken:
+      type: object
+      properties:
+        enabled:
+          type: string
+      required:
+        - enabled
+    NodeInfoScript:
+      type: object
+      properties:
+        allowed_types:
+          type: string
+        disable_max_compilations_rate:
+          type: string
+      required:
+        - allowed_types
+        - disable_max_compilations_rate
+    NodeInfoSearch:
+      type: object
+      properties:
+        remote:
+          $ref: '#/components/schemas/NodeInfoSearchRemote'
+      required:
+        - remote
+    NodeInfoSearchRemote:
+      type: object
+      properties:
+        connect:
+          type: string
+      required:
+        - connect
+    NodeInfoSettingsIngest:
+      type: object
+      properties:
+        attachment:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        append:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        csv:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        convert:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        date:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        date_index_name:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        dot_expander:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        enrich:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        fail:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        foreach:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        json:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        user_agent:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        kv:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        geoip:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        grok:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        gsub:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        join:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        lowercase:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        remove:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        rename:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        script:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        set:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        sort:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        split:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        trim:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        uppercase:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        urldecode:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        bytes:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        dissect:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        set_security_user:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        pipeline:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        drop:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        circle:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+        inference:
+          $ref: '#/components/schemas/NodeInfoIngestInfo'
+    NodeInfoIngestInfo:
+      type: object
+      properties:
+        downloader:
+          $ref: '#/components/schemas/NodeInfoIngestDownloader'
+      required:
+        - downloader
+    NodeInfoIngestDownloader:
+      type: object
+      properties:
+        enabled:
+          type: string
+      required:
+        - enabled
+    NodeThreadPoolInfo:
+      type: object
+      properties:
+        core:
+          type: number
+        keep_alive:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        max:
+          type: number
+        queue_size:
+          type: number
+        size:
+          type: number
+        type:
+          type: string
+      required:
+        - queue_size
+        - type
+    NodeInfoTransport:
+      type: object
+      properties:
+        bound_address:
+          type: array
+          items:
+            type: string
+        publish_address:
+          type: string
+        profiles:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - bound_address
+        - publish_address
+        - profiles
+    NodeInfoIngest:
+      type: object
+      properties:
+        processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeInfoIngestProcessor'
+      required:
+        - processors
+    NodeInfoIngestProcessor:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    NodeInfoAggregation:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+      required:
+        - types

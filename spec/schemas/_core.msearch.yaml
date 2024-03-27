@@ -1,0 +1,188 @@
+openapi: 3.1.0
+info:
+  title: Schemas of _core.msearch category
+  description: Schemas of _core.msearch category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    RequestItem:
+      oneOf:
+        - $ref: '#/components/schemas/MultisearchHeader'
+        - $ref: '#/components/schemas/MultisearchBody'
+    MultisearchHeader:
+      type: object
+      properties:
+        allow_no_indices:
+          type: boolean
+        expand_wildcards:
+          $ref: '_common.yaml#/components/schemas/ExpandWildcards'
+        ignore_unavailable:
+          type: boolean
+        index:
+          $ref: '_common.yaml#/components/schemas/Indices'
+        preference:
+          type: string
+        request_cache:
+          type: boolean
+        routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+        search_type:
+          $ref: '_common.yaml#/components/schemas/SearchType'
+        ccs_minimize_roundtrips:
+          type: boolean
+        allow_partial_search_results:
+          type: boolean
+        ignore_throttled:
+          type: boolean
+    MultisearchBody:
+      type: object
+      properties:
+        aggregations:
+          type: object
+          additionalProperties:
+            $ref: '_common.aggregations.yaml#/components/schemas/AggregationContainer'
+        collapse:
+          $ref: '_core.search.yaml#/components/schemas/FieldCollapse'
+        query:
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        explain:
+          description: If true, returns detailed information about score computation as part of a hit.
+          type: boolean
+        ext:
+          description: Configuration of search extensions defined by Opensearch plugins.
+          type: object
+          additionalProperties:
+            type: object
+        stored_fields:
+          $ref: '_common.yaml#/components/schemas/Fields'
+        docvalue_fields:
+          description: |-
+            Array of wildcard (*) patterns. The request returns doc values for field
+            names matching these patterns in the hits.fields property of the response.
+          type: array
+          items:
+            $ref: '_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
+        knn:
+          description: Defines the approximate kNN search to run.
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/KnnQuery'
+            - type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/KnnQuery'
+        from:
+          description: |-
+            Starting document offset. By default, you cannot page through more than 10,000
+            hits using the from and size parameters. To page through more hits, use the
+            search_after parameter.
+          type: number
+        highlight:
+          $ref: '_core.search.yaml#/components/schemas/Highlight'
+        indices_boost:
+          description: Boosts the _score of documents from specified indices.
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: number
+        min_score:
+          description: |-
+            Minimum _score for matching documents. Documents with a lower _score are
+            not included in the search results.
+          type: number
+        post_filter:
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        profile:
+          type: boolean
+        rescore:
+          oneOf:
+            - $ref: '_core.search.yaml#/components/schemas/Rescore'
+            - type: array
+              items:
+                $ref: '_core.search.yaml#/components/schemas/Rescore'
+        script_fields:
+          description: Retrieve a script evaluation (based on different fields) for each hit.
+          type: object
+          additionalProperties:
+            $ref: '_common.yaml#/components/schemas/ScriptField'
+        search_after:
+          $ref: '_common.yaml#/components/schemas/SortResults'
+        size:
+          description: |-
+            The number of hits to return. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the search_after parameter.
+          type: number
+        sort:
+          $ref: '_common.yaml#/components/schemas/Sort'
+        _source:
+          $ref: '_core.search.yaml#/components/schemas/SourceConfig'
+        fields:
+          description: |-
+            Array of wildcard (*) patterns. The request returns values for field names
+            matching these patterns in the hits.fields property of the response.
+          type: array
+          items:
+            $ref: '_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
+        terminate_after:
+          description: |-
+            Maximum number of documents to collect for each shard. If a query reaches this
+            limit, Opensearch terminates the query early. Opensearch collects documents
+            before sorting. Defaults to 0, which does not terminate query execution early.
+          type: number
+        stats:
+          description: |-
+            Stats groups to associate with the search. Each group maintains a statistics
+            aggregation for its associated searches. You can retrieve these stats using
+            the indices stats API.
+          type: array
+          items:
+            type: string
+        timeout:
+          description: |-
+            Specifies the period of time to wait for a response from each shard. If no response
+            is received before the timeout expires, the request fails and returns an error.
+            Defaults to no timeout.
+          type: string
+        track_scores:
+          description: If true, calculate and return document scores, even if the scores are not used for sorting.
+          type: boolean
+        track_total_hits:
+          $ref: '_core.search.yaml#/components/schemas/TrackHits'
+        version:
+          description: If true, returns document version as part of a hit.
+          type: boolean
+        runtime_mappings:
+          $ref: '_common.mapping.yaml#/components/schemas/RuntimeFields'
+        seq_no_primary_term:
+          description: |-
+            If true, returns sequence number and primary term of the last modification
+            of each hit. See Optimistic concurrency control.
+          type: boolean
+        pit:
+          $ref: '_core.search.yaml#/components/schemas/PointInTimeReference'
+        suggest:
+          $ref: '_core.search.yaml#/components/schemas/Suggester'
+    ResponseItem:
+      oneOf:
+        - $ref: '#/components/schemas/MultiSearchItem'
+        - $ref: '_common.yaml#/components/schemas/ErrorResponseBase'
+    MultiSearchItem:
+      allOf:
+        - $ref: '_core.search.yaml#/components/schemas/ResponseBody'
+        - type: object
+          properties:
+            status:
+              type: number
+    MultiSearchResult:
+      type: object
+      properties:
+        took:
+          type: number
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseItem'
+      required:
+        - took
+        - responses

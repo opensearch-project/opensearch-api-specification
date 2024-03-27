@@ -1,0 +1,344 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Ingest API
+  description: OpenSearch Ingest API
+  version: 1.0.0
+paths:
+  /_ingest/pipeline:
+    get:
+      operationId: ingest.get_pipeline.0
+      x-operation-group: ingest.get_pipeline
+      x-version-added: '1.0'
+      description: Returns a pipeline.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/ingest-apis/get-ingest/
+      parameters:
+        - $ref: '#/components/parameters/ingest.get_pipeline::query.master_timeout'
+        - $ref: '#/components/parameters/ingest.get_pipeline::query.cluster_manager_timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.get_pipeline@200'
+  /_ingest/pipeline/_simulate:
+    get:
+      operationId: ingest.simulate.0
+      x-operation-group: ingest.simulate
+      x-version-added: '1.0'
+      description: Allows to simulate a pipeline with example documents.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/ingest-apis/simulate-ingest/
+      parameters:
+        - $ref: '#/components/parameters/ingest.simulate::query.verbose'
+      requestBody:
+        $ref: '#/components/requestBodies/ingest.simulate'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.simulate@200'
+    post:
+      operationId: ingest.simulate.1
+      x-operation-group: ingest.simulate
+      x-version-added: '1.0'
+      description: Allows to simulate a pipeline with example documents.
+      parameters:
+        - $ref: '#/components/parameters/ingest.simulate::query.verbose'
+      requestBody:
+        $ref: '#/components/requestBodies/ingest.simulate'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.simulate@200'
+  /_ingest/pipeline/{id}:
+    delete:
+      operationId: ingest.delete_pipeline.0
+      x-operation-group: ingest.delete_pipeline
+      x-version-added: '1.0'
+      description: Deletes a pipeline.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/ingest-apis/delete-ingest/
+      parameters:
+        - $ref: '#/components/parameters/ingest.delete_pipeline::path.id'
+        - $ref: '#/components/parameters/ingest.delete_pipeline::query.master_timeout'
+        - $ref: '#/components/parameters/ingest.delete_pipeline::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ingest.delete_pipeline::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.delete_pipeline@200'
+    get:
+      operationId: ingest.get_pipeline.1
+      x-operation-group: ingest.get_pipeline
+      x-version-added: '1.0'
+      description: Returns a pipeline.
+      parameters:
+        - $ref: '#/components/parameters/ingest.get_pipeline::path.id'
+        - $ref: '#/components/parameters/ingest.get_pipeline::query.master_timeout'
+        - $ref: '#/components/parameters/ingest.get_pipeline::query.cluster_manager_timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.get_pipeline@200'
+    put:
+      operationId: ingest.put_pipeline.0
+      x-operation-group: ingest.put_pipeline
+      x-version-added: '1.0'
+      description: Creates or updates a pipeline.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/ingest-apis/create-update-ingest/
+      parameters:
+        - $ref: '#/components/parameters/ingest.put_pipeline::path.id'
+        - $ref: '#/components/parameters/ingest.put_pipeline::query.master_timeout'
+        - $ref: '#/components/parameters/ingest.put_pipeline::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ingest.put_pipeline::query.timeout'
+      requestBody:
+        $ref: '#/components/requestBodies/ingest.put_pipeline'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.put_pipeline@200'
+  /_ingest/pipeline/{id}/_simulate:
+    get:
+      operationId: ingest.simulate.2
+      x-operation-group: ingest.simulate
+      x-version-added: '1.0'
+      description: Allows to simulate a pipeline with example documents.
+      parameters:
+        - $ref: '#/components/parameters/ingest.simulate::path.id'
+        - $ref: '#/components/parameters/ingest.simulate::query.verbose'
+      requestBody:
+        $ref: '#/components/requestBodies/ingest.simulate'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.simulate@200'
+    post:
+      operationId: ingest.simulate.3
+      x-operation-group: ingest.simulate
+      x-version-added: '1.0'
+      description: Allows to simulate a pipeline with example documents.
+      parameters:
+        - $ref: '#/components/parameters/ingest.simulate::path.id'
+        - $ref: '#/components/parameters/ingest.simulate::query.verbose'
+      requestBody:
+        $ref: '#/components/requestBodies/ingest.simulate'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.simulate@200'
+  /_ingest/processor/grok:
+    get:
+      operationId: ingest.processor_grok.0
+      x-operation-group: ingest.processor_grok
+      x-version-added: '1.0'
+      description: Returns a list of the built-in patterns.
+      externalDocs:
+        url: https://opensearch.org/docs/latest
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ingest.processor_grok@200'
+components:
+  requestBodies:
+    ingest.put_pipeline:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _meta:
+                $ref: '../schemas/_common.yaml#/components/schemas/Metadata'
+              description:
+                description: Description of the ingest pipeline.
+                type: string
+              on_failure:
+                description: Processors to run immediately after a processor failure. Each processor supports a processor-level
+                  `on_failure` value. If a processor without an `on_failure` value fails, Opensearch uses this
+                  pipeline-level parameter as a fallback. The processors in this parameter run sequentially in the order
+                  specified. Opensearch will not attempt to run the pipeline's remaining processors.
+                type: array
+                items:
+                  $ref: '../schemas/ingest._common.yaml#/components/schemas/ProcessorContainer'
+              processors:
+                description: Processors used to perform transformations on documents before indexing. Processors run sequentially in the
+                  order specified.
+                type: array
+                items:
+                  $ref: '../schemas/ingest._common.yaml#/components/schemas/ProcessorContainer'
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+            description: The ingest definition
+      required: true
+    ingest.simulate:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              docs:
+                description: Sample documents to test in the pipeline.
+                type: array
+                items:
+                  $ref: '../schemas/ingest.simulate.yaml#/components/schemas/Document'
+              pipeline:
+                $ref: '../schemas/ingest._common.yaml#/components/schemas/Pipeline'
+            description: The simulate definition
+      required: true
+  responses:
+    ingest.delete_pipeline@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    ingest.get_pipeline@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '../schemas/ingest._common.yaml#/components/schemas/Pipeline'
+    ingest.processor_grok@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              patterns:
+                type: object
+                additionalProperties:
+                  type: string
+            required:
+              - patterns
+    ingest.put_pipeline@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    ingest.simulate@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              docs:
+                type: array
+                items:
+                  $ref: '../schemas/ingest.simulate.yaml#/components/schemas/PipelineSimulation'
+            required:
+              - docs
+  parameters:
+    ingest.delete_pipeline::path.id:
+      in: path
+      name: id
+      description: |-
+        Pipeline ID or wildcard expression of pipeline IDs used to limit the request.
+        To delete all ingest pipelines in a cluster, use a value of `*`.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    ingest.delete_pipeline::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      x-version-added: 2.0.0
+    ingest.delete_pipeline::query.master_timeout:
+      in: query
+      name: master_timeout
+      description: |-
+        Period to wait for a connection to the master node.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      deprecated: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-deprecated: 2.0.0
+      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+    ingest.delete_pipeline::query.timeout:
+      in: query
+      name: timeout
+      description: |-
+        Period to wait for a response.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    ingest.get_pipeline::path.id:
+      in: path
+      name: id
+      description: |-
+        Comma-separated list of pipeline IDs to retrieve.
+        Wildcard (`*`) expressions are supported.
+        To get all ingest pipelines, omit this parameter or use `*`.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    ingest.get_pipeline::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      x-version-added: 2.0.0
+    ingest.get_pipeline::query.master_timeout:
+      in: query
+      name: master_timeout
+      description: |-
+        Period to wait for a connection to the master node.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      deprecated: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-deprecated: 2.0.0
+      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+    ingest.put_pipeline::path.id:
+      in: path
+      name: id
+      description: ID of the ingest pipeline to create or update.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    ingest.put_pipeline::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      x-version-added: 2.0.0
+    ingest.put_pipeline::query.master_timeout:
+      in: query
+      name: master_timeout
+      description: Period to wait for a connection to the master node. If no response is received before the timeout expires,
+        the request fails and returns an error.
+      deprecated: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-deprecated: 2.0.0
+      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+    ingest.put_pipeline::query.timeout:
+      in: query
+      name: timeout
+      description: Period to wait for a response. If no response is received before the timeout expires, the request fails and
+        returns an error.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    ingest.simulate::path.id:
+      in: path
+      name: id
+      description: |-
+        Pipeline to test.
+        If you don’t specify a `pipeline` in the request body, this parameter is required.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    ingest.simulate::query.verbose:
+      in: query
+      name: verbose
+      description: If `true`, the response includes output data for each processor in the executed pipeline.
+      schema:
+        type: boolean
+      style: form

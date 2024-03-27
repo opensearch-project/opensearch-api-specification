@@ -1,0 +1,187 @@
+openapi: 3.1.0
+info:
+  title: Schemas of _core.rank_eval category
+  description: Schemas of _core.rank_eval category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    RankEvalRequestItem:
+      type: object
+      properties:
+        id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        request:
+          $ref: '#/components/schemas/RankEvalQuery'
+        ratings:
+          description: List of document ratings
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentRating'
+        template_id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        params:
+          description: The search template parameters.
+          type: object
+          additionalProperties:
+            type: object
+      required:
+        - id
+        - ratings
+    RankEvalQuery:
+      type: object
+      properties:
+        query:
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        size:
+          type: number
+      required:
+        - query
+    DocumentRating:
+      type: object
+      properties:
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        rating:
+          description: The document’s relevance with regard to this search request.
+          type: number
+      required:
+        - _id
+        - _index
+        - rating
+    RankEvalMetric:
+      type: object
+      properties:
+        precision:
+          $ref: '#/components/schemas/RankEvalMetricPrecision'
+        recall:
+          $ref: '#/components/schemas/RankEvalMetricRecall'
+        mean_reciprocal_rank:
+          $ref: '#/components/schemas/RankEvalMetricMeanReciprocalRank'
+        dcg:
+          $ref: '#/components/schemas/RankEvalMetricDiscountedCumulativeGain'
+        expected_reciprocal_rank:
+          $ref: '#/components/schemas/RankEvalMetricExpectedReciprocalRank'
+    RankEvalMetricPrecision:
+      allOf:
+        - $ref: '#/components/schemas/RankEvalMetricRatingTreshold'
+        - type: object
+          properties:
+            ignore_unlabeled:
+              description: Controls how unlabeled documents in the search results are counted. If set to true, unlabeled documents are
+                ignored and neither count as relevant or irrelevant. Set to false (the default), they are treated as
+                irrelevant.
+              type: boolean
+    RankEvalMetricRatingTreshold:
+      allOf:
+        - $ref: '#/components/schemas/RankEvalMetricBase'
+        - type: object
+          properties:
+            relevant_rating_threshold:
+              description: Sets the rating threshold above which documents are considered to be "relevant".
+              type: number
+    RankEvalMetricBase:
+      type: object
+      properties:
+        k:
+          description: Sets the maximum number of documents retrieved per query. This value will act in place of the usual size
+            parameter in the query.
+          type: number
+    RankEvalMetricRecall:
+      allOf:
+        - $ref: '#/components/schemas/RankEvalMetricRatingTreshold'
+        - type: object
+    RankEvalMetricMeanReciprocalRank:
+      allOf:
+        - $ref: '#/components/schemas/RankEvalMetricRatingTreshold'
+        - type: object
+    RankEvalMetricDiscountedCumulativeGain:
+      allOf:
+        - $ref: '#/components/schemas/RankEvalMetricBase'
+        - type: object
+          properties:
+            normalize:
+              externalDocs:
+                url: https://en.wikipedia.org/wiki/Discounted_cumulative_gain#Normalized_DCG
+              description: If set to true, this metric will calculate the Normalized DCG.
+              type: boolean
+    RankEvalMetricExpectedReciprocalRank:
+      allOf:
+        - $ref: '#/components/schemas/RankEvalMetricBase'
+        - type: object
+          properties:
+            maximum_relevance:
+              description: The highest relevance grade used in the user-supplied relevance judgments.
+              type: number
+          required:
+            - maximum_relevance
+    RankEvalMetricDetail:
+      type: object
+      properties:
+        metric_score:
+          description: The metric_score in the details section shows the contribution of this query to the global quality metric
+            score
+          type: number
+        unrated_docs:
+          description: The unrated_docs section contains an _index and _id entry for each document in the search result for this
+            query that didn’t have a ratings value. This can be used to ask the user to supply ratings for these
+            documents
+          type: array
+          items:
+            $ref: '#/components/schemas/UnratedDocument'
+        hits:
+          description: The hits section shows a grouping of the search results with their supplied ratings
+          type: array
+          items:
+            $ref: '#/components/schemas/RankEvalHitItem'
+        metric_details:
+          description: The metric_details give additional information about the calculated quality metric (e.g. how many of the
+            retrieved documents were relevant). The content varies for each metric but allows for better interpretation
+            of the results
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: object
+      required:
+        - metric_score
+        - unrated_docs
+        - hits
+        - metric_details
+    UnratedDocument:
+      type: object
+      properties:
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+      required:
+        - _id
+        - _index
+    RankEvalHitItem:
+      type: object
+      properties:
+        hit:
+          $ref: '#/components/schemas/RankEvalHit'
+        rating:
+          oneOf:
+            - type: number
+            - nullable: true
+              type: string
+      required:
+        - hit
+    RankEvalHit:
+      type: object
+      properties:
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        _score:
+          type: number
+      required:
+        - _id
+        - _index
+        - _score

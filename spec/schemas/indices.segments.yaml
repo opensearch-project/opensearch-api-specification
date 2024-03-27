@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: Schemas of indices.segments category
+  description: Schemas of indices.segments category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    IndexSegment:
+      type: object
+      properties:
+        shards:
+          type: object
+          additionalProperties:
+            oneOf:
+              - $ref: '#/components/schemas/ShardsSegment'
+              - type: array
+                items:
+                  $ref: '#/components/schemas/ShardsSegment'
+      required:
+        - shards
+    ShardsSegment:
+      type: object
+      properties:
+        num_committed_segments:
+          type: number
+        routing:
+          $ref: '#/components/schemas/ShardSegmentRouting'
+        num_search_segments:
+          type: number
+        segments:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Segment'
+      required:
+        - num_committed_segments
+        - routing
+        - num_search_segments
+        - segments
+    ShardSegmentRouting:
+      type: object
+      properties:
+        node:
+          type: string
+        primary:
+          type: boolean
+        state:
+          type: string
+      required:
+        - node
+        - primary
+        - state
+    Segment:
+      type: object
+      properties:
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+        committed:
+          type: boolean
+        compound:
+          type: boolean
+        deleted_docs:
+          type: number
+        generation:
+          type: number
+        search:
+          type: boolean
+        size_in_bytes:
+          type: number
+        num_docs:
+          type: number
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+      required:
+        - attributes
+        - committed
+        - compound
+        - deleted_docs
+        - generation
+        - search
+        - size_in_bytes
+        - num_docs
+        - version
