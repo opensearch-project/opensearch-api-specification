@@ -2,5 +2,5 @@
 
 ## Publishing OpenSearch API Specs
 
-* The [build-openapi-specs](.github/workflows/build-openapi-specs.yml) workflow raises a PR for the changes to the [OpenAPI specs](OpenSearch.openapi.json) whenever a change is made to the Smithy models.
+* The [build-single-file-specs](.github/workflows/build-single-file-specs.yml) workflow raises a PR for the changes to the [./build/OpenSearch.latest.yaml](builds/OpenSearch.latest.yaml) whenever a change is made to the [spec folder](./spec).
 * The updated OpenAPI specs are hosted on GitHub pages at https://opensearch-project.github.io/opensearch-api-specification/.

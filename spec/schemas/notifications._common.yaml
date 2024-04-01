@@ -1,0 +1,289 @@
+openapi: 3.1.0
+info:
+  title: Schemas of notifications._common category
+  description: Schemas of notifications._common category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    DeleteResponseList:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/RestStatus'
+    RestStatus:
+      type: string
+      enum:
+        - continue
+        - switching_protocols
+        - ok
+        - created
+        - accepted
+        - non_authoritative_information
+        - no_content
+        - reset_content
+        - partial_content
+        - multi_status
+        - multiple_choices
+        - moved_permanently
+        - found
+        - see_other
+        - not_modified
+        - use_proxy
+        - temporary_redirect
+    NotificationsConfigs_GetRequestContent:
+      type: object
+      properties:
+        config_id_list:
+          type: array
+          items:
+            type: string
+        sort_field:
+          type: string
+        sort_order:
+          type: string
+        from_index:
+          type: integer
+          format: int32
+        max_items:
+          type: integer
+          format: int32
+    NotificationConfigType:
+      type: string
+      description: Type of notification configuration.
+      enum:
+        - slack
+        - chime
+        - microsoft_teams
+        - webhook
+        - email
+        - sns
+        - ses_account
+        - smtp_account
+        - email_group
+    TotalHitRelation:
+      type: string
+      enum:
+        - eq
+        - gte
+    NotificationsConfigsOutputItem:
+      type: object
+      properties:
+        config_id:
+          type: string
+        last_updated_time_ms:
+          type: integer
+          format: int64
+        created_time_ms:
+          type: integer
+          format: int64
+        config:
+          $ref: '#/components/schemas/NotificationsConfigItem'
+    NotificationsConfigItem:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        config_type:
+          $ref: '#/components/schemas/NotificationConfigType'
+        is_enabled:
+          type: boolean
+        sns:
+          $ref: '#/components/schemas/SnsItem'
+        slack:
+          $ref: '#/components/schemas/SlackItem'
+        chime:
+          $ref: '#/components/schemas/Chime'
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        smtp_account:
+          $ref: '#/components/schemas/SmtpAccount'
+        ses_account:
+          $ref: '#/components/schemas/SesAccount'
+        email_group:
+          $ref: '#/components/schemas/EmailGroup'
+        email:
+          $ref: '#/components/schemas/Email'
+        microsoft_teams:
+          $ref: '#/components/schemas/MicrosoftTeamsItem'
+      required:
+        - config_type
+        - name
+    SnsItem:
+      type: object
+      properties:
+        topic_arn:
+          type: string
+        role_arn:
+          type: string
+      required:
+        - topic_arn
+    SlackItem:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+    Chime:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+    Webhook:
+      type: object
+      properties:
+        url:
+          type: string
+        method:
+          $ref: '#/components/schemas/HttpMethodType'
+        header_params:
+          $ref: '#/components/schemas/HeaderParamsMap'
+      required:
+        - url
+    HttpMethodType:
+      type: string
+      enum:
+        - POST
+        - PUT
+        - PATCH
+    HeaderParamsMap:
+      type: object
+      additionalProperties:
+        type: integer
+        format: int32
+    SmtpAccount:
+      type: object
+      properties:
+        host:
+          type: string
+        port:
+          type: integer
+          format: int32
+        method:
+          $ref: '#/components/schemas/EmailEncryptionMethod'
+        from_addess:
+          type: string
+      required:
+        - from_addess
+        - host
+        - method
+        - port
+    EmailEncryptionMethod:
+      type: string
+      enum:
+        - ssl
+        - start_tls
+        - none
+    SesAccount:
+      type: object
+      properties:
+        region:
+          type: string
+        role_arn:
+          type: string
+        from_addess:
+          type: string
+      required:
+        - from_addess
+        - region
+    EmailGroup:
+      type: object
+      properties:
+        recipient_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientListItem'
+        email_group_id_list:
+          type: array
+          items:
+            type: string
+      required:
+        - recipient_list
+    RecipientListItem:
+      type: object
+      properties:
+        recipient:
+          type: string
+    Email:
+      type: object
+      properties:
+        email_account_id:
+          type: string
+        recipient_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientListItem'
+      required:
+        - email_account_id
+    MicrosoftTeamsItem:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+    NotificationsConfig:
+      type: object
+      properties:
+        config_id:
+          type: string
+        config:
+          $ref: '#/components/schemas/NotificationsConfigItem'
+      required:
+        - config
+    EventSource:
+      type: object
+      properties:
+        title:
+          type: string
+        reference_id:
+          type: string
+        severity:
+          $ref: '#/components/schemas/SeverityType'
+        tags:
+          type: array
+          items:
+            type: string
+    SeverityType:
+      type: string
+      enum:
+        - high
+        - info
+        - critical
+    EventStatus:
+      type: object
+      properties:
+        config_id:
+          type: string
+        config_name:
+          type: string
+        config_type:
+          $ref: '#/components/schemas/NotificationConfigType'
+        email_recipient_status:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailRecipientStatus'
+        delivery_status:
+          $ref: '#/components/schemas/DeliveryStatus'
+    EmailRecipientStatus:
+      type: object
+      properties:
+        recipient:
+          type: string
+        delivery_status:
+          $ref: '#/components/schemas/DeliveryStatus'
+    DeliveryStatus:
+      type: object
+      properties:
+        status_code:
+          type: string
+        status_text:
+          type: string
+    NotificationsPluginFeaturesMap:
+      type: object
+      additionalProperties:
+        type: string

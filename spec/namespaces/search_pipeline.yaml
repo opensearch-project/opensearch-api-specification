@@ -1,0 +1,68 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Search_pipeline API
+  description: OpenSearch Search_pipeline API
+  version: 1.0.0
+paths:
+  /_search/pipeline/{pipeline}:
+    get:
+      operationId: search_pipeline.get.0
+      x-operation-group: search_pipeline.get
+      x-version-added: '2.9'
+      description: Retrieves information about a specified search pipeline.
+      parameters:
+        - $ref: '#/components/parameters/search_pipeline.get::path.pipeline'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_pipeline.get@200'
+    put:
+      operationId: search_pipeline.create.0
+      x-operation-group: search_pipeline.create
+      x-version-added: '2.9'
+      description: Creates or replaces the specified search pipeline.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/search-pipelines/creating-search-pipeline/
+      parameters:
+        - $ref: '#/components/parameters/search_pipeline.create::path.pipeline'
+      requestBody:
+        $ref: '#/components/requestBodies/search_pipeline.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_pipeline.create@200'
+components:
+  requestBodies:
+    search_pipeline.create:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_pipeline._common.yaml#/components/schemas/SearchPipelineStructure'
+      required: true
+  responses:
+    search_pipeline.create@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    search_pipeline.get@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_pipeline._common.yaml#/components/schemas/SearchPipelineMap'
+  parameters:
+    search_pipeline.create::path.pipeline:
+      name: pipeline
+      in: path
+      schema:
+        type: string
+      required: true
+    search_pipeline.get::path.pipeline:
+      name: pipeline
+      in: path
+      schema:
+        type: string
+      required: true

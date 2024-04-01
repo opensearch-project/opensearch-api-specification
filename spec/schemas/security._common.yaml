@@ -1,0 +1,360 @@
+openapi: 3.1.0
+info:
+  title: Schemas of security._common category
+  description: Schemas of security._common category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    RoleMapping:
+      type: object
+      properties:
+        hosts:
+          type: array
+          items:
+            type: string
+        users:
+          type: array
+          items:
+            type: string
+        reserved:
+          type: boolean
+        hidden:
+          type: boolean
+        backend_roles:
+          type: array
+          items:
+            type: string
+        and_backend_roles:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+    User:
+      type: object
+      properties:
+        hash:
+          type: string
+        reserved:
+          type: boolean
+        hidden:
+          type: boolean
+        backend_roles:
+          type: array
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/UserAttributes'
+        description:
+          type: string
+        opendistro_security_roles:
+          type: array
+          items:
+            type: string
+        static:
+          type: boolean
+    AccountDetails:
+      type: object
+      properties:
+        user_name:
+          type: string
+        is_reserved:
+          type: boolean
+        is_hidden:
+          type: boolean
+        is_internal_user:
+          type: boolean
+        user_requested_tenant:
+          type: string
+        backend_roles:
+          type: array
+          items:
+            type: string
+        custom_attribute_names:
+          type: array
+          items:
+            type: string
+        tenants:
+          $ref: '#/components/schemas/UserTenants'
+        roles:
+          type: array
+          items:
+            type: string
+    UserTenants:
+      type: object
+      properties:
+        global_tenant:
+          type: boolean
+        admin_tenant:
+          type: boolean
+        admin:
+          type: boolean
+    ChangePasswordRequestContent:
+      type: object
+      properties:
+        current_password:
+          type: string
+          description: The current password
+        password:
+          type: string
+          description: The new password to set
+      required:
+        - current_password
+        - password
+    ActionGroupsMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Action_Group'
+    Action_Group:
+      type: object
+      properties:
+        reserved:
+          type: boolean
+        hidden:
+          type: boolean
+        allowed_actions:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+        description:
+          type: string
+        static:
+          type: boolean
+    PatchOperation:
+      type: object
+      properties:
+        op:
+          type: string
+          description: 'The operation to perform. Possible values: remove,add, replace, move, copy, test.'
+        path:
+          type: string
+          description: The path to the resource.
+        value:
+          description: The new values used for the update.
+      required:
+        - op
+        - path
+    AuditConfigWithReadOnly:
+      type: object
+      properties:
+        _readonly:
+          type: array
+          items:
+            type: string
+        config:
+          $ref: '#/components/schemas/AuditConfig'
+    AuditConfig:
+      type: object
+      properties:
+        compliance:
+          $ref: '#/components/schemas/ComplianceConfig'
+        enabled:
+          type: boolean
+        audit:
+          $ref: '#/components/schemas/AuditLogsConfig'
+    ComplianceConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        write_log_diffs:
+          type: boolean
+        read_watched_fields: {}
+        read_ignore_users:
+          type: array
+          items:
+            type: string
+        write_watched_indices:
+          type: array
+          items:
+            type: string
+        write_ignore_users:
+          type: array
+          items:
+            type: string
+        read_metadata_only:
+          type: boolean
+        write_metadata_only:
+          type: boolean
+        external_config:
+          type: boolean
+        internal_config:
+          type: boolean
+    AuditLogsConfig:
+      type: object
+      properties:
+        ignore_users:
+          type: array
+          items:
+            type: string
+        ignore_requests:
+          type: array
+          items:
+            type: string
+        disabled_rest_categories:
+          type: array
+          items:
+            type: string
+        disabled_transport_categories:
+          type: array
+          items:
+            type: string
+        log_request_body:
+          type: boolean
+        resolve_indices:
+          type: boolean
+        resolve_bulk_requests:
+          type: boolean
+        exclude_sensitive_headers:
+          type: boolean
+        enable_transport:
+          type: boolean
+        enable_rest:
+          type: boolean
+    UsersMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/User'
+    UserAttributes:
+      type: object
+      additionalProperties:
+        type: string
+    DistinguishedNamesMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/DistinguishedNames'
+    DistinguishedNames:
+      type: object
+      properties:
+        nodes_dn:
+          type: array
+          items:
+            type: string
+    RolesMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Role'
+    Role:
+      type: object
+      properties:
+        reserved:
+          type: boolean
+        hidden:
+          type: boolean
+        description:
+          type: string
+        cluster_permissions:
+          type: array
+          items:
+            type: string
+        index_permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndexPermission'
+        tenant_permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TenantPermission'
+        static:
+          type: boolean
+    IndexPermission:
+      type: object
+      properties:
+        index_patterns:
+          type: array
+          items:
+            type: string
+        dls:
+          type: string
+        fls:
+          type: array
+          items:
+            type: string
+        masked_fields:
+          type: array
+          items:
+            type: string
+        allowed_actions:
+          type: array
+          items:
+            type: string
+    TenantPermission:
+      type: object
+      properties:
+        tenant_patterns:
+          type: array
+          items:
+            type: string
+        allowed_actions:
+          type: array
+          items:
+            type: string
+    RoleMappings:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/RoleMapping'
+    DynamicConfig:
+      type: object
+      properties:
+        dynamic:
+          $ref: '#/components/schemas/DynamicOptions'
+    DynamicOptions:
+      type: object
+      properties:
+        filteredAliasMode:
+          type: string
+        disableRestAuth:
+          type: boolean
+        disableIntertransportAuth:
+          type: boolean
+        respectRequestIndicesOptions:
+          type: boolean
+        kibana: {}
+        http: {}
+        authc: {}
+        authz: {}
+        authFailureListeners: {}
+        doNotFailOnForbidden:
+          type: boolean
+        multiRolespanEnabled:
+          type: boolean
+        hostsResolverMode:
+          type: string
+        doNotFailOnForbiddenEmpty:
+          type: boolean
+    CertificatesDetail:
+      type: object
+      properties:
+        issuer_dn:
+          type: string
+        subject_dn:
+          type: string
+        san:
+          type: string
+        not_before:
+          type: string
+        not_after:
+          type: string
+    TenantsMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Tenant'
+    Tenant:
+      type: object
+      properties:
+        reserved:
+          type: boolean
+        hidden:
+          type: boolean
+        description:
+          type: string
+        static:
+          type: boolean
+    CreateTenantParams:
+      type: object
+      properties:
+        description:
+          type: string

@@ -1,0 +1,237 @@
+openapi: 3.1.0
+info:
+  title: Schemas of search_pipeline._common category
+  description: Schemas of search_pipeline._common category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    SearchPipelineMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/SearchPipelineStructure'
+    SearchPipelineStructure:
+      type: object
+      properties:
+        version:
+          type: integer
+          format: int32
+        request_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestProcessor'
+        response_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestProcessor'
+        phase_results_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhaseResultsProcessor'
+    RequestProcessor:
+      oneOf:
+        - type: object
+          title: filter_query
+          properties:
+            filter_query:
+              $ref: '#/components/schemas/FilterQueryRequestProcessor'
+          required:
+            - filter_query
+        - type: object
+          title: neural_query_enricher
+          properties:
+            neural_query_enricher:
+              $ref: '#/components/schemas/NeuralQueryEnricherRequestProcessor'
+          required:
+            - neural_query_enricher
+        - type: object
+          title: script
+          properties:
+            script:
+              $ref: '#/components/schemas/SearchScriptRequestProcessor'
+          required:
+            - script
+        - type: object
+          title: oversample
+          properties:
+            oversample:
+              $ref: '#/components/schemas/OversampleRequestProcessor'
+          required:
+            - oversample
+    FilterQueryRequestProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        query:
+          $ref: '#/components/schemas/UserDefinedObjectStructure'
+    UserDefinedObjectStructure:
+      type: object
+      properties:
+        bool: {}
+        boosting: {}
+        combined_fields: {}
+        constant_score: {}
+        dis_max: {}
+        distance_feature: {}
+        exists: {}
+        function_score: {}
+        fuzzy:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        geo_bounding_box: {}
+        geo_distance: {}
+        geo_polygon: {}
+        geo_shape: {}
+        has_child: {}
+        has_parent: {}
+        ids: {}
+        intervals:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        knn: {}
+        match:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        match_all: {}
+        match_bool_prefix:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        match_none: {}
+        match_phrase:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        match_phrase_prefix:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        more_like_this: {}
+        multi_match: {}
+        nested: {}
+        parent_id: {}
+        percolate: {}
+        pinned: {}
+        prefix:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        query_string: {}
+        range:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        rank_feature: {}
+        regexp:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        script: {}
+        script_score: {}
+        shape: {}
+        simple_query_string: {}
+        span_containing: {}
+        field_masking_span: {}
+        span_first: {}
+        span_multi: {}
+        span_near: {}
+        span_not: {}
+        span_or: {}
+        span_term:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        span_within: {}
+        term:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        terms: {}
+        terms_set:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        wildcard:
+          $ref: '#/components/schemas/UserDefinedValueMap'
+        wrapper: {}
+    UserDefinedValueMap:
+      type: object
+      additionalProperties: {}
+    NeuralQueryEnricherRequestProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        default_model_id:
+          type: string
+        neural_field_default_id:
+          $ref: '#/components/schemas/NeuralFieldMap'
+    NeuralFieldMap:
+      type: object
+      additionalProperties:
+        type: string
+    SearchScriptRequestProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        source:
+          type: string
+        lang:
+          type: string
+      required:
+        - source
+    OversampleRequestProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        sample_factor:
+          type: number
+          format: float
+        content_prefix:
+          type: string
+      required:
+        - sample_factor
+    PhaseResultsProcessor:
+      oneOf:
+        - type: object
+          title: normalization-processor
+          properties:
+            normalization-processor:
+              $ref: '#/components/schemas/NormalizationPhaseResultsProcessor'
+          required:
+            - normalization-processor
+    NormalizationPhaseResultsProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        normalization:
+          $ref: '#/components/schemas/ScoreNormalization'
+        combination:
+          $ref: '#/components/schemas/ScoreCombination'
+    ScoreNormalization:
+      type: object
+      properties:
+        technique:
+          $ref: '#/components/schemas/ScoreNormalizationTechnique'
+    ScoreNormalizationTechnique:
+      type: string
+      enum:
+        - min_max
+        - l2
+    ScoreCombination:
+      type: object
+      properties:
+        technique:
+          $ref: '#/components/schemas/ScoreCombinationTechnique'
+        parameters:
+          type: array
+          items:
+            type: number
+            format: float
+    ScoreCombinationTechnique:
+      type: string
+      enum:
+        - arithmetic_mean
+        - geometric_mean
+        - harmonic_mean

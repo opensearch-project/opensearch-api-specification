@@ -1,0 +1,49 @@
+name: Build latest single-file specs
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Build
+        working-directory: ./tools
+        run: |-
+          npm install
+          export ROOT_PATH=../spec/OpenSearch.openapi.yaml
+          export OUTPUT_PATH=../builds/OpenSearch.latest.yaml
+          npm run merge -- $ROOT_PATH $OUTPUT_PATH
+
+      - name: Upload OpenAPI model artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: opensearch-openapi
+          path: ./builds/OpenSearch.latest.yaml
+
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.5.0
+        if: github.repository == 'opensearch-project/opensearch-api-specification' && github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        if: github.repository == 'opensearch-project/opensearch-api-specification' && github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          commit-message: Build latest single-file specs
+          signoff: true
+          title: Build latest single-file specs
+          body: |
+            I've noticed an update in the `./spec` folder. This pull request updates `./build/OpenSearch.latest.yaml` accordingly.
+          branch: create-pull-request/single-file-specs
