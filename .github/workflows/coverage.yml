@@ -1,0 +1,62 @@
+name: API Coverage
+
+on: [push, pull_request_target]
+
+env:
+  JAVA_VERSION: 11
+  OPENSEARCH_INITIAL_ADMIN_PASSWORD: BobgG7YrtsdKf9M
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Build Spec
+        working-directory: ./tools
+        run: |-
+          npm install
+          export ROOT_PATH=../spec/OpenSearch.openapi.yaml
+          export OUTPUT_PATH=../builds/OpenSearch.latest.yaml
+          npm run merge -- $ROOT_PATH $OUTPUT_PATH
+      - name: Build and Run Docker Container
+        run: |
+          docker build coverage --tag opensearch-with-api-plugin
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_INITIAL_ADMIN_PASSWORD" opensearch-with-api-plugin
+          sleep 15
+      - name: Display OpenSearch Info
+        run: |
+          curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/ | jq
+      - name: Dump and Compare API
+        run: |
+          curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/_plugins/api | jq > ./builds/OpenSearch.current.json
+          docker run --rm --mount type=bind,source=./builds,target=/builds openapitools/openapi-diff:latest /builds/OpenSearch.latest.yaml /builds/OpenSearch.current.json --json /builds/diff.json
+      - name: Show Diff
+        run: |
+          echo "-------- Missing APIs"
+          jq -r '.newEndpoints | group_by(.pathUrl)[] | "\(.[0].pathUrl): \([.[].method])"' builds/diff.json
+          echo "-------- Legacy APIs"
+          jq -r '.missingEndpoints | group_by(.pathUrl)[] | "\(.[0].pathUrl): \([.[].method])"' builds/diff.json
+      - name: Gather Coverage
+        id: coverage
+        shell: bash
+        run: |
+          current=`docker run --rm -i mikefarah/yq:latest -r '.paths | keys | length' < builds/OpenSearch.latest.yaml`
+          total=`jq -r '.paths | keys | length' builds/OpenSearch.current.json`
+          percent=$((current * 100 / total))
+          echo "API specs implemented for $current/$total ($percent%) APIs."
+          cat >>"$GITHUB_OUTPUT" <<EOL
+          current=$current
+          total=$total
+          percent=$percent
+          EOL
+      - uses: peter-evans/create-or-update-comment@v4
+        if: github.event_name == 'pull_request_target'
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            API specs implemented for ${{ steps.coverage.outputs.current }}/${{ steps.coverage.outputs.total }} (${{ steps.coverage.outputs.percent }}%) APIs.
