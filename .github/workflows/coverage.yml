@@ -19,9 +19,10 @@ jobs:
       - name: Build Spec
         working-directory: ./tools
         run: |-
+          mkdir -p ../build
           npm install
-          export ROOT_PATH=../spec/OpenSearch.openapi.yaml
-          export OUTPUT_PATH=../builds/OpenSearch.latest.yaml
+          export ROOT_PATH=../spec/opensearch-openapi.yaml
+          export OUTPUT_PATH=../build/opensearch-openapi.yaml
           npm run merge -- $ROOT_PATH $OUTPUT_PATH
       - name: Build and Run Docker Container
         run: |
@@ -33,20 +34,20 @@ jobs:
           curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/ | jq
       - name: Dump and Compare API
         run: |
-          curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/_plugins/api | jq > ./builds/OpenSearch.current.json
-          docker run --rm --mount type=bind,source=./builds,target=/builds openapitools/openapi-diff:latest /builds/OpenSearch.latest.yaml /builds/OpenSearch.current.json --json /builds/diff.json
+          curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/_plugins/api | jq > ./build/local-openapi.json
+          docker run --rm --mount type=bind,source=./build,target=/build openapitools/openapi-diff:latest /build/opensearch-openapi.yaml /build/local-openapi.json --json /build/diff.json
       - name: Show Diff
         run: |
           echo "-------- Missing APIs"
-          jq -r '.newEndpoints | group_by(.pathUrl)[] | "\(.[0].pathUrl): \([.[].method])"' builds/diff.json
+          jq -r '.newEndpoints | group_by(.pathUrl)[] | "\(.[0].pathUrl): \([.[].method])"' build/diff.json
           echo "-------- Legacy APIs"
-          jq -r '.missingEndpoints | group_by(.pathUrl)[] | "\(.[0].pathUrl): \([.[].method])"' builds/diff.json
+          jq -r '.missingEndpoints | group_by(.pathUrl)[] | "\(.[0].pathUrl): \([.[].method])"' build/diff.json
       - name: Gather Coverage
         id: coverage
         shell: bash
         run: |
-          current=`docker run --rm -i mikefarah/yq:latest -r '.paths | keys | length' < builds/OpenSearch.latest.yaml`
-          total=`jq -r '.paths | keys | length' builds/OpenSearch.current.json`
+          current=`docker run --rm -i mikefarah/yq:latest -r '.paths | keys | length' < build/opensearch-openapi.yaml`
+          total=`jq -r '.paths | keys | length' build/local-openapi.json`
           percent=$((current * 100 / total))
           echo "API specs implemented for $current/$total ($percent%) APIs."
           cat >>"$GITHUB_OUTPUT" <<EOL

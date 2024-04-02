@@ -1,0 +1,45 @@
+name: Build and Publish Spec
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Build
+        working-directory: ./tools
+        run: |-
+          mkdir -p ../build
+          npm install
+          export ROOT_PATH=../spec/opensearch-openapi.yaml
+          export OUTPUT_PATH=../build/opensearch-openapi.yaml
+          npm run merge -- $ROOT_PATH $OUTPUT_PATH
+
+      - name: Extract Branch Name
+        id: branch
+        shell: bash
+        run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+      - uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ steps.branch.outputs.name }}
+          prerelease: true
+          title: OpenSearch OpenAPI Spec (${{ steps.branch.outputs.name }})
+          files: |
+            LICENSE.txt
+            build/*

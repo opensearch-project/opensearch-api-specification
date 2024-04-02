@@ -2,5 +2,5 @@
 
 ## Publishing OpenSearch API Specs
 
-* The [build-single-file-specs](.github/workflows/build-single-file-specs.yml) workflow raises a PR for the changes to the [./build/OpenSearch.latest.yaml](builds/OpenSearch.latest.yaml) whenever a change is made to the [spec folder](./spec).
+* The [build](.github/workflows/build.yml) workflow publishes [a release draft](https://github.com/opensearch-project/opensearch-api-specification/releases) whenever a change is pushed to `main`.
 * The updated OpenAPI specs are hosted on GitHub pages at https://opensearch-project.github.io/opensearch-api-specification/.
