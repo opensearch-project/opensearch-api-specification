@@ -6,10 +6,31 @@ info:
 paths: {}
 components:
   schemas:
+    DeleteConfigsResponse:
+      type: object
+      properties:
+        delete_response_list:
+          $ref: '#/components/schemas/DeleteResponseList'
     DeleteResponseList:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/RestStatus'
+    GetConfigsResponse:
+      type: object
+      properties:
+        start_index:
+          type: integer
+          format: int64
+        total_hits:
+          type: integer
+          format: int64
+        total_hit_relation:
+          $ref: '#/components/schemas/TotalHitRelation'
+        config_list:
+          type: array
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/NotificationsConfigsOutputItem'
     RestStatus:
       type: string
       enum:
@@ -30,23 +51,6 @@ components:
         - not_modified
         - use_proxy
         - temporary_redirect
-    NotificationsConfigs_GetRequestContent:
-      type: object
-      properties:
-        config_id_list:
-          type: array
-          items:
-            type: string
-        sort_field:
-          type: string
-        sort_order:
-          type: string
-        from_index:
-          type: integer
-          format: int32
-        max_items:
-          type: integer
-          format: int32
     NotificationConfigType:
       type: string
       description: Type of notification configuration.
