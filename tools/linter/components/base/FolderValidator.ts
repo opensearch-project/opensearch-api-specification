@@ -12,9 +12,9 @@ export default class FolderValidator<F extends FileValidator> extends ValidatorB
         const folder_name = (parts[0] === undefined ? parts[1] : parts[0]) + '/';
         super(folder_name, 'Folder');
         this.folder_path = folder_path;
-        this.files = fs.readdirSync(this.folder_path).sort().map((file) => {
-            return new file_type(`${this.folder_path}/${file}`) as F;
-        });
+        this.files = fs.readdirSync(this.folder_path).sort()
+            .filter((file) => file !== '.gitkeep')
+            .map((file) => { return new file_type(`${this.folder_path}/${file}`) as F; });
     }
 
     validate(): ValidationError[] {
