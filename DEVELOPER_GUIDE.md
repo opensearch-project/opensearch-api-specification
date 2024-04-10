@@ -83,7 +83,5 @@ This repository includes several penAPI Specification Extensions to fill in any 
 - `x-ignorable`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 
 ## Linting
+We have a linter that validates every `yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter](tools/README.md#linter) tool for more information on how to run it locally. Make sure to run the linter before submitting a PR.
 
-[WORK IN PROGRESS](https://github.com/opensearch-project/opensearch-api-specification/issues/205)
-
-We are working on a linter that will validate every `yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. The linter will be run on every pull request to make sure that the changes are in line with the guidelines.
