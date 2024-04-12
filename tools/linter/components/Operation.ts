@@ -60,6 +60,8 @@ export default class Operation extends ValidatorBase {
         const description = this.spec.description;
         if(!description || description === '')
             return this.error(`Missing description property`);
+        if(!description.endsWith('.'))
+            return this.error(`Description must end with a period`);
     }
 
     validate_operationId(): ValidationError | void {

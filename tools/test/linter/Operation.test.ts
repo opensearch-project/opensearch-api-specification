@@ -58,7 +58,11 @@ test('validate_description()', () => {
     expect(no_description.validate_description())
         .toEqual(no_description.error(`Missing description property`));
 
-    const valid_description = operation({'x-operation-group': 'indices.create', description: 'This is a description'});
+    const invalid_description = operation({'x-operation-group': 'indices.create', description: 'This is a description without a period'});
+    expect(invalid_description.validate_description())
+        .toEqual(invalid_description.error(`Description must end with a period`));
+
+    const valid_description = operation({'x-operation-group': 'indices.create', description: 'This is a description with a period.'});
     expect(valid_description.validate_description())
         .toBeUndefined();
 });
