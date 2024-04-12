@@ -37,7 +37,7 @@ export default class SchemaRefsValidator {
         const search = (obj: Record<string, any>, ref_file: string) => {
             const ref = obj.$ref;
             if(ref) {
-                const file = ref.startsWith('#') ? ref_file : ref.split('#')[0].replace("./", "schemas/");
+                const file = ref.startsWith('#') ? ref_file : `schemas/${ref.split('#')[0]}`;
                 const name = ref.split('/').pop();
                 if(!this.referenced_schemas[file]) this.referenced_schemas[file] = new Set();
                 this.referenced_schemas[file].add(name);
