@@ -1,0 +1,73 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch API
+  description: OpenSearch API
+  version: 1.0.0
+paths:
+  /adopt/{animal}:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/adopt::path.animal'
+      requestBody:
+        $ref: '#/components/requestBodies/adopt'
+      responses:
+        '200':
+          $ref: '#/components/responses/adopt@200'
+components:
+  parameters:
+    _global::query.human:
+      x-global: true
+      name: human
+      in: query
+      description: Whether to return human readable values for statistics.
+      schema:
+        type: boolean
+      default: true
+    adopt::path.animal:
+      name: animal
+      in: path
+      schema:
+        $ref: '#/components/schemas/animals:Animal'
+    indices.create::path.index:
+      name: index
+      in: path
+      schema:
+        type: string
+    indices.create::query.pretty:
+      name: pretty
+      in: query
+      schema:
+        type: boolean
+  requestBodies:
+    adopt: {}
+    indices.create: {}
+  responses:
+    adopt@200:
+      description: ''
+      application/json:
+        schema:
+          type: object
+    indices.create@200:
+      description: ''
+      application/json:
+        schema:
+          type: object
+  schemas:
+    actions:Bark:
+      type: string
+    actions:Meow:
+      type: string
+    animals:Animal:
+      oneOf:
+        - $ref: '#/components/schemas/animals:Dog'
+        - $ref: '#/components/schemas/animals:Cat'
+    animals:Cat:
+      type: object
+      properties:
+        meow:
+          $ref: '#/components/schemas/actions:Meow'
+    animals:Dog:
+      type: object
+      properties:
+        bark:
+          $ref: '#/components/schemas/actions:Bark'

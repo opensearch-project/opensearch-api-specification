@@ -17,14 +17,14 @@ export default class OpenApiMerger {
         this.root_folder = this.root_path.split('/').slice(0, -1).join('/');
         this.spec = yaml.parse(fs.readFileSync(this.root_path, 'utf8'));
         this.spec.components = {
-            parameters: {},
+            parameters: this.spec.components?.parameters || {},
             requestBodies: {},
             responses: {},
             schemas: {},
         };
     }
 
-    merge(output_path: string | null): OpenAPIV3.Document {
+    merge(output_path?: string): OpenAPIV3.Document {
         this.#merge_namespaces();
         this.#merge_schemas();
         this.#sort_spec_keys();
