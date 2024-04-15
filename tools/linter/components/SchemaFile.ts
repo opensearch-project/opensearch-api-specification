@@ -34,9 +34,9 @@ export default class SchemaFile extends FileValidator {
     validate_category(category = this.category): ValidationError | void {
         if(category === '_common') return;
         if(!category.match(CATEGORY_REGEX))
-            return this.error(`Invalid category name '${category}'. Must match regex: ${CATEGORY_REGEX.source}`, 'File Name');
+            return this.error(`Invalid category name '${category}'. Must match regex: /${CATEGORY_REGEX.source}/.`, 'File Name');
         const name = category.split('.')[1];
         if(name !== '_common' && !name.match(NAME_REGEX))
-            return this.error(`Invalid category name '${category}'. '${name}' does not match regex: ${NAME_REGEX.source}`, 'File Name');
+            return this.error(`Invalid category name '${category}'. '${name}' does not match regex: /${NAME_REGEX.source}/.`, 'File Name');
     }
 }

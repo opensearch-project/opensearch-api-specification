@@ -11,7 +11,7 @@ test('validate()', () => {
         {
             file: "opensearch-openapi.yaml",
             location: "Path: /{index}",
-            message: "Unresolved path reference: Path /{index} does not exist in namespace file namespaces/indices.yaml"
+            message: "Unresolved path reference: Path /{index} does not exist in namespace file namespaces/indices.yaml."
         },
         {
             file: "opensearch-openapi.yaml",

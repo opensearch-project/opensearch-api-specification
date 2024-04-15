@@ -51,7 +51,7 @@ export default class PathRefsValidator {
                 if(!available.has(path)) return {
                     file: this.root_file.file,
                     location: `Path: ${path}`,
-                    message: `Unresolved path reference: Path ${path} does not exist in namespace file ${ref_file}`,
+                    message: `Unresolved path reference: Path ${path} does not exist in namespace file ${ref_file}.`,
                 };
             }).filter((e) => e) as ValidationError[];
         });

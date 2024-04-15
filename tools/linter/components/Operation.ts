@@ -41,7 +41,7 @@ export default class Operation extends ValidatorBase {
         if(!this.group || this.group === '')
             return this.error(`Missing x-operation-group property`);
         if(!this.group.match(GROUP_REGEX))
-            return this.error(`Invalid x-operation-group '${this.group}'. Must match regex: ${GROUP_REGEX.source}`);
+            return this.error(`Invalid x-operation-group '${this.group}'. Must match regex: /${GROUP_REGEX.source}/.`);
     }
 
     validate_namespace(): ValidationError | void {
@@ -49,27 +49,27 @@ export default class Operation extends ValidatorBase {
 
         if(expected_namespace === '_core' && this.namespace === undefined) return;
         if(expected_namespace === '_core' && this.namespace === '_core')
-            return this.error(`Invalid x-operation-group '${this.group}'. '_core' namespace must be omitted in x-operation-group`);
+            return this.error(`Invalid x-operation-group '${this.group}'. '_core' namespace must be omitted in x-operation-group.`);
 
         if(this.namespace === expected_namespace ) return;
         return this.error(`Invalid x-operation-group '${this.group}'. '${this.namespace}' namespace detected. ` +
-            `Only '${expected_namespace}' namespace is allowed in this file`);
+            `Only '${expected_namespace}' namespace is allowed in this file.`);
     }
 
     validate_description(): ValidationError | void {
         const description = this.spec.description;
         if(!description || description === '')
-            return this.error(`Missing description property`);
+            return this.error(`Missing description property.`);
         if(!description.endsWith('.'))
-            return this.error(`Description must end with a period`);
+            return this.error(`Description must end with a period.`);
     }
 
     validate_operationId(): ValidationError | void {
         const id = this.spec.operationId;
         if(!id || id === '')
-            return this.error(`Missing operationId property`);
+            return this.error(`Missing operationId property.`);
         if(!id.match(new RegExp(`^${this.group_regex}\\.[0-9]+$`)))
-            return this.error(`Invalid operationId '${id}'. Must be in {x-operation-group}.{number} format`);
+            return this.error(`Invalid operationId '${id}'. Must be in {x-operation-group}.{number} format.`);
     }
 
     validate_requestBody(): ValidationError | void {
@@ -77,16 +77,16 @@ export default class Operation extends ValidatorBase {
         if(!body) return;
         const expected = `#/components/requestBodies/${this.group}`;
         if(body.$ref !== expected)
-            return this.error(`The requestBody must be a reference object to '${expected}'`);
+            return this.error(`The requestBody must be a reference object to '${expected}'.`);
     }
 
     validate_responses(): ValidationError[] {
         const responses = this.spec.responses;
-        if(!responses || _.keys(responses).length == 0) return [this.error(`Missing responses property`)];
+        if(!responses || _.keys(responses).length == 0) return [this.error(`Missing responses property.`)];
         return _.entries(responses).map(([code, response]) => {
             const expected = `#/components/responses/${this.group}@${code}`;
             if(response.$ref && response.$ref !== expected)
-                return this.error(`The ${code} response must be a reference object to '${expected}'`);
+                return this.error(`The ${code} response must be a reference object to '${expected}'.`);
             return;
         }).filter((error) => error) as ValidationError[];
     }
@@ -97,7 +97,7 @@ export default class Operation extends ValidatorBase {
         const regex = new RegExp(`^#/components/parameters/${this.group_regex}::((path)|(query))\\.[a-z0-9_.]+$`);
         for(const parameter of parameters){
             if(!parameter.$ref.match(regex))
-                return this.error(`Every parameter must be a reference object to '#/components/parameters/{x-operation-group}::{path|query}.{parameter_name}'`);
+                return this.error(`Every parameter must be a reference object to '#/components/parameters/{x-operation-group}::{path|query}.{parameter_name}'.`);
         }
     }
 
@@ -105,7 +105,7 @@ export default class Operation extends ValidatorBase {
         const path_params = this.path_params();
         const expected = this.path.match(/{[a-z0-9_]+}/g)?.map(p => p.slice(1, -1)) || [];
         if(path_params.sort().join(', ')  !== expected.sort().join(', '))
-            return this.error(`Path parameters must match the parameters in the path: {${expected.join('}, {')}}`);
+            return this.error(`Path parameters must match the parameters in the path: {${expected.join('}, {')}}.`);
     }
 
     path_params(): string[] {

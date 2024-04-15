@@ -60,7 +60,7 @@ export default class NamespaceFile extends FileValidator {
     validate_name(name = this.namespace): ValidationError | void {
         if(name === '_core') return;
         if(!name.match(NAME_REGEX))
-            return this.error(`Invalid namespace name '${name}'. Must match regex: ${NAME_REGEX.source}`, 'File Name');
+            return this.error(`Invalid namespace name '${name}'. Must match regex: /${NAME_REGEX.source}/.`, 'File Name');
         return;
     }
 
@@ -96,7 +96,7 @@ export default class NamespaceFile extends FileValidator {
                     `#/components/parameters/#${name}`);
             if(!p.name.match(/^[a-z0-9._]+$/))
                 return this.error(
-                    `Invalid parameter name '${p.name}'. A parameter's name can only contain lower-cased alphanumerics, underscores, and dots`,
+                    `Invalid parameter name '${p.name}'. A parameter's name can only contain lower-cased alphanumerics, underscores, and periods.`,
                     `#/components/parameters/#${name}`);
         }).filter((e) => e) as ValidationError[];
     }

@@ -10,12 +10,12 @@ test('validate_category()', () => {
    expect(validator.validate_category('cat._invalid_name')).toEqual({
       file: "schemas/_common.empty.yaml",
       location: "File Name",
-      message: "Invalid category name 'cat._invalid_name'. '_invalid_name' does not match regex: ^[a-z]+[a-z_]*[a-z]+$"
+      message: "Invalid category name 'cat._invalid_name'. '_invalid_name' does not match regex: /^[a-z]+[a-z_]*[a-z]+$/."
    });
    expect(validator.validate_category('invalid_regex')).toEqual({
       file: "schemas/_common.empty.yaml",
       location: "File Name",
-      message: "Invalid category name 'invalid_regex'. Must match regex: ^[a-z_]+\\.[a-z_]+$"
+      message: "Invalid category name 'invalid_regex'. Must match regex: /^[a-z_]+\\.[a-z_]+$/."
    });
 });
 

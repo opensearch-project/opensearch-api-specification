@@ -16,7 +16,7 @@ test('validate_name()', () => {
     expect(ns_file.validate_name('_cat')).toEqual({
         file: 'namespaces/indices.yaml',
         location: 'File Name',
-        message: `Invalid namespace name '_cat'. Must match regex: ^[a-z]+[a-z_]*[a-z]+$`
+        message: `Invalid namespace name '_cat'. Must match regex: /^[a-z]+[a-z_]*[a-z]+$/.`
     });
 });
 
@@ -70,7 +70,7 @@ test('validate_parameter_refs()', () => {
         {
             file: "namespaces/invalid_components.yaml",
             location: "#/components/parameters/#indices.create::query.ExpandWildcards",
-            message: "Invalid parameter name 'ExpandWildcards'. A parameter's name can only contain lower-cased alphanumerics, underscores, and dots"
+            message: "Invalid parameter name 'ExpandWildcards'. A parameter's name can only contain lower-cased alphanumerics, underscores, and periods."
         },
         {
             file: "namespaces/invalid_components.yaml",
