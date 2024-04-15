@@ -16,7 +16,7 @@ test('validate_name()', () => {
     expect(ns_file.validate_name('_cat')).toEqual({
         file: 'namespaces/indices.yaml',
         location: 'File Name',
-        message: `Invalid namespace name '_cat'. Must match regex: ^[a-z]+[a-z_]*[a-z]+$`
+        message: `Invalid namespace name '_cat'. Must match regex: /^[a-z]+[a-z_]*[a-z]+$/.`
     });
 });
 
@@ -68,9 +68,14 @@ test('validate_parameter_refs()', () => {
    const validator = namespace_file('invalid_components.yaml');
     expect(validator.validate_parameter_refs()).toEqual([
         {
-            "file": `namespaces/invalid_components.yaml`,
-            "location": `#/components/parameters/#indices.create::query.h`,
-            "message": `Parameter component 'indices.create::query.h' must be named 'indices.create::query.v' since it is a query parameter named 'v'.`
+            file: "namespaces/invalid_components.yaml",
+            location: "#/components/parameters/#indices.create::query.ExpandWildcards",
+            message: "Invalid parameter name 'ExpandWildcards'. A parameter's name can only contain lower-cased alphanumerics, underscores, and periods."
+        },
+        {
+            file: "namespaces/invalid_components.yaml",
+            location: "#/components/parameters/#indices.create::query.h",
+            message: "Parameter component 'indices.create::query.h' must be named 'indices.create::query.v' since it is a query parameter named 'v'."
         }
     ]);
 });

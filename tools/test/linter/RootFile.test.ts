@@ -6,12 +6,12 @@ test('validate()', () => {
         {
             file: "root.yaml",
             location: "Path: /",
-            message: "Every path must be a reference object to a path in a namespace file"
+            message: "Every path must be a reference object to a path in a namespace file."
         },
         {
             file: "root.yaml",
             location: "Path: /{index}",
-            message: "Every path must be a reference object to a path in a namespace file"
+            message: "Every path must be a reference object to a path in a namespace file."
         }
     ]);
 });

@@ -1,0 +1,27 @@
+name: Validate Spec
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'spec/**'
+      - 'tools/linter/**'
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'spec/**'
+      - 'tools/linter/**'
+
+jobs:
+  lint-spec:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.10.0
+      - run: npm install
+      - run: npm run lint -- ../spec

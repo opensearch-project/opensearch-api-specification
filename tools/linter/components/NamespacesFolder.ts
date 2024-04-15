@@ -22,7 +22,7 @@ export default class NamespacesFolder extends FolderValidator<NamespaceFile> {
         }
         return Object.entries(paths).map(([path, namespaces]) => {
             if(namespaces.length > 1)
-                return this.error(`Duplicate path '${path}' found in namespaces: ${namespaces.sort().join(', ')}`);
+                return this.error(`Duplicate path '${path}' found in namespaces: ${namespaces.sort().join(', ')}.`);
         }).filter((e) => e) as ValidationError[];
     }
 }
