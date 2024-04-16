@@ -3094,9 +3094,29 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/nodes.usage@200'
-  /_nodes/{node_id}:
+  /_nodes/{metric}:
     get:
       operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '1.0'
+      description: Returns information about nodes in the cluster.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-info/
+      parameters:
+        - $ref: '#/components/parameters/nodes.info::path.metric'
+        - $ref: '#/components/parameters/nodes.info::query.flat_settings'
+        - $ref: '#/components/parameters/nodes.info::query.timeout'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
+  /_nodes/{node_id}:
+    get:
+      operationId: nodes.info.2
       x-operation-group: nodes.info
       x-version-added: '1.0'
       description: Returns information about nodes in the cluster.
@@ -3309,7 +3329,7 @@ paths:
           $ref: '#/components/responses/nodes.usage@200'
   /_nodes/{node_id}/{metric}:
     get:
-      operationId: nodes.info.2
+      operationId: nodes.info.3
       x-operation-group: nodes.info
       x-version-added: '1.0'
       description: Returns information about nodes in the cluster.
@@ -10975,10 +10995,12 @@ components:
     cluster.delete_component_template::path.name:
       in: path
       name: name
-      description: Comma-separated list or wildcard expression of component template names used to limit the request.
+      description: |-
+        Name of the component template to delete.
+        Wildcard (*) expressions are supported.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Names'
+        $ref: '#/components/schemas/_common:Name'
       style: simple
     cluster.delete_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -11025,11 +11047,11 @@ components:
       in: path
       name: name
       description: |-
-        Comma-separated list of component template names used to limit the request.
+        Name of the component template to check existence of.
         Wildcard (*) expressions are supported.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Names'
+        $ref: '#/components/schemas/_common:Name'
       style: simple
     cluster.exists_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -11064,7 +11086,7 @@ components:
       in: path
       name: name
       description: |-
-        Comma-separated list of component template names used to limit the request.
+        Name of the component template to retrieve.
         Wildcard (`*`) expressions are supported.
       required: true
       schema:
@@ -11192,7 +11214,7 @@ components:
       name: level
       description: Can be one of cluster, indices or shards. Controls the details level of the health information returned.
       schema:
-        $ref: '#/components/schemas/_common:Level'
+        $ref: '#/components/schemas/cluster.health:Level'
       style: form
     cluster.health::query.local:
       in: query
@@ -11488,7 +11510,9 @@ components:
       description: Limit the information returned to the specified metrics
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        type: array
+        items:
+          $ref: '#/components/schemas/cluster.state:Metric'
       style: simple
     cluster.state::query.allow_no_indices:
       in: query
@@ -11528,7 +11552,7 @@ components:
     cluster.state::query.local:
       in: query
       name: local
-      description: 'Return local information, do not retrieve the state from master node (default: false)'
+      description: 'Return local information, do not retrieve the state from cluster-manager node (default: false)'
       schema:
         type: boolean
       style: form
@@ -12973,7 +12997,7 @@ components:
       description: A comma separated list of indices to add a block to
       required: true
       schema:
-        $ref: '#/components/schemas/_common:IndexName'
+        $ref: '#/components/schemas/_common:Indices'
       style: simple
     indices.add_block::query.allow_no_indices:
       in: query
@@ -13452,10 +13476,10 @@ components:
     indices.delete_index_template::path.name:
       in: path
       name: name
-      description: Comma-separated list of index template names used to limit the request. Wildcard (*) expressions are supported.
+      description: Name of the index template to delete. Wildcard (*) expressions are supported.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Names'
+        $ref: '#/components/schemas/_common:Name'
       style: simple
     indices.delete_index_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -13630,7 +13654,7 @@ components:
     indices.exists_index_template::path.name:
       in: path
       name: name
-      description: Comma-separated list of index template names used to limit the request. Wildcard (*) expressions are supported.
+      description: Name of the index template to check existence of. Wildcard (*) expressions are supported.
       required: true
       schema:
         $ref: '#/components/schemas/_common:Name'
@@ -13693,7 +13717,7 @@ components:
     indices.exists_template::query.local:
       in: query
       name: local
-      description: 'Return local information, do not retrieve the state from master node (default: false)'
+      description: 'Return local information, do not retrieve the state from cluster-manager node (default: false)'
       schema:
         type: boolean
       style: form
@@ -14030,7 +14054,7 @@ components:
     indices.get_index_template::path.name:
       in: path
       name: name
-      description: Comma-separated list of index template names used to limit the request. Wildcard (*) expressions are supported.
+      description: Name of the index template to retrieve. Wildcard (*) expressions are supported.
       required: true
       schema:
         $ref: '#/components/schemas/_common:Name'
@@ -16301,7 +16325,9 @@ components:
       description: Limits the information returned to the specific metrics. Supports a comma-separated list, such as http,ingest.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        type: array
+        items:
+          $ref: '#/components/schemas/nodes.info:Metric'
       style: simple
     nodes.info::path.node_id:
       in: path
@@ -16348,7 +16374,9 @@ components:
       description: Limit the information returned for indices metric to the specific index metrics. It can be used only if indices (or all) metric is specified.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        type: array
+        items:
+          $ref: '#/components/schemas/nodes.stats:IndexMetric'
       style: simple
     nodes.stats::path.metric:
       in: path
@@ -16356,7 +16384,9 @@ components:
       description: Limit the information returned to the specified metrics
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        type: array
+        items:
+          $ref: '#/components/schemas/nodes.stats:Metric'
       style: simple
     nodes.stats::path.node_id:
       in: path
@@ -16392,7 +16422,9 @@ components:
       name: groups
       description: Comma-separated list of search groups to include in the search statistics.
       schema:
-        type: boolean
+        type: array
+        items:
+          type: string
       style: form
     nodes.stats::query.include_segment_file_sizes:
       in: query
@@ -16432,7 +16464,9 @@ components:
         A comma-separated list of the following options: `_all`, `rest_actions`.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        type: array
+        items:
+          $ref: '#/components/schemas/nodes.usage:Metric'
       style: simple
     nodes.usage::path.node_id:
       in: path
@@ -17924,7 +17958,7 @@ components:
     snapshot.get_repository::query.local:
       in: query
       name: local
-      description: 'Return local information, do not retrieve the state from master node (default: false)'
+      description: 'Return local information, do not retrieve the state from cluster-manager node (default: false)'
       schema:
         type: boolean
       style: form
@@ -31033,10 +31067,15 @@ components:
       type: string
       enum:
         - b
+        - k
         - kb
+        - m
         - mb
+        - g
         - gb
+        - t
         - tb
+        - p
         - pb
     _common:ClusterDetails:
       type: object
@@ -35521,13 +35560,25 @@ components:
         node.role:
           description: |-
             The roles of the node.
-            Returned values include `c`(cold node), `d`(data node), `f`(frozen node), `h`(hot node), `i`(ingest node), `l`(machine learning node), `m` (master eligible node), `r`(remote cluster client node), `s`(content node), `t`(transform node), `v`(voting-only node), `w`(warm node),and `-`(coordinating node only).
+            Returned values include `c`(cold node), `d`(data node), `f`(frozen node), `h`(hot node), `i`(ingest node), `l`(machine learning node), `m` (cluster-manager eligible node), `r`(remote cluster client node), `s`(content node), `t`(transform node), `v`(voting-only node), `w`(warm node),and `-`(coordinating node only).
+          type: string
+        node.roles:
+          description: |-
+            A comma-separated list of the roles of the node.
+            Returned values may include but are not limited to: `data`, `ingest`, `master`, `cluster_manager`, `remote_cluster_client`, `search`, and `-`(coordinating node only).
+          type: string
+        cluster_manager:
+          description: |-
+            Indicates whether the node is the elected cluster-manager node.
+            Returned values include `*`(elected cluster-manager) and `-`(not elected cluster-manager).
           type: string
         master:
           description: |-
             Indicates whether the node is the elected master node.
             Returned values include `*`(elected master) and `-`(not elected master).
           type: string
+          x-version-deprecated: 2.0.0
+          x-deprecation-message: To promote inclusive language, use 'cluster_manager' instead.
         name:
           $ref: '#/components/schemas/_common:Name'
         completion.size:
@@ -36718,6 +36769,13 @@ components:
         - relocating_shards
         - status
         - unassigned_shards
+    cluster.health:Level:
+      type: string
+      enum:
+        - cluster
+        - indices
+        - shards
+        - awareness_attributes
     cluster.health:ShardHealthStats:
       type: object
       properties:
@@ -36956,6 +37014,18 @@ components:
         - index
         - node
         - shard
+    cluster.state:Metric:
+      type: string
+      enum:
+        - blocks
+        - metadata
+        - nodes
+        - routing_table
+        - routing_nodes
+        - master_node
+        - cluster_manager_node
+        - version
+        - _all
     cluster.stats:CharFilterTypes:
       type: object
       properties:
@@ -41642,6 +41712,22 @@ components:
             - type: string
       required:
         - enabled
+    nodes.info:Metric:
+      type: string
+      enum:
+        - settings
+        - os
+        - process
+        - jvm
+        - thread_pool
+        - transport
+        - http
+        - plugins
+        - ingest
+        - aggregations
+        - indices
+        - search_pipelines
+        - _all
     nodes.info:NodeInfo:
       type: object
       properties:
@@ -42298,6 +42384,43 @@ components:
           required:
             - cluster_name
             - nodes
+    nodes.stats:IndexMetric:
+      type: string
+      enum:
+        - store
+        - indexing
+        - get
+        - search
+        - merge
+        - flush
+        - refresh
+        - query_cache
+        - fielddata
+        - docs
+        - warmer
+        - completion
+        - segments
+        - translog
+        - suggest
+        - request_cache
+        - recovery
+        - _all
+    nodes.stats:Metric:
+      type: string
+      enum:
+        - breaker
+        - fs
+        - http
+        - indices
+        - jvm
+        - os
+        - process
+        - thread_pool
+        - transport
+        - discovery
+        - indexing_pressure
+        - search_pipeline
+        - _all
     nodes.stats:ResponseBase:
       allOf:
         - $ref: '#/components/schemas/nodes._common:NodesResponseBase'
@@ -42311,6 +42434,11 @@ components:
                 $ref: '#/components/schemas/nodes._common:Stats'
           required:
             - nodes
+    nodes.usage:Metric:
+      type: string
+      enum:
+        - rest_actions
+        - _all
     nodes.usage:NodeUsage:
       type: object
       properties:
