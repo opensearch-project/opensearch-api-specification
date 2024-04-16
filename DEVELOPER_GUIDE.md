@@ -81,6 +81,7 @@ This repository includes several penAPI Specification Extensions to fill in any 
 - `x-version-removed`: OpenSearch version when the operation/parameter was removed.
 - `x-deprecation-message`: Reason for deprecation and guidance on how to prepare for the next major version.
 - `x-ignorable`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
+- `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml).
 
 ## Linting
 We have a linter that validates every `yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter](tools/README.md#linter) tool for more information on how to run it locally. Make sure to run the linter before submitting a PR.

@@ -28,7 +28,7 @@ export function sortByKey(obj: Record<string, any>, priorities: string[] = []) {
 }
 
 export function write2file(file_path: string, content: Record<string, any>): void {
-    fs.writeFileSync(file_path, quoteRefs(YAML.stringify(content, {lineWidth: 0, singleQuote: true})));
+    fs.writeFileSync(file_path, quoteRefs(YAML.stringify(removeAnchors(content), {lineWidth: 0, singleQuote: true})));
 }
 
 function quoteRefs(str: string): string {
@@ -39,4 +39,9 @@ function quoteRefs(str: string): string {
         }
         return line
     }).join('\n');
+}
+
+function removeAnchors(content: Record<string, any>): Record<string, any> {
+    const replacer = (key: string, value: any) => key === '$anchor' ? undefined : value;
+    return JSON.parse(JSON.stringify(content, replacer));
 }
