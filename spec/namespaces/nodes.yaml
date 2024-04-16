@@ -253,9 +253,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/nodes.usage@200'
-  /_nodes/{node_id}:
+  /_nodes/{metric}:
     get:
       operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '1.0'
+      description: Returns information about nodes in the cluster.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-info/
+      parameters:
+        - $ref: '#/components/parameters/nodes.info::path.metric'
+        - $ref: '#/components/parameters/nodes.info::query.flat_settings'
+        - $ref: '#/components/parameters/nodes.info::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
+  /_nodes/{node_id}:
+    get:
+      operationId: nodes.info.2
       x-operation-group: nodes.info
       x-version-added: '1.0'
       description: Returns information about nodes in the cluster.
@@ -423,7 +438,7 @@ paths:
           $ref: '#/components/responses/nodes.usage@200'
   /_nodes/{node_id}/{metric}:
     get:
-      operationId: nodes.info.2
+      operationId: nodes.info.3
       x-operation-group: nodes.info
       x-version-added: '1.0'
       description: Returns information about nodes in the cluster.
@@ -536,7 +551,9 @@ components:
       description: Limits the information returned to the specific metrics. Supports a comma-separated list, such as http,ingest.
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Metrics'
+        type: array
+        items:
+          $ref: '../schemas/nodes.info.yaml#/components/schemas/Metric'
       style: simple
     nodes.info::path.node_id:
       in: path
@@ -583,7 +600,9 @@ components:
       description: Limit the information returned for indices metric to the specific index metrics. It can be used only if indices (or all) metric is specified.
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Metrics'
+        type: array
+        items:
+          $ref: '../schemas/nodes.stats.yaml#/components/schemas/IndexMetric'
       style: simple
     nodes.stats::path.metric:
       in: path
@@ -591,7 +610,9 @@ components:
       description: Limit the information returned to the specified metrics
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Metrics'
+        type: array
+        items:
+          $ref: '../schemas/nodes.stats.yaml#/components/schemas/Metric'
       style: simple
     nodes.stats::path.node_id:
       in: path
@@ -627,7 +648,9 @@ components:
       name: groups
       description: Comma-separated list of search groups to include in the search statistics.
       schema:
-        type: boolean
+        type: array
+        items:
+          type: string
       style: form
     nodes.stats::query.include_segment_file_sizes:
       in: query
@@ -667,7 +690,9 @@ components:
         A comma-separated list of the following options: `_all`, `rest_actions`.
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Metrics'
+        type: array
+        items:
+          $ref: '../schemas/nodes.usage.yaml#/components/schemas/Metric'
       style: simple
     nodes.usage::path.node_id:
       in: path

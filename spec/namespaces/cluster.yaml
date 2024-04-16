@@ -773,10 +773,12 @@ components:
     cluster.delete_component_template::path.name:
       in: path
       name: name
-      description: Comma-separated list or wildcard expression of component template names used to limit the request.
+      description: |-
+        Name of the component template to delete.
+        Wildcard (*) expressions are supported.
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Names'
+        $ref: '../schemas/_common.yaml#/components/schemas/Name'
       style: simple
     cluster.delete_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -823,11 +825,11 @@ components:
       in: path
       name: name
       description: |-
-        Comma-separated list of component template names used to limit the request.
+        Name of the component template to check existence of.
         Wildcard (*) expressions are supported.
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Names'
+        $ref: '../schemas/_common.yaml#/components/schemas/Name'
       style: simple
     cluster.exists_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -862,7 +864,7 @@ components:
       in: path
       name: name
       description: |-
-        Comma-separated list of component template names used to limit the request.
+        Name of the component template to retrieve.
         Wildcard (`*`) expressions are supported.
       required: true
       schema:
@@ -990,7 +992,7 @@ components:
       name: level
       description: Can be one of cluster, indices or shards. Controls the details level of the health information returned.
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Level'
+        $ref: '../schemas/cluster.health.yaml#/components/schemas/Level'
       style: form
     cluster.health::query.local:
       in: query
@@ -1286,7 +1288,9 @@ components:
       description: Limit the information returned to the specified metrics
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Metrics'
+        type: array
+        items:
+          $ref: '../schemas/cluster.state.yaml#/components/schemas/Metric'
       style: simple
     cluster.state::query.allow_no_indices:
       in: query
@@ -1326,7 +1330,7 @@ components:
     cluster.state::query.local:
       in: query
       name: local
-      description: 'Return local information, do not retrieve the state from master node (default: false)'
+      description: 'Return local information, do not retrieve the state from cluster-manager node (default: false)'
       schema:
         type: boolean
       style: form
