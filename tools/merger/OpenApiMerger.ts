@@ -2,12 +2,14 @@ import { OpenAPIV3 } from "openapi-types";
 import fs from 'fs';
 import _ from 'lodash';
 import yaml from 'yaml';
+import { write2file } from '../helpers';
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
     root_path: string;
     root_folder: string;
     spec: Record<string, any>;
+    global_param_refs: OpenAPIV3.ReferenceObject[];
 
     paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {}; // namespace -> path -> path_item_object
     schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {}; // category -> schema -> schema_object
@@ -16,8 +18,10 @@ export default class OpenApiMerger {
         this.root_path = fs.realpathSync(root_path);
         this.root_folder = this.root_path.split('/').slice(0, -1).join('/');
         this.spec = yaml.parse(fs.readFileSync(this.root_path, 'utf8'));
+        const global_params: OpenAPIV3.ParameterObject = this.spec.components?.parameters || {};
+        this.global_param_refs = Object.keys(global_params).map(param => ({$ref: `#/components/parameters/${param}`}));
         this.spec.components = {
-            parameters: this.spec.components?.parameters || {},
+            parameters: global_params,
             requestBodies: {},
             responses: {},
             schemas: {},
@@ -25,12 +29,23 @@ export default class OpenApiMerger {
     }
 
     merge(output_path?: string): OpenAPIV3.Document {
-        this.#merge_namespaces();
         this.#merge_schemas();
+        this.#merge_namespaces();
+        this.#apply_global_params();
         this.#sort_spec_keys();
 
-        if(output_path) fs.writeFileSync(output_path, yaml.stringify(this.spec, {lineWidth: 0, singleQuote: true}))
+        if(output_path) write2file(output_path, this.spec);
         return this.spec as OpenAPIV3.Document;
+    }
+
+    // Apply global parameters to all operations in the spec.
+    #apply_global_params(): void {
+        Object.entries(this.spec.paths).forEach(([path, pathItem]) => {
+            Object.entries(pathItem!).forEach(([method, operation]) => {
+                const params = operation.parameters || [];
+                operation.parameters = [...params, ...Object.values(this.global_param_refs)];
+            });
+        });
     }
 
     // Merge files from <spec_root>/namespaces folder.

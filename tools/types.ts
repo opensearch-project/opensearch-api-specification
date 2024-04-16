@@ -18,6 +18,7 @@ export interface ParameterSpec extends OpenAPIV3.ParameterObject {
     'x-data-type'?: string;
     'x-version-deprecated'?: string;
     'x-deprecation-message'?: string;
+    'x-global'?: boolean;
 }
 
 export interface ValidationError {
