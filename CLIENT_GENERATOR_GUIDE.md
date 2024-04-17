@@ -52,3 +52,9 @@ Some operations accept a bulk of data in the request body. For example, the `bul
 As of right now, most clients only validate whether required parameters are present. The clients do not validate the values of parameters against the enum values or regex patterns. This is to reduce performance overhead for the clients as the validation is already done on the server. However, the list of enum values and regex patterns are often written into the parameter description.
 
 Some clients also check for the validity of query string parameter names to guard the users from typos. If you decide to implement this feature, make sure that it's performant. Scripting languages like Python and Ruby require the code to be loaded into memory at runtime, and constructs used for this feature can be expensive to load, as far as micro-services are concerned.
+
+## Global Parameters
+All operations in the spec contain a set of parameters that are common across all operations. These parameters are denoted with `x-global: true` vendor extension. The generated clients should find a way to DRY these parameters.
+
+## Parameter Default Values
+Parameters can have default values either through its schema or the `x-default` vendor extension. When both are present, the `x-default` value takes precedence.
