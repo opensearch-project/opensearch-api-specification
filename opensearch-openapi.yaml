@@ -5309,14 +5309,32 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
-  /_search/pipeline/{pipeline}:
+  /_search/pipeline/{id}:
+    delete:
+      operationId: search_pipeline.delete.0
+      x-operation-group: search_pipeline.delete
+      x-version-added: '2.9'
+      description: Deletes the specified search pipeline.
+      parameters:
+        - $ref: '#/components/parameters/search_pipeline.delete::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/search_pipeline.delete::query.timeout'
+        - $ref: '#/components/parameters/search_pipeline.delete::path.id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_pipeline.delete@200'
     get:
       operationId: search_pipeline.get.0
       x-operation-group: search_pipeline.get
       x-version-added: '2.9'
       description: Retrieves information about a specified search pipeline.
       parameters:
-        - $ref: '#/components/parameters/search_pipeline.get::path.pipeline'
+        - $ref: '#/components/parameters/search_pipeline.get::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/search_pipeline.get::path.id'
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
@@ -5333,7 +5351,9 @@ paths:
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/search-pipelines/creating-search-pipeline/
       parameters:
-        - $ref: '#/components/parameters/search_pipeline.create::path.pipeline'
+        - $ref: '#/components/parameters/search_pipeline.create::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/search_pipeline.create::query.timeout'
+        - $ref: '#/components/parameters/search_pipeline.create::path.id'
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
@@ -17346,18 +17366,57 @@ components:
       schema:
         type: boolean
       style: form
-    search_pipeline.create::path.pipeline:
-      name: pipeline
+    search_pipeline.create::path.id:
+      name: id
       in: path
       schema:
         type: string
       required: true
-    search_pipeline.get::path.pipeline:
-      name: pipeline
+    search_pipeline.create::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '#/components/schemas/_common:Duration'
+      x-version-added: 2.0.0
+    search_pipeline.create::query.timeout:
+      name: timeout
+      in: query
+      description: Operation timeout.
+      schema:
+        $ref: '#/components/schemas/_common:Duration'
+    search_pipeline.delete::path.id:
+      name: id
       in: path
       schema:
         type: string
       required: true
+    search_pipeline.delete::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '#/components/schemas/_common:Duration'
+      x-version-added: 2.0.0
+    search_pipeline.delete::query.timeout:
+      name: timeout
+      in: query
+      description: Operation timeout.
+      schema:
+        $ref: '#/components/schemas/_common:Duration'
+    search_pipeline.get::path.id:
+      name: id
+      in: path
+      description: Comma-separated list of search pipeline ids. Wildcards supported.
+      schema:
+        type: string
+    search_pipeline.get::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '#/components/schemas/_common:Duration'
+      x-version-added: 2.0.0
     search_shards::path.index:
       in: path
       name: index
@@ -21614,6 +21673,15 @@ components:
           schema:
             $ref: '#/components/schemas/_core.search:ResponseBody'
     search_pipeline.create@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    search_pipeline.delete@200:
       description: ''
       content:
         application/json:
