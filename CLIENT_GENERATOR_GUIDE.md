@@ -56,5 +56,5 @@ Some clients also check for the validity of query string parameter names to guar
 ## Global Parameters
 All operations in the spec contain a set of parameters that are common across all operations. These parameters are denoted with `x-global: true` vendor extension. The generated clients should find a way to DRY these parameters.
 
-## Parameter Default Values
-Parameters can have default values either through its schema or the `x-default` vendor extension. When both are present, the `x-default` value takes precedence.
+## Default Parameter Values
+Parameters can have default values either through schema or the `x-default` vendor extension. When both are present, `x-default` will takes precedence.
