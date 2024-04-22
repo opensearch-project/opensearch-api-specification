@@ -26,7 +26,6 @@ export default [
       '@typescript-eslint/consistent-type-imports': 'warn',
       '@typescript-eslint/dot-notation': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'warn',
-      '@typescript-eslint/indent': 'warn',
       '@typescript-eslint/keyword-spacing': 'warn',
       '@typescript-eslint/lines-between-class-members': 'warn',
       '@typescript-eslint/member-delimiter-style': 'warn',
