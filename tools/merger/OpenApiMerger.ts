@@ -3,7 +3,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import yaml from 'yaml';
 import { write2file } from '../helpers';
-import ReplacedOpsGenerator from "./ReplacedOpsGenerator";
+import SupersededOpsGenerator from "./SupersededOpsGenerator";
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
@@ -128,7 +128,7 @@ export default class OpenApiMerger {
     }
 
     #generate_replaced_ops(): void {
-        const gen = new ReplacedOpsGenerator(this.root_folder);
+        const gen = new SupersededOpsGenerator(this.root_folder);
         gen.generate(this.spec);
     }
 }

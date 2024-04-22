@@ -29,4 +29,4 @@ export interface ValidationError {
 
 export type HttpVerb = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS' | 'TRACE'
 export type OperationPath = string;
-export type ReplacedOperationMap = Record<OperationPath, { replaced_by: OperationPath, operations: HttpVerb[] }>;
+export type SupersededOperationMap = Record<OperationPath, { superseded_by: OperationPath, operations: HttpVerb[] }>;

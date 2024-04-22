@@ -1,25 +1,24 @@
-import {OperationSpec, ReplacedOperationMap} from "../types";
+import {OperationSpec, SupersededOperationMap} from "../types";
 import YAML from "yaml";
 import fs from "fs";
 import _ from "lodash";
 
-export default class ReplacedOpsGenerator {
-    file_path: string;
-    replaced_ops: ReplacedOperationMap;
+export default class SupersededOpsGenerator {
+    superseded_ops: SupersededOperationMap;
 
     constructor(root_path: string) {
-        this.file_path = root_path + '/_replaced_operations.yaml';
-        this.replaced_ops = YAML.parse(fs.readFileSync(this.file_path, 'utf8'));
+        const file_path = root_path + '/_superseded_operations.yaml';
+        this.superseded_ops = YAML.parse(fs.readFileSync(file_path, 'utf8'));
     }
 
     generate(spec: Record<string, any>): void {
-        for(const [path, { replaced_by, operations }] of _.entries(this.replaced_ops)) {
-            const regex = this.path_to_regex(replaced_by);
+        for(const [path, { superseded_by, operations }] of _.entries(this.superseded_ops)) {
+            const regex = this.path_to_regex(superseded_by);
             const operation_keys = operations.map(op => op.toLowerCase());
-            const replaced_path = this.copy_params(replaced_by, path);
+            const superseded_path = this.copy_params(superseded_by, path);
             const path_entry = _.entries(spec.paths).find(([path, _]) => regex.test(path));
-            if(!path_entry) console.log(`Path not found: ${replaced_by}`);
-            else spec.paths[replaced_path] = this.path_object(path_entry[1] as any, operation_keys);
+            if(!path_entry) console.log(`Path not found: ${superseded_by}`);
+            else spec.paths[superseded_path] = this.path_object(path_entry[1] as any, operation_keys);
         }
     }
 
@@ -27,7 +26,7 @@ export default class ReplacedOpsGenerator {
         const cloned_obj = _.cloneDeep(_.pick(obj, keys));
         for(const key in cloned_obj) {
             const operation = cloned_obj[key] as OperationSpec;
-            operation.operationId = operation.operationId + '_replaced';
+            operation.operationId = operation.operationId + '_superseded';
             operation.deprecated = true;
             operation['x-ignorable'] = true;
         }
