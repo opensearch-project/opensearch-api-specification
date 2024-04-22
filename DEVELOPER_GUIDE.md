@@ -45,6 +45,7 @@ spec
 │
 └── opensearch-openapi.yaml
 ```
+
 Every `.yaml` file is a valid OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will provide you with autocompletion and validation in real-time.
 
 ## Grouping Operations
@@ -84,6 +85,14 @@ This repository includes several penAPI Specification Extensions to fill in any 
 - `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml).
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
 
-## Linting
-We have a linter that validates every `yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter](tools/README.md#linter) tool for more information on how to run it locally. Make sure to run the linter before submitting a PR.
+## Tools
 
+We authored a number of tools to merge and lint specs that live in [tools](tools/). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
+
+### Merger
+
+The spec merger "builds", aka combines various `.yaml` files into a complete OpenAPI spec. A [workflow](./.github/workflows/build.yml) publishes the output into [releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
+
+### Linter
+
+The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.
