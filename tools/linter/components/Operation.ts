@@ -73,7 +73,7 @@ export default class Operation extends ValidatorBase {
 
   validate_responses (): ValidationError[] {
     const responses = this.spec.responses
-    if (!responses || _.keys(responses).length == 0) return [this.error('Missing responses property.')]
+    if (!responses || _.keys(responses).length === 0) return [this.error('Missing responses property.')]
     return _.entries(responses).map(([code, response]) => {
       const expected = `#/components/responses/${this.group}@${code}`
       if (response.$ref && response.$ref !== expected) { return this.error(`The ${code} response must be a reference object to '${expected}'.`) }

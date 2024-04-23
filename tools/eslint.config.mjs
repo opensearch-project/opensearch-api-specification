@@ -32,7 +32,6 @@ export default [
       '@typescript-eslint/require-array-sort-compare': 'warn',
       '@typescript-eslint/strict-boolean-expressions': 'warn',
       'array-callback-return': 'warn',
-      eqeqeq: 'warn',
       'new-cap': 'warn',
       'no-return-assign': 'warn',
       'no-useless-return': 'warn',
