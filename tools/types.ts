@@ -26,3 +26,7 @@ export interface ValidationError {
   location?: string;
   message: string;
 }
+
+export type HttpVerb = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS' | 'TRACE'
+export type OperationPath = string;
+export type SupersededOperationMap = Record<OperationPath, { superseded_by: OperationPath, operations: HttpVerb[] }>;

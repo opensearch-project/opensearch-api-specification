@@ -93,6 +93,22 @@ We authored a number of tools to merge and lint specs that live in [tools](tools
 
 The spec merger "builds", aka combines various `.yaml` files into a complete OpenAPI spec. A [workflow](./.github/workflows/build.yml) publishes the output into [releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
 
+#### Auto-generating Superseded Operations
+
+When an operation is superseded by another operation with **IDENTICAL FUNCTIONALITY**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](./spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated` and `x-ignorable` properties set to `true` to indicate that it should be ignored by the client generator.
+For example, if the `_superseded_operations.yaml` file contains the following entry:
+```yaml
+/_opendistro/_anomaly_detection/{nodeId}/stats/{stat}:
+  superseded_by: /_plugins/_anomaly_detection/{nodeId}/stats/{stat}
+  operations:
+    - GET
+    - POST
+```
+Then, the merger tool will generate 2 operations: `GET /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}` and `POST /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}` from `GET /_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and `POST /_plugins/_anomaly_detection/{nodeId}/stats/{stat}` respectively, if they exist (A warning will be printed on the console if they do not). Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
+
+#### Auto-generating global parameters
+Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml) under the `parameters` section with `x-global` set to true. The merger tool will automatically add these parameters to all operations.
+
 ### Linter
 
 The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.

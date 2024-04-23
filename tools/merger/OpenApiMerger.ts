@@ -1,8 +1,9 @@
-import { OpenAPIV3 } from "openapi-types";
+import {OpenAPIV3} from "openapi-types";
 import fs from 'fs';
 import _ from 'lodash';
 import yaml from 'yaml';
-import { write2file } from '../helpers';
+import {write2file} from '../helpers';
+import SupersededOpsGenerator from "./SupersededOpsGenerator";
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
@@ -33,8 +34,9 @@ export default class OpenApiMerger {
     this.#merge_namespaces();
     this.#apply_global_params();
     this.#sort_spec_keys();
+    this.#generate_replaced_ops();
 
-    if(output_path) write2file(output_path, this.spec);
+    if (output_path) write2file(output_path, this.spec);
     return this.spec as OpenAPIV3.Document;
   }
 
@@ -63,7 +65,7 @@ export default class OpenApiMerger {
 
     Object.entries(this.spec.paths).forEach(([path, refObj]) => {
       const ref = (refObj as Record<string, any>).$ref!;
-      const namespace =  ref.match(/namespaces\/(.*)\.yaml/)![1];
+      const namespace = ref.match(/namespaces\/(.*)\.yaml/)![1];
       this.spec.paths[path] = this.paths[namespace][path];
     });
   }
@@ -71,11 +73,11 @@ export default class OpenApiMerger {
   // Redirect schema references in namespace files to local references in single-file spec.
   redirect_refs_in_namespace(obj: Record<string, any>): void {
     const ref = obj.$ref;
-    if(ref?.startsWith('../schemas/'))
+    if (ref?.startsWith('../schemas/'))
       obj.$ref = ref.replace('../schemas/', '#/components/schemas/').replace('.yaml#/components/schemas/', ':');
 
-    for(const key in obj)
-      if(typeof obj[key] === 'object')
+    for (const key in obj)
+      if (typeof obj[key] === 'object')
         this.redirect_refs_in_namespace(obj[key]);
   }
 
@@ -99,16 +101,16 @@ export default class OpenApiMerger {
   // Redirect schema references in schema files to local references in single-file spec.
   redirect_refs_in_schema(category: string, obj: Record<string, any>): void {
     const ref = obj.$ref;
-    if(ref)
-      if(ref.startsWith('#/components/schemas'))
+    if (ref)
+      if (ref.startsWith('#/components/schemas'))
         obj.$ref = `#/components/schemas/${category}:${ref.split('/').pop()}`;
       else {
         const other_category = ref.match(/(.*)\.yaml/)![1];
         obj.$ref = `#/components/schemas/${other_category}:${ref.split('/').pop()}`;
       }
 
-    for(const key in obj)
-      if(typeof obj[key] === 'object')
+    for (const key in obj)
+      if (typeof obj[key] === 'object')
         this.redirect_refs_in_schema(category, obj[key]);
   }
 
@@ -123,5 +125,10 @@ export default class OpenApiMerger {
     Object.entries(this.spec.paths).forEach(([path, pathItem]) => {
       this.spec.paths[path] = _.fromPairs(Object.entries(pathItem!).sort());
     });
+  }
+
+  #generate_replaced_ops(): void {
+    const gen = new SupersededOpsGenerator(this.root_folder);
+    gen.generate(this.spec);
   }
 }
