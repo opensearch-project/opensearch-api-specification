@@ -1,6 +1,5 @@
 import OpenApiMerger from '../../merger/OpenApiMerger'
 import fs from 'fs'
-import yaml from 'yaml'
 
 test('merge()', async () => {
   const merger = new OpenApiMerger('./test/merger/fixtures/spec/opensearch-openapi.yaml')

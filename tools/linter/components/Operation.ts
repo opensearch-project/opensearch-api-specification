@@ -1,7 +1,6 @@
 import { OperationSpec, ValidationError } from '../../types'
 import _ from 'lodash'
 import ValidatorBase from './base/ValidatorBase'
-import { OpenAPIV3 } from 'openapi-types'
 
 const GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z_]*[a-z]+)$/
 export default class Operation extends ValidatorBase {

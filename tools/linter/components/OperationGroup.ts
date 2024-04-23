@@ -17,7 +17,6 @@ export default class OperationGroup extends ValidatorBase {
   }
 
   validate (): ValidationError[] {
-    const location = `Operation Group: ${this.name}`
     const ops_errors = this.operations.flatMap((op) => op.validate())
     if (ops_errors.length > 0) return ops_errors
     if (this.operations.length == 1) return []

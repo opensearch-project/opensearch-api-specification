@@ -1,4 +1,4 @@
-import { mocked_schema, schema } from './schema'
+import { mocked_schema } from './schema'
 import SchemaFile from '../../../linter/components/SchemaFile'
 
 export function schema_file (fixture: string): SchemaFile {
