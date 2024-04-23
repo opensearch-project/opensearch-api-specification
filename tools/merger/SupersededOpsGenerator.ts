@@ -1,4 +1,4 @@
-import { OperationSpec, SupersededOperationMap } from '../types'
+import { type OperationSpec, type SupersededOperationMap } from '../types'
 import YAML from 'yaml'
 import fs from 'fs'
 import _ from 'lodash'

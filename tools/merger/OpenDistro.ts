@@ -1,6 +1,6 @@
 import fs from 'fs'
 import YAML from 'yaml'
-import { HttpVerb, OperationPath, SupersededOperationMap } from '../types'
+import { type HttpVerb, type OperationPath, type SupersededOperationMap } from '../types'
 import { write2file } from '../helpers'
 
 // One-time script to generate _superseded_operations.yaml file for OpenDistro
