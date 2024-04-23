@@ -77,7 +77,6 @@ export default class Operation extends ValidatorBase {
     return _.entries(responses).map(([code, response]) => {
       const expected = `#/components/responses/${this.group}@${code}`
       if (response.$ref && response.$ref !== expected) { return this.error(`The ${code} response must be a reference object to '${expected}'.`) }
-      return
     }).filter((error) => error) as ValidationError[]
   }
 

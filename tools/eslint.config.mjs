@@ -33,7 +33,6 @@ export default [
       'array-callback-return': 'warn',
       'new-cap': 'warn',
       'no-return-assign': 'warn',
-      'no-useless-return': 'warn',
       'object-shorthand': 'warn'
     }
   }

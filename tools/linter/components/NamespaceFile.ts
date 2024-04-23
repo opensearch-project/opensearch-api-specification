@@ -60,7 +60,6 @@ export default class NamespaceFile extends FileValidator {
   validate_name (name = this.namespace): ValidationError | void {
     if (name === '_core') return
     if (!name.match(NAME_REGEX)) { return this.error(`Invalid namespace name '${name}'. Must match regex: /${NAME_REGEX.source}/.`, 'File Name') }
-    return
   }
 
   validate_schemas (): ValidationError | void {
