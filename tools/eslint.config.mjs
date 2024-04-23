@@ -18,7 +18,6 @@ export default [
       '@typescript-eslint/array-type': 'warn',
       '@typescript-eslint/consistent-indexed-object-style': 'warn',
       '@typescript-eslint/consistent-type-assertions': 'warn',
-      '@typescript-eslint/consistent-type-imports': 'warn',
       '@typescript-eslint/dot-notation': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'warn',
       '@typescript-eslint/naming-convention': 'warn',

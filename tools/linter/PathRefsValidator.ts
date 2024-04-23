@@ -1,6 +1,6 @@
-import { ValidationError } from '../types'
-import RootFile from './components/RootFile'
-import NamespacesFolder from './components/NamespacesFolder'
+import { type ValidationError } from '../types'
+import type RootFile from './components/RootFile'
+import type NamespacesFolder from './components/NamespacesFolder'
 
 export default class PathRefsValidator {
   root_file: RootFile

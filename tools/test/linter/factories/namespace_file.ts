@@ -1,5 +1,5 @@
 import NamespaceFile from '../../../linter/components/NamespaceFile'
-import { OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3 } from 'openapi-types'
 import { mocked_operation_group } from './operation_group'
 
 export function namespace_file (fixture_file: string): NamespaceFile {

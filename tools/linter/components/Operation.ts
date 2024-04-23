@@ -1,4 +1,4 @@
-import { OperationSpec, ValidationError } from '../../types'
+import { type OperationSpec, type ValidationError } from '../../types'
 import _ from 'lodash'
 import ValidatorBase from './base/ValidatorBase'
 

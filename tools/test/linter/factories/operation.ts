@@ -1,5 +1,5 @@
 import Operation from '../../../linter/components/Operation'
-import { OperationSpec } from '../../../types'
+import { type OperationSpec } from '../../../types'
 
 export function operation (spec: Record<string, any>, file_name = 'indices.yaml') {
   return new Operation(`namespaces/${file_name}`, '/{index}/something/{abc_xyz}', 'post', spec as OperationSpec)

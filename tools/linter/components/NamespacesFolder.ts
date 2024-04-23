@@ -1,5 +1,5 @@
 import NamespaceFile from './NamespaceFile'
-import { ValidationError } from '../../types'
+import { type ValidationError } from '../../types'
 import FolderValidator from './base/FolderValidator'
 
 export default class NamespacesFolder extends FolderValidator<NamespaceFile> {

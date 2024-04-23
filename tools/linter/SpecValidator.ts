@@ -1,7 +1,7 @@
 import SchemasFolder from './components/SchemasFolder'
 import NamespacesFolder from './components/NamespacesFolder'
 import RootFile from './components/RootFile'
-import { ValidationError } from '../types'
+import { type ValidationError } from '../types'
 import PathRefsValidator from './PathRefsValidator'
 import SchemaRefsValidator from './SchemaRefsValidator'
 

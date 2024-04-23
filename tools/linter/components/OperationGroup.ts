@@ -1,5 +1,5 @@
-import Operation from './Operation'
-import { ValidationError } from '../../types'
+import type Operation from './Operation'
+import { type ValidationError } from '../../types'
 import ValidatorBase from './base/ValidatorBase'
 
 export default class OperationGroup extends ValidatorBase {

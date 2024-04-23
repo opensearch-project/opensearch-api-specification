@@ -1,8 +1,8 @@
 import ValidatorBase from './ValidatorBase'
-import { ValidationError } from '../../../types'
+import { type ValidationError } from '../../../types'
 import fs from 'fs'
 import YAML from 'yaml'
-import { OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3 } from 'openapi-types'
 
 export default class FileValidator extends ValidatorBase {
   file_path: string

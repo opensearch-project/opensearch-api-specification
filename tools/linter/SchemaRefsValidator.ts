@@ -1,6 +1,6 @@
-import NamespacesFolder from './components/NamespacesFolder'
-import SchemasFolder from './components/SchemasFolder'
-import { ValidationError } from '../types'
+import type NamespacesFolder from './components/NamespacesFolder'
+import type SchemasFolder from './components/SchemasFolder'
+import { type ValidationError } from '../types'
 
 export default class SchemaRefsValidator {
   namespaces_folder: NamespacesFolder

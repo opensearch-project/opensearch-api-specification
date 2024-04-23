@@ -1,7 +1,7 @@
 import fs from 'fs'
 import ValidatorBase from './ValidatorBase'
-import FileValidator from './FileValidator'
-import { ValidationError } from '../../../types'
+import type FileValidator from './FileValidator'
+import { type ValidationError } from '../../../types'
 
 export default class FolderValidator<F extends FileValidator> extends ValidatorBase {
   folder_path: string

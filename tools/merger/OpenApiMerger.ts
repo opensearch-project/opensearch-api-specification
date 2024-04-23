@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3 } from 'openapi-types'
 import fs from 'fs'
 import _ from 'lodash'
 import yaml from 'yaml'

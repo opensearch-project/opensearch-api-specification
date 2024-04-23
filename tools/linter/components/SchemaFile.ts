@@ -1,7 +1,7 @@
 import FileValidator from './base/FileValidator'
-import { ValidationError } from '../../types'
+import { type ValidationError } from '../../types'
 import Schema from './Schema'
-import { OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3 } from 'openapi-types'
 
 const CATEGORY_REGEX = /^[a-z_]+\.[a-z_]+$/
 const NAME_REGEX = /^[a-z]+[a-z_]*[a-z]+$/

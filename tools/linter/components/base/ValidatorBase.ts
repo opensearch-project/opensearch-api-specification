@@ -1,4 +1,4 @@
-import { ValidationError } from '../../../types'
+import { type ValidationError } from '../../../types'
 export default class ValidatorBase {
   file: string
   location: string | undefined

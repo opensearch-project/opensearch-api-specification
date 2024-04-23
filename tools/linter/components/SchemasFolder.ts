@@ -1,6 +1,6 @@
 import SchemaFile from './SchemaFile'
 import FolderValidator from './base/FolderValidator'
-import { ValidationError } from '../../types'
+import { type ValidationError } from '../../types'
 
 export default class SchemasFolder extends FolderValidator<SchemaFile> {
   constructor (folder_path: string) {

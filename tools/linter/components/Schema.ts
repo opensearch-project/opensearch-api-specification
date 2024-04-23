@@ -1,6 +1,6 @@
 import ValidatorBase from './base/ValidatorBase'
-import { OpenAPIV3 } from 'openapi-types'
-import { ValidationError } from '../../types'
+import { type OpenAPIV3 } from 'openapi-types'
+import { type ValidationError } from '../../types'
 
 const NAME_REGEX = /^[A-Za-z0-9]+$/
 

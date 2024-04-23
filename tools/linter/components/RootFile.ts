@@ -1,4 +1,4 @@
-import { ParameterSpec, ValidationError } from '../../types'
+import { type ParameterSpec, type ValidationError } from '../../types'
 import FileValidator from './base/FileValidator'
 
 export default class RootFile extends FileValidator {

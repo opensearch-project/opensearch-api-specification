@@ -1,5 +1,5 @@
-import { OpenAPIV3 } from 'openapi-types'
-import { OperationSpec, ValidationError } from '../../types'
+import { type OpenAPIV3 } from 'openapi-types'
+import { type OperationSpec, type ValidationError } from '../../types'
 import OperationGroup from './OperationGroup'
 import _ from 'lodash'
 import Operation from './Operation'

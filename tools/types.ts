@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3 } from 'openapi-types'
 
 export interface OperationSpec extends OpenAPIV3.OperationObject {
   'x-operation-group': string
