@@ -1,7 +1,7 @@
 import OperationGroup from '../../../linter/components/OperationGroup'
 import { operation, mocked_operation } from './operation'
 
-export function operation_group (operation_specs: Record<string, any>[]): OperationGroup {
+export function operation_group (operation_specs: Array<Record<string, any>>): OperationGroup {
   const operations = operation_specs.map((spec) => {
     return operation({ 'x-operation-group': 'indices.create', ...spec })
   })

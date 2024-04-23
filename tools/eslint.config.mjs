@@ -15,7 +15,6 @@ export default [
     files: ['**/*.{js,ts}'],
     // to auto-fix disable all rules except the one you want to fix with '@rule': 'warn', then run `npm run lint -- --fix`
     rules: {
-      '@typescript-eslint/array-type': 'warn',
       '@typescript-eslint/consistent-indexed-object-style': 'warn',
       '@typescript-eslint/consistent-type-assertions': 'warn',
       '@typescript-eslint/dot-notation': 'warn',
