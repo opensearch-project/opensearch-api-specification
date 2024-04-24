@@ -103,6 +103,45 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_action_group@200'
+  /_plugins/_security/api/allowlist:
+    get:
+      operationId: security.get_allowlist.0
+      x-operation-group: security.get_allowlist
+      x-version-added: '1.0'
+      description: Retrieves the current list of allowed API accessible to normal user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_allowlist@200'
+    patch:
+      operationId: security.patch_allowlist.0
+      x-operation-group: security.patch_allowlist
+      x-version-added: '1.0'
+      description: Updates the current list of allowed API accessible to normal user. 
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      parameters:
+        - $ref: '#/components/parameters/security.patch_allowlist::path.patch_allowlist'
+      requestBody:
+        $ref: '#/components/requestBodies/security.patch_allowlist'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.patch_allowlist@200'
+    put:
+      operationId: security.put_allowlist.0
+      x-operation-group: security.create_allowlist
+      x-version-added: '1.0'
+      description: Creates or replaces the allowlisted APIs. Accessible via Super Admin certificate or REST API permission.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      parameters:
+        - $ref: '#/components/parameters/security.create_allowlist::path.allowlist'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_allowlist'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_allowlist@200'
   /_plugins/_security/api/audit:
     get:
       operationId: security.get_audit_configuration.0
@@ -139,6 +178,59 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.update_audit_configuration@200'
+  /_plugins/_security/authinfo:
+    get:
+      operationId: security.get_authinfo.0
+      x-operation-group: security.get_authinfo
+      x-version-added: '1.0'
+      description: Retrieves the authentication information.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_authinfo@200'
+    post:
+      operationId: security.post_authinfo.0
+      x-operation-group: security.post_authinfo
+      x-version-added: '1.0'
+      description: Returns the authentication information.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_authinfo'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_authinfo@200'
+  /_plugins/_security/api/authtoken:
+    post:
+      operationId: security.post_authtoken.0
+      x-operation-group: security.post_authtoken
+      x-version-added: '1.0'
+      description: Returns the authorization token.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_authtoken'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_authtoken@200'
+  /_plugins/_security/_upgrade_check:
+    get:
+      operationId: security.get_uprade_check.0
+      x-operation-group: security.get_uprade_check
+      x-version-added: '1.0'
+      description: Check whether or not an upgrade can be performed and what resources can be updated.
+      externalDocs:
+        url: https://opensearch.org/docs/2.7/security/access-control/api/#configuration-upgrade-check
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_authinfo@200'
+    post:
+      operationId: security.post_upgrade_perform.0
+      x-operation-group: security.post_upgrade_perform
+      x-version-added: '1.0'
+      description: Helps cluster operator upgrade missing defaults and stale default definitions.
+      externalDocs:
+        url: https://opensearch.org/docs/2.7/security/access-control/api/#configuration-upgrade
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_upgrade_perform'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_upgrade_perform@200'
   /_plugins/_security/api/cache:
     delete:
       operationId: security.flush_cache.0
@@ -150,6 +242,34 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.flush_cache@200'
+    get:
+      operationId: security.get_cache.0
+      x-operation-group: security.get_cache
+      x-version-added: '1.0'
+      description: Retrieves the Security plugin user, authentication, and authorization cache.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_cache@200'
+    put:
+      operationId: security.put_cache.0
+      x-operation-group: security.put_cache
+      x-version-added: '1.0'
+      description: Creates or updates the Security plugin user, authentication, and authorization cache.
+      requestBody:
+        $ref: '#/components/requestBodies/security.put_cache'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.put_cache@200'
+    post:
+      operationId: security.post_cache.0
+      x-operation-group: security.post_cache
+      x-version-added: '1.0'
+      description: Updates the Security plugin user, authentication, and authorization cache.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_cache'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_cache@200'
   /_plugins/_security/api/internalusers:
     get:
       operationId: security.get_users.0
@@ -226,6 +346,81 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_user@200'
+  /_plugins/_security/api/internalusers/{username}/authtoken:
+    post:
+      operationId: security.post_user_token.0
+      x-operation-group: security.post_user_token
+      x-version-added: '1.0'
+      description: Generates authorization token for the given user.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_user_token'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_user_token@200'
+  /_plugins/_security/api/user:
+    get:
+      operationId: security.get_user_legacy.0
+      x-operation-group: security.get_user_legacy
+      x-version-added: '1.0'
+      description: Retrieve all internal users. Legacy API.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_user_legacy@200'
+  /_plugins/_security/api/user/{username}:
+    delete:
+      operationId: security.delete_user_legacy.0
+      x-operation-group: security.delete_user_legacy
+      x-version-added: '1.0'
+      description: Delete the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.delete_user_legacy::path.username'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_user_legacy@200'
+    get:
+      operationId: security.get_user_legacy.0
+      x-operation-group: security.get_user_legacy
+      x-version-added: '1.0'
+      description: Retrieve one user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.get_user_legacy::path.username'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_user_legacy@200'
+    put:
+      operationId: security.create_user_legacy.0
+      x-operation-group: security.create_user_legacy
+      x-version-added: '1.0'
+      description: Creates or replaces the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.create_user_legacy::path.username'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_user_legacy'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_user_legacy@200'
+  /_plugins/_security/api/user/{username}/authtoken:
+    post:
+      operationId: security.post_user_token_legacy.0
+      x-operation-group: security.post_user_token_legacy
+      x-version-added: '1.0'
+      description: Generates authorization token for the given user. Legacy API.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_user_token_legacy'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_user_token_legacy@200'
+  /_plugins/_security/api/migrate:
+    post:
+      operationId: security.post_migrate.0
+      x-operation-group: security.post_migrate
+      x-version-added: '1.0'
+      description: Migrates security configuration from v6 to v7.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_migrate'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_migrate@200'
   /_plugins/_security/api/nodesdn:
     get:
       operationId: security.get_distinguished_names.0
@@ -288,6 +483,38 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.update_distinguished_names@200'
+    patch:
+      operationId: security.patch_distinguished_name.0
+      x-operation-group: security.patch_distinguished_name
+      x-version-added: '1.0'
+      description: Updates a distinguished cluster name for a specific cluster.
+      requestBody:
+        $ref: '#/components/requestBodies/security.patch_distinguished_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.patch_distinguished_name@200'
+  /_plugins/_security/api/permissionsinfo:
+    get:
+      operationId: security.get_permissions_info.1
+      x-operation-group: security.get_permissions_info
+      x-version-added: '1.0'
+      description: Gets the evaluated REST API permissions for the currently logged in user.
+      parameters:
+        - $ref: '#/components/parameters/security.get_permissions_info'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_permissions_info@200'
+  /_plugins/_security/api/validate:
+    get:
+      operationId: security.get_validate.1
+      x-operation-group: security.get_validate
+      x-version-added: '1.0'
+      description: Checks whether the v6 security configuration is valid and ready to be migrated to v7.
+      parameters:
+        - $ref: '#/components/parameters/security.get_validate'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_validate@200'
   /_plugins/_security/api/roles:
     patch:
       operationId: security.patch_roles.0
@@ -301,7 +528,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_roles@200'
-  /_plugins/_security/api/roles/:
     get:
       operationId: security.get_roles.0
       x-operation-group: security.get_roles
@@ -510,7 +736,16 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.reload_transport_certificates@200'
-  /_plugins/_security/api/tenants/:
+  /_opendistro/_security/sslinfo:
+    get:
+      operationId: security.get_sslinfo.0
+      x-operation-group: security.get_sslinfo
+      x-version-added: '1.0'
+      description: Retrieves the SSL configuration information.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_sslinfo@200'
+  /_plugins/_security/api/tenants:
     get:
       operationId: security.get_tenants.0
       x-operation-group: security.get_tenants
@@ -586,17 +821,137 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_tenant@200'
+  /_plugins/_security/api/tenantinfo:
+    get:
+      operationId: security.get_tenant_info.0
+      x-operation-group: security.get_tenant_info
+      x-version-added: '1.0'
+      description: Retrieves the tenant names if any exist. Only accesible to super admins or kibanaserver user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_tenant_info@200'
+    post:
+      operationId: security.post_tenant_info.0
+      x-operation-group: security.post_tenant_info
+      x-version-added: '1.0'
+      description: Retrieves the tenant names if any exist. Only accesible to super admins or kibanaserver user.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_tenant_info'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_tenant_info@200'
+  /_plugins/_security/api/tenancy/config:
+    get:
+      operationId: security.get_tenancy_config.0
+      x-operation-group: security.get_tenancy_config
+      x-version-added: '1.0'
+      description: Retrieves multi-tenancy configuration.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
+      parameters:
+        - $ref: '#/components/parameters/security.get_tenancy_config'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_tenancy_config@200'
+    put:
+      operationId: security.create_tenancy_config.0
+      x-operation-group: security.create_tenancy_config
+      x-version-added: '1.0'
+      description: Creates or replaces the multi-tenancy configuration.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
+      parameters:
+        - $ref: '#/components/parameters/security.create_tenancy_config'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_tenancy_config'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_tenancy_config@200'
+  /_plugins/_security/dashboardsinfo:
+    get:
+      operationId: security.get_dashboards_info.0
+      x-operation-group: security.get_dashboards_info
+      x-version-added: '1.0'
+      description: Retrieves the current security-dashboards plugin configuration.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_dashboards_info@200'
+    post:
+      operationId: security.post_dashboards_info.0
+      x-operation-group: security.post_dashboards_info
+      x-version-added: '1.0'
+      description: Updates the current security-dashboards plugin configuration.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_dashboards_info'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_dashboards_info@200'
   /_plugins/_security/health:
     get:
       operationId: security.health.0
       x-operation-group: security.health
       x-version-added: '1.0'
       description: Checks to see if the Security plugin is up and running.
+      parameters:
+        - $ref: '#/components/parameters/security.health'
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#health-check
       responses:
         '200':
           $ref: '#/components/responses/security.health@200'
+    post:
+      operationId: security.post_health.0
+      x-operation-group: security.post_health
+      x-version-added: '1.0'
+      description: Checks to see if the Security plugin is up and running.
+      parameters:
+        - $ref: '#/components/parameters/security.post_health'
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_health'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_health@200'
+  /_plugins/_security/whoami:
+    get:
+      operationId: security.get_who_am_i.0
+      x-operation-group: security.get_who_am_i
+      x-version-added: '1.0'
+      description: Gets the user identity related information for currently logged in user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_who_am_i@200'
+    post:
+      operationId: security.post_who_am_i.0
+      x-operation-group: security.post_who_am_i
+      x-version-added: '1.0'
+      description: Gets the user identity related information for currently logged in user.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_who_am_i'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_who_am_i@200'
+  /_plugins/_security/whoamiprotected:
+    get:
+      operationId: security.get_who_am_i.0
+      x-operation-group: security.get_who_am_i
+      x-version-added: '1.0'
+      description: Gets the user identity related information for currently logged in user. User needs to have access to this endpoint.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_who_am_i@200'
+  /_plugins/_security/api/generateonbehalfoftoken:
+    post:
+      operationId: security.generate_obo_token.0
+      x-operation-group: security.generate_obo_token
+      x-version-added: '1.0'
+      description: Generates On-Behalf-Of token for the current user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/authentication-tokens/#api-endpoint
+      requestBody:
+        $ref: '#/components/requestBodies/security.generate_obo_token'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.generate_obo_token@200'
 components:
   requestBodies:
     security.change_password:
