@@ -1,5 +1,7 @@
 <img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px" alt="OpenSearch logo">
 
+[![Check Links](https://github.com/opensearch-project/repo/actions/workflows/links-fail-fast.yml/badge.svg)](https://github.com/org/opensearch-api-specification/actions/workflows/links-fail-fast.yml)
+
 ## OpenSearch API Specification
 
 - [OpenSearch API Specification](#opensearch-api-specification)
