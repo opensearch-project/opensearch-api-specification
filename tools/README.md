@@ -2,8 +2,8 @@
 
 This folder contains tools for the repo:
 
-- [Merger](./merger/): merges multiple OpenAPI files into one
-- [Linter](./linter/): validates files in the spec folder
+- [Merger](./merger): merges multiple OpenAPI files into one
+- [Linter](./linter): validates files in the spec folder
 
 ## Setup
 
@@ -20,10 +20,21 @@ The merger tool merges the multi-file OpenSearch spec into a single file for pro
 Example:
 
 ```bash
-npm run merge -- ../spec ../build/opensearch-openapi.latest.yaml
+mkdir -p ../build
+export ROOT_PATH=../spec/opensearch-openapi.yaml
+export OUTPUT_PATH=../build/opensearch-openapi.yaml
+npm run merge -- $ROOT_PATH $OUTPUT_PATH
 ```
 
-## Linter
+As a shortcut, if those parameters are not provided, the tool will use the default values:
+- `../spec/opensearch-openapi.yaml` as the root path (i.e. the root file of the repo's [spec folder](../spec))
+- `../opensearch-openapi.yaml` as the output path
+
+```bash
+npm run merge
+```
+
+## Spec Linter
 
 The linter tool validates the OpenSearch spec files in the `spec` folder:
 
@@ -31,4 +42,4 @@ The linter tool validates the OpenSearch spec files in the `spec` folder:
 npm run lint:spec
 ```
 
-It will print out all the errors and warnings in the spec files. This tool in still in development, and it will be integrated into the CI/CD pipeline and run automatically with every PR.
+It will print out all the errors and warnings in the spec files.

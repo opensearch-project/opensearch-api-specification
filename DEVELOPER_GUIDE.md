@@ -3,8 +3,10 @@
   - [File Structure](#file-structure)
   - [Grouping Operations](#grouping-operations)
   - [Grouping Schemas](#grouping-schemas)
+  - [Superseded Operations](#superseded-operations)
+  - [Global Parameters](#global-parameters)
   - [OpenAPI Extensions](#openapi-extensions)
-  - [Linting](#linting)
+  - [Tools](#tools)
 
 # Developer Guide
 
@@ -19,10 +21,6 @@ The Specification is written in OpenAPI 3, so understanding the OpenAPI 3 specif
 ## File Structure
 
 To make editing the specification easier, we split the OpenAPI spec into multiple files that can be found in the [spec](spec) directory. The file structure is as follows:
-
-- The API Operations are grouped by namespaces in [spec/namespaces](spec/namespaces/) directory. Each `.yaml` file in this directory represents a namespace and holds all paths and operations of the namespace.
-- The data schemas are grouped by categories in [spec/schemas](spec/schemas/) directory. Each `.yaml` file in this directory represents a category.
-- The [spec/opensearch-openapi.yaml](spec/opensearch-openapi.yaml) file is the OpenAPI root file that ties everything together.
 
 ```
 spec
@@ -46,7 +44,11 @@ spec
 └── opensearch-openapi.yaml
 ```
 
-Every `.yaml` file is a valid OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will provide you with autocompletion and validation in real-time.
+- The API Operations are grouped by namespaces in [spec/namespaces/](spec/namespaces) directory. Each file in this directory represents a namespace and holds all paths and operations of the namespace.
+- The data schemas are grouped by categories in [spec/schemas/](spec/schemas) directory. Each file in this directory represents a category.
+- The [spec/opensearch-openapi.yaml](spec/opensearch-openapi.yaml) file is the OpenAPI root file that ties everything together.
+
+Every `.yaml` file is a OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will also offer autocomplete and validation in real-time.
 
 ## Grouping Operations
 
@@ -65,16 +67,44 @@ For this reason, every operation *must* be accompanied by the `x-operation-group
 
 ## Grouping Schemas
 
-Schemas are grouped by categories to keep their names short and aid in client generation:
+Schemas are grouped by categories to keep their names short, and aid in client generation (where the schemas are translated into data types/classes, and divided into packages/modules). The schema file names can be in one of the following formats:
 
 - `_common` category holds the common schemas that are used across multiple namespaces and features.
 - `_common.<sub_category>` category holds the common schemas of a specific sub_category. (e.g. `_common.mapping`)
 - `<namespace>._common` category holds the common schemas of a specific namespace. (e.g. `cat._common`, `_core._common`)
 - `<namespace>.<action>` category holds the schemas of a specific sub_category of a namespace. (e.g. `cat.aliases`, `_core.search`)
 
+## Superseded Operations
+
+When an operation is superseded by another operation with **IDENTICAL FUNCTIONALITY**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](./spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated: true` and `x-ignorable: true` properties to indicate that it should be ignored by the client generator.
+
+For example, if the `_superseded_operations.yaml` file contains the following entry:
+```yaml
+/_opendistro/_anomaly_detection/{nodeId}/stats/{stat}:
+  superseded_by: /_plugins/_anomaly_detection/{nodeId}/stats/{stat}
+  operations:
+    - GET
+    - POST
+```
+Then, the merger tool will generate 2 superseded operations: 
+- `GET /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}` 
+- `POST /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}`
+
+from their respective superseding operations:
+
+- `GET /_plugins/_anomaly_detection/{nodeId}/stats/{stat}`
+- `POST /_plugins/_anomaly_detection/{nodeId}/stats/{stat}`
+
+if and only if the superseding operations exist in the spec. A warning will be printed on the console if they do not. 
+
+Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
+
+## Global parameters
+Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml) under the `parameters` section with `x-global` set to true. The merger tool will automatically add these parameters to all operations.
+
 ## OpenAPI Extensions
 
-This repository includes several penAPI Specification Extensions to fill in any metadata not directly supported OpenAPI:
+This repository includes several OpenAPI Specification Extensions to fill in any metadata not natively supported by OpenAPI:
 
 - `x-operation-group`: Used to group operations into API actions.
 - `x-version-added`: OpenSearch version when the operation/parameter was added.
@@ -87,27 +117,11 @@ This repository includes several penAPI Specification Extensions to fill in any 
 
 ## Tools
 
-We authored a number of tools to merge and lint specs that live in [tools](tools/). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
+We authored a number of tools to merge and lint specs that live in [tools](tools). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
 
 ### Merger
 
-The spec merger "builds", aka combines various `.yaml` files into a complete OpenAPI spec. A [workflow](./.github/workflows/build.yml) publishes the output into [releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
-
-#### Auto-generating Superseded Operations
-
-When an operation is superseded by another operation with **IDENTICAL FUNCTIONALITY**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](./spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated` and `x-ignorable` properties set to `true` to indicate that it should be ignored by the client generator.
-For example, if the `_superseded_operations.yaml` file contains the following entry:
-```yaml
-/_opendistro/_anomaly_detection/{nodeId}/stats/{stat}:
-  superseded_by: /_plugins/_anomaly_detection/{nodeId}/stats/{stat}
-  operations:
-    - GET
-    - POST
-```
-Then, the merger tool will generate 2 operations: `GET /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}` and `POST /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}` from `GET /_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and `POST /_plugins/_anomaly_detection/{nodeId}/stats/{stat}` respectively, if they exist (A warning will be printed on the console if they do not). Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
-
-#### Auto-generating global parameters
-Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml) under the `parameters` section with `x-global` set to true. The merger tool will automatically add these parameters to all operations.
+The spec merger "builds", aka combines all `.yaml` files in a spec folder into a complete OpenAPI spec. A [workflow](./.github/workflows/build.yml) performs this task on the [spec folder](spec) of this repo then publishes the output into [releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
 
 ### Linter
 
