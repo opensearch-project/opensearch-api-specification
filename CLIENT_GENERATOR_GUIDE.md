@@ -19,13 +19,13 @@ In a client, the `search` operations are grouped in to a single API method, `cli
 
 In the [published OpenAPI spec](https://github.com/opensearch-project/opensearch-api-specification/releases), this grouping is denoted by `x-operation-group` vendor extension in every operation definition. The value of this extension is the name of the API action (like `search` or `indices.get_field_mapping`). Operations with the same `x-operation-group` value are guaranteed to have the same query string parameters, response body, and request body (for PUT/POST/DELETE operations). Common path parameters are also guaranteed to be the same. The only differences between operations are the HTTP method and the path. With that in mind, below are rules on how to combine operations of different HTTP methods and path compositions.
 
-- If an operation is marked with `x-ignorable: "true"`, then ignore the operation. Such an operation has been deprecated and has been replaced by a newer one. As far as the clients are concerned, ignorable operations do not exist.
+- If an operation is marked with `x-ignorable: true`, then ignore the operation. Such an operation has been deprecated and has been superseded by a newer one. As far as the clients are concerned, ignorable operations do not exist.
 - If two operations have identical HTTP methods, but different paths: use the path that best matches the path parameters provided.
 - If two operations have identical path, but different HTTP methods:
     - GET/POST: if the request body is provided then use POST, otherwise use GET
     - PUT/POST: Either works, but PUT is preferred when an optional path parameter is provided.
 
-The psuedo-code that combines the `search` operations into a single API method is as follows:
+The pseudocode that combines the `search` operations into a single API method is as follows:
 ```python
 def search(self, index=None, body=None):
     if index is None:
@@ -41,20 +41,19 @@ def search(self, index=None, body=None):
     return self.perform_request(method, path, body=body)
 ```
 
-
 ## Overloaded Name
-You will also encounter `x-overloaded-param: "metric"` for the `node_id` path parameter of `GET /_nodes/{node_id}` operation in `nodes.info` action. This is a special case where the path parameter is overloaded to accept either a node ID or a metric name. The `client.nodes.info` method when called with either `metric` or `node_id` (but not both), will use `GET /_nodes/{node_id}` operation (even though the path parameter name is `node_id`). When called with both `metric` and `node_id`, it will use `GET /_nodes/{node_id}/{metric}` operation.
+You will also encounter `x-overloaded-param: metric` for the `node_id` path parameter of the `GET /_nodes/{node_id}` operation in `nodes.info` action. This is a special case where the path parameter is overloaded to accept either a node ID or a metric name. When the user evokes the `client.nodes.info` method with either `metric` or `node_id` (but not both), the method will use the `GET /_nodes/{node_id}` operation. When evoked with both `metric` and `node_id`, it will use the `GET /_nodes/{node_id}/{metric}` operation.
 
 ## Handling Bulk Operations
-Some operations accept a bulk of data in the request body. For example, the `bulk` action accepts a bulk of index, update, and delete operations on multiple documents. Unlike other operations where the request body is a JSON object, the request body for bulk operations is a newline-seperated JSON string. The client will automatically convert the request body into a newline-seperated JSON objects. The request body of such operations will be denoted with `x-serialize: "bulk"` vendor extension.
+Some operations accept a bulk of data in the request body. For example, the `bulk` action accepts a bulk of index, update, and delete operations on multiple documents. Unlike other operations where the request body is a **JSON object**, the request body for bulk operations is an **NDJSON** (i.e a [Newline-delimited JSON](https://github.com/ndjson/ndjson-spec)). When encountering this type of operation, the client must serialize the request body accordingly, and set the `Content-Type` header to `application/x-ndjson`.
 
 ## Parameter Validation
 As of right now, most clients only validate whether required parameters are present. The clients do not validate the values of parameters against the enum values or regex patterns. This is to reduce performance overhead for the clients as the validation is already done on the server. However, the list of enum values and regex patterns are often written into the parameter description.
 
-Some clients also check for the validity of query string parameter names to guard the users from typos. If you decide to implement this feature, make sure that it's performant. Scripting languages like Python and Ruby require the code to be loaded into memory at runtime, and constructs used for this feature can be expensive to load, as far as micro-services are concerned.
+Some clients also check for the validity of query string parameter names to guard the users from typos. If you decide to implement this feature, make sure that it's performant. Scripting languages like Python and Ruby require the code to be loaded into memory at runtime, and constructs used for this feature can be expensive to load, as far as microservices are concerned.
 
 ## Global Parameters
-All operations in the spec contain a set of parameters that are common across all operations. These parameters are denoted with `x-global: true` vendor extension. The generated clients should find a way to DRY these parameters.
+All operations in the spec contain a set of parameters that are common across all operations. These parameters are denoted with `x-global: true` vendor extension. The generated clients should find a way to DRY these parameters in type definitions and method documentation.
 
 ## Default Parameter Values
-Parameters can have default values either through schema or the `x-default` vendor extension. When both are present, `x-default` will takes precedence.
+Parameters can have default values either through schema or the `x-default` vendor extension. When both are present, `x-default` will take precedence.
