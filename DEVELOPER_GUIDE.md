@@ -48,7 +48,7 @@ spec
 - The data schemas are grouped by categories in [spec/schemas/](spec/schemas) directory. Each file in this directory represents a category.
 - The [spec/opensearch-openapi.yaml](spec/opensearch-openapi.yaml) file is the OpenAPI root file that ties everything together.
 
-Every `.yaml` file is a OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will also offer autocomplete and validation in real-time.
+Every `.yaml` file is a OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will also offer autocomplete and validation in realtime.
 
 ## Grouping Operations
 
@@ -76,7 +76,7 @@ Schemas are grouped by categories to keep their names short, and aid in client g
 
 ## Superseded Operations
 
-When an operation is superseded by another operation with **IDENTICAL FUNCTIONALITY**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](./spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated: true` and `x-ignorable: true` properties to indicate that it should be ignored by the client generator.
+When an operation is superseded by another operation with **identical functionality**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](./spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated: true` and `x-ignorable: true` properties to indicate that it should be ignored by the client generator.
 
 For example, if the `_superseded_operations.yaml` file contains the following entry:
 ```yaml
@@ -99,7 +99,7 @@ if and only if the superseding operations exist in the spec. A warning will be p
 
 Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
 
-## Global parameters
+## Global Parameters
 Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml) under the `parameters` section with `x-global` set to true. The merger tool will automatically add these parameters to all operations.
 
 ## OpenAPI Extensions
