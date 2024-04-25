@@ -125,4 +125,4 @@ The spec merger "builds", aka combines all `.yaml` files in a spec folder into a
 
 ### Linter
 
-The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.
+The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#spec-linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.
