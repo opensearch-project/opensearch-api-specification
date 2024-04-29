@@ -482,6 +482,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.generate_user_token@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/migrate:
     post:
       operationId: security.post_migrate.0
@@ -498,7 +500,7 @@ paths:
       operationId: security.distinguished_names.0
       x-operation-group: security.distinguished_names
       x-version-added: '1.0'
-      description: Retrieves distinguished names.
+      description: Retrieves distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names
       parameters:
@@ -506,11 +508,13 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.get_distinguished_names@200'
+        '403':
+          $ref: '#/components/responses/security.unauthorized@403'
     patch:
       operationId: security.distinguished_names.1
       x-operation-group: security.distinguished_names
       x-version-added: '1.0'
-      description: Bulk update of distinguished names.
+      description: Bulk update of distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#update-all-distinguished-names
       requestBody:
@@ -518,12 +522,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_distinguished_names@200'
+        '403':
+          $ref: '#/components/responses/security.unauthorized@403'
   /_plugins/_security/api/nodesdn/{cluster_name}:
     get:
       operationId: security.distinguished_name.0
       x-operation-group: security.distinguished_name
       x-version-added: '1.0'
-      description: Retrieves distinguished names.
+      description: Retrieves distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names
       parameters:
@@ -532,11 +538,13 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.get_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.unauthorized@403'
     put:
       operationId: security.distinguished_name.1
       x-operation-group: security.distinguished_names
       x-version-added: '1.0'
-      description: Adds or updates the specified distinguished names in the cluster’s or node’s allow list.
+      description: Adds or updates the specified distinguished names in the cluster’s or node’s allow list. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#update-distinguished-names
       parameters:
@@ -546,21 +554,25 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.update_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.unauthorized@403'
     patch:
       operationId: security.distinguished_name.2
       x-operation-group: security.distinguished_name
       x-version-added: '1.0'
-      description: Updates a distinguished cluster name for a specific cluster.
+      description: Updates a distinguished cluster name for a specific cluster. Only accessible to super-admins and with rest-api permissions when enabled.
       requestBody:
         $ref: '#/components/requestBodies/security.patch_distinguished_name'
       responses:
         '200':
           $ref: '#/components/responses/security.patch_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.unauthorized@403'
     delete:
       operationId: security.distinguished_name.3
       x-operation-group: security.distinguished_names
       x-version-added: '1.0'
-      description: Deletes all distinguished names in the specified cluster’s or node’s allow list.
+      description: Deletes all distinguished names in the specified cluster’s or node’s allow list. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#delete-distinguished-names
       parameters:
@@ -568,6 +580,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.delete_distinguished_names@200'
+        '403':
+          $ref: '#/components/responses/security.unauthorized@403'
   /_plugins/_security/api/permissionsinfo:
     get:
       operationId: security.permissions_info.0
@@ -602,6 +616,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_roles@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/roles/{role}:
     get:
       operationId: security.role.0
@@ -643,6 +659,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
     delete:
       operationId: security.role.3
       x-operation-group: security.role
@@ -678,6 +696,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role_mappings@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/rolesmapping/{role}:
     get:
       operationId: security.role_mapping.0
@@ -719,6 +739,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role_mapping@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
     delete:
       operationId: security.role_mapping.3
       x-operation-group: security.role_mapping
@@ -746,7 +768,7 @@ paths:
       operationId: security.configuration.1
       x-operation-group: security.configuration
       x-version-added: '1.0'
-      description: A PATCH call is used to update the existing configuration using the REST API.
+      description: A PATCH call is used to update the existing configuration using the REST API. Only accessible by admins and users with rest api access.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#patch-configuration
       requestBody:
@@ -759,7 +781,7 @@ paths:
       operationId: security.configuration.2
       x-operation-group: security.configuration
       x-version-added: '1.0'
-      description: Adds or updates the existing configuration using the REST API.
+      description: Adds or updates the existing configuration using the REST API. Only accessible by admins and users with rest api access.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#update-configuration
       requestBody:
@@ -772,12 +794,14 @@ paths:
       operationId: security.certificates.0
       x-operation-group: security.certificates
       x-version-added: '1.0'
-      description: Retrieves the cluster’s security certificates.
+      description: Retrieves the cluster security certificates.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#get-certificates
       responses:
         '200':
           $ref: '#/components/responses/security.get_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/ssl/http/reloadcerts:
     put:
       operationId: security.certificates.1
@@ -789,6 +813,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.reload_http_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/ssl/transport/reloadcerts:
     put:
       operationId: security.certificates.2
@@ -800,22 +826,26 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.reload_transport_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/tenancy/config:
     get:
       operationId: security.tenancy_config.0
       x-operation-group: security.tenancy_config
       x-version-added: '1.0'
-      description: Retrieves multi-tenancy configuration.
+      description: Retrieves multi-tenancy configuration. Only accessible to admins and users with REST API permissions.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
       responses:
         '200':
           $ref: '#/components/responses/security.get_tenancy_config@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
     put:
       operationId: security.tenancy_config.1
       x-operation-group: security.tenancy_config
       x-version-added: '1.0'
-      description: Creates or replaces the multi-tenancy configuration.
+      description: Creates or replaces the multi-tenancy configuration. Only accessible to admins and users with REST API permissions.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
       requestBody:
@@ -823,6 +853,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_update_tenancy_config@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/tenants:
     get:
       operationId: security.tenants.0
@@ -834,6 +866,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.get_tenants@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
     patch:
       operationId: security.tenants.1
       x-operation-group: security.tenants
@@ -846,6 +880,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_tenants@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/tenants/{tenant}:
     get:
       operationId: security.tenant.0
@@ -873,6 +909,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
     patch:
       operationId: security.tenant.2
       x-operation-group: security.tenant
@@ -887,6 +925,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
     delete:
       operationId: security.tenant.3
       x-operation-group: security.tenant
@@ -899,6 +939,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.delete_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/user:
     get:
       operationId: security.users.0
@@ -952,6 +994,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.generate_user_token@200'
+        '400':
+          $ref: '#/components/responses/security.bad_request@400'
   /_plugins/_security/api/validate:
     get:
       operationId: security.validate.0
@@ -1746,6 +1790,18 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
+    security.unauthenticated@401:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthenticatedResponse'
+    security.unauthorized@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
     security.migrate@200:
       description: ''
       content:
