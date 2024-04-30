@@ -45,7 +45,9 @@ def search(self, index=None, body=None):
 You will also encounter `x-overloaded-param: metric` for the `node_id` path parameter of the `GET /_nodes/{node_id}` operation in `nodes.info` action. This is a special case where the path parameter is overloaded to accept either a node ID or a metric name. When the user evokes the `client.nodes.info` method with either `metric` or `node_id` (but not both), the method will use the `GET /_nodes/{node_id}` operation. When evoked with both `metric` and `node_id`, it will use the `GET /_nodes/{node_id}/{metric}` operation.
 
 ## Handling Bulk Operations
-Some operations accept a bulk of data in the request body. For example, the `bulk` action accepts a bulk of index, update, and delete operations on multiple documents. Unlike other operations where the request body is a **JSON object**, the request body for bulk operations is an **NDJSON** (i.e a [Newline-delimited JSON](https://github.com/ndjson/ndjson-spec)). When encountering this type of operation, the client must serialize the request body accordingly, and set the `Content-Type` header to `application/x-ndjson`.
+Some operations accept a bulk of data in the request body. For example, the `bulk` action accepts a bulk of index, update, and delete operations on multiple documents. Unlike other operations where the request body is a **JSON object**, the request body for bulk operations is an **NDJSON** (i.e a [Newline-delimited JSON](https://github.com/ndjson/ndjson-spec)). 
+
+In the spec, these request bodies have the `content` of `application/x-ndjson` and their schemas are of type array. In this situation, the client must serialize the request body accordingly, and set the `Content-Type` header to `application/x-ndjson`.
 
 ## Parameter Validation
 As of right now, most clients only validate whether required parameters are present. The clients do not validate the values of parameters against the enum values or regex patterns. This is to reduce performance overhead for the clients as the validation is already done on the server. However, the list of enum values and regex patterns are often written into the parameter description.
