@@ -7,7 +7,8 @@
 - [Project Resources](#project-resources)
 - [Code of Conduct](#code-of-conduct)
 - [Developer Guide](#developer-guide)
-- [OpenSearch API Specs](#opensearch-api-specs)
+- [Client Generator Guide](#client-generator-guide)
+- [Published Spec](#published-spec)
 - [Security](#security)
 - [License](#license)
 - [Copyright](#copyright)
@@ -38,9 +39,16 @@ This project has adopted the [Amazon Open Source Code of Conduct](CODE_OF_CONDUC
 
 See [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md).
 
-## OpenSearch API Specs
+## Client Generator Guide
+
+See [CLIENT_GENERATOR_GUIDE](CLIENT_GENERATOR_GUIDE.md).
+
+## Published Spec
 
 OpenSearch API Specs are hosted at https://opensearch-project.github.io/opensearch-api-specification/. See [PUBLISHING_SPECS](PUBLISHING_SPECS.md) for more information.
+
+Click [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main/opensearch-openapi.yaml) to download the latest OpenSearch OpenAPI yaml file.
+
 
 ## Security
 
