@@ -2,13 +2,28 @@ import fs from 'fs'
 import YAML from 'yaml'
 import _ from 'lodash'
 
-export function resolve (ref: string, root: Record<string, any>) {
+export function resolveRef (ref: string, root: Record<string, any>): Record<string, any> | undefined{
   const paths = ref.replace('#/', '').split('/')
   for (const p of paths) {
     root = root[p]
     if (root === undefined) break
   }
   return root
+}
+
+export function resolveObj(obj: Record<string, any> | undefined, root: Record<string, any>) {
+  if (obj === undefined) return undefined
+  if (obj.$ref) return resolveRef(obj.$ref, root)
+  return obj
+}
+
+export function dig(obj: Record<string, any>, path: string[], root: Record<string, any>): any {
+  let value = obj
+  for (const p of path) {
+    value = resolveObj(value, root)?.[p]
+    if (value === undefined) break
+  }
+  return value
 }
 
 export function sortByKey (obj: Record<string, any>, priorities: string[] = []) {

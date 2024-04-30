@@ -3,7 +3,7 @@ import { type OperationSpec, type ValidationError } from '../../types'
 import OperationGroup from './OperationGroup'
 import _ from 'lodash'
 import Operation from './Operation'
-import { resolve } from '../../helpers'
+import { resolveRef } from '../../helpers'
 import FileValidator from './base/FileValidator'
 
 const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
@@ -68,7 +68,7 @@ export default class NamespaceFile extends FileValidator {
 
   validate_unresolved_refs (): ValidationError[] {
     return Array.from(this.refs()).map((ref) => {
-      if (resolve(ref, this.spec()) === undefined) return this.error(`Unresolved reference: ${ref}`, ref)
+      if (resolveRef(ref, this.spec()) === undefined) return this.error(`Unresolved reference: ${ref}`, ref)
     }).filter((e) => e) as ValidationError[]
   }
 
