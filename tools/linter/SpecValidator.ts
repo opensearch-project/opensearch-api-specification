@@ -4,7 +4,7 @@ import RootFile from './components/RootFile'
 import { type ValidationError } from '../types'
 import PathRefsValidator from './PathRefsValidator'
 import SchemaRefsValidator from './SchemaRefsValidator'
-import SupersededOperationsFile from "./components/SupersededOperationsFile";
+import SupersededOperationsFile from './components/SupersededOperationsFile'
 
 export default class SpecValidator {
   root_file: RootFile
@@ -29,7 +29,7 @@ export default class SpecValidator {
       ...this.namespaces_folder.validate(),
       ...this.schemas_folder.validate()
     ]
-    if (component_errors.length) return component_errors
+    if (component_errors.length > 0) return component_errors
 
     return [
       ...this.path_refs_validator.validate(),
