@@ -9,6 +9,7 @@ export default class SupersededOpsGenerator {
   constructor (root_path: string) {
     const file_path = root_path + '/_superseded_operations.yaml'
     this.superseded_ops = YAML.parse(fs.readFileSync(file_path, 'utf8'))
+    delete this.superseded_ops.$schema
   }
 
   generate (spec: Record<string, any>): void {
