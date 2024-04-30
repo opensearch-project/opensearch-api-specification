@@ -6,9 +6,6 @@ import { type ValidationError } from '../../types'
 
 export default class SupersededOperationsFile extends FileValidator {
   JSON_SCHEMA_PATH = '../json_schemas/_superseded_operations.yaml'
-  constructor (file_path: string) {
-    super(file_path)
-  }
 
   validate (): ValidationError[] {
     return [
