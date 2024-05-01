@@ -946,61 +946,61 @@ paths:
           $ref: '#/components/responses/security.delete_tenant@200'
         '400':
           $ref: '#/components/responses/security.delete_tenant@400'
-  # /_plugins/_security/api/user:
-  #   get:
-  #     operationId: security.get_users.1
-  #     x-operation-group: security.get_users
-  #     x-version-added: '1.0'
-  #     description: Retrieve all internal users. Legacy API.
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/security.get_users@200'
-  # /_plugins/_security/api/user/{username}:
-  #   get:
-  #     operationId: security.get_user.1
-  #     x-operation-group: security.get_user
-  #     x-version-added: '1.0'
-  #     description: Retrieve one user. Legacy API.
-  #     parameters:
-  #       - $ref: '#/components/parameters/security.get_user::path.username'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/security.get_user@200'
-  #   put:
-  #     operationId: security.create_user.1
-  #     x-operation-group: security.create_user
-  #     x-version-added: '1.0'
-  #     description: Creates or replaces the specified user. Legacy API.
-  #     parameters:
-  #       - $ref: '#/components/parameters/security.create_user::path.username'
-  #     requestBody:
-  #       $ref: '#/components/requestBodies/security.create_user'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/security.create_user@200'
-  #   delete:
-  #     operationId: security.delete_user.1
-  #     x-operation-group: security.delete_user
-  #     x-version-added: '1.0'
-  #     description: Delete the specified user. Legacy API.
-  #     parameters:
-  #       - $ref: '#/components/parameters/security.delete_user::path.username'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/security.delete_user@200'
-  # /_plugins/_security/api/user/{username}/authtoken:
-  #   post:
-  #     operationId: security.generate_user_token.1
-  #     x-operation-group: security.generate_user_token
-  #     x-version-added: '1.0'
-  #     description: Generates authorization token for the given user. Legacy API.
-  #     parameters:
-  #       - $ref: '#/components/parameters/security.generate_user_token::path.username'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/security.generate_user_token@200'
-  #       '400':
-  #         $ref: '#/components/responses/security.generate_user_token@400'
+  /_plugins/_security/api/user:
+    get:
+      operationId: security.get_users_legacy.0
+      x-operation-group: security.get_users_legacy
+      x-version-added: '1.0'
+      description: Retrieve all internal users. Legacy API.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_users_legacy@200'
+  /_plugins/_security/api/user/{username}:
+    get:
+      operationId: security.get_user_legacy.0
+      x-operation-group: security.get_user_legacy
+      x-version-added: '1.0'
+      description: Retrieve one user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.get_user_legacy::path.username'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_user_legacy@200'
+    put:
+      operationId: security.create_user_legacy.0
+      x-operation-group: security.create_user_legacy
+      x-version-added: '1.0'
+      description: Creates or replaces the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.create_user_legacy::path.username'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_user_legacy'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_user_legacy@200'
+    delete:
+      operationId: security.delete_user_legacy.0
+      x-operation-group: security.delete_user_legacy
+      x-version-added: '1.0'
+      description: Delete the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.delete_user_legacy::path.username'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_user_legacy@200'
+  /_plugins/_security/api/user/{username}/authtoken:
+    post:
+      operationId: security.generate_user_token_legacy.0
+      x-operation-group: security.generate_user_token_legacy
+      x-version-added: '1.0'
+      description: Generates authorization token for the given user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.generate_user_token_legacy::path.username'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.generate_user_token_legacy@200'
+        '400':
+          $ref: '#/components/responses/security.generate_user_token_legacy@400'
   /_plugins/_security/api/validate:
     get:
       operationId: security.validate.0
@@ -1065,6 +1065,12 @@ components:
             $ref: '../schemas/security._common.yaml#/components/schemas/OBOToken'
       required: true
     security.create_user:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/User'
+      required: true
+    security.create_user_legacy:
       content:
         application/json:
           schema:
@@ -1221,102 +1227,13 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              principal:
-                type: string
-                description: User principal
-              peer_certificates:
-                type: number
-                description: Number of certificates
-              peer_certificates_list:
-                type: array
-                description: List of domain names from peer certificates
-              local_certificates_list:
-                type: array
-                description: List of domain names from local certificates
-              ssl_protocol:
-                type: string
-                description: Protocol for this ssl setup
-              ssl_cipher:
-                type: string
-                description: Cipher for this ssl setup
-              ssl_openssl_available:
-                type: boolean
-                description: A boolean to indicate if OpenSSL is available
-              ssl_openssl_version:
-                type: string
-                description: Version of openssl
-              ssl_openssl_version_string:
-                type: string
-                description: Full version string for openssl version
-              ssl_openssl_non_available_cause:
-                type: string
-                description: Reason for openssl unavailability
-              ssl_openssl_supports_key_manager_factory:
-                type: boolean
-                description: Indicates where KMF is supported
-              ssl_openssl_supports_hostname_validation:
-                type: boolean
-                description: Indicates whether hostname validation is supported
-              ssl_provider_http:
-                type: string
-                description: Returns http provider's name
-              ssl_provider_transport_server:
-                type: string
-                description: Returns transport server's name
-              ssl_provider_transport_client:
-                type: string
-                description: Returns transport client's name
+            $ref: '../schemas/security._common.yaml#/components/schemas/SSLInfo'
     security.authinfo@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              user:
-                type: string
-                description: Stringified User object
-              user_name:
-                type: string
-                description: User's name
-              user_requested_tenant:
-                type: string
-                description: Name of the tenant the user wants to switch to
-              remote_address:
-                type: string
-                description: The IP address of remote user
-              backend_roles:
-                type: array
-                description: Backend roles associated with the user
-              custom_attribute_names:
-                type: array
-                description: Name of the attributes associated with the user
-              roles:
-                type: array
-                description: Roles associated with the user
-              tenants:
-                type: object
-                description: Tenants the user has access to with read-write or read-only access indicator
-              principal:
-                type: string
-                description: User principal 
-              peer_certificates:
-                type: number
-                description: Number of peer certificates
-              sso_logout_url:
-                type: string
-                description: Logout url
-              size_of_user:
-                type: string
-                description: Size of user in memory
-              size_of_custom_attributes:
-                type: string
-                description: Size of user's custom attributes in bytes
-              size_of_backendroles:
-                type: string
-                description: Size of backend roles in bytes
+            $ref: '../schemas/security._common.yaml#/components/schemas/AuthInfo'
     security.get_dashboards_info@200:
       description: ''
       content:
@@ -1365,6 +1282,12 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+    security.create_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
     security.delete_action_group@200:
       description: ''
       content:
@@ -1401,7 +1324,19 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+    security.delete_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
     security.generate_user_token@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+    security.generate_user_token_legacy@200:
       description: ''
       content:
         application/json:
@@ -1608,7 +1543,19 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/UsersMap'
+    security.get_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/UsersMap'
     security.get_users@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/UsersMap'
+    security.get_users_legacy@200:
       description: ''
       content:
         application/json:
@@ -1825,6 +1772,12 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
+    security.generate_user_token_legacy@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
     security.delete_tenant@400:
       description: ''
       content:
@@ -1973,32 +1926,32 @@ components:
     security.get_sslinfo::query.show_dn:
       name: show_dn
       in: query
-      description: The domain names from all certificates 
+      description: The domain names from all certificates.
       schema:
         type: string
-        description: A boolean flag to indicate whether all domain names should be returned
+        description: A boolean flag to indicate whether all domain names should be returned.
       required: false
     security.authinfo::query.verbose:
       name: verbose
       in: query
-      description: Indicates whether a verbose response should be returned
+      description: Indicates whether a verbose response should be returned.
       schema:
         type: boolean
       required: false
     security.authinfo::query.auth_type:
       name: auth_type
       in: query
-      description: The type of current authentication request
+      description: The type of current authentication request.
       schema:
         type: string
       required: false
     security.create_action_group::path.action_group:
       name: action_group
       in: path
-      description: The name of the action group to create or replace
+      description: The name of the action group to create or replace.
       schema:
         type: string
-        description: The name of the action group to create or replace
+        description: The name of the action group to create or replace.
       required: true
     security.create_role::path.role:
       name: role
@@ -2019,6 +1972,12 @@ components:
         type: string
       required: true
     security.create_user::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
+    security.create_user_legacy::path.username:
       name: username
       in: path
       schema:
@@ -2062,7 +2021,19 @@ components:
       schema:
         type: string
       required: true
+    security.delete_user_legacy::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
     security.generate_user_token::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
+    security.generate_user_token_legacy::path.username:
       name: username
       in: path
       schema:
@@ -2113,6 +2084,12 @@ components:
         type: string
       required: true
     security.get_user::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
+    security.get_user_legacy::path.username:
       name: username
       in: path
       schema:
