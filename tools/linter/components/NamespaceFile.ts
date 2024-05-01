@@ -3,7 +3,7 @@ import { type OperationSpec, type ValidationError } from '../../types'
 import OperationGroup from './OperationGroup'
 import _ from 'lodash'
 import Operation from './Operation'
-import { resolveRef } from '../../helpers'
+import { resolve_ref } from '../../helpers'
 import FileValidator from './base/FileValidator'
 
 const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
@@ -11,8 +11,8 @@ const NAME_REGEX = /^[a-z]+[a-z_]*[a-z]+$/
 
 export default class NamespaceFile extends FileValidator {
   namespace: string
-  _operation_groups: OperationGroup[] | undefined
-  _refs: Set<string> | undefined
+  private _operation_groups: OperationGroup[] | undefined
+  private _refs: Set<string> | undefined
 
   constructor (file_path: string) {
     super(file_path)
@@ -41,39 +41,41 @@ export default class NamespaceFile extends FileValidator {
       })
     })
 
-    return this._operation_groups = _.entries(_.groupBy(ops, (op) => op.group)).map(([group, ops]) => {
+    this._operation_groups = _.entries(_.groupBy(ops, (op) => op.group)).map(([group, ops]) => {
       return new OperationGroup(this.file, group, ops)
     })
+    return this._operation_groups
   }
 
   refs (): Set<string> {
     if (this._refs) return this._refs
     this._refs = new Set<string>()
-    const find_refs = (obj: Record<string, any>) => {
-      if (obj.$ref) this._refs!.add(obj.$ref)
-      _.values(obj).forEach((value) => { if (typeof value === 'object') find_refs(value) })
+    const find_refs = (obj: Record<string, any>): void => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (obj.$ref != null) this._refs!.add(obj.$ref as string)
+      _.values(obj).forEach((value) => { if (typeof value === 'object') find_refs(value as Record<string, any>) })
     }
-    find_refs(this.spec().paths || {})
+    find_refs(this.spec().paths ?? {})
     return this._refs
   }
 
-  validate_name (name = this.namespace): ValidationError | void {
+  validate_name (name = this.namespace): ValidationError | undefined {
     if (name === '_core') return
     if (!name.match(NAME_REGEX)) { return this.error(`Invalid namespace name '${name}'. Must match regex: /${NAME_REGEX.source}/.`, 'File Name') }
   }
 
-  validate_schemas (): ValidationError | void {
+  validate_schemas (): ValidationError | undefined {
     if (this.spec().components?.schemas) { return this.error('components/schemas is not allowed in namespace files', '#/components/schemas') }
   }
 
   validate_unresolved_refs (): ValidationError[] {
     return Array.from(this.refs()).map((ref) => {
-      if (resolveRef(ref, this.spec()) === undefined) return this.error(`Unresolved reference: ${ref}`, ref)
+      if (resolve_ref(ref, this.spec()) === undefined) return this.error(`Unresolved reference: ${ref}`, ref)
     }).filter((e) => e) as ValidationError[]
   }
 
   validate_unused_refs (): ValidationError[] {
-    return _.entries(this.spec().components || {}).flatMap(([type, collection]) => {
+    return _.entries(this.spec().components ?? {}).flatMap(([type, collection]) => {
       return _.keys(collection).map((name) => {
         if (!this.refs().has(`#/components/${type}/${name}`)) { return this.error(`Unused ${type} component: ${name}`, `#/components/${type}/${name}`) }
       })
@@ -81,7 +83,7 @@ export default class NamespaceFile extends FileValidator {
   }
 
   validate_parameter_refs (): ValidationError[] {
-    const parameters = this.spec().components?.parameters as Record<string, OpenAPIV3.ParameterObject>
+    const parameters = this.spec().components?.parameters as Record<string, OpenAPIV3.ParameterObject> | undefined
     if (!parameters) return []
     return _.entries(parameters).map(([name, p]) => {
       const group = name.split('::')[0]

@@ -7,11 +7,11 @@ export function schema (name: string, spec: Record<string, any> = {}): Schema {
 
 interface MockedReturnedValues {
   validate?: string[]
-  validate_name?: string | void
+  validate_name?: string | undefined
 }
 
-export function mocked_schema (returned_values: MockedReturnedValues) {
-  const schema = new Schema('_common.yaml', 'Schema', {} as OpenAPIV3.SchemaObject)
+export function mocked_schema (returned_values: MockedReturnedValues): Schema {
+  const schema = new Schema('_common.yaml', 'Schema', {})
 
   if (returned_values.validate) {
     schema.validate = jest.fn();
@@ -21,7 +21,7 @@ export function mocked_schema (returned_values: MockedReturnedValues) {
 
   schema.validate_name = jest.fn()
 
-  if (returned_values.validate_name) (schema.validate_name as jest.Mock).mockReturnValue(returned_values.validate_name)
+  if (returned_values.validate_name != null) (schema.validate_name as jest.Mock).mockReturnValue(returned_values.validate_name)
 
   return schema
 }

@@ -10,7 +10,7 @@ export interface OperationSpec extends OpenAPIV3.OperationObject {
 
   parameters?: OpenAPIV3.ReferenceObject[]
   requestBody?: OpenAPIV3.ReferenceObject
-  responses: { [code: string]: OpenAPIV3.ReferenceObject }
+  responses: Record<string, OpenAPIV3.ReferenceObject>
 }
 
 export interface ParameterSpec extends OpenAPIV3.ParameterObject {

@@ -17,13 +17,13 @@ export default class SupersededOpsGenerator {
       const regex = this.path_to_regex(superseded_by)
       const operation_keys = operations.map(op => op.toLowerCase())
       const superseded_path = this.copy_params(superseded_by, path)
-      const path_entry = _.entries(spec.paths).find(([path, _]) => regex.test(path))
+      const path_entry = _.entries(spec.paths as Document).find(([path, _]) => regex.test(path))
       if (!path_entry) console.log(`Path not found: ${superseded_by}`)
-      else spec.paths[superseded_path] = this.path_object(path_entry[1] as any, operation_keys)
+      else spec.paths[superseded_path] = this.path_object(path_entry[1], operation_keys)
     }
   }
 
-  path_object (obj: Record<string, any>, keys: string[]): Record<string, any> {
+  path_object (obj: any, keys: string[]): Record<string, any> {
     const cloned_obj = _.cloneDeep(_.pick(obj, keys))
     for (const key in cloned_obj) {
       const operation = cloned_obj[key] as OperationSpec
@@ -44,6 +44,6 @@ export default class SupersededOpsGenerator {
     const target_params = target_parts.filter(part => part.startsWith('{'))
     const source_params = source.split('/').filter(part => part.startsWith('{')).reverse()
     if (target_params.length !== source_params.length) { throw new Error('Mismatched parameters in source and target paths: ' + source + ' -> ' + target) }
-    return target_parts.map((part) => part.startsWith('{') ? source_params.pop()! : part).join('/')
+    return target_parts.map((part) => part.startsWith('{') ? source_params.pop() : part).join('/')
   }
 }

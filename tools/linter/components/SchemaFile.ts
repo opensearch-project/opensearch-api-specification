@@ -8,7 +8,7 @@ const NAME_REGEX = /^[a-z]+[a-z_]*[a-z]+$/
 
 export default class SchemaFile extends FileValidator {
   category: string
-  _schemas: Schema[] | undefined
+  private _schemas: Schema[] | undefined
 
   constructor (file_path: string) {
     super(file_path)
@@ -26,15 +26,16 @@ export default class SchemaFile extends FileValidator {
 
   schemas (): Schema[] {
     if (this._schemas) return this._schemas
-    return Object.entries(this.spec().components?.schemas || {}).map(([name, spec]) => {
+    this._schemas = Object.entries(this.spec().components?.schemas ?? {}).map(([name, spec]) => {
       return new Schema(this.file, name, spec as OpenAPIV3.SchemaObject)
     })
+    return this._schemas
   }
 
-  validate_category (category = this.category): ValidationError | void {
+  validate_category (category = this.category): ValidationError | undefined {
     if (category === '_common') return
-    if (!category.match(CATEGORY_REGEX)) { return this.error(`Invalid category name '${category}'. Must match regex: /${CATEGORY_REGEX.source}/.`, 'File Name') }
+    if (!CATEGORY_REGEX.test(category)) { return this.error(`Invalid category name '${category}'. Must match regex: /${CATEGORY_REGEX.source}/.`, 'File Name') }
     const name = category.split('.')[1]
-    if (name !== '_common' && !name.match(NAME_REGEX)) { return this.error(`Invalid category name '${category}'. '${name}' does not match regex: /${NAME_REGEX.source}/.`, 'File Name') }
+    if (name !== '_common' && !NAME_REGEX.test(name)) { return this.error(`Invalid category name '${category}'. '${name}' does not match regex: /${NAME_REGEX.source}/.`, 'File Name') }
   }
 }

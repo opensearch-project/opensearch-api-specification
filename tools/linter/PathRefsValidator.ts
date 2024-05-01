@@ -16,18 +16,19 @@ export default class PathRefsValidator {
     this.#build_available_paths()
   }
 
-  #build_referenced_paths () {
+  #build_referenced_paths (): void {
     for (const [path, spec] of Object.entries(this.root_file.spec().paths)) {
-      const ref = spec!.$ref!
+      const ref = spec?.$ref ?? ''
       const file = ref.split('#')[0]
-      if (!this.referenced_paths[file]) this.referenced_paths[file] = new Set()
+      const ref_path = this.referenced_paths[file] as Set<string> | undefined
+      if (!ref_path) this.referenced_paths[file] = new Set()
       this.referenced_paths[file].add(path)
     }
   }
 
-  #build_available_paths () {
+  #build_available_paths (): void {
     for (const file of this.namespaces_folder.files) {
-      this.available_paths[file.file] = new Set(Object.keys(file.spec().paths || {}))
+      this.available_paths[file.file] = new Set(Object.keys(file.spec().paths ?? {}))
     }
   }
 
@@ -40,7 +41,7 @@ export default class PathRefsValidator {
 
   validate_unresolved_refs (): ValidationError[] {
     return Object.entries(this.referenced_paths).flatMap(([ref_file, ref_paths]) => {
-      const available = this.available_paths[ref_file]
+      const available = this.available_paths[ref_file] as Set<string> | undefined
       if (!available) {
         return {
           file: this.root_file.file,
@@ -63,7 +64,7 @@ export default class PathRefsValidator {
 
   validate_unreferenced_paths (): ValidationError[] {
     return Object.entries(this.available_paths).flatMap(([ns_file, ns_paths]) => {
-      const referenced = this.referenced_paths[ns_file]
+      const referenced = this.referenced_paths[ns_file] as Set<string> | undefined
       if (!referenced) {
         return {
           file: ns_file,
@@ -71,7 +72,7 @@ export default class PathRefsValidator {
         }
       }
       return Array.from(ns_paths).map((path) => {
-        if (!referenced || !referenced.has(path)) {
+        if (!referenced?.has(path)) {
           return {
             file: ns_file,
             location: `Path: ${path}`,
