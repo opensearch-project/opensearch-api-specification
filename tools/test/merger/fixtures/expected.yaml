@@ -4,6 +4,17 @@ info:
   description: OpenSearch API
   version: 1.0.0
 paths:
+  /{index}:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/indices.create::path.index'
+        - $ref: '#/components/parameters/indices.create::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+      requestBody:
+        $ref: '#/components/requestBodies/indices.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.create@200'
   /adopt/{animal}/dockets/{docket}:
     get:
       operationId: adopt.0
@@ -40,13 +51,13 @@ paths:
 components:
   parameters:
     _global::query.human:
-      x-global: true
       name: human
       in: query
       description: Whether to return human readable values for statistics.
       schema:
         type: boolean
       default: true
+      x-global: true
     adopt::path.animal:
       name: animal
       in: path

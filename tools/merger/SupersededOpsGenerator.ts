@@ -1,14 +1,13 @@
 import { type OperationSpec, type SupersededOperationMap } from '../types'
-import YAML from 'yaml'
-import fs from 'fs'
 import _ from 'lodash'
+import { read_yaml } from '../helpers'
 
 export default class SupersededOpsGenerator {
   superseded_ops: SupersededOperationMap
 
   constructor (root_path: string) {
     const file_path = root_path + '/_superseded_operations.yaml'
-    this.superseded_ops = YAML.parse(fs.readFileSync(file_path, 'utf8'))
+    this.superseded_ops = read_yaml(file_path) as SupersededOperationMap
     delete this.superseded_ops.$schema
   }
 

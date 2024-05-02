@@ -1,73 +1,54 @@
 import { type OpenAPIV3 } from 'openapi-types'
 import fs from 'fs'
 import _ from 'lodash'
-import yaml from 'yaml'
-import { write_to_yaml } from '../helpers'
+import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
+import GlobalParamsGenerator from './GlobalParamsGenerator'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
-  root_path: string
   root_folder: string
   spec: Record<string, any>
-  global_param_refs: OpenAPIV3.ReferenceObject[]
 
   paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
   schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
 
-  constructor (root_path: string) {
-    this.root_path = fs.realpathSync(root_path)
-    this.root_folder = this.root_path.split('/').slice(0, -1).join('/')
-    this.spec = yaml.parse(fs.readFileSync(this.root_path, 'utf8'))
-    const global_params: OpenAPIV3.ParameterObject = this.spec.components?.parameters ?? {}
-    this.global_param_refs = Object.keys(global_params).map(param => ({ $ref: `#/components/parameters/${param}` }))
-    this.spec.components = {
-      parameters: global_params,
-      requestBodies: {},
-      responses: {},
-      schemas: {}
+  constructor (root_folder: string) {
+    this.root_folder = fs.realpathSync(root_folder)
+    this.spec = {
+      openapi: '3.1.0',
+      info: read_yaml(`${this.root_folder}/_info.yaml`),
+      paths: {},
+      components: {
+        parameters: {},
+        requestBodies: {},
+        responses: {},
+        schemas: {}
+      }
     }
   }
 
   merge (output_path: string = ''): OpenAPIV3.Document {
     this.#merge_schemas()
     this.#merge_namespaces()
-    this.#apply_global_params()
     this.#sort_spec_keys()
-    this.#generate_replaced_ops()
+    this.#generate_global_params()
+    this.#generate_superseded_ops()
 
-    if (output_path !== '') write_to_yaml(output_path, this.spec)
+    if (output_path !== '') write_yaml(output_path, this.spec)
     return this.spec as OpenAPIV3.Document
-  }
-
-  // Apply global parameters to all operations in the spec.
-  #apply_global_params (): void {
-    Object.entries(this.spec.paths as Document).forEach(([path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([method, operation]) => {
-        const params = operation.parameters ?? []
-        operation.parameters = [...params, ...Object.values(this.global_param_refs)]
-      })
-    })
   }
 
   // Merge files from <spec_root>/namespaces folder.
   #merge_namespaces (): void {
     const folder = `${this.root_folder}/namespaces`
     fs.readdirSync(folder).forEach(file => {
-      const spec = yaml.parse(fs.readFileSync(`${folder}/${file}`, 'utf8'))
-      const namespace = file.split('.yaml')[0]
+      const spec = read_yaml(`${folder}/${file}`)
       this.redirect_refs_in_namespace(spec)
-      this.paths[namespace] = spec.paths
+      this.spec.paths = { ...this.spec.paths, ...spec.paths }
       this.spec.components.parameters = { ...this.spec.components.parameters, ...spec.components.parameters }
       this.spec.components.responses = { ...this.spec.components.responses, ...spec.components.responses }
       this.spec.components.requestBodies = { ...this.spec.components.requestBodies, ...spec.components.requestBodies }
-    })
-
-    Object.entries(this.spec.paths as Document).forEach(([path, ref_obj]) => {
-      const ref: string = (ref_obj as Record<string, any>).$ref ?? ''
-      const namespace = ref.match(/namespaces\/(.*)\.yaml/)?.[1] ?? ''
-      if (namespace === '') throw new Error(`Invalid path reference: ${ref}`)
-      this.spec.paths[path] = this.paths[namespace][path]
     })
   }
 
@@ -85,7 +66,7 @@ export default class OpenApiMerger {
   #merge_schemas (): void {
     const folder = `${this.root_folder}/schemas`
     fs.readdirSync(folder).forEach(file => {
-      const spec = yaml.parse(fs.readFileSync(`${folder}/${file}`, 'utf8'))
+      const spec = read_yaml(`${folder}/${file}`)
       const category = file.split('.yaml')[0]
       this.redirect_refs_in_schema(category, spec)
       this.schemas[category] = spec.components.schemas as Record<string, OpenAPIV3.SchemaObject>
@@ -127,7 +108,14 @@ export default class OpenApiMerger {
     })
   }
 
-  #generate_replaced_ops (): void {
+  // Generate global parameters from _global_params.yaml file.
+  #generate_global_params (): void {
+    const gen = new GlobalParamsGenerator(this.root_folder)
+    gen.generate(this.spec)
+  }
+
+  // Generate superseded operations from _superseded_operations.yaml file.
+  #generate_superseded_ops (): void {
     const gen = new SupersededOpsGenerator(this.root_folder)
     gen.generate(this.spec)
   }

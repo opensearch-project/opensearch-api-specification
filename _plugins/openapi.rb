@@ -4,7 +4,7 @@ module OpenAPI
 
     Dir.chdir('tools') do
       system 'npm install'
-      system 'npm run merge -- ../spec/opensearch-openapi.yaml ../_site/opensearch-openapi.yaml'
+      system 'npm run merge -- ../spec ../_site/opensearch-openapi.yaml'
     end
 
     @generated = true
