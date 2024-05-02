@@ -1022,6 +1022,11 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/ChangePasswordRequestContent'
       required: true
+    security.config_upgrade_perform:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/ConfigUpgradePayload'
     security.create_action_group:
       content:
         application/json:
@@ -1033,12 +1038,6 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/AllowlistConfig'
-      required: true
-    security.patch_allowlist:
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
       required: true
     security.create_role:
       content:
@@ -1058,11 +1057,13 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/CreateTenantParams'
       required: true
-    security.generate_obo_token:
+    security.create_update_tenancy_config:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OBOToken'
+            type: array
+            items:
+              $ref: '../schemas/security._common.yaml#/components/schemas/MultiTenancyConfig'
       required: true
     security.create_user:
       content:
@@ -1076,15 +1077,15 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/User'
       required: true
-    security.post_dashboards_info:
+    security.generate_obo_token:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/DashboardsInfo'
-      required: false
+            $ref: '../schemas/security._common.yaml#/components/schemas/OBOToken'
+      required: true
     security.patch_action_group:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1092,7 +1093,15 @@ components:
       required: true
     security.patch_action_groups:
       content:
-        application/x-ndjson:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
+      required: true
+    security.patch_allowlist:
+      content:
+        application/json:
           schema:
             type: array
             items:
@@ -1100,7 +1109,7 @@ components:
       required: true
     security.patch_audit_configuration:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1108,15 +1117,20 @@ components:
       required: true
     security.patch_configuration:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
               $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
       required: true
+    security.patch_distinguished_name:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
     security.patch_distinguished_names:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1124,7 +1138,7 @@ components:
       required: true
     security.patch_role:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1132,7 +1146,7 @@ components:
       required: true
     security.patch_role_mapping:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1140,7 +1154,7 @@ components:
       required: true
     security.patch_role_mappings:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1148,7 +1162,7 @@ components:
       required: true
     security.patch_roles:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1156,7 +1170,7 @@ components:
       required: true
     security.patch_tenant:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1164,7 +1178,7 @@ components:
       required: true
     security.patch_tenants:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1172,7 +1186,7 @@ components:
       required: true
     security.patch_user:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -1180,12 +1194,18 @@ components:
       required: true
     security.patch_users:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
               $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
       required: true
+    security.post_dashboards_info:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/DashboardsInfo'
+      required: false
     security.update_audit_configuration:
       content:
         application/json:
@@ -1203,199 +1223,205 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
-    security.patch_distinguished_name:
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
-    security.config_upgrade_perform:
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/ConfigUpgradePayload'
-    security.create_update_tenancy_config:
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '../schemas/security._common.yaml#/components/schemas/MultiTenancyConfig'
-      required: true
   responses:
-    security.get_sslinfo@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/SSLInfo'
     security.authinfo@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/AuthInfo'
-    security.get_dashboards_info@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/DashboardsInfo'
-    security.post_dashboards_info@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/DashboardsInfo'
-    security.change_password@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.create_action_group@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.create_role@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.create_role_mapping@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.create_tenant@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.create_user@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.create_user_legacy@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_action_group@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_distinguished_name@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_role@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_role_mapping@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_tenant@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_user@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.delete_user_legacy@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.generate_user_token@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.generate_user_token_legacy@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.get_permissions_info@500:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
-    security.who_am_i@500:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
-    security.who_am_i_protected@500:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
-    security.tenant_info@500:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
-    security.post_dashboards_info@500:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
-    security.get_dashboards_info@500:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
     security.authinfo@500:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
-    security.get_sslinfo@500:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
+    security.authtoken@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerErrorResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.cache@501:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/MethodNotImplemented'
+    security.change_password@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.config_upgrade_check@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/UpgradeCheck'
+    security.config_upgrade_perform@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/UpgradePerform'
+    security.create_action_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.create_allowlist@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/AllowlistConfig'
+    security.create_role@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.create_role_mapping@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.create_tenant@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.create_tenant@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.create_update_tenancy_config@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/MultiTenancyConfig'
+    security.create_update_tenancy_config@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.create_user@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.create_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_action_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_distinguished_name@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_distinguished_name@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Unauthorized'
+    security.delete_role@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_role_mapping@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_tenant@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_tenant@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.delete_user@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.delete_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
     security.flush_cache@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.generate_obo_token@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/GenerateOBOToken'
+    security.generate_obo_token@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.generate_user_token@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.generate_user_token@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.generate_user_token_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.generate_user_token_legacy@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
     security.get_account_details@200:
       description: ''
       content:
@@ -1414,30 +1440,12 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/ActionGroupsMap'
-    security.patch_allowlist@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/AllowlistConfig'
     security.get_allowlist@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/AllowlistConfig'
-    security.create_allowlist@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/AllowlistConfig'
-    security.authtoken@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
     security.get_audit_configuration@200:
       description: ''
       content:
@@ -1449,40 +1457,67 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              http_certificates_list:
-                type: array
-                items:
-                  $ref: '../schemas/security._common.yaml#/components/schemas/CertificatesDetail'
-              transport_certificates_list:
-                type: array
-                items:
-                  $ref: '../schemas/security._common.yaml#/components/schemas/CertificatesDetail'
+            $ref: '../schemas/security._common.yaml#/components/schemas/GetCertificates'
+    security.get_certificates@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
     security.get_configuration@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/DynamicConfig'
+    security.get_dashboards_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/DashboardsInfo'
+    security.get_dashboards_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
     security.get_distinguished_name@200:
       description: Show nodesDn setting for given cluster.
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/DistinguishedNames'
-    security.update_distinguished_name@200:
+    security.get_distinguished_name@403:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Unauthorized'
     security.get_distinguished_names@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/DistinguishedNamesMap'
+    security.get_distinguished_names@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Unauthorized'
+    security.get_permissions_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/PermissionsInfo'
+    security.get_permissions_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
     security.get_role@200:
       description: ''
       content:
@@ -1501,25 +1536,25 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/RoleMappings'
-    security.get_permissions_info@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/PermissionsInfo'
     security.get_roles@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/RolesMap'
-    security.get_tenant@200:
+    security.get_sslinfo@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/TenantsMap'
-    security.get_tenants@200:
+            $ref: '../schemas/security._common.yaml#/components/schemas/SSLInfo'
+    security.get_sslinfo@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
+    security.get_tenant@200:
       description: ''
       content:
         application/json:
@@ -1531,12 +1566,24 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/MultiTenancyConfig'
-    security.create_update_tenancy_config@200:
+    security.get_tenancy_config@400:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/MultiTenancyConfig'
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.get_tenants@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/TenantsMap'
+    security.get_tenants@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
     security.get_user@200:
       description: ''
       content:
@@ -1567,326 +1614,271 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/HealthInfo'
+    security.migrate@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.migrate@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
     security.patch_action_group@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
     security.patch_action_groups@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_allowlist@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/AllowlistConfig'
     security.patch_audit_configuration@200:
       description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
     security.patch_configuration@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_distinguished_names@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_role@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_role_mapping@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_role_mappings@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_roles@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_tenant@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_tenants@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_user@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.patch_users@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.reload_http_certificates@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.reload_transport_certificates@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.tenant_info@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              "<indexOrAlias>":
-                type: string
-                value: "<tenant-name>"
-    security.update_audit_configuration@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.update_configuration@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
     security.patch_distinguished_name@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.config_upgrade_check@200:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_distinguished_name@403:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UpgradeCheck'
-    security.config_upgrade_perform@200:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Unauthorized'
+    security.patch_distinguished_names@200:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UpgradePerform'
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_distinguished_names@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Unauthorized'
+    security.patch_role@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_role@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.patch_role_mapping@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_role_mapping@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.patch_role_mappings@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_role_mappings@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.patch_roles@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_roles@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.patch_tenant@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_tenant@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.patch_tenants@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_tenants@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.patch_user@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.patch_users@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.post_dashboards_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/DashboardsInfo'
+    security.post_dashboards_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
+    security.reload_http_certificates@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.reload_http_certificates@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.reload_transport_certificates@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.reload_transport_certificates@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
+    security.tenant_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/TenantInfo'
+    security.tenant_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
+    security.update_audit_configuration@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.update_configuration@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.update_distinguished_name@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.update_distinguished_name@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Unauthorized'
+    security.validate@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.validate@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
     security.who_am_i@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/WhoAmI'
+    security.who_am_i@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
     security.who_am_i_protected@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/WhoAmI'
-    security.generate_obo_token@200:
+    security.who_am_i_protected@500:
       description: ''
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/GenerateOBOToken'
-    security.cache@501:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/MethodNotImplemented'
-    security.validate@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.generate_user_token@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.generate_user_token_legacy@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.delete_tenant@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.patch_tenant@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.patch_tenants@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.create_tenant@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.get_tenants@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.create_update_tenancy_config@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.get_tenancy_config@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.get_certificates@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.reload_http_certificates@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.reload_transport_certificates@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.patch_roles@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.patch_role@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.patch_role_mappings@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.patch_role_mapping@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.migrate@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.generate_obo_token@400:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/BadRequestResponse'
-    security.get_distinguished_names@403:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
-    security.patch_distinguished_names@403:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
-    security.get_distinguished_name@403:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
-    security.patch_distinguished_name@403:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
-    security.update_distinguished_name@403:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
-    security.delete_distinguished_name@403:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UnauthorizedResponse'
-    security.migrate@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
-    security.validate@200:
-      description: ''
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/OkResponse'
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
   parameters:
-    security.get_sslinfo::query.show_dn:
-      name: show_dn
+    security.authinfo::query.auth_type:
+      name: auth_type
       in: query
-      description: The domain names from all certificates.
+      description: The type of current authentication request.
       schema:
         type: string
-        description: A boolean flag to indicate whether all domain names should be returned.
       required: false
     security.authinfo::query.verbose:
       name: verbose
@@ -1894,13 +1886,6 @@ components:
       description: Indicates whether a verbose response should be returned.
       schema:
         type: boolean
-      required: false
-    security.authinfo::query.auth_type:
-      name: auth_type
-      in: query
-      description: The type of current authentication request.
-      schema:
-        type: string
       required: false
     security.create_action_group::path.action_group:
       name: action_group
@@ -2034,6 +2019,14 @@ components:
       schema:
         type: string
       required: true
+    security.get_sslinfo::query.show_dn:
+      name: show_dn
+      in: query
+      description: The domain names from all certificates.
+      schema:
+        type: string
+        description: A boolean flag to indicate whether all domain names should be returned.
+      required: false
     security.get_tenant::path.tenant:
       name: tenant
       in: path
@@ -2060,6 +2053,12 @@ components:
       required: false
     security.patch_action_group::path.action_group:
       name: action_group
+      in: path
+      schema:
+        type: string
+      required: true
+    security.patch_distinguished_name::path.cluster_name:
+      name: cluster_name
       in: path
       schema:
         type: string
@@ -2094,15 +2093,11 @@ components:
       schema:
         type: string
       required: true
-    security.patch_distinguished_name::path.cluster_name:
-      name: cluster_name
-      in: path
-      schema:
-        type: string
-      required: true
     security.validate::query.accept_invalid:
       name: accept_invalid
       in: query
       schema:
         type: boolean
       required: false
+
+
