@@ -13,26 +13,45 @@ export default [
   ...compat.extends('standard-with-typescript'),
   {
     files: ['**/*.{js,ts}'],
-    // to auto-fix disable all rules except the one you want to fix with '@rule': 'warn', then run `npm run lint -- --fix`
     rules: {
-      '@typescript-eslint/consistent-indexed-object-style': 'warn',
-      '@typescript-eslint/consistent-type-assertions': 'warn',
-      '@typescript-eslint/dot-notation': 'warn',
-      '@typescript-eslint/explicit-function-return-type': 'warn',
-      '@typescript-eslint/naming-convention': 'warn',
-      '@typescript-eslint/no-confusing-void-expression': 'warn',
-      '@typescript-eslint/no-dynamic-delete': 'warn',
-      '@typescript-eslint/no-invalid-void-type': 'warn',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
-      '@typescript-eslint/require-array-sort-compare': 'warn',
-      '@typescript-eslint/strict-boolean-expressions': 'warn',
-      'array-callback-return': 'warn',
-      'new-cap': 'warn',
-      'no-return-assign': 'warn',
-      'object-shorthand': 'warn'
+      '@typescript-eslint/consistent-indexed-object-style': 'error',
+      '@typescript-eslint/consistent-type-assertions': 'error',
+      '@typescript-eslint/dot-notation': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/naming-convention': ['error',
+        { selector: 'classProperty', modifiers: ['readonly'], format: ['UPPER_CASE'], leadingUnderscore: 'allow' },
+        { selector: 'memberLike', modifiers: ['public'], format: ['snake_case'], leadingUnderscore: 'forbid' },
+        { selector: 'memberLike', modifiers: ['private', 'protected'], format: ['snake_case'], leadingUnderscore: 'require' },
+        { selector: 'variableLike', format: ['snake_case', 'UPPER_CASE'], leadingUnderscore: 'allow' },
+        { selector: 'typeLike', format: ['PascalCase'] },
+        { selector: 'objectLiteralProperty', format: null },
+        { selector: 'typeProperty', format: null }
+      ],
+      '@typescript-eslint/no-confusing-void-expression': 'error',
+      '@typescript-eslint/no-dynamic-delete': 'error',
+      '@typescript-eslint/no-invalid-void-type': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/no-unsafe-argument': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+      '@typescript-eslint/require-array-sort-compare': 'error',
+      '@typescript-eslint/strict-boolean-expressions': ['error',
+        {
+          allowString: true,
+          allowNumber: true,
+          allowNullableObject: true,
+          allowNullableBoolean: true,
+          allowNullableString: false,
+          allowNullableNumber: false,
+          allowNullableEnum: false,
+          allowAny: false,
+          allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false
+        }
+      ],
+      'array-callback-return': 'off',
+      'new-cap': 'off',
+      'no-return-assign': 'error',
+      'object-shorthand': 'error'
     }
   }
 ]

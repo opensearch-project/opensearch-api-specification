@@ -1,12 +1,11 @@
 import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from '../../../types'
-import fs from 'fs'
-import YAML from 'yaml'
 import { type OpenAPIV3 } from 'openapi-types'
+import { read_yaml } from '../../../helpers'
 
 export default class FileValidator extends ValidatorBase {
   file_path: string
-  _spec: OpenAPIV3.Document | undefined
+  protected _spec: OpenAPIV3.Document | undefined
 
   constructor (file_path: string) {
     super(file_path.split('/').slice(-2).join('/'))
@@ -15,10 +14,11 @@ export default class FileValidator extends ValidatorBase {
 
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
-    return this._spec = YAML.parse(fs.readFileSync(this.file_path, 'utf8')) || {}
+    this._spec = read_yaml(this.file_path) as OpenAPIV3.Document
+    return this._spec
   }
 
-  validate (...args: any[]): ValidationError[] {
+  validate (): ValidationError[] {
     const extension_error = this.validate_extension()
     if (extension_error) return [extension_error]
     const yaml_error = this.validate_yaml()
@@ -26,7 +26,7 @@ export default class FileValidator extends ValidatorBase {
     return this.validate_file()
   }
 
-  validate_file (...args: any[]): ValidationError[] {
+  validate_file (): ValidationError[] {
     throw new Error('Method not implemented.')
   }
 

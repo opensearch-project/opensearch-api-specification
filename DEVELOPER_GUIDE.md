@@ -41,14 +41,15 @@ spec
 │   ├── cat.aliases.yaml
 │   └── ...
 │
-└── opensearch-openapi.yaml
+├── _info.yaml
+├── _global_parameters.yaml
+└── _superseded_operations.yaml
 ```
 
 - The API Operations are grouped by namespaces in [spec/namespaces/](spec/namespaces) directory. Each file in this directory represents a namespace and holds all paths and operations of the namespace.
 - The data schemas are grouped by categories in [spec/schemas/](spec/schemas) directory. Each file in this directory represents a category.
-- The [spec/opensearch-openapi.yaml](spec/opensearch-openapi.yaml) file is the OpenAPI root file that ties everything together.
 
-Every `.yaml` file is a OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will also offer autocomplete and validation in realtime.
+Every `.yaml` file in the namespaces and schemas folders is a OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will also offer autocomplete and validation in realtime.
 
 ## Grouping Operations
 
@@ -100,7 +101,7 @@ if and only if the superseding operations exist in the spec. A warning will be p
 Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
 
 ## Global Parameters
-Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml) under the `parameters` section with `x-global` set to true. The merger tool will automatically add these parameters to all operations.
+Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [spec/_global_parameters.yaml](spec/_global_parameters.yaml). The merger tool will automatically add these parameters to all operations.
 
 ## OpenAPI Extensions
 
@@ -112,7 +113,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-version-removed`: OpenSearch version when the operation/parameter was removed.
 - `x-deprecation-message`: Reason for deprecation and guidance on how to prepare for the next major version.
 - `x-ignorable`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
-- `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [root file](spec/opensearch-openapi.yaml).
+- `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [spec/_global_parameters.yaml](spec/_global_parameters.yaml).
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
 
 ## Tools

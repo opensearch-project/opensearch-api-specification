@@ -17,39 +17,41 @@ export default class SchemaRefsValidator {
     this.#build_available_schemas()
   }
 
-  #find_refs_in_namespaces_folder () {
-    const search = (obj: Record<string, any>) => {
-      const ref = obj.$ref
-      if (ref) {
+  #find_refs_in_namespaces_folder (): void {
+    const search = (obj: any): void => {
+      const ref: string = obj.$ref ?? ''
+      if (ref !== '') {
         const file = ref.split('#')[0].replace('../', '')
-        const name = ref.split('/').pop()
-        if (!this.referenced_schemas[file]) this.referenced_schemas[file] = new Set()
+        const name = ref.split('/').pop() ?? ''
+        if (name === '') throw new Error(`Invalid schema reference: ${ref}`)
+        if (this.referenced_schemas[file] == null) this.referenced_schemas[file] = new Set()
         this.referenced_schemas[file].add(name)
       }
       for (const key in obj) { if (typeof obj[key] === 'object') search(obj[key]) }
     }
 
-    this.namespaces_folder.files.forEach((file) => { search(file.spec().components || {}) })
+    this.namespaces_folder.files.forEach((file) => { search(file.spec().components ?? {}) })
   }
 
-  #find_refs_in_schemas_folder () {
-    const search = (obj: Record<string, any>, ref_file: string) => {
-      const ref = obj.$ref
-      if (ref) {
+  #find_refs_in_schemas_folder (): void {
+    const search = (obj: any, ref_file: string): void => {
+      const ref = obj.$ref as string ?? ''
+      if (ref !== '') {
         const file = ref.startsWith('#') ? ref_file : `schemas/${ref.split('#')[0]}`
-        const name = ref.split('/').pop()
-        if (!this.referenced_schemas[file]) this.referenced_schemas[file] = new Set()
+        const name = ref.split('/').pop() ?? ''
+        if (name === '') throw new Error(`Invalid schema reference: ${ref}`)
+        if (this.referenced_schemas[file] == null) this.referenced_schemas[file] = new Set()
         this.referenced_schemas[file].add(name)
       }
       for (const key in obj) { if (typeof obj[key] === 'object') search(obj[key], ref_file) }
     }
 
-    this.schemas_folder.files.forEach((file) => { search(file.spec().components?.schemas || {}, file.file) })
+    this.schemas_folder.files.forEach((file) => { search(file.spec().components?.schemas ?? {}, file.file) })
   }
 
-  #build_available_schemas () {
+  #build_available_schemas (): void {
     this.schemas_folder.files.forEach((file) => {
-      this.available_schemas[file.file] = new Set(Object.keys(file.spec().components?.schemas || {}))
+      this.available_schemas[file.file] = new Set(Object.keys(file.spec().components?.schemas ?? {}))
     })
   }
 
@@ -63,7 +65,7 @@ export default class SchemaRefsValidator {
   validate_unresolved_refs (): ValidationError[] {
     return Object.entries(this.referenced_schemas).flatMap(([ref_file, ref_schemas]) => {
       const available = this.available_schemas[ref_file]
-      if (!available) {
+      if (available == null) {
         return {
           file: this.namespaces_folder.file,
           message: `Unresolved schema reference: Schema file ${ref_file} is referenced but does not exist.`
@@ -85,9 +87,9 @@ export default class SchemaRefsValidator {
   validate_unreferenced_schemas (): ValidationError[] {
     return Object.entries(this.available_schemas).flatMap(([file, schemas]) => {
       const referenced = this.referenced_schemas[file]
-      if (!referenced) {
+      if (referenced == null) {
         return {
-          file: file,
+          file,
           message: `Unreferenced schema: Schema file ${file} is not referenced anywhere.`
         }
       }
@@ -95,7 +97,7 @@ export default class SchemaRefsValidator {
       return Array.from(schemas).map((schema) => {
         if (!referenced.has(schema)) {
           return {
-            file: file,
+            file,
             location: `#/components/schemas/${schema}`,
             message: `Unreferenced schema: Schema ${schema} is not referenced anywhere.`
           }

@@ -6,7 +6,6 @@ test('validate()', () => {
 
   validator.namespaces_folder.validate = jest.fn().mockReturnValue([{ file: 'namespaces/', message: 'namespace error' }])
   validator.schemas_folder.validate = jest.fn().mockReturnValue([{ file: 'schemas/', message: 'schema error' }])
-  validator.path_refs_validator.validate = jest.fn().mockReturnValue([{ file: 'path_refs', message: 'path refs error' }])
   validator.schema_refs_validator.validate = jest.fn().mockReturnValue([{ file: 'schema_refs', message: 'schema refs error' }])
 
   expect(validator.validate()).toEqual([
@@ -18,7 +17,6 @@ test('validate()', () => {
   validator.schemas_folder.validate = jest.fn().mockReturnValue([])
 
   expect(validator.validate()).toEqual([
-    { file: 'path_refs', message: 'path refs error' },
     { file: 'schema_refs', message: 'schema refs error' }
   ])
 })

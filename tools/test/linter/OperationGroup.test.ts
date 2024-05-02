@@ -18,32 +18,32 @@ test('validate_description()', () => {
 })
 
 test('validate_externalDocs()', () => {
-  const valid_externalDocs = operation_group([
+  const valid_external_docs = operation_group([
     { externalDocs: { url: 'https://example.com' } },
     { externalDocs: { url: 'https://example.com' } }])
-  expect(valid_externalDocs.validate_externalDocs())
+  expect(valid_external_docs.validate_external_docs())
     .toBeUndefined()
 
-  const invalid_externalDocs = operation_group([
+  const invalid_external_docs = operation_group([
     { externalDocs: { url: 'https://example.com' } },
     { externalDocs: { url: 'https://example.com' } },
     {}])
-  expect(invalid_externalDocs.validate_externalDocs())
-    .toEqual(invalid_externalDocs.error('3 \'indices.create\' operations must have identical externalDocs property.'))
+  expect(invalid_external_docs.validate_external_docs())
+    .toEqual(invalid_external_docs.error('3 \'indices.create\' operations must have identical externalDocs property.'))
 })
 
 test('validate_requestBody()', () => {
-  const valid_requestBodies = operation_group([
+  const valid_request_bodies = operation_group([
     { requestBody: { $ref: '#/components/requestBodies/indices.create' } },
     { requestBody: { $ref: '#/components/requestBodies/indices.create' } }])
-  expect(valid_requestBodies.validate_requestBody())
+  expect(valid_request_bodies.validate_request_body())
     .toBeUndefined()
 
-  const invalid_requestBodies = operation_group([
+  const invalid_request_bodies = operation_group([
     { requestBody: { $ref: '#/components/requestBodies/indices.create' } },
     {}])
-  expect(invalid_requestBodies.validate_requestBody())
-    .toEqual(invalid_requestBodies.error('2 \'indices.create\' operations must have identical requestBody property.'))
+  expect(invalid_request_bodies.validate_request_body())
+    .toEqual(invalid_request_bodies.error('2 \'indices.create\' operations must have identical requestBody property.'))
 })
 
 test('validate_responses()', () => {

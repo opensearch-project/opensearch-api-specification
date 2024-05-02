@@ -8,8 +8,8 @@ export function namespace_file (fixture_file: string): NamespaceFile {
 
 interface MockedReturnedValues {
   validate?: string[]
-  validate_name?: string | void
-  validate_schemas?: string | void
+  validate_name?: string | undefined
+  validate_schemas?: string | undefined
   validate_unresolved_refs?: string[]
   validate_unused_refs?: string[]
   validate_parameter_refs?: string[]
@@ -20,8 +20,10 @@ export function mocked_namespace_file (ops: { returned_values?: MockedReturnedVa
   ns_file.file = 'namespaces/indices.yaml'
   ns_file.namespace = 'indices'
 
-  if (ops.groups_errors) ns_file._operation_groups = ops.groups_errors.map((errors) => mocked_operation_group({ validate: errors }))
-  if (ops.spec) ns_file._spec = { paths: {}, components: {}, ...ops.spec } as OpenAPIV3.Document
+  // eslint-disable-next-line @typescript-eslint/dot-notation
+  if (ops.groups_errors) ns_file['_operation_groups'] = ops.groups_errors.map((errors) => mocked_operation_group({ validate: errors }))
+  // eslint-disable-next-line @typescript-eslint/dot-notation,@typescript-eslint/consistent-type-assertions
+  if (ops.spec) ns_file['_spec'] = { paths: {}, components: {}, ...ops.spec } as OpenAPIV3.Document
 
   if (ops.returned_values) {
     if (ops.returned_values.validate) {
@@ -36,11 +38,11 @@ export function mocked_namespace_file (ops: { returned_values?: MockedReturnedVa
     ns_file.validate_unused_refs = jest.fn()
     ns_file.validate_parameter_refs = jest.fn()
 
-    if (ops.returned_values.validate_name) (ns_file.validate_name as jest.Mock).mockReturnValue(ops.returned_values.validate_name)
-    if (ops.returned_values.validate_schemas) (ns_file.validate_schemas as jest.Mock).mockReturnValue(ops.returned_values.validate_schemas)
-    if (ops.returned_values.validate_unresolved_refs) (ns_file.validate_unresolved_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_unresolved_refs)
-    if (ops.returned_values.validate_unused_refs) (ns_file.validate_unused_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_unused_refs)
-    if (ops.returned_values.validate_parameter_refs) (ns_file.validate_parameter_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_parameter_refs)
+    if (ops.returned_values.validate_name != null) (ns_file.validate_name as jest.Mock).mockReturnValue(ops.returned_values.validate_name)
+    if (ops.returned_values.validate_schemas != null) (ns_file.validate_schemas as jest.Mock).mockReturnValue(ops.returned_values.validate_schemas)
+    if (ops.returned_values.validate_unresolved_refs != null) (ns_file.validate_unresolved_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_unresolved_refs)
+    if (ops.returned_values.validate_unused_refs != null) (ns_file.validate_unused_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_unused_refs)
+    if (ops.returned_values.validate_parameter_refs != null) (ns_file.validate_parameter_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_parameter_refs)
   }
 
   return ns_file
