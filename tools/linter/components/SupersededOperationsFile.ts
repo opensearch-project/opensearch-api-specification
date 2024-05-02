@@ -5,7 +5,7 @@ import YAML from 'yaml'
 import { type ValidationError } from '../../types'
 
 export default class SupersededOperationsFile extends FileValidator {
-  JSON_SCHEMA_PATH = '../json_schemas/_superseded_operations.yaml'
+  readonly JSON_SCHEMA_PATH = '../json_schemas/_superseded_operations.yaml'
 
   validate (): ValidationError[] {
     return [

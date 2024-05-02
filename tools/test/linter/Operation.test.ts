@@ -41,15 +41,15 @@ test('validate_namespace()', () => {
 
 test('validate_operationId()', () => {
   const no_id = operation({ 'x-operation-group': 'indices.create' })
-  expect(no_id.validate_operationId())
+  expect(no_id.validate_operation_id())
     .toEqual(no_id.error('Missing operationId property.'))
 
   const invalid_id = operation({ 'x-operation-group': 'indices.create', operationId: 'create_index' })
-  expect(invalid_id.validate_operationId())
+  expect(invalid_id.validate_operation_id())
     .toEqual(invalid_id.error('Invalid operationId \'create_index\'. Must be in {x-operation-group}.{number} format.'))
 
   const valid_id = operation({ 'x-operation-group': 'indices.create', operationId: 'indices.create.1' })
-  expect(valid_id.validate_operationId())
+  expect(valid_id.validate_operation_id())
     .toBeUndefined()
 })
 
@@ -69,15 +69,15 @@ test('validate_description()', () => {
 
 test('validate_requestBody()', () => {
   const no_body = operation({ 'x-operation-group': 'indices.create' })
-  expect(no_body.validate_requestBody())
+  expect(no_body.validate_request_body())
     .toBeUndefined()
 
   const valid_body = operation({ 'x-operation-group': 'indices.create', requestBody: { $ref: '#/components/requestBodies/indices.create' } })
-  expect(valid_body.validate_requestBody())
+  expect(valid_body.validate_request_body())
     .toBeUndefined()
 
   const invalid_body = operation({ 'x-operation-group': 'indices.create', requestBody: { $ref: '#/components/requestBodies/indices.create.1' } })
-  expect(invalid_body.validate_requestBody())
+  expect(invalid_body.validate_request_body())
     .toEqual(invalid_body.error('The requestBody must be a reference object to \'#/components/requestBodies/indices.create\'.'))
 })
 
