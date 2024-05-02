@@ -1,8 +1,7 @@
 import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from '../../../types'
-import fs from 'fs'
-import YAML from 'yaml'
 import { type OpenAPIV3 } from 'openapi-types'
+import { read_yaml } from '../../../helpers'
 
 export default class FileValidator extends ValidatorBase {
   file_path: string
@@ -15,7 +14,7 @@ export default class FileValidator extends ValidatorBase {
 
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
-    this._spec = YAML.parse(fs.readFileSync(this.file_path, 'utf8')) as OpenAPIV3.Document
+    this._spec = read_yaml(this.file_path) as OpenAPIV3.Document
     return this._spec
   }
 

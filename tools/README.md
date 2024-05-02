@@ -21,13 +21,13 @@ Example:
 
 ```bash
 mkdir -p ../build
-export ROOT_PATH=../spec/opensearch-openapi.yaml
+export ROOT_PATH=../spec
 export OUTPUT_PATH=../build/opensearch-openapi.yaml
 npm run merge -- $ROOT_PATH $OUTPUT_PATH
 ```
 
 As a shortcut, if those parameters are not provided, the tool will use the default values:
-- `../spec/opensearch-openapi.yaml` as the root path (i.e. the root file of the repo's [spec folder](../spec))
+- `../spec` as the root path (i.e. the repo's [spec folder](../spec))
 - `../opensearch-openapi.yaml` as the output path
 
 ```bash

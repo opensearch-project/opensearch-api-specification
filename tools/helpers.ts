@@ -43,7 +43,11 @@ export function sort_by_keys (obj: Record<string, any>, priorities: string[] = [
   })
 }
 
-export function write_to_yaml (file_path: string, content: Record<string, any>): void {
+export function read_yaml (file_path: string): Record<string, any> {
+  return YAML.parse(fs.readFileSync(file_path, 'utf8'))
+}
+
+export function write_yaml (file_path: string, content: Record<string, any>): void {
   fs.writeFileSync(file_path, quote_refs(YAML.stringify(remove_anchors(content), { lineWidth: 0, singleQuote: true })))
 }
 
