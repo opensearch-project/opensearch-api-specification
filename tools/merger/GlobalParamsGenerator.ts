@@ -27,9 +27,9 @@ export default class GlobalParamsGenerator {
     const params = (spec.components?.parameters ?? {}) as Record<string, OpenAPIV3.ParameterObject>
     _.entries(params).forEach(([original_key, param]) => {
       const global_key = `_global::${param.in}.${param.name}`
-      params[global_key] = param
       _.set(param, 'x-global', true)
       _.unset(params, original_key)
+      params[global_key] = param
     })
     return params
   }
