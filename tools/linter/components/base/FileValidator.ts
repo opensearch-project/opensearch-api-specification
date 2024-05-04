@@ -2,9 +2,12 @@ import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from '../../../types'
 import { type OpenAPIV3 } from 'openapi-types'
 import { read_yaml } from '../../../helpers'
+import AJV from 'ajv'
+import addFormats from 'ajv-formats'
 
 export default class FileValidator extends ValidatorBase {
   file_path: string
+  has_json_schema: boolean = false
   protected _spec: OpenAPIV3.Document | undefined
 
   constructor (file_path: string) {
@@ -23,11 +26,13 @@ export default class FileValidator extends ValidatorBase {
     if (extension_error) return [extension_error]
     const yaml_error = this.validate_yaml()
     if (yaml_error) return [yaml_error]
+    const json_schema_error = this.validate_json_schema()
+    if (json_schema_error) return [json_schema_error]
     return this.validate_file()
   }
 
   validate_file (): ValidationError[] {
-    throw new Error('Method not implemented.')
+    return []
   }
 
   validate_extension (): ValidationError | undefined {
@@ -39,6 +44,19 @@ export default class FileValidator extends ValidatorBase {
       this.spec()
     } catch (e: any) {
       return this.error('Unable to read or parse YAML.', 'File Content')
+    }
+  }
+
+  validate_json_schema (): ValidationError | undefined {
+    if (!this.has_json_schema) return
+    const json_schema_path: string = (this.spec() as any).$schema ?? ''
+    if (json_schema_path === '') return this.error('JSON Schema is required but not found in this file.', '$schema')
+    const schema = read_yaml(json_schema_path)
+    const ajv = new AJV({ schemaId: 'id' })
+    addFormats(ajv)
+    const validator = ajv.compile(schema)
+    if (!validator(this.spec())) {
+      return this.error(`File content does not match JSON schema found in '${json_schema_path}':\n ${JSON.stringify(validator.errors, null, 2)}`)
     }
   }
 }

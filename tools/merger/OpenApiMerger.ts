@@ -17,7 +17,7 @@ export default class OpenApiMerger {
     this.root_folder = fs.realpathSync(root_folder)
     this.spec = {
       openapi: '3.1.0',
-      info: read_yaml(`${this.root_folder}/_info.yaml`),
+      info: read_yaml(`${this.root_folder}/_info.yaml`, true),
       paths: {},
       components: {
         parameters: {},
