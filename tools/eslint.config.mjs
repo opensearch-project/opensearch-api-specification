@@ -19,7 +19,7 @@ export default [
       '@typescript-eslint/dot-notation': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/naming-convention': ['error',
-        { selector: 'classProperty', modifiers: ['readonly'], format: ['UPPER_CASE'], leadingUnderscore: 'allow' },
+        { selector: 'classProperty', modifiers: ['static', 'readonly'], format: ['UPPER_CASE'], leadingUnderscore: 'allow' },
         { selector: 'memberLike', modifiers: ['public'], format: ['snake_case'], leadingUnderscore: 'forbid' },
         { selector: 'memberLike', modifiers: ['private', 'protected'], format: ['snake_case'], leadingUnderscore: 'require' },
         { selector: 'variableLike', format: ['snake_case', 'UPPER_CASE'], leadingUnderscore: 'allow' },
