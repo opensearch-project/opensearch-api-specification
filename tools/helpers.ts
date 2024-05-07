@@ -43,8 +43,10 @@ export function sort_by_keys (obj: Record<string, any>, priorities: string[] = [
   })
 }
 
-export function read_yaml (file_path: string): Record<string, any> {
-  return YAML.parse(fs.readFileSync(file_path, 'utf8'))
+export function read_yaml (file_path: string, exclude_schema: boolean = false): Record<string, any> {
+  const doc = YAML.parse(fs.readFileSync(file_path, 'utf8'))
+  if (exclude_schema) delete doc.$schema
+  return doc
 }
 
 export function write_yaml (file_path: string, content: Record<string, any>): void {

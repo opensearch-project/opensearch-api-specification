@@ -3,7 +3,7 @@ import { type ValidationError } from '../../types'
 import ValidatorBase from './base/ValidatorBase'
 
 export default class OperationGroup extends ValidatorBase {
-  readonly OP_PRIORITY = ['operationId', 'x-operation-group', 'x-ignorable', 'deprecated',
+  static readonly OP_PRIORITY = ['operationId', 'x-operation-group', 'x-ignorable', 'deprecated',
     'x-deprecation-message', 'x-version-added', 'x-version-deprecated', 'x-version-removed',
     'description', 'externalDocs', 'parameters', 'requestBody', 'responses']
 
