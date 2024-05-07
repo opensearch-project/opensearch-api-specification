@@ -1,0 +1,195 @@
+openapi: 3.1.0
+info:
+  title: Schemas of rollup._common category
+  description: Schemas of rollup._common category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    RollupEntity:
+      type: object
+      properties:
+        _id:
+          type: string
+        _seqNo:
+          type: number
+        _primaryTerm:
+          type: number
+        rollup:
+          $ref: '#/components/schemas/Rollup'
+    Rollup:
+      type: object
+      properties:
+        rollup_id:
+          type: string
+        enabled:
+          type: boolean
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        last_updated_time:
+          type: number
+        enabled_time:
+          type: number
+        description:
+          type: string
+        schema_version:
+          type: number
+        source_index:
+          type: string
+        target_index:
+          type: string
+        metadata_id:
+          type: string
+        page_size:
+          type: number
+        delay:
+          type: number
+        continuous:
+          type: boolean
+        dimensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DimensionsConfigItem'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricsConfigItem'
+        error_notification:
+          type: string
+          description: 'Set up a Mustache message template for error notifications. For example, if an index rollup job fails, the system sends a message to a Slack channel.'
+    ExplainEntities:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/Explain'
+    Explain:
+      type: object
+      properties:
+        rollup_id:
+          type: string
+        last_updated_time:
+          type: number
+        continuous:
+          $ref: '#/components/schemas/Continuous'
+    DimensionsConfigItem:
+      type: object
+      properties:
+        histogram:
+          $ref: '#/components/schemas/HistogramDimension'
+        date_histogram:
+          $ref: '#/components/schemas/DateHistogramDimension'
+        terms:
+          $ref: '#/components/schemas/TermsDimension'
+      minproperties: 1
+      maxproperties: 1
+    DateHistogramDimension:
+      type: object
+      properties:
+        fixed_interval:
+          type: string
+        calendar_interval:
+          type: string
+        timezone:
+          type: string
+        source_field:
+          type: string
+        target_field:
+          type: string
+    HistogramDimension:
+      type: object
+      properties:
+        source_field:
+          type: string
+        target_field:
+          type: string
+        interval:
+          type: string
+    TermsDimension:
+      type: object
+      properties:
+        source_field:
+          type: string
+        target_field:
+          type: string
+    MetricsConfigItem:
+      type: object
+      properties:
+        source_field:
+          type: string
+        target_field:
+          type: string
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricsConfigMetrics'
+    MetricsConfigMetrics:
+      type: object
+      properties:
+        avg:
+          type: object
+        sum:
+          type: object
+        max:
+          type: object
+        min:
+          type: object
+        value_count:
+          type: object
+      minproperties: 1
+      maxproperties: 1
+    Cron:
+      type: object
+      properties:
+        expression:
+          type: string
+        timezone:
+          type: string
+    Schedule:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/Interval'
+    Interval:
+      type: object
+      properties:
+        start_time:
+          type: number
+        period:
+          type: number
+        unit:
+          type: string
+        cron:
+          oneOf:
+            - type: array
+              items:
+                $ref: '#/components/schemas/Cron'
+            - $ref: '#/components/schemas/Cron'
+        schedule_delay:
+          type: number
+    Continuous:
+      type: object
+      properties:
+        next_window_start_time:
+          type: number
+        next_window_end_time:
+          type: number
+      status:
+        type: string
+      failure_reason:
+        type: string
+      stats:
+        $ref: '#/components/schemas/Stats'
+    Stats:
+      type: object
+      properties:
+        pages_processsed:
+          type: number
+        documents_processed:
+          type: number
+        rollups_indexed:
+          type: number
+        index_time_in_ms:
+          type: number
+        search_time_in_ms:
+          type: number
+
