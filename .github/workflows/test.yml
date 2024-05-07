@@ -1,0 +1,43 @@
+name: Test Spec
+
+on: [push, pull_request]
+
+env:
+  OPENSEARCH_INITIAL_ADMIN_PASSWORD: BobgG7YrtsdKf9M
+
+jobs:
+  integ-tests:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Build
+        working-directory: ./tools
+        run: |-
+          mkdir -p ../build
+          npm install
+          npm run merge -- ../spec ../build/opensearch-openapi.yaml
+
+      - name: Build and Run Docker Container
+        run: |
+          docker build coverage --tag opensearch-with-api-plugin
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_INITIAL_ADMIN_PASSWORD" opensearch-with-api-plugin
+          sleep 15
+
+      - name: Display OpenSearch Info
+        run: |
+          curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/ | jq
+
+      - name: Test
+        working-directory: ./tools
+        run: |-
+          npm run dredd -- --user "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ../build/opensearch-openapi.yaml https://localhost:9200

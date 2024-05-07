@@ -48,6 +48,7 @@ export default [
           allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false
         }
       ],
+      '@typescript-eslint/no-var-requires': 'off',
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',
