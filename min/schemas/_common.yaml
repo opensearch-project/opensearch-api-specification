@@ -1,0 +1,65 @@
+openapi: 3.1.0
+info:
+  title: Schemas of _common category
+  description: Schemas of _common category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    VersionNumber:
+      type: number
+    Name:
+      type: string
+    VersionType:
+      type: string
+      enum:
+        - internal
+        - external
+        - external_gte
+        - force
+    Uuid:
+      type: string
+    DateTime:
+      description: |-
+        A date and time, either as a string whose format can depend on the context (defaulting to ISO 8601), or a
+        number of milliseconds since the Epoch. Opensearch accepts both as input, but will generally output a string
+        representation.
+      oneOf:
+        - type: string
+        - $ref: '#/components/schemas/EpochTimeUnitMillis'
+    OpensearchVersionInfo:
+      type: object
+      properties:
+        build_date:
+          $ref: '#/components/schemas/DateTime'
+        build_hash:
+          type: string
+        build_snapshot:
+          type: boolean
+        build_type:
+          type: string
+        lucene_version:
+          $ref: '#/components/schemas/VersionString'
+        minimum_index_compatibility_version:
+          $ref: '#/components/schemas/VersionString'
+        minimum_wire_compatibility_version:
+          $ref: '#/components/schemas/VersionString'
+        number:
+          type: string
+      required:
+        - build_date
+        - build_hash
+        - build_snapshot
+        - build_type
+        - lucene_version
+        - minimum_index_compatibility_version
+        - minimum_wire_compatibility_version
+        - number
+    EpochTimeUnitMillis:
+      allOf:
+        - $ref: '#/components/schemas/UnitMillis'
+    UnitMillis:
+      description: Time unit for milliseconds
+      type: number
+    VersionString:
+      type: string
