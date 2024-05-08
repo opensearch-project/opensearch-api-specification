@@ -93,9 +93,9 @@ export default class NamespaceFile extends FileValidator {
           `Parameter component '${name}' must be named '${expected}' since it is a ${p.in} parameter named '${p.name}'.`,
           `#/components/parameters/#${name}`)
       }
-      if (!p.name.match(/^[a-z0-9._]+$/)) {
+      if (!p.name.match(/^[a-zA-Z0-9._]+$/)) {
         return this.error(
-          `Invalid parameter name '${p.name}'. A parameter's name can only contain lower-cased alphanumerics, underscores, and periods.`,
+          `Invalid parameter name '${p.name}'. A parameter's name can only contain alphanumerics, underscores, and periods.`,
           `#/components/parameters/#${name}`)
       }
     }).filter((e) => e) as ValidationError[]

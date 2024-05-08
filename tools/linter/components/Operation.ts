@@ -84,7 +84,7 @@ export default class Operation extends ValidatorBase {
   validate_parameters (): ValidationError | undefined {
     const parameters = this.spec.parameters
     if (!parameters) return
-    const regex = new RegExp(`^#/components/parameters/${this.group_regex}::((path)|(query))\\.[a-z0-9_.]+$`)
+    const regex = new RegExp(`^#/components/parameters/${this.group_regex}::((path)|(query))\\.[a-zA-Z0-9_.]+$`)
     for (const parameter of parameters) {
       if (!regex.test(parameter.$ref)) { return this.error('Every parameter must be a reference object to \'#/components/parameters/{x-operation-group}::{path|query}.{parameter_name}\'.') }
     }

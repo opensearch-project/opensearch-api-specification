@@ -1,0 +1,205 @@
+openapi: 3.1.0
+info:
+  title: Schemas of transforms._common category
+  description: Schemas of transforms._common category
+  version: 1.0.0
+components:
+  schemas:
+    TransformEntity:
+      type: object
+      properties:
+        _id:
+          type: string
+        _seqNo:
+          type: number
+        _primaryTerm:
+          type: number
+        transform:
+          $ref: '#/components/schemas/Transform'
+    TransformsResponse:
+      type: object
+      properties:
+        total_transforms:
+          type: number
+        transforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransformEntity'
+    Transform:
+      type: object
+      properties:
+        transform_id:
+          type: string
+        schema_version:
+          type: number
+        continuous:
+          type: boolean
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        metadata_id:
+          type: string
+        updated_at:
+          type: string
+        enabled:
+          type: boolean
+        enabled_at:
+          type: number
+        description:
+          type: string
+        source_index:
+          type: string
+        data_selection_query: 
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        target_index:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        page_size:
+          type: number
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupsConfigItem'
+        aggregations: 
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricsConfigItem'
+    ExplainResponse:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Explain'
+    Explain:
+      type: object
+      properties:
+        metadata_id:
+          type: string
+        transform_metadata:
+          $ref: '#/components/schemas/TransformMetadata'
+    Preview:
+      type: object
+      properties:
+        documents:
+          type: array
+          items:
+            type: object
+    Schedule:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/ScheduleInterval'
+      required:
+        - interval
+    ScheduleInterval:
+      type: object
+      properties:
+        start_time:
+          type: number
+        period:
+          type: number
+        unit:
+          type: string
+    GroupsConfigItem:
+      type: object
+      properties:
+        histogram:
+          $ref: '#/components/schemas/HistogramGroup'
+        date_histogram:
+          $ref: '#/components/schemas/DateHistogramGroup'
+        terms:
+          $ref: '#/components/schemas/TermsGroup'
+      minproperties: 1
+      maxproperties: 1
+    DateHistogramGroup:
+      type: object
+      properties:
+        fixed_interval:
+          type: string
+        calendar_interval:
+          type: string
+        timezone:
+          type: string
+        source_field:
+          type: string
+        target_field:
+          type: string
+    HistogramGroup:
+      type: object
+      properties:
+        source_field:
+          type: string
+        target_field:
+          type: string
+        interval:
+          type: string
+    TermsGroup:
+      type: object
+      properties:
+        source_field:
+          type: string
+        target_field:
+          type: string
+    MetricsConfigItem:
+      type: object
+      properties:
+        source_field:
+          type: string
+        target_field:
+          type: string
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricsConfigMetrics'
+    MetricsConfigMetrics:
+      type: object
+      properties:
+        avg:
+          type: object
+        sum:
+          type: object
+        max:
+          type: object
+        min:
+          type: object
+        value_count:
+          type: object
+      minproperties: 1
+      maxproperties: 1
+    ContinuousStats:
+      type: object
+      properties:
+        last_timestamp:
+          type: number
+        documents_behind:
+          type: object
+          additionalProperties:
+            type: number
+    ExplainStats:
+      type: object
+      properties:
+        pages_processed:
+          type: number
+        documents_processed:
+          type: number
+        documents_indexed:
+          type: number
+        index_time_in_millis:
+          type: number
+        search_time_in_millis:
+          type: number
+    TransformMetadata:
+      type: object
+      properties:
+        continuous_stats:
+          $ref: '#/components/schemas/ContinuousStats'
+        transform_id:
+          type: string
+        last_updated_at:
+          type: number
+        status:
+          type: string
+        failure_reason:
+          type: string
+        stats:
+          $ref: '#/components/schemas/ExplainStats'
