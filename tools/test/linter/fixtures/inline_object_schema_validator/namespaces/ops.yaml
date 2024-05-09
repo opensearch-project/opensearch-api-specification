@@ -1,0 +1,73 @@
+paths:
+  /the/path:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/query.ref_string_is_ok'
+        - $ref: '#/components/parameters/query.ref_object_is_ok'
+        - name: inline_string_is_ok
+          in: query
+          schema:
+            type: string
+        - name: inline_object_is_not_ok
+          in: query
+          schema:
+            type: object
+            properties:
+              the_prop:
+                type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                title: inline_object_as_array_items_is_not_ok
+                type: object
+                properties:
+                  item_prop:
+                    type: number
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inline_object_as_a_property_is_not_ok:
+                    type: object
+                    properties:
+                      nested_prop:
+                        type: string
+components:
+  parameters:
+    query.ref_string_is_ok:
+      name: ref_string_is_ok
+      in: query
+      schema:
+        type: string
+    query.ref_object_is_ok:
+      name: ref_object_is_ok
+      in: query
+      schema:
+        type: object
+        properties:
+          setting:
+            type: integer
+  requestBodies:
+    obj:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              prop:
+                type: number
+  responses:
+    obj@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              prop:
+                type: number

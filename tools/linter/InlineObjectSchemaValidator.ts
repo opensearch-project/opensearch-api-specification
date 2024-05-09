@@ -34,10 +34,12 @@ export default class InlineObjectSchemaValidator {
       return
     }
 
-    const this_key = ctx.key
-    const parent_key = ctx.parent().key
+    const ancestry = ctx.keys.reverse()
 
-    if (parent_key === 'properties' || this_key === 'additionalProperties' || this_key === 'items') {
+    if (ancestry[1] === 'properties' ||
+        ancestry[0] === 'additionalProperties' ||
+        ancestry[0] === 'items' ||
+        (ancestry[0] === 'schema' && ancestry[2] === 'parameters' && ancestry[3] !== 'components')) {
       errors.push(ctx.error('object schemas should be defined out-of-line via a $ref'))
     }
   }
