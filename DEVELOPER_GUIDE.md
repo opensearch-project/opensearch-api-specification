@@ -7,6 +7,9 @@
   - [Global Parameters](#global-parameters)
   - [OpenAPI Extensions](#openapi-extensions)
   - [Tools](#tools)
+    - [Merger](#merger)
+    - [Linter](#linter)
+    - [Validator](#validator)
 
 # Developer Guide
 
@@ -127,3 +130,15 @@ The spec merger "builds", aka combines all `.yaml` files in a spec folder into a
 ### Linter
 
 The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#spec-linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.
+
+### Validator
+
+The project uses [dredd](https://dredd.org) to test the spec against a live instance OpenSearch. See [test.yml](.github/workflows/test.yml) for details.
+
+To run locally, start OpenSearch, generate the spec and run `dredd`.
+
+```bash
+ docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "OPENSEARCH_INITIAL_ADMIN_PASSWORD=InitialAdminPassword1" opensearchproject/opensearch:latest
+npm run merge -- ../spec ../build/opensearch-openapi.yaml
+npm run dredd -- --user "admin:InitialAdminPassword1" ../build/opensearch-openapi.yaml https://localhost:9200
+```
