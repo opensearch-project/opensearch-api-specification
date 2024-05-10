@@ -51,7 +51,7 @@ jobs:
           total=`docker run --rm -i mikefarah/yq:latest -r '.paths | keys | length' < build/opensearch-openapi.yaml`
           percent=$((current * 100 / total))
           echo "$current/$total ($percent%) APIs tested."
-          cat >>"test-coverage.json" <<EOL
+          cat >>"coverage-tests.json" <<EOL
           {
             "pull_request":${{ github.event.number }},
             "current":$current,
@@ -61,5 +61,5 @@ jobs:
           EOL
       - uses: actions/upload-artifact@v4
         with:
-          name: test-coverage
-          path: test-coverage.json          
+          name: coverage-tests
+          path: coverage-tests.json
