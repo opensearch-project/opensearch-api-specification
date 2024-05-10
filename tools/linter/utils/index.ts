@@ -53,6 +53,10 @@ export class SpecificationContext {
   get key (): string {
     return this._location[this._location.length - 1]
   }
+
+  get keys (): string[] {
+    return [...this._location]
+  }
 }
 
 export type MaybeRef<O extends object> = O | OpenAPIV3.ReferenceObject
