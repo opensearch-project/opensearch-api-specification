@@ -8,13 +8,15 @@ import GlobalParamsGenerator from './GlobalParamsGenerator'
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
   root_folder: string
+  options: { x_include: string[] }
   spec: Record<string, any>
 
   paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
   schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
 
-  constructor (root_folder: string) {
+  constructor (root_folder: string, options?: { x_include: string[] }) {
     this.root_folder = fs.realpathSync(root_folder)
+    this.options = options ?? { x_include: [] }
     this.spec = {
       openapi: '3.1.0',
       info: read_yaml(`${this.root_folder}/_info.yaml`, true),
@@ -46,6 +48,7 @@ export default class OpenApiMerger {
       const spec = read_yaml(`${folder}/${file}`)
       this.redirect_refs_in_namespace(spec)
       this.spec.paths = { ...this.spec.paths, ...spec.paths }
+      this.filter_methods(spec)
       this.spec.components.parameters = { ...this.spec.components.parameters, ...spec.components.parameters }
       this.spec.components.responses = { ...this.spec.components.responses, ...spec.components.responses }
       this.spec.components.requestBodies = { ...this.spec.components.requestBodies, ...spec.components.requestBodies }
@@ -118,5 +121,24 @@ export default class OpenApiMerger {
   #generate_superseded_ops (): void {
     const gen = new SupersededOpsGenerator(this.root_folder)
     gen.generate(this.spec)
+  }
+
+  filter_methods (paths: any): void {
+    for (const x_include_value of this.options.x_include) {
+      this.#filter_methods_with_key(paths, x_include_value)
+    }
+  }
+
+  #filter_methods_with_key (paths: any, key: string): void {
+    Object.entries(this.spec.paths as Document).forEach(([path, path_item]) => {
+      Object.entries(path_item as Document).forEach(([method, method_spec]) => {
+        if (method_spec[key] === undefined) {
+          delete (this.spec.paths[path][method])
+          if (Object.keys(this.spec.paths[path] as Document).length === 0) {
+            delete (this.spec.paths[path])
+          }
+        }
+      })
+    })
   }
 }
