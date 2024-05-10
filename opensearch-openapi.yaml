@@ -3347,6 +3347,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/nodes.usage@200'
+  /_opendistro/_security/sslinfo:
+    get:
+      operationId: security.get_sslinfo.0
+      x-operation-group: security.get_sslinfo
+      x-version-added: '1.0'
+      description: Retrieves the SSL configuration information.
+      parameters:
+        - $ref: '#/components/parameters/security.get_sslinfo::query.show_dn'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_sslinfo@200'
+        '500':
+          $ref: '#/components/responses/security.get_sslinfo@500'
   /_plugins/_knn/{node_id}/stats:
     get:
       operationId: knn.stats.2
@@ -3855,6 +3873,42 @@ paths:
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/_upgrade_check:
+    get:
+      operationId: security.config_upgrade_check.0
+      x-operation-group: security.config_upgrade_check
+      x-version-added: '2.14'
+      description: Check whether or not an upgrade can be performed and what resources can be updated.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#configuration-upgrade-check
+      responses:
+        '200':
+          $ref: '#/components/responses/security.config_upgrade_check@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/_upgrade_perform:
+    post:
+      operationId: security.config_upgrade_perform.0
+      x-operation-group: security.config_upgrade_perform
+      x-version-added: '2.14'
+      description: Helps cluster operator upgrade missing defaults and stale default definitions.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#configuration-upgrade
+      requestBody:
+        $ref: '#/components/requestBodies/security.config_upgrade_perform'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.config_upgrade_perform@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
   /_plugins/_security/api/account:
     get:
       operationId: security.get_account_details.0
@@ -3908,7 +3962,7 @@ paths:
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
     patch:
-      operationId: security.patch_action_groups.0
+      operationId: security.patch_action_groups.1
       x-operation-group: security.patch_action_groups
       x-version-added: '1.0'
       description: Creates, updates, or deletes multiple action groups in a single call.
@@ -3998,6 +4052,59 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_action_group@200'
+  /_plugins/_security/api/allowlist:
+    get:
+      operationId: security.get_allowlist.0
+      x-operation-group: security.get_allowlist
+      x-version-added: '1.0'
+      description: Retrieves the current list of allowed API accessible to normal user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_allowlist@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    patch:
+      operationId: security.patch_allowlist.0
+      x-operation-group: security.patch_allowlist
+      x-version-added: '1.0'
+      description: Updates the current list of allowed API accessible to normal user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      requestBody:
+        $ref: '#/components/requestBodies/security.patch_allowlist'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.patch_allowlist@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    put:
+      operationId: security.create_allowlist.0
+      x-operation-group: security.create_allowlist
+      x-version-added: '1.0'
+      description: Creates or replaces the allowlisted APIs. Accessible via Super Admin certificate or REST API permission.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_allowlist'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_allowlist@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
   /_plugins/_security/api/audit:
     get:
       operationId: security.get_audit_configuration.0
@@ -4052,6 +4159,21 @@ paths:
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/api/authtoken:
+    post:
+      operationId: security.authtoken.0
+      x-operation-group: security.authtoken
+      x-version-added: '1.0'
+      description: Returns the authorization token.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.authtoken@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
   /_plugins/_security/api/cache:
     delete:
       operationId: security.flush_cache.0
@@ -4059,10 +4181,76 @@ paths:
       x-version-added: '1.0'
       description: Flushes the Security plugin user, authentication, and authorization cache.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#flush-cache
+        url: https://opensearch.org/docs/latest/security/access-control/api/#flush-cache
       responses:
         '200':
           $ref: '#/components/responses/security.flush_cache@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    get:
+      operationId: security.cache.1
+      x-operation-group: security.cache
+      x-ignorable: true
+      x-version-added: '1.0'
+      description: Not supported for cache API.
+      responses:
+        '501':
+          $ref: '#/components/responses/security.cache@501'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    post:
+      operationId: security.cache.2
+      x-operation-group: security.cache
+      x-version-added: '1.0'
+      x-ignorable: true
+      description: Not supported for cache API.
+      responses:
+        '501':
+          $ref: '#/components/responses/security.cache@501'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    put:
+      operationId: security.cache.3
+      x-operation-group: security.cache
+      x-version-added: '1.0'
+      x-ignorable: true
+      description: Not supported for cache API.
+      responses:
+        '501':
+          $ref: '#/components/responses/security.cache@501'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/api/generateonbehalfoftoken:
+    post:
+      operationId: security.generate_obo_token.0
+      x-operation-group: security.generate_obo_token
+      x-version-added: '2.12'
+      description: Generates On-Behalf-Of token for the current user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/authentication-tokens/#api-endpoint
+      requestBody:
+        $ref: '#/components/requestBodies/security.generate_obo_token'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.generate_obo_token@200'
+        '400':
+          $ref: '#/components/responses/security.generate_obo_token@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4177,28 +4365,66 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_user@200'
-  /_plugins/_security/api/nodesdn:
-    get:
-      operationId: security.get_distinguished_names.0
-      x-operation-group: security.get_distinguished_names
+  /_plugins/_security/api/internalusers/{username}/authtoken:
+    post:
+      operationId: security.generate_user_token.0
+      x-operation-group: security.generate_user_token
       x-version-added: '1.0'
-      description: Retrieves distinguished names.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names
+      description: Generates authorization token for the given user.
+      parameters:
+        - $ref: '#/components/parameters/security.generate_user_token::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
       responses:
         '200':
-          $ref: '#/components/responses/security.get_distinguished_names@200'
+          $ref: '#/components/responses/security.generate_user_token@200'
+        '400':
+          $ref: '#/components/responses/security.generate_user_token@400'
+  /_plugins/_security/api/migrate:
+    post:
+      operationId: security.migrate.0
+      x-operation-group: security.migrate
+      x-version-added: '1.0'
+      description: Migrates security configuration from v6 to v7.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.migrate@200'
+        '400':
+          $ref: '#/components/responses/security.migrate@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/api/nodesdn:
+    get:
+      operationId: security.get_distinguished_names.0
+      x-operation-group: security.get_distinguished_names
+      x-version-added: '1.0'
+      description: Retrieves distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names
+      parameters:
+        - $ref: '#/components/parameters/security.get_distinguished_names::query.show_all'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_distinguished_names@200'
+        '403':
+          $ref: '#/components/responses/security.get_distinguished_names@403'
     patch:
       operationId: security.patch_distinguished_names.0
       x-operation-group: security.patch_distinguished_names
       x-version-added: '1.0'
-      description: Bulk update of distinguished names.
+      description: Bulk update of distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#update-all-distinguished-names
       requestBody:
@@ -4206,6 +4432,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_distinguished_names@200'
+        '403':
+          $ref: '#/components/responses/security.patch_distinguished_names@403'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4214,14 +4442,14 @@ paths:
         - $ref: '#/components/parameters/_global::query.filter_path'
   /_plugins/_security/api/nodesdn/{cluster_name}:
     delete:
-      operationId: security.delete_distinguished_names.0
-      x-operation-group: security.delete_distinguished_names
+      operationId: security.delete_distinguished_name.0
+      x-operation-group: security.delete_distinguished_name
       x-version-added: '1.0'
-      description: Deletes all distinguished names in the specified cluster’s or node’s allow list.
+      description: Deletes all distinguished names in the specified cluster or node allow list. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#delete-distinguished-names
       parameters:
-        - $ref: '#/components/parameters/security.delete_distinguished_names::path.cluster_name'
+        - $ref: '#/components/parameters/security.delete_distinguished_name::path.cluster_name'
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
@@ -4229,16 +4457,19 @@ paths:
         - $ref: '#/components/parameters/_global::query.filter_path'
       responses:
         '200':
-          $ref: '#/components/responses/security.delete_distinguished_names@200'
+          $ref: '#/components/responses/security.delete_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.delete_distinguished_name@403'
     get:
-      operationId: security.get_distinguished_names.1
-      x-operation-group: security.get_distinguished_names
+      operationId: security.get_distinguished_name.0
+      x-operation-group: security.get_distinguished_name
       x-version-added: '1.0'
-      description: Retrieves distinguished names.
+      description: Retrieves distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names
       parameters:
-        - $ref: '#/components/parameters/security.get_distinguished_names::path.cluster_name'
+        - $ref: '#/components/parameters/security.get_distinguished_name::path.cluster_name'
+        - $ref: '#/components/parameters/security.get_distinguished_name::query.show_all'
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
@@ -4246,27 +4477,83 @@ paths:
         - $ref: '#/components/parameters/_global::query.filter_path'
       responses:
         '200':
-          $ref: '#/components/responses/security.get_distinguished_names@200'
-    put:
-      operationId: security.update_distinguished_names.0
-      x-operation-group: security.update_distinguished_names
+          $ref: '#/components/responses/security.get_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.get_distinguished_name@403'
+    patch:
+      operationId: security.patch_distinguished_name.0
+      x-operation-group: security.patch_distinguished_name
       x-version-added: '1.0'
-      description: Adds or updates the specified distinguished names in the cluster’s or node’s allow list.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/security/access-control/api/#update-distinguished-names
+      description: Updates a distinguished cluster name for a specific cluster. Only accessible to super-admins and with rest-api permissions when enabled.
       parameters:
-        - $ref: '#/components/parameters/security.update_distinguished_names::path.cluster_name'
+        - $ref: '#/components/parameters/security.patch_distinguished_name::path.cluster_name'
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
       requestBody:
-        $ref: '#/components/requestBodies/security.update_distinguished_names'
+        $ref: '#/components/requestBodies/security.patch_distinguished_name'
       responses:
         '200':
-          $ref: '#/components/responses/security.update_distinguished_names@200'
+          $ref: '#/components/responses/security.patch_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.patch_distinguished_name@403'
+    put:
+      operationId: security.update_distinguished_name.0
+      x-operation-group: security.update_distinguished_name
+      x-version-added: '1.0'
+      description: Adds or updates the specified distinguished names in the cluster or node allow list. Only accessible to super-admins and with rest-api permissions when enabled.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#update-distinguished-names
+      parameters:
+        - $ref: '#/components/parameters/security.update_distinguished_name::path.cluster_name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/security.update_distinguished_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.update_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.update_distinguished_name@403'
+  /_plugins/_security/api/permissionsinfo:
+    get:
+      operationId: security.get_permissions_info.0
+      x-operation-group: security.get_permissions_info
+      x-version-added: '1.0'
+      description: Gets the evaluated REST API permissions for the currently logged in user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_permissions_info@200'
+        '500':
+          $ref: '#/components/responses/security.get_permissions_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
   /_plugins/_security/api/roles:
+    get:
+      operationId: security.get_roles.0
+      x-operation-group: security.get_roles
+      x-version-added: '1.0'
+      description: Retrieves all roles.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-roles
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_roles@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
     patch:
       operationId: security.patch_roles.0
       x-operation-group: security.patch_roles
@@ -4279,23 +4566,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_roles@200'
-      parameters:
-        - $ref: '#/components/parameters/_global::query.pretty'
-        - $ref: '#/components/parameters/_global::query.human'
-        - $ref: '#/components/parameters/_global::query.error_trace'
-        - $ref: '#/components/parameters/_global::query.source'
-        - $ref: '#/components/parameters/_global::query.filter_path'
-  /_plugins/_security/api/roles/:
-    get:
-      operationId: security.get_roles.0
-      x-operation-group: security.get_roles
-      x-version-added: '1.0'
-      description: Retrieves all roles.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/security/access-control/api/#get-roles
-      responses:
-        '200':
-          $ref: '#/components/responses/security.get_roles@200'
+        '400':
+          $ref: '#/components/responses/security.patch_roles@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4356,6 +4628,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role@200'
+        '400':
+          $ref: '#/components/responses/security.patch_role@400'
     put:
       operationId: security.create_role.0
       x-operation-group: security.create_role
@@ -4404,6 +4678,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role_mappings@200'
+        '400':
+          $ref: '#/components/responses/security.patch_role_mappings@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4464,6 +4740,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role_mapping@200'
+        '400':
+          $ref: '#/components/responses/security.patch_role_mapping@400'
     put:
       operationId: security.create_role_mapping.0
       x-operation-group: security.create_role_mapping
@@ -4490,7 +4768,7 @@ paths:
       x-version-added: '1.0'
       description: Returns the current Security plugin configuration in JSON format.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#get-configuration
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-configuration
       responses:
         '200':
           $ref: '#/components/responses/security.get_configuration@200'
@@ -4504,9 +4782,9 @@ paths:
       operationId: security.patch_configuration.0
       x-operation-group: security.patch_configuration
       x-version-added: '1.0'
-      description: A PATCH call is used to update the existing configuration using the REST API.
+      description: A PATCH call is used to update the existing configuration using the REST API. Only accessible by admins and users with rest api access and only when put or patch is enabled.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#patch-configuration
+        url: https://opensearch.org/docs/latest/security/access-control/api/#patch-configuration
       requestBody:
         $ref: '#/components/requestBodies/security.patch_configuration'
       responses:
@@ -4523,9 +4801,9 @@ paths:
       operationId: security.update_configuration.0
       x-operation-group: security.update_configuration
       x-version-added: '1.0'
-      description: Adds or updates the existing configuration using the REST API.
+      description: Adds or updates the existing configuration using the REST API. Only accessible by admins and users with rest api access and only when put or patch is enabled.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#update-configuration
+        url: https://opensearch.org/docs/latest/security/access-control/api/#update-configuration
       requestBody:
         $ref: '#/components/requestBodies/security.update_configuration'
       responses:
@@ -4542,12 +4820,14 @@ paths:
       operationId: security.get_certificates.0
       x-operation-group: security.get_certificates
       x-version-added: '1.0'
-      description: Retrieves the cluster’s security certificates.
+      description: Retrieves the cluster security certificates.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#get-certificates
       responses:
         '200':
           $ref: '#/components/responses/security.get_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.get_certificates@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4565,6 +4845,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.reload_http_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.reload_http_certificates@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4576,29 +4858,72 @@ paths:
       operationId: security.reload_transport_certificates.0
       x-operation-group: security.reload_transport_certificates
       x-version-added: '1.0'
-      description: Reload transport layer communication certificates.
+      description: Reload Transport layer communication certificates.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#reload-transport-certificates
       responses:
         '200':
           $ref: '#/components/responses/security.reload_transport_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.reload_transport_certificates@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
-  /_plugins/_security/api/tenants/:
+  /_plugins/_security/api/tenancy/config:
+    get:
+      operationId: security.get_tenancy_config.0
+      x-operation-group: security.get_tenancy_config
+      x-version-added: '2.7'
+      description: Retrieves multi-tenancy configuration. Only accessible to admins and users with REST API permissions.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_tenancy_config@200'
+        '400':
+          $ref: '#/components/responses/security.get_tenancy_config@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    put:
+      operationId: security.create_update_tenancy_config.0
+      x-operation-group: security.create_update_tenancy_config
+      x-version-added: '2.7'
+      description: Creates or replaces the multi-tenancy configuration. Only accessible to admins and users with REST API permissions.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_update_tenancy_config'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_update_tenancy_config@200'
+        '400':
+          $ref: '#/components/responses/security.create_update_tenancy_config@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/api/tenants:
     get:
       operationId: security.get_tenants.0
       x-operation-group: security.get_tenants
       x-version-added: '1.0'
       description: Retrieves all tenants.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#get-tenants
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-tenants
       responses:
         '200':
           $ref: '#/components/responses/security.get_tenants@200'
+        '400':
+          $ref: '#/components/responses/security.get_tenants@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4611,12 +4936,14 @@ paths:
       x-version-added: '1.0'
       description: Add, delete, or modify multiple tenants in a single call.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#patch-tenants
+        url: https://opensearch.org/docs/latest/security/access-control/api/#patch-tenants
       requestBody:
         $ref: '#/components/requestBodies/security.patch_tenants'
       responses:
         '200':
           $ref: '#/components/responses/security.patch_tenants@200'
+        '400':
+          $ref: '#/components/responses/security.patch_tenants@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -4641,13 +4968,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.delete_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.delete_tenant@400'
     get:
       operationId: security.get_tenant.0
       x-operation-group: security.get_tenant
       x-version-added: '1.0'
       description: Retrieves one tenant.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#get-tenant
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-tenant
       parameters:
         - $ref: '#/components/parameters/security.get_tenant::path.tenant'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -4664,7 +4993,7 @@ paths:
       x-version-added: '1.0'
       description: Add, delete, or modify a single tenant.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#patch-tenant
+        url: https://opensearch.org/docs/latest/security/access-control/api/#patch-tenant
       parameters:
         - $ref: '#/components/parameters/security.patch_tenant::path.tenant'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -4677,13 +5006,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.patch_tenant@400'
     put:
       operationId: security.create_tenant.0
       x-operation-group: security.create_tenant
       x-version-added: '1.0'
       description: Creates or replaces the specified tenant.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#create-tenant
+        url: https://opensearch.org/docs/latest/security/access-control/api/#create-tenant
       parameters:
         - $ref: '#/components/parameters/security.create_tenant::path.tenant'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -4696,17 +5027,291 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.create_tenant@400'
+  /_plugins/_security/api/user:
+    get:
+      operationId: security.get_users_legacy.0
+      x-operation-group: security.get_users_legacy
+      x-version-added: '1.0'
+      description: Retrieve all internal users. Legacy API.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_users_legacy@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/api/user/{username}:
+    delete:
+      operationId: security.delete_user_legacy.0
+      x-operation-group: security.delete_user_legacy
+      x-version-added: '1.0'
+      description: Delete the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.delete_user_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_user_legacy@200'
+    get:
+      operationId: security.get_user_legacy.0
+      x-operation-group: security.get_user_legacy
+      x-version-added: '1.0'
+      description: Retrieve one user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.get_user_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_user_legacy@200'
+    put:
+      operationId: security.create_user_legacy.0
+      x-operation-group: security.create_user_legacy
+      x-version-added: '1.0'
+      description: Creates or replaces the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.create_user_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_user_legacy'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_user_legacy@200'
+  /_plugins/_security/api/user/{username}/authtoken:
+    post:
+      operationId: security.generate_user_token_legacy.0
+      x-operation-group: security.generate_user_token_legacy
+      x-version-added: '1.0'
+      description: Generates authorization token for the given user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.generate_user_token_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.generate_user_token_legacy@200'
+        '400':
+          $ref: '#/components/responses/security.generate_user_token_legacy@400'
+  /_plugins/_security/api/validate:
+    get:
+      operationId: security.validate.0
+      x-operation-group: security.validate
+      x-version-added: '1.0'
+      description: Checks whether the v6 security configuration is valid and ready to be migrated to v7.
+      parameters:
+        - $ref: '#/components/parameters/security.validate::query.accept_invalid'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.validate@200'
+        '400':
+          $ref: '#/components/responses/security.validate@400'
+  /_plugins/_security/authinfo:
+    get:
+      operationId: security.authinfo.0
+      x-operation-group: security.authinfo
+      x-version-added: '1.0'
+      description: Returns the authentication information.
+      parameters:
+        - $ref: '#/components/parameters/security.authinfo::query.verbose'
+        - $ref: '#/components/parameters/security.authinfo::query.auth_type'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.authinfo@200'
+        '500':
+          $ref: '#/components/responses/security.authinfo@500'
+    post:
+      operationId: security.authinfo.1
+      x-operation-group: security.authinfo
+      x-version-added: '1.0'
+      description: Returns the authentication information.
+      parameters:
+        - $ref: '#/components/parameters/security.authinfo::query.verbose'
+        - $ref: '#/components/parameters/security.authinfo::query.auth_type'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.authinfo@200'
+        '500':
+          $ref: '#/components/responses/security.authinfo@500'
+  /_plugins/_security/dashboardsinfo:
+    get:
+      operationId: security.get_dashboards_info.0
+      x-operation-group: security.get_dashboards_info
+      x-version-added: '1.0'
+      description: Retrieves the current security-dashboards plugin configuration.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_dashboards_info@200'
+        '500':
+          $ref: '#/components/responses/security.get_dashboards_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    post:
+      operationId: security.post_dashboards_info.1
+      x-operation-group: security.post_dashboards_info
+      x-version-added: '1.0'
+      description: Updates the current security-dashboards plugin configuration.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_dashboards_info'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_dashboards_info@200'
+        '500':
+          $ref: '#/components/responses/security.post_dashboards_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
   /_plugins/_security/health:
     get:
       operationId: security.health.0
       x-operation-group: security.health
       x-version-added: '1.0'
       description: Checks to see if the Security plugin is up and running.
+      parameters:
+        - $ref: '#/components/parameters/security.health::query.mode'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#health-check
       responses:
         '200':
           $ref: '#/components/responses/security.health@200'
+    post:
+      operationId: security.health.1
+      x-operation-group: security.health
+      x-version-added: '1.0'
+      description: Checks to see if the Security plugin is up and running.
+      parameters:
+        - $ref: '#/components/parameters/security.health::query.mode'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#health-check
+      responses:
+        '200':
+          $ref: '#/components/responses/security.health@200'
+  /_plugins/_security/tenantinfo:
+    get:
+      operationId: security.tenant_info.0
+      x-operation-group: security.tenant_info
+      x-version-added: '1.0'
+      description: Retrieves the tenant names if any exist. Only accesible to super admins or kibanaserver user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.tenant_info@200'
+        '500':
+          $ref: '#/components/responses/security.tenant_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    post:
+      operationId: security.tenant_info.1
+      x-operation-group: security.tenant_info
+      x-version-added: '1.0'
+      description: Retrieves the tenant names if any exist. Only accesible to super admins or kibanaserver user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.tenant_info@200'
+        '500':
+          $ref: '#/components/responses/security.tenant_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/whoami:
+    get:
+      operationId: security.who_am_i.0
+      x-operation-group: security.who_am_i
+      x-version-added: '1.0'
+      description: Gets the user identity related information for currently logged in user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.who_am_i@200'
+        '500':
+          $ref: '#/components/responses/security.who_am_i@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    post:
+      operationId: security.who_am_i.1
+      x-operation-group: security.who_am_i
+      x-version-added: '1.0'
+      description: Gets the user identity related information for currently logged in user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.who_am_i@200'
+        '500':
+          $ref: '#/components/responses/security.who_am_i@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_security/whoamiprotected:
+    get:
+      operationId: security.who_am_i_protected.0
+      x-operation-group: security.who_am_i_protected
+      x-version-added: '2.11'
+      description: Gets the user identity related information for currently logged in user. User needs to have access to this endpoint when authorization at REST layer is enabled.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.who_am_i_protected@200'
+        '500':
+          $ref: '#/components/responses/security.who_am_i_protected@500'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -9195,25 +9800,6 @@ paths:
           $ref: '#/components/responses/security.create_action_group@200'
       deprecated: true
       x-ignorable: true
-    delete:
-      operationId: security.delete_action_group.0_superseded
-      x-operation-group: security.delete_action_group
-      x-version-added: '1.0'
-      description: Delete a specified action group.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/security/access-control/api/#delete-action-group
-      parameters:
-        - $ref: '#/components/parameters/security.delete_action_group::path.action_group'
-        - $ref: '#/components/parameters/_global::query.pretty'
-        - $ref: '#/components/parameters/_global::query.human'
-        - $ref: '#/components/parameters/_global::query.error_trace'
-        - $ref: '#/components/parameters/_global::query.source'
-        - $ref: '#/components/parameters/_global::query.filter_path'
-      responses:
-        '200':
-          $ref: '#/components/responses/security.delete_action_group@200'
-      deprecated: true
-      x-ignorable: true
     patch:
       operationId: security.patch_action_group.0_superseded
       x-operation-group: security.patch_action_group
@@ -9233,6 +9819,25 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_action_group@200'
+      deprecated: true
+      x-ignorable: true
+    delete:
+      operationId: security.delete_action_group.0_superseded
+      x-operation-group: security.delete_action_group
+      x-version-added: '1.0'
+      description: Delete a specified action group.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#delete-action-group
+      parameters:
+        - $ref: '#/components/parameters/security.delete_action_group::path.action_group'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_action_group@200'
       deprecated: true
       x-ignorable: true
   /_opendistro/_security/api/audit/config:
@@ -9256,14 +9861,79 @@ paths:
         - $ref: '#/components/parameters/_global::query.filter_path'
       deprecated: true
       x-ignorable: true
+  /_opendistro/_security/api/authtoken:
+    post:
+      operationId: security.authtoken.0_superseded
+      x-operation-group: security.authtoken
+      x-version-added: '1.0'
+      description: Returns the authorization token.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.authtoken@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
   /_opendistro/_security/api/cache:
+    get:
+      operationId: security.cache.1_superseded
+      x-operation-group: security.cache
+      x-ignorable: true
+      x-version-added: '1.0'
+      description: Not supported for cache API.
+      responses:
+        '501':
+          $ref: '#/components/responses/security.cache@501'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+    put:
+      operationId: security.cache.3_superseded
+      x-operation-group: security.cache
+      x-version-added: '1.0'
+      x-ignorable: true
+      description: Not supported for cache API.
+      responses:
+        '501':
+          $ref: '#/components/responses/security.cache@501'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+    post:
+      operationId: security.cache.2_superseded
+      x-operation-group: security.cache
+      x-version-added: '1.0'
+      x-ignorable: true
+      description: Not supported for cache API.
+      responses:
+        '501':
+          $ref: '#/components/responses/security.cache@501'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
     delete:
       operationId: security.flush_cache.0_superseded
       x-operation-group: security.flush_cache
       x-version-added: '1.0'
       description: Flushes the Security plugin user, authentication, and authorization cache.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#flush-cache
+        url: https://opensearch.org/docs/latest/security/access-control/api/#flush-cache
       responses:
         '200':
           $ref: '#/components/responses/security.flush_cache@200'
@@ -9356,17 +10026,56 @@ paths:
           $ref: '#/components/responses/security.patch_user@200'
       deprecated: true
       x-ignorable: true
-  /_opendistro/_security/api/roles/:
-    get:
-      operationId: security.get_roles.0_superseded
-      x-operation-group: security.get_roles
+  /_opendistro/_security/api/internalusers/{name}/authtoken:
+    post:
+      operationId: security.generate_user_token.0_superseded
+      x-operation-group: security.generate_user_token
       x-version-added: '1.0'
-      description: Retrieves all roles.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/security/access-control/api/#get-roles
+      description: Generates authorization token for the given user.
+      parameters:
+        - $ref: '#/components/parameters/security.generate_user_token::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
       responses:
         '200':
-          $ref: '#/components/responses/security.get_roles@200'
+          $ref: '#/components/responses/security.generate_user_token@200'
+        '400':
+          $ref: '#/components/responses/security.generate_user_token@400'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/migrate:
+    post:
+      operationId: security.migrate.0_superseded
+      x-operation-group: security.migrate
+      x-version-added: '1.0'
+      description: Migrates security configuration from v6 to v7.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.migrate@200'
+        '400':
+          $ref: '#/components/responses/security.migrate@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/permissionsinfo:
+    get:
+      operationId: security.get_permissions_info.0_superseded
+      x-operation-group: security.get_permissions_info
+      x-version-added: '1.0'
+      description: Gets the evaluated REST API permissions for the currently logged in user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_permissions_info@200'
+        '500':
+          $ref: '#/components/responses/security.get_permissions_info@500'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -9454,6 +10163,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role@200'
+        '400':
+          $ref: '#/components/responses/security.patch_role@400'
       deprecated: true
       x-ignorable: true
   /_opendistro/_security/api/rolesmapping/{name}:
@@ -9535,6 +10246,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_role_mapping@200'
+        '400':
+          $ref: '#/components/responses/security.patch_role_mapping@400'
       deprecated: true
       x-ignorable: true
   /_opendistro/_security/api/securityconfig:
@@ -9544,7 +10257,7 @@ paths:
       x-version-added: '1.0'
       description: Returns the current Security plugin configuration in JSON format.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#get-configuration
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-configuration
       responses:
         '200':
           $ref: '#/components/responses/security.get_configuration@200'
@@ -9560,9 +10273,9 @@ paths:
       operationId: security.patch_configuration.0_superseded
       x-operation-group: security.patch_configuration
       x-version-added: '1.0'
-      description: A PATCH call is used to update the existing configuration using the REST API.
+      description: A PATCH call is used to update the existing configuration using the REST API. Only accessible by admins and users with rest api access and only when put or patch is enabled.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#patch-configuration
+        url: https://opensearch.org/docs/latest/security/access-control/api/#patch-configuration
       requestBody:
         $ref: '#/components/requestBodies/security.patch_configuration'
       responses:
@@ -9581,9 +10294,9 @@ paths:
       operationId: security.update_configuration.0_superseded
       x-operation-group: security.update_configuration
       x-version-added: '1.0'
-      description: Adds or updates the existing configuration using the REST API.
+      description: Adds or updates the existing configuration using the REST API. Only accessible by admins and users with rest api access and only when put or patch is enabled.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#update-configuration
+        url: https://opensearch.org/docs/latest/security/access-control/api/#update-configuration
       requestBody:
         $ref: '#/components/requestBodies/security.update_configuration'
       responses:
@@ -9602,12 +10315,14 @@ paths:
       operationId: security.get_certificates.0_superseded
       x-operation-group: security.get_certificates
       x-version-added: '1.0'
-      description: Retrieves the cluster’s security certificates.
+      description: Retrieves the cluster security certificates.
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#get-certificates
       responses:
         '200':
           $ref: '#/components/responses/security.get_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.get_certificates@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -9616,17 +10331,192 @@ paths:
         - $ref: '#/components/parameters/_global::query.filter_path'
       deprecated: true
       x-ignorable: true
-  /_opendistro/_security/api/tenants/:
+  /_opendistro/_security/api/ssl/transport/reloadcerts:
+    put:
+      operationId: security.reload_transport_certificates.0_superseded
+      x-operation-group: security.reload_transport_certificates
+      x-version-added: '1.0'
+      description: Reload Transport layer communication certificates.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#reload-transport-certificates
+      responses:
+        '200':
+          $ref: '#/components/responses/security.reload_transport_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.reload_transport_certificates@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/ssl/http/reloadcerts:
+    put:
+      operationId: security.reload_http_certificates.0_superseded
+      x-operation-group: security.reload_http_certificates
+      x-version-added: '1.0'
+      description: Reload HTTP layer communication certificates.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#reload-http-certificates
+      responses:
+        '200':
+          $ref: '#/components/responses/security.reload_http_certificates@200'
+        '400':
+          $ref: '#/components/responses/security.reload_http_certificates@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/nodesdn/{cluster_name}:
+    get:
+      operationId: security.get_distinguished_name.0_superseded
+      x-operation-group: security.get_distinguished_name
+      x-version-added: '1.0'
+      description: Retrieves distinguished names. Only accessible to super-admins and with rest-api permissions when enabled.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-distinguished-names
+      parameters:
+        - $ref: '#/components/parameters/security.get_distinguished_name::path.cluster_name'
+        - $ref: '#/components/parameters/security.get_distinguished_name::query.show_all'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.get_distinguished_name@403'
+      deprecated: true
+      x-ignorable: true
+    put:
+      operationId: security.update_distinguished_name.0_superseded
+      x-operation-group: security.update_distinguished_name
+      x-version-added: '1.0'
+      description: Adds or updates the specified distinguished names in the cluster or node allow list. Only accessible to super-admins and with rest-api permissions when enabled.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#update-distinguished-names
+      parameters:
+        - $ref: '#/components/parameters/security.update_distinguished_name::path.cluster_name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/security.update_distinguished_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.update_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.update_distinguished_name@403'
+      deprecated: true
+      x-ignorable: true
+    patch:
+      operationId: security.patch_distinguished_name.0_superseded
+      x-operation-group: security.patch_distinguished_name
+      x-version-added: '1.0'
+      description: Updates a distinguished cluster name for a specific cluster. Only accessible to super-admins and with rest-api permissions when enabled.
+      parameters:
+        - $ref: '#/components/parameters/security.patch_distinguished_name::path.cluster_name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/security.patch_distinguished_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.patch_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.patch_distinguished_name@403'
+      deprecated: true
+      x-ignorable: true
+    delete:
+      operationId: security.delete_distinguished_name.0_superseded
+      x-operation-group: security.delete_distinguished_name
+      x-version-added: '1.0'
+      description: Deletes all distinguished names in the specified cluster or node allow list. Only accessible to super-admins and with rest-api permissions when enabled.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#delete-distinguished-names
+      parameters:
+        - $ref: '#/components/parameters/security.delete_distinguished_name::path.cluster_name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_distinguished_name@200'
+        '403':
+          $ref: '#/components/responses/security.delete_distinguished_name@403'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/tenancy/config:
+    get:
+      operationId: security.get_tenancy_config.0_superseded
+      x-operation-group: security.get_tenancy_config
+      x-version-added: '2.7'
+      description: Retrieves multi-tenancy configuration. Only accessible to admins and users with REST API permissions.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_tenancy_config@200'
+        '400':
+          $ref: '#/components/responses/security.get_tenancy_config@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+    put:
+      operationId: security.create_update_tenancy_config.0_superseded
+      x-operation-group: security.create_update_tenancy_config
+      x-version-added: '2.7'
+      description: Creates or replaces the multi-tenancy configuration. Only accessible to admins and users with REST API permissions.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/multi-tenancy/dynamic-config/#configuring-multi-tenancy-with-the-rest-api
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_update_tenancy_config'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_update_tenancy_config@200'
+        '400':
+          $ref: '#/components/responses/security.create_update_tenancy_config@400'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/tenants:
     get:
       operationId: security.get_tenants.0_superseded
       x-operation-group: security.get_tenants
       x-version-added: '1.0'
       description: Retrieves all tenants.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#get-tenants
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-tenants
       responses:
         '200':
           $ref: '#/components/responses/security.get_tenants@200'
+        '400':
+          $ref: '#/components/responses/security.get_tenants@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -9641,12 +10531,14 @@ paths:
       x-version-added: '1.0'
       description: Add, delete, or modify multiple tenants in a single call.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#patch-tenants
+        url: https://opensearch.org/docs/latest/security/access-control/api/#patch-tenants
       requestBody:
         $ref: '#/components/requestBodies/security.patch_tenants'
       responses:
         '200':
           $ref: '#/components/responses/security.patch_tenants@200'
+        '400':
+          $ref: '#/components/responses/security.patch_tenants@400'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -9662,7 +10554,7 @@ paths:
       x-version-added: '1.0'
       description: Retrieves one tenant.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#get-tenant
+        url: https://opensearch.org/docs/latest/security/access-control/api/#get-tenant
       parameters:
         - $ref: '#/components/parameters/security.get_tenant::path.tenant'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -9681,7 +10573,7 @@ paths:
       x-version-added: '1.0'
       description: Creates or replaces the specified tenant.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#create-tenant
+        url: https://opensearch.org/docs/latest/security/access-control/api/#create-tenant
       parameters:
         - $ref: '#/components/parameters/security.create_tenant::path.tenant'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -9694,6 +10586,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.create_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.create_tenant@400'
       deprecated: true
       x-ignorable: true
     delete:
@@ -9713,6 +10607,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.delete_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.delete_tenant@400'
       deprecated: true
       x-ignorable: true
     patch:
@@ -9721,7 +10617,7 @@ paths:
       x-version-added: '1.0'
       description: Add, delete, or modify a single tenant.
       externalDocs:
-        url: https://opensearch.org/docs/2.7/security/access-control/api/#patch-tenant
+        url: https://opensearch.org/docs/latest/security/access-control/api/#patch-tenant
       parameters:
         - $ref: '#/components/parameters/security.patch_tenant::path.tenant'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -9734,6 +10630,219 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.patch_tenant@200'
+        '400':
+          $ref: '#/components/responses/security.patch_tenant@400'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/user:
+    get:
+      operationId: security.get_users_legacy.0_superseded
+      x-operation-group: security.get_users_legacy
+      x-version-added: '1.0'
+      description: Retrieve all internal users. Legacy API.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_users_legacy@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/user/{name}:
+    get:
+      operationId: security.get_user_legacy.0_superseded
+      x-operation-group: security.get_user_legacy
+      x-version-added: '1.0'
+      description: Retrieve one user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.get_user_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_user_legacy@200'
+      deprecated: true
+      x-ignorable: true
+    put:
+      operationId: security.create_user_legacy.0_superseded
+      x-operation-group: security.create_user_legacy
+      x-version-added: '1.0'
+      description: Creates or replaces the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.create_user_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_user_legacy'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_user_legacy@200'
+      deprecated: true
+      x-ignorable: true
+    delete:
+      operationId: security.delete_user_legacy.0_superseded
+      x-operation-group: security.delete_user_legacy
+      x-version-added: '1.0'
+      description: Delete the specified user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.delete_user_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_user_legacy@200'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/user/{name}/authtoken:
+    post:
+      operationId: security.generate_user_token_legacy.0_superseded
+      x-operation-group: security.generate_user_token_legacy
+      x-version-added: '1.0'
+      description: Generates authorization token for the given user. Legacy API.
+      parameters:
+        - $ref: '#/components/parameters/security.generate_user_token_legacy::path.username'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.generate_user_token_legacy@200'
+        '400':
+          $ref: '#/components/responses/security.generate_user_token_legacy@400'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/validate:
+    get:
+      operationId: security.validate.0_superseded
+      x-operation-group: security.validate
+      x-version-added: '1.0'
+      description: Checks whether the v6 security configuration is valid and ready to be migrated to v7.
+      parameters:
+        - $ref: '#/components/parameters/security.validate::query.accept_invalid'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.validate@200'
+        '400':
+          $ref: '#/components/responses/security.validate@400'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/api/allowlist:
+    get:
+      operationId: security.get_allowlist.0_superseded
+      x-operation-group: security.get_allowlist
+      x-version-added: '1.0'
+      description: Retrieves the current list of allowed API accessible to normal user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_allowlist@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+    put:
+      operationId: security.create_allowlist.0_superseded
+      x-operation-group: security.create_allowlist
+      x-version-added: '1.0'
+      description: Creates or replaces the allowlisted APIs. Accessible via Super Admin certificate or REST API permission.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_allowlist'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_allowlist@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+    patch:
+      operationId: security.patch_allowlist.0_superseded
+      x-operation-group: security.patch_allowlist
+      x-version-added: '1.0'
+      description: Updates the current list of allowed API accessible to normal user.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#access-control-for-the-api
+      requestBody:
+        $ref: '#/components/requestBodies/security.patch_allowlist'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.patch_allowlist@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/authinfo:
+    get:
+      operationId: security.authinfo.0_superseded
+      x-operation-group: security.authinfo
+      x-version-added: '1.0'
+      description: Returns the authentication information.
+      parameters:
+        - $ref: '#/components/parameters/security.authinfo::query.verbose'
+        - $ref: '#/components/parameters/security.authinfo::query.auth_type'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.authinfo@200'
+        '500':
+          $ref: '#/components/responses/security.authinfo@500'
+      deprecated: true
+      x-ignorable: true
+    post:
+      operationId: security.authinfo.1_superseded
+      x-operation-group: security.authinfo
+      x-version-added: '1.0'
+      description: Returns the authentication information.
+      parameters:
+        - $ref: '#/components/parameters/security.authinfo::query.verbose'
+        - $ref: '#/components/parameters/security.authinfo::query.auth_type'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.authinfo@200'
+        '500':
+          $ref: '#/components/responses/security.authinfo@500'
       deprecated: true
       x-ignorable: true
   /_opendistro/_security/health:
@@ -9742,11 +10851,107 @@ paths:
       x-operation-group: security.health
       x-version-added: '1.0'
       description: Checks to see if the Security plugin is up and running.
+      parameters:
+        - $ref: '#/components/parameters/security.health::query.mode'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
       externalDocs:
         url: https://opensearch.org/docs/latest/security/access-control/api/#health-check
       responses:
         '200':
           $ref: '#/components/responses/security.health@200'
+      deprecated: true
+      x-ignorable: true
+    post:
+      operationId: security.health.1_superseded
+      x-operation-group: security.health
+      x-version-added: '1.0'
+      description: Checks to see if the Security plugin is up and running.
+      parameters:
+        - $ref: '#/components/parameters/security.health::query.mode'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      externalDocs:
+        url: https://opensearch.org/docs/latest/security/access-control/api/#health-check
+      responses:
+        '200':
+          $ref: '#/components/responses/security.health@200'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/kibanainfo:
+    get:
+      operationId: security.get_dashboards_info.0_superseded
+      x-operation-group: security.get_dashboards_info
+      x-version-added: '1.0'
+      description: Retrieves the current security-dashboards plugin configuration.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_dashboards_info@200'
+        '500':
+          $ref: '#/components/responses/security.get_dashboards_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+    post:
+      operationId: security.post_dashboards_info.1_superseded
+      x-operation-group: security.post_dashboards_info
+      x-version-added: '1.0'
+      description: Updates the current security-dashboards plugin configuration.
+      requestBody:
+        $ref: '#/components/requestBodies/security.post_dashboards_info'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.post_dashboards_info@200'
+        '500':
+          $ref: '#/components/responses/security.post_dashboards_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_security/tenantinfo:
+    get:
+      operationId: security.tenant_info.0_superseded
+      x-operation-group: security.tenant_info
+      x-version-added: '1.0'
+      description: Retrieves the tenant names if any exist. Only accesible to super admins or kibanaserver user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.tenant_info@200'
+        '500':
+          $ref: '#/components/responses/security.tenant_info@500'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      deprecated: true
+      x-ignorable: true
+    post:
+      operationId: security.tenant_info.1_superseded
+      x-operation-group: security.tenant_info
+      x-version-added: '1.0'
+      description: Retrieves the tenant names if any exist. Only accesible to super admins or kibanaserver user.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.tenant_info@200'
+        '500':
+          $ref: '#/components/responses/security.tenant_info@500'
       parameters:
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
@@ -18454,13 +19659,27 @@ components:
       schema:
         type: boolean
       style: form
+    security.authinfo::query.auth_type:
+      name: auth_type
+      in: query
+      description: The type of current authentication request.
+      schema:
+        type: string
+      required: false
+    security.authinfo::query.verbose:
+      name: verbose
+      in: query
+      description: Indicates whether a verbose response should be returned.
+      schema:
+        type: boolean
+      required: false
     security.create_action_group::path.action_group:
       name: action_group
       in: path
-      description: The name of the action group to create or replace
+      description: The name of the action group to create or replace.
       schema:
         type: string
-        description: The name of the action group to create or replace
+        description: The name of the action group to create or replace.
       required: true
     security.create_role_mapping::path.role:
       name: role
@@ -18480,6 +19699,12 @@ components:
       schema:
         type: string
       required: true
+    security.create_user_legacy::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
     security.create_user::path.username:
       name: username
       in: path
@@ -18494,7 +19719,7 @@ components:
         type: string
         description: Action group to delete.
       required: true
-    security.delete_distinguished_names::path.cluster_name:
+    security.delete_distinguished_name::path.cluster_name:
       name: cluster_name
       in: path
       schema:
@@ -18518,7 +19743,25 @@ components:
       schema:
         type: string
       required: true
+    security.delete_user_legacy::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
     security.delete_user::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
+    security.generate_user_token_legacy::path.username:
+      name: username
+      in: path
+      schema:
+        type: string
+      required: true
+    security.generate_user_token::path.username:
       name: username
       in: path
       schema:
@@ -18532,12 +19775,24 @@ components:
         type: string
         description: Action group to retrieve.
       required: true
-    security.get_distinguished_names::path.cluster_name:
+    security.get_distinguished_name::path.cluster_name:
       name: cluster_name
       in: path
       schema:
         type: string
       required: true
+    security.get_distinguished_name::query.show_all:
+      name: show_all
+      in: query
+      schema:
+        type: boolean
+      required: false
+    security.get_distinguished_names::query.show_all:
+      name: show_all
+      in: query
+      schema:
+        type: boolean
+      required: false
     security.get_role_mapping::path.role:
       name: role
       in: path
@@ -18550,8 +19805,22 @@ components:
       schema:
         type: string
       required: true
+    security.get_sslinfo::query.show_dn:
+      name: show_dn
+      in: query
+      description: The domain names from all certificates.
+      schema:
+        type: string
+        description: A boolean flag to indicate whether all domain names should be returned.
+      required: false
     security.get_tenant::path.tenant:
       name: tenant
+      in: path
+      schema:
+        type: string
+      required: true
+    security.get_user_legacy::path.username:
+      name: username
       in: path
       schema:
         type: string
@@ -18562,8 +19831,20 @@ components:
       schema:
         type: string
       required: true
+    security.health::query.mode:
+      name: mode
+      in: query
+      schema:
+        type: string
+      required: false
     security.patch_action_group::path.action_group:
       name: action_group
+      in: path
+      schema:
+        type: string
+      required: true
+    security.patch_distinguished_name::path.cluster_name:
+      name: cluster_name
       in: path
       schema:
         type: string
@@ -18592,12 +19873,18 @@ components:
       schema:
         type: string
       required: true
-    security.update_distinguished_names::path.cluster_name:
+    security.update_distinguished_name::path.cluster_name:
       name: cluster_name
       in: path
       schema:
         type: string
       required: true
+    security.validate::query.accept_invalid:
+      name: accept_invalid
+      in: query
+      schema:
+        type: boolean
+      required: false
     snapshot.cleanup_repository::path.repository:
       in: path
       name: repository
@@ -20683,11 +21970,22 @@ components:
           schema:
             $ref: '#/components/schemas/security._common:ChangePasswordRequestContent'
       required: true
+    security.config_upgrade_perform:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:ConfigUpgradePayload'
     security.create_action_group:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:ActionGroup'
+      required: true
+    security.create_allowlist:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:AllowlistConfig'
       required: true
     security.create_role:
       content:
@@ -20707,15 +22005,35 @@ components:
           schema:
             $ref: '#/components/schemas/security._common:CreateTenantParams'
       required: true
+    security.create_update_tenancy_config:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/security._common:MultiTenancyConfig'
+      required: true
     security.create_user:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:User'
       required: true
+    security.create_user_legacy:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:User'
+      required: true
+    security.generate_obo_token:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:OBOToken'
+      required: true
     security.patch_action_group:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20723,7 +22041,15 @@ components:
       required: true
     security.patch_action_groups:
       content:
-        application/x-ndjson:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/security._common:PatchOperation'
+      required: true
+    security.patch_allowlist:
+      content:
+        application/json:
           schema:
             type: array
             items:
@@ -20731,7 +22057,7 @@ components:
       required: true
     security.patch_audit_configuration:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20739,15 +22065,20 @@ components:
       required: true
     security.patch_configuration:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
               $ref: '#/components/schemas/security._common:PatchOperation'
       required: true
+    security.patch_distinguished_name:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:PatchOperation'
     security.patch_distinguished_names:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20755,7 +22086,7 @@ components:
       required: true
     security.patch_role:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20763,7 +22094,7 @@ components:
       required: true
     security.patch_role_mapping:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20771,7 +22102,7 @@ components:
       required: true
     security.patch_role_mappings:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20779,7 +22110,7 @@ components:
       required: true
     security.patch_roles:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20787,7 +22118,7 @@ components:
       required: true
     security.patch_tenant:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20795,7 +22126,7 @@ components:
       required: true
     security.patch_tenants:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20803,7 +22134,7 @@ components:
       required: true
     security.patch_user:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
@@ -20811,12 +22142,18 @@ components:
       required: true
     security.patch_users:
       content:
-        application/x-ndjson:
+        application/json:
           schema:
             type: array
             items:
               $ref: '#/components/schemas/security._common:PatchOperation'
       required: true
+    security.post_dashboards_info:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:DashboardsInfo'
+      required: false
     security.update_audit_configuration:
       content:
         application/json:
@@ -20829,11 +22166,11 @@ components:
           schema:
             $ref: '#/components/schemas/security._common:DynamicConfig'
       required: true
-    security.update_distinguished_names:
+    security.update_distinguished_name:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/security._common:DistinguishedNames'
+            $ref: '#/components/schemas/security._common:PatchOperation'
     snapshot.clone:
       content:
         application/json:
@@ -22680,175 +24017,204 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_core.search:ResponseBody'
+    security.authinfo@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:AuthInfo'
+    security.authinfo@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
+    security.authtoken@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.cache@501:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:MethodNotImplemented'
     security.change_password@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.config_upgrade_check@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:UpgradeCheck'
+    security.config_upgrade_perform@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:UpgradePerform'
     security.create_action_group@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.create_allowlist@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:AllowlistConfig'
     security.create_role_mapping@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.create_role@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.create_tenant@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.create_tenant@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.create_update_tenancy_config@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:MultiTenancyConfig'
+    security.create_update_tenancy_config@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.create_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
     security.create_user@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.delete_action_group@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
-    security.delete_distinguished_names@200:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.delete_distinguished_name@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.delete_distinguished_name@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Unauthorized'
     security.delete_role_mapping@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.delete_role@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.delete_tenant@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.delete_tenant@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.delete_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
     security.delete_user@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.flush_cache@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.generate_obo_token@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:GenerateOBOToken'
+    security.generate_obo_token@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.generate_user_token_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.generate_user_token_legacy@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.generate_user_token@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.generate_user_token@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.get_account_details@200:
       description: ''
       content:
@@ -22867,6 +24233,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:ActionGroupsMap'
+    security.get_allowlist@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:AllowlistConfig'
     security.get_audit_configuration@200:
       description: ''
       content:
@@ -22878,28 +24250,67 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              http_certificates_list:
-                type: array
-                items:
-                  $ref: '#/components/schemas/security._common:CertificatesDetail'
-              transport_certificates_list:
-                type: array
-                items:
-                  $ref: '#/components/schemas/security._common:CertificatesDetail'
+            $ref: '#/components/schemas/security._common:GetCertificates'
+    security.get_certificates@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.get_configuration@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:DynamicConfig'
+    security.get_dashboards_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:DashboardsInfo'
+    security.get_dashboards_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
+    security.get_distinguished_name@200:
+      description: Show nodesDn setting for given cluster.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:DistinguishedNames'
+    security.get_distinguished_name@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Unauthorized'
     security.get_distinguished_names@200:
       description: ''
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:DistinguishedNamesMap'
+    security.get_distinguished_names@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Unauthorized'
+    security.get_permissions_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:PermissionsInfo'
+    security.get_permissions_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
     security.get_role_mapping@200:
       description: ''
       content:
@@ -22924,6 +24335,30 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:RolesMap'
+    security.get_sslinfo@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:SSLInfo'
+    security.get_sslinfo@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
+    security.get_tenancy_config@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:MultiTenancyConfig'
+    security.get_tenancy_config@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.get_tenant@200:
       description: ''
       content:
@@ -22936,7 +24371,25 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/security._common:TenantsMap'
+    security.get_tenants@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.get_user_legacy@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:UsersMap'
     security.get_user@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:UsersMap'
+    security.get_users_legacy@200:
       description: ''
       content:
         application/json:
@@ -22953,237 +24406,265 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-              mode:
-                type: string
-              status:
-                type: string
+            $ref: '#/components/schemas/security._common:HealthInfo'
+    security.migrate@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.migrate@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_action_group@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.patch_action_groups@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_allowlist@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:AllowlistConfig'
     security.patch_audit_configuration@200:
       description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
     security.patch_configuration@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_distinguished_name@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_distinguished_name@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Unauthorized'
     security.patch_distinguished_names@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_distinguished_names@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Unauthorized'
     security.patch_role_mapping@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_role_mapping@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_role_mappings@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_role_mappings@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_role@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_role@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_roles@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_roles@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_tenant@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_tenant@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_tenants@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.patch_tenants@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.patch_user@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.patch_users@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.post_dashboards_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:DashboardsInfo'
+    security.post_dashboards_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
     security.reload_http_certificates@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.reload_http_certificates@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
     security.reload_transport_certificates@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.reload_transport_certificates@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.tenant_info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:TenantInfo'
+    security.tenant_info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
     security.update_audit_configuration@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
     security.update_configuration@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
-    security.update_distinguished_names@200:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.update_distinguished_name@200:
       description: ''
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                description: Security Operation Status
-              message:
-                type: string
-                description: Security Operation Message
+            $ref: '#/components/schemas/security._common:Ok'
+    security.update_distinguished_name@403:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Unauthorized'
+    security.validate@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:Ok'
+    security.validate@400:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:BadRequest'
+    security.who_am_i_protected@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:WhoAmI'
+    security.who_am_i_protected@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
+    security.who_am_i@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:WhoAmI'
+    security.who_am_i@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common:InternalServerError'
     snapshot.cleanup_repository@200:
       description: ''
       content:
@@ -44050,6 +45531,17 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/security._common:ActionGroup'
+    security._common:AllowlistConfig:
+      type: object
+      properties:
+        config:
+          type: object
+          items:
+            enabled:
+              type: boolean
+            requests:
+              type: object
+              description: An object with APIs as key and array of http methods as values.
     security._common:AuditConfig:
       type: object
       properties:
@@ -44099,6 +45591,60 @@ components:
           type: boolean
         enable_rest:
           type: boolean
+    security._common:AuthInfo:
+      type: object
+      properties:
+        user:
+          type: string
+          description: Stringified User object.
+        user_name:
+          type: string
+          description: User's name.
+        user_requested_tenant:
+          type: string
+          description: Name of the tenant the user wants to switch to.
+        remote_address:
+          type: string
+          description: The IP address of remote user.
+        backend_roles:
+          type: array
+          description: Backend roles associated with the user.
+        custom_attribute_names:
+          type: array
+          description: Name of the attributes associated with the user.
+        roles:
+          type: array
+          description: Roles associated with the user.
+        tenants:
+          type: object
+          description: Tenants the user has access to with read-write or read-only access indicator.
+        principal:
+          type: string
+          description: User principal.
+        peer_certificates:
+          type: number
+          description: Number of peer certificates.
+        sso_logout_url:
+          type: string
+          description: Logout url.
+        size_of_user:
+          type: string
+          description: Size of user in memory.
+        size_of_custom_attributes:
+          type: string
+          description: Size of user's custom attributes in bytes.
+        size_of_backendroles:
+          type: string
+          description: Size of backend roles in bytes.
+    security._common:BadRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          value: 400
+        message:
+          type: string
+          description: Message returned as part of BAD_REQUEST response.
     security._common:CertificatesDetail:
       type: object
       properties:
@@ -44117,10 +45663,10 @@ components:
       properties:
         current_password:
           type: string
-          description: The current password
+          description: The current password.
         password:
           type: string
-          description: The new password to set
+          description: The new password to set.
       required:
         - current_password
         - password
@@ -44152,11 +45698,53 @@ components:
           type: boolean
         internal_config:
           type: boolean
+    security._common:ConfigUpgradePayload:
+      type: object
+      properties:
+        config:
+          type: array
+          description: List of configs to be upgraded.
     security._common:CreateTenantParams:
       type: object
       properties:
         description:
           type: string
+    security._common:DashboardsInfo:
+      type: object
+      properties:
+        user_name:
+          type: string
+          description: User's name
+        not_fail_on_forbidden_enabled:
+          type: boolean
+          description: Indicates whether DNFOF is enabled.
+        opensearch_dashboards_mt_enabled:
+          type: boolean
+          description: Indicates whether multi-tenancy is enabled.
+        opensearch_dashboards_index:
+          type: string
+          description: Name of the dashboards index.
+        opensearch_dashboards_server_user:
+          type: string
+          description: Name of the user used to connect dashboards to the server.
+        multitenancy_enabled:
+          type: boolean
+          description: Indicates whether multi-tenancy is enabled.
+        private_tenant_enabled:
+          type: boolean
+          description: Indicates whether private tenant is enabled for all users.
+        default_tenant:
+          type: string
+          description: The default tenant setting for the dashboard.
+        sign_in_options:
+          type: array
+          description: List of available sign-in options available.
+        password_validation_error_message:
+          type: string
+          description: Error message when password validation fails.
+        password_validation_regex:
+          type: string
+          description: Reg-ex to be used to perform password validation.
     security._common:DistinguishedNames:
       type: object
       properties:
@@ -44197,6 +45785,38 @@ components:
           type: string
         doNotFailOnForbiddenEmpty:
           type: boolean
+    security._common:GenerateOBOToken:
+      type: object
+      properties:
+        user:
+          type: string
+          description: The name of the entity requesting token.
+        authenticationToken:
+          type: string
+          description: The generated OBO token.
+        durationSeconds:
+          type: string
+          description: The duration of the token, defaulted to 300s.
+    security._common:GetCertificates:
+      type: object
+      properties:
+        http_certificates_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/security._common:CertificatesDetail'
+        transport_certificates_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/security._common:CertificatesDetail'
+    security._common:HealthInfo:
+      type: object
+      properties:
+        message:
+          type: string
+        mode:
+          type: string
+        status:
+          type: string
     security._common:IndexPermission:
       type: object
       properties:
@@ -44218,12 +45838,65 @@ components:
           type: array
           items:
             type: string
+    security._common:InternalServerError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message during request execution.
+    security._common:MethodNotImplemented:
+      type: object
+      properties:
+        status:
+          type: string
+          value: 501
+        message:
+          type: string
+          description: Message returned as part of NOT_IMPLEMENTED response.
+    security._common:MultiTenancyConfig:
+      type: object
+      properties:
+        default_tenant:
+          type: string
+        private_tenant_enabled:
+          type: boolean
+        multitenancy_enabled:
+          type: boolean
+        sign_in_options:
+          type: array
+          items:
+            type: string
+          description: Value in seconds.
+    security._common:OBOToken:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Contains the description supplied by the user to describe the token.
+          required: true
+        service:
+          type: string
+          description: A name of the service if generating a token for that service.
+          required: false
+        duration:
+          type: string
+          description: Value in seconds.
+          required: optional
+    security._common:Ok:
+      type: object
+      properties:
+        status:
+          type: string
+          value: 200
+        message:
+          type: string
+          description: Message returned as part of OK response.
     security._common:PatchOperation:
       type: object
       properties:
         op:
           type: string
-          description: 'The operation to perform. Possible values: remove,add, replace, move, copy, test.'
+          description: 'The operation to perform. Possible values: remove, add, replace, move, copy, test.'
         path:
           type: string
           description: The path to the resource.
@@ -44232,6 +45905,18 @@ components:
       required:
         - op
         - path
+    security._common:PermissionsInfo:
+      type: object
+      properties:
+        user:
+          type: string
+        user_name:
+          type: string
+        has_api_access:
+          type: boolean
+        disabled_endpoints:
+          type: object
+          description: An object with disabled APIs as key and array of http methods as values.
     security._common:Role:
       type: object
       properties:
@@ -44288,6 +45973,54 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/security._common:Role'
+    security._common:SSLInfo:
+      type: object
+      properties:
+        principal:
+          type: string
+          description: User principal.
+        peer_certificates:
+          type: number
+          description: Number of certificates.
+        peer_certificates_list:
+          type: array
+          description: List of domain names from peer certificates.
+        local_certificates_list:
+          type: array
+          description: List of domain names from local certificates.
+        ssl_protocol:
+          type: string
+          description: Protocol for this ssl setup.
+        ssl_cipher:
+          type: string
+          description: Cipher for this ssl setup.
+        ssl_openssl_available:
+          type: boolean
+          description: A boolean to indicate if OpenSSL is available.
+        ssl_openssl_version:
+          type: string
+          description: Version of openssl.
+        ssl_openssl_version_string:
+          type: string
+          description: Full version string for openssl version.
+        ssl_openssl_non_available_cause:
+          type: string
+          description: Reason for openssl unavailability.
+        ssl_openssl_supports_key_manager_factory:
+          type: boolean
+          description: Indicates where KMF is supported.
+        ssl_openssl_supports_hostname_validation:
+          type: boolean
+          description: Indicates whether hostname validation is supported.
+        ssl_provider_http:
+          type: string
+          description: Returns http provider's name.
+        ssl_provider_transport_server:
+          type: string
+          description: Returns transport server's name.
+        ssl_provider_transport_client:
+          type: string
+          description: Returns transport client's name.
     security._common:Tenant:
       type: object
       properties:
@@ -44299,6 +46032,10 @@ components:
           type: string
         static:
           type: boolean
+    security._common:TenantInfo:
+      type: object
+      additionalProperties:
+        type: string
     security._common:TenantPermission:
       type: object
       properties:
@@ -44314,6 +46051,31 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/security._common:Tenant'
+    security._common:Unauthorized:
+      type: object
+      properties:
+        status:
+          type: string
+          value: 403
+        message:
+          type: string
+          description: Message returned as part of FORBIDDEN response.
+    security._common:UpgradeCheck:
+      type: object
+      properties:
+        status:
+          type: string
+        upgradeAvailable:
+          type: boolean
+        upgradeActions:
+          type: object
+    security._common:UpgradePerform:
+      type: object
+      properties:
+        status:
+          type: string
+        upgrades:
+          type: object
     security._common:User:
       type: object
       properties:
@@ -44354,6 +46116,15 @@ components:
           type: boolean
         admin:
           type: boolean
+    security._common:WhoAmI:
+      type: object
+      properties:
+        dn:
+          type: string
+        is_admin:
+          type: string
+        is_node_certificate_request:
+          type: string
     snapshot._common:FileCountSnapshotStats:
       type: object
       properties:
