@@ -1,7 +1,16 @@
+import { Command, Option } from '@commander-js/extra-typings'
 import SpecValidator from './SpecValidator'
+import { resolve } from 'path'
 
-const root_folder = process.argv[2] ?? '../spec'
-const validator = new SpecValidator(root_folder)
+const command = new Command()
+  .description('Validate the OpenSearch multi-file spec.')
+  .addOption(new Option('-s, --source <path>', 'path to the root folder of the multi-file spec').default(resolve(__dirname, '../../spec')))
+  .allowExcessArguments(false)
+  .parse()
+
+const opts = command.opts()
+console.log(`Validating ${opts.source} ...`)
+const validator = new SpecValidator(opts.source)
 const errors = validator.validate()
 
 if (errors.length === 0) {
