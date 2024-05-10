@@ -25,7 +25,8 @@ jobs:
         run: |-
           mkdir -p ../build
           npm install
-          npm run merge -- --source ../spec --output ../build/opensearch-openapi.yaml --x-include=x-tested
+          npm run merge -- --source ../spec --output ../build/opensearch-openapi.yaml
+          npm run merge -- --source ../spec --output ../build/opensearch-openapi-tested.yaml --x-include=x-tested
 
       - name: Build and Run Docker Container
         run: |
@@ -40,4 +41,25 @@ jobs:
       - name: Test
         working-directory: ./tools
         run: |-
-          npm run dredd -- --user "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ../build/opensearch-openapi.yaml https://localhost:9200
+          npm run dredd -- --user "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ../build/opensearch-openapi-tested.yaml https://localhost:9200
+
+      - name: Gather Test Coverage
+        id: test-coverage
+        shell: bash
+        run: |
+          current=`docker run --rm -i mikefarah/yq:latest -r '.paths | keys | length' < build/opensearch-openapi-tested.yaml`
+          total=`docker run --rm -i mikefarah/yq:latest -r '.paths | keys | length' < build/opensearch-openapi.yaml`
+          percent=$((current * 100 / total))
+          echo "$current/$total ($percent%) APIs tested."
+          cat >>"test-coverage.json" <<EOL
+          {
+            "pull_request":${{ github.event.number }},
+            "current":$current,
+            "total":$total,
+            "percent":$percent
+          }
+          EOL
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage
+          path: test-coverage.json          

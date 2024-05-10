@@ -2,7 +2,7 @@ name: Comment with API Coverage
 
 on:
   workflow_run:
-    workflows: ["Gather API Coverage"]
+    workflows: ["Gather API Coverage", "Test Spec"]
     types:
       - completed
 
@@ -28,9 +28,11 @@ jobs:
             const fs = require('fs');
             const data = JSON.parse(fs.readFileSync('./coverage.json'));
             console.log(data);
+            const test_data = JSON.parse(fs.readFileSync('./test-coverage.json'));
+            console.log(test_data);
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: data.pull_request,
-              body: `API specs implemented for ${data.current}/${data.total} (${data.percent}%) APIs.`
+              body: `API specs implemented for ${data.current}/${data.total} (${data.percent}%) APIs, with ${test_data.current}/${test_data.total} (${test_data.percent}%) APIs tested.`
             });
