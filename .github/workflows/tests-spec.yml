@@ -6,8 +6,8 @@ env:
   OPENSEARCH_INITIAL_ADMIN_PASSWORD: BobgG7YrtsdKf9M
 
 jobs:
-  integ-tests:
-    name: Build and Test
+  tests-spec:
+    name: Build and Test Spec
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -21,12 +21,11 @@ jobs:
           node-version: '20'
 
       - name: Build
-        working-directory: ./tools
         run: |-
-          mkdir -p ../build
+          mkdir -p ./build
           npm install
-          npm run merge -- --source ../spec --output ../build/opensearch-openapi.yaml
-          npm run merge -- --source ../spec --output ../build/opensearch-openapi-tested.yaml --x-include=x-tested
+          npm run merge -- --source ./spec --output ./build/opensearch-openapi.yaml
+          npm run merge -- --source ./spec --output ./build/opensearch-openapi-tested.yaml --x-include=x-tested
 
       - name: Build and Run Docker Container
         run: |
@@ -39,9 +38,8 @@ jobs:
           curl -ks -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/ | jq
 
       - name: Test
-        working-directory: ./tools
         run: |-
-          npm run dredd -- --user "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ../build/opensearch-openapi-tested.yaml https://localhost:9200
+          npm run dredd -- --user "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ./build/opensearch-openapi-tested.yaml https://localhost:9200
 
       - name: Gather Test Coverage
         id: test-coverage

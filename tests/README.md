@@ -16,8 +16,8 @@ docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "OPEN
 Generate the spec and run `dredd` from inside [tools](../tools).
 
 ```
-npm run merge -- --source ../spec --output ../build/opensearch-openapi-tested.yaml --x-include=x-tested
-npm run dredd -- --user "admin:BobgG7YrtsdKf9M" ../build/opensearch-openapi-tested.yaml https://localhost:9200
+npm run merge -- --source ./spec --output ../build/opensearch-openapi-tested.yaml --x-include=x-tested
+npm run dredd -- --user "admin:BobgG7YrtsdKf9M" ./build/opensearch-openapi-tested.yaml https://localhost:9200
 ```
 
 ## Writing Tests
@@ -60,4 +60,4 @@ For `GET` APIs, provide an example for the default response (`cat.help@200` in t
 
 ## Github Actions
 
-Tests run on pull requests via [test.yml](../.github/workflows/test.yml).
+Tests run on pull requests via [tests-spec.yml](../.github/workflows/tests-spec.yml).

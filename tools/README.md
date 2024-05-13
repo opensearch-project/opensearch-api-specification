@@ -25,8 +25,8 @@ npm run merge -- --source ./spec --output ./build/opensearch-openapi.yaml
 
 As a shortcut, if those parameters are not provided, the tool will use the default values:
 
-- `../spec` as the root path (i.e. the repo's [spec folder](../spec))
-- `./build/opensearch-openapi.yaml` as the output path
+- `spec` as the root path (i.e. the repo's [spec folder](../spec))
+- `build/opensearch-openapi.yaml` as the output path
 
 ```bash
 npm run merge
