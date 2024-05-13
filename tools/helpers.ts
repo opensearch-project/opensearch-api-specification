@@ -1,6 +1,9 @@
 import fs from 'fs'
 import YAML from 'yaml'
 import _ from 'lodash'
+import { OpenAPIV3 } from 'openapi-types'
+
+export const OPENAPI_HTTP_METHODS: OpenAPIV3.HttpMethods[] = Object.values(OpenAPIV3.HttpMethods)
 
 export function resolve_ref (ref: string, root: Record<string, any>): Record<string, any> | undefined {
   const paths = ref.replace('#/', '').split('/')
@@ -66,4 +69,8 @@ function quote_refs (str: string): string {
 function remove_anchors (content: Record<string, any>): Record<string, any> {
   const replacer = (key: string, value: any): any => key === '$anchor' ? undefined : value
   return JSON.parse(JSON.stringify(content, replacer))
+}
+
+export function is_http_method (str: string): str is OpenAPIV3.HttpMethods {
+  return OPENAPI_HTTP_METHODS.includes(str as OpenAPIV3.HttpMethods)
 }

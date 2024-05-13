@@ -1,7 +1,7 @@
 import { type OpenAPIV3 } from 'openapi-types'
 import fs from 'fs'
 import _ from 'lodash'
-import { read_yaml, write_yaml } from '../../helpers'
+import { is_http_method, read_yaml, write_yaml } from '../../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 
@@ -47,8 +47,7 @@ export default class OpenApiMerger {
     fs.readdirSync(folder).forEach(file => {
       const spec = read_yaml(`${folder}/${file}`)
       this.redirect_refs_in_namespace(spec)
-      this.spec.paths = { ...this.spec.paths, ...spec.paths }
-      this.filter_methods(spec)
+      this.spec.paths = { ...this.spec.paths, ...this.filter_paths(spec.paths as OpenAPIV3.PathsObject) }
       this.spec.components.parameters = { ...this.spec.components.parameters, ...spec.components.parameters }
       this.spec.components.responses = { ...this.spec.components.responses, ...spec.components.responses }
       this.spec.components.requestBodies = { ...this.spec.components.requestBodies, ...spec.components.requestBodies }
@@ -123,22 +122,21 @@ export default class OpenApiMerger {
     gen.generate(this.spec)
   }
 
-  filter_methods (paths: any): void {
+  filter_paths (paths: OpenAPIV3.PathsObject): OpenAPIV3.PathsObject {
     for (const x_include_value of this.options.x_include) {
-      this.#filter_methods_with_key(paths, x_include_value)
+      paths = this.#filter_operations_with_key(paths, x_include_value)
     }
+    return paths
   }
 
-  #filter_methods_with_key (paths: any, key: string): void {
-    Object.entries(this.spec.paths as Document).forEach(([path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([method, method_spec]) => {
-        if (method_spec[key] === undefined) {
-          delete (this.spec.paths[path][method])
-          if (Object.keys(this.spec.paths[path] as Document).length === 0) {
-            delete (this.spec.paths[path])
-          }
-        }
+  #filter_operations_with_key (paths: OpenAPIV3.PathsObject, key: string): OpenAPIV3.PathsObject {
+    const entries = Object.entries(paths)
+      .map(([path, path_item]) => {
+        const entries = Object.entries(path_item as Record<string, any>)
+          .filter(([op_key, value]) => !is_http_method(op_key) || value[key] !== undefined)
+        return [path, Object.fromEntries(entries)]
       })
-    })
+      .filter(([_, path_item]) => Object.keys(path_item).filter(is_http_method).length > 0)
+    return Object.fromEntries(entries)
   }
 }
