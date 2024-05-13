@@ -118,7 +118,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 
 ## Tools
 
-We authored a number of tools to merge and lint specs that live in [tools](tools). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
+We authored a number of tools to merge and lint specs that live in [tools](./tools/src/). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
 
 ### Merger
 
