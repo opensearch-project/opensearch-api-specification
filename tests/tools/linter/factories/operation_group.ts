@@ -1,4 +1,4 @@
-import OperationGroup from '../../../linter/components/OperationGroup'
+import OperationGroup from '../../../../tools/linter/components/OperationGroup'
 import { operation, mocked_operation } from './operation'
 
 export function operation_group (operation_specs: Array<Record<string, any>>): OperationGroup {

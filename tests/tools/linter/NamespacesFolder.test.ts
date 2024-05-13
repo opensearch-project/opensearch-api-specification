@@ -1,7 +1,7 @@
-import NamespacesFolder from '../../linter/components/NamespacesFolder'
+import NamespacesFolder from '../../../tools/linter/components/NamespacesFolder'
 
 test('validate() - When there invalid files', () => {
-  const validator = new NamespacesFolder('./test/linter/fixtures/folder_validators/namespaces/invalid_files')
+  const validator = new NamespacesFolder('./tests/tools/linter/fixtures/folder_validators/namespaces/invalid_files')
   expect(validator.validate()).toEqual([
     {
       file: 'invalid_files/indices.txt',
@@ -37,7 +37,7 @@ test('validate() - When there invalid files', () => {
 })
 
 test('validate() - When the files are valid but the folder is not', () => {
-  const validator = new NamespacesFolder('./test/linter/fixtures/folder_validators/namespaces/invalid_folder')
+  const validator = new NamespacesFolder('./tests/tools/linter/fixtures/folder_validators/namespaces/invalid_folder')
   expect(validator.validate()).toEqual([
     {
       file: 'invalid_folder/',

@@ -1,8 +1,8 @@
 import { mocked_schema } from './schema'
-import SchemaFile from '../../../linter/components/SchemaFile'
+import SchemaFile from '../../../../tools/linter/components/SchemaFile'
 
 export function schema_file (fixture: string): SchemaFile {
-  return new SchemaFile(`./test/linter/fixtures/file_validators/schemas/${fixture}`)
+  return new SchemaFile(`./tests/tools/linter/fixtures/file_validators/schemas/${fixture}`)
 }
 
 interface MockedReturnedValues {

@@ -1,7 +1,7 @@
-import SpecValidator from '../../linter/SpecValidator'
+import SpecValidator from '../../../tools/linter/SpecValidator'
 
 test('validate()', () => {
-  const validator = new SpecValidator('./test/linter/fixtures/empty')
+  const validator = new SpecValidator('./tests/tools/linter/fixtures/empty')
   expect(validator.validate()).toEqual([])
 
   validator.namespaces_folder.validate = jest.fn().mockReturnValue([{ file: 'namespaces/', message: 'namespace error' }])

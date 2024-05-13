@@ -1,9 +1,9 @@
-import NamespaceFile from '../../../linter/components/NamespaceFile'
+import NamespaceFile from '../../../../tools/linter/components/NamespaceFile'
 import { type OpenAPIV3 } from 'openapi-types'
 import { mocked_operation_group } from './operation_group'
 
 export function namespace_file (fixture_file: string): NamespaceFile {
-  return new NamespaceFile(`./test/linter/fixtures/file_validators/namespaces/${fixture_file}`)
+  return new NamespaceFile(`./tests/tools/linter/fixtures/file_validators/namespaces/${fixture_file}`)
 }
 
 interface MockedReturnedValues {
