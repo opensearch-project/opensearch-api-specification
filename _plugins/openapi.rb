@@ -2,10 +2,8 @@ module OpenAPI
   def self.generate(_site, _payload)
     return if @generated
 
-    Dir.chdir('tools') do
-      system 'npm install'
-      system 'npm run merge -- ../spec ../_site/opensearch-openapi.yaml'
-    end
+    system 'npm install'
+    system 'npm run merge -- --source ./spec --output ./_site/opensearch-openapi.yaml'
 
     @generated = true
   end
