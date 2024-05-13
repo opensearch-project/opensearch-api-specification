@@ -1,4 +1,4 @@
-import Schema from '../../../../tools/linter/components/Schema'
+import Schema from 'linter/components/Schema'
 import { type OpenAPIV3 } from 'openapi-types'
 
 export function schema (name: string, spec: Record<string, any> = {}): Schema {

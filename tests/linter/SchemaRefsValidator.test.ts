@@ -1,9 +1,9 @@
-import SchemasFolder from '../../../tools/linter/components/SchemasFolder'
-import NamespacesFolder from '../../../tools/linter/components/NamespacesFolder'
-import SchemaRefsValidator from '../../../tools/linter/SchemaRefsValidator'
+import SchemasFolder from 'linter/components/SchemasFolder'
+import NamespacesFolder from 'linter/components/NamespacesFolder'
+import SchemaRefsValidator from 'linter/SchemaRefsValidator'
 
 test('validate()', () => {
-  const root_folder = './tests/tools/linter/fixtures/schema_refs_validator'
+  const root_folder = './tests/linter/fixtures/schema_refs_validator'
   const namespaces_folder = new NamespacesFolder(`${root_folder}/namespaces`)
   const schemas_folder = new SchemasFolder(`${root_folder}/schemas`)
   const validator = new SchemaRefsValidator(namespaces_folder, schemas_folder)

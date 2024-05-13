@@ -1,7 +1,7 @@
-import InfoFile from '../../../tools/linter/components/InfoFile'
+import InfoFile from 'linter/components/InfoFile'
 
 test('validate()', () => {
-  const validator = new InfoFile('./tests/tools/linter/fixtures/_info.yaml')
+  const validator = new InfoFile('./tests/linter/fixtures/_info.yaml')
   expect(validator.validate()).toEqual([
     {
       file: 'fixtures/_info.yaml',

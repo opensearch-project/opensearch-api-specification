@@ -118,7 +118,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 
 ## Tools
 
-We authored a number of tools to merge and lint specs that live in [tools](tools). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
+We authored a number of tools to merge and lint specs that live in [src](./src/). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
 
 ### Merger
 
@@ -126,4 +126,4 @@ The spec merger "builds", aka combines all `.yaml` files in a spec folder into a
 
 ### Linter
 
-The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#spec-linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.
+The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](src/README.md#spec-linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.

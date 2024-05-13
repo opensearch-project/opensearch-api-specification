@@ -1,7 +1,7 @@
-import SupersededOperationsFile from '../../../tools/linter/components/SupersededOperationsFile'
+import SupersededOperationsFile from 'linter/components/SupersededOperationsFile'
 
 test('validate()', () => {
-  const validator = new SupersededOperationsFile('./tests/tools/linter/fixtures/_superseded_operations.yaml')
+  const validator = new SupersededOperationsFile('./tests/linter/fixtures/_superseded_operations.yaml')
   expect(validator.validate()).toEqual([
     {
       file: 'fixtures/_superseded_operations.yaml',
