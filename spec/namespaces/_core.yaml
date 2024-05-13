@@ -1200,6 +1200,7 @@ paths:
       operationId: index.0
       x-operation-group: index
       x-version-added: '1.0'
+      x-tested: true
       description: Creates or updates a document in an index.
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/document-apis/index-document/
@@ -1219,8 +1220,8 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/index'
       responses:
-        '200':
-          $ref: '#/components/responses/index@200'
+        '201':
+          $ref: '#/components/responses/index@201'
   /{index}/_doc/{id}:
     delete:
       operationId: delete.0
@@ -2870,12 +2871,31 @@ components:
         application/json:
           schema:
             type: object
-    index@200:
+    index@201:
       description: ''
       content:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+          examples:
+            application/json:
+              value:
+                _index: my-index
+                _id: "R5Umc48BxVNStfTNiYzC"
+                _version: 1
+                result: "created"
+                _shards:
+                  total: 2
+                  successful: 1
+                  failed: 0
+                _seq_no: 0
+                _primary_term: 1
+    index@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     info@200:
       description: ''
       content:
@@ -4562,6 +4582,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
+      example: my-index
     index::query.if_primary_term:
       in: query
       name: if_primary_term
