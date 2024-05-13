@@ -1,0 +1,264 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Index Transforms API
+  description: OpenSearch Index Transforms API
+  version: 1.0.0
+paths:
+  /_plugins/_transform:
+    get:
+      operationId: transforms.get.0
+      x-operation-group: transforms.get
+      x-version-added: 1.0
+      description: Returns the details of all transform jobs.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#get-a-transform-jobs-details
+      parameters:
+        - $ref: '#/components/parameters/transforms.get::query.size'
+        - $ref: '#/components/parameters/transforms.get::query.from'
+        - $ref: '#/components/parameters/transforms.get::query.search'
+        - $ref: '#/components/parameters/transforms.get::query.sortField'
+        - $ref: '#/components/parameters/transforms.get::query.sortDirection'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.get@200'
+  /_plugins/_transform/{id}:
+    get:
+      operationId: transforms.get.0
+      x-operation-group: transforms.get
+      x-version-added: 1.0
+      description: Returns the status and metadata of a transform job.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#get-a-transform-jobs-details
+      parameters:
+        - $ref: '#/components/parameters/transforms.get::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.get@200'
+    put:
+      operationId: transforms.put.0
+      x-operation-group: transforms.put
+      x-version-added: 1.0
+      description: Create an index transform, or update a transform if if_seq_no and if_primary_term are provided.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#create-a-transform-job      
+      parameters:
+        - $ref: '#/components/parameters/transforms.put::path.id'
+        - $ref: '#/components/parameters/transforms.put::query.if_seq_no'
+        - $ref: '#/components/parameters/transforms.put::query.if_primary_term'
+      requestBody:
+        $ref: '#/components/requestBodies/transforms.put'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.put@200'
+    delete:
+      operationId: transforms.delete.0
+      x-operation-group: transforms.delete
+      x-version-added: 1.0
+      description: Delete an index transform.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#delete-a-transform-job
+      parameters:
+        - $ref: '#/components/parameters/transforms.delete::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.delete@200'
+  /_plugins/_transform/{id}/_start:
+    post:
+      operationId: transforms.start.0
+      x-operation-group: transforms.start
+      x-version-added: 1.0
+      description: Start transform.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#start-a-transform-job
+      parameters:
+        - $ref: '#/components/parameters/transforms.start::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.start@200'
+  /_plugins/_transform/{id}/_stop:
+    post:
+      operationId: transforms.stop.0
+      x-operation-group: transforms.stop
+      x-version-added: 1.0
+      description: stop transform.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#stop-a-transform-job
+      parameters:
+        - $ref: '#/components/parameters/transforms.stop::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.stop@200'
+  /_plugins/_transform/{id}/_explain:
+    get:
+      operationId: transforms.explain.0
+      x-operation-group: transforms.explain
+      x-version-added: 1.0
+      description: Returns the status and metadata of a transform job.      
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#get-the-status-of-a-transform-job
+      parameters:
+        - $ref: '#/components/parameters/transforms.explain::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.explain@200'
+  /_plugins/_transform/_preview:
+    get:
+      operationId: transforms.preview.0
+      x-operation-group: transforms.preview
+      x-version-added: 1.0
+      description: Returns a preview of what a transformed index would look like.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/index-transforms/transforms-apis/#preview-a-transform-jobs-results
+      responses:
+        '200':
+          $ref: '#/components/responses/transforms.preview@200'
+components:
+  requestBodies:
+    transforms.put:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transforms._common.yaml#/components/schemas/Transform'
+  responses:
+    transforms.get@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transforms._common.yaml#/components/schemas/TransformsResponse'
+    transforms.get@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transforms._common.yaml#/components/schemas/TransformEntity'
+    transforms.put@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transforms._common.yaml#/components/schemas/TransformEntity'
+    transforms.delete@200:
+      description: ''
+    transforms.start@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    transforms.stop@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    transforms.explain@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transforms._common.yaml#/components/schemas/ExplainResponse'
+    transforms.preview@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/transforms._common.yaml#/components/schemas/Preview'
+  parameters:
+    transforms.get::path.id:
+      name: id
+      in: path
+      description: Transform to access
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    transforms.put::path.id:
+      name: id
+      in: path
+      description: Transform to access
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    transforms.delete::path.id:
+      name: id
+      in: path
+      description: Transform to access
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    transforms.start::path.id:
+      name: id
+      in: path
+      description: Transform to access
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    transforms.stop::path.id:
+      name: id
+      in: path
+      description: Transform to access
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    transforms.explain::path.id:
+      name: id
+      in: path
+      description: Transform to access
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Id'
+      style: simple
+    transforms.put::query.if_seq_no:
+      name: if_seq_no
+      in: query
+      description: Only perform the operation if the document has this sequence number.
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SequenceNumber'
+      style: form
+    transforms.put::query.if_primary_term:
+      name: if_primary_term
+      in: query
+      description: Only perform the operation if the document has this primary term.
+      required: false
+      schema:
+        type: number
+      style: form
+    transforms.get::query.size:
+      name: size
+      in: query
+      description: Specifies the number of transforms to return. Default is 10.
+      required: false
+      schema:
+        type: number
+      style: form
+    transforms.get::query.from:
+      name: from
+      in: query
+      description: The starting transform to return. Default is 0.
+      required: false
+      schema:
+        type: number
+      style: form
+    transforms.get::query.search:
+      name: search
+      in: query
+      description: The search term to use to filter results.
+      required: false
+      schema:
+        type: string
+      style: form
+    transforms.get::query.sortField:
+      name: sortField
+      in: query
+      description: The field to sort results with.
+      required: false
+      schema:
+        type: string
+      style: form
+    transforms.get::query.sortDirection:
+      name: sortDirection
+      in: query
+      description: Specifies the direction to sort results in. Can be ASC or DESC. Default is ASC.
+      required: false
+      schema:
+        type: string
+      style: form
