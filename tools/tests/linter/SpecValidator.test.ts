@@ -2,11 +2,11 @@ import SpecValidator from 'linter/SpecValidator'
 
 test('validate()', () => {
   const validator = new SpecValidator('./tools/tests/linter/fixtures/empty')
-  expect(validator.validate()).toEqual([])
-
   validator.namespaces_folder.validate = jest.fn().mockReturnValue([{ file: 'namespaces/', message: 'namespace error' }])
   validator.schemas_folder.validate = jest.fn().mockReturnValue([{ file: 'schemas/', message: 'schema error' }])
   validator.schema_refs_validator.validate = jest.fn().mockReturnValue([{ file: 'schema_refs', message: 'schema refs error' }])
+  validator.schemas_validator.validate = jest.fn().mockReturnValue([{ file: 'schemas/', message: 'schema error' }])
+  validator.inline_object_schema_validator.validate = jest.fn().mockReturnValue([{ file: 'inline_file', message: 'inline_object_schema_validator error' }])
 
   expect(validator.validate()).toEqual([
     { file: 'namespaces/', message: 'namespace error' },
@@ -17,6 +17,8 @@ test('validate()', () => {
   validator.schemas_folder.validate = jest.fn().mockReturnValue([])
 
   expect(validator.validate()).toEqual([
-    { file: 'schema_refs', message: 'schema refs error' }
+    { file: 'schema_refs', message: 'schema refs error' },
+    { file: 'inline_file', message: 'inline_object_schema_validator error' },
+    { file: 'schemas/', message: 'schema error' }
   ])
 })
