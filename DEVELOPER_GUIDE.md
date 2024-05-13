@@ -133,12 +133,4 @@ The spec linter that validates every `.yaml` file in the `./spec` folder to assu
 
 ### Validator
 
-The project uses [dredd](https://dredd.org) to test the spec against a live instance OpenSearch. See [test.yml](.github/workflows/test.yml) for details.
-
-To run locally, start OpenSearch, generate the spec and run `dredd`.
-
-```bash
- docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "OPENSEARCH_INITIAL_ADMIN_PASSWORD=InitialAdminPassword1" opensearchproject/opensearch:latest
-npm run merge -- ../spec ../build/opensearch-openapi.yaml
-npm run dredd -- --user "admin:InitialAdminPassword1" ../build/opensearch-openapi.yaml https://localhost:9200
-```
+The project uses [dredd](https://dredd.org) to test the spec against a live instance OpenSearch. See [tests](tests/README.md) for details.
