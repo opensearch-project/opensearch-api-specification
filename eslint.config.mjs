@@ -48,11 +48,17 @@ export default [
           allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false
         }
       ],
-      '@typescript-eslint/no-var-requires': 'off',
+      '@typescript-eslint/no-var-requires': 'error',
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',
       'object-shorthand': 'error'
+    }
+  },
+  {
+    files: ['**/*.js'],
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off'
     }
   }
 ]
