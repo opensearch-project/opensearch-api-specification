@@ -1,0 +1,45 @@
+name: Test the OS cluster against the OpenSearch Spec
+
+on:
+  push:
+   branches: [ '**' ]
+   paths:
+     - 'package*.json'
+     - 'tsconfig.json'
+     - 'tools/tester/**'
+     - 'spec/**'
+  pull_request:
+   branches: [ '**' ]
+   paths:
+     - 'package*.json'
+     - 'tsconfig.json'
+     - 'tools/tester/**'
+     - 'spec/**'
+
+jobs:
+  test-opensearch-spec:
+    runs-on: ubuntu-latest
+    env:
+      OPENSEARCH_VERSION: 2.12.0
+      OPENSEARCH_PASSWORD: myStrongPassword123!
+      OPENSEARCH_URL: https://localhost:9200
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run OpenSearch Cluster
+        working-directory: .github/opensearch-cluster
+        run: |
+          docker-compose up -d
+          sleep 60
+
+      - name: Run Tests
+        run: npm run test:spec
