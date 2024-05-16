@@ -1,0 +1,35 @@
+name: Comment on PR
+description: Creates or updates a comment on a PR
+inputs:
+  pr-number:
+    description: The number of the PR to comment on
+    required: true
+  comment-search-string:
+    description: String to use to locate a previous comment to update
+    required: true
+  body:
+    description: String to use as the body for the created comment
+    default: ''
+  body-path:
+    description: Path to a file containing the body to use for the created comment
+    default: ''
+outputs: {}
+runs:
+  using: composite
+  steps:
+    - name: Find Existing Comment
+      uses: peter-evans/find-comment@v3
+      id: fc
+      with:
+        issue-number: ${{ inputs.pr-number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: ${{ inputs.comment-search-string }}
+
+    - name: Create or Update Comment
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        issue-number: ${{ inputs.pr-number }}
+        body: ${{ inputs.body }}
+        body-path: ${{ inputs.body-path }}
+        edit-mode: replace

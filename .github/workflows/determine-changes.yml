@@ -1,0 +1,117 @@
+name: Determine API Changes
+
+on: [pull_request]
+
+jobs:
+  determine-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Branch Point
+        shell: bash -eo pipefail {0}
+        run: |
+          { 
+            echo "BRANCH_POINT_SHA=$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
+            echo "HEAD_SHA=${HEAD_SHA}"
+          } | tee "$GITHUB_ENV"
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
+      - name: Checkout Original Spec
+        shell: bash -eo pipefail {0}
+        run: git checkout $BRANCH_POINT_SHA
+
+      - name: Build Original Spec
+        shell: bash -eo pipefail {0}
+        run: |
+          npm install
+          npm run merge -- --source ./spec --output /tmp/opensearch-openapi-ORIGINAL.yaml
+
+      - name: Checkout Changed Spec
+        shell: bash -eo pipefail {0}
+        run: git checkout $HEAD_SHA
+
+      - name: Build Changed Spec
+        shell: bash -eo pipefail {0}
+        run: |
+          npm install
+          npm run merge -- --source ./spec --output /tmp/opensearch-openapi-CHANGED.yaml
+
+      - name: Install openapi-changes
+        shell: bash -eo pipefail {0}
+        run: npm install --global @pb33f/openapi-changes
+
+      - name: Generate Report
+        shell: bash -eo pipefail {0}
+        run: openapi-changes html-report --no-logo --no-color /tmp/opensearch-openapi-ORIGINAL.yaml /tmp/opensearch-openapi-CHANGED.yaml
+
+      - name: Upload Report
+        id: upload-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: changes-report
+          path: |
+            report.html
+            /tmp/opensearch-openapi-ORIGINAL.yaml
+            /tmp/opensearch-openapi-CHANGED.yaml
+
+      - name: Generate Summary
+        shell: bash -eo pipefail {0}
+        run: |
+          if ! openapi-changes summary --no-logo --no-color --markdown /tmp/opensearch-openapi-ORIGINAL.yaml /tmp/opensearch-openapi-CHANGED.yaml >output.md ; then
+            if ! grep -q 'breaking changes discovered' output.md ; then
+              cat output.md >/dev/stderr
+              exit 1
+            fi
+          fi
+          
+          gawk -v HEAD_SHA="${HEAD_SHA}" -v REPORT_URL="${REPORT_URL}" '
+            BEGIN {
+              print "### API Changes Summary"
+              RS = "(\r|\n|\r\n)"
+              WAS_BLANK = 0
+              HAD_CHANGES = 0
+            }
+            
+            /^starting work/ || /^Building original model/ || /^SPEC: extracted/ || /^ERROR: breaking/ || /^DONE: completed/ {
+              next
+            }
+              
+            /^[[:space:]]*$/ {
+              WAS_BLANK = 1
+              next
+            }
+              
+            WAS_BLANK {
+              WAS_BLANK = 0
+              print ""
+            }
+              
+            {
+              HAD_CHANGES = 1
+              sub(/Commit: New:/, "Commit: " HEAD_SHA ", New:")
+              print
+            }
+          
+            END {
+              if (!HAD_CHANGES) {
+                print "Commit: " HEAD_SHA ", **NO CHANGES**\n"
+              }
+              print "\nFull Report: " REPORT_URL
+            }
+          ' output.md | tee changes-summary.md
+        env:
+          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+
+      - name: Upload Summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: changes-summary
+          path: changes-summary.md
