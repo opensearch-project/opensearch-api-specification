@@ -17,7 +17,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          name: coverage
+          pattern: coverage-*
+          merge-multiple: true
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: 'Comment on PR'
@@ -26,11 +27,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const data = JSON.parse(fs.readFileSync('./coverage.json'));
-            console.log(data);
+            const coverage_api = JSON.parse(fs.readFileSync('./coverage-api.json'));
+            console.log(coverage_api);
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: data.pull_request,
-              body: `API specs implemented for ${data.current}/${data.total} (${data.percent}%) APIs.`
+              issue_number: coverage_api.pull_request,
+              body: `API specs implemented for ${coverage_api.current}/${coverage_api.total} (${coverage_api.percent}%) APIs.`
             });
