@@ -68,8 +68,8 @@ test('validate_parameter_refs()', () => {
   expect(validator.validate_parameter_refs()).toEqual([
     {
       file: 'namespaces/invalid_components.yaml',
-      location: '#/components/parameters/#indices.create::query.ExpandWildcards',
-      message: "Invalid parameter name 'ExpandWildcards'. A parameter's name can only contain lower-cased alphanumerics, underscores, and periods."
+      location: '#/components/parameters/#indices.create::query.ExpandWildcard$',
+      message: "Invalid parameter name 'ExpandWildcard$'. A parameter's name can only contain alphanumerics, underscores, and periods."
     },
     {
       file: 'namespaces/invalid_components.yaml',
