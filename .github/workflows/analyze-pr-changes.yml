@@ -1,6 +1,9 @@
-name: Determine API Changes
+name: Analyze PR Changes
 
 on: [pull_request]
+
+env:
+  OPENSEARCH_INITIAL_ADMIN_PASSWORD: BobgG7YrtsdKf9M
 
 jobs:
   determine-changes:
@@ -12,6 +15,34 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Build Docker Image
+        run: docker build coverage --tag opensearch-with-api-plugin
+
+      - name: Run OpenSearch
+        shell: bash -eo pipefail {0}
+        run: |
+          docker run \
+            --name opensearch \
+            --rm -d \
+            -p 9200:9200 -p 9600:9600 \
+            -e "discovery.type=single-node" \
+            -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_INITIAL_ADMIN_PASSWORD" \
+            opensearch-with-api-plugin
+          
+          for attempt in {1..20}; do
+            sleep 5
+            if curl -ksS -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200; then
+              echo '=> ready'
+              exit 0
+            fi
+            echo '=> waiting...'
+          done
+          exit 1
+
+      - name: Dump Cluster's API
+        shell: bash -eo pipefail {0}
+        run: curl -ksS -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/_plugins/api | jq > /tmp/opensearch-openapi-CLUSTER.json
 
       - name: Determine Branch Point
         shell: bash -eo pipefail {0}
@@ -44,15 +75,35 @@ jobs:
           npm install
           npm run merge -- --source ./spec --output /tmp/opensearch-openapi-CHANGED.yaml
 
+      - name: Calculate Coverage
+        shell: bash -eo pipefail {0}
+        run: |
+          for variant in ORIGINAL CHANGED ; do
+            echo "Calculating coverage of ${variant}"
+            npm run coverage:spec -- \
+              --cluster /tmp/opensearch-openapi-CLUSTER.json \
+              --specification /tmp/opensearch-openapi-${variant}.yaml \
+              --output /tmp/coverage-api-${variant}.json
+          done
+
+      - name: Upload Coverage Data
+        id: upload-coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-api
+          path: |
+            /tmp/coverage-api-ORIGINAL.json
+            /tmp/coverage-api-CHANGED.json
+
       - name: Install openapi-changes
         shell: bash -eo pipefail {0}
         run: npm install --global @pb33f/openapi-changes
 
-      - name: Generate Report
+      - name: Generate HTML Report
         shell: bash -eo pipefail {0}
         run: openapi-changes html-report --no-logo --no-color /tmp/opensearch-openapi-ORIGINAL.yaml /tmp/opensearch-openapi-CHANGED.yaml
 
-      - name: Upload Report
+      - name: Upload HTML Report
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
