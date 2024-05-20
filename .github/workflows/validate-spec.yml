@@ -1,17 +1,19 @@
-name: Tools Testing
+name: Validate Spec
 
 on:
   push:
     branches: ['**']
     paths:
-      - 'tools/**'
+      - 'spec/**'
+      - 'tools/src/linter/**'
   pull_request:
     branches: ['**']
     paths:
-      - 'tools/**'
+      - 'spec/**'
+      - 'tools/src/linter/**'
 
 jobs:
-  tools-tests:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,5 +21,5 @@ jobs:
         with:
           node-version: 20.10.0
       - run: npm install
-      - run: npm run test
-      - run: npm run lint
+      - run: |
+          npm run lint:spec -- --source ./spec

@@ -1,11 +1,14 @@
 import { type OperationSpec, type SupersededOperationMap } from 'types'
 import _ from 'lodash'
 import { read_yaml } from '../../helpers'
+import { Logger, LogLevel } from '../Logger'
 
 export default class SupersededOpsGenerator {
+  logger: Logger
   superseded_ops: SupersededOperationMap
 
-  constructor (root_path: string) {
+  constructor (root_path: string, logger: Logger | undefined) {
+    this.logger = logger ?? new Logger(LogLevel.warn)
     const file_path = root_path + '/_superseded_operations.yaml'
     this.superseded_ops = read_yaml(file_path) as SupersededOperationMap
     delete this.superseded_ops.$schema
@@ -17,8 +20,8 @@ export default class SupersededOpsGenerator {
       const operation_keys = operations.map(op => op.toLowerCase())
       const superseded_path = this.copy_params(superseded_by, path)
       const path_entry = _.entries(spec.paths as Document).find(([path, _]) => regex.test(path))
-      if (!path_entry) console.log(`Path not found: ${superseded_by}`)
-      else spec.paths[superseded_path] = this.path_object(path_entry[1], operation_keys)
+      if (path_entry != null) spec.paths[superseded_path] = this.path_object(path_entry[1], operation_keys)
+      else this.logger.warn(`Path not found: ${superseded_by}`)
     }
   }
 

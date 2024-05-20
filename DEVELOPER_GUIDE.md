@@ -7,6 +7,8 @@
   - [Global Parameters](#global-parameters)
   - [OpenAPI Extensions](#openapi-extensions)
   - [Tools](#tools)
+    - [Merger](#merger)
+    - [Linter](#linter)
 
 # Developer Guide
 
