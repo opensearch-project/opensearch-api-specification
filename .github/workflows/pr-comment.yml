@@ -1,0 +1,74 @@
+name: Comment on PR
+
+on:
+  workflow_run:
+    workflows:
+      - Analyze PR Changes
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          sparse-checkout: |
+            .github
+
+      - name: Download PR Comment Payload
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: pr-comment
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Parse Payload
+        shell: bash -eo pipefail {0}
+        run: |
+          PR_NUMBER=$(jq -r '.pr_number' ./pr-comment.json)
+          COMMENT_IDENTIFIER=$(jq -r '.comment_identifier' ./pr-comment.json)
+          TEMPLATE_NAME=$(jq -r '.template_name' ./pr-comment.json)
+          TEMPLATE_DATA=$(jq -c '.template_data' ./pr-comment.json)
+        
+          vars=(
+            PR_NUMBER
+            COMMENT_IDENTIFIER
+            TEMPLATE_NAME
+            TEMPLATE_DATA
+          )
+          
+          {
+            for var in "${vars[@]}"
+            do
+              echo "${var}=${!var}"
+            done
+          } | tee "$GITHUB_ENV"
+
+      - name: Render Comment Template
+        uses: chuhlomin/render-template@v1
+        id: render
+        with:
+          template: .github/pr-comment-templates/${{ env.TEMPLATE_NAME }}.template.md
+          vars: ${{ env.TEMPLATE_DATA }}
+
+      - name: Find Existing Comment
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ env.PR_NUMBER }}
+          comment-author: 'github-actions[bot]'
+          body-includes: ${{ env.COMMENT_IDENTIFIER }}
+
+      - name: Create or Update Comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ env.PR_NUMBER }}
+          body: ${{ steps.render.outputs.result }}
+          edit-mode: replace

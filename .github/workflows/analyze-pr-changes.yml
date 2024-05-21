@@ -19,9 +19,24 @@ jobs:
           CLUSTER_SPEC=/tmp/opensearch-openapi-CLUSTER.yaml
           BEFORE_SPEC=/tmp/opensearch-openapi-${BEFORE_SHA}.yaml
           AFTER_SPEC=/tmp/opensearch-openapi-${AFTER_SHA}.yaml
+          BEFORE_COVERAGE=/tmp/coverage-api-${BEFORE_SHA}.json
+          AFTER_COVERAGE=/tmp/coverage-api-${AFTER_SHA}.json
+          COVERAGE_DIFF=/tmp/coverage-api-${BEFORE_SHA}-${AFTER_SHA}-DIFF.json
+          
+          vars=(
+            BEFORE_SHA
+            AFTER_SHA
+            CLUSTER_SPEC
+            BEFORE_SPEC
+            AFTER_SPEC
+            BEFORE_COVERAGE
+            AFTER_COVERAGE
+            COVERAGE_DIFF
+          )
           
           { 
-            for var in BEFORE_SHA AFTER_SHA CLUSTER_SPEC BEFORE_SPEC AFTER_SPEC ; do
+            for var in "${vars[@]}"
+            do
               echo "${var}=${!var}"
             done
           } | tee "$GITHUB_ENV"
@@ -73,31 +88,33 @@ jobs:
       - name: Calculate Coverage
         shell: bash -eo pipefail {0}
         run: |
-          for sha in ${BEFORE_SHA} ${AFTER_SHA} ; do
-            echo "Calculating coverage of ${sha}"
-            npm run coverage:spec -- \
+          npm run coverage:spec -- \
               --cluster $CLUSTER_SPEC \
-              --specification /tmp/opensearch-openapi-${sha}.yaml \
-              --output /tmp/coverage-api-${sha}.json
-          done
+              --specification $BEFORE_SPEC \
+              --output $BEFORE_COVERAGE
           
-          jq . /tmp/coverage-api-${AFTER_SHA}.json
+          npm run coverage:spec -- \
+              --cluster $CLUSTER_SPEC \
+              --specification $AFTER_SPEC \
+              --output $AFTER_COVERAGE
+          
+          jq . $AFTER_COVERAGE
           
           jq --slurp '
             [ .[].counts ]
             | {
-              "covered_before": (.[0].covered),
-              "covered_before_pct": (.[0].covered_pct),
-              "covered_after": (.[1].covered),
-              "covered_after_pct": (.[1].covered_pct),
-              "total_to_cover": (.[1].covered + .[1].uncovered),
+              "before": (.[0]),
+              "after": (.[1]),
               "covered_delta": (.[1].covered - .[0].covered),
-              "covered_pct_delta": ((.[1].covered_pct - .[0].covered_pct) * 100 | round / 100)
+              "covered_pct_delta": ((.[1].covered_pct - .[0].covered_pct) * 100 | round / 100),
+              "uncovered_delta": (.[1].uncovered - .[0].uncovered),
+              "uncovered_pct_delta": ((.[1].uncovered_pct - .[0].uncovered_pct) * 100 | round / 100),
+              "specified_but_not_provided_delta": (.[1].specified_but_not_provided - .[0].specified_but_not_provided)
             }
             ' \
-            /tmp/coverage-api-${BEFORE_SHA}.json \
-            /tmp/coverage-api-${AFTER_SHA}.json \
-            | tee ./coverage-api-${BEFORE_SHA}-${AFTER_SHA}-DIFF.json
+            $BEFORE_COVERAGE \
+            $AFTER_COVERAGE \
+            | tee $COVERAGE_DIFF
 
       - name: Upload Coverage Data
         id: upload-coverage
@@ -116,7 +133,7 @@ jobs:
         run: openapi-changes html-report --no-logo --no-color $BEFORE_SPEC $AFTER_SPEC
 
       - name: Upload API Changes HTML Report
-        id: upload-report
+        id: upload-api-changes-report
         uses: actions/upload-artifact@v4
         with:
           name: api-changes-report
@@ -167,8 +184,36 @@ jobs:
             }
           ' output.md | tee changes-summary.md
 
-      - name: Upload Summary
+      - name: Construct Comment Data Payload
+        shell: bash -eo pipefail {0}
+        run: |
+          jq \
+            --arg pr_number ${PR_NUMBER} \
+            --arg before_sha ${BEFORE_SHA} \
+            --arg after_sha ${AFTER_SHA} \
+            --arg api_changes_report_url "${API_CHANGES_REPORT_URL}" \
+            --rawfile api_changes_summary ./changes-summary.md \
+            --slurpfile api_coverage $COVERAGE_DIFF \
+            --null-input '
+            {
+              "pr_number": ($pr_number),
+              "comment_identifier": "# Changes Analysis",
+              "template_name": "pr-change-analysis",
+              "template_data": {
+                "before_sha": ($before_sha),
+                "after_sha": ($after_sha),
+                "api_changes_report_url": ($api_changes_report_url),
+                "api_changes_summary": ($api_changes_summary),
+                "api_coverage": ($api_coverage[0])
+              }
+            }
+            ' | tee pr-comment.json
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          API_CHANGES_REPORT_URL: ${{ steps.upload-api-changes-report.outputs.artifact-url }}
+
+      - name: Upload PR Comment Payload
         uses: actions/upload-artifact@v4
         with:
-          name: changes-summary
-          path: changes-summary.md
+          name: pr-comment
+          path: pr-comment.json
