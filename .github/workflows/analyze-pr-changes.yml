@@ -2,89 +2,102 @@ name: Analyze PR Changes
 
 on: [pull_request]
 
-env:
-  OPENSEARCH_INITIAL_ADMIN_PASSWORD: BobgG7YrtsdKf9M
-
 jobs:
-  determine-changes:
+  analyze:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Build Docker Image
-        run: docker build coverage --tag opensearch-with-api-plugin
-
-      - name: Run OpenSearch
+      - name: Setup Environment Variables
         shell: bash -eo pipefail {0}
         run: |
-          docker run \
-            --name opensearch \
-            --rm -d \
-            -p 9200:9200 -p 9600:9600 \
-            -e "discovery.type=single-node" \
-            -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_INITIAL_ADMIN_PASSWORD" \
-            opensearch-with-api-plugin
+          BEFORE_SHA=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
+          AFTER_SHA=${HEAD_SHA}
+          CLUSTER_SPEC=/tmp/opensearch-openapi-CLUSTER.yaml
+          BEFORE_SPEC=/tmp/opensearch-openapi-${BEFORE_SHA}.yaml
+          AFTER_SPEC=/tmp/opensearch-openapi-${AFTER_SHA}.yaml
           
-          for attempt in {1..20}; do
-            sleep 5
-            if curl -ksS -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200; then
-              echo '=> ready'
-              exit 0
-            fi
-            echo '=> waiting...'
-          done
-          exit 1
-
-      - name: Dump Cluster's API
-        shell: bash -eo pipefail {0}
-        run: curl -ksS -u "admin:$OPENSEARCH_INITIAL_ADMIN_PASSWORD" https://localhost:9200/_plugins/api | jq > /tmp/opensearch-openapi-CLUSTER.json
-
-      - name: Determine Branch Point
-        shell: bash -eo pipefail {0}
-        run: |
           { 
-            echo "BRANCH_POINT_SHA=$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
-            echo "HEAD_SHA=${HEAD_SHA}"
+            for var in BEFORE_SHA AFTER_SHA CLUSTER_SPEC BEFORE_SPEC AFTER_SPEC ; do
+              echo "${var}=${!var}"
+            done
           } | tee "$GITHUB_ENV"
         env:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
-      - name: Checkout Original Spec
+      - name: Dump OpenSearch Cluster's API
         shell: bash -eo pipefail {0}
-        run: git checkout $BRANCH_POINT_SHA
+        run: |
+          docker build coverage --tag opensearch-with-api-plugin
+          
+          docker run \
+            --name opensearch \
+            --rm -d \
+            -p 9200:9200 -p 9600:9600 \
+            -e "discovery.type=single-node" \
+            -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
+            opensearch-with-api-plugin
+          
+          npm install
+          
+          npm run dump-cluster-spec -- --insecure --output $CLUSTER_SPEC
+          
+          docker stop opensearch
+        env:
+          OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
 
-      - name: Build Original Spec
+      - name: Checkout BEFORE Spec
+        shell: bash -eo pipefail {0}
+        run: git checkout $BEFORE_SHA
+
+      - name: Build BEFORE Spec
         shell: bash -eo pipefail {0}
         run: |
           npm install
-          npm run merge -- --source ./spec --output /tmp/opensearch-openapi-ORIGINAL.yaml
+          npm run merge -- --source ./spec --output $BEFORE_SPEC
 
-      - name: Checkout Changed Spec
+      - name: Checkout AFTER Spec
         shell: bash -eo pipefail {0}
-        run: git checkout $HEAD_SHA
+        run: git checkout $AFTER_SHA
 
-      - name: Build Changed Spec
+      - name: Build AFTER Spec
         shell: bash -eo pipefail {0}
         run: |
           npm install
-          npm run merge -- --source ./spec --output /tmp/opensearch-openapi-CHANGED.yaml
+          npm run merge -- --source ./spec --output $AFTER_SPEC
 
       - name: Calculate Coverage
         shell: bash -eo pipefail {0}
         run: |
-          for variant in ORIGINAL CHANGED ; do
-            echo "Calculating coverage of ${variant}"
+          for sha in ${BEFORE_SHA} ${AFTER_SHA} ; do
+            echo "Calculating coverage of ${sha}"
             npm run coverage:spec -- \
-              --cluster /tmp/opensearch-openapi-CLUSTER.json \
-              --specification /tmp/opensearch-openapi-${variant}.yaml \
-              --output /tmp/coverage-api-${variant}.json
+              --cluster $CLUSTER_SPEC \
+              --specification /tmp/opensearch-openapi-${sha}.yaml \
+              --output /tmp/coverage-api-${sha}.json
           done
+          
+          jq . /tmp/coverage-api-${AFTER_SHA}.json
+          
+          jq --slurp '
+            [ .[].counts ]
+            | {
+              "covered_before": (.[0].covered),
+              "covered_before_pct": (.[0].covered_pct),
+              "covered_after": (.[1].covered),
+              "covered_after_pct": (.[1].covered_pct),
+              "total_to_cover": (.[1].covered + .[1].uncovered),
+              "covered_delta": (.[1].covered - .[0].covered),
+              "covered_pct_delta": ((.[1].covered_pct - .[0].covered_pct) * 100 | round / 100)
+            }
+            ' \
+            /tmp/coverage-api-${BEFORE_SHA}.json \
+            /tmp/coverage-api-${AFTER_SHA}.json \
+            | tee ./coverage-api-${BEFORE_SHA}-${AFTER_SHA}-DIFF.json
 
       - name: Upload Coverage Data
         id: upload-coverage
@@ -92,46 +105,43 @@ jobs:
         with:
           name: coverage-api
           path: |
-            /tmp/coverage-api-ORIGINAL.json
-            /tmp/coverage-api-CHANGED.json
+            /tmp/coverage-api-*.json
 
       - name: Install openapi-changes
         shell: bash -eo pipefail {0}
         run: npm install --global @pb33f/openapi-changes
 
-      - name: Generate HTML Report
+      - name: Generate API Changes HTML Report
         shell: bash -eo pipefail {0}
-        run: openapi-changes html-report --no-logo --no-color /tmp/opensearch-openapi-ORIGINAL.yaml /tmp/opensearch-openapi-CHANGED.yaml
+        run: openapi-changes html-report --no-logo --no-color $BEFORE_SPEC $AFTER_SPEC
 
-      - name: Upload HTML Report
+      - name: Upload API Changes HTML Report
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
-          name: changes-report
+          name: api-changes-report
           path: |
             report.html
-            /tmp/opensearch-openapi-ORIGINAL.yaml
-            /tmp/opensearch-openapi-CHANGED.yaml
+            /tmp/opensearch-openapi-*.yaml
 
-      - name: Generate Summary
+      - name: Generate API Changes Summary
         shell: bash -eo pipefail {0}
         run: |
-          if ! openapi-changes summary --no-logo --no-color --markdown /tmp/opensearch-openapi-ORIGINAL.yaml /tmp/opensearch-openapi-CHANGED.yaml >output.md ; then
+          if ! openapi-changes summary --no-logo --no-color --markdown $BEFORE_SPEC $AFTER_SPEC >output.md ; then
             if ! grep -q 'breaking changes discovered' output.md ; then
               cat output.md >/dev/stderr
               exit 1
             fi
           fi
           
-          gawk -v HEAD_SHA="${HEAD_SHA}" -v REPORT_URL="${REPORT_URL}" '
+          gawk '
             BEGIN {
-              print "### API Changes Summary"
               RS = "(\r|\n|\r\n)"
               WAS_BLANK = 0
               HAD_CHANGES = 0
             }
             
-            /^starting work/ || /^Building original model/ || /^SPEC: extracted/ || /^ERROR: breaking/ || /^DONE: completed/ {
+            /^starting work/ || /^Building original model/ || /^Date:/ || /^SPEC:/ || /^ERROR:/ || /^DONE:/ {
               next
             }
               
@@ -147,19 +157,15 @@ jobs:
               
             {
               HAD_CHANGES = 1
-              sub(/Commit: New:/, "Commit: " HEAD_SHA ", New:")
               print
             }
           
             END {
               if (!HAD_CHANGES) {
-                print "Commit: " HEAD_SHA ", **NO CHANGES**\n"
+                print "**NO CHANGES**\n"
               }
-              print "\nFull Report: " REPORT_URL
             }
           ' output.md | tee changes-summary.md
-        env:
-          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
 
       - name: Upload Summary
         uses: actions/upload-artifact@v4

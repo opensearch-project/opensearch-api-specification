@@ -7,7 +7,7 @@ export default class GlobalParamsGenerator {
 
   constructor (root_path: string) {
     const file_path = root_path + '/_global_parameters.yaml'
-    const spec = read_yaml(file_path) as OpenAPIV3.Document
+    const spec: OpenAPIV3.Document = read_yaml(file_path)
     this.global_params = this.create_global_params(spec)
   }
 

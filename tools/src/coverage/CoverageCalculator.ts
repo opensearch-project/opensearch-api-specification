@@ -1,6 +1,5 @@
-import fs from 'fs'
 import { type OpenAPIV3 } from 'openapi-types'
-import { HTTP_METHODS, read_yaml } from '../../helpers'
+import { HTTP_METHODS, read_yaml, write_json } from '../../helpers'
 
 export default class CoverageCalculator {
   private readonly _cluster_spec: OpenAPIV3.Document
@@ -8,8 +7,8 @@ export default class CoverageCalculator {
   private readonly _output_path: string
 
   constructor (cluster_spec_path: string, input_spec_path: string, output_path: string) {
-    this._cluster_spec = read_yaml(cluster_spec_path) as OpenAPIV3.Document
-    this._input_spec = read_yaml(input_spec_path) as OpenAPIV3.Document
+    this._cluster_spec = read_yaml(cluster_spec_path)
+    this._input_spec = read_yaml(input_spec_path)
     this._output_path = output_path
   }
 
@@ -50,7 +49,8 @@ export default class CoverageCalculator {
     const covered_count = count(covered)
     const total_count = uncovered_count + covered_count
 
-    const json = JSON.stringify(
+    write_json(
+      this._output_path,
       {
         $description: {
           uncovered: 'Endpoints provided by the OpenSearch cluster but DO NOT exist in the specification',
@@ -73,9 +73,6 @@ export default class CoverageCalculator {
       (_, value) => {
         if (value instanceof Set) return [...value]
         return value
-      },
-      2)
-
-    fs.writeFileSync(this._output_path, json)
+      })
   }
 }

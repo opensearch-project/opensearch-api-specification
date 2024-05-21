@@ -17,7 +17,7 @@ export default class FileValidator extends ValidatorBase {
 
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
-    this._spec = read_yaml(this.file_path) as OpenAPIV3.Document
+    this._spec = read_yaml<OpenAPIV3.Document>(this.file_path)
     return this._spec
   }
 
