@@ -1,26 +1,52 @@
-- [Developer Guide](#developer-guide)
-  - [Getting Started](#getting-started)
-  - [File Structure](#file-structure)
-  - [Grouping Operations](#grouping-operations)
-  - [Grouping Schemas](#grouping-schemas)
-  - [Superseded Operations](#superseded-operations)
-  - [Global Parameters](#global-parameters)
-  - [OpenAPI Extensions](#openapi-extensions)
-  - [Tools](#tools)
-    - [Merger](#merger)
-    - [Linter](#linter)
+<!-- TOC -->
+* [Developer Guide](#developer-guide)
+  * [Getting Started](#getting-started)
+  * [Specification](#specification)
+    * [File Structure](#file-structure)
+    * [Grouping Operations](#grouping-operations)
+    * [Grouping Schemas](#grouping-schemas)
+    * [Superseded Operations](#superseded-operations)
+    * [Global Parameters](#global-parameters)
+    * [OpenAPI Extensions](#openapi-extensions)
+  * [Tools](#tools)
+    * [Setup](#setup)
+    * [Merger](#merger)
+      * [Arguments](#arguments)
+      * [Example](#example)
+    * [Spec Linter](#spec-linter)
+      * [Arguments](#arguments-1)
+      * [Example](#example-1)
+    * [Dump Cluster Spec](#dump-cluster-spec)
+      * [Arguments](#arguments-2)
+      * [Example](#example-2)
+    * [Coverage](#coverage)
+      * [Arguments](#arguments-3)
+      * [Example](#example-3)
+    * [Testing](#testing)
+      * [Tests](#tests)
+      * [Lints](#lints)
+  * [Workflows](#workflows)
+    * [Analyze PR Changes](#analyze-pr-changes)
+    * [Build](#build)
+    * [Deploy GitHub Pages](#deploy-github-pages)
+    * [Comment on PR](#comment-on-pr)
+    * [Test Tools](#test-tools)
+    * [Validate Spec](#validate-spec)
+<!-- TOC -->
 
 # Developer Guide
 
-Welcome to the ```opensearch-api-specification``` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
+Welcome to the `opensearch-api-specification` developer guide! Glad you want to contribute. Here are the things you need to know while getting started!
 
 ## Getting Started
 
 Fork the [opensearch-api-specification](https://github.com/opensearch-project/opensearch-api-specification) repository to your GitHub account and clone it to your local machine. Whenever you're drafting a change, create a new branch for the change on your fork instead of on the upstream repository.
 
+## Specification
+
 The Specification is written in OpenAPI 3, so understanding the OpenAPI 3 specification is a must. If you are new to OpenAPI, you can start by reading the [OpenAPI 3 Specification](https://swagger.io/specification/).
 
-## File Structure
+### File Structure
 
 To make editing the specification easier, we split the OpenAPI spec into multiple files that can be found in the [spec](spec) directory. The file structure is as follows:
 
@@ -53,7 +79,7 @@ spec
 
 Every `.yaml` file in the namespaces and schemas folders is a OpenAPI 3 document. This means that you can use any OpenAPI 3 compatible tool to view and edit the files, and IDEs with OpenAPI support will also offer autocomplete and validation in realtime.
 
-## Grouping Operations
+### Grouping Operations
 
 Each API action is composed of multiple operations. The `search` action, for example, consists of 4 operations:
 
@@ -68,7 +94,7 @@ Note that this extension tells the client generators that these operations serve
 
 For this reason, every operation *must* be accompanied by the `x-operation-group` extension, and operations in the same group MUST have identical descriptions, request and response bodies, and query string parameters.
 
-## Grouping Schemas
+### Grouping Schemas
 
 Schemas are grouped by categories to keep their names short, and aid in client generation (where the schemas are translated into data types/classes, and divided into packages/modules). The schema file names can be in one of the following formats:
 
@@ -77,9 +103,9 @@ Schemas are grouped by categories to keep their names short, and aid in client g
 - `<namespace>._common` category holds the common schemas of a specific namespace. (e.g. `cat._common`, `_core._common`)
 - `<namespace>.<action>` category holds the schemas of a specific sub_category of a namespace. (e.g. `cat.aliases`, `_core.search`)
 
-## Superseded Operations
+### Superseded Operations
 
-When an operation is superseded by another operation with **identical functionality**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](./spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated: true` and `x-ignorable: true` properties to indicate that it should be ignored by the client generator.
+When an operation is superseded by another operation with **identical functionality**, that is a rename or a change in the URL, it should be listed in [_superseded_operations.yaml](spec/_superseded_operations.yaml) file. The merger tool will automatically generate the superseded operation in the OpenAPI spec. The superseded operation will have `deprecated: true` and `x-ignorable: true` properties to indicate that it should be ignored by the client generator.
 
 For example, if the `_superseded_operations.yaml` file contains the following entry:
 ```yaml
@@ -102,10 +128,11 @@ if and only if the superseding operations exist in the spec. A warning will be p
 
 Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
 
-## Global Parameters
+### Global Parameters
+
 Certain query parameters are global, and they are accepted by every operation. These parameters are listed in the [spec/_global_parameters.yaml](spec/_global_parameters.yaml). The merger tool will automatically add these parameters to all operations.
 
-## OpenAPI Extensions
+### OpenAPI Extensions
 
 This repository includes several OpenAPI Specification Extensions to fill in any metadata not natively supported by OpenAPI:
 
@@ -120,12 +147,195 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 
 ## Tools
 
-We authored a number of tools to merge and lint specs that live in [tools](./tools/src/). All tools have tests (run with `npm run test`) and a linter (run with `npm run lint`).
+A number of [tools](tools) have been authored using TypeScript to aid in the development of the specification. These largely center around linting and merging the multi-file spec layout.
 
-### Merger
+### Setup
 
-The spec merger "builds", aka combines all `.yaml` files in a spec folder into a complete OpenAPI spec. A [workflow](./.github/workflows/build.yml) performs this task on the [spec folder](spec) of this repo then publishes the output into [releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
+To be able to use or develop the tools, some setup is required:
+1. Install [Node.js](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs).
+2. Run `npm install` from the repository's root.
 
-### Linter
+### [Merger](tools/src/merger)
 
-The spec linter that validates every `.yaml` file in the `./spec` folder to assure that they follow the guidelines we have set. Check out the [Linter README](tools/README.md#spec-linter) for more information on how to run it locally. Make sure to run the linter before submitting a PR.
+```bash
+npm run merge -- --help
+```
+
+The merger tool merges the multi-file OpenSearch spec into a single file for programmatic use.
+
+#### Arguments
+
+- `--source <path>`: The path to the root folder of the multi-file spec, defaults to `<repository-root>/spec`.
+- `--output <path>`: The path to write the final merged spec to, defaults to `<repository-root>/build/opensearch-openapi.yaml`.
+
+#### Example
+
+We can take advantage of the default values and simply merge the specification via:
+```bash
+npm run merge
+```
+
+### [Spec Linter](tools/src/linter)
+
+```bash
+npm run lint:spec -- --help
+```
+
+The linter tool validates the OpenSearch multi-file spec, and will print out all the errors and warnings in it.
+
+#### Arguments
+
+- `--source <path>`: The path to the root folder of the multi-file spec, defaults to `<repository-root>/spec`.
+
+#### Example
+
+We can take advantage of the default values and simply lint the specification via:
+```bash
+npm run lint:spec
+```
+
+### [Dump Cluster Spec](tools/src/dump-cluster-spec)
+
+```bash
+npm run dump-cluster-spec -- --help
+```
+
+The dump-cluster-spec tool connects to an OpenSearch cluster which has the [opensearch-api plugin](https://github.com/dblock/opensearch-api) installed and dumps the skeleton OpenAPI specification it provides to a file.
+
+#### Arguments
+
+- `--host <host>`: The host at which the cluster is accessible, defaults to `localhost`.
+- `--port <port>`: The port at which the cluster is accessible, defaults to `9200`.
+- `--no-https`: Disable HTTPS, defaults to using HTTPS.
+- `--insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
+- `--username <username>`: The username to authenticate with the cluster, defaults to `admin`, only used when `--password` is set.
+- `--password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
+- `--output <path>`: The path to write the dumped spec to, defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
+
+#### Example
+
+You can use this repo's [docker image which includes the opensearch-api plugin](coverage/Dockerfile) to spin up a local development cluster with a self-signed certificate (e.g. `https://localhost:9200`) and security enabled, to then dump the skeleton specification:
+```bash
+OPENSEARCH_PASSWORD='My$3cureP@$$w0rd'
+
+docker build ./coverage --tag opensearch-with-api-plugin
+          
+docker run \
+    --name opensearch \
+    --rm -d \
+    -p 9200:9200 -p 9600:9600 \
+    -e "discovery.type=single-node" \
+    -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
+    opensearch-with-api-plugin
+
+OPENSEARCH_PASSWORD="${OPENSEARCH_PASSWORD}" npm run dump-cluster-spec -- --insecure
+
+docker stop opensearch
+```
+
+### [Coverage](tools/src/coverage)
+
+```bash
+npm run coverage:spec -- --help
+```
+
+The coverage tool determines which APIs from the OpenSearch cluster's reference skeleton specification (dumped by the [dump-cluster-spec tool](#dump-cluster-spec)) are covered by this specification (as built by the [merger tool](#merger)).
+
+#### Arguments
+
+- `--cluster <path>`: The path to the cluster's reference skeleton specification, as dumped by [dump-cluster-spec](#dump-cluster-spec), defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
+- `--specification <path>`: The path to the merged specification, as built by [merger](#merger), defaults to `<repository-root>/build/opensearch-openapi.yaml`.
+- `--output <path>`: The path to write the coverage data to, defaults to `<repository-root>/build/coverage.json`.
+
+#### Example
+
+Assuming you've already followed the previous examples to build the merged specification with the [merger](#example) and dump the cluster's specification with [dump-cluster-spec](#example-2), you can then calculate the API coverage:
+```bash
+npm run coverage:spec
+```
+The output file `build/coverage.json` will now contain data of like below:
+```json
+{
+  "$description": {
+    "uncovered": "Endpoints provided by the OpenSearch cluster but DO NOT exist in the specification",
+    "covered": "Endpoints both provided by the OpenSearch cluster and exist in the specification",
+    "specified_but_not_provided": "Endpoints NOT provided by the OpenSearch cluster but exist in the specification"
+  },
+  "counts": {
+    "uncovered": 552,
+    "uncovered_pct": 54.06,
+    "covered": 469,
+    "covered_pct": 45.94,
+    "specified_but_not_provided": 23
+  },
+  "endpoints": {
+    "uncovered": {
+      "/_alias": [
+        "put"
+      ],
+      ...
+    },
+    "covered": {
+      "/_mapping": [
+        "get"
+      ],
+      ...
+    },
+    "specified_but_not_provided": {
+      "/_plugins/_knn/{}/stats": [
+        "get"
+      ],
+      ...
+    }
+  }
+}
+```
+
+### Testing
+
+#### Tests
+
+All tools should have tests added in [tools/tests](tools/tests), tests are implemented using [Jest](https://jestjs.io/). They can be run via:
+```bash
+npm run test
+```
+
+#### Lints
+
+All code is linted using [ESLint](https://eslint.org/) in combination with [typescript-eslint](https://typescript-eslint.io/). Linting can be run via:
+```bash
+npm run lint
+```
+
+If a lint is unavoidable it should only be disabled on a case-by-case basis (e.g. `// eslint-disable-next-line @typescript-eslint/dot-notation`) and ideally be justified with an accompanying comment or at least in PR review.
+
+ESLint's auto-fixes can be applied by running:
+```bash
+npm run lint--fix
+```
+
+## Workflows
+
+### [Analyze PR Changes](.github/workflows/analyze-pr-changes.yml)
+
+This workflow runs on all pull requests to analyze any potential changes to the specification. It uses the [coverage](#coverage) tool and [openapi-changes](https://pb33f.io/openapi-changes/) to calculate coverage metrics and provide a report on the changes when comparing with the commit at which the PR was branched off.
+
+### [Build](.github/workflows/build.yml)
+
+This workflow runs on pushes to the `main` branch and will [merge](#merger) the specification and publish it to [GitHub Releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
+
+### [Deploy GitHub Pages](.github/workflows/deploy-gh-pages.yml)
+
+This workflow performs a [Jekyll](https://jekyllrb.com/) build of the `main` branch to generate the [Swagger docs](index.html) and publish it to [GitHub Pages](https://opensearch-project.github.io/opensearch-api-specification/).
+
+### [Comment on PR](.github/workflows/pr-comment.yml)
+
+This workflow is triggered by the completion of the workflows such as [Analyze PR Changes](#analyze-pr-changes) and downloading a JSON payload artifact which it uses to invoke a template from [.github/pr-comment-templates](.github/pr-comment-templates) to render a comment which is placed on the original triggering PR.
+
+### [Test Tools](.github/workflows/test-tools.yml)
+
+This workflow runs on PRs to invoke the [tools' tests](tools/tests) and [TypeScript linting](#lints) to ensure there are no breakages in behavior or departures from the desired code style and cleanliness.
+
+### [Validate Spec](.github/workflows/validate-spec.yml)
+
+This workflow runs on PRs to invoke the [spec linter](#spec-linter) and ensure the multi-file spec is correct and follows the design guidelines.
