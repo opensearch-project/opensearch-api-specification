@@ -50,10 +50,10 @@ async function main (opts: CommandOpts): Promise<void> {
 }
 
 const command = new Command()
-  .description('Dumps an OpenSearch clusters generated specification.')
+  .description('Dumps an OpenSearch cluster\'s generated specification.')
   .addOption(new Option('--host <host>', 'cluster\'s host').default('localhost'))
   .addOption(new Option('--no-https', 'disable HTTPS'))
-  .addOption(new Option('--insecure', 'disable SSL certificate validation').default(false))
+  .addOption(new Option('--insecure', 'disable SSL/TLS certificate verification').default(false))
   .addOption(new Option('--port <port>', 'cluster\'s port to connect to').default(9200))
   .addOption(new Option('--username <username>', 'username to authenticate with the cluster').default('admin'))
   .addOption(new Option('--password <password>', 'password to authenticate with the cluster').env('OPENSEARCH_PASSWORD'))
@@ -63,6 +63,14 @@ const command = new Command()
 
 main(command.opts())
   .catch(e => {
-    console.log('ERROR: ', e)
+    if (e instanceof Error) {
+      console.error(`ERROR: ${e.stack}`)
+      while (e.cause !== undefined) {
+        console.error(`Caused by: ${e.stack}`)
+        e = e.cause
+      }
+    } else {
+      console.error('ERROR:', e)
+    }
     process.exit(1)
   })
