@@ -3,7 +3,7 @@ module OpenAPI
     return if @generated
 
     system 'npm install'
-    system 'npm run merge -- --source ./spec --output ./_site/opensearch-openapi.yaml'
+    system 'npm run merge -- --output ./_site/opensearch-openapi.yaml'
 
     @generated = true
   end

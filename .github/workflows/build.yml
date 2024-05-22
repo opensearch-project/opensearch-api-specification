@@ -13,25 +13,23 @@ jobs:
 
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
       - name: Build
-        run: |-
-          mkdir -p ./build
-          npm install
-          npm run merge -- --source ./spec --output ./build/opensearch-openapi.yaml
+        run: npm install && npm run merge
 
       - name: Extract Branch Name
         id: branch
         shell: bash
         run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
 
-      - uses: marvinpinto/action-automatic-releases@v1.2.1
+      - name: Release Specification to GitHub
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ steps.branch.outputs.name }}
