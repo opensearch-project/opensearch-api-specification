@@ -1,0 +1,219 @@
+name: Analyze PR Changes
+
+on: [pull_request]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment Variables
+        shell: bash -eo pipefail {0}
+        run: |
+          BEFORE_SHA=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
+          AFTER_SHA=${HEAD_SHA}
+          CLUSTER_SPEC=/tmp/opensearch-openapi-CLUSTER.yaml
+          BEFORE_SPEC=/tmp/opensearch-openapi-${BEFORE_SHA}.yaml
+          AFTER_SPEC=/tmp/opensearch-openapi-${AFTER_SHA}.yaml
+          BEFORE_COVERAGE=/tmp/coverage-api-${BEFORE_SHA}.json
+          AFTER_COVERAGE=/tmp/coverage-api-${AFTER_SHA}.json
+          COVERAGE_DIFF=/tmp/coverage-api-${BEFORE_SHA}-${AFTER_SHA}-DIFF.json
+          
+          vars=(
+            BEFORE_SHA
+            AFTER_SHA
+            CLUSTER_SPEC
+            BEFORE_SPEC
+            AFTER_SPEC
+            BEFORE_COVERAGE
+            AFTER_COVERAGE
+            COVERAGE_DIFF
+          )
+          
+          { 
+            for var in "${vars[@]}"
+            do
+              echo "${var}=${!var}"
+            done
+          } | tee "$GITHUB_ENV"
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
+      - name: Dump OpenSearch Cluster's API
+        shell: bash -eo pipefail {0}
+        run: |
+          docker build coverage --tag opensearch-with-api-plugin
+          
+          docker run \
+            --name opensearch \
+            --rm -d \
+            -p 9200:9200 -p 9600:9600 \
+            -e "discovery.type=single-node" \
+            -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
+            opensearch-with-api-plugin
+          
+          npm install
+          
+          npm run dump-cluster-spec -- --insecure --output $CLUSTER_SPEC
+          
+          docker stop opensearch
+        env:
+          OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
+
+      - name: Checkout BEFORE Spec
+        shell: bash -eo pipefail {0}
+        run: git checkout $BEFORE_SHA
+
+      - name: Build BEFORE Spec
+        shell: bash -eo pipefail {0}
+        run: |
+          npm install
+          npm run merge -- --source ./spec --output $BEFORE_SPEC
+
+      - name: Checkout AFTER Spec
+        shell: bash -eo pipefail {0}
+        run: git checkout $AFTER_SHA
+
+      - name: Build AFTER Spec
+        shell: bash -eo pipefail {0}
+        run: |
+          npm install
+          npm run merge -- --source ./spec --output $AFTER_SPEC
+
+      - name: Calculate Coverage
+        shell: bash -eo pipefail {0}
+        run: |
+          npm run coverage:spec -- \
+              --cluster $CLUSTER_SPEC \
+              --specification $BEFORE_SPEC \
+              --output $BEFORE_COVERAGE
+          
+          npm run coverage:spec -- \
+              --cluster $CLUSTER_SPEC \
+              --specification $AFTER_SPEC \
+              --output $AFTER_COVERAGE
+          
+          jq . $AFTER_COVERAGE
+          
+          jq --slurp '
+            [ .[].counts ]
+            | {
+              "before": (.[0]),
+              "after": (.[1]),
+              "covered_delta": (.[1].covered - .[0].covered),
+              "covered_pct_delta": ((.[1].covered_pct - .[0].covered_pct) * 100 | round / 100),
+              "uncovered_delta": (.[1].uncovered - .[0].uncovered),
+              "uncovered_pct_delta": ((.[1].uncovered_pct - .[0].uncovered_pct) * 100 | round / 100),
+              "specified_but_not_provided_delta": (.[1].specified_but_not_provided - .[0].specified_but_not_provided)
+            }
+            ' \
+            $BEFORE_COVERAGE \
+            $AFTER_COVERAGE \
+            | tee $COVERAGE_DIFF
+
+      - name: Upload Coverage Data
+        id: upload-coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-api
+          path: |
+            /tmp/coverage-api-*.json
+
+      - name: Install openapi-changes
+        shell: bash -eo pipefail {0}
+        run: npm install --global @pb33f/openapi-changes
+
+      - name: Generate API Changes HTML Report
+        shell: bash -eo pipefail {0}
+        run: openapi-changes html-report --no-logo --no-color $BEFORE_SPEC $AFTER_SPEC
+
+      - name: Upload API Changes HTML Report
+        id: upload-api-changes-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-changes-report
+          path: |
+            report.html
+            /tmp/opensearch-openapi-*.yaml
+
+      - name: Generate API Changes Summary
+        shell: bash -eo pipefail {0}
+        run: |
+          if ! openapi-changes summary --no-logo --no-color --markdown $BEFORE_SPEC $AFTER_SPEC >output.md ; then
+            if ! grep -q 'breaking changes discovered' output.md ; then
+              cat output.md >/dev/stderr
+              exit 1
+            fi
+          fi
+          
+          gawk '
+            BEGIN {
+              RS = "(\r|\n|\r\n)"
+              WAS_BLANK = 0
+              HAD_CHANGES = 0
+            }
+            
+            /^starting work/ || /^Building original model/ || /^Date:/ || /^SPEC:/ || /^ERROR:/ || /^DONE:/ {
+              next
+            }
+              
+            /^[[:space:]]*$/ {
+              WAS_BLANK = 1
+              next
+            }
+              
+            WAS_BLANK {
+              WAS_BLANK = 0
+              print ""
+            }
+              
+            {
+              HAD_CHANGES = 1
+              print
+            }
+          
+            END {
+              if (!HAD_CHANGES) {
+                print "**NO CHANGES**\n"
+              }
+            }
+          ' output.md | tee changes-summary.md
+
+      - name: Construct Comment Data Payload
+        shell: bash -eo pipefail {0}
+        run: |
+          jq \
+            --arg pr_number ${PR_NUMBER} \
+            --arg before_sha ${BEFORE_SHA} \
+            --arg after_sha ${AFTER_SHA} \
+            --arg api_changes_report_url "${API_CHANGES_REPORT_URL}" \
+            --rawfile api_changes_summary ./changes-summary.md \
+            --slurpfile api_coverage $COVERAGE_DIFF \
+            --null-input '
+            {
+              "pr_number": ($pr_number),
+              "comment_identifier": "# Changes Analysis",
+              "template_name": "pr-change-analysis",
+              "template_data": {
+                "before_sha": ($before_sha),
+                "after_sha": ($after_sha),
+                "api_changes_report_url": ($api_changes_report_url),
+                "api_changes_summary": ($api_changes_summary),
+                "api_coverage": ($api_coverage[0])
+              }
+            }
+            ' | tee pr-comment.json
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          API_CHANGES_REPORT_URL: ${{ steps.upload-api-changes-report.outputs.artifact-url }}
+
+      - name: Upload PR Comment Payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-comment
+          path: pr-comment.json

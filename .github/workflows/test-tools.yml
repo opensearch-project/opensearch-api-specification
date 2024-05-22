@@ -4,20 +4,37 @@ on:
   push:
     branches: ['**']
     paths:
+      - 'package*.json'
+      - 'eslint.config.mjs'
+      - 'jest.config.js'
+      - 'tsconfig.json'
       - 'tools/**'
   pull_request:
     branches: ['**']
     paths:
+      - 'package*.json'
+      - 'eslint.config.mjs'
+      - 'jest.config.js'
+      - 'tsconfig.json'
       - 'tools/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 20.10.0
-      - run: npm install
-      - run: npm run test
-      - run: npm run lint
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm run test
+
+      - name: Lint
+        run: npm run lint

@@ -1,6 +1,10 @@
 import fs from 'fs'
+import path from 'path'
 import YAML from 'yaml'
 import _ from 'lodash'
+import { OpenAPIV3 } from 'openapi-types'
+
+export const HTTP_METHODS: OpenAPIV3.HttpMethods[] = Object.values(OpenAPIV3.HttpMethods)
 
 export function resolve_ref (ref: string, root: Record<string, any>): Record<string, any> | undefined {
   const paths = ref.replace('#/', '').split('/')
@@ -43,27 +47,35 @@ export function sort_by_keys (obj: Record<string, any>, priorities: string[] = [
   })
 }
 
-export function read_yaml (file_path: string, exclude_schema: boolean = false): Record<string, any> {
+export function ensure_parent_dir (file_path: string): void {
+  fs.mkdirSync(path.dirname(file_path), { recursive: true })
+}
+
+export function write_text (file_path: string, text: string): void {
+  ensure_parent_dir(file_path)
+  fs.writeFileSync(file_path, text)
+}
+
+export function read_yaml<T = Record<string, any>> (file_path: string, exclude_schema: boolean = false): T {
   const doc = YAML.parse(fs.readFileSync(file_path, 'utf8'))
-  if (exclude_schema) delete doc.$schema
+  if (typeof doc === 'object' && exclude_schema) delete doc.$schema
   return doc
 }
 
-export function write_yaml (file_path: string, content: Record<string, any>): void {
-  fs.writeFileSync(file_path, quote_refs(YAML.stringify(remove_anchors(content), { lineWidth: 0, singleQuote: true })))
+export function write_yaml (file_path: string, content: any): void {
+  write_text(file_path, YAML.stringify(
+    content,
+    {
+      lineWidth: 0,
+      singleQuote: true,
+      aliasDuplicateObjects: false
+    }))
 }
 
-function quote_refs (str: string): string {
-  return str.split('\n').map((line) => {
-    if (line.includes('$ref')) {
-      const [key, value] = line.split(': ')
-      if (!value.startsWith("'")) line = `${key}: '${value}'`
-    }
-    return line
-  }).join('\n')
+export function write_json (file_path: string, content: any, replacer?: (this: any, key: string, value: any) => any): void {
+  write_text(file_path, JSON.stringify(content, replacer, 2))
 }
 
-function remove_anchors (content: Record<string, any>): Record<string, any> {
-  const replacer = (key: string, value: any): any => key === '$anchor' ? undefined : value
-  return JSON.parse(JSON.stringify(content, replacer))
+export async function sleep (ms: number): Promise<void> {
+  await new Promise<void>((resolve) => setTimeout(resolve, ms))
 }

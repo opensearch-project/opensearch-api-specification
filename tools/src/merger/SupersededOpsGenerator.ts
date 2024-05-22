@@ -10,7 +10,7 @@ export default class SupersededOpsGenerator {
   constructor (root_path: string, logger: Logger | undefined) {
     this.logger = logger ?? new Logger(LogLevel.warn)
     const file_path = root_path + '/_superseded_operations.yaml'
-    this.superseded_ops = read_yaml(file_path) as SupersededOperationMap
+    this.superseded_ops = read_yaml(file_path)
     delete this.superseded_ops.$schema
   }
 
