@@ -1,0 +1,146 @@
+$schema: http://json-schema.org/draft-07/schema#
+
+type: object
+properties:
+  $schema:
+    type: string
+  skip:
+    type: boolean
+    description: If true, the story will be skipped.
+    default: false
+  description:
+    type: string
+  prologues:
+    type: array
+    items:
+      $ref: '#/definitions/SupplementalChapter'
+  epilogues:
+    type: array
+    items:
+      $ref: '#/definitions/SupplementalChapter'
+  chapters:
+    type: array
+    items:
+      $ref: '#/definitions/Chapter'
+    minItems: 1
+required: [ description, chapters]
+additionalProperties: false
+
+definitions:
+  Chapter:
+    type: object
+    allOf:
+      - $ref: '#/definitions/ChapterRequest'
+      - properties:
+          synopsis:
+            type: string
+            description: A brief description of the chapter.
+          response:
+            $ref: '#/definitions/ExpectedResponse'
+        required: [ synopsis ]
+        additionalProperties: false
+
+  ReadChapter:
+    allOf:
+      - $ref: '#/definitions/Chapter'
+      - type: object
+        properties:
+          response:
+            $ref: '#/definitions/ActualResponse'
+        required: [ response ]
+        additionalProperties: false
+
+  SupplementalChapter:
+    allOf:
+      - $ref: '#/definitions/ChapterRequest'
+      - type: object
+        properties:
+          status:
+            description: Array of success HTTP status codes. Default to [200, 201].
+            type: array
+            default: [200, 201]
+            items:
+              type: integer
+        additionalProperties: false
+
+  ChapterRequest:
+    type: object
+    properties:
+      path:
+        type: string
+      method:
+        type: string
+        enum: [ GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS ]
+      parameters:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Parameter'
+      request_body:
+        $ref: '#/definitions/RequestBody'
+    required: [ path, method ]
+    additionalProperties: false
+
+
+  RequestBody:
+    type: object
+    properties:
+      content_type:
+        type: string
+        default: application/json
+      payload:
+        $ref: '#/definitions/Payload'
+    required: [ payload ]
+    additionalProperties: false
+
+  ExpectedResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: The expected HTTP status code. Default to 200.
+        default: 200
+      content_type:
+        type: string
+        default: application/json
+      payload:
+        $ref: '#/definitions/Payload'
+    required: [ status ]
+    additionalProperties: false
+
+  ActualResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      content_type:
+        type: string
+      payload:
+        $ref: '#/definitions/Payload'
+      message:
+        type: string
+        description: Error message for non 2XX responses.
+      error:
+        type: object
+        description: Error object.
+    required: [ status, content_type, payload ]
+    additionalProperties: false
+
+  Payload:
+    anyOf:
+      - type: object
+      - type: array
+      - type: string
+      - type: number
+      - type: boolean
+
+  Parameter:
+    anyOf:
+      - type: array
+        items:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+      - type: string
+      - type: number
+      - type: boolean
