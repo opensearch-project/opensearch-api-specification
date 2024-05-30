@@ -57,7 +57,7 @@ export default class ResultsDisplayer {
     if (chapter.overall.result === Result.PASSED || chapter.overall.result === Result.SKIPPED) return
 
     this.#display_parameters(chapter.request?.parameters ?? {})
-    this.#display_request_body(chapter.request?.requestBody)
+    this.#display_request_body(chapter.request?.request_body)
     this.#display_status(chapter.response?.status)
     this.#display_payload(chapter.response?.payload)
   }

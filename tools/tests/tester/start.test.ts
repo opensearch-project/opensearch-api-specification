@@ -29,7 +29,7 @@ test('--invalid', async () => {
 })
 
 test('--tests', async () => {
-  expect(spec(['--tests', 'tools/tests/tester/fixtures']).stdout).toContain(
+  expect(spec(['--tests', 'tools/tests/tester/fixtures/empty_story']).stdout).toContain(
     `${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('empty.yaml'))}`
   )
 })

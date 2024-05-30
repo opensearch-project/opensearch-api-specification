@@ -27,6 +27,9 @@ const display_options = {
   verbose: opts.verbose ?? false,
   tab_width: Number.parseInt(opts.tabWidth)
 }
+
+// The fallback password must match the default password specified in .github/opensearch-cluster/docker-compose.yml
+process.env.OPENSEARCH_PASSWORD = process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
 const spec = (new OpenApiMerger(opts.specPath, LogLevel.error)).merge()
 const runner = new TestsRunner(spec, opts.testsPath, display_options)
 void runner.run().then(() => { _.noop() })
