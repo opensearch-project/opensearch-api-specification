@@ -12,62 +12,57 @@ import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.ty
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
-import SharedResources from './SharedResources'
 import type SpecParser from './SpecParser'
 import type SchemaValidator from './SchemaValidator'
 
 export default class ChapterEvaluator {
-  chapter: Chapter
-  skip_payload_evaluation: boolean = false
-  spec_parser: SpecParser
-  chapter_reader: ChapterReader
-  schema_validator: SchemaValidator
+  private readonly _spec_parser: SpecParser
+  private readonly _chapter_reader: ChapterReader
+  private readonly _schema_validator: SchemaValidator
 
-  constructor (chapter: Chapter) {
-    this.chapter = chapter
-    this.spec_parser = SharedResources.get_instance().spec_parser
-    this.chapter_reader = SharedResources.get_instance().chapter_reader
-    this.schema_validator = SharedResources.get_instance().schema_validator
+  constructor (spec_parser: SpecParser, chapter_reader: ChapterReader, schema_validator: SchemaValidator) {
+    this._spec_parser = spec_parser
+    this._chapter_reader = chapter_reader
+    this._schema_validator = schema_validator
   }
 
-  async evaluate (skip: boolean): Promise<ChapterEvaluation> {
-    if (skip) return { title: this.chapter.synopsis, overall: { result: Result.SKIPPED } }
-    const response = await this.chapter_reader.read(this.chapter)
-    const operation = this.spec_parser.locate_operation(this.chapter)
-    if (operation == null) return { title: this.chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${this.chapter.method.toUpperCase()} ${this.chapter.path}" not found in the spec.` } }
-    const params = this.#evaluate_parameters(operation)
-    const request_body = this.#evaluate_request_body(operation)
-    const status = this.#evaluate_status(response)
-    const payload = this.#evaluate_payload(operation, response)
+  async evaluate (chapter: Chapter, skip: boolean): Promise<ChapterEvaluation> {
+    if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
+    const response = await this._chapter_reader.read(chapter)
+    const operation = this._spec_parser.locate_operation(chapter)
+    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
+    const params = this.#evaluate_parameters(chapter, operation)
+    const request_body = this.#evaluate_request_body(chapter, operation)
+    const status = this.#evaluate_status(chapter, response)
+    const payload = status.result === Result.PASSED ? this.#evaluate_payload(response, operation) : { result: Result.SKIPPED }
     return {
-      title: this.chapter.synopsis,
+      title: chapter.synopsis,
       overall: { result: overall_result(Object.values(params).concat([request_body, status, payload])) },
       request: { parameters: params, request_body },
       response: { status, payload }
     }
   }
 
-  #evaluate_parameters (operation: ParsedOperation): Record<string, Evaluation> {
-    return Object.fromEntries(Object.entries(this.chapter.parameters ?? {}).map(([name, parameter]) => {
+  #evaluate_parameters (chapter: Chapter, operation: ParsedOperation): Record<string, Evaluation> {
+    return Object.fromEntries(Object.entries(chapter.parameters ?? {}).map(([name, parameter]) => {
       const schema = operation.parameters[name]?.schema
       if (schema == null) return [name, { result: Result.FAILED, message: `Schema for "${name}" parameter not found.` }]
-      const evaluation = this.schema_validator.validate(schema, parameter)
+      const evaluation = this._schema_validator.validate(schema, parameter)
       return [name, evaluation]
     }))
   }
 
-  #evaluate_request_body (operation: ParsedOperation): Evaluation {
-    if (!this.chapter.request_body) return { result: Result.PASSED }
-    const content_type = this.chapter.request_body.content_type ?? 'application/json'
+  #evaluate_request_body (chapter: Chapter, operation: ParsedOperation): Evaluation {
+    if (!chapter.request_body) return { result: Result.PASSED }
+    const content_type = chapter.request_body.content_type ?? 'application/json'
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }
-    return this.schema_validator.validate(schema, this.chapter.request_body?.payload ?? {})
+    return this._schema_validator.validate(schema, chapter.request_body?.payload ?? {})
   }
 
-  #evaluate_status (response: ActualResponse): Evaluation {
-    const expected_status = this.chapter.response?.status ?? 200
+  #evaluate_status (chapter: Chapter, response: ActualResponse): Evaluation {
+    const expected_status = chapter.response?.status ?? 200
     if (response.status === expected_status) return { result: Result.PASSED }
-    this.skip_payload_evaluation = true
     return {
       result: Result.ERROR,
       message: `Expected status ${expected_status}, but received ${response.status}: ${response.content_type}. ${response.message}`,
@@ -75,13 +70,12 @@ export default class ChapterEvaluator {
     }
   }
 
-  #evaluate_payload (operation: ParsedOperation, response: ActualResponse): Evaluation {
-    if (this.skip_payload_evaluation) return { result: Result.SKIPPED }
+  #evaluate_payload (response: ActualResponse, operation: ParsedOperation): Evaluation {
     const content_type = response.content_type ?? 'application/json'
     const content = operation.responses[response.status]?.content[content_type]
     const schema = content?.schema
     if (schema == null && content != null) return { result: Result.PASSED }
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
-    return this.schema_validator.validate(schema, response.payload)
+    return this._schema_validator.validate(schema, response.payload)
   }
 }

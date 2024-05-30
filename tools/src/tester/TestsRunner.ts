@@ -16,36 +16,38 @@ import fs from 'fs'
 import { type Story } from './types/story.types'
 import { read_yaml } from '../../helpers'
 import { Result, type StoryEvaluation } from './types/eval.types'
-import ResultsDisplayer, { type TestRunOptions, type DisplayOptions } from './ResultsDisplayer'
-import SharedResources from './SharedResources'
+import ResultsDisplayer, { type DisplayOptions } from './ResultsDisplayer'
 import { resolve, basename } from 'path'
+import ChapterEvaluator from './ChapterEvaluator'
 
-type TestsRunnerOptions = TestRunOptions & DisplayOptions & Record<string, any>
+interface TestsRunnerOptions {
+  dry_run?: boolean
+  display: DisplayOptions
+}
 
 export default class TestsRunner {
-  path: string // Path to a story file or a directory containing story files
-  opts: TestsRunnerOptions
+  private readonly _story_evaluator: StoryEvaluator
+  private readonly _results_displayer: ResultsDisplayer
 
-  constructor (spec: OpenAPIV3.Document, path: string, opts: TestsRunnerOptions) {
-    this.path = resolve(path)
-    this.opts = opts
-
-    const chapter_reader = new ChapterReader()
+  constructor (spec: OpenAPIV3.Document, opts: TestsRunnerOptions) {
     const spec_parser = new SpecParser(spec)
+    const chapter_reader = new ChapterReader()
     const schema_validator = new SchemaValidator(spec)
-    SharedResources.create_instance({ chapter_reader, schema_validator, spec_parser })
+    const chapter_evaluator = new ChapterEvaluator(spec_parser, chapter_reader, schema_validator)
+    this._story_evaluator = new StoryEvaluator(chapter_reader, chapter_evaluator, opts.dry_run ?? false)
+    this._results_displayer = new ResultsDisplayer(opts.display)
   }
 
-  async run (debug: boolean = false): Promise<StoryEvaluation[]> {
+  async run (story_path: string, debug: boolean = false): Promise<StoryEvaluation[]> {
     let failed = false
-    const story_files = this.#collect_story_files(this.path, '', '')
+    const story_files = this.#sort_story_files(this.#collect_story_files(resolve(story_path), '', ''))
     const evaluations: StoryEvaluation[] = []
-    for (const story_file of this.#sort_story_files(story_files)) {
-      const evaluator = new StoryEvaluator(story_file, this.opts.dry_run)
-      const evaluation = await evaluator.evaluate()
-      const displayer = new ResultsDisplayer(evaluation, this.opts)
-      if (debug) evaluations.push(evaluation)
-      else displayer.display()
+    for (const story_file of story_files) {
+      const evaluation = await this._story_evaluator.evaluate(story_file)
+      evaluations.push(evaluation)
+      if (!debug) {
+        this._results_displayer.display(evaluation)
+      }
       if ([Result.ERROR, Result.FAILED].includes(evaluation.result)) failed = true
     }
     if (failed && !debug) process.exit(1)

@@ -9,9 +9,8 @@
 
 import { type Chapter, type Story, type SupplementalChapter } from './types/story.types'
 import { type ChapterEvaluation, Result, type StoryEvaluation } from './types/eval.types'
-import ChapterEvaluator from './ChapterEvaluator'
+import type ChapterEvaluator from './ChapterEvaluator'
 import type ChapterReader from './ChapterReader'
-import SharedResources from './SharedResources'
 import { overall_result } from './helpers'
 
 export interface StoryFile {
@@ -21,38 +20,33 @@ export interface StoryFile {
 }
 
 export default class StoryEvaluator {
-  dry_run: boolean
-  story: Story
-  display_path: string
-  full_path: string
-  has_errors: boolean = false
-  chapter_reader: ChapterReader
+  private readonly _chapter_reader: ChapterReader
+  private readonly _chapter_evaluator: ChapterEvaluator
+  private readonly _dry_run: boolean
 
-  constructor (story_file: StoryFile, dry_run?: boolean) {
-    this.dry_run = dry_run ?? false
-    this.story = story_file.story
-    this.display_path = story_file.display_path
-    this.full_path = story_file.full_path
-    this.chapter_reader = SharedResources.get_instance().chapter_reader
+  constructor (chapter_reader: ChapterReader, chapter_evaluator: ChapterEvaluator, dry_run: boolean) {
+    this._chapter_reader = chapter_reader
+    this._chapter_evaluator = chapter_evaluator
+    this._dry_run = dry_run
   }
 
-  async evaluate (): Promise<StoryEvaluation> {
-    if (this.story.skip) {
+  async evaluate ({ story, display_path, full_path }: StoryFile): Promise<StoryEvaluation> {
+    if (story.skip) {
       return {
         result: Result.SKIPPED,
-        display_path: this.display_path,
-        full_path: this.full_path,
-        description: this.story.description,
+        display_path,
+        full_path,
+        description: story.description,
         chapters: []
       }
     }
-    const prologues = await this.#evaluate_supplemental_chapters(this.story.prologues ?? [])
-    const chapters = await this.#evaluate_chapters(this.story.chapters)
-    const epilogues = await this.#evaluate_supplemental_chapters(this.story.epilogues ?? [])
+    const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [])
+    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors)
+    const { evaluations: epilogues } = await this.#evaluate_supplemental_chapters(story.epilogues ?? [])
     return {
-      display_path: this.display_path,
-      full_path: this.full_path,
-      description: this.story.description,
+      display_path,
+      full_path,
+      description: story.description,
       chapters,
       prologues,
       epilogues,
@@ -60,38 +54,38 @@ export default class StoryEvaluator {
     }
   }
 
-  async #evaluate_chapters (chapters: Chapter[]): Promise<ChapterEvaluation[]> {
+  async #evaluate_chapters (chapters: Chapter[], has_errors: boolean): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      if (this.dry_run) {
+      if (this._dry_run) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
-        const evaluator = new ChapterEvaluator(chapter)
-        const evaluation = await evaluator.evaluate(this.has_errors)
-        this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
+        const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors)
+        has_errors = has_errors || evaluation.overall.result === Result.ERROR
         evaluations.push(evaluation)
       }
     }
     return evaluations
   }
 
-  async #evaluate_supplemental_chapters (chapters: SupplementalChapter[]): Promise<ChapterEvaluation[]> {
+  async #evaluate_supplemental_chapters (chapters: SupplementalChapter[]): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
+    let has_errors = false
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       const title = `${chapter.method} ${chapter.path}`
-      if (this.dry_run) {
+      if (this._dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
-        const response = await this.chapter_reader.read(chapter)
+        const response = await this._chapter_reader.read(chapter)
         const status = chapter.status ?? [200, 201]
         if (status.includes(response.status)) evaluations.push({ title, overall: { result: Result.PASSED } })
         else {
-          this.has_errors = true
+          has_errors = true
           evaluations.push({ title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error } })
         }
       }
     }
-    return evaluations
+    return { evaluations, has_errors }
   }
 }
