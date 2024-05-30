@@ -1,5 +1,5 @@
 import { spawnSync } from 'child_process'
-import { Ansi } from '../../src/tester/ResultsDisplayer'
+import * as ansi from '../../src/tester/Ansi'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/start.ts'].concat(args), {
@@ -21,7 +21,7 @@ test('--invalid', async () => {
 
 test('--tests', async () => {
   expect(spec(['--tests', 'tools/tests/tester/fixtures']).stdout).toContain(
-    `${Ansi.green('PASSED ')} ${Ansi.cyan(Ansi.b('empty.yaml'))}`
+    `${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('empty.yaml'))}`
   )
 })
 

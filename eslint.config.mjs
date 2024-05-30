@@ -48,7 +48,6 @@ export default [
           allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false
         }
       ],
-      '@typescript-eslint/no-extraneous-class': 'off',
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',

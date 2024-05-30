@@ -1,22 +1,6 @@
 import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
 import { overall_result } from './helpers'
-
-export class Ansi {
-  static b (text: string): string { return `\x1b[1m${text}\x1b[0m` }
-  static i (text: string): string { return `\x1b[3m${text}\x1b[0m` }
-
-  static padding (text: string, length: number, prefix: number = 0): string {
-    const spaces = length - text.length > 0 ? ' '.repeat(length - text.length) : ''
-    return `${' '.repeat(prefix)}${text}${spaces}`
-  }
-
-  static green (text: string): string { return `\x1b[32m${text}\x1b[0m` }
-  static red (text: string): string { return `\x1b[31m${text}\x1b[0m` }
-  static yellow (text: string): string { return `\x1b[33m${text}\x1b[0m` }
-  static cyan (text: string): string { return `\x1b[36m${text}\x1b[0m` }
-  static gray (text: string): string { return `\x1b[90m${text}\x1b[0m` }
-  static magenta (text: string): string { return `\x1b[35m${text}\x1b[0m` }
-}
+import * as ansi from './Ansi'
 
 export interface DisplayOptions {
   tab_width?: number
@@ -47,7 +31,7 @@ export default class ResultsDisplayer {
   #display_story (): void {
     const result = this.evaluation.result
     const message = this.evaluation.full_path
-    const title = Ansi.cyan(Ansi.b(this.evaluation.display_path))
+    const title = ansi.cyan(ansi.b(this.evaluation.display_path))
     this.#display_evaluation({ result, message }, title)
   }
 
@@ -60,7 +44,7 @@ export default class ResultsDisplayer {
   }
 
   #display_chapter (chapter: ChapterEvaluation): void {
-    this.#display_evaluation(chapter.overall, Ansi.i(chapter.title), this.tab_width * 2)
+    this.#display_evaluation(chapter.overall, ansi.i(chapter.title), this.tab_width * 2)
     if (chapter.overall.result === Result.PASSED || chapter.overall.result === Result.SKIPPED) return
 
     this.#display_parameters(chapter.request?.parameters ?? {})
@@ -95,8 +79,8 @@ export default class ResultsDisplayer {
   }
 
   #display_evaluation (evaluation: Evaluation, title: string, prefix: number = 0): void {
-    const result = Ansi.padding(this.#result(evaluation.result), 0, prefix)
-    const message = evaluation.message != null ? `${Ansi.gray('(' + evaluation.message + ')')}` : ''
+    const result = ansi.padding(this.#result(evaluation.result), 0, prefix)
+    const message = evaluation.message != null ? `${ansi.gray('(' + evaluation.message + ')')}` : ''
     console.log(`${result} ${title} ${message}`)
     if (evaluation.error && this.verbose) {
       console.log('-'.repeat(100))
@@ -106,13 +90,13 @@ export default class ResultsDisplayer {
   }
 
   #result (r: Result): string {
-    const text = Ansi.padding(r, 7)
+    const text = ansi.padding(r, 7)
     switch (r) {
-      case Result.PASSED: return Ansi.green(text)
-      case Result.SKIPPED: return Ansi.yellow(text)
-      case Result.FAILED: return Ansi.magenta(text)
-      case Result.ERROR: return Ansi.red(text)
-      default: return Ansi.gray(text)
+      case Result.PASSED: return ansi.green(text)
+      case Result.SKIPPED: return ansi.yellow(text)
+      case Result.FAILED: return ansi.magenta(text)
+      case Result.ERROR: return ansi.red(text)
+      default: return ansi.gray(text)
     }
   }
 }
