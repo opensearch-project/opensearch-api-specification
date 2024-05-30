@@ -25,6 +25,6 @@ test('--tests', async () => {
   )
 })
 
-test.todo('--tab-size')
+test.todo('--tab-width')
 test.todo('--verbose')
 test.todo('--spec')
