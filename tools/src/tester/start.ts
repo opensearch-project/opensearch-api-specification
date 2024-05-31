@@ -12,6 +12,13 @@ import { LogLevel } from '../Logger'
 import TestsRunner from './TestsRunner'
 import { Command, Option } from '@commander-js/extra-typings'
 import _ from 'lodash'
+import {
+  get_opensearch_opts_from_cli,
+  OPENSEARCH_INSECURE_OPTION,
+  OPENSEARCH_PASSWORD_OPTION,
+  OPENSEARCH_URL_OPTION,
+  OPENSEARCH_USERNAME_OPTION
+} from '../OpenSearchHttpClient'
 
 const command = new Command()
   .description('Run test stories against the OpenSearch spec.')
@@ -20,6 +27,10 @@ const command = new Command()
   .addOption(new Option('--tab-width <size>', 'tab width for displayed results').default('4'))
   .addOption(new Option('--verbose', 'whether to print the full stack trace of errors'))
   .addOption(new Option('--dry-run', 'dry run only, do not make HTTP requests'))
+  .addOption(OPENSEARCH_URL_OPTION)
+  .addOption(OPENSEARCH_USERNAME_OPTION)
+  .addOption(OPENSEARCH_PASSWORD_OPTION)
+  .addOption(OPENSEARCH_INSECURE_OPTION)
   .allowExcessArguments(false)
   .parse()
 
@@ -30,7 +41,8 @@ const tests_runner_options = {
   display: {
     verbose: opts.verbose ?? false,
     tab_width: Number.parseInt(opts.tabWidth)
-  }
+  },
+  opensearch: get_opensearch_opts_from_cli(opts)
 }
 
 // The fallback password must match the default password specified in .github/opensearch-cluster/docker-compose.yml

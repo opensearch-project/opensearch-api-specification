@@ -16,26 +16,28 @@ import fs from 'fs'
 import { type Story } from './types/story.types'
 import { read_yaml } from '../../helpers'
 import { Result, type StoryEvaluation } from './types/eval.types'
-import ResultsDisplayer, { type DisplayOptions } from './ResultsDisplayer'
-import { resolve, basename } from 'path'
+import ResultsDisplay, { type DisplayOptions } from './ResultsDisplay'
+import { basename, resolve } from 'path'
 import ChapterEvaluator from './ChapterEvaluator'
+import { OpenSearchHttpClient, type OpenSearchHttpClientOptions } from '../OpenSearchHttpClient'
 
 interface TestsRunnerOptions {
   dry_run?: boolean
   display: DisplayOptions
+  opensearch: OpenSearchHttpClientOptions
 }
 
 export default class TestsRunner {
+  private readonly _http_client: OpenSearchHttpClient
   private readonly _story_evaluator: StoryEvaluator
-  private readonly _results_displayer: ResultsDisplayer
+  private readonly _results_display: ResultsDisplay
 
   constructor (spec: OpenAPIV3.Document, opts: TestsRunnerOptions) {
-    const spec_parser = new SpecParser(spec)
-    const chapter_reader = new ChapterReader()
-    const schema_validator = new SchemaValidator(spec)
-    const chapter_evaluator = new ChapterEvaluator(spec_parser, chapter_reader, schema_validator)
+    this._http_client = new OpenSearchHttpClient(opts.opensearch)
+    const chapter_reader = new ChapterReader(this._http_client)
+    const chapter_evaluator = new ChapterEvaluator(new SpecParser(spec), chapter_reader, new SchemaValidator(spec))
     this._story_evaluator = new StoryEvaluator(chapter_reader, chapter_evaluator, opts.dry_run ?? false)
-    this._results_displayer = new ResultsDisplayer(opts.display)
+    this._results_display = new ResultsDisplay(opts.display)
   }
 
   async run (story_path: string, debug: boolean = false): Promise<StoryEvaluation[]> {
@@ -46,7 +48,7 @@ export default class TestsRunner {
       const evaluation = await this._story_evaluator.evaluate(story_file)
       evaluations.push(evaluation)
       if (!debug) {
-        this._results_displayer.display(evaluation)
+        this._results_display.display(evaluation)
       }
       if ([Result.ERROR, Result.FAILED].includes(evaluation.result)) failed = true
     }

@@ -16,7 +16,7 @@ export interface DisplayOptions {
   verbose?: boolean
 }
 
-export default class ResultsDisplayer {
+export default class ResultsDisplay {
   private readonly _tab_width: number
   private readonly _verbose: boolean
 
