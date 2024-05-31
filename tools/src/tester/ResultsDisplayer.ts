@@ -11,6 +11,10 @@ import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation }
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'
 
+export interface TestRunOptions {
+  dry_run?: boolean
+}
+
 export interface DisplayOptions {
   tab_width?: number
   verbose?: boolean
@@ -18,13 +22,11 @@ export interface DisplayOptions {
 
 export default class ResultsDisplayer {
   evaluation: StoryEvaluation
-  skip_components: boolean
   tab_width: number
   verbose: boolean
 
   constructor (evaluation: StoryEvaluation, opts: DisplayOptions) {
     this.evaluation = evaluation
-    this.skip_components = [Result.PASSED, Result.SKIPPED].includes(evaluation.result)
     this.tab_width = opts.tab_width ?? 4
     this.verbose = opts.verbose ?? false
   }
@@ -40,22 +42,20 @@ export default class ResultsDisplayer {
   #display_story (): void {
     const result = this.evaluation.result
     const message = this.evaluation.full_path
-    const title = ansi.cyan(ansi.b(this.evaluation.display_path))
+    const title = ansi.cyan(ansi.b(this.evaluation.description ?? this.evaluation.display_path))
     this.#display_evaluation({ result, message }, title)
   }
 
   #display_chapters (evaluations: ChapterEvaluation[], title: string): void {
-    if (this.skip_components || evaluations.length === 0) return
+    if (evaluations.length === 0) return
     const result = overall_result(evaluations.map(e => e.overall))
+    if (!this.verbose && (result === Result.SKIPPED || result === Result.PASSED)) return
     this.#display_evaluation({ result }, title, this.tab_width)
-    if (result === Result.PASSED) return
     for (const evaluation of evaluations) this.#display_chapter(evaluation)
   }
 
   #display_chapter (chapter: ChapterEvaluation): void {
     this.#display_evaluation(chapter.overall, ansi.i(chapter.title), this.tab_width * 2)
-    if (chapter.overall.result === Result.PASSED || chapter.overall.result === Result.SKIPPED) return
-
     this.#display_parameters(chapter.request?.parameters ?? {})
     this.#display_request_body(chapter.request?.request_body)
     this.#display_status(chapter.response?.status)
@@ -66,7 +66,6 @@ export default class ResultsDisplayer {
     if (Object.keys(parameters).length === 0) return
     const result = overall_result(Object.values(parameters))
     this.#display_evaluation({ result }, 'PARAMETERS', this.tab_width * 3)
-    if (result === Result.PASSED) return
     for (const [name, evaluation] of Object.entries(parameters)) {
       this.#display_evaluation(evaluation, name, this.tab_width * 4)
     }

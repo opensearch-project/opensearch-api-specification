@@ -16,11 +16,11 @@ import fs from 'fs'
 import { type Story } from './types/story.types'
 import { read_yaml } from '../../helpers'
 import { Result, type StoryEvaluation } from './types/eval.types'
-import ResultsDisplayer, { type DisplayOptions } from './ResultsDisplayer'
+import ResultsDisplayer, { type TestRunOptions, type DisplayOptions } from './ResultsDisplayer'
 import SharedResources from './SharedResources'
 import { resolve, basename } from 'path'
 
-type TestsRunnerOptions = DisplayOptions & Record<string, any>
+type TestsRunnerOptions = TestRunOptions & DisplayOptions & Record<string, any>
 
 export default class TestsRunner {
   path: string // Path to a story file or a directory containing story files
@@ -41,7 +41,7 @@ export default class TestsRunner {
     const story_files = this.#collect_story_files(this.path, '', '')
     const evaluations: StoryEvaluation[] = []
     for (const story_file of this.#sort_story_files(story_files)) {
-      const evaluator = new StoryEvaluator(story_file)
+      const evaluator = new StoryEvaluator(story_file, this.opts.dry_run)
       const evaluation = await evaluator.evaluate()
       const displayer = new ResultsDisplayer(evaluation, this.opts)
       if (debug) evaluations.push(evaluation)

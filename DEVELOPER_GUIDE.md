@@ -380,6 +380,11 @@ All tools should have tests added in [tools/tests](tools/tests), tests are imple
 npm run test
 ```
 
+Specify the test path to run tests for one of the tools:
+```bash
+npm run test -- tools/tests/tester/
+```
+
 #### Lints
 
 All code is linted using [ESLint](https://eslint.org/) in combination with [typescript-eslint](https://typescript-eslint.io/). Linting can be run via:

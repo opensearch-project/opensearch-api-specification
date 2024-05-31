@@ -21,13 +21,15 @@ export interface StoryFile {
 }
 
 export default class StoryEvaluator {
+  dry_run: boolean
   story: Story
   display_path: string
   full_path: string
   has_errors: boolean = false
   chapter_reader: ChapterReader
 
-  constructor (story_file: StoryFile) {
+  constructor (story_file: StoryFile, dry_run?: boolean) {
+    this.dry_run = dry_run ?? false
     this.story = story_file.story
     this.display_path = story_file.display_path
     this.full_path = story_file.full_path
@@ -61,10 +63,15 @@ export default class StoryEvaluator {
   async #evaluate_chapters (chapters: Chapter[]): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      const evaluator = new ChapterEvaluator(chapter)
-      const evaluation = await evaluator.evaluate(this.has_errors)
-      this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
-      evaluations.push(evaluation)
+      if (this.dry_run) {
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
+      } else {
+        const evaluator = new ChapterEvaluator(chapter)
+        const evaluation = await evaluator.evaluate(this.has_errors)
+        this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
+        evaluations.push(evaluation)
+      }
     }
     return evaluations
   }
@@ -73,12 +80,16 @@ export default class StoryEvaluator {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       const title = `${chapter.method} ${chapter.path}`
-      const response = await this.chapter_reader.read(chapter)
-      const status = chapter.status ?? [200, 201]
-      if (status.includes(response.status)) evaluations.push({ title, overall: { result: Result.PASSED } })
-      else {
-        this.has_errors = true
-        evaluations.push({ title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error } })
+      if (this.dry_run) {
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
+      } else {
+        const response = await this.chapter_reader.read(chapter)
+        const status = chapter.status ?? [200, 201]
+        if (status.includes(response.status)) evaluations.push({ title, overall: { result: Result.PASSED } })
+        else {
+          this.has_errors = true
+          evaluations.push({ title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error } })
+        }
       }
     }
     return evaluations
