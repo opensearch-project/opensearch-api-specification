@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'

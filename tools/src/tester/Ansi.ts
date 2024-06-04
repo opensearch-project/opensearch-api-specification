@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 export function b (text: string): string { return `\x1b[1m${text}\x1b[0m` }
 export function i (text: string): string { return `\x1b[3m${text}\x1b[0m` }
 
