@@ -2,6 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
 import pluginJs from '@eslint/js'
+import licenseHeader from 'eslint-plugin-license-header'
 
 // mimic CommonJS variables -- not needed if using CommonJS
 const _filename = fileURLToPath(import.meta.url)
@@ -13,6 +14,9 @@ export default [
   ...compat.extends('standard-with-typescript'),
   {
     files: ['**/*.{js,ts}'],
+    plugins: {
+      'license-header': licenseHeader
+    },
     rules: {
       '@typescript-eslint/consistent-indexed-object-style': 'error',
       '@typescript-eslint/consistent-type-assertions': 'error',
@@ -51,7 +55,20 @@ export default [
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',
-      'object-shorthand': 'error'
+      'object-shorthand': 'error',
+      'license-header/header': [
+        'error',
+        [
+          '/*',
+          '* Copyright OpenSearch Contributors',
+          '* SPDX-License-Identifier: Apache-2.0',
+          '*',
+          '* The OpenSearch Contributors require contributions made to',
+          '* this file be licensed under the Apache-2.0 license or a',
+          '* compatible open source license.',
+          '*/'
+        ]
+      ]
     }
   }
 ]
