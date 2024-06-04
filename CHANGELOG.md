@@ -11,6 +11,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added workflow to determine API changes ([#297](https://github.com/opensearch-project/opensearch-api-specification/pull/297))
 - Added link checking ([#269](https://github.com/opensearch-project/opensearch-api-specification/pull/269))
 - Added API coverage ([#210](https://github.com/opensearch-project/opensearch-api-specification/pull/210))
+- Added license headers to TypeScript code ([#311](https://github.com/opensearch-project/opensearch-api-specification/pull/311))
   
 ### Changed
 

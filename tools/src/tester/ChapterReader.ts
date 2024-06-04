@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import axios from 'axios'
 import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { Agent } from 'https'
