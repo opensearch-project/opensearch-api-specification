@@ -19,17 +19,19 @@ const command = new Command()
   .addOption(new Option('--tests, --tests-path <path>', 'path to the root folder of the tests').default('./tests'))
   .addOption(new Option('--tab-width <size>', 'tab width for displayed results').default('4'))
   .addOption(new Option('--verbose', 'whether to print the full stack trace of errors'))
+  .addOption(new Option('--dry-run', 'dry run only, do not make HTTP requests'))
   .allowExcessArguments(false)
   .parse()
 
 const opts = command.opts()
-const display_options = {
+const options = {
   verbose: opts.verbose ?? false,
-  tab_width: Number.parseInt(opts.tabWidth)
+  tab_width: Number.parseInt(opts.tabWidth),
+  dry_run: opts.dryRun ?? false
 }
 
 // The fallback password must match the default password specified in .github/opensearch-cluster/docker-compose.yml
 process.env.OPENSEARCH_PASSWORD = process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
 const spec = (new OpenApiMerger(opts.specPath, LogLevel.error)).merge()
-const runner = new TestsRunner(spec, opts.testsPath, display_options)
+const runner = new TestsRunner(spec, opts.testsPath, options)
 void runner.run().then(() => { _.noop() })
