@@ -15,7 +15,7 @@ import { type Evaluation, Result } from './types/eval.types'
 export default class SchemaValidator {
   private readonly ajv: AJV
   constructor (spec: OpenAPIV3.Document) {
-    this.ajv = new AJV()
+    this.ajv = new AJV({ allErrors: true, strict: true })
     addFormats(this.ajv)
     this.ajv.addKeyword('discriminator')
     const schemas = spec.components?.schemas ?? {}

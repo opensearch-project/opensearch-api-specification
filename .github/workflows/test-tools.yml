@@ -21,9 +21,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      OPENSEARCH_VERSION: 2.12.0
+      OPENSEARCH_PASSWORD: myStrongPassword123!
+      OPENSEARCH_URL: https://localhost:9200
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+
+      - name: Run OpenSearch Cluster
+        working-directory: .github/opensearch-cluster
+        run: |
+          docker-compose up -d
+          sleep 30
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -33,8 +43,14 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Tests
-        run: npm run test
-
       - name: Lint
         run: npm run lint
+
+      - name: Test Spec Merger
+        run: npm run test -- tools/tests/merger
+
+      - name: Test Spec Linter
+        run: npm run test -- tools/tests/linter
+
+      - name: Test Spec Tester
+        run: npm run test -- tools/tests/tester --runInBand

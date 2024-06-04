@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Added CHANGELOG ([#309](https://github.com/opensearch-project/opensearch-api-specification/pull/309))
 - Added a spec test framework ([#299](https://github.com/opensearch-project/opensearch-api-specification/pull/299))
+- Added tests for the framework ([#310](https://github.com/opensearch-project/opensearch-api-specification/pull/310))
 - Added workflow to determine API changes ([#297](https://github.com/opensearch-project/opensearch-api-specification/pull/297))
 - Added link checking ([#269](https://github.com/opensearch-project/opensearch-api-specification/pull/269))
 - Added API coverage ([#210](https://github.com/opensearch-project/opensearch-api-specification/pull/210))

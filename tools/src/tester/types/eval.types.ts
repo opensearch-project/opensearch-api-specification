@@ -25,7 +25,7 @@ export interface ChapterEvaluation {
   overall: Evaluation
   request?: {
     parameters?: Record<string, Evaluation>
-    requestBody?: Evaluation
+    request_body?: Evaluation
   }
   response?: {
     status: Evaluation

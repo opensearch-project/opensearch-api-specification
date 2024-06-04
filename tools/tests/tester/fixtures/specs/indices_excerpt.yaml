@@ -1,0 +1,177 @@
+openapi: 3.1.0
+info:
+  title: Test API
+  version: 1.0.0
+paths:
+  /{index}:
+    delete:
+      operationId: indices.delete.0
+      x-operation-group: indices.delete
+      x-version-added: '1.0'
+      description: Deletes an index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/index-apis/delete-index/
+      parameters:
+        - $ref: '#/components/parameters/indices.delete::path.index'
+        - $ref: '#/components/parameters/indices.delete::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.delete@200'
+    head:
+      operationId: indices.exists.0
+      x-operation-group: indices.exists
+      x-version-added: '1.0'
+      description: Returns information about whether a particular index exists.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/index-apis/exists/
+      parameters:
+        - $ref: '#/components/parameters/indices.exists::path.index'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.exists@200'
+    put:
+      operationId: indices.create.0
+      x-operation-group: indices.create
+      x-version-added: '1.0'
+      description: Creates an index with optional settings and mappings.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/index-apis/create-index/
+      parameters:
+        - $ref: '#/components/parameters/indices.create::path.index'
+      requestBody:
+        $ref: '#/components/requestBodies/indices.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.create@200'
+components:
+  requestBodies:
+    indices.create:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              settings:
+                type: object
+                description: Optional settings for the index.
+              mappings:
+                type: object
+                description: Optional mappings for the index.
+            additionalProperties: false
+  responses:
+    indices.delete@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:IndicesResponseBase'
+    indices.exists@200:
+      description: ''
+      content:
+        application/json: {}
+    indices.create@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              index:
+                $ref: '#/components/schemas/_common:IndexName'
+              shards_acknowledged:
+                type: boolean
+              acknowledged:
+                type: boolean
+            required:
+              - index
+              - shards_acknowledged
+              - acknowledged
+  parameters:
+    indices.delete::path.index:
+      in: path
+      name: index
+      description: |-
+        Comma-separated list of indices to delete.
+        You cannot specify index aliases.
+        By default, this parameter does not support wildcards (`*`) or `_all`.
+        To use wildcards or `_all`, set the `action.destructive_requires_name` cluster setting to `false`.
+      required: true
+      schema:
+        $ref: '#/components/schemas/_common:Indices'
+    indices.delete::query.timeout:
+      in: query
+      name: timeout
+      description: |-
+        Period to wait for a response.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      schema:
+        $ref: '#/components/schemas/_common:Duration'
+      style: form
+    indices.exists::path.index:
+      in: path
+      name: index
+      description: Comma-separated list of data streams, indices, and aliases. Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '#/components/schemas/_common:Indices'
+      style: simple
+    indices.create::path.index:
+      in: path
+      name: index
+      description: Name of the index you wish to create.
+      required: true
+      schema:
+        $ref: '#/components/schemas/_common:IndexName'
+      style: simple
+  schemas:
+    _common:uint:
+      type: number
+    _common:ShardStatistics:
+      type: object
+      properties:
+        failed:
+          $ref: '#/components/schemas/_common:uint'
+        successful:
+          $ref: '#/components/schemas/_common:uint'
+        total:
+          $ref: '#/components/schemas/_common:uint'
+        failures:
+          type: array
+          items:
+            type: object
+        skipped:
+          $ref: '#/components/schemas/_common:uint'
+      required:
+        - failed
+        - successful
+        - total
+    _common:AcknowledgedResponseBase:
+      type: object
+      properties:
+        acknowledged:
+          description: For a successful response, this value is always true. On failure, an exception is returned instead.
+          type: boolean
+      required:
+        - acknowledged
+    _common:IndicesResponseBase:
+      allOf:
+        - $ref: '#/components/schemas/_common:AcknowledgedResponseBase'
+        - type: object
+          properties:
+            _shards:
+              $ref: '#/components/schemas/_common:ShardStatistics'
+          additionalProperties: false
+    _common:Indices:
+      oneOf:
+        - $ref: '#/components/schemas/_common:IndexName'
+        - type: array
+          items:
+            $ref: '#/components/schemas/_common:IndexName'
+    _common:IndexName:
+      type: string
+    _common:Duration:
+      description: |-
+        A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
+        `d` (days). Also accepts "0" without a unit and "-1" to indicate an unspecified value.
+      pattern: ^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$
+      type: string

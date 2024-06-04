@@ -59,18 +59,13 @@ export default class StoryEvaluator {
   }
 
   async #evaluate_chapters (chapters: Chapter[]): Promise<ChapterEvaluation[]> {
-    if (this.has_errors) return []
-    let has_errors: boolean = this.has_errors
-
     const evaluations: ChapterEvaluation[] = []
-
     for (const chapter of chapters) {
       const evaluator = new ChapterEvaluator(chapter)
-      const evaluation = await evaluator.evaluate(has_errors)
-      has_errors = has_errors || evaluation.overall.result === Result.ERROR
+      const evaluation = await evaluator.evaluate(this.has_errors)
+      this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
       evaluations.push(evaluation)
     }
-
     return evaluations
   }
 
@@ -79,7 +74,7 @@ export default class StoryEvaluator {
     for (const chapter of chapters) {
       const title = `${chapter.method} ${chapter.path}`
       const response = await this.chapter_reader.read(chapter)
-      const status = chapter.status ?? []
+      const status = chapter.status ?? [200, 201]
       if (status.includes(response.status)) evaluations.push({ title, overall: { result: Result.PASSED } })
       else {
         this.has_errors = true
