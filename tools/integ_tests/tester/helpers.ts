@@ -34,21 +34,21 @@ export function print_yaml (obj: any): void {
 export function scrub_errors (obj: any): void {
   for (const key in obj) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    if (key === 'error') obj[key] = obj[key].message
+    if (key === 'error') obj[key] = obj[key]?.message
     else if (typeof obj[key] === 'object') scrub_errors(obj[key])
   }
 }
 
 export async function load_expected_evaluation (name: string, exclude_full_path: boolean = false): Promise<any> {
-  const expected = read_yaml(`tools/tests/tester/fixtures/evals/${name}.yaml`)
+  const expected = read_yaml(`tools/integ_tests/tester/fixtures/evals/${name}.yaml`)
   if (exclude_full_path) delete expected.full_path
   return expected
 }
 
 export async function load_actual_evaluation (name: string): Promise<StoryEvaluation> {
-  const story: Story = read_yaml(`tools/tests/tester/fixtures/stories/${name}.yaml`)
+  const story: Story = read_yaml(`tools/integ_tests/tester/fixtures/stories/${name}.yaml`)
   const display_path = `${name}.yaml`
-  const full_path = `tools/tests/tester/fixtures/stories/${name}.yaml`
+  const full_path = `tools/integ_tests/tester/fixtures/stories/${name}.yaml`
   const actual = await new StoryEvaluator({ display_path, full_path, story }).evaluate()
   scrub_errors(actual)
   return actual

@@ -15,8 +15,10 @@ import { load_expected_evaluation, scrub_errors } from './helpers'
 test('stories folder', async () => {
   // The fallback password must match the default password specified in .github/opensearch-cluster/docker-compose.yml
   process.env.OPENSEARCH_PASSWORD = process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
-  const spec = read_yaml('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
-  const runner = new TestsRunner(spec as OpenAPIV3.Document, 'tools/tests/tester/fixtures/stories', {})
+  const spec = read_yaml('tools/integ_tests/tester/fixtures/specs/indices_excerpt.yaml')
+  const runner = new TestsRunner(
+    spec as OpenAPIV3.Document,
+    'tools/integ_tests/tester/fixtures/stories', {})
   const actual_evaluations = await runner.run(true) as any[]
   for (const evaluation of actual_evaluations) scrub_errors(evaluation)
   for (const evaluation of actual_evaluations) {
