@@ -24,12 +24,12 @@ test('stories folder', async () => {
     delete evaluation.full_path
   }
 
-  const skipped = await load_expected_evaluation('skipped', true)
-  const passed = await load_expected_evaluation('passed', true)
-  const not_found = await load_expected_evaluation('failed/not_found', true)
-  const invalid_data = await load_expected_evaluation('failed/invalid_data', true)
-  const chapter_error = await load_expected_evaluation('error/chapter_error', true)
-  const prologue_error = await load_expected_evaluation('error/prologue_error', true)
+  const skipped = load_expected_evaluation('skipped', true)
+  const passed = load_expected_evaluation('passed', true)
+  const not_found = load_expected_evaluation('failed/not_found', true)
+  const invalid_data = load_expected_evaluation('failed/invalid_data', true)
+  const chapter_error = load_expected_evaluation('error/chapter_error', true)
+  const prologue_error = load_expected_evaluation('error/prologue_error', true)
 
   const expected_evaluations = [passed, skipped, chapter_error, prologue_error, invalid_data, not_found]
   expect(actual_evaluations).toEqual(expected_evaluations)

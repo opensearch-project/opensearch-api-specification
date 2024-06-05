@@ -39,7 +39,7 @@ export function scrub_errors (obj: any): void {
   }
 }
 
-export async function load_expected_evaluation (name: string, exclude_full_path: boolean = false): Promise<any> {
+export function load_expected_evaluation (name: string, exclude_full_path: boolean = false): Record<string, any> {
   const expected = read_yaml(`tools/tests/tester/fixtures/evals/${name}.yaml`)
   if (exclude_full_path) delete expected.full_path
   return expected

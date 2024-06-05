@@ -11,7 +11,7 @@ import OpenApiMerger from 'merger/OpenApiMerger'
 import fs from 'fs'
 import { LogLevel } from '../../src/Logger'
 
-test('merge()', async () => {
+test('merge()', () => {
   const merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/', LogLevel.error)
   merger.merge('./tools/tests/merger/opensearch-openapi.yaml')
   expect(fs.readFileSync('./tools/tests/merger/fixtures/expected.yaml', 'utf8'))
