@@ -20,6 +20,7 @@ import { OpenSearchHttpClient } from '../../src/OpenSearchHttpClient'
 import { type OpenAPIV3 } from 'openapi-types'
 import TestRunner from '../../src/tester/TestRunner'
 import { NoOpResultLogger, type ResultLogger } from '../../src/tester/ResultLogger'
+import * as process from 'node:process'
 
 export function construct_tester_components (spec_path: string): {
   specification: OpenAPIV3.Document
@@ -35,7 +36,9 @@ export function construct_tester_components (spec_path: string): {
   const specification: OpenAPIV3.Document = read_yaml(spec_path)
   const spec_parser = new SpecParser(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
-    insecure: true
+    insecure: true,
+    username: process.env.OPENSEARCH_USERNAME ?? 'admin',
+    password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
   })
   const chapter_reader = new ChapterReader(opensearch_http_client)
   const schema_validator = new SchemaValidator(specification)
@@ -62,9 +65,9 @@ export function print_yaml (obj: any): void {
 
 export function scrub_errors (obj: any): void {
   for (const key in obj) {
-    if (typeof obj[key] !== 'object') continue
-    if (key === 'error') obj.error = obj.error.message
-    else scrub_errors(obj[key])
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    if (key === 'error') obj[key] = obj[key].message
+    else if (typeof obj[key] === 'object') scrub_errors(obj[key])
   }
 }
 
