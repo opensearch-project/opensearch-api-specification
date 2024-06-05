@@ -53,6 +53,7 @@ export default [
         }
       ],
       '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',

@@ -24,8 +24,8 @@ export default class GlobalParamsGenerator {
     spec.components.parameters = { ...this.global_params, ...spec.components.parameters }
 
     const global_param_refs = Object.keys(this.global_params).map(param => ({ $ref: `#/components/parameters/${param}` }))
-    Object.entries(spec.paths as Document).forEach(([path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([method, operation]) => {
+    Object.entries(spec.paths as Document).forEach(([_path, path_item]) => {
+      Object.entries(path_item as Document).forEach(([_method, operation]) => {
         const params = operation.parameters ?? []
         operation.parameters = [...params, ...Object.values(global_param_refs)]
       })
