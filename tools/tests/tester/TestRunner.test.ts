@@ -11,7 +11,7 @@ import { construct_tester_components, load_expected_evaluation, scrub_errors } f
 
 test('stories folder', async () => {
   const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
-  const result = await test_runner.run('tools/tests/tester/fixtures/stories', true)
+  const result = await test_runner.run('tools/tests/tester/fixtures/stories')
 
   expect(result.failed).toBeTruthy()
 

@@ -65,9 +65,9 @@ export function print_yaml (obj: any): void {
 
 export function scrub_errors (obj: any): void {
   for (const key in obj) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    if (key === 'error') obj[key] = obj[key].message
-    else if (typeof obj[key] === 'object') scrub_errors(obj[key])
+    if (typeof obj[key] !== 'object') continue
+    if (key === 'error') obj.error = obj.error.message
+    else scrub_errors(obj[key])
   }
 }
 
