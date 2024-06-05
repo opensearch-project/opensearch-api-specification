@@ -34,7 +34,9 @@ export function construct_tester_components (spec_path: string): {
 } {
   const specification: OpenAPIV3.Document = read_yaml(spec_path)
   const spec_parser = new SpecParser(specification)
-  const opensearch_http_client = new OpenSearchHttpClient()
+  const opensearch_http_client = new OpenSearchHttpClient({
+    insecure: true
+  })
   const chapter_reader = new ChapterReader(opensearch_http_client)
   const schema_validator = new SchemaValidator(specification)
   const chapter_evaluator = new ChapterEvaluator(spec_parser, chapter_reader, schema_validator)
