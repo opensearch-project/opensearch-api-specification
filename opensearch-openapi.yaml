@@ -43459,8 +43459,6 @@ components:
           $ref: '#/components/schemas/_common:VersionNumber'
         _meta:
           $ref: '#/components/schemas/_common:Metadata'
-      required:
-        - _meta
     ingest._common:PipelineProcessor:
       allOf:
         - $ref: '#/components/schemas/ingest._common:ProcessorBase'
@@ -43568,6 +43566,8 @@ components:
           $ref: '#/components/schemas/ingest._common:CircleProcessor'
         inference:
           $ref: '#/components/schemas/ingest._common:InferenceProcessor'
+        text_embedding:
+          $ref: '#/components/schemas/ingest._common:TextEmbeddingProcessor'
       minProperties: 1
       maxProperties: 1
     ingest._common:RemoveProcessor:
@@ -43681,6 +43681,24 @@ components:
           required:
             - field
             - separator
+    ingest._common:TextEmbeddingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ingest._common:ProcessorBase'
+        - type: object
+          properties:
+            model_id:
+              $ref: '#/components/schemas/_common:Id'
+            field_map:
+              description: Contains key-value pairs that specify the mapping of a text field to a vector field.
+              type: object
+              additionalProperties:
+                type: string
+            description:
+              type: string
+              description: A brief description of the processor.
+          required:
+            - model_id
+            - field_map
     ingest._common:TrimProcessor:
       allOf:
         - $ref: '#/components/schemas/ingest._common:ProcessorBase'
