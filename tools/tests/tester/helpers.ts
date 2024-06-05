@@ -7,25 +7,12 @@
 * compatible open source license.
 */
 
-import ChapterReader from '../../src/tester/ChapterReader'
-import SpecParser from '../../src/tester/SpecParser'
-import SchemaValidator from '../../src/tester/SchemaValidator'
-import SharedResources from '../../src/tester/SharedResources'
-import { type OpenAPIV3 } from 'openapi-types'
 import YAML from 'yaml'
+import { type OpenAPIV3 } from 'openapi-types'
 import type { StoryEvaluation } from '../../src/tester/types/eval.types'
 import type { Story } from '../../src/tester/types/story.types'
 import { read_yaml } from '../../helpers'
 import StoryEvaluator from '../../src/tester/StoryEvaluator'
-
-export function create_shared_resources (spec: any): void {
-  // The fallback password must match the default password specified in .github/opensearch-cluster/docker-compose.yml
-  process.env.OPENSEARCH_PASSWORD = process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
-  const chapter_reader = new ChapterReader()
-  const spec_parser = new SpecParser(spec as OpenAPIV3.Document)
-  const schema_validator = new SchemaValidator(spec as OpenAPIV3.Document)
-  SharedResources.create_instance({ chapter_reader, schema_validator, spec_parser })
-}
 
 export function print_yaml (obj: any): void {
   console.log(YAML.stringify(obj, { indent: 2, singleQuote: true, lineWidth: undefined }))
@@ -45,11 +32,11 @@ export async function load_expected_evaluation (name: string, exclude_full_path:
   return expected
 }
 
-export async function load_actual_evaluation (name: string): Promise<StoryEvaluation> {
+export async function load_actual_evaluation (name: string, spec: OpenAPIV3.Document): Promise<StoryEvaluation> {
   const story: Story = read_yaml(`tools/tests/tester/fixtures/stories/${name}.yaml`)
   const display_path = `${name}.yaml`
   const full_path = `tools/tests/tester/fixtures/stories/${name}.yaml`
-  const actual = await new StoryEvaluator({ display_path, full_path, story }).evaluate()
+  const actual = await new StoryEvaluator({ display_path, full_path, story }, spec).evaluate()
   scrub_errors(actual)
   return actual
 }

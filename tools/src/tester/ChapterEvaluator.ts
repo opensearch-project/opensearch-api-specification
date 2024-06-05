@@ -11,29 +11,25 @@ import { type Chapter, type ActualResponse } from './types/story.types'
 import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
-import type ChapterReader from './ChapterReader'
-import SharedResources from './SharedResources'
-import type SpecParser from './SpecParser'
-import type SchemaValidator from './SchemaValidator'
+import { type OpenAPIV3 } from 'openapi-types'
+import ChapterReader from './ChapterReader'
+import SpecParser from './SpecParser'
+import SchemaValidator from './SchemaValidator'
 
 export default class ChapterEvaluator {
+  spec: OpenAPIV3.Document
   chapter: Chapter
   skip_payload_evaluation: boolean = false
-  spec_parser: SpecParser
-  chapter_reader: ChapterReader
-  schema_validator: SchemaValidator
 
-  constructor (chapter: Chapter) {
+  constructor (chapter: Chapter, spec: OpenAPIV3.Document) {
     this.chapter = chapter
-    this.spec_parser = SharedResources.get_instance().spec_parser
-    this.chapter_reader = SharedResources.get_instance().chapter_reader
-    this.schema_validator = SharedResources.get_instance().schema_validator
+    this.spec = spec
   }
 
   async evaluate (skip: boolean): Promise<ChapterEvaluation> {
     if (skip) return { title: this.chapter.synopsis, overall: { result: Result.SKIPPED } }
-    const response = await this.chapter_reader.read(this.chapter)
-    const operation = this.spec_parser.locate_operation(this.chapter)
+    const response = await new ChapterReader().read(this.chapter)
+    const operation = new SpecParser(this.spec).locate_operation(this.chapter)
     if (operation == null) return { title: this.chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${this.chapter.method.toUpperCase()} ${this.chapter.path}" not found in the spec.` } }
     const params = this.#evaluate_parameters(operation)
     const request_body = this.#evaluate_request_body(operation)
@@ -51,7 +47,7 @@ export default class ChapterEvaluator {
     return Object.fromEntries(Object.entries(this.chapter.parameters ?? {}).map(([name, parameter]) => {
       const schema = operation.parameters[name]?.schema
       if (schema == null) return [name, { result: Result.FAILED, message: `Schema for "${name}" parameter not found.` }]
-      const evaluation = this.schema_validator.validate(schema, parameter)
+      const evaluation = new SchemaValidator(this.spec).validate(schema, parameter)
       return [name, evaluation]
     }))
   }
@@ -61,7 +57,7 @@ export default class ChapterEvaluator {
     const content_type = this.chapter.request_body.content_type ?? 'application/json'
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }
-    return this.schema_validator.validate(schema, this.chapter.request_body?.payload ?? {})
+    return new SchemaValidator(this.spec).validate(schema, this.chapter.request_body?.payload ?? {})
   }
 
   #evaluate_status (response: ActualResponse): Evaluation {
@@ -82,6 +78,6 @@ export default class ChapterEvaluator {
     const schema = content?.schema
     if (schema == null && content != null) return { result: Result.PASSED }
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
-    return this.schema_validator.validate(schema, response.payload)
+    return new SchemaValidator(this.spec).validate(schema, response.payload)
   }
 }

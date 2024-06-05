@@ -7,12 +7,12 @@
 * compatible open source license.
 */
 
+import { type OpenAPIV3 } from 'openapi-types'
 import { type Chapter, type Story, type SupplementalChapter } from './types/story.types'
 import { type ChapterEvaluation, Result, type StoryEvaluation } from './types/eval.types'
 import ChapterEvaluator from './ChapterEvaluator'
-import type ChapterReader from './ChapterReader'
-import SharedResources from './SharedResources'
 import { overall_result } from './helpers'
+import ChapterReader from './ChapterReader'
 
 export interface StoryFile {
   display_path: string
@@ -21,19 +21,19 @@ export interface StoryFile {
 }
 
 export default class StoryEvaluator {
+  spec: OpenAPIV3.Document
   dry_run: boolean
   story: Story
   display_path: string
   full_path: string
   has_errors: boolean = false
-  chapter_reader: ChapterReader
 
-  constructor (story_file: StoryFile, dry_run?: boolean) {
+  constructor (story_file: StoryFile, spec: OpenAPIV3.Document, dry_run?: boolean) {
+    this.spec = spec
     this.dry_run = dry_run ?? false
     this.story = story_file.story
     this.display_path = story_file.display_path
     this.full_path = story_file.full_path
-    this.chapter_reader = SharedResources.get_instance().chapter_reader
   }
 
   async evaluate (): Promise<StoryEvaluation> {
@@ -67,7 +67,7 @@ export default class StoryEvaluator {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
-        const evaluator = new ChapterEvaluator(chapter)
+        const evaluator = new ChapterEvaluator(chapter, this.spec)
         const evaluation = await evaluator.evaluate(this.has_errors)
         this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
         evaluations.push(evaluation)
@@ -83,7 +83,7 @@ export default class StoryEvaluator {
       if (this.dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
-        const response = await this.chapter_reader.read(chapter)
+        const response = await new ChapterReader().read(chapter)
         const status = chapter.status ?? [200, 201]
         if (status.includes(response.status)) evaluations.push({ title, overall: { result: Result.PASSED } })
         else {

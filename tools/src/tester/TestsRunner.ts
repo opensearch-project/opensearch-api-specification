@@ -8,16 +8,12 @@
 */
 
 import { type OpenAPIV3 } from 'openapi-types'
-import SpecParser from './SpecParser'
-import ChapterReader from './ChapterReader'
-import SchemaValidator from './SchemaValidator'
 import StoryEvaluator, { type StoryFile } from './StoryEvaluator'
 import fs from 'fs'
 import { type Story } from './types/story.types'
 import { read_yaml } from '../../helpers'
 import { Result, type StoryEvaluation } from './types/eval.types'
 import ResultsDisplayer, { type TestRunOptions, type DisplayOptions } from './ResultsDisplayer'
-import SharedResources from './SharedResources'
 import { resolve, basename } from 'path'
 
 type TestsRunnerOptions = TestRunOptions & DisplayOptions & Record<string, any>
@@ -25,15 +21,12 @@ type TestsRunnerOptions = TestRunOptions & DisplayOptions & Record<string, any>
 export default class TestsRunner {
   path: string // Path to a story file or a directory containing story files
   opts: TestsRunnerOptions
+  spec: OpenAPIV3.Document
 
   constructor (spec: OpenAPIV3.Document, path: string, opts: TestsRunnerOptions) {
     this.path = resolve(path)
     this.opts = opts
-
-    const chapter_reader = new ChapterReader()
-    const spec_parser = new SpecParser(spec)
-    const schema_validator = new SchemaValidator(spec)
-    SharedResources.create_instance({ chapter_reader, schema_validator, spec_parser })
+    this.spec = spec
   }
 
   async run (debug: boolean = false): Promise<StoryEvaluation[]> {
@@ -41,7 +34,7 @@ export default class TestsRunner {
     const story_files = this.#collect_story_files(this.path, '', '')
     const evaluations: StoryEvaluation[] = []
     for (const story_file of this.#sort_story_files(story_files)) {
-      const evaluator = new StoryEvaluator(story_file, this.opts.dry_run)
+      const evaluator = new StoryEvaluator(story_file, this.spec, this.opts.dry_run)
       const evaluation = await evaluator.evaluate()
       const displayer = new ResultsDisplayer(evaluation, this.opts)
       if (debug) evaluations.push(evaluation)
