@@ -22,7 +22,15 @@ export interface ChapterEvaluation {
     status: Evaluation
     payload: Evaluation
   }
+  updated_environment?: EvaluationEnvironment
 }
+
+export interface ChaptersEvaluations {
+  evaluations: ChapterEvaluation[]
+  final_environment: EvaluationEnvironment
+}
+
+export type EvaluationEnvironment = { [k: string]: any };
 
 export interface Evaluation {
   result: Result

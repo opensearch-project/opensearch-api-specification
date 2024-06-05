@@ -37,6 +37,7 @@ export type Chapter = ChapterRequest & {
    */
   synopsis: string;
   response?: ExpectedResponse;
+  remember?: SaveInEnvironment;
 };
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -70,7 +71,14 @@ export interface ChapterRequest {
   parameters?: {
     [k: string]: Parameter;
   };
+  parameters_from_environment?: {
+    [k: string]: string;
+  };
+  retry_on_response?:RetryOnResponse;
   request_body?: RequestBody;
+}
+export interface RetryOnResponse {
+  payload?: Payload;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -92,6 +100,19 @@ export interface ExpectedResponse {
   content_type?: string;
   payload?: Payload;
 }
+/**
+ * Optionally save data from the response in the environment.
+ */
+export interface SaveInEnvironment {
+  payload?: SaveInEnvironmentMapping;
+  // @TODO add for headers
+}
+/**
+ * Describes data that we want to save in the environment.
+ * The key is the name we want to use to refer to the data.
+ * The value is the path to the data in the response.
+ */
+export type SaveInEnvironmentMapping = { [k: string]: string };
 /**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "ActualResponse".

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
+import { type ChapterRequest, type ActualResponse, type Parameter, RetryOnResponse } from './types/story.types'
 import { Agent } from 'https'
 
 // A lightweight client for testing the API
@@ -13,9 +13,40 @@ export default class ChapterReader {
     this.admin_password = process.env.OPENSEARCH_PASSWORD
   }
 
-  async read (chapter: ChapterRequest): Promise<ActualResponse> {
+  get_params(chapter: ChapterRequest, environment: Record<string, any>): Record<string, Parameter> {
+    const params = { ...chapter.parameters }
+    for (const [key, value] of Object.entries(chapter.parameters_from_environment ?? {})) {
+      params[key] = environment[value]
+    }
+    return params
+  }
+
+  needs_to_retry(response: ActualResponse, retry_on_response: RetryOnResponse): boolean {
+    const payload_to_check = retry_on_response.payload || {}
+    if(typeof response.payload !== 'object') return response.payload !== payload_to_check
+    const response_payload = response.payload as Record<string, any>
+    for (const [key, value] of Object.entries(payload_to_check)) {
+      if (response_payload[key] !== value) return false
+    }
+    return true
+  }
+
+  async read_with_retry (chapter: ChapterRequest, retry_on_response: RetryOnResponse, environment: Record<string, any>, max_attempts: number, backoff: number, attempts: number): Promise<ActualResponse> {
+    const response = await this.read(chapter, environment);
+    if (attempts >= max_attempts || !this.needs_to_retry(response, retry_on_response)) return response
+    await this.sleep_for_ms(backoff)
+    return await this.read_with_retry(chapter, retry_on_response, environment, max_attempts, backoff, attempts + 1)
+  }
+
+  async sleep_for_ms (ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  async read (chapter: ChapterRequest, environment: Record<string, any>): Promise<ActualResponse> {
     const response: Record<string, any> = {}
-    const [url, params] = this.#parse_url(chapter.path, chapter.parameters ?? {})
+    const params_with_values = this.get_params(chapter, environment)
+    console.log("params_with_values: ", params_with_values)
+    const [url, params] = this.#parse_url(chapter.path, params_with_values ?? {})
     await axios.request({
       url,
       auth: {

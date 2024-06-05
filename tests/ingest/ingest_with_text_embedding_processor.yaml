@@ -11,7 +11,60 @@ epilogues:
   - path: /books
     method: DELETE
     status: [200, 404]
+  # - path: /_plugins/_ml/model_groups/{model_group_id}
+  #   method: DELETE
+  #   status: [200, 404]
+  #   parameters_from_environment:
+  #     model_group_id: test_model_group_id
+  - path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    status: [200, 404]
+    parameters_from_environment:
+      model_id: test_model_id
 chapters:
+  - synopsis: Configure cluster
+    path: /_cluster/settings
+    method: PUT
+    request_body:
+      payload:
+        persistent:
+          plugins:
+            ml_commons:
+              only_run_on_ml_node: false
+  # - synopsis: Create model group
+  #   path: /_plugins/_ml/model_groups/_register
+  #   method: POST
+  #   request_body:
+  #     payload:
+  #       name: "NLP_Group"
+  #       description: "Model group for NLP models"
+  #   remember:
+  #     payload:
+  #       test_model_group_id: "model_group_id"
+  - synopsis: Create model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request_body:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: "1.0.1"
+        model_format: TORCH_SCRIPT
+        # @TODO: Add model group, need to support passing things from the environment
+        # to the request body
+    remember:
+      payload:
+        model_registration_task_id: "task_id"
+  # - synopsis: Wait for model registration task to complete and keep the model id
+  #   path: /_plugins/_ml/tasks/{task_id}
+  #   method: GET
+  #   retry_on_response:
+  #     payload:
+  #       status: "CREATED"
+  #   parameters_from_environment:
+  #     task_id: model_registration_task_id
+  #   remember:
+  #     payload:
+  #       model_id: "model_id"
   - synopsis: Create ingest pipeline with a text embedding processor
     path: /_ingest/pipeline/{id}
     method: PUT

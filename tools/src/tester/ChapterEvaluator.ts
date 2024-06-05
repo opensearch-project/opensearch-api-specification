@@ -1,5 +1,5 @@
-import { type Chapter, type ActualResponse } from './types/story.types'
-import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
+import { type Chapter, type ActualResponse, SaveInEnvironment, SaveInEnvironmentMapping } from './types/story.types'
+import { type ChapterEvaluation, type Evaluation, Result, EvaluationEnvironment } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
@@ -21,19 +21,22 @@ export default class ChapterEvaluator {
     this.schema_validator = SharedResources.get_instance().schema_validator
   }
 
-  async evaluate (skipped: boolean): Promise<ChapterEvaluation> {
+  async evaluate (skipped: boolean, environment: EvaluationEnvironment): Promise<ChapterEvaluation> {
     if (skipped) return { title: this.chapter.synopsis, overall: { result: Result.SKIPPED } }
     const operation = this.spec_parser.locate_operation(this.chapter)
-    const response = await this.chapter_reader.read(this.chapter)
+    const response = await this.chapter_reader.read(this.chapter, environment)
     const params = this.#evaluate_parameters(operation)
     const request_body = this.#evaluate_request_body(operation)
     const status = this.#evaluate_status(response)
     const payload = this.#evaluate_payload(operation, response)
+    console.log("remember: ", this.chapter.remember)
+    const updated_environment = this.chapter.remember? this.#evaluate_environment(this.chapter.remember, response) : {}
     return {
       title: this.chapter.synopsis,
       overall: { result: overall_result(Object.values(params).concat([request_body, status, payload])) },
       request: { parameters: params, requestBody: request_body },
-      response: { status, payload }
+      response: { status, payload },
+      updated_environment: updated_environment
     }
   }
 
@@ -73,5 +76,26 @@ export default class ChapterEvaluator {
     if (schema == null && content != null) return { result: Result.PASSED }
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
     return this.schema_validator.validate(schema, response.payload)
+  }
+
+  #evaluate_environment(remember: SaveInEnvironment, actualResponse: ActualResponse): EvaluationEnvironment {
+    if(remember.payload) {
+      return this.#evaluate_environment_for_payload(remember.payload, actualResponse)
+    }
+    // @TODO support headers environments
+    return {}
+  }
+
+  #evaluate_environment_for_payload (payload_remember: SaveInEnvironmentMapping, actualResponse: ActualResponse): EvaluationEnvironment {
+    const environment: EvaluationEnvironment = {}
+    // @TODO support saving environments for the whole payload no matter if it's an object or not
+    if(actualResponse.payload && typeof actualResponse.payload === 'object' ) {
+      for (const key in payload_remember) {
+        const payload_as_object = actualResponse.payload as Record<string, any>
+        const payload_field = payload_remember[key]
+        environment[key] = payload_as_object[payload_field]
+      }
+    }
+    return environment
   }
 }
