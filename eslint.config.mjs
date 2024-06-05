@@ -52,6 +52,7 @@ export default [
           allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false
         }
       ],
+      '@typescript-eslint/require-await': 'error',
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',
