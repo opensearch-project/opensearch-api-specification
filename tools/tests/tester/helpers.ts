@@ -11,7 +11,7 @@ import YAML from 'yaml'
 import type { ChapterEvaluation, Evaluation, StoryEvaluation } from '../../src/tester/types/eval.types'
 import { read_yaml } from '../../helpers'
 import StoryEvaluator from '../../src/tester/StoryEvaluator'
-import SpecParser from '../../src/tester/SpecParser'
+import OperationLocator from '../../src/tester/OperationLocator'
 import ChapterReader from '../../src/tester/ChapterReader'
 import SchemaValidator from '../../src/tester/SchemaValidator'
 import ChapterEvaluator from '../../src/tester/ChapterEvaluator'
@@ -23,7 +23,7 @@ import * as process from 'node:process'
 
 export function construct_tester_components (spec_path: string): {
   specification: OpenAPIV3.Document
-  spec_parser: SpecParser
+  operation_locator: OperationLocator
   opensearch_http_client: OpenSearchHttpClient
   chapter_reader: ChapterReader
   schema_validator: SchemaValidator
@@ -33,7 +33,7 @@ export function construct_tester_components (spec_path: string): {
   test_runner: TestRunner
 } {
   const specification: OpenAPIV3.Document = read_yaml(spec_path)
-  const spec_parser = new SpecParser(specification)
+  const operation_locator = new OperationLocator(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
     insecure: true,
     username: process.env.OPENSEARCH_USERNAME ?? 'admin',
@@ -41,13 +41,13 @@ export function construct_tester_components (spec_path: string): {
   })
   const chapter_reader = new ChapterReader(opensearch_http_client)
   const schema_validator = new SchemaValidator(specification)
-  const chapter_evaluator = new ChapterEvaluator(spec_parser, chapter_reader, schema_validator)
+  const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator)
   const story_evaluator = new StoryEvaluator(chapter_reader, chapter_evaluator)
   const result_logger = new NoOpResultLogger()
   const test_runner = new TestRunner(story_evaluator, result_logger)
   return {
     specification,
-    spec_parser,
+    operation_locator,
     opensearch_http_client,
     chapter_reader,
     schema_validator,

@@ -12,16 +12,16 @@ import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.ty
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
-import type SpecParser from './SpecParser'
+import type OperationLocator from './OperationLocator'
 import type SchemaValidator from './SchemaValidator'
 
 export default class ChapterEvaluator {
-  private readonly _spec_parser: SpecParser
+  private readonly _operation_locator: OperationLocator
   private readonly _chapter_reader: ChapterReader
   private readonly _schema_validator: SchemaValidator
 
-  constructor (spec_parser: SpecParser, chapter_reader: ChapterReader, schema_validator: SchemaValidator) {
-    this._spec_parser = spec_parser
+  constructor (spec_parser: OperationLocator, chapter_reader: ChapterReader, schema_validator: SchemaValidator) {
+    this._operation_locator = spec_parser
     this._chapter_reader = chapter_reader
     this._schema_validator = schema_validator
   }
@@ -29,7 +29,7 @@ export default class ChapterEvaluator {
   async evaluate (chapter: Chapter, skip: boolean): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
     const response = await this._chapter_reader.read(chapter)
-    const operation = this._spec_parser.locate_operation(chapter)
+    const operation = this._operation_locator.locate_operation(chapter)
     if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
     const params = this.#evaluate_parameters(chapter, operation)
     const request_body = this.#evaluate_request_body(chapter, operation)

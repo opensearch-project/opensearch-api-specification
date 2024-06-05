@@ -20,7 +20,7 @@ import {
 } from '../OpenSearchHttpClient'
 import ChapterReader from './ChapterReader'
 import ChapterEvaluator from './ChapterEvaluator'
-import SpecParser from './SpecParser'
+import OperationLocator from './OperationLocator'
 import SchemaValidator from './SchemaValidator'
 import StoryEvaluator from './StoryEvaluator'
 import { ConsoleResultLogger } from './ResultLogger'
@@ -50,7 +50,7 @@ const spec = (new OpenApiMerger(opts.specPath, LogLevel.error)).merge()
 
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli(opts))
 const chapter_reader = new ChapterReader(http_client)
-const chapter_evaluator = new ChapterEvaluator(new SpecParser(spec), chapter_reader, new SchemaValidator(spec))
+const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec), chapter_reader, new SchemaValidator(spec))
 const story_evaluator = new StoryEvaluator(chapter_reader, chapter_evaluator)
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)
 const runner = new TestRunner(story_evaluator, result_logger)
