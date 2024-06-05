@@ -7,7 +7,8 @@
 * compatible open source license.
 */
 
-import { construct_tester_components, load_expected_evaluation, scrub_errors } from './helpers'
+import { construct_tester_components, flatten_errors, load_expected_evaluation } from './helpers'
+import { type StoryEvaluation } from '../../src/tester/types/eval.types'
 
 test('stories folder', async () => {
   const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
@@ -15,12 +16,12 @@ test('stories folder', async () => {
 
   expect(result.failed).toBeTruthy()
 
-  const actual_evaluations: any[] = result.evaluations
+  const actual_evaluations: Array<Omit<StoryEvaluation, 'full_path'>> = []
 
-  for (const evaluation of actual_evaluations) {
-    expect(evaluation.full_path.endsWith(evaluation.display_path)).toBeTruthy()
-    scrub_errors(evaluation)
-    delete evaluation.full_path
+  for (const evaluation of result.evaluations) {
+    const { full_path, ...rest } = flatten_errors(evaluation)
+    expect(full_path.endsWith(rest.display_path)).toBeTruthy()
+    actual_evaluations.push(rest)
   }
 
   const skipped = load_expected_evaluation('skipped', true)
