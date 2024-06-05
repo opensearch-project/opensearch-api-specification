@@ -1,0 +1,33 @@
+$schema: ../../../../../../../json_schemas/test_story.schema.yaml
+
+description: This story should failed due invalid data.
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /30
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: This chapter should fail because the parameter is invalid.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: 30
+  - synopsis: This chapter should fail because the request body is invalid.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request_body:
+      payload:
+        aliases: {}
+  - synopsis: This chapter should fail because the response is invalid.
+    path: /{index}
+    method: DELETE
+    parameters:
+      index: books
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
