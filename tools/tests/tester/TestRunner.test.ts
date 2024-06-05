@@ -7,20 +7,19 @@
 * compatible open source license.
 */
 
-import { read_yaml } from '../../helpers'
-import TestsRunner from '../../src/tester/TestsRunner'
-import { type OpenAPIV3 } from 'openapi-types'
-import { load_expected_evaluation, scrub_errors } from './helpers'
+import { construct_tester_components, load_expected_evaluation, scrub_errors } from './helpers'
 
 test('stories folder', async () => {
-  // The fallback password must match the default password specified in .github/opensearch-cluster/docker-compose.yml
-  process.env.OPENSEARCH_PASSWORD = process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
-  const spec = read_yaml('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
-  const runner = new TestsRunner(spec as OpenAPIV3.Document, 'tools/tests/tester/fixtures/stories', {})
-  const actual_evaluations = await runner.run(true) as any[]
-  for (const evaluation of actual_evaluations) scrub_errors(evaluation)
+  const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
+  const result = await test_runner.run('tools/tests/tester/fixtures/stories', true)
+
+  expect(result.failed).toBeTruthy()
+
+  const actual_evaluations: any[] = result.evaluations
+
   for (const evaluation of actual_evaluations) {
     expect(evaluation.full_path.endsWith(evaluation.display_path)).toBeTruthy()
+    scrub_errors(evaluation)
     delete evaluation.full_path
   }
 

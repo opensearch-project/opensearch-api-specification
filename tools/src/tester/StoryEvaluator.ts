@@ -22,15 +22,13 @@ export interface StoryFile {
 export default class StoryEvaluator {
   private readonly _chapter_reader: ChapterReader
   private readonly _chapter_evaluator: ChapterEvaluator
-  private readonly _dry_run: boolean
 
-  constructor (chapter_reader: ChapterReader, chapter_evaluator: ChapterEvaluator, dry_run: boolean) {
+  constructor (chapter_reader: ChapterReader, chapter_evaluator: ChapterEvaluator) {
     this._chapter_reader = chapter_reader
     this._chapter_evaluator = chapter_evaluator
-    this._dry_run = dry_run
   }
 
-  async evaluate ({ story, display_path, full_path }: StoryFile): Promise<StoryEvaluation> {
+  async evaluate ({ story, display_path, full_path }: StoryFile, dry_run: boolean = false): Promise<StoryEvaluation> {
     if (story.skip) {
       return {
         result: Result.SKIPPED,
@@ -40,9 +38,9 @@ export default class StoryEvaluator {
         chapters: []
       }
     }
-    const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [])
-    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors)
-    const { evaluations: epilogues } = await this.#evaluate_supplemental_chapters(story.epilogues ?? [])
+    const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [], dry_run)
+    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run)
+    const { evaluations: epilogues } = await this.#evaluate_supplemental_chapters(story.epilogues ?? [], dry_run)
     return {
       display_path,
       full_path,
@@ -54,10 +52,10 @@ export default class StoryEvaluator {
     }
   }
 
-  async #evaluate_chapters (chapters: Chapter[], has_errors: boolean): Promise<ChapterEvaluation[]> {
+  async #evaluate_chapters (chapters: Chapter[], has_errors: boolean, dry_run: boolean): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      if (this._dry_run) {
+      if (dry_run) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
@@ -69,12 +67,12 @@ export default class StoryEvaluator {
     return evaluations
   }
 
-  async #evaluate_supplemental_chapters (chapters: SupplementalChapter[]): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
+  async #evaluate_supplemental_chapters (chapters: SupplementalChapter[], dry_run: boolean): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
     let has_errors = false
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       const title = `${chapter.method} ${chapter.path}`
-      if (this._dry_run) {
+      if (dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
         const response = await this._chapter_reader.read(chapter)

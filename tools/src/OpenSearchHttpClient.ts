@@ -1,27 +1,40 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { Option } from '@commander-js/extra-typings'
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import * as https from 'node:https'
 import { sleep } from '../helpers'
 
+const DEFAULT_URL = 'https://localhost:9200'
+const DEFAULT_USER = 'admin'
+const DEFAULT_INSECURE = false
+
 export const OPENSEARCH_URL_OPTION = new Option('--opensearch-url <url>', 'URL at which the OpenSearch cluster is accessible')
-  .default('https://localhost:9200')
+  .default(DEFAULT_URL)
   .env('OPENSEARCH_URL')
 
 export const OPENSEARCH_USERNAME_OPTION = new Option('--opensearch-username <username>', 'username to use when authenticating with OpenSearch')
-  .default('admin')
+  .default(DEFAULT_USER)
   .env('OPENSEARCH_USERNAME')
 
 export const OPENSEARCH_PASSWORD_OPTION = new Option('--opensearch-password <password>', 'password to use when authenticating with OpenSearch')
   .env('OPENSEARCH_PASSWORD')
 
 export const OPENSEARCH_INSECURE_OPTION = new Option('--opensearch-insecure', 'disable SSL/TLS certificate verification when connecting to OpenSearch')
-  .default(false)
+  .default(DEFAULT_INSECURE)
 
 export interface OpenSearchHttpClientOptions {
-  url: string
+  url?: string
   username?: string
   password?: string
-  insecure: boolean
+  insecure?: boolean
 }
 
 export type OpenSearchHttpClientCliOptions = { [K in keyof OpenSearchHttpClientOptions as `opensearch${Capitalize<K>}`]: OpenSearchHttpClientOptions[K] }
@@ -56,16 +69,16 @@ export interface OpenSearchInfo {
 export class OpenSearchHttpClient {
   private readonly _axios: AxiosInstance
 
-  constructor (opts: OpenSearchHttpClientOptions) {
+  constructor (opts?: OpenSearchHttpClientOptions) {
     this._axios = axios.create({
-      baseURL: opts.url,
-      auth: opts.username !== undefined && opts.password !== undefined
+      baseURL: opts?.url ?? DEFAULT_URL,
+      auth: opts?.username !== undefined && opts.password !== undefined
         ? {
             username: opts.username,
             password: opts.password
           }
         : undefined,
-      httpsAgent: new https.Agent({ rejectUnauthorized: !opts.insecure })
+      httpsAgent: new https.Agent({ rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE) })
     })
   }
 
