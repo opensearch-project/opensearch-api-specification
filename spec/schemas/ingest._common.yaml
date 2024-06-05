@@ -28,8 +28,6 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         _meta:
           $ref: '_common.yaml#/components/schemas/Metadata'
-      required:
-        - _meta
     ProcessorContainer:
       type: object
       properties:
@@ -101,6 +99,8 @@ components:
           $ref: '#/components/schemas/CircleProcessor'
         inference:
           $ref: '#/components/schemas/InferenceProcessor'
+        text_embedding:
+          $ref: '#/components/schemas/TextEmbeddingProcessor'
       minProperties: 1
       maxProperties: 1
     AttachmentProcessor:
@@ -870,3 +870,22 @@ components:
             Specifies the type of the predicted field to write.
             Valid values are: `string`, `number`, `boolean`.
           type: string
+    TextEmbeddingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            model_id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of a text field to a vector field.
+              type: object
+              additionalProperties:
+                type: string
+            description:
+              type: string
+              description: A brief description of the processor.
+          required:
+            - model_id
+            - field_map
