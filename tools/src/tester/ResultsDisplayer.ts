@@ -30,7 +30,7 @@ export default class ResultsDisplayer {
 
   #display_story (): void {
     const result = this.evaluation.result
-    const message = this.evaluation.full_path
+    const message = this.evaluation.message || this.evaluation.full_path
     const title = ansi.cyan(ansi.b(this.evaluation.display_path))
     this.#display_evaluation({ result, message }, title)
   }

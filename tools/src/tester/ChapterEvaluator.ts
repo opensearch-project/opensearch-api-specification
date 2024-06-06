@@ -29,12 +29,13 @@ export default class ChapterEvaluator {
     const request_body = this.#evaluate_request_body(operation)
     const status = this.#evaluate_status(response)
     const payload = this.#evaluate_payload(operation, response)
+    const output_values = extract_output_values(response, this.chapter.output)
     return {
       title: this.chapter.synopsis,
-      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload])) },
+      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload, output_values])) },
       request: { parameters: params, requestBody: request_body },
       response: { status, payload },
-      output_values: extract_output_values(response, this.chapter.output)
+      output_values: output_values
     }
   }
 

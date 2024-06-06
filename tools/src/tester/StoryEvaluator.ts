@@ -3,7 +3,7 @@ import { type ChapterEvaluation, Result, type StoryEvaluation, ChaptersEvaluatio
 import ChapterEvaluator from './ChapterEvaluator'
 import type ChapterReader from './ChapterReader'
 import SharedResources from './SharedResources'
-import { extract_output_values, overall_result } from './helpers'
+import { check_story_variables, extract_output_values, overall_result } from './helpers'
 
 export interface StoryFile {
   display_path: string
@@ -33,6 +33,17 @@ export default class StoryEvaluator {
         full_path: this.full_path,
         description: this.story.description,
         chapters: []
+      }
+    }
+    const variables_error = check_story_variables(this.story)
+    if (variables_error) {
+      return {
+        result: Result.ERROR,
+        display_path: this.display_path,
+        full_path: this.full_path,
+        description: this.story.description,
+        chapters: [],
+        message: variables_error
       }
     }
     const story_outputs: StoryOutputs = {}
