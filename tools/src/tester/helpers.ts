@@ -1,4 +1,4 @@
-import { type Evaluation, Result, EvaluationWithOutput, StoryOutputs, StoryEvaluation } from './types/eval.types'
+import { type Evaluation, Result, EvaluationWithOutput, StoryOutputs, StoryEvaluation, OutputReference } from './types/eval.types'
 import { ActualResponse, ChapterRequest, Output, Parameter, Payload, Story } from './types/story.types'
 import _ from 'lodash'
 
@@ -67,24 +67,24 @@ export function resolve_value(payload: Payload, story_outputs: StoryOutputs): Pa
   }
 }
 
-function parse_reference(str: string): string[] | undefined {
+function parse_reference(str: string): OutputReference | undefined {
   if (str.startsWith('${') && str.endsWith('}')) {
-    return str.slice(2, -1).split('.', 2)
+    const spl = str.slice(2, -1).split('.', 2)
+    return { chapter_id: spl[0], output_name: spl[1] }
   }
   return undefined
 }
 
 export function resolve_string(str: string, story_outputs: StoryOutputs): any {
-  const path = parse_reference(str)
-  if (path) {
-    const [chapter_id, output_name] = path
-    return story_outputs[chapter_id][output_name]
+  const ref = parse_reference(str)
+  if (ref) {
+    return story_outputs[ref.chapter_id][ref.output_name]
   } else {
     return str
   }
 }
 
-function extract_params_variables(parameters: Record<string, Parameter>, variables: Set<string[]>): void {
+function extract_params_variables(parameters: Record<string, Parameter>, variables: Set<OutputReference>): void {
   Object.values((parameters || {})).forEach((param) => {
     if (typeof param === 'string') {
       const ref = parse_reference(param)
@@ -95,7 +95,7 @@ function extract_params_variables(parameters: Record<string, Parameter>, variabl
   })
 }
 
-function extract_request_body_variables(request_body: Payload, variables: Set<string[]>): void {
+function extract_request_body_variables(request_body: Payload, variables: Set<OutputReference>): void {
   const request_body_type = typeof request_body
   switch (request_body_type) {
     case 'string':
@@ -121,15 +121,15 @@ function extract_request_body_variables(request_body: Payload, variables: Set<st
 }
 
 export function check_used_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): string | undefined {
-  const variables = new Set<string[]>()
+  const variables = new Set<OutputReference>()
   extract_params_variables(chapter.parameters ?? {}, variables)
   extract_request_body_variables(chapter.request_body?.payload ?? {}, variables)
-  for (const [chapter_id, output] of variables) {
+  for (const { chapter_id, output_name } of variables) {
     if (story_outputs[chapter_id] == undefined) {
       return `Chapter makes reference to non existent chapter "${chapter_id}`
     }
-    if (story_outputs[chapter_id][output] == undefined) {
-      return `Chapter makes reference to non existent output "${output}" in chapter "${chapter_id}"`
+    if (story_outputs[chapter_id][output_name] == undefined) {
+      return `Chapter makes reference to non existent output "${output_name}" in chapter "${chapter_id}"`
     }
   }
 }

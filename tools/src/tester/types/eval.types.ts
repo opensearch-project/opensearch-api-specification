@@ -63,3 +63,8 @@ export enum Result {
 export type ChapterOutput = Record<string, any>
 
 export type StoryOutputs = Record<string, ChapterOutput>
+
+export interface OutputReference {
+  chapter_id: string
+  output_name: string
+}
