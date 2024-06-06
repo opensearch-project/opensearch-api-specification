@@ -36,7 +36,7 @@ export interface ChapterEvaluation {
 export interface Evaluation {
   result: Result
   message?: string
-  error?: Error
+  error?: Error | string
 }
 
 export enum Result {

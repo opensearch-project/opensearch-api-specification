@@ -284,12 +284,10 @@ The dump-cluster-spec tool connects to an OpenSearch cluster which has the [open
 
 #### Arguments
 
-- `--host <host>`: The host at which the cluster is accessible, defaults to `localhost`.
-- `--port <port>`: The port at which the cluster is accessible, defaults to `9200`.
-- `--no-https`: Disable HTTPS, defaults to using HTTPS.
-- `--insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
-- `--username <username>`: The username to authenticate with the cluster, defaults to `admin`, only used when `--password` is set.
-- `--password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
+- `--opensearch-url <url>`: The URL at which the cluster is accessible, defaults to `https://localhost:9200`.
+- `--opensearch-insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
+- `--opensearch-username <username>`: The username to authenticate with the cluster, defaults to `admin`, only used when `--opensearch-password` is set.
+- `--opensearch-password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
 - `--output <path>`: The path to write the dumped spec to, defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
 
 #### Example
@@ -308,7 +306,7 @@ docker run \
     -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
     opensearch-with-api-plugin
 
-OPENSEARCH_PASSWORD="${OPENSEARCH_PASSWORD}" npm run dump-cluster-spec -- --insecure
+OPENSEARCH_PASSWORD="${OPENSEARCH_PASSWORD}" npm run dump-cluster-spec -- --opensearch-insecure
 
 docker stop opensearch
 ```
