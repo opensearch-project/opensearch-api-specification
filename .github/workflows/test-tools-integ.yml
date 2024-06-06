@@ -1,4 +1,4 @@
-name: Test Tools
+name: Test Tools (Integration)
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
       - 'jest.config.js'
       - 'tsconfig.json'
       - 'tools/**'
+      - '.github/workflows/test-tools*.yml'
   pull_request:
     branches: ['**']
     paths:
@@ -17,6 +18,7 @@ on:
       - 'jest.config.js'
       - 'tsconfig.json'
       - 'tools/**'
+      - '.github/workflows/test-tools*.yml'
 
 jobs:
   test:
@@ -43,8 +45,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Lint
-        run: npm run lint
-
       - name: Tests
-        run: npm run test
+        run: |
+          npm run test:integ -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+            token: ${{ secrets.CODECOV_TOKEN }}
