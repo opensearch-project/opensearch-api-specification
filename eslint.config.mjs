@@ -72,6 +72,7 @@ export default [
       'new-cap': 'off',
       'no-return-assign': 'error',
       'object-shorthand': 'error',
+      'no-constant-condition': 'off',
       'license-header/header': [
         'error',
         [
@@ -98,7 +99,8 @@ export default [
     },
     rules: {
       'yml/no-empty-document': 'off',
-      'yml/quotes': ['error', { prefer: 'single' }]
+      'yml/quotes': 'off',
+      'yml/plain-scalar': 'off'
     }
   }
 ]
