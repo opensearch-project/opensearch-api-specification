@@ -30,7 +30,7 @@ export default class SupersededOpsGenerator {
       const superseded_path = this.copy_params(superseded_by, path)
       const path_entry = _.entries(spec.paths as Document).find(([path, _]) => regex.test(path))
       if (path_entry != null) spec.paths[superseded_path] = this.path_object(path_entry[1], operation_keys)
-      else this.logger.warn(`Path not found: ${superseded_by}`)
+      else this.logger.warn(`Warning: ${path} is superseded by a path that does not exist: ${superseded_by}`)
     }
   }
 
