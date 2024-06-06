@@ -1,7 +1,7 @@
 import { type Chapter, type ActualResponse } from './types/story.types'
-import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
+import { type ChapterEvaluation, type Evaluation, Result, type StoryOutputs, ChapterOutput, ChaptersEvaluations } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
-import { overall_result } from './helpers'
+import { extract_output_values, overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
 import SharedResources from './SharedResources'
 import type SpecParser from './SpecParser'
@@ -21,10 +21,10 @@ export default class ChapterEvaluator {
     this.schema_validator = SharedResources.get_instance().schema_validator
   }
 
-  async evaluate (skipped: boolean): Promise<ChapterEvaluation> {
+  async evaluate (skipped: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skipped) return { title: this.chapter.synopsis, overall: { result: Result.SKIPPED } }
     const operation = this.spec_parser.locate_operation(this.chapter)
-    const response = await this.chapter_reader.read(this.chapter)
+    const response = await this.chapter_reader.read(this.chapter, story_outputs)
     const params = this.#evaluate_parameters(operation)
     const request_body = this.#evaluate_request_body(operation)
     const status = this.#evaluate_status(response)
@@ -33,7 +33,8 @@ export default class ChapterEvaluator {
       title: this.chapter.synopsis,
       overall: { result: overall_result(Object.values(params).concat([request_body, status, payload])) },
       request: { parameters: params, requestBody: request_body },
-      response: { status, payload }
+      response: { status, payload },
+      output_values: extract_output_values(response, this.chapter.output)
     }
   }
 

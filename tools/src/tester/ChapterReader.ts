@@ -1,6 +1,9 @@
 import axios from 'axios'
-import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
+import { type ChapterRequest, type ActualResponse, type Parameter, RequestBody, Payload } from './types/story.types'
 import { Agent } from 'https'
+import { StoryOutputs } from './types/eval.types'
+import { string } from 'yaml/dist/schema/common/string'
+import { resolve_params, resolve_value } from './helpers'
 
 // A lightweight client for testing the API
 export default class ChapterReader {
@@ -13,9 +16,11 @@ export default class ChapterReader {
     this.admin_password = process.env.OPENSEARCH_PASSWORD
   }
 
-  async read (chapter: ChapterRequest): Promise<ActualResponse> {
+  async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
     const response: Record<string, any> = {}
-    const [url, params] = this.#parse_url(chapter.path, chapter.parameters ?? {})
+    const resolved_params = resolve_params(chapter.parameters || {}, story_outputs)
+    const [url, params] = this.#parse_url(chapter.path, resolved_params)
+    const request_data = chapter.request_body?.payload ? resolve_value(chapter.request_body.payload, story_outputs) : undefined
     await axios.request({
       url,
       auth: {
@@ -25,7 +30,7 @@ export default class ChapterReader {
       httpsAgent: new Agent({ rejectUnauthorized: false }),
       method: chapter.method,
       params,
-      data: chapter.request_body?.payload
+      data: request_data
     }).then(r => {
       response.status = r.status
       response.content_type = r.headers['content-type'].split(';')[0]
@@ -51,4 +56,5 @@ export default class ChapterReader {
     const url = this.url + parsed_path
     return [url, query_params]
   }
+
 }

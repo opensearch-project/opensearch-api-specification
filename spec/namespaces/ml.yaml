@@ -1,0 +1,330 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch ML API
+  description: OpenSearch ML API
+  version: 1.0.0
+paths:
+  /_plugins/_ml/model_groups/_register:
+    post:
+      operationId: ml.register_model_group.0
+      description: Registers a model group.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model_group@200'
+  /_plugins/_ml/model_groups/{model_group_id}:
+    get:
+      operationId: ml.get_model_group.0
+      description: Retrieves a model group.
+      parameters:
+        - name: model_group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_model_group@200'
+        '404':
+          description: The model group was not found.
+    delete:
+      operationId: ml.delete_model_group.0
+      description: Deletes a model group.
+      parameters:
+        - name: model_group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The model group was deleted.
+        '404':
+          description: The model group was not found.
+  /_plugins/_ml/models/_register:
+    post:
+      operationId: ml.register_model.0
+      description: Registers a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model@200'
+  /_plugins/_ml/models/{model_id}:
+    delete:
+      operationId: ml.delete_model.0
+      description: Deletes a model.
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The model was deleted.
+        '404':
+          description: The model was not found.
+  /_plugins/_ml/tasks/{task_id}:
+    get:
+      operationId: ml.get_task.0
+      description: Retrieves a task.
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_task@200'
+  /_plugins/_ml/models/_search:
+    get:
+      operationId: ml.search_models.0
+      description: Searches for models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_models'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_models@200'
+components:
+  requestBodies:
+    ml.register_model_group:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name: 
+                type: string
+                description: The model group name.
+              description:
+                type: string
+                description: The model group description.
+              access_mode:
+                type: string
+                description: The model group access mode.
+                enum: [private, public, restricted]
+              backend_roles:
+                type: array
+                items:
+                  type: string
+                description: The backend roles.
+              add_all_backend_roles:
+                type: boolean
+                description: The add all backend roles.
+            required:
+              - name
+    ml.register_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name: 
+                type: string
+                description: The model name.
+              version:
+                type: string
+                description: The model version.
+              model_format:
+                type: string
+                description: The portable format of the model file.
+                enum: [TORCH_SCRIPT, ONNX]
+              description:
+                type: string
+                description: The model description.
+              model_group_id:
+                type: string
+                description: The ID of the model group to which to register the model.
+            required:
+              - name
+              - version
+              - model_format
+    ml.search_models:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                type: object
+                # TODO: Define the query schema
+                description: The query.
+              size:
+                type: integer
+                description: The number of models to return.
+            required:
+              - query
+              - size
+  responses:
+    ml.register_model_group@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_group_id:
+                type: string
+                description: The model group ID.
+              status:
+                type: string
+                description: The status.
+            required:
+              - model_group_id
+              - status
+    ml.get_model_group@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model group name.
+              latest_version:
+                type: number
+                description: The latest version.
+              description:
+                type: string
+                description: The model group description.
+              access:
+                type: string
+                description: The model group access.
+            required:
+              - name
+              - latest_version
+              - description
+              - access
+    ml.search_model_group@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                $ref: '#/components/schemas/ml.search_model_group.hits'
+            required:
+              - hits
+    ml.register_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              task_id:
+                type: string
+                description: The task ID.
+              model_id:
+                type: string
+                description: The model ID.
+              status:
+                type: string
+                description: The status.
+            required:
+              # model_id doesn't seem to be required in the response
+              # it can be eventually retrieved through the task_id
+              - task_id
+              - status
+    ml.get_task@200:
+      content:
+        application/json:
+          schema:
+            # https://github.com/opensearch-project/ml-commons/blob/9b072c43fa99c0dfb86373e5ae95c86ccc94233f/common/src/main/java/org/opensearch/ml/common/MLTask.java#L37
+            type: object
+            properties:
+              model_id:
+                type: string
+                description: The model ID.
+              state:
+                type: string
+                description: The state.
+                enum:
+                  - CREATED
+                  - RUNNING
+                  - COMPLETED
+                  - FAILED
+                  - CANCELLED
+                  - COMPLETED_WITH_ERROR
+            required:
+              - state
+    ml.search_models@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                $ref: '#/components/schemas/ml.search_models.hits'
+            required:
+              - hits
+  schemas:
+    ml.search_model_group.hits:
+      type: object
+      properties:
+        total:
+          type: object
+          properties:
+            value:
+              type: integer
+              description: The total number of hits.
+            relation:
+              type: string
+              description: The relation.
+          required:
+            - value
+            - relation
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml.search_model_group.hits.hit'
+      required:
+        - total
+        - hits
+    ml.search_model_group.hits.hit:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The hit ID.
+      required:
+        - _id
+    ml.search_models.hits:
+      type: object
+      properties:
+        total:
+          type: object
+          properties:
+            value:
+              type: integer
+              description: The total number of hits.
+            relation:
+              type: string
+              description: The relation.
+          required:
+            - value
+            - relation
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml.search_models.hits.hit'
+      required:
+        - total
+        - hits
+    ml.search_models.hits.hit:
+      type: object
+      properties:
+        _index:
+          type: string
+          description: The index.
+        _id:
+          type: string
+          description: The hit ID.
+        model_id:
+          type: string
+          description: The model ID.
+      required:
+        - _id
+        - model_id
+

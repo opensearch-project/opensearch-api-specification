@@ -1,0 +1,38 @@
+$schema: ../json_schemas/test_story.schema.yaml
+
+skip: false
+description: |
+  This test story checks that we can create a model group
+epilogues:
+  - path: /_plugins/_ml/model_groups/{model_group_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+chapters:
+  - synopsis: Configure cluster
+    path: /_cluster/settings
+    method: PUT
+    request_body:
+      payload:
+        persistent:
+          plugins:
+            ml_commons:
+              only_run_on_ml_node: false
+  - synopsis: Create model group
+    id: create_model_group
+    path: /_plugins/_ml/model_groups/_register
+    method: POST
+    request_body:
+      payload:
+        name: "NLP_Group"
+        description: "Model group for NLP models"
+    output:
+      test_model_group_id: "payload.model_group_id"
+  - synopsis: Query model group
+    path: /_plugins/_ml/model_groups/{model_group_id}
+    method: GET
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+    response:
+      status: 200
