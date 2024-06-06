@@ -11,7 +11,7 @@ import AJV from 'ajv'
 import addFormats from 'ajv-formats'
 import OpenApiMerger from '../merger/OpenApiMerger'
 import { type ValidationError } from '../types'
-import { LogLevel } from '../Logger'
+import { type Logger } from '../Logger'
 
 const IGNORED_ERROR_PREFIXES = [
   'can\'t resolve reference', // errors in referenced schemas will also cause reference errors
@@ -26,11 +26,13 @@ const ADDITIONAL_KEYWORDS = [
 ]
 
 export default class SchemasValidator {
+  logger: Logger
   root_folder: string
   spec: Record<string, any> = {}
   ajv: AJV
 
-  constructor (root_folder: string) {
+  constructor (root_folder: string, logger: Logger) {
+    this.logger = logger
     this.root_folder = root_folder
     this.ajv = new AJV({ strict: true, discriminator: true })
     addFormats(this.ajv)
@@ -38,7 +40,7 @@ export default class SchemasValidator {
   }
 
   validate (): ValidationError[] {
-    this.spec = new OpenApiMerger(this.root_folder, LogLevel.error).merge().components as Record<string, any>
+    this.spec = new OpenApiMerger(this.root_folder, this.logger).merge().components as Record<string, any>
     const named_schemas_errors = this.validate_named_schemas()
     if (named_schemas_errors.length > 0) return named_schemas_errors
     return [

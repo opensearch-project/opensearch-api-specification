@@ -10,14 +10,14 @@
 import { type OperationSpec, type SupersededOperationMap } from 'types'
 import _ from 'lodash'
 import { read_yaml } from '../../helpers'
-import { Logger, LogLevel } from '../Logger'
+import { type Logger } from '../Logger'
 
 export default class SupersededOpsGenerator {
   logger: Logger
   superseded_ops: SupersededOperationMap
 
-  constructor (root_path: string, logger: Logger | undefined) {
-    this.logger = logger ?? new Logger(LogLevel.warn)
+  constructor (root_path: string, logger: Logger) {
+    this.logger = logger
     const file_path = root_path + '/_superseded_operations.yaml'
     this.superseded_ops = read_yaml(file_path)
     delete this.superseded_ops.$schema

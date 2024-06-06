@@ -15,8 +15,10 @@ import SupersededOperationsFile from './components/SupersededOperationsFile'
 import InfoFile from './components/InfoFile'
 import InlineObjectSchemaValidator from './InlineObjectSchemaValidator'
 import SchemasValidator from './SchemasValidator'
+import { type Logger } from '../Logger'
 
 export default class SpecValidator {
+  logger: Logger
   superseded_ops_file: SupersededOperationsFile
   info_file: InfoFile
   namespaces_folder: NamespacesFolder
@@ -25,12 +27,13 @@ export default class SpecValidator {
   schema_refs_validator: SchemaRefsValidator
   inline_object_schema_validator: InlineObjectSchemaValidator
 
-  constructor (root_folder: string) {
+  constructor (root_folder: string, logger: Logger) {
+    this.logger = logger
     this.superseded_ops_file = new SupersededOperationsFile(`${root_folder}/_superseded_operations.yaml`)
     this.info_file = new InfoFile(`${root_folder}/_info.yaml`)
     this.namespaces_folder = new NamespacesFolder(`${root_folder}/namespaces`)
     this.schemas_folder = new SchemasFolder(`${root_folder}/schemas`)
-    this.schemas_validator = new SchemasValidator(root_folder)
+    this.schemas_validator = new SchemasValidator(root_folder, logger)
     this.schema_refs_validator = new SchemaRefsValidator(this.namespaces_folder, this.schemas_folder)
     this.inline_object_schema_validator = new InlineObjectSchemaValidator(this.namespaces_folder, this.schemas_folder)
   }

@@ -7,10 +7,11 @@
 * compatible open source license.
 */
 
+import { Logger } from 'Logger'
 import SpecValidator from 'linter/SpecValidator'
 
 test('validate()', () => {
-  const validator = new SpecValidator('./tools/tests/linter/fixtures/empty')
+  const validator = new SpecValidator('./tools/tests/linter/fixtures/empty', new Logger())
   validator.namespaces_folder.validate = jest.fn().mockReturnValue([{ file: 'namespaces/', message: 'namespace error' }])
   validator.schemas_folder.validate = jest.fn().mockReturnValue([{ file: 'schemas/', message: 'schema error' }])
   validator.schema_refs_validator.validate = jest.fn().mockReturnValue([{ file: 'schema_refs', message: 'schema refs error' }])

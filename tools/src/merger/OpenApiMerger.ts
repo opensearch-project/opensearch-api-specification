@@ -13,7 +13,7 @@ import _ from 'lodash'
 import { read_yaml, write_yaml } from '../../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
-import { Logger, LogLevel } from '../Logger'
+import { Logger } from '../Logger'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
@@ -24,7 +24,7 @@ export default class OpenApiMerger {
   paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
   schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
 
-  constructor (root_folder: string, logger: Logger = new Logger(LogLevel.warn)) {
+  constructor (root_folder: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.root_folder = fs.realpathSync(root_folder)
     this.spec = {

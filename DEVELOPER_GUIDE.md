@@ -380,7 +380,7 @@ npm run test
 
 Specify the test path to run tests for one of the tools:
 ```bash
-npm run test -- tools/tests/tester/
+npm run jest -- tools/tests/linter/lint.test.ts 
 ```
 
 The test suite contains unit tests and integration tests. Integration tests, such as [these](tools/tests/tester/integ/), require a local instance of OpenSearch and are placed into a folder named `integ`. Unit tests are run in parallel and integration tests are run sequentially using `--runInBand`. You can run unit tests with `npm run test:unit` separately from integration tests with `npm run test:integ`.
