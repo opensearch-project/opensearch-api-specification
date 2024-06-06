@@ -14,6 +14,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API coverage ([#210](https://github.com/opensearch-project/opensearch-api-specification/pull/210))
 - Added license headers to TypeScript code ([#311](https://github.com/opensearch-project/opensearch-api-specification/pull/311))
 - Added `npm run test:spec -- --dry-run --verbose` ([#303](https://github.com/opensearch-project/opensearch-api-specification/pull/303))
+- Added `npm run test:unit` and `test:integ` ([#320](https://github.com/opensearch-project/opensearch-api-specification/pull/320))
 
 ### Changed
 

@@ -383,6 +383,8 @@ Specify the test path to run tests for one of the tools:
 npm run test -- tools/tests/tester/
 ```
 
+The test suite contains unit tests and integration tests. Integration tests, such as [these](tools/tests/tester/integ/), require a local instance of OpenSearch and are placed into a folder named `integ`. Unit tests are run in parallel and integration tests are run sequentially using `--runInBand`. You can run unit tests with `npm run test:unit` separately from integration tests with `npm run test:integ`.
+
 #### Lints
 
 All code is linted using [ESLint](https://eslint.org/) in combination with [typescript-eslint](https://typescript-eslint.io/). Linting can be run via:

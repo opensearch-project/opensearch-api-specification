@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { construct_tester_components, load_actual_evaluation, load_expected_evaluation } from './helpers'
+import { construct_tester_components, load_actual_evaluation, load_expected_evaluation } from '../helpers'
 
 const { story_evaluator } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
 
