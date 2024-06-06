@@ -66,36 +66,27 @@ export default class StoryEvaluator {
     let has_errors: boolean = this.has_errors
 
     const evaluations: ChapterEvaluation[] = []
-    let index = 0
     for (const chapter of chapters) {
       const evaluator = new ChapterEvaluator(chapter)
       const evaluation = await evaluator.evaluate(has_errors, story_outputs)
       has_errors = has_errors || evaluation.overall.result === Result.ERROR
-      const chapter_id = chapter.id ?? index.toString()
-      if(evaluation.output_values?.output !== undefined) {
-        story_outputs[chapter_id] = evaluation.output_values?.output
+      if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
+        story_outputs[chapter.id] = evaluation.output_values?.output
       }
       evaluations.push(evaluation)
-      index++
     }
-
-    console.log(`Chapter evaluations outputs: ${JSON.stringify(story_outputs)}`)
     return evaluations
   }
 
   async #evaluate_supplemental_chapters (chapters: SupplementalChapter[], story_outputs: StoryOutputs): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
-    let index = 0
     for (const chapter of chapters) {
       const evaluation = await this.evaluate_supplemental_chapter(chapter, story_outputs)
-      const chapter_id = chapter.id ?? index.toString()
-      if(evaluation.output_values?.output !== undefined) {
-        story_outputs[chapter_id] = evaluation.output_values?.output
+      if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
+        story_outputs[chapter.id] = evaluation.output_values?.output
       }
       evaluations.push(evaluation)
-      index++
     }
-    console.log(`Supplemental Chapter evaluations outputs: ${JSON.stringify(story_outputs)}`)
     return evaluations
   }
 
