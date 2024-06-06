@@ -8,7 +8,7 @@
 */
 
 import OpenApiMerger from '../merger/OpenApiMerger'
-import { LogLevel } from '../Logger'
+import { LogLevel, Logger } from '../Logger'
 import TestRunner from './TestRunner'
 import { Command, Option } from '@commander-js/extra-typings'
 import {
@@ -45,8 +45,9 @@ const command = new Command()
   .parse()
 
 const opts = command.opts()
+const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 
-const spec = (new OpenApiMerger(opts.specPath, LogLevel.error)).merge()
+const spec = (new OpenApiMerger(opts.specPath, logger)).merge()
 
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli(opts))
 const chapter_reader = new ChapterReader(http_client)

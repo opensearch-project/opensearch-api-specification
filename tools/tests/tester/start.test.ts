@@ -47,7 +47,10 @@ test('--dry-run', () => {
   const test_yaml = 'tools/tests/tester/fixtures/empty_with_all_the_parts.yaml'
   const s = spec(['--dry-run', '--tests', test_yaml]).stdout
   const full_path = path.join(__dirname, '../../../' + test_yaml)
-  expect(s).toEqual(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('A story with all its parts.'))} ${ansi.gray('(' + full_path + ')')}\n\n\n`)
+  expect(s).not.toContain(`${ansi.yellow('SKIPPED')} CHAPTERS`)
+  expect(s).not.toContain(`${ansi.yellow('SKIPPED')} EPILOGUES`)
+  expect(s).not.toContain(`${ansi.yellow('SKIPPED')} PROLOGUES`)
+  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('A story with all its parts.'))} ${ansi.gray('(' + full_path + ')')}\n\n\n`)
 })
 
 test('--dry-run --verbose', () => {

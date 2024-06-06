@@ -7,10 +7,11 @@
 * compatible open source license.
 */
 
+import { Logger } from 'Logger'
 import SchemasValidator from '../../src/linter/SchemasValidator'
 
 test('validate() - named_schemas', () => {
-  const validator = new SchemasValidator('./tools/tests/linter/fixtures/schemas_validator/named_schemas')
+  const validator = new SchemasValidator('./tools/tests/linter/fixtures/schemas_validator/named_schemas', new Logger())
   expect(validator.validate()).toEqual([
     {
       file: 'schemas/actions.yaml',
@@ -26,7 +27,7 @@ test('validate() - named_schemas', () => {
 })
 
 test('validate() - anonymous_schemas', () => {
-  const validator = new SchemasValidator('./tools/tests/linter/fixtures/schemas_validator/anonymous_schemas')
+  const validator = new SchemasValidator('./tools/tests/linter/fixtures/schemas_validator/anonymous_schemas', new Logger())
   expect(validator.validate()).toEqual([
     {
       file: '_global_parameters.yaml',
