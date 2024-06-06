@@ -7,8 +7,8 @@
 * compatible open source license.
 */
 
-import { construct_tester_components, flatten_errors, load_expected_evaluation } from './helpers'
-import { type StoryEvaluation } from '../../src/tester/types/eval.types'
+import { construct_tester_components, flatten_errors, load_expected_evaluation } from '../helpers'
+import { type StoryEvaluation } from '../../../src/tester/types/eval.types'
 
 test('stories folder', async () => {
   const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
