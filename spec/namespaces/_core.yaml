@@ -534,21 +534,6 @@ paths:
         '200':
           $ref: '#/components/responses/scripts_painless_execute@200'
   /_scripts/{id}:
-    delete:
-      operationId: delete_script.0
-      x-operation-group: delete_script
-      x-version-added: '1.0'
-      description: Deletes a script.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/api-reference/script-apis/delete-script/
-      parameters:
-        - $ref: '#/components/parameters/delete_script::path.id'
-        - $ref: '#/components/parameters/delete_script::query.timeout'
-        - $ref: '#/components/parameters/delete_script::query.master_timeout'
-        - $ref: '#/components/parameters/delete_script::query.cluster_manager_timeout'
-      responses:
-        '200':
-          $ref: '#/components/responses/delete_script@200'
     get:
       operationId: get_script.0
       x-operation-group: get_script
@@ -597,6 +582,21 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/put_script@200'
+    delete:
+      operationId: delete_script.0
+      x-operation-group: delete_script
+      x-version-added: '1.0'
+      description: Deletes a script.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/script-apis/delete-script/
+      parameters:
+        - $ref: '#/components/parameters/delete_script::path.id'
+        - $ref: '#/components/parameters/delete_script::query.timeout'
+        - $ref: '#/components/parameters/delete_script::query.master_timeout'
+        - $ref: '#/components/parameters/delete_script::query.cluster_manager_timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/delete_script@200'
   /_scripts/{id}/{context}:
     post:
       operationId: put_script.2
@@ -763,16 +763,6 @@ paths:
         '200':
           $ref: '#/components/responses/delete_pit@200'
   /_search/point_in_time/_all:
-    delete:
-      operationId: delete_all_pits.0
-      x-operation-group: delete_all_pits
-      x-version-added: '2.4'
-      description: Deletes all active point in time searches.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/point-in-time-api/#delete-pits
-      responses:
-        '200':
-          $ref: '#/components/responses/delete_all_pits@200'
     get:
       operationId: get_all_pits.0
       x-operation-group: get_all_pits
@@ -783,20 +773,17 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/get_all_pits@200'
-  /_search/scroll:
     delete:
-      operationId: clear_scroll.0
-      x-operation-group: clear_scroll
-      x-version-added: '1.0'
-      description: Explicitly clears the search context for a scroll.
+      operationId: delete_all_pits.0
+      x-operation-group: delete_all_pits
+      x-version-added: '2.4'
+      description: Deletes all active point in time searches.
       externalDocs:
-        url: https://opensearch.org/docs/latest/api-reference/scroll/
-      parameters: []
-      requestBody:
-        $ref: '#/components/requestBodies/clear_scroll'
+        url: https://opensearch.org/docs/latest/search-plugins/point-in-time-api/#delete-pits
       responses:
         '200':
-          $ref: '#/components/responses/clear_scroll@200'
+          $ref: '#/components/responses/delete_all_pits@200'
+  /_search/scroll:
     get:
       operationId: scroll.0
       x-operation-group: scroll
@@ -829,24 +816,20 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/scroll@200'
-  /_search/scroll/{scroll_id}:
     delete:
-      operationId: clear_scroll.1
+      operationId: clear_scroll.0
       x-operation-group: clear_scroll
-      deprecated: true
-      x-deprecation-message: A scroll id can be quite large and should be specified as part of the body
       x-version-added: '1.0'
-      x-version-deprecated: '1.0'
       description: Explicitly clears the search context for a scroll.
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/scroll/
-      parameters:
-        - $ref: '#/components/parameters/clear_scroll::path.scroll_id'
+      parameters: []
       requestBody:
         $ref: '#/components/requestBodies/clear_scroll'
       responses:
         '200':
           $ref: '#/components/responses/clear_scroll@200'
+  /_search/scroll/{scroll_id}:
     get:
       operationId: scroll.2
       x-operation-group: scroll
@@ -887,6 +870,23 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/scroll@200'
+    delete:
+      operationId: clear_scroll.1
+      x-operation-group: clear_scroll
+      deprecated: true
+      x-deprecation-message: A scroll id can be quite large and should be specified as part of the body
+      x-version-added: '1.0'
+      x-version-deprecated: '1.0'
+      description: Explicitly clears the search context for a scroll.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/scroll/
+      parameters:
+        - $ref: '#/components/parameters/clear_scroll::path.scroll_id'
+      requestBody:
+        $ref: '#/components/requestBodies/clear_scroll'
+      responses:
+        '200':
+          $ref: '#/components/responses/clear_scroll@200'
   /_search/template:
     get:
       operationId: search_template.0
@@ -1221,27 +1221,6 @@ paths:
         '200':
           $ref: '#/components/responses/index@200'
   /{index}/_doc/{id}:
-    delete:
-      operationId: delete.0
-      x-operation-group: delete
-      x-version-added: '1.0'
-      description: Removes a document from the index.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/api-reference/document-apis/delete-document/
-      parameters:
-        - $ref: '#/components/parameters/delete::path.id'
-        - $ref: '#/components/parameters/delete::path.index'
-        - $ref: '#/components/parameters/delete::query.wait_for_active_shards'
-        - $ref: '#/components/parameters/delete::query.refresh'
-        - $ref: '#/components/parameters/delete::query.routing'
-        - $ref: '#/components/parameters/delete::query.timeout'
-        - $ref: '#/components/parameters/delete::query.if_seq_no'
-        - $ref: '#/components/parameters/delete::query.if_primary_term'
-        - $ref: '#/components/parameters/delete::query.version'
-        - $ref: '#/components/parameters/delete::query.version_type'
-      responses:
-        '200':
-          $ref: '#/components/responses/delete@200'
     get:
       operationId: get.0
       x-operation-group: get
@@ -1340,6 +1319,27 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/index@200'
+    delete:
+      operationId: delete.0
+      x-operation-group: delete
+      x-version-added: '1.0'
+      description: Removes a document from the index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/document-apis/delete-document/
+      parameters:
+        - $ref: '#/components/parameters/delete::path.id'
+        - $ref: '#/components/parameters/delete::path.index'
+        - $ref: '#/components/parameters/delete::query.wait_for_active_shards'
+        - $ref: '#/components/parameters/delete::query.refresh'
+        - $ref: '#/components/parameters/delete::query.routing'
+        - $ref: '#/components/parameters/delete::query.timeout'
+        - $ref: '#/components/parameters/delete::query.if_seq_no'
+        - $ref: '#/components/parameters/delete::query.if_primary_term'
+        - $ref: '#/components/parameters/delete::query.version'
+        - $ref: '#/components/parameters/delete::query.version_type'
+      responses:
+        '200':
+          $ref: '#/components/responses/delete@200'
   /{index}/_explain/{id}:
     get:
       operationId: explain.0

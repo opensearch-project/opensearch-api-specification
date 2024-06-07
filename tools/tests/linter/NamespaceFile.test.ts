@@ -88,6 +88,17 @@ test('validate_parameter_refs()', () => {
   ])
 })
 
+test('validate_order_of_operations()', () => {
+  const validator = namespace_file('invalid_order_of_operations.yaml')
+  expect(validator.validate_order_of_operations()).toEqual([
+    {
+      file: 'namespaces/invalid_order_of_operations.yaml',
+      location: '/index',
+      message: 'Operations must be sorted. Expected get, head, post, put, patch, delete.'
+    },
+  ])
+})
+
 test('validate()', () => {
   const invalid_name = mocked_namespace_file({ returned_values: { validate_name: 'Invalid Name' }, groups_errors: [['group error']] })
   expect(invalid_name.validate()).toEqual(['Invalid Name'])
