@@ -41,12 +41,6 @@ export class ChaptersEvaluations {
     this.evaluations = []
     this.outputs = {}
   }
-  push (chapter_id: string, evaluation: ChapterEvaluation) {
-    this.evaluations.push(evaluation)
-    if(evaluation.output_values !== undefined) {
-      this.outputs[chapter_id] = evaluation.output_values
-    }
-  }
 }
 
 export interface Evaluation {

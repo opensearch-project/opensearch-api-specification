@@ -8,7 +8,7 @@
 */
 
 import { type Chapter, type ActualResponse } from './types/story.types'
-import { type ChapterEvaluation, type Evaluation, Result, type StoryOutputs, ChapterOutput, ChaptersEvaluations } from './types/eval.types'
+import { type ChapterEvaluation, type Evaluation, Result, type StoryOutputs } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { extract_output_values, overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'

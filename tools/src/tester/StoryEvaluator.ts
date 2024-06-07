@@ -8,7 +8,7 @@
 */
 
 import { type Chapter, type Story, type SupplementalChapter } from './types/story.types'
-import { type ChapterEvaluation, Result, type StoryEvaluation, ChaptersEvaluations, StoryOutputs, Evaluation } from './types/eval.types'
+import { type ChapterEvaluation, Result, type StoryEvaluation, type StoryOutputs } from './types/eval.types'
 import ChapterEvaluator from './ChapterEvaluator'
 import type ChapterReader from './ChapterReader'
 import SharedResources from './SharedResources'
@@ -47,7 +47,7 @@ export default class StoryEvaluator {
       }
     }
     const variables_error = check_story_variables(this.story)
-    if (variables_error) {
+    if (variables_error !== undefined) {
       return {
         result: Result.ERROR,
         display_path: this.display_path,
@@ -82,7 +82,7 @@ export default class StoryEvaluator {
         const evaluator = new ChapterEvaluator(chapter)
         const evaluation = await evaluator.evaluate(this.has_errors, story_outputs)
         this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
-        if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
+        if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
           story_outputs[chapter.id] = evaluation.output_values?.output
         }
         evaluations.push(evaluation)
@@ -99,7 +99,7 @@ export default class StoryEvaluator {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
         const evaluation = await this.evaluate_supplemental_chapter(chapter, story_outputs)
-        if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
+        if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
           story_outputs[chapter.id] = evaluation.output_values?.output
         }
         evaluations.push(evaluation)
@@ -108,37 +108,37 @@ export default class StoryEvaluator {
     return evaluations
   }
 
-  async evaluate_supplemental_chapter(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
+  async evaluate_supplemental_chapter (chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     const title = `${chapter.method} ${chapter.path}`
     const response = await this.chapter_reader.read(chapter, story_outputs)
     const status = chapter.status ?? [200, 201]
     const output_values = extract_output_values(response)
-    let response_evaluation: ChapterEvaluation;
+    let response_evaluation: ChapterEvaluation
     const passed_evaluation = { title, overall: { result: Result.PASSED } }
-    if(status.includes(response.status)){
+    if (status.includes(response.status)) {
       response_evaluation = passed_evaluation
     } else {
-      response_evaluation = { title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error }, output_values: output_values }
+      response_evaluation = { title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error }, output_values }
     }
-    if(output_values) {
+    if (output_values) {
       response_evaluation.output_values = output_values
     }
     const result = overall_result([response_evaluation.overall].concat(output_values ? [output_values] : []))
-    if(result == Result.PASSED) {
+    if (result === Result.PASSED) {
       return passed_evaluation
     } else {
       this.has_errors = true
       const message_segments = []
-      if(response_evaluation.overall.result == Result.ERROR) {
+      if (response_evaluation.overall.result === Result.ERROR) {
         message_segments.push(`${response_evaluation.overall.message}`)
       }
-      if(output_values !== undefined && output_values.result == Result.ERROR) {
+      if (output_values !== undefined && output_values.result === Result.ERROR) {
         message_segments.push(`${output_values.message}`)
       }
       const message = message_segments.join('\n')
-      return { 
-        title, 
-        overall: { result: Result.ERROR, message: message, error: response.error as Error } ,
+      return {
+        title,
+        overall: { result: Result.ERROR, message, error: response.error as Error },
         ...(output_values ? { output_values } : {})
       }
     }

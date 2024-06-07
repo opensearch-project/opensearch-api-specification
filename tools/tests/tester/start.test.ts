@@ -11,8 +11,8 @@ import { spawnSync } from 'child_process'
 import * as ansi from '../../src/tester/Ansi'
 import * as path from 'path'
 import { extract_output_values, resolve_params, resolve_string, resolve_value } from '../../src/tester/helpers'
-import { ActualResponse } from 'tester/types/story.types'
-import { ChapterOutput, EvaluationWithOutput, Result } from 'tester/types/eval.types'
+import { type ActualResponse } from 'tester/types/story.types'
+import { type ChapterOutput, type EvaluationWithOutput, Result } from 'tester/types/eval.types'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/start.ts'].concat(args), {
@@ -44,7 +44,7 @@ test('displays story description', async () => {
   )
 })
 
-function create_response(payload: any): ActualResponse {
+function create_response (payload: any): ActualResponse {
   return {
     status: 200,
     content_type: 'application/json',
@@ -52,13 +52,12 @@ function create_response(payload: any): ActualResponse {
   }
 }
 
-function passed_output(output: ChapterOutput): EvaluationWithOutput {
+function passed_output (output: ChapterOutput): EvaluationWithOutput {
   return {
     result: Result.PASSED,
-    output: output
+    output
   }
 }
-
 
 test('extract_output_values', async () => {
   const response: ActualResponse = create_response({
@@ -98,29 +97,33 @@ const story_outputs = {
   }
 }
 
-test("resolve_string", async () => {
+/* eslint-disable no-template-curly-in-string */
+test('resolve_string', async () => {
   expect(resolve_string('${chapter_id.x}', story_outputs)).toEqual(1)
   expect(resolve_string('some_str', story_outputs)).toEqual('some_str')
 })
+/* eslint-enable no-template-curly-in-string */
 
-test("resolve_value", async () => {
+test('resolve_value', async () => {
+/* eslint-disable no-template-curly-in-string */
   const value = {
-    a: "${chapter_id.x}",
-    b: ["${chapter_id.x}", "${chapter_id.y}", 3],
+    a: '${chapter_id.x}',
+    b: ['${chapter_id.x}', '${chapter_id.y}', 3],
     c: {
-      d: "${chapter_id.x}",
-      e: "str",
+      d: '${chapter_id.x}',
+      e: 'str',
       f: true
     },
     g: 123
   }
+  /* eslint-enable no-template-curly-in-string */
   expect(resolve_value(value, story_outputs)).toEqual(
     {
       a: 1,
       b: [1, 2, 3],
       c: {
         d: 1,
-        e: "str",
+        e: 'str',
         f: true
       },
       g: 123
@@ -128,18 +131,20 @@ test("resolve_value", async () => {
   )
 })
 
-test("resolve_params", async () => {
+test('resolve_params', async () => {
+  /* eslint-disable no-template-curly-in-string */
   const parameters = {
-    a: "${chapter_id.x}",
-    b: "${chapter_id.y}",
+    a: '${chapter_id.x}',
+    b: '${chapter_id.y}',
     c: 3,
-    d: "str"
+    d: 'str'
   }
+  /* eslint-enable no-template-curly-in-string */
   expect(resolve_params(parameters, story_outputs)).toEqual({
     a: 1,
     b: 2,
     c: 3,
-    d: "str"
+    d: 'str'
   })
 })
 
