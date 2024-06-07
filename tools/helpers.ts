@@ -56,6 +56,18 @@ export function sort_by_keys (obj: Record<string, any>, priorities: string[] = [
   })
 }
 
+export function sort_array_by_keys (values: any[], priorities: string[] = []): string[] {
+  const orders = _.fromPairs(priorities.map((k, i) => [k, i + 1]))
+  return _.clone(values).sort((a, b) => {
+    const order_a = orders[a]
+    const order_b = orders[b]
+    if (order_a != null && order_b != null) return order_a - order_b
+    if (order_a != null) return 1
+    if (order_b != null) return -1
+    return a.localeCompare(b)
+  })
+}
+
 export function ensure_parent_dir (file_path: string): void {
   fs.mkdirSync(path.dirname(file_path), { recursive: true })
 }
