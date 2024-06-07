@@ -8,7 +8,7 @@
 */
 
 import { spawnSync } from 'child_process'
-import * as ansi from '../../src/tester/Ansi'
+import * as ansi from 'tester/Ansi'
 import * as path from 'path'
 
 const spec = (args: string[]): any => {

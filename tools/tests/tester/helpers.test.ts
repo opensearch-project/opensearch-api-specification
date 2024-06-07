@@ -7,8 +7,8 @@
 * compatible open source license.
 */
 
-import { overall_result } from '../../src/tester/helpers'
-import { type Evaluation, Result } from '../../src/tester/types/eval.types'
+import { overall_result } from 'tester/helpers'
+import { type Evaluation, Result } from 'tester/types/eval.types'
 
 describe('helpers', () => {
   function e (...results: Result[]): Evaluation[] {

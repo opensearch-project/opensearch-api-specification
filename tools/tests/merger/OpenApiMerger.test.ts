@@ -9,7 +9,7 @@
 
 import OpenApiMerger from 'merger/OpenApiMerger'
 import fs from 'fs'
-import { Logger } from '../../src/Logger'
+import { Logger } from 'Logger'
 
 test('merge()', () => {
   const merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/', new Logger())

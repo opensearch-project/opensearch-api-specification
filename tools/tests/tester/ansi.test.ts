@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import * as ansi from '../../src/tester/Ansi'
+import * as ansi from 'tester/Ansi'
 
 test('b', () => {
   expect(ansi.b('xyz')).toEqual('\x1b[1mxyz\x1b[0m')
