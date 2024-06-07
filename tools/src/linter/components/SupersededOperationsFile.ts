@@ -8,7 +8,7 @@
 */
 
 import _ from 'lodash'
-import { sort_array_by_keys } from '../../../helpers'
+import { sort_array_by_keys } from '../../helpers'
 import FileValidator from './base/FileValidator'
 import { type ValidationError } from 'types'
 import { type OpenAPIV3 } from 'openapi-types'

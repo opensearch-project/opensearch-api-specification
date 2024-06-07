@@ -9,7 +9,7 @@
 
 import { type OpenAPIV3 } from 'openapi-types'
 import _ from 'lodash'
-import { read_yaml } from '../../helpers'
+import { read_yaml } from '../helpers'
 
 export default class GlobalParamsGenerator {
   global_params: Record<string, OpenAPIV3.ParameterObject>

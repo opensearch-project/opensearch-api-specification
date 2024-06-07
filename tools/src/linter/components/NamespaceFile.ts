@@ -12,7 +12,7 @@ import { type OperationSpec, type ValidationError } from 'types'
 import OperationGroup from './OperationGroup'
 import _ from 'lodash'
 import Operation from './Operation'
-import { resolve_ref, sort_by_keys } from '../../../helpers'
+import { resolve_ref, sort_by_keys } from '../../helpers'
 import FileValidator from './base/FileValidator'
 
 const HTTP_METHODS = ['get', 'head', 'post', 'put', 'patch', 'delete', 'options', 'trace']

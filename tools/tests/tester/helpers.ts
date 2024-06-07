@@ -9,7 +9,7 @@
 
 import YAML from 'yaml'
 import type { ChapterEvaluation, Evaluation, StoryEvaluation } from '../../src/tester/types/eval.types'
-import { read_yaml } from '../../helpers'
+import { read_yaml } from 'helpers'
 import StoryEvaluator from '../../src/tester/StoryEvaluator'
 import OperationLocator from '../../src/tester/OperationLocator'
 import ChapterReader from '../../src/tester/ChapterReader'
