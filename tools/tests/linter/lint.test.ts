@@ -18,5 +18,7 @@ const spec = (args: string[]): any => {
 }
 
 test('--help', () => {
-  expect(spec(['--help']).stdout).toContain('Usage: lint [options]')
+  const output = spec(['--help']) 
+  expect(output.stderr).toEqual('')
+  expect(output.stdout).toContain('Usage: lint [options]')
 })
