@@ -388,7 +388,7 @@ The test suite contains unit tests and integration tests. Integration tests, suc
 
 #### Lints
 
-All code is linted using [ESLint](https://eslint.org/) in combination with [typescript-eslint](https://typescript-eslint.io/). Linting can be run via:
+All TypeScript code and YAML files are linted using [ESLint](https://eslint.org/), [typescript-eslint](https://typescript-eslint.io/), and [eslint-plugin-yml](https://ota-meshi.github.io/eslint-plugin-yml/). Linting can be run via:
 ```bash
 npm run lint
 ```

@@ -53,7 +53,7 @@ See [CLIENT_GENERATOR_GUIDE](CLIENT_GENERATOR_GUIDE.md).
 
 OpenSearch API Specs are hosted at https://opensearch-project.github.io/opensearch-api-specification/. See [PUBLISHING_SPECS](PUBLISHING_SPECS.md) for more information.
 
-Click [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main/opensearch-openapi.yaml) to download the latest OpenSearch OpenAPI yaml file.
+Click [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml) to download the latest OpenSearch OpenAPI yaml file.
 
 
 ## Security
