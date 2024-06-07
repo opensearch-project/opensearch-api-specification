@@ -1,0 +1,35 @@
+$schema: ../json_schemas/test_story.schema.yaml
+
+skip: false
+description: |
+  This test story checks that we can create an ingest pipeline with a text 
+  embedding processor
+epilogues:
+  - path: /_ingest/pipeline/books_pipeline
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create ingest pipeline for text embedding
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: books_pipeline
+    request_body:
+      payload:
+        description: "Extracts text from field and embeds it"
+        processors:
+          - text_embedding:
+              model_id: "text-embedding-model"
+              field_map:
+                text: "passage_embedding"
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Query created pipeline
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: books_pipeline
+    response:
+      status: 200

@@ -8,9 +8,11 @@
     * [Superseded Operations](#superseded-operations)
     * [Global Parameters](#global-parameters)
     * [OpenAPI Extensions](#openapi-extensions)
+  * [Writing Spec Tests](#writing-spec-tests)
+    * [Running Spec Tests Locally](#running-spec-tests-locally)
   * [Tools](#tools)
     * [Setup](#setup)
-    * [Merger](#merger)
+    * [Spec Merger](#spec-merger)
       * [Arguments](#arguments)
       * [Example](#example)
     * [Spec Linter](#spec-linter)
@@ -145,6 +147,84 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [spec/_global_parameters.yaml](spec/_global_parameters.yaml).
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
 
+## Writing Spec Tests
+
+To assure the correctness of the spec, you must add tests for the spec in the [tests/](tests) directory. Each yaml file in the tests directory represents a test story that tests a collection of related operations. A test story has 3 main components:
+- prologues: These are the operations that are executed before the test story is run. They are used to set up the environment for the test story.
+- chapters: These are the operations that are being tested.
+- epilogues: These are the operations that are executed after the test story is run. They are used to clean up the environment after the test story.
+
+Below is the simplified version of the test story that tests the [index operations](tests/index.yaml):
+```yaml
+$schema: ../json_schemas/test_story.schema.yaml # The schema of the test story. Include this line so that your editor can validate the test story on the fly.
+
+skip: false # Skip this test story if set to true.
+description: This story tests all endpoints relevant the lifecycle of an index, from creation to deletion.
+
+prologues: [] # No prologues are needed for this story.
+
+epilogues: # Clean up the environment by assuring that the `books` index is deleted afterward.
+  - path: /books
+    method: DELETE
+    status: [200, 404] # The index may not exist, so we accept 404 as a valid response. Default to [200, 201] if not specified.
+    
+chapters:
+  - synopsis: Create an index named `books` with mappings and settings.
+    path: /{index} # The test will fail if "PUT /{index}" operation is not found in the spec.
+    method: PUT
+    parameters: # All parameters are validated against their schemas in the spec
+      index: books
+    request_body: # The request body is validated against the schema of the requestBody in the spec
+      payload:
+        mappings:
+          properties:
+            name:
+              type: keyword
+            age:
+              type: integer
+        settings:
+          number_of_shards: 5
+          number_of_replicas: 2
+    response: # The response body is validated against the schema of the corresponding response in the spec
+      status: 200 # This is the expected status code of the response. Any other status code will fail the test.
+
+  - synopsis: Retrieve the mappings and settings of the `books` index.
+    path: /{index}
+    method: GET
+    parameters:
+      index: books
+      flat_settings: true
+      
+  - synopsis: Delete the `books` index.
+    path: /{index}
+    method: DELETE
+    parameters:
+      index: books
+```
+
+Check the [test_story JSON Schema](json_schemas/test_story.schema.yaml) for the complete structure of a test story.
+
+### Running Spec Tests Locally
+
+Set up an OpenSearch cluster with Docker using the default OPENSEARCH_PASSWORD (Recommended):
+```bash
+cd .github/opensearch-cluster
+docker-compose up -d
+```
+
+Run the tests:
+```bash
+npm run test:spec
+```
+
+If you opt to use a different password, you can set the `OPENSEARCH_PASSWORD` environment variable to the desired password before running `docker-compose up` and every time you run the tests:
+```bash
+export OPENSEARCH_PASSWORD='yourOwnPassword@2021'
+```
+
+Check the [test_story JSON Schema](json_schemas/test_story.schema.yaml) for the complete structure of a test story.
+
+
 ## Tools
 
 A number of [tools](tools) have been authored using TypeScript to aid in the development of the specification. These largely center around linting and merging the multi-file spec layout.
@@ -155,7 +235,7 @@ To be able to use or develop the tools, some setup is required:
 1. Install [Node.js](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs).
 2. Run `npm install` from the repository's root.
 
-### [Merger](tools/src/merger)
+### [Spec Merger](tools/src/merger)
 
 ```bash
 npm run merge -- --help
@@ -298,6 +378,11 @@ The output file `build/coverage.json` will now contain data of like below:
 All tools should have tests added in [tools/tests](tools/tests), tests are implemented using [Jest](https://jestjs.io/). They can be run via:
 ```bash
 npm run test
+```
+
+Specify the test path to run tests for one of the tools:
+```bash
+npm run test -- tools/tests/tester/
 ```
 
 #### Lints

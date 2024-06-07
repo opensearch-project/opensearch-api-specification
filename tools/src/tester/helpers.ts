@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { type Evaluation, Result, EvaluationWithOutput, StoryOutputs, StoryEvaluation, OutputReference } from './types/eval.types'
 import { ActualResponse, ChapterRequest, Output, Parameter, Payload, Story } from './types/story.types'
 import _ from 'lodash'
@@ -9,9 +18,10 @@ export function overall_result(evaluations: Evaluation[]): Result {
   return Result.PASSED
 }
 
-export function extract_output_values(response: ActualResponse, chapterOutput?: Output): EvaluationWithOutput {
+export function extract_output_values(response: ActualResponse, chapterOutput?: Output): EvaluationWithOutput | undefined {
+  if (!chapterOutput) return undefined
   const output: Record<string, any> = {}
-  for (const [name, path] of Object.entries(chapterOutput ?? {})) {
+  for (const [name, path] of Object.entries(chapterOutput)) {
     const [source, ...rest] = path.split('.')
     const keys = rest.join('.')
     let value: any

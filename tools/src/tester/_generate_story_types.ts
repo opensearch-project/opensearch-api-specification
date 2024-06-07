@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import * as js2ts from 'json-schema-to-typescript'
 import fs from 'fs'
 import { read_yaml } from '../../helpers'

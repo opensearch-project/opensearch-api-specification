@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { type OpenAPIV3 } from 'openapi-types'
 import SpecParser from './SpecParser'
 import ChapterReader from './ChapterReader'
@@ -6,12 +15,12 @@ import StoryEvaluator, { type StoryFile } from './StoryEvaluator'
 import fs from 'fs'
 import { type Story } from './types/story.types'
 import { read_yaml } from '../../helpers'
-import { Result } from './types/eval.types'
-import ResultsDisplayer, { type DisplayOptions } from './ResultsDisplayer'
+import { Result, type StoryEvaluation } from './types/eval.types'
+import ResultsDisplayer, { type TestRunOptions, type DisplayOptions } from './ResultsDisplayer'
 import SharedResources from './SharedResources'
 import { resolve, basename } from 'path'
 
-type TestsRunnerOptions = DisplayOptions & Record<string, any>
+type TestsRunnerOptions = TestRunOptions & DisplayOptions & Record<string, any>
 
 export default class TestsRunner {
   path: string // Path to a story file or a directory containing story files
@@ -27,17 +36,20 @@ export default class TestsRunner {
     SharedResources.create_instance({ chapter_reader, schema_validator, spec_parser })
   }
 
-  async run (): Promise<void> {
+  async run (debug: boolean = false): Promise<StoryEvaluation[]> {
     let failed = false
-    const story_files = this.#collect_story_files(this.path, '', '').sort((a, b) => a.display_path.localeCompare(b.display_path))
-    for (const story_file of story_files) {
-      const evaluator = new StoryEvaluator(story_file)
+    const story_files = this.#collect_story_files(this.path, '', '')
+    const evaluations: StoryEvaluation[] = []
+    for (const story_file of this.#sort_story_files(story_files)) {
+      const evaluator = new StoryEvaluator(story_file, this.opts.dry_run)
       const evaluation = await evaluator.evaluate()
       const displayer = new ResultsDisplayer(evaluation, this.opts)
-      displayer.display()
+      if (debug) evaluations.push(evaluation)
+      else displayer.display()
       if ([Result.ERROR, Result.FAILED].includes(evaluation.result)) failed = true
     }
-    if (failed) process.exit(1)
+    if (failed && !debug) process.exit(1)
+    return evaluations
   }
 
   #collect_story_files (folder: string, file: string, prefix: string): StoryFile[] {
@@ -55,5 +67,14 @@ export default class TestsRunner {
         return this.#collect_story_files(path, next_file, next_prefix)
       })
     }
+  }
+
+  #sort_story_files (story_files: StoryFile[]): StoryFile[] {
+    return story_files.sort((a, b) => {
+      const a_depth = a.display_path.split('/').length
+      const b_depth = b.display_path.split('/').length
+      if (a_depth !== b_depth) return a_depth - b_depth
+      return a.display_path.localeCompare(b.display_path)
+    })
   }
 }

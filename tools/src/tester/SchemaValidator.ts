@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import AJV from 'ajv'
 import addFormats from 'ajv-formats'
 import { type OpenAPIV3 } from 'openapi-types'
@@ -6,7 +15,7 @@ import { type Evaluation, Result } from './types/eval.types'
 export default class SchemaValidator {
   private readonly ajv: AJV
   constructor (spec: OpenAPIV3.Document) {
-    this.ajv = new AJV()
+    this.ajv = new AJV({ allErrors: true, strict: true })
     addFormats(this.ajv)
     this.ajv.addKeyword('discriminator')
     const schemas = spec.components?.schemas ?? {}

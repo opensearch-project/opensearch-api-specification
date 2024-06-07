@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { type OpenAPIV3 } from 'openapi-types'
 import { resolve_ref } from '../../helpers'
 import { type Chapter } from './types/story.types'
@@ -12,13 +21,13 @@ export default class SpecParser {
     this.spec = spec
   }
 
-  locate_operation (chapter: Chapter): ParsedOperation {
+  locate_operation (chapter: Chapter): ParsedOperation | undefined {
     const path = chapter.path
     const method = chapter.method.toLowerCase() as OpenAPIV3.HttpMethods
     const cache_key = path + method
     if (this.cached_operations[cache_key] != null) return this.cached_operations[cache_key]
     const operation = this.spec.paths[path]?.[method]
-    if (operation == null) throw new Error(`Operation "${method.toUpperCase()} ${path}" not found in the spec.`)
+    if (operation == null) return undefined
     this.#deref(operation)
     const parameters = _.keyBy(operation.parameters ?? [], 'name')
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

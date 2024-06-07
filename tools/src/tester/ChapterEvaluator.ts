@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { type Chapter, type ActualResponse } from './types/story.types'
 import { type ChapterEvaluation, type Evaluation, Result, type StoryOutputs, ChapterOutput, ChaptersEvaluations } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
@@ -21,10 +30,11 @@ export default class ChapterEvaluator {
     this.schema_validator = SharedResources.get_instance().schema_validator
   }
 
-  async evaluate (skipped: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
-    if (skipped) return { title: this.chapter.synopsis, overall: { result: Result.SKIPPED } }
-    const operation = this.spec_parser.locate_operation(this.chapter)
+  async evaluate (skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
+    if (skip) return { title: this.chapter.synopsis, overall: { result: Result.SKIPPED } }
     const response = await this.chapter_reader.read(this.chapter, story_outputs)
+    const operation = this.spec_parser.locate_operation(this.chapter)
+    if (operation == null) return { title: this.chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${this.chapter.method.toUpperCase()} ${this.chapter.path}" not found in the spec.` } }
     const params = this.#evaluate_parameters(operation)
     const request_body = this.#evaluate_request_body(operation)
     const status = this.#evaluate_status(response)
@@ -32,10 +42,10 @@ export default class ChapterEvaluator {
     const output_values = extract_output_values(response, this.chapter.output)
     return {
       title: this.chapter.synopsis,
-      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload, output_values])) },
-      request: { parameters: params, requestBody: request_body },
+      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload]).concat(output_values ? [output_values] : [])) },
+      request: { parameters: params, request_body },
       response: { status, payload },
-      output_values: output_values
+      ...(output_values ? { output_values } : {})
     }
   }
 

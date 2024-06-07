@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 export type LibraryEvaluation = StoryEvaluation[]
 
 export interface StoryEvaluation {
@@ -16,7 +25,7 @@ export interface ChapterEvaluation {
   overall: Evaluation
   request?: {
     parameters?: Record<string, Evaluation>
-    requestBody?: Evaluation
+    request_body?: Evaluation
   }
   response?: {
     status: Evaluation

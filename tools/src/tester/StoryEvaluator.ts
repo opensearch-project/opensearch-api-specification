@@ -1,3 +1,12 @@
+/*
+* Copyright OpenSearch Contributors
+* SPDX-License-Identifier: Apache-2.0
+*
+* The OpenSearch Contributors require contributions made to
+* this file be licensed under the Apache-2.0 license or a
+* compatible open source license.
+*/
+
 import { type Chapter, type Story, type SupplementalChapter } from './types/story.types'
 import { type ChapterEvaluation, Result, type StoryEvaluation, ChaptersEvaluations, StoryOutputs, Evaluation } from './types/eval.types'
 import ChapterEvaluator from './ChapterEvaluator'
@@ -12,13 +21,15 @@ export interface StoryFile {
 }
 
 export default class StoryEvaluator {
+  dry_run: boolean
   story: Story
   display_path: string
   full_path: string
   has_errors: boolean = false
   chapter_reader: ChapterReader
 
-  constructor (story_file: StoryFile) {
+  constructor (story_file: StoryFile, dry_run?: boolean) {
+    this.dry_run = dry_run ?? false
     this.story = story_file.story
     this.display_path = story_file.display_path
     this.full_path = story_file.full_path
@@ -62,18 +73,20 @@ export default class StoryEvaluator {
   }
 
   async #evaluate_chapters (chapters: Chapter[], story_outputs: StoryOutputs): Promise<ChapterEvaluation[]> {
-    if (this.has_errors) return []
-    let has_errors: boolean = this.has_errors
-
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      const evaluator = new ChapterEvaluator(chapter)
-      const evaluation = await evaluator.evaluate(has_errors, story_outputs)
-      has_errors = has_errors || evaluation.overall.result === Result.ERROR
-      if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-        story_outputs[chapter.id] = evaluation.output_values?.output
+      if (this.dry_run) {
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
+      } else {
+        const evaluator = new ChapterEvaluator(chapter)
+        const evaluation = await evaluator.evaluate(this.has_errors, story_outputs)
+        this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
+        if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
+          story_outputs[chapter.id] = evaluation.output_values?.output
+        }
+        evaluations.push(evaluation)
       }
-      evaluations.push(evaluation)
     }
     return evaluations
   }
@@ -81,11 +94,16 @@ export default class StoryEvaluator {
   async #evaluate_supplemental_chapters (chapters: SupplementalChapter[], story_outputs: StoryOutputs): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      const evaluation = await this.evaluate_supplemental_chapter(chapter, story_outputs)
-      if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-        story_outputs[chapter.id] = evaluation.output_values?.output
+      const title = `${chapter.method} ${chapter.path}`
+      if (this.dry_run) {
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
+      } else {
+        const evaluation = await this.evaluate_supplemental_chapter(chapter, story_outputs)
+        if(evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
+          story_outputs[chapter.id] = evaluation.output_values?.output
+        }
+        evaluations.push(evaluation)
       }
-      evaluations.push(evaluation)
     }
     return evaluations
   }
@@ -93,28 +111,36 @@ export default class StoryEvaluator {
   async evaluate_supplemental_chapter(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     const title = `${chapter.method} ${chapter.path}`
     const response = await this.chapter_reader.read(chapter, story_outputs)
-    const status = chapter.status ?? []
+    const status = chapter.status ?? [200, 201]
     const output_values = extract_output_values(response)
     let response_evaluation: ChapterEvaluation;
-    const passed_evaluation = { title, overall: { result: Result.PASSED }, output_values: output_values }
+    const passed_evaluation = { title, overall: { result: Result.PASSED } }
     if(status.includes(response.status)){
       response_evaluation = passed_evaluation
     } else {
       response_evaluation = { title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error }, output_values: output_values }
     }
-    const result = overall_result([response_evaluation.overall, output_values])
+    if(output_values) {
+      response_evaluation.output_values = output_values
+    }
+    const result = overall_result([response_evaluation.overall].concat(output_values ? [output_values] : []))
     if(result == Result.PASSED) {
       return passed_evaluation
     } else {
       this.has_errors = true
-      let message: string = "";
+      const message_segments = []
       if(response_evaluation.overall.result == Result.ERROR) {
-        message+= `${response_evaluation.overall.message}\n`
+        message_segments.push(`${response_evaluation.overall.message}`)
       }
-      if(output_values.result == Result.ERROR) {
-        message+= `${output_values.message}\n`
+      if(output_values !== undefined && output_values.result == Result.ERROR) {
+        message_segments.push(`${output_values.message}`)
       }
-      return { title, overall: { result: Result.ERROR, message: message, error: response.error as Error }, output_values: output_values }
+      const message = message_segments.join('\n')
+      return { 
+        title, 
+        overall: { result: Result.ERROR, message: message, error: response.error as Error } ,
+        ...(output_values ? { output_values } : {})
+      }
     }
   }
 }
