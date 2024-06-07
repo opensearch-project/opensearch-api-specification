@@ -15,7 +15,7 @@ import Operation from './Operation'
 import { resolve_ref, sort_by_keys } from '../../../helpers'
 import FileValidator from './base/FileValidator'
 
-const HTTP_METHODS = ['get', 'head', 'put', 'patch', 'post', 'delete', 'options', 'trace']
+const HTTP_METHODS = ['get', 'head', 'post', 'put', 'patch', 'delete', 'options', 'trace']
 const NAME_REGEX = /^[a-z]+[a-z_]*[a-z]+$/
 
 export default class NamespaceFile extends FileValidator {
