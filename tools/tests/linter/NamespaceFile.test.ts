@@ -94,7 +94,7 @@ test('validate_order_of_operations()', () => {
     {
       file: 'namespaces/invalid_order_of_operations.yaml',
       location: '/index',
-      message: 'Operations must be sorted. Expected get, head, put, patch, post, delete.'
+      message: 'Operations must be sorted. Expected get, head, post, put, patch, delete.'
     },
   ])
 })
