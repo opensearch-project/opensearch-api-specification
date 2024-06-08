@@ -8,13 +8,14 @@
 */
 
 import { type Chapter, type ActualResponse } from './types/story.types'
-import { type ChapterEvaluation, type Evaluation, Result, type StoryOutputs } from './types/eval.types'
+import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { extract_output_values, overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
 import SharedResources from './SharedResources'
 import type SpecParser from './SpecParser'
 import type SchemaValidator from './SchemaValidator'
+import { type StoryOutputs } from './StoryOutputs'
 
 export default class ChapterEvaluator {
   chapter: Chapter

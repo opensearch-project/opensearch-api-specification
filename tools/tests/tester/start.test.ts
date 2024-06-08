@@ -10,9 +10,11 @@
 import { spawnSync } from 'child_process'
 import * as ansi from '../../src/tester/Ansi'
 import * as path from 'path'
-import { extract_output_values, resolve_params, resolve_string, resolve_value } from '../../src/tester/helpers'
+import { extract_output_values } from '../../src/tester/helpers'
 import { type ActualResponse } from 'tester/types/story.types'
-import { type ChapterOutput, type EvaluationWithOutput, Result } from 'tester/types/eval.types'
+import { type EvaluationWithOutput, Result } from 'tester/types/eval.types'
+import { ChapterOutput } from 'tester/ChapterOutput'
+import { StoryOutputs } from 'tester/StoryOutputs'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/start.ts'].concat(args), {
@@ -52,10 +54,10 @@ function create_response (payload: any): ActualResponse {
   }
 }
 
-function passed_output (output: ChapterOutput): EvaluationWithOutput {
+function passed_output (output: Record<string, any>): EvaluationWithOutput {
   return {
     result: Result.PASSED,
-    output
+    output: new ChapterOutput(output)
   }
 }
 
@@ -90,17 +92,17 @@ test('extract_output_values', async () => {
   })
 })
 
-const story_outputs = {
-  chapter_id: {
+const story_outputs = new StoryOutputs({
+  chapter_id: new ChapterOutput({
     x: 1,
     y: 2
-  }
-}
+  })
+})
 
 /* eslint-disable no-template-curly-in-string */
 test('resolve_string', async () => {
-  expect(resolve_string('${chapter_id.x}', story_outputs)).toEqual(1)
-  expect(resolve_string('some_str', story_outputs)).toEqual('some_str')
+  expect(story_outputs.resolve_string('${chapter_id.x}')).toEqual(1)
+  expect(story_outputs.resolve_string('some_str')).toEqual('some_str')
 })
 /* eslint-enable no-template-curly-in-string */
 
@@ -117,7 +119,7 @@ test('resolve_value', async () => {
     g: 123
   }
   /* eslint-enable no-template-curly-in-string */
-  expect(resolve_value(value, story_outputs)).toEqual(
+  expect(story_outputs.resolve_value(value)).toEqual(
     {
       a: 1,
       b: [1, 2, 3],
@@ -140,7 +142,7 @@ test('resolve_params', async () => {
     d: 'str'
   }
   /* eslint-enable no-template-curly-in-string */
-  expect(resolve_params(parameters, story_outputs)).toEqual({
+  expect(story_outputs.resolve_params(parameters)).toEqual({
     a: 1,
     b: 2,
     c: 3,

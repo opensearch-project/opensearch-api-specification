@@ -7,6 +7,9 @@
 * compatible open source license.
 */
 
+import { type ChapterOutput } from '../ChapterOutput'
+import { StoryOutputs } from '../StoryOutputs'
+
 export type LibraryEvaluation = StoryEvaluation[]
 
 export interface StoryEvaluation {
@@ -39,7 +42,7 @@ export class ChaptersEvaluations {
   outputs: StoryOutputs
   constructor () {
     this.evaluations = []
-    this.outputs = {}
+    this.outputs = new StoryOutputs()
   }
 }
 
@@ -60,14 +63,19 @@ export enum Result {
   ERROR = 'ERROR',
 }
 
-/**
- * A map of output values from the response.
- */
-export type ChapterOutput = Record<string, any>
-
-export type StoryOutputs = Record<string, ChapterOutput>
-
-export interface OutputReference {
+export class OutputReference {
   chapter_id: string
   output_name: string
+  private constructor (chapter_id: string, output_name: string) {
+    this.chapter_id = chapter_id
+    this.output_name = output_name
+  }
+
+  static parse (str: string): OutputReference | undefined {
+    if (str.startsWith('${') && str.endsWith('}')) {
+      const spl = str.slice(2, -1).split('.', 2)
+      return { chapter_id: spl[0], output_name: spl[1] }
+    }
+    return undefined
+  }
 }

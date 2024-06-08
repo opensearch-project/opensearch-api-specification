@@ -10,8 +10,7 @@
 import axios from 'axios'
 import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { Agent } from 'https'
-import { type StoryOutputs } from './types/eval.types'
-import { resolve_params, resolve_value } from './helpers'
+import { type StoryOutputs } from './StoryOutputs'
 
 // A lightweight client for testing the API
 export default class ChapterReader {
@@ -26,9 +25,9 @@ export default class ChapterReader {
 
   async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
     const response: Record<string, any> = {}
-    const resolved_params = resolve_params(chapter.parameters ?? {}, story_outputs)
+    const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url, params] = this.#parse_url(chapter.path, resolved_params)
-    const request_data = chapter.request_body?.payload !== undefined ? resolve_value(chapter.request_body.payload, story_outputs) : undefined
+    const request_data = chapter.request_body?.payload !== undefined ? story_outputs.resolve_value(chapter.request_body.payload) : undefined
     await axios.request({
       url,
       auth: {

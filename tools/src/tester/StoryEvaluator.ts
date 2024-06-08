@@ -8,11 +8,12 @@
 */
 
 import { type Chapter, type Story, type SupplementalChapter } from './types/story.types'
-import { type ChapterEvaluation, Result, type StoryEvaluation, type StoryOutputs } from './types/eval.types'
+import { type ChapterEvaluation, Result, type StoryEvaluation } from './types/eval.types'
 import ChapterEvaluator from './ChapterEvaluator'
 import type ChapterReader from './ChapterReader'
 import SharedResources from './SharedResources'
 import { check_story_variables, extract_output_values, overall_result } from './helpers'
+import { StoryOutputs } from './StoryOutputs'
 
 export interface StoryFile {
   display_path: string
@@ -57,7 +58,7 @@ export default class StoryEvaluator {
         message: variables_error
       }
     }
-    const story_outputs: StoryOutputs = {}
+    const story_outputs = new StoryOutputs()
     const prologues = await this.#evaluate_supplemental_chapters(this.story.prologues ?? [], story_outputs)
     const chapters = await this.#evaluate_chapters(this.story.chapters, story_outputs)
     const epilogues = await this.#evaluate_supplemental_chapters(this.story.epilogues ?? [], story_outputs)
@@ -83,7 +84,7 @@ export default class StoryEvaluator {
         const evaluation = await evaluator.evaluate(this.has_errors, story_outputs)
         this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
         if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-          story_outputs[chapter.id] = evaluation.output_values?.output
+          story_outputs.set_chapter(chapter.id, evaluation.output_values?.output)
         }
         evaluations.push(evaluation)
       }
@@ -100,7 +101,7 @@ export default class StoryEvaluator {
       } else {
         const evaluation = await this.evaluate_supplemental_chapter(chapter, story_outputs)
         if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-          story_outputs[chapter.id] = evaluation.output_values?.output
+          story_outputs.set_chapter(chapter.id, evaluation.output_values?.output)
         }
         evaluations.push(evaluation)
       }
