@@ -82,15 +82,15 @@ function extract_request_body_variables (request_body: any, variables: Set<Outpu
   }
 }
 
-export function check_used_variables (chapter: ChapterRequest, story_outputs: StoryOutputs): string | undefined {
+function check_used_variables (chapter: ChapterRequest, story_outputs: StoryOutputs): string | undefined {
   const variables = new Set<OutputReference>()
   extract_params_variables(chapter.parameters ?? {}, variables)
   extract_request_body_variables(chapter.request_body?.payload ?? {}, variables)
   for (const { chapter_id, output_name } of variables) {
-    if (story_outputs.has_chapter(chapter_id)) {
+    if (!story_outputs.has_chapter(chapter_id)) {
       return `Chapter makes reference to non existent chapter "${chapter_id}`
     }
-    if (story_outputs.has_output_value(chapter_id, output_name)) {
+    if (!story_outputs.has_output_value(chapter_id, output_name)) {
       return `Chapter makes reference to non existent output "${output_name}" in chapter "${chapter_id}"`
     }
   }
@@ -108,7 +108,7 @@ export function check_story_variables (story: Story): string | undefined {
       return 'An episode must have an id to store its output'
     }
     if (episode.id !== undefined && episode.output !== undefined) {
-      story_outputs.set_episode_output(episode.id, episode.output)
+      story_outputs.set_chapter_output(episode.id, ChapterOutput.create_dummy_from_output(episode.output))
     }
   }
 }

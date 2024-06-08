@@ -7,6 +7,8 @@
 * compatible open source license.
 */
 
+import { Output } from "./types/story.types"
+
 export class ChapterOutput {
   private outputs: Record<string, any>
   constructor (outputs: Record<string, any>) {
@@ -19,5 +21,16 @@ export class ChapterOutput {
 
   set_output (name: string, value: any): void {
     this.outputs[name] = value
+  }
+
+  /**
+   * Creates a dummy ChapterOutput from an Output object
+   * where the values will be the response paths.
+   * Used for a validation check.
+   * @param output 
+   * @returns 
+   */
+  static create_dummy_from_output(output: Output): ChapterOutput {
+    return new ChapterOutput(output)
   }
 }

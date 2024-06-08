@@ -84,7 +84,7 @@ export default class StoryEvaluator {
         const evaluation = await evaluator.evaluate(this.has_errors, story_outputs)
         this.has_errors = this.has_errors || evaluation.overall.result === Result.ERROR
         if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-          story_outputs.set_chapter(chapter.id, evaluation.output_values?.output)
+          story_outputs.set_chapter_output(chapter.id, evaluation.output_values?.output)
         }
         evaluations.push(evaluation)
       }
@@ -101,7 +101,7 @@ export default class StoryEvaluator {
       } else {
         const evaluation = await this.evaluate_supplemental_chapter(chapter, story_outputs)
         if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-          story_outputs.set_chapter(chapter.id, evaluation.output_values?.output)
+          story_outputs.set_chapter_output(chapter.id, evaluation.output_values?.output)
         }
         evaluations.push(evaluation)
       }

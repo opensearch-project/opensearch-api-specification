@@ -26,15 +26,8 @@ export class StoryOutputs {
     return this.has_chapter(chapter_id) && this.outputs[chapter_id].get_output(output_name) !== undefined
   }
 
-  set_chapter (chapter_id: string, output: ChapterOutput): void {
+  set_chapter_output (chapter_id: string, output: ChapterOutput): void {
     this.outputs[chapter_id] = output
-  }
-
-  set_episode_output (chapter_id: string, output: Output): void {
-    if (this.outputs[chapter_id] === undefined) {
-      this.outputs[chapter_id] = new ChapterOutput({})
-    }
-    this.outputs[chapter_id].set_output(output.name, output.value)
   }
 
   get_output_value (chapter_id: string, output_name: string): any {
