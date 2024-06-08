@@ -7,9 +7,9 @@
 * compatible open source license.
 */
 
-import { ChapterOutput } from './ChapterOutput'
+import { type ChapterOutput } from './ChapterOutput'
 import { OutputReference } from './types/eval.types'
-import { type Output, type Parameter } from './types/story.types'
+import { type Parameter } from './types/story.types'
 
 export class StoryOutputs {
   private outputs: Record<string, ChapterOutput>

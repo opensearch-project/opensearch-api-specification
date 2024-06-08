@@ -10,8 +10,8 @@
 import { spawnSync } from 'child_process'
 import * as ansi from '../../src/tester/Ansi'
 import * as path from 'path'
-import { extract_output_values } from '../../src/tester/helpers'
-import { type ActualResponse } from 'tester/types/story.types'
+import { check_story_variables as get_bad_references, extract_output_values } from '../../src/tester/helpers'
+import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse } from 'tester/types/story.types'
 import { type EvaluationWithOutput, Result } from 'tester/types/eval.types'
 import { ChapterOutput } from 'tester/ChapterOutput'
 import { StoryOutputs } from 'tester/StoryOutputs'
@@ -107,7 +107,7 @@ test('resolve_string', async () => {
 /* eslint-enable no-template-curly-in-string */
 
 test('resolve_value', async () => {
-/* eslint-disable no-template-curly-in-string */
+  /* eslint-disable no-template-curly-in-string */
   const value = {
     a: '${chapter_id.x}',
     b: ['${chapter_id.x}', '${chapter_id.y}', 3],
@@ -149,6 +149,83 @@ test('resolve_params', async () => {
     d: 'str'
   })
 })
+
+function dummy_chapter_request (id?: string, output?: Output): ChapterRequest {
+  return {
+    id,
+    path: '/path',
+    method: 'GET',
+    output
+  }
+}
+
+function dummy_chapter_request_with_input (parameters?: Record<string, any>, request_body?: RequestBody, id?: string, output?: Output): ChapterRequest {
+  return {
+    ...dummy_chapter_request(id, output),
+    parameters,
+    request_body
+  }
+}
+
+function chapter (synopsis: string, request: ChapterRequest): Chapter {
+  return {
+    synopsis,
+    ...request
+  }
+}
+
+/* eslint-disable no-template-curly-in-string */
+test('get_bad_references', async () => {
+  expect(get_bad_references({
+    description: 'story1',
+    prologues: [
+      dummy_chapter_request('prologue1', { x: 'payload.x' })
+    ],
+    chapters: [
+      chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue1.x}' }))
+    ]
+  })).toBe(undefined)
+
+  expect(get_bad_references({
+    description: 'story1',
+    prologues: [
+      dummy_chapter_request('prologue1', { x: 'payload.x' })
+    ],
+    chapters: [
+      chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue1.y}' }))
+    ]
+  })).toBe('Chapter makes reference to non existent output "y" in chapter "prologue1"')
+
+  expect(get_bad_references({
+    description: 'story1',
+    prologues: [
+      dummy_chapter_request('prologue1', { x: 'payload.x' })
+    ],
+    chapters: [
+      chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue2.x}' }))
+    ]
+  })).toBe('Chapter makes reference to non existent chapter "prologue2')
+
+  expect(get_bad_references({
+    description: 'story1',
+    prologues: [
+      dummy_chapter_request(undefined, { x: 'payload.x' })
+    ],
+    chapters: []
+  })).toBe('An episode must have an id to store its output')
+
+  expect(get_bad_references({
+    description: 'story1',
+    prologues: [
+      dummy_chapter_request('prologue1', { x: 'payload.x' })
+    ],
+    chapters: [
+      chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue1.x}' }, undefined, 'chapter1', { y: 'payload.y' })),
+      chapter('synopsis-2', dummy_chapter_request_with_input({ 'param-y': '${chapter1.y}' }))
+    ]
+  })).toBe(undefined)
+})
+/* eslint-enable no-template-curly-in-string */
 
 test.todo('--tab-width')
 

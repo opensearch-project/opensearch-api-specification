@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { Output } from "./types/story.types"
+import { type Output } from './types/story.types'
 
 export class ChapterOutput {
   private outputs: Record<string, any>
@@ -27,10 +27,10 @@ export class ChapterOutput {
    * Creates a dummy ChapterOutput from an Output object
    * where the values will be the response paths.
    * Used for a validation check.
-   * @param output 
-   * @returns 
+   * @param output
+   * @returns
    */
-  static create_dummy_from_output(output: Output): ChapterOutput {
+  static create_dummy_from_output (output: Output): ChapterOutput {
     return new ChapterOutput(output)
   }
 }
