@@ -8,7 +8,7 @@
 */
 
 import { type HttpVerb, type OperationPath, type SupersededOperationMap } from 'types'
-import { read_yaml, write_yaml } from '../../helpers'
+import { read_yaml, write_yaml } from '../helpers'
 
 // One-time script to generate _superseded_operations.yaml file for OpenDistro
 // Keeping this for now in case we need to update the file in the near future. Can be removed after a few months.

@@ -5,7 +5,7 @@
 [![Code Covergage](https://codecov.io/github/opensearch-project/opensearch-api-specification/graph/badge.svg?token=TO9YMAKSHH)](https://codecov.io/github/opensearch-project/opensearch-api-specification)
 [![Test Tools (Unit)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml)
 [![Test Tools (Integration)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml)
-[![Test Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test.yml)
+[![Test Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-spec.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-spec.yml)
 [![Validate Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec.yml)
 
 - [OpenSearch API Specification](#opensearch-api-specification)

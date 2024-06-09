@@ -10,7 +10,7 @@
 import { type OpenAPIV3 } from 'openapi-types'
 import fs from 'fs'
 import _ from 'lodash'
-import { read_yaml, write_yaml } from '../../helpers'
+import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import { Logger } from '../Logger'

@@ -8,17 +8,17 @@
 */
 
 import YAML from 'yaml'
-import type { ChapterEvaluation, Evaluation, StoryEvaluation } from '../../src/tester/types/eval.types'
-import { read_yaml } from '../../helpers'
-import StoryEvaluator from '../../src/tester/StoryEvaluator'
-import OperationLocator from '../../src/tester/OperationLocator'
-import ChapterReader from '../../src/tester/ChapterReader'
-import SchemaValidator from '../../src/tester/SchemaValidator'
-import ChapterEvaluator from '../../src/tester/ChapterEvaluator'
-import { OpenSearchHttpClient } from '../../src/OpenSearchHttpClient'
+import type { ChapterEvaluation, Evaluation, StoryEvaluation } from 'tester/types/eval.types'
+import { read_yaml } from 'helpers'
+import StoryEvaluator from 'tester/StoryEvaluator'
+import OperationLocator from 'tester/OperationLocator'
+import ChapterReader from 'tester/ChapterReader'
+import SchemaValidator from 'tester/SchemaValidator'
+import ChapterEvaluator from 'tester/ChapterEvaluator'
+import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import { type OpenAPIV3 } from 'openapi-types'
-import TestRunner from '../../src/tester/TestRunner'
-import { NoOpResultLogger, type ResultLogger } from '../../src/tester/ResultLogger'
+import TestRunner from 'tester/TestRunner'
+import { NoOpResultLogger, type ResultLogger } from 'tester/ResultLogger'
 import * as process from 'node:process'
 
 export function construct_tester_components (spec_path: string): {
