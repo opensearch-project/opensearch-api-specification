@@ -1,0 +1,49 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+skip: false
+description: Test inserting and retrieving a doc.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a document.
+    path: /{index}/_doc/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: '1'
+    request_body:
+      payload:
+        title: Beauty and the Beast
+        year: 1991
+    response:
+      status: 201
+  - synopsis: Update a document.
+    path: /{index}/_doc/{id}
+    method: PUT
+    parameters:
+      index: movies
+      id: '1'
+    request_body:
+      payload:
+        title: Beauty and the Beast (Updated)
+        year: 1991
+    response:
+      status: 200
+  - synopsis: Retrieve a document.
+    path: /{index}/_doc/{id}
+    method: GET
+    parameters:
+      index: movies
+      id: '1'
+    response:
+      status: 200
+  - synopsis: Delete a document.
+    path: /{index}/_doc/{id}
+    method: DELETE
+    parameters:
+      index: movies
+      id: '1'
+    response:
+      status: 200

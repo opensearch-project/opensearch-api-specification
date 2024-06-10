@@ -155,7 +155,7 @@ To assure the correctness of the spec, you must add tests for the spec in the [t
 - chapters: These are the operations that are being tested.
 - epilogues: These are the operations that are executed after the test story is run. They are used to clean up the environment after the test story.
 
-Below is the simplified version of the test story that tests the [index operations](tests/index.yaml):
+Below is the simplified version of the test story that tests the [index operations](tests/_core/index.yaml):
 ```yaml
 $schema: ../json_schemas/test_story.schema.yaml # The schema of the test story. Include this line so that your editor can validate the test story on the fly.
 
