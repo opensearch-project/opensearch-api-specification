@@ -11,5 +11,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  moduleDirectories: ['node_modules', './tools/src']
+  moduleDirectories: ['node_modules', './tools/src'],
+  collectCoverageFrom: ['tools/src/**']
 }
