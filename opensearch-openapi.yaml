@@ -3656,6 +3656,113 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/knn.warmup@200'
+  /_plugins/_ml/model_groups/_register:
+    post:
+      operationId: ml.register_model_group.0
+      x-operation-group: ml.register_model_group
+      description: Registers a model group.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model_group@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_ml/model_groups/{model_group_id}:
+    delete:
+      operationId: ml.delete_model_group.0
+      x-operation-group: ml.delete_model_group
+      description: Deletes a model group.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_model_group::path.model_group_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_model_group@200'
+    get:
+      operationId: ml.get_model_group.0
+      x-operation-group: ml.get_model_group
+      description: Retrieves a model group.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_model_group::path.model_group_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_model_group@200'
+  /_plugins/_ml/models/_register:
+    post:
+      operationId: ml.register_model.0
+      x-operation-group: ml.register_model
+      description: Registers a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_ml/models/_search:
+    get:
+      operationId: ml.search_models.0
+      x-operation-group: ml.search_models
+      description: Searches for models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_models'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_models@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_ml/models/{model_id}:
+    delete:
+      operationId: ml.delete_model.0
+      x-operation-group: ml.delete_model
+      description: Deletes a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_model::path.model_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_model@200'
+  /_plugins/_ml/tasks/{task_id}:
+    get:
+      operationId: ml.get_task.0
+      x-operation-group: ml.get_task
+      description: Retrieves a task.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_task::path.task_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_task@200'
   /_plugins/_notifications/channels:
     get:
       operationId: notifications.list_channels.0
@@ -18490,6 +18597,30 @@ components:
       schema:
         $ref: '#/components/schemas/_common:Fields'
       style: form
+    ml.delete_model_group::path.model_group_id:
+      name: model_group_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_model_group::path.model_group_id:
+      name: model_group_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_task::path.task_id:
+      name: task_id
+      in: path
+      required: true
+      schema:
+        type: string
     msearch_template::path.index:
       in: path
       name: index
@@ -22123,6 +22254,78 @@ components:
                 $ref: '#/components/schemas/_common:Ids'
             description: Document identifiers; can be either `docs` (containing full document information) or `ids` (when index is provided in the URL.
       required: true
+    ml.register_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                type: string
+                description: The model version.
+              model_format:
+                type: string
+                description: The portable format of the model file.
+                enum:
+                  - TORCH_SCRIPT
+                  - ONNX
+              description:
+                type: string
+                description: The model description.
+              model_group_id:
+                type: string
+                description: The ID of the model group to which to register the model.
+            required:
+              - name
+              - version
+              - model_format
+    ml.register_model_group:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model group name.
+              description:
+                type: string
+                description: The model group description.
+              access_mode:
+                type: string
+                description: The model group access mode.
+                enum:
+                  - private
+                  - public
+                  - restricted
+              backend_roles:
+                type: array
+                items:
+                  type: string
+                description: The backend roles.
+              add_all_backend_roles:
+                type: boolean
+                description: The add all backend roles.
+            required:
+              - name
+    ml.search_models:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                type: object
+                description: The query.
+              size:
+                type: integer
+                description: The number of models to return.
+            required:
+              - query
+              - size
     msearch:
       content:
         application/x-ndjson:
@@ -24191,6 +24394,103 @@ components:
                   $ref: '#/components/schemas/_core.mget:ResponseItem'
             required:
               - docs
+    ml.delete_model_group@200:
+      content:
+        application/json:
+          schema:
+            type: object
+    ml.delete_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+    ml.get_model_group@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model group name.
+              latest_version:
+                type: number
+                description: The latest version.
+              description:
+                type: string
+                description: The model group description.
+              access:
+                type: string
+                description: The model group access.
+            required:
+              - name
+              - latest_version
+              - description
+              - access
+    ml.get_task@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_id:
+                type: string
+                description: The model ID.
+              state:
+                type: string
+                description: The state.
+                enum:
+                  - CREATED
+                  - RUNNING
+                  - COMPLETED
+                  - FAILED
+                  - CANCELLED
+                  - COMPLETED_WITH_ERROR
+            required:
+              - state
+    ml.register_model_group@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_group_id:
+                type: string
+                description: The model group ID.
+              status:
+                type: string
+                description: The status.
+            required:
+              - model_group_id
+              - status
+    ml.register_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              task_id:
+                type: string
+                description: The task ID.
+              model_id:
+                type: string
+                description: The model ID.
+              status:
+                type: string
+                description: The status.
+            required:
+              - task_id
+              - status
+    ml.search_models@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                $ref: '#/components/schemas/ml._common:SearchModelHits'
+            required:
+              - hits
     msearch_template@200:
       description: ''
       content:
@@ -43856,6 +44156,45 @@ components:
         - missing
         - popular
         - always
+    ml._common:HitsTotal:
+      type: object
+      properties:
+        value:
+          type: integer
+          description: The total number of hits.
+        relation:
+          type: string
+          description: The relation.
+      required:
+        - value
+        - relation
+    ml._common:SearchModelHits:
+      type: object
+      properties:
+        total:
+          $ref: '#/components/schemas/ml._common:HitsTotal'
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common:SearchModelHitsHit'
+      required:
+        - total
+        - hits
+    ml._common:SearchModelHitsHit:
+      type: object
+      properties:
+        _index:
+          type: string
+          description: The index.
+        _id:
+          type: string
+          description: The hit ID.
+        model_id:
+          type: string
+          description: The model ID.
+      required:
+        - _id
+        - model_id
     nodes._common:AdaptiveSelection:
       type: object
       properties:
