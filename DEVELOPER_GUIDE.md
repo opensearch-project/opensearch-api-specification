@@ -9,6 +9,8 @@
     - [Global Parameters](#global-parameters)
     - [OpenAPI Extensions](#openapi-extensions)
   - [Writing Spec Tests](#writing-spec-tests)
+    - [Test Stories](#test-stories)
+    - [Organizing Tests](#organizing-tests)
     - [Running Spec Tests Locally](#running-spec-tests-locally)
   - [Tools](#tools)
     - [Setup](#setup)
@@ -150,12 +152,18 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 
 ## Writing Spec Tests
 
-To assure the correctness of the spec, you must add tests for the spec in the [tests/](tests) directory. Each yaml file in the tests directory represents a test story that tests a collection of related operations. A test story has 3 main components:
+To assure the correctness of the spec, you must add tests for the spec in the [tests/](tests) directory.
+
+### Test Stories
+
+Each yaml file in the tests directory represents a test story that tests a collection of related operations.
+
+A test story has 3 main components:
 - prologues: These are the operations that are executed before the test story is run. They are used to set up the environment for the test story.
 - chapters: These are the operations that are being tested.
 - epilogues: These are the operations that are executed after the test story is run. They are used to clean up the environment after the test story.
 
-Below is the simplified version of the test story that tests the [index operations](tests/_core/index.yaml):
+Below is the simplified version of the test story that tests the [index operations](tests/indices/index.yaml):
 ```yaml
 $schema: ../json_schemas/test_story.schema.yaml # The schema of the test story. Include this line so that your editor can validate the test story on the fly.
 
@@ -204,6 +212,10 @@ chapters:
 ```
 
 Check the [test_story JSON Schema](json_schemas/test_story.schema.yaml) for the complete structure of a test story.
+
+### Organizing Tests
+
+Tests are organized in folders that match [namespaces](spec/namespaces). For example, tests for APIs defined in [spec/namespaces/indices.yaml](spec/namespaces/indices.yaml) can be found in [tests/indices/index.yaml](tests/indices/index.yaml) (for `/{index}`), and [tests/indices/_doc.yaml](tests/indices/_doc.yaml) (for `/{index}/_doc`).
 
 ### Running Spec Tests Locally
 
