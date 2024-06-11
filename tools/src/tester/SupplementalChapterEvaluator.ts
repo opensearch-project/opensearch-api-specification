@@ -7,9 +7,10 @@
 * compatible open source license.
 */
 
+import { ChapterOutput } from "./ChapterOutput";
 import ChapterReader from "./ChapterReader";
 import { StoryOutputs } from "./StoryOutputs";
-import { extract_output_values, overall_result } from "./helpers";
+import { overall_result } from "./helpers";
 import { ChapterEvaluation, Result } from "./types/eval.types";
 import { SupplementalChapter } from "./types/story.types";
 
@@ -24,7 +25,7 @@ export default class SupplementalChapterEvaluator {
         const title = `${chapter.method} ${chapter.path}`
         const response = await this._chapter_reader.read(chapter, story_outputs)
         const status = chapter.status ?? [200, 201]
-        const output_values = extract_output_values(response)
+        const output_values = ChapterOutput.extract_output_values(response, chapter.output)
         let response_evaluation: ChapterEvaluation
         const passed_evaluation = { title, overall: { result: Result.PASSED } }
         if (status.includes(response.status)) {

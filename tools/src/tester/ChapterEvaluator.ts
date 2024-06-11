@@ -10,11 +10,12 @@
 import { type Chapter, type ActualResponse } from './types/story.types'
 import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
-import { extract_output_values, overall_result } from './helpers'
+import { overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
 import type OperationLocator from './OperationLocator'
 import type SchemaValidator from './SchemaValidator'
 import { type StoryOutputs } from './StoryOutputs'
+import { ChapterOutput } from './ChapterOutput'
 
 export default class ChapterEvaluator {
   private readonly _operation_locator: OperationLocator
@@ -36,7 +37,7 @@ export default class ChapterEvaluator {
     const request_body = this.#evaluate_request_body(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
     const payload = status.result === Result.PASSED ? this.#evaluate_payload(response, operation) : { result: Result.SKIPPED }
-    const output_values = extract_output_values(response, chapter.output)
+    const output_values = ChapterOutput.extract_output_values(response, chapter.output)
     return {
       title: chapter.synopsis,
       overall: { result: overall_result(Object.values(params).concat([request_body, status, payload]).concat(output_values ? [output_values] : [])) },

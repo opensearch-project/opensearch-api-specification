@@ -10,7 +10,6 @@
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
 import * as path from 'path'
-import { extract_output_values } from '../../src/tester/helpers'
 import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse, Story } from 'tester/types/story.types'
 import { type EvaluationWithOutput, Result, ChapterEvaluation, StoryEvaluation } from 'tester/types/eval.types'
 import { ChapterOutput } from 'tester/ChapterOutput'
@@ -78,15 +77,15 @@ test('extract_output_values', () => {
     d: 'payload.a.arr[0].d',
     e: 'payload.a.arr[1].e'
   }
-  expect(extract_output_values(response, output1)).toEqual(passed_output({
+  expect(ChapterOutput.extract_output_values(response, output1)).toEqual(passed_output({
     c: 1,
     d: 2,
     e: 3
   }))
-  expect(extract_output_values(response, { x: 'payload' })).toEqual(
+  expect(ChapterOutput.extract_output_values(response, { x: 'payload' })).toEqual(
     passed_output({ x: response.payload })
   )
-  expect(extract_output_values(response, { x: 'payload.a.b.x[0]' })).toEqual({
+  expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0]' })).toEqual({
     result: Result.ERROR,
     message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
   })
