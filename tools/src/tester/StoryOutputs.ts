@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type ChapterOutput } from './ChapterOutput'
+import { ChapterOutput } from './ChapterOutput'
 import { OutputReference } from './types/eval.types'
 import { type Parameter } from './types/story.types'
 

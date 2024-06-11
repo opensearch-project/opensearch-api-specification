@@ -30,7 +30,6 @@ export default class OperationLocator {
     if (operation == null) return undefined
     this.#deref(operation)
     const parameters = _.keyBy(operation.parameters ?? [], 'name')
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.cached_operations[cache_key] = { ...operation, parameters } as ParsedOperation
     return this.cached_operations[cache_key]
   }

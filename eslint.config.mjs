@@ -1,10 +1,11 @@
-import pluginJs from '@eslint/js'
-import pluginTs from '@typescript-eslint/eslint-plugin'
-import parserTs from '@typescript-eslint/parser'
-import eslintPluginYml from 'eslint-plugin-yml'
-import parserYml from "yaml-eslint-parser"
 import globals from 'globals'
-import licenseHeader from 'eslint-plugin-license-header'
+import parserTs from '@typescript-eslint/parser'
+import parserYml from "yaml-eslint-parser"
+import pluginComments from 'eslint-plugin-eslint-comments'
+import pluginJs from '@eslint/js'
+import pluginLicenseHeader from 'eslint-plugin-license-header'
+import pluginTs from '@typescript-eslint/eslint-plugin'
+import pluginYml from 'eslint-plugin-yml'
 
 export default [
   pluginJs.configs.recommended,
@@ -22,10 +23,12 @@ export default [
     },
     plugins: {
       '@typescript-eslint': pluginTs,
-      'license-header': licenseHeader
+      'license-header': pluginLicenseHeader,
+      'eslint-comments': pluginComments
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
+      ...pluginComments.configs.recommended.rules,
       ...pluginTs.configs["recommended-type-checked"].rules,
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -85,17 +88,17 @@ export default [
           '* compatible open source license.',
           '*/'
         ]
-      ]
+      ],
     }
   },
-  ...eslintPluginYml.configs['flat/standard'],
+  ...pluginYml.configs['flat/standard'],
   {
     files: ["**/*.yaml", "**/*.yml"],
     languageOptions: {
       parser: parserYml
     },
     plugins: {
-      yml: eslintPluginYml
+      yml: pluginYml
     },
     rules: {
       'yml/no-empty-document': 'off',
