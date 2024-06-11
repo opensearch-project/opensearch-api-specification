@@ -36,8 +36,8 @@ export class ConsoleResultLogger implements ResultLogger {
     console.log('\n')
   }
 
-  #log_story ({ result, full_path, description, display_path }: StoryEvaluation): void {
-    this.#log_evaluation({ result, message: full_path }, ansi.cyan(ansi.b(description ?? display_path)))
+  #log_story ({ result, full_path, description, display_path, message }: StoryEvaluation): void {
+    this.#log_evaluation({ result, message: message ?? full_path }, ansi.cyan(ansi.b(description ?? display_path)))
   }
 
   #log_chapters (evaluations: ChapterEvaluation[], title: string): void {

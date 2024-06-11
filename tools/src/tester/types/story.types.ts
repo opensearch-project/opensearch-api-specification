@@ -65,12 +65,17 @@ export interface Story {
  * via the `definition` "ChapterRequest".
  */
 export interface ChapterRequest {
+  /**
+   * A unique identifier for the chapter, useful for accessing outputs.
+   */
+  id?: string;
   path: string;
   method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
   parameters?: {
     [k: string]: Parameter;
   };
   request_body?: RequestBody;
+  output?: Output;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -79,6 +84,21 @@ export interface ChapterRequest {
 export interface RequestBody {
   content_type?: string;
   payload: Payload;
+}
+/**
+ * Describes output for a chapter.
+ * The keys are the names for the variable in the chapter output.
+ * The values are paths to the values in the response.
+ * The values should be in the form:
+ * - `payload.<payload-path>` for the payload
+ * - `headers.<header-name>` for the headers
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Output".
+ */
+export interface Output {
+  [k: string]: string;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

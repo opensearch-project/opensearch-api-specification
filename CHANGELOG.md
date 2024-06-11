@@ -18,6 +18,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added code coverage to tools' tests ([#323](https://github.com/opensearch-project/opensearch-api-specification/pull/323))
 - Added a YAML linter ([#312](https://github.com/opensearch-project/opensearch-api-specification/pull/312))
 - Added linter to validate order of spec operations ([#325](https://github.com/opensearch-project/opensearch-api-specification/pull/326)) ([#326](https://github.com/opensearch-project/opensearch-api-specification/pull/326))
+- Added support to read outputs from requests in tests([#324](https://github.com/opensearch-project/opensearch-api-specification/pull/324))
 
 ### Changed
 

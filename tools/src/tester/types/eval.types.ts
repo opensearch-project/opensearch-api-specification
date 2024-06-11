@@ -7,6 +7,9 @@
 * compatible open source license.
 */
 
+import { type ChapterOutput } from '../ChapterOutput'
+import { StoryOutputs } from '../StoryOutputs'
+
 export type LibraryEvaluation = StoryEvaluation[]
 
 export interface StoryEvaluation {
@@ -31,6 +34,16 @@ export interface ChapterEvaluation {
     status: Evaluation
     payload: Evaluation
   }
+  output_values?: EvaluationWithOutput
+}
+
+export class ChaptersEvaluations {
+  evaluations: ChapterEvaluation[]
+  outputs: StoryOutputs
+  constructor () {
+    this.evaluations = []
+    this.outputs = new StoryOutputs()
+  }
 }
 
 export interface Evaluation {
@@ -39,9 +52,30 @@ export interface Evaluation {
   error?: Error | string
 }
 
+export type EvaluationWithOutput = Evaluation & {
+  output?: ChapterOutput
+}
+
 export enum Result {
   PASSED = 'PASSED',
   FAILED = 'FAILED',
   SKIPPED = 'SKIPPED',
   ERROR = 'ERROR',
+}
+
+export class OutputReference {
+  chapter_id: string
+  output_name: string
+  private constructor (chapter_id: string, output_name: string) {
+    this.chapter_id = chapter_id
+    this.output_name = output_name
+  }
+
+  static parse (str: string): OutputReference | undefined {
+    if (str.startsWith('${') && str.endsWith('}')) {
+      const spl = str.slice(2, -1).split('.', 2)
+      return { chapter_id: spl[0], output_name: spl[1] }
+    }
+    return undefined
+  }
 }

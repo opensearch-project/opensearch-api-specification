@@ -9,6 +9,7 @@
 
 import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
+import { type StoryOutputs } from './StoryOutputs'
 
 // A lightweight client for testing the API
 export default class ChapterReader {
@@ -18,14 +19,16 @@ export default class ChapterReader {
     this._client = client
   }
 
-  async read (chapter: ChapterRequest): Promise<ActualResponse> {
+  async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
     const response: Record<string, any> = {}
-    const [url_path, params] = this.#parse_url(chapter.path, chapter.parameters ?? {})
+    const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
+    const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
+    const request_data = chapter.request_body?.payload !== undefined ? story_outputs.resolve_value(chapter.request_body.payload) : undefined
     await this._client.request({
       url: url_path,
       method: chapter.method,
       params,
-      data: chapter.request_body?.payload
+      data: request_data
     }).then(r => {
       response.status = r.status
       response.content_type = r.headers['content-type'].split(';')[0]

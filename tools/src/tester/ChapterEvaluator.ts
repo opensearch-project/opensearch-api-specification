@@ -14,36 +14,40 @@ import { overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
 import type OperationLocator from './OperationLocator'
 import type SchemaValidator from './SchemaValidator'
+import { type StoryOutputs } from './StoryOutputs'
+import { ChapterOutput } from './ChapterOutput'
 
 export default class ChapterEvaluator {
   private readonly _operation_locator: OperationLocator
   private readonly _chapter_reader: ChapterReader
   private readonly _schema_validator: SchemaValidator
 
-  constructor (spec_parser: OperationLocator, chapter_reader: ChapterReader, schema_validator: SchemaValidator) {
+  constructor(spec_parser: OperationLocator, chapter_reader: ChapterReader, schema_validator: SchemaValidator) {
     this._operation_locator = spec_parser
     this._chapter_reader = chapter_reader
     this._schema_validator = schema_validator
   }
 
-  async evaluate (chapter: Chapter, skip: boolean): Promise<ChapterEvaluation> {
+  async evaluate(chapter: Chapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
-    const response = await this._chapter_reader.read(chapter)
+    const response = await this._chapter_reader.read(chapter, story_outputs)
     const operation = this._operation_locator.locate_operation(chapter)
     if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
     const params = this.#evaluate_parameters(chapter, operation)
     const request_body = this.#evaluate_request_body(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
     const payload = status.result === Result.PASSED ? this.#evaluate_payload(response, operation) : { result: Result.SKIPPED }
+    const output_values = ChapterOutput.extract_output_values(response, chapter.output)
     return {
       title: chapter.synopsis,
-      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload])) },
+      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload]).concat(output_values ? [output_values] : [])) },
       request: { parameters: params, request_body },
-      response: { status, payload }
+      response: { status, payload },
+      ...(output_values ? { output_values } : {})
     }
   }
 
-  #evaluate_parameters (chapter: Chapter, operation: ParsedOperation): Record<string, Evaluation> {
+  #evaluate_parameters(chapter: Chapter, operation: ParsedOperation): Record<string, Evaluation> {
     return Object.fromEntries(Object.entries(chapter.parameters ?? {}).map(([name, parameter]) => {
       const schema = operation.parameters[name]?.schema
       if (schema == null) return [name, { result: Result.FAILED, message: `Schema for "${name}" parameter not found.` }]
@@ -52,7 +56,7 @@ export default class ChapterEvaluator {
     }))
   }
 
-  #evaluate_request_body (chapter: Chapter, operation: ParsedOperation): Evaluation {
+  #evaluate_request_body(chapter: Chapter, operation: ParsedOperation): Evaluation {
     if (!chapter.request_body) return { result: Result.PASSED }
     const content_type = chapter.request_body.content_type ?? 'application/json'
     const schema = operation.requestBody?.content[content_type]?.schema
@@ -60,7 +64,7 @@ export default class ChapterEvaluator {
     return this._schema_validator.validate(schema, chapter.request_body?.payload ?? {})
   }
 
-  #evaluate_status (chapter: Chapter, response: ActualResponse): Evaluation {
+  #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {
     const expected_status = chapter.response?.status ?? 200
     if (response.status === expected_status) return { result: Result.PASSED }
     return {
@@ -70,7 +74,7 @@ export default class ChapterEvaluator {
     }
   }
 
-  #evaluate_payload (response: ActualResponse, operation: ParsedOperation): Evaluation {
+  #evaluate_payload(response: ActualResponse, operation: ParsedOperation): Evaluation {
     const content_type = response.content_type ?? 'application/json'
     const content = operation.responses[response.status]?.content[content_type]
     const schema = content?.schema
