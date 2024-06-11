@@ -27,7 +27,7 @@ interface MockedReturnedValues {
 }
 
 export function mocked_operation (returned_values: MockedReturnedValues): Operation {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+   
   const op: Operation = new Operation('', '', '', {} as OperationSpec)
 
   if (returned_values.validate) {

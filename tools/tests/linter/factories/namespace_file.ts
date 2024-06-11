@@ -31,7 +31,7 @@ export function mocked_namespace_file (ops: { returned_values?: MockedReturnedVa
 
   // eslint-disable-next-line @typescript-eslint/dot-notation
   if (ops.groups_errors) ns_file['_operation_groups'] = ops.groups_errors.map((errors) => mocked_operation_group({ validate: errors }))
-  // eslint-disable-next-line @typescript-eslint/dot-notation,@typescript-eslint/consistent-type-assertions
+  // eslint-disable-next-line @typescript-eslint/dot-notation
   if (ops.spec) ns_file['_spec'] = { paths: {}, components: {}, ...ops.spec } as OpenAPIV3.Document
 
   if (ops.returned_values) {
