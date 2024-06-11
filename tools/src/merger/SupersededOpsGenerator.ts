@@ -9,7 +9,7 @@
 
 import { type OperationSpec, type SupersededOperationMap } from 'types'
 import _ from 'lodash'
-import { read_yaml } from '../../helpers'
+import { read_yaml } from '../helpers'
 import { type Logger } from '../Logger'
 
 export default class SupersededOpsGenerator {

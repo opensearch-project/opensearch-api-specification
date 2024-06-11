@@ -9,12 +9,45 @@
 
 import SupersededOperationsFile from 'linter/components/SupersededOperationsFile'
 
-test('validate()', () => {
-  const validator = new SupersededOperationsFile('./tools/tests/linter/fixtures/_superseded_operations.yaml')
-  expect(validator.validate()).toEqual([
-    {
-      file: 'fixtures/_superseded_operations.yaml',
-      message: "File content does not match JSON schema found in './json_schemas/_superseded_operations.schema.yaml':\n [\n  {\n    \"instancePath\": \"/~1hello~1world/operations/1\",\n    \"schemaPath\": \"#/patternProperties/%5E~1/properties/operations/items/enum\",\n    \"keyword\": \"enum\",\n    \"params\": {\n      \"allowedValues\": [\n        \"GET\",\n        \"POST\",\n        \"PUT\",\n        \"DELETE\",\n        \"HEAD\",\n        \"OPTIONS\",\n        \"PATCH\"\n      ]\n    },\n    \"message\": \"must be equal to one of the allowed values\"\n  }\n]"
-    }
-  ])
+describe('validate()', () => {
+  test('invalid schema', () => {
+    const validator = new SupersededOperationsFile('./tools/tests/linter/fixtures/superseded_operations/invalid_schema.yaml')
+    expect(validator.validate()).toEqual([
+      {
+        file: 'superseded_operations/invalid_schema.yaml',
+        message: "File content does not match JSON schema found in './json_schemas/_superseded_operations.schema.yaml':\n " +
+          JSON.stringify([
+              {
+                "instancePath": "/~1hello~1world/operations/1",
+                "schemaPath": "#/patternProperties/%5E~1/properties/operations/items/enum",
+                "keyword": "enum",
+                "params": {
+                  "allowedValues": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE",
+                    "HEAD",
+                    "OPTIONS",
+                    "PATCH"
+                  ]
+                },
+                "message": "must be equal to one of the allowed values"
+              }
+        ], null, 2),
+      },
+    ])
+  })
+
+  test('incorrect order of operations', () => {
+    const validator = new SupersededOperationsFile('./tools/tests/linter/fixtures/superseded_operations/incorrect_order_of_operations.yaml')
+    expect(validator.validate()).toEqual([
+      {
+        file: 'superseded_operations/incorrect_order_of_operations.yaml',
+        location: '/world/hello',
+        message: "Operations must be sorted. Expected GET, HEAD, POST, PUT, PATCH, DELETE."
+      },
+    ])
+  })
 })
+

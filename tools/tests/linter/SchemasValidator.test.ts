@@ -8,7 +8,7 @@
 */
 
 import { Logger } from 'Logger'
-import SchemasValidator from '../../src/linter/SchemasValidator'
+import SchemasValidator from 'linter/SchemasValidator'
 
 test('validate() - named_schemas', () => {
   const validator = new SchemasValidator('./tools/tests/linter/fixtures/schemas_validator/named_schemas', new Logger())

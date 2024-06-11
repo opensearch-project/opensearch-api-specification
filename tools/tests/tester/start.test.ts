@@ -8,7 +8,7 @@
 */
 
 import { spawnSync } from 'child_process'
-import * as ansi from '../../src/tester/Ansi'
+import * as ansi from 'tester/Ansi'
 import * as path from 'path'
 import { check_story_variables as get_bad_references, extract_output_values } from '../../src/tester/helpers'
 import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse } from 'tester/types/story.types'

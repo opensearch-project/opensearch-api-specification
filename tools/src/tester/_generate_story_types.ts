@@ -9,7 +9,7 @@
 
 import * as js2ts from 'json-schema-to-typescript'
 import fs from 'fs'
-import { read_yaml } from '../../helpers'
+import { read_yaml } from '../helpers'
 
 const schema = read_yaml('json_schemas/test_story.schema.yaml')
 void js2ts.compile(schema, 'Story',

@@ -8,7 +8,7 @@
 */
 
 import { type OpenAPIV3 } from 'openapi-types'
-import { resolve_ref } from '../../helpers'
+import { resolve_ref } from '../helpers'
 import { type Chapter } from './types/story.types'
 import { type ParsedOperation } from './types/spec.types'
 import _ from 'lodash'

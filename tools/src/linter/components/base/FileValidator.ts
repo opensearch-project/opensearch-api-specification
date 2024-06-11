@@ -10,7 +10,7 @@
 import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from 'types'
 import { type OpenAPIV3 } from 'openapi-types'
-import { read_yaml } from '../../../../helpers'
+import { read_yaml } from '../../../helpers'
 import AJV from 'ajv'
 import addFormats from 'ajv-formats'
 

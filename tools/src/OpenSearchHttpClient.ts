@@ -10,7 +10,7 @@
 import { Option } from '@commander-js/extra-typings'
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import * as https from 'node:https'
-import { sleep } from '../helpers'
+import { sleep } from './helpers'
 
 const DEFAULT_URL = 'https://localhost:9200'
 const DEFAULT_USER = 'admin'

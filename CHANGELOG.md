@@ -17,7 +17,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `npm run test:unit` and `test:integ` ([#320](https://github.com/opensearch-project/opensearch-api-specification/pull/320))
 - Added code coverage to tools' tests ([#323](https://github.com/opensearch-project/opensearch-api-specification/pull/323))
 - Added a YAML linter ([#312](https://github.com/opensearch-project/opensearch-api-specification/pull/312))
- 
+- Added linter to validate order of spec operations ([#325](https://github.com/opensearch-project/opensearch-api-specification/pull/326)) ([#326](https://github.com/opensearch-project/opensearch-api-specification/pull/326))
+
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))

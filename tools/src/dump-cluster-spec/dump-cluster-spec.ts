@@ -10,7 +10,7 @@
 import { Command, Option } from '@commander-js/extra-typings'
 import { resolve } from 'path'
 import * as process from 'node:process'
-import { write_yaml } from '../../helpers'
+import { write_yaml } from '../helpers'
 import {
   get_opensearch_opts_from_cli,
   OPENSEARCH_INSECURE_OPTION,
