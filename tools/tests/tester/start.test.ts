@@ -10,10 +10,11 @@
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
 import * as path from 'path'
-import { check_story_variables as get_bad_references, extract_output_values } from '../../src/tester/helpers'
-import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse } from 'tester/types/story.types'
-import { type EvaluationWithOutput, Result } from 'tester/types/eval.types'
+import { extract_output_values } from '../../src/tester/helpers'
+import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse, Story } from 'tester/types/story.types'
+import { type EvaluationWithOutput, Result, ChapterEvaluation, StoryEvaluation } from 'tester/types/eval.types'
 import { ChapterOutput } from 'tester/ChapterOutput'
+import StoryEvaluator from 'tester/StoryEvaluator'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/start.ts'].concat(args), {
@@ -45,7 +46,7 @@ test('displays story description', () => {
   )
 })
 
-function create_response (payload: any): ActualResponse {
+function create_response(payload: any): ActualResponse {
   return {
     status: 200,
     content_type: 'application/json',
@@ -53,7 +54,7 @@ function create_response (payload: any): ActualResponse {
   }
 }
 
-function passed_output (output: Record<string, any>): EvaluationWithOutput {
+function passed_output(output: Record<string, any>): EvaluationWithOutput {
   return {
     result: Result.PASSED,
     output: new ChapterOutput(output)
@@ -91,7 +92,7 @@ test('extract_output_values', () => {
   })
 })
 
-function dummy_chapter_request (id?: string, output?: Output): ChapterRequest {
+function dummy_chapter_request(id?: string, output?: Output): ChapterRequest {
   return {
     id,
     path: '/path',
@@ -100,7 +101,7 @@ function dummy_chapter_request (id?: string, output?: Output): ChapterRequest {
   }
 }
 
-function dummy_chapter_request_with_input (parameters?: Record<string, any>, request_body?: RequestBody, id?: string, output?: Output): ChapterRequest {
+function dummy_chapter_request_with_input(parameters?: Record<string, any>, request_body?: RequestBody, id?: string, output?: Output): ChapterRequest {
   return {
     ...dummy_chapter_request(id, output),
     parameters,
@@ -108,7 +109,7 @@ function dummy_chapter_request_with_input (parameters?: Record<string, any>, req
   }
 }
 
-function chapter (synopsis: string, request: ChapterRequest): Chapter {
+function chapter(synopsis: string, request: ChapterRequest): Chapter {
   return {
     synopsis,
     ...request
@@ -116,8 +117,19 @@ function chapter (synopsis: string, request: ChapterRequest): Chapter {
 }
 
 /* eslint-disable no-template-curly-in-string */
-test('get_bad_references', () => {
-  expect(get_bad_references({
+test('check_story_variables', () => {
+  const check_story_variables = (s: Story): StoryEvaluation | undefined => StoryEvaluator.check_story_variables(s, 'display_path', 'full_path')
+  const failed = (prologues: ChapterEvaluation[] = [], chapters: ChapterEvaluation[] = []): StoryEvaluation => ({
+    result: Result.ERROR,
+    description: 'story1',
+    display_path: 'display_path',
+    full_path: 'full_path',
+    message: 'The story was defined with incorrect variables',
+    prologues,
+    chapters,
+    epilogues: []
+  })
+  expect(check_story_variables({
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -125,9 +137,9 @@ test('get_bad_references', () => {
     chapters: [
       chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue1.x}' }))
     ]
-  })).toBe(undefined)
+  })).toStrictEqual(undefined)
 
-  expect(get_bad_references({
+  expect(check_story_variables({
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -135,9 +147,14 @@ test('get_bad_references', () => {
     chapters: [
       chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue1.y}' }))
     ]
-  })).toBe('Chapter makes reference to non existent output "y" in chapter "prologue1"')
+  })).toStrictEqual(
+    failed(
+      [{ title: "GET /path", overall: { result: Result.PASSED } }],
+      [{ title: 'GET /path', overall: { result: Result.FAILED, message: 'Chapter makes reference to non existent output "y" in chapter "prologue1"' } }]
+    )
+  )
 
-  expect(get_bad_references({
+  expect(check_story_variables({
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -145,17 +162,28 @@ test('get_bad_references', () => {
     chapters: [
       chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue2.x}' }))
     ]
-  })).toBe('Chapter makes reference to non existent chapter "prologue2')
+  })).toStrictEqual(
+    failed(
+      [{ title: "GET /path", overall: { result: Result.PASSED } }],
+      [{ title: 'GET /path', overall: { result: Result.FAILED, message: 'Chapter makes reference to non existent chapter "prologue2' } }]
+    )
+  )
 
-  expect(get_bad_references({
+  expect(check_story_variables({
     description: 'story1',
     prologues: [
       dummy_chapter_request(undefined, { x: 'payload.x' })
     ],
     chapters: []
-  })).toBe('An episode must have an id to store its output')
+  })).toStrictEqual(
+    failed(
+      [
+        { title: "GET /path", overall: { result: Result.FAILED, message: 'An episode must have an id to store its output' } }
+      ]
+    )
+  )
 
-  expect(get_bad_references({
+  expect(check_story_variables({
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -164,7 +192,7 @@ test('get_bad_references', () => {
       chapter('synopsis-1', dummy_chapter_request_with_input({ 'param-x': '${prologue1.x}' }, undefined, 'chapter1', { y: 'payload.y' })),
       chapter('synopsis-2', dummy_chapter_request_with_input({ 'param-y': '${chapter1.y}' }))
     ]
-  })).toBe(undefined)
+  })).toStrictEqual(undefined)
 })
 /* eslint-enable no-template-curly-in-string */
 
