@@ -14,7 +14,6 @@ import { check_story_variables as get_bad_references, extract_output_values } fr
 import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse } from 'tester/types/story.types'
 import { type EvaluationWithOutput, Result } from 'tester/types/eval.types'
 import { ChapterOutput } from 'tester/ChapterOutput'
-import { StoryOutputs } from 'tester/StoryOutputs'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/start.ts'].concat(args), {
@@ -89,64 +88,6 @@ test('extract_output_values', () => {
   expect(extract_output_values(response, { x: 'payload.a.b.x[0]' })).toEqual({
     result: Result.ERROR,
     message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
-  })
-})
-
-const story_outputs = new StoryOutputs({
-  chapter_id: new ChapterOutput({
-    x: 1,
-    y: 2
-  })
-})
-
-/* eslint-disable no-template-curly-in-string */
-test('resolve_string', () => {
-  expect(story_outputs.resolve_string('${chapter_id.x}')).toEqual(1)
-  expect(story_outputs.resolve_string('some_str')).toEqual('some_str')
-})
-/* eslint-enable no-template-curly-in-string */
-
-test('resolve_value', () => {
-  /* eslint-disable no-template-curly-in-string */
-  const value = {
-    a: '${chapter_id.x}',
-    b: ['${chapter_id.x}', '${chapter_id.y}', 3],
-    c: {
-      d: '${chapter_id.x}',
-      e: 'str',
-      f: true
-    },
-    g: 123
-  }
-  /* eslint-enable no-template-curly-in-string */
-  expect(story_outputs.resolve_value(value)).toEqual(
-    {
-      a: 1,
-      b: [1, 2, 3],
-      c: {
-        d: 1,
-        e: 'str',
-        f: true
-      },
-      g: 123
-    }
-  )
-})
-
-test('resolve_params', () => {
-  /* eslint-disable no-template-curly-in-string */
-  const parameters = {
-    a: '${chapter_id.x}',
-    b: '${chapter_id.y}',
-    c: 3,
-    d: 'str'
-  }
-  /* eslint-enable no-template-curly-in-string */
-  expect(story_outputs.resolve_params(parameters)).toEqual({
-    a: 1,
-    b: 2,
-    c: 3,
-    d: 'str'
   })
 })
 
