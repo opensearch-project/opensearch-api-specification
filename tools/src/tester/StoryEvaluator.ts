@@ -10,9 +10,9 @@
 import { type Chapter, type Story, type SupplementalChapter } from './types/story.types'
 import { type ChapterEvaluation, Result, type StoryEvaluation } from './types/eval.types'
 import type ChapterEvaluator from './ChapterEvaluator'
-import type ChapterReader from './ChapterReader'
-import { check_story_variables, extract_output_values, overall_result } from './helpers'
+import { check_story_variables, overall_result } from './helpers'
 import { StoryOutputs } from './StoryOutputs'
+import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 
 export interface StoryFile {
   display_path: string
@@ -21,12 +21,12 @@ export interface StoryFile {
 }
 
 export default class StoryEvaluator {
-  private readonly _chapter_reader: ChapterReader
   private readonly _chapter_evaluator: ChapterEvaluator
+  private readonly _supplemental_chapter_evaluator: SupplementalChapterEvaluator
 
-  constructor (chapter_reader: ChapterReader, chapter_evaluator: ChapterEvaluator) {
-    this._chapter_reader = chapter_reader
+  constructor (chapter_evaluator: ChapterEvaluator, supplemental_chapter_evaluator: SupplementalChapterEvaluator) {
     this._chapter_evaluator = chapter_evaluator
+    this._supplemental_chapter_evaluator = supplemental_chapter_evaluator
   }
 
   async evaluate ({ story, display_path, full_path }: StoryFile, dry_run: boolean = false): Promise<StoryEvaluation> {
@@ -91,7 +91,7 @@ export default class StoryEvaluator {
       if (dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else {
-        const {evaluation, evaluation_error} = await this.evaluate_supplemental_chapter(chapter, story_outputs)
+        const {evaluation, evaluation_error} = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
         has_errors = has_errors || evaluation_error
         if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
           story_outputs.set_chapter_output(chapter.id, evaluation.output_values?.output)
@@ -100,42 +100,6 @@ export default class StoryEvaluator {
       }
     }
     return { evaluations, has_errors }
-  }
-
-  async evaluate_supplemental_chapter (chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<{ evaluation: ChapterEvaluation, evaluation_error: boolean} > {
-    const title = `${chapter.method} ${chapter.path}`
-    const response = await this._chapter_reader.read(chapter, story_outputs)
-    const status = chapter.status ?? [200, 201]
-    const output_values = extract_output_values(response)
-    let response_evaluation: ChapterEvaluation
-    const passed_evaluation = { title, overall: { result: Result.PASSED } }
-    if (status.includes(response.status)) {
-      response_evaluation = passed_evaluation
-    } else {
-      response_evaluation = { title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error }, output_values }
-    }
-    if (output_values) {
-      response_evaluation.output_values = output_values
-    }
-    const result = overall_result([response_evaluation.overall].concat(output_values ? [output_values] : []))
-    if (result === Result.PASSED) {
-      return {evaluation: passed_evaluation, evaluation_error: false}
-    } else {
-      const message_segments = []
-      if (response_evaluation.overall.result === Result.ERROR) {
-        message_segments.push(`${response_evaluation.overall.message}`)
-      }
-      if (output_values !== undefined && output_values.result === Result.ERROR) {
-        message_segments.push(`${output_values.message}`)
-      }
-      const message = message_segments.join('\n')
-      const evaluation = {
-        title,
-        overall: { result: Result.ERROR, message, error: response.error as Error },
-        ...(output_values ? { output_values } : {})
-      }
-      return {evaluation, evaluation_error: true}
-    }
   }
 
 }

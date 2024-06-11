@@ -20,6 +20,7 @@ import { type OpenAPIV3 } from 'openapi-types'
 import TestRunner from 'tester/TestRunner'
 import { NoOpResultLogger, type ResultLogger } from 'tester/ResultLogger'
 import * as process from 'node:process'
+import SupplementalChapterEvaluator from 'tester/SupplementalChapterEvaluator'
 
 export function construct_tester_components (spec_path: string): {
   specification: OpenAPIV3.Document
@@ -42,7 +43,8 @@ export function construct_tester_components (spec_path: string): {
   const chapter_reader = new ChapterReader(opensearch_http_client)
   const schema_validator = new SchemaValidator(specification)
   const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator)
-  const story_evaluator = new StoryEvaluator(chapter_reader, chapter_evaluator)
+  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+  const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
   const test_runner = new TestRunner(story_evaluator, result_logger)
   return {
