@@ -2,6 +2,12 @@
 
 ## OpenSearch API Specification
 
+[![Code Covergage](https://codecov.io/github/opensearch-project/opensearch-api-specification/graph/badge.svg?token=TO9YMAKSHH)](https://codecov.io/github/opensearch-project/opensearch-api-specification)
+[![Test Tools (Unit)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml)
+[![Test Tools (Integration)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml)
+[![Test Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test.yml)
+[![Validate Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec.yml)
+
 - [OpenSearch API Specification](#opensearch-api-specification)
 - [Welcome!](#welcome)
 - [Project Resources](#project-resources)
@@ -47,7 +53,7 @@ See [CLIENT_GENERATOR_GUIDE](CLIENT_GENERATOR_GUIDE.md).
 
 OpenSearch API Specs are hosted at https://opensearch-project.github.io/opensearch-api-specification/. See [PUBLISHING_SPECS](PUBLISHING_SPECS.md) for more information.
 
-Click [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main/opensearch-openapi.yaml) to download the latest OpenSearch OpenAPI yaml file.
+Click [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml) to download the latest OpenSearch OpenAPI yaml file.
 
 
 ## Security

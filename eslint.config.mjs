@@ -1,23 +1,37 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
 import pluginJs from '@eslint/js'
+import pluginTs from '@typescript-eslint/eslint-plugin'
+import parserTs from '@typescript-eslint/parser'
+import eslintPluginYml from 'eslint-plugin-yml'
+import parserYml from "yaml-eslint-parser"
+import globals from 'globals'
 import licenseHeader from 'eslint-plugin-license-header'
-
-// mimic CommonJS variables -- not needed if using CommonJS
-const _filename = fileURLToPath(import.meta.url)
-const _dirname = path.dirname(_filename)
-const compat = new FlatCompat({ baseDirectory: _dirname, recommendedConfig: pluginJs.configs.recommended })
 
 export default [
   pluginJs.configs.recommended,
-  ...compat.extends('standard-with-typescript'),
   {
     files: ['**/*.{js,ts}'],
+    languageOptions: {
+      parser: parserTs,
+      parserOptions: {
+        project: './tsconfig.json'
+      },
+      globals: {
+        ...globals.jest,
+        ...globals.node,
+      },
+    },
     plugins: {
+      '@typescript-eslint': pluginTs,
       'license-header': licenseHeader
     },
     rules: {
+      ...pluginJs.configs.recommended.rules,
+      ...pluginTs.configs["recommended-type-checked"].rules,
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/consistent-indexed-object-style': 'error',
       '@typescript-eslint/consistent-type-assertions': 'error',
       '@typescript-eslint/dot-notation': 'error',
@@ -52,10 +66,13 @@ export default [
           allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false
         }
       ],
+      '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'array-callback-return': 'off',
       'new-cap': 'off',
       'no-return-assign': 'error',
       'object-shorthand': 'error',
+      'no-constant-condition': 'off',
       'license-header/header': [
         'error',
         [
@@ -69,6 +86,21 @@ export default [
           '*/'
         ]
       ]
+    }
+  },
+  ...eslintPluginYml.configs['flat/standard'],
+  {
+    files: ["**/*.yaml", "**/*.yml"],
+    languageOptions: {
+      parser: parserYml
+    },
+    plugins: {
+      yml: eslintPluginYml
+    },
+    rules: {
+      'yml/no-empty-document': 'off',
+      'yml/quotes': 'off',
+      'yml/plain-scalar': 'off'
     }
   }
 ]

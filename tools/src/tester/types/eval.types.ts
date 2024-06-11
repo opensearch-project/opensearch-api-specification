@@ -49,7 +49,7 @@ export class ChaptersEvaluations {
 export interface Evaluation {
   result: Result
   message?: string
-  error?: Error
+  error?: Error | string
 }
 
 export type EvaluationWithOutput = Evaluation & {

@@ -1,39 +1,40 @@
 <!-- TOC -->
-* [Developer Guide](#developer-guide)
-  * [Getting Started](#getting-started)
-  * [Specification](#specification)
-    * [File Structure](#file-structure)
-    * [Grouping Operations](#grouping-operations)
-    * [Grouping Schemas](#grouping-schemas)
-    * [Superseded Operations](#superseded-operations)
-    * [Global Parameters](#global-parameters)
-    * [OpenAPI Extensions](#openapi-extensions)
-  * [Writing Spec Tests](#writing-spec-tests)
-    * [Running Spec Tests Locally](#running-spec-tests-locally)
-  * [Tools](#tools)
-    * [Setup](#setup)
-    * [Spec Merger](#spec-merger)
-      * [Arguments](#arguments)
-      * [Example](#example)
-    * [Spec Linter](#spec-linter)
-      * [Arguments](#arguments-1)
-      * [Example](#example-1)
-    * [Dump Cluster Spec](#dump-cluster-spec)
-      * [Arguments](#arguments-2)
-      * [Example](#example-2)
-    * [Coverage](#coverage)
-      * [Arguments](#arguments-3)
-      * [Example](#example-3)
-    * [Testing](#testing)
-      * [Tests](#tests)
-      * [Lints](#lints)
-  * [Workflows](#workflows)
-    * [Analyze PR Changes](#analyze-pr-changes)
-    * [Build](#build)
-    * [Deploy GitHub Pages](#deploy-github-pages)
-    * [Comment on PR](#comment-on-pr)
-    * [Test Tools](#test-tools)
-    * [Validate Spec](#validate-spec)
+- [Developer Guide](#developer-guide)
+  - [Getting Started](#getting-started)
+  - [Specification](#specification)
+    - [File Structure](#file-structure)
+    - [Grouping Operations](#grouping-operations)
+    - [Grouping Schemas](#grouping-schemas)
+    - [Superseded Operations](#superseded-operations)
+    - [Global Parameters](#global-parameters)
+    - [OpenAPI Extensions](#openapi-extensions)
+  - [Writing Spec Tests](#writing-spec-tests)
+    - [Running Spec Tests Locally](#running-spec-tests-locally)
+  - [Tools](#tools)
+    - [Setup](#setup)
+    - [Spec Merger](#spec-merger)
+      - [Arguments](#arguments)
+      - [Example](#example)
+    - [Spec Linter](#spec-linter)
+      - [Arguments](#arguments-1)
+      - [Example](#example-1)
+    - [Dump Cluster Spec](#dump-cluster-spec)
+      - [Arguments](#arguments-2)
+      - [Example](#example-2)
+    - [Coverage](#coverage)
+      - [Arguments](#arguments-3)
+      - [Example](#example-3)
+    - [Testing](#testing)
+      - [Tests](#tests)
+      - [Lints](#lints)
+  - [Workflows](#workflows)
+    - [Analyze PR Changes](#analyze-pr-changes)
+    - [Build](#build)
+    - [Deploy GitHub Pages](#deploy-github-pages)
+    - [Comment on PR](#comment-on-pr)
+    - [Test Tools (Unit)](#test-tools-unit)
+    - [Test Tools (Integration)](#test-tools-integration)
+    - [Validate Spec](#validate-spec)
 <!-- TOC -->
 
 # Developer Guide
@@ -284,12 +285,10 @@ The dump-cluster-spec tool connects to an OpenSearch cluster which has the [open
 
 #### Arguments
 
-- `--host <host>`: The host at which the cluster is accessible, defaults to `localhost`.
-- `--port <port>`: The port at which the cluster is accessible, defaults to `9200`.
-- `--no-https`: Disable HTTPS, defaults to using HTTPS.
-- `--insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
-- `--username <username>`: The username to authenticate with the cluster, defaults to `admin`, only used when `--password` is set.
-- `--password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
+- `--opensearch-url <url>`: The URL at which the cluster is accessible, defaults to `https://localhost:9200`.
+- `--opensearch-insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
+- `--opensearch-username <username>`: The username to authenticate with the cluster, defaults to `admin`, only used when `--opensearch-password` is set.
+- `--opensearch-password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
 - `--output <path>`: The path to write the dumped spec to, defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
 
 #### Example
@@ -308,7 +307,7 @@ docker run \
     -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
     opensearch-with-api-plugin
 
-OPENSEARCH_PASSWORD="${OPENSEARCH_PASSWORD}" npm run dump-cluster-spec -- --insecure
+OPENSEARCH_PASSWORD="${OPENSEARCH_PASSWORD}" npm run dump-cluster-spec -- --opensearch-insecure
 
 docker stop opensearch
 ```
@@ -382,12 +381,14 @@ npm run test
 
 Specify the test path to run tests for one of the tools:
 ```bash
-npm run test -- tools/tests/tester/
+npm run jest -- tools/tests/linter/lint.test.ts 
 ```
+
+The test suite contains unit tests and integration tests. Integration tests, such as [these](tools/tests/tester/integ/), require a local instance of OpenSearch and are placed into a folder named `integ`. Unit tests are run in parallel and integration tests are run sequentially using `--runInBand`. You can run unit tests with `npm run test:unit` separately from integration tests with `npm run test:integ`.
 
 #### Lints
 
-All code is linted using [ESLint](https://eslint.org/) in combination with [typescript-eslint](https://typescript-eslint.io/). Linting can be run via:
+All TypeScript code and YAML files are linted using [ESLint](https://eslint.org/), [typescript-eslint](https://typescript-eslint.io/), and [eslint-plugin-yml](https://ota-meshi.github.io/eslint-plugin-yml/). Linting can be run via:
 ```bash
 npm run lint
 ```
@@ -417,9 +418,13 @@ This workflow performs a [Jekyll](https://jekyllrb.com/) build of the `main` bra
 
 This workflow is triggered by the completion of the workflows such as [Analyze PR Changes](#analyze-pr-changes) and downloading a JSON payload artifact which it uses to invoke a template from [.github/pr-comment-templates](.github/pr-comment-templates) to render a comment which is placed on the original triggering PR.
 
-### [Test Tools](.github/workflows/test-tools.yml)
+### [Test Tools (Unit)](.github/workflows/test-tools-unit.yml)
 
-This workflow runs on PRs to invoke the [tools' tests](tools/tests) and [TypeScript linting](#lints) to ensure there are no breakages in behavior or departures from the desired code style and cleanliness.
+This workflow runs on PRs to invoke the [tools' unit tests](tools/tests), upload test coverage to CodeCov, and run [TypeScript linting](#lints) to ensure there are no breakages in behavior or departures from the desired code style and cleanliness.
+
+### [Test Tools (Integration)](.github/workflows/test-tools-integ.yml)
+
+This workflow runs on PRs to invoke the [tools' integration tests](tools/tests) that require a running instance of OpenSearch to ensure there are no breakages in behavior.
 
 ### [Validate Spec](.github/workflows/validate-spec.yml)
 

@@ -16,8 +16,18 @@ export enum LogLevel {
 export class Logger {
   level: LogLevel
 
-  constructor (level: LogLevel) {
+  static messages = {
+    [LogLevel.error]: 'ERROR',
+    [LogLevel.warn]: 'WARNING',
+    [LogLevel.info]: 'INFO'
+  }
+
+  constructor (level: LogLevel = LogLevel.warn) {
     this.level = level
+  }
+
+  log (message: string): void {
+    console.log(message)
   }
 
   info (message: string): void {
@@ -34,9 +44,7 @@ export class Logger {
 
   #log (level: LogLevel, message: string): void {
     if (level > this.level) return
-    const output = `[${level}] ${message}`
-    if (level === LogLevel.error) console.error(output)
-    if (level === LogLevel.warn) console.warn(output)
-    if (level === LogLevel.info) console.info(output)
+    const output = `[${Logger.messages[level]}] ${message}`
+    console.log(output)
   }
 }

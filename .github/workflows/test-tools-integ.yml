@@ -1,22 +1,24 @@
-name: Test Tools
+name: Test Tools (Integration)
 
 on:
   push:
     branches: ['**']
     paths:
       - 'package*.json'
-      - 'eslint.config.mjs'
-      - 'jest.config.js'
-      - 'tsconfig.json'
+      - eslint.config.mjs
+      - jest.config.js
+      - tsconfig.json
       - 'tools/**'
+      - '.github/workflows/test-tools*.yml'
   pull_request:
     branches: ['**']
     paths:
       - 'package*.json'
-      - 'eslint.config.mjs'
-      - 'jest.config.js'
-      - 'tsconfig.json'
+      - eslint.config.mjs
+      - jest.config.js
+      - tsconfig.json
       - 'tools/**'
+      - '.github/workflows/test-tools*.yml'
 
 jobs:
   test:
@@ -43,14 +45,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Lint
-        run: npm run lint
+      - name: Tests
+        run: |
+          npm run test:integ -- --coverage
 
-      - name: Test Spec Merger
-        run: npm run test -- tools/tests/merger
-
-      - name: Test Spec Linter
-        run: npm run test -- tools/tests/linter
-
-      - name: Test Spec Tester
-        run: npm run test -- tools/tests/tester --runInBand
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

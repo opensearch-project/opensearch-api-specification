@@ -1,0 +1,48 @@
+name: Test Tools (Unit)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'package*.json'
+      - 'eslint.config.mjs'
+      - 'jest.config.js'
+      - 'tsconfig.json'
+      - 'tools/**'
+      - '.github/workflows/test-tools*.yml'
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'package*.json'
+      - 'eslint.config.mjs'
+      - 'jest.config.js'
+      - 'tsconfig.json'
+      - 'tools/**'
+      - '.github/workflows/test-tools*.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: |
+          npm run test:unit -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

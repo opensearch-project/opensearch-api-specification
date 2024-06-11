@@ -12,10 +12,10 @@ import { type OperationSpec, type ValidationError } from 'types'
 import OperationGroup from './OperationGroup'
 import _ from 'lodash'
 import Operation from './Operation'
-import { resolve_ref } from '../../../helpers'
+import { resolve_ref, sort_by_keys } from '../../../helpers'
 import FileValidator from './base/FileValidator'
 
-const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace']
+const HTTP_METHODS = ['get', 'head', 'post', 'put', 'patch', 'delete', 'options', 'trace']
 const NAME_REGEX = /^[a-z]+[a-z_]*[a-z]+$/
 
 export default class NamespaceFile extends FileValidator {
@@ -38,7 +38,8 @@ export default class NamespaceFile extends FileValidator {
       this.validate_schemas(),
       ...this.validate_unresolved_refs(),
       ...this.validate_unused_refs(),
-      ...this.validate_parameter_refs()
+      ...this.validate_parameter_refs(),
+      ...this.validate_order_of_operations()
     ].filter((e) => e) as ValidationError[]
   }
 
@@ -106,6 +107,19 @@ export default class NamespaceFile extends FileValidator {
         return this.error(
           `Invalid parameter name '${p.name}'. A parameter's name can only contain alphanumerics, underscores, and periods.`,
           `#/components/parameters/#${name}`)
+      }
+    }).filter((e) => e) as ValidationError[]
+  }
+
+  validate_order_of_operations (): ValidationError[] {
+    return _.entries(this.spec().paths).map(([path, p]) => {
+      const current_keys = _.keys(p)
+      sort_by_keys(p as Record<string, any>, HTTP_METHODS)
+      const sorted_keys = _.keys(p)
+      if(!_.isEqual(current_keys, sorted_keys)) {
+        return this.error(
+          `Operations must be sorted. Expected ${_.join(sorted_keys, ', ')}.`,
+          path)
       }
     }).filter((e) => e) as ValidationError[]
   }

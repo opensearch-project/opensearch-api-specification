@@ -13,7 +13,7 @@ import { type Chapter } from './types/story.types'
 import { type ParsedOperation } from './types/spec.types'
 import _ from 'lodash'
 
-export default class SpecParser {
+export default class OperationLocator {
   private readonly spec: OpenAPIV3.Document
   private cached_operations: Record<string, ParsedOperation> = {}
 

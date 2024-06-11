@@ -13,7 +13,7 @@ import _ from 'lodash'
 import { read_yaml, write_yaml } from '../../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
-import { Logger, LogLevel } from '../Logger'
+import { Logger } from '../Logger'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
@@ -24,8 +24,8 @@ export default class OpenApiMerger {
   paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
   schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
 
-  constructor (root_folder: string, log_level: LogLevel = LogLevel.warn) {
-    this.logger = new Logger(log_level)
+  constructor (root_folder: string, logger: Logger = new Logger()) {
+    this.logger = logger
     this.root_folder = fs.realpathSync(root_folder)
     this.spec = {
       openapi: '3.1.0',
@@ -47,6 +47,8 @@ export default class OpenApiMerger {
     this.#generate_global_params()
     this.#generate_superseded_ops()
 
+    this.logger.info(`Writing ${output_path} ...`)
+
     if (output_path !== '') write_yaml(output_path, this.spec)
     return this.spec as OpenAPIV3.Document
   }
@@ -55,6 +57,7 @@ export default class OpenApiMerger {
   #merge_namespaces (): void {
     const folder = `${this.root_folder}/namespaces`
     fs.readdirSync(folder).forEach(file => {
+      this.logger.info(`Merging namespaces in ${folder}/${file} ...`)
       const spec = read_yaml(`${folder}/${file}`)
       this.redirect_refs_in_namespace(spec)
       this.spec.paths = { ...this.spec.paths, ...spec.paths }
@@ -78,6 +81,7 @@ export default class OpenApiMerger {
   #merge_schemas (): void {
     const folder = `${this.root_folder}/schemas`
     fs.readdirSync(folder).forEach(file => {
+      this.logger.info(`Merging schema ${folder}/${file} ...`)
       const spec = read_yaml(`${folder}/${file}`)
       const category = file.split('.yaml')[0]
       this.redirect_refs_in_schema(category, spec)
