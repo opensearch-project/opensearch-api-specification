@@ -132,7 +132,7 @@ export default class StoryEvaluator {
         return this.#failed_evaluation(title, 'An episode must have an id to store its output')
       }
       if (episode.id !== undefined && episode.output !== undefined) {
-        story_outputs.set_chapter_output(episode.id, ChapterOutput.create_dummy_from_output(episode.output))
+        story_outputs.set_chapter_output(episode.id, new ChapterOutput(episode.output))
       }
       return { title, overall: { result: Result.PASSED } }
   }
