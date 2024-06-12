@@ -59,6 +59,7 @@ export interface OpenSearchInfo {
     build_hash: string
     build_snapshot: boolean
     build_type: string
+    distribution: string
     lucene_version: string
     minimum_index_compatibility_version: string
     minimum_wire_compatibility_version: string
