@@ -23,7 +23,7 @@ export class StoryOutputs {
   }
 
   has_output_value (chapter_id: string, output_name: string): boolean {
-    return this.has_chapter(chapter_id) && this.outputs[chapter_id].get_output(output_name) !== undefined
+    return this.has_chapter(chapter_id) && this.outputs[chapter_id].get(output_name) !== undefined
   }
 
   set_chapter_output (chapter_id: string, output: ChapterOutput): void {
@@ -32,7 +32,7 @@ export class StoryOutputs {
 
   get_output_value (chapter_id: string, output_name: string): any {
     const output = this.outputs[chapter_id]
-    return output !== undefined ? output.get_output(output_name) : undefined
+    return output !== undefined ? output.get(output_name) : undefined
   }
 
   resolve_params (parameters: Record<string, Parameter>): Record<string, Parameter> {

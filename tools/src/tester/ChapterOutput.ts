@@ -18,11 +18,11 @@ export class ChapterOutput {
     this.outputs = outputs
   }
 
-  get_output(name: string): any {
+  get(name: string): any {
     return this.outputs[name]
   }
 
-  set_output(name: string, value: any): void {
+  set(name: string, value: any): void {
     this.outputs[name] = value
   }
 
@@ -44,7 +44,7 @@ export class ChapterOutput {
       } else {
         return { result: Result.ERROR, message: 'Unknown output source: ' + source }
       }
-      chapter_output.set_output(name, value)
+      chapter_output.set(name, value)
     }
     return { result: Result.PASSED, output: chapter_output }
   }
