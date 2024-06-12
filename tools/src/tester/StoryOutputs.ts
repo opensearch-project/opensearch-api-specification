@@ -31,7 +31,8 @@ export class StoryOutputs {
   }
 
   get_output_value (chapter_id: string, output_name: string): any {
-    return this.outputs[chapter_id].get_output(output_name)
+    const output = this.outputs[chapter_id]
+    return output !== undefined ? output.get_output(output_name) : undefined
   }
 
   resolve_params (parameters: Record<string, Parameter>): Record<string, Parameter> {

@@ -19,6 +19,7 @@ const story_outputs = new StoryOutputs({
 
 test('resolve_string', () => {
   expect(story_outputs.resolve_string('${chapter_id.x}')).toEqual(1)
+  expect(story_outputs.resolve_string('${invalid_id.x}')).toBeUndefined()
   expect(story_outputs.resolve_string('some_str')).toEqual('some_str')
 })
 
