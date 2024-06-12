@@ -219,15 +219,20 @@ Tests are organized in folders that match [namespaces](spec/namespaces). For exa
 
 ### Running Spec Tests Locally
 
-Set up an OpenSearch cluster with Docker using the default OPENSEARCH_PASSWORD (Recommended):
+Set up an OpenSearch cluster with Docker using the default `OPENSEARCH_PASSWORD` (Recommended):
 ```bash
 cd .github/opensearch-cluster
 docker-compose up -d
 ```
 
-Run the tests:
+Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
-npm run test:spec
+npm run test:spec -- --opensearch-insecure
+```
+
+Run a specific test story:
+```bash
+npm run test:spec -- --opensearch-insecure --tests tests/_core/info.yaml
 ```
 
 If you opt to use a different password, you can set the `OPENSEARCH_PASSWORD` environment variable to the desired password before running `docker-compose up` and every time you run the tests:
