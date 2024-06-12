@@ -16,7 +16,7 @@ import { ChapterOutput } from 'tester/ChapterOutput'
 import StoryEvaluator from 'tester/StoryEvaluator'
 
 const spec = (args: string[]): any => {
-  const start = spawnSync('ts-node', ['tools/src/tester/start.ts'].concat(args), {
+  const start = spawnSync('ts-node', ['tools/src/tester/test.ts'].concat(args), {
     env: { ...process.env, OPENSEARCH_PASSWORD: 'password' }
   })
   return {
@@ -26,7 +26,7 @@ const spec = (args: string[]): any => {
 }
 
 test('--help', () => {
-  expect(spec(['--help']).stdout).toContain('Usage: start [options]')
+  expect(spec(['--help']).stdout).toContain('Usage: test [options]')
 })
 
 test('--invalid', () => {
