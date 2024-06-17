@@ -28,7 +28,7 @@ export default class SchemaRefsValidator {
 
   #find_refs_in_namespaces_folder (): void {
     const search = (obj: any): void => {
-      const ref: string = obj.$ref ?? ''
+      const ref: string = obj?.$ref ?? ''
       if (ref !== '') {
         const file = ref.split('#')[0].replace('../', '')
         const name = ref.split('/').pop() ?? ''

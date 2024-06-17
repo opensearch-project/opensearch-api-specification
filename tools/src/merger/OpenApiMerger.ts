@@ -85,7 +85,9 @@ export default class OpenApiMerger {
       const spec = read_yaml(`${folder}/${file}`)
       const category = file.split('.yaml')[0]
       this.redirect_refs_in_schema(category, spec)
-      this.schemas[category] = spec.components.schemas as Record<string, OpenAPIV3.SchemaObject>
+      if (spec.components?.schemas !== undefined) {
+        this.schemas[category] = spec.components?.schemas
+      }
     })
 
     Object.entries(this.schemas).forEach(([category, schemas]) => {
@@ -97,7 +99,7 @@ export default class OpenApiMerger {
 
   // Redirect schema references in schema files to local references in single-file spec.
   redirect_refs_in_schema (category: string, obj: any): void {
-    const ref: string = obj.$ref ?? ''
+    const ref: string = obj?.$ref ?? ''
     if (ref !== '') {
       if (ref.startsWith('#/components/schemas')) { obj.$ref = `#/components/schemas/${category}:${ref.split('/').pop()}` } else {
         const other_category = ref.match(/(.*)\.yaml/)?.[1] ?? ''

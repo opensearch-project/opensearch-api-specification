@@ -8,6 +8,7 @@
 */
 
 import AJV from 'ajv'
+import ajv_errors from 'ajv-errors'
 import addFormats from 'ajv-formats'
 import { type OpenAPIV3 } from 'openapi-types'
 import { type Evaluation, Result } from './types/eval.types'
@@ -17,6 +18,7 @@ export default class SchemaValidator {
   constructor (spec: OpenAPIV3.Document) {
     this.ajv = new AJV({ allErrors: true, strict: true })
     addFormats(this.ajv)
+    ajv_errors(this.ajv, { singleError: true })
     this.ajv.addKeyword('discriminator')
     const schemas = spec.components?.schemas ?? {}
     for (const key in schemas) this.ajv.addSchema(schemas[key], `#/components/schemas/${key}`)
