@@ -6,6 +6,7 @@ import pluginJs from '@eslint/js'
 import pluginLicenseHeader from 'eslint-plugin-license-header'
 import pluginTs from '@typescript-eslint/eslint-plugin'
 import pluginYml from 'eslint-plugin-yml'
+import pluginCspell from '@cspell/eslint-plugin'
 
 export default [
   pluginJs.configs.recommended,
@@ -24,7 +25,8 @@ export default [
     plugins: {
       '@typescript-eslint': pluginTs,
       'license-header': pluginLicenseHeader,
-      'eslint-comments': pluginComments
+      'eslint-comments': pluginComments,
+      '@cspell': pluginCspell
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
@@ -92,6 +94,7 @@ export default [
           '*/'
         ]
       ],
+      '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }]
     }
   },
   ...pluginYml.configs['flat/standard'],
@@ -101,12 +104,14 @@ export default [
       parser: parserYml
     },
     plugins: {
-      yml: pluginYml
+      'yml': pluginYml,
+      '@cspell': pluginCspell
     },
     rules: {
       'yml/no-empty-document': 'off',
       'yml/quotes': 'off',
-      'yml/plain-scalar': 'off'
+      'yml/plain-scalar': 'off',
+      '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }]
     }
   }
 ]
