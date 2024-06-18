@@ -34,15 +34,15 @@ export default class MergedOpenApiSpec {
   }
 
   private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3.Document): void {
-    const visitor = new SchemaVisitor((_ctx, schema) => {
-      if ('properties' in schema && schema.additionalProperties === undefined) {
+    const visitor = new SchemaVisitor((_ctx, schema: any) => {
+      if (('required' in schema) && ('properties' in schema) && !('additionalProperties' in schema)) {
         // causes any undeclared field in the response to produce an error
-        (schema as any).additionalProperties = {
+        schema.additionalProperties = {
           not: true,
           errorMessage: "property is not defined in the spec"
         }
       }
-    });
+    })
     
     visitor.visit_specification(ctx, spec)
   }
