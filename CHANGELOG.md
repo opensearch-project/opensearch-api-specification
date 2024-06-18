@@ -21,6 +21,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added support to read outputs from requests in tests([#324](https://github.com/opensearch-project/opensearch-api-specification/pull/324))
 - Added `eslint-plugin-eslint-comments` ([#333](https://github.com/opensearch-project/opensearch-api-specification/pull/333))
 - Added `distribution` field to `OpenSearchVersionInfo` ([#336](https://github.com/opensearch-project/opensearch-api-specification/pull/336)) 
+- Added `created_time` and `last_updated_time` to `ml.get_model_group@200` ([#342](https://github.com/opensearch-project/opensearch-api-specification/pull/342))
 
 ### Changed
 
