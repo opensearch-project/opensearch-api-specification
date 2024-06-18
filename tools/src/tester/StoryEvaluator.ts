@@ -40,7 +40,7 @@ export default class StoryEvaluator {
         chapters: []
       }
     }
-    const variables_error = StoryEvaluator.check_story_variables(story, display_path, full_path )
+    const variables_error = StoryEvaluator.check_story_variables(story, display_path, full_path)
     if (variables_error !== undefined) {
       return variables_error
     }
@@ -96,7 +96,7 @@ export default class StoryEvaluator {
     return { evaluations, has_errors }
   }
 
-  static check_story_variables(story: Story, display_path: string, full_path: string ): StoryEvaluation | undefined {
+  static check_story_variables(story: Story, display_path: string, full_path: string): StoryEvaluation | undefined {
     const story_outputs = new StoryOutputs()
     const prologues = (story.prologues ?? []).map((prologue) => {
       return StoryEvaluator.#check_episode_variables(prologue, story_outputs)
@@ -124,26 +124,26 @@ export default class StoryEvaluator {
 
   static #check_episode_variables(episode: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
     const title = `${episode.method} ${episode.path}`
-      const error = StoryEvaluator.#check_used_variables(episode, story_outputs)
-      if (error !== undefined) {
-        return error
-      }
-      if (episode.id === undefined && episode.output !== undefined) {
-        return this.#failed_evaluation(title, 'An episode must have an id to store its output')
-      }
-      if (episode.id !== undefined && episode.output !== undefined) {
-        story_outputs.set_chapter_output(episode.id, new ChapterOutput(episode.output))
-      }
-      return { title, overall: { result: Result.PASSED } }
+    const error = StoryEvaluator.#check_used_variables(episode, story_outputs)
+    if (error !== undefined) {
+      return error
+    }
+    if (episode.id === undefined && episode.output !== undefined) {
+      return this.#failed_evaluation(title, 'An episode must have an id to store its output')
+    }
+    if (episode.id !== undefined && episode.output !== undefined) {
+      story_outputs.set_chapter_output(episode.id, new ChapterOutput(episode.output))
+    }
+    return { title, overall: { result: Result.PASSED } }
   }
 
   /**
-   * 
+   *
    * @param chapter ChapterEvaluation {
   title: string
   overall: Evaluation
-   * @param story_outputs 
-   * @returns 
+   * @param story_outputs
+   * @returns
    */
   static #check_used_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation | undefined {
     const variables = new Set<OutputReference>()

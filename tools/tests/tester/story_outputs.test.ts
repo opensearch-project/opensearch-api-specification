@@ -34,7 +34,7 @@ test('resolve_value', () => {
     },
     g: 123
   }
-    expect(story_outputs.resolve_value(value)).toEqual(
+  expect(story_outputs.resolve_value(value)).toEqual(
     {
       a: 1,
       b: [1, 2, 3],
@@ -55,7 +55,7 @@ test('resolve_params', () => {
     c: 3,
     d: 'str'
   }
-    expect(story_outputs.resolve_params(parameters)).toEqual({
+  expect(story_outputs.resolve_params(parameters)).toEqual({
     a: 1,
     b: 2,
     c: 3,

@@ -67,9 +67,9 @@ export function print_yaml (obj: any): void {
 export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
   const flatten = <T extends Evaluation | undefined>(e: T): T => (e !== undefined
     ? {
-        ...e,
-        error: typeof e.error === 'object' ? e.error.message : e.error
-      }
+      ...e,
+      error: typeof e.error === 'object' ? e.error.message : e.error
+    }
     : undefined as T)
 
   const flatten_chapters = <T extends ChapterEvaluation[] | undefined> (chapters: T): T => {
@@ -79,17 +79,17 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
       overall: flatten(c.overall),
       request: c.request !== undefined
         ? {
-            parameters: c.request.parameters !== undefined
-              ? Object.fromEntries(Object.entries(c.request.parameters).map(([k, v]) => [k, flatten(v)]))
-              : undefined,
-            request_body: flatten(c.request.request_body)
-          }
+          parameters: c.request.parameters !== undefined
+            ? Object.fromEntries(Object.entries(c.request.parameters).map(([k, v]) => [k, flatten(v)]))
+            : undefined,
+          request_body: flatten(c.request.request_body)
+        }
         : undefined,
       response: c.response !== undefined
         ? {
-            status: flatten(c.response.status),
-            payload: flatten(c.response.payload)
-          }
+          status: flatten(c.response.status),
+          payload: flatten(c.response.payload)
+        }
         : undefined
     })) as T
   }

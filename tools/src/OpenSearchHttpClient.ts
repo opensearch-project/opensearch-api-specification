@@ -75,9 +75,9 @@ export class OpenSearchHttpClient {
       baseURL: opts?.url ?? DEFAULT_URL,
       auth: opts?.username !== undefined && opts.password !== undefined
         ? {
-            username: opts.username,
-            password: opts.password
-          }
+          username: opts.username,
+          password: opts.password
+        }
         : undefined,
       httpsAgent: new https.Agent({ rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE) })
     })

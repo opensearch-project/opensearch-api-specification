@@ -27,7 +27,7 @@ interface MockedReturnedValues {
 }
 
 export function mocked_operation (returned_values: MockedReturnedValues): Operation {
-   
+
   const op: Operation = new Operation('', '', '', {} as OperationSpec)
 
   if (returned_values.validate) {
