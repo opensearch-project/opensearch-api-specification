@@ -115,7 +115,7 @@ function chapter(synopsis: string, request: ChapterRequest): Chapter {
   }
 }
 
- 
+
 test('check_story_variables', () => {
   const check_story_variables = (s: Story): StoryEvaluation | undefined => StoryEvaluator.check_story_variables(s, 'display_path', 'full_path')
   const failed = (prologues: ChapterEvaluation[] = [], chapters: ChapterEvaluation[] = []): StoryEvaluation => ({
@@ -193,7 +193,7 @@ test('check_story_variables', () => {
     ]
   })).toStrictEqual(undefined)
 })
- 
+
 
 test.todo('--tab-width')
 

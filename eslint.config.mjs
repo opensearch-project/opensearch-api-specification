@@ -72,10 +72,13 @@ export default [
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'array-callback-return': 'off',
+      'indent': ['error', 2, { 'SwitchCase': 1 }],
       'new-cap': 'off',
-      'no-return-assign': 'error',
-      'object-shorthand': 'error',
       'no-constant-condition': 'off',
+      'no-return-assign': 'error',
+      'no-trailing-spaces': 'error',
+      'object-shorthand': 'error',
+      'space-in-parens': 'error',
       'license-header/header': [
         'error',
         [
