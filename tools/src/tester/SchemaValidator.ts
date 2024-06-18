@@ -13,6 +13,7 @@ import addFormats from 'ajv-formats'
 import { type OpenAPIV3 } from 'openapi-types'
 import { type Evaluation, Result } from './types/eval.types'
 import { Logger } from 'Logger'
+import { to_json } from '../helpers'
 
 export default class SchemaValidator {
   private readonly ajv: AJV
@@ -32,8 +33,8 @@ export default class SchemaValidator {
     const validate = this.ajv.compile(schema)
     const valid = validate(data)
     if (! valid) {
-      this.logger.info(`# ${JSON.stringify(schema, null, 2)}`)
-      this.logger.info(`* ${JSON.stringify(data, null, 2)}`)
+      this.logger.info(`# ${to_json(schema)}`)
+      this.logger.info(`* ${to_json(data)}`)
     }
     return {
       result: valid ? Result.PASSED : Result.FAILED,

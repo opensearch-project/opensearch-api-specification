@@ -21,12 +21,12 @@ export default class MergedOpenApiSpec {
 
   constructor (spec_path: string, logger: Logger = new Logger()) {
     this.logger = logger
-    this.file_path = spec_path 
+    this.file_path = spec_path
   }
 
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
-    const spec = (new OpenApiMerger(this.file_path, this.logger)).merge()    
+    const spec = (new OpenApiMerger(this.file_path, this.logger)).merge()
     const ctx = new SpecificationContext(this.file_path)
     this.inject_additional_properties(ctx, spec)
     this._spec = spec
@@ -43,7 +43,7 @@ export default class MergedOpenApiSpec {
         }
       }
     })
-    
+
     visitor.visit_specification(ctx, spec)
   }
 }
