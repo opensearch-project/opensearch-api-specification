@@ -12,10 +12,14 @@ import ajv_errors from 'ajv-errors'
 import addFormats from 'ajv-formats'
 import { type OpenAPIV3 } from 'openapi-types'
 import { type Evaluation, Result } from './types/eval.types'
+import { Logger } from 'Logger'
 
 export default class SchemaValidator {
   private readonly ajv: AJV
-  constructor (spec: OpenAPIV3.Document) {
+  private readonly logger: Logger
+
+  constructor (spec: OpenAPIV3.Document, logger: Logger) {
+    this.logger = logger
     this.ajv = new AJV({ allErrors: true, strict: true })
     addFormats(this.ajv)
     ajv_errors(this.ajv, { singleError: true })
@@ -27,6 +31,10 @@ export default class SchemaValidator {
   validate (schema: OpenAPIV3.SchemaObject, data: any): Evaluation {
     const validate = this.ajv.compile(schema)
     const valid = validate(data)
+    if (! valid) {
+      this.logger.info(`# ${JSON.stringify(schema, null, 2)}`)
+      this.logger.info(`* ${JSON.stringify(data, null, 2)}`)
+    }
     return {
       result: valid ? Result.PASSED : Result.FAILED,
       message: valid ? undefined : this.ajv.errorsText(validate.errors)

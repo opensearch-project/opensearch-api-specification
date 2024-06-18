@@ -10,13 +10,16 @@
 import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
 import { type StoryOutputs } from './StoryOutputs'
+import { Logger } from 'Logger'
 
 // A lightweight client for testing the API
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
+  private readonly logger: Logger
 
-  constructor (client: OpenSearchHttpClient) {
+  constructor (client: OpenSearchHttpClient, logger: Logger) {
     this._client = client
+    this.logger = logger
   }
 
   async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
@@ -24,17 +27,23 @@ export default class ChapterReader {
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
     const request_data = chapter.request_body?.payload !== undefined ? story_outputs.resolve_value(chapter.request_body.payload) : undefined
+    this.logger.info(`=> ${chapter.method} ${url_path} (${JSON.stringify(params, null, 2)}) | ${JSON.stringify(request_data, null, 2)}`)
     await this._client.request({
       url: url_path,
       method: chapter.method,
       params,
       data: request_data
     }).then(r => {
+      this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${JSON.stringify(r.data, null, 2)}`)
       response.status = r.status
       response.content_type = r.headers['content-type'].split(';')[0]
       response.payload = r.data
     }).catch(e => {
-      if (e.response == null) throw e
+      if (e.response == null) {
+        this.logger.info(`<= ERROR: ${e}`)
+        throw e
+      }
+      this.logger.info(`<= ${e.response.status} (${e.response.headers['content-type']}) | ${JSON.stringify(e.response.data, null, 2)}`)
       response.status = e.response.status
       response.content_type = e.response.headers['content-type'].split(';')[0]
       response.payload = e.response.data?.error

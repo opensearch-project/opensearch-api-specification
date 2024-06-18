@@ -21,6 +21,7 @@ import TestRunner from 'tester/TestRunner'
 import { NoOpResultLogger, type ResultLogger } from 'tester/ResultLogger'
 import * as process from 'node:process'
 import SupplementalChapterEvaluator from 'tester/SupplementalChapterEvaluator'
+import { Logger } from 'Logger'
 
 export function construct_tester_components (spec_path: string): {
   specification: OpenAPIV3.Document
@@ -33,6 +34,7 @@ export function construct_tester_components (spec_path: string): {
   result_logger: ResultLogger
   test_runner: TestRunner
 } {
+  const logger = new Logger()
   const specification: OpenAPIV3.Document = read_yaml(spec_path)
   const operation_locator = new OperationLocator(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
@@ -40,8 +42,8 @@ export function construct_tester_components (spec_path: string): {
     username: process.env.OPENSEARCH_USERNAME ?? 'admin',
     password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
   })
-  const chapter_reader = new ChapterReader(opensearch_http_client)
-  const schema_validator = new SchemaValidator(specification)
+  const chapter_reader = new ChapterReader(opensearch_http_client, logger)
+  const schema_validator = new SchemaValidator(specification, logger)
   const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator)
   const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
