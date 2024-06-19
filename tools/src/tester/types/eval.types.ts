@@ -32,7 +32,8 @@ export interface ChapterEvaluation {
   }
   response?: {
     status: Evaluation
-    payload: Evaluation
+    payload_body: Evaluation,
+    payload_schema: Evaluation
   }
   output_values?: EvaluationWithOutput
 }
