@@ -7,7 +7,6 @@
 * compatible open source license.
 */
 
-import OpenApiMerger from '../merger/OpenApiMerger'
 import { LogLevel, Logger } from '../Logger'
 import TestRunner from './TestRunner'
 import { Command, Option } from '@commander-js/extra-typings'
@@ -26,6 +25,7 @@ import StoryEvaluator from './StoryEvaluator'
 import { ConsoleResultLogger } from './ResultLogger'
 import * as process from 'node:process'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
+import MergedOpenApiSpec from './MergedOpenApiSpec'
 
 const command = new Command()
   .description('Run test stories against the OpenSearch spec.')
@@ -48,11 +48,10 @@ const command = new Command()
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 
-const spec = (new OpenApiMerger(opts.specPath, logger)).merge()
-
+const spec = (new MergedOpenApiSpec(opts.specPath, logger)).spec()
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli(opts))
-const chapter_reader = new ChapterReader(http_client)
-const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec), chapter_reader, new SchemaValidator(spec))
+const chapter_reader = new ChapterReader(http_client, logger)
+const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec), chapter_reader, new SchemaValidator(spec, logger))
 const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
 const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)

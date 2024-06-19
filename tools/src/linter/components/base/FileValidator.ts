@@ -10,7 +10,7 @@
 import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from 'types'
 import { type OpenAPIV3 } from 'openapi-types'
-import { read_yaml } from '../../../helpers'
+import { read_yaml, to_json } from '../../../helpers'
 import AJV from 'ajv'
 import addFormats from 'ajv-formats'
 
@@ -65,7 +65,7 @@ export default class FileValidator extends ValidatorBase {
     addFormats(ajv)
     const validator = ajv.compile(schema)
     if (!validator(this.spec())) {
-      return this.error(`File content does not match JSON schema found in '${json_schema_path}':\n ${JSON.stringify(validator.errors, null, 2)}`)
+      return this.error(`File content does not match JSON schema found in '${json_schema_path}':\n ${to_json(validator.errors)}`)
     }
   }
 }

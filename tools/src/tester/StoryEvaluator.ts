@@ -152,7 +152,7 @@ export default class StoryEvaluator {
     StoryEvaluator.#extract_request_body_variables(chapter.request_body?.payload ?? {}, variables)
     for (const { chapter_id, output_name } of variables) {
       if (!story_outputs.has_chapter(chapter_id)) {
-        return  StoryEvaluator.#failed_evaluation(title, `Chapter makes reference to non existent chapter "${chapter_id}`)
+        return StoryEvaluator.#failed_evaluation(title, `Chapter makes reference to non existent chapter "${chapter_id}`)
       }
       if (!story_outputs.has_output_value(chapter_id, output_name)) {
         return StoryEvaluator.#failed_evaluation(title, `Chapter makes reference to non existent output "${output_name}" in chapter "${chapter_id}"`)
@@ -202,5 +202,4 @@ export default class StoryEvaluator {
   static #failed_evaluation(title: string, message: string): ChapterEvaluation {
     return { title, overall: { result: Result.FAILED, message } }
   }
-
 }

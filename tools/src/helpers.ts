@@ -93,8 +93,12 @@ export function write_yaml (file_path: string, content: any): void {
     }))
 }
 
+export function to_json(content: any, replacer?: (this: any, key: string, value: any) => any): string {
+  return JSON.stringify(content, replacer, 2)
+}
+
 export function write_json (file_path: string, content: any, replacer?: (this: any, key: string, value: any) => any): void {
-  write_text(file_path, JSON.stringify(content, replacer, 2))
+  write_text(file_path, to_json(content, replacer))
 }
 
 export async function sleep (ms: number): Promise<void> {

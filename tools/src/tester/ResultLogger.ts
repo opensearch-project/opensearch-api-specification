@@ -84,11 +84,6 @@ export class ConsoleResultLogger implements ResultLogger {
     const result = ansi.padding(this.#result(evaluation.result), 0, prefix)
     const message = evaluation.message != null ? `${ansi.gray('(' + evaluation.message + ')')}` : ''
     console.log(`${result} ${title} ${message}`)
-    if (evaluation.error != null && this._verbose) {
-      console.log('-'.repeat(100))
-      console.error(evaluation.error)
-      console.log('-'.repeat(100))
-    }
   }
 
   #result (r: Result): string {
