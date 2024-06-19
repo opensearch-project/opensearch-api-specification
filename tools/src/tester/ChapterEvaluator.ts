@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type Chapter, type ActualResponse } from './types/story.types'
+import { type Chapter, type ActualResponse, type Payload } from './types/story.types'
 import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
@@ -16,6 +16,8 @@ import type OperationLocator from './OperationLocator'
 import type SchemaValidator from './SchemaValidator'
 import { type StoryOutputs } from './StoryOutputs'
 import { ChapterOutput } from './ChapterOutput'
+import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
+import _ from 'lodash'
 
 export default class ChapterEvaluator {
   private readonly _operation_locator: OperationLocator
@@ -36,13 +38,20 @@ export default class ChapterEvaluator {
     const params = this.#evaluate_parameters(chapter, operation)
     const request_body = this.#evaluate_request_body(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
-    const payload = status.result === Result.PASSED ? this.#evaluate_payload(response, operation) : { result: Result.SKIPPED }
+    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
+    const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(response, operation) : { result: Result.SKIPPED }
     const output_values = ChapterOutput.extract_output_values(response, chapter.output)
     return {
       title: chapter.synopsis,
-      overall: { result: overall_result(Object.values(params).concat([request_body, status, payload]).concat(output_values ? [output_values] : [])) },
+      overall: { result: overall_result(Object.values(params).concat([
+        request_body, status, payload_body_evaluation, payload_schema_evaluation
+      ]).concat(output_values ? [output_values] : [])) },
       request: { parameters: params, request_body },
-      response: { status, payload },
+      response: {
+        status,
+        payload_body: payload_body_evaluation,
+        payload_schema: payload_schema_evaluation
+      },
       ...(output_values ? { output_values } : {})
     }
   }
@@ -74,7 +83,21 @@ export default class ChapterEvaluator {
     }
   }
 
-  #evaluate_payload(response: ActualResponse, operation: ParsedOperation): Evaluation {
+  #evaluate_payload_body(response: ActualResponse, expected_payload?: Payload): Evaluation {
+    if (expected_payload == null) return { result: Result.PASSED }
+    const delta = atomizeChangeset(diff(expected_payload, response.payload))
+    const messages: string[] = _.compact(delta.map((value, _index, _array) => {
+      switch(value.type) {
+        case Operation.UPDATE:
+          return `expected ${value.path.replace('$.', '')}='${value.oldValue}', got '${value.value}'`
+        case Operation.REMOVE:
+          return `missing ${value.path.replace('$.', '')}='${value.value}'`
+      }
+    }))
+    return messages.length > 0 ? { result: Result.FAILED, message: _.join(messages, ', ')} : { result: Result.PASSED }
+  }
+
+  #evaluate_payload_schema(response: ActualResponse, operation: ParsedOperation): Evaluation {
     const content_type = response.content_type ?? 'application/json'
     const content = operation.responses[response.status]?.content[content_type]
     const schema = content?.schema

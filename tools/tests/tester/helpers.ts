@@ -90,7 +90,8 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
       response: c.response !== undefined
         ? {
           status: flatten(c.response.status),
-          payload: flatten(c.response.payload)
+          payload_body: flatten(c.response.payload_body),
+          payload_schema: flatten(c.response.payload_schema)
         }
         : undefined
     })) as T
