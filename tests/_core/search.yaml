@@ -3,8 +3,10 @@ $schema: ../../json_schemas/test_story.schema.yaml
 skip: false
 description: Test search endpoint.
 prologues:
-  - path: /movies/_doc?refresh=true
+  - path: /movies/_doc
     method: POST
+    parameters:
+      refresh: true
     request_body:
       payload:
         director: Bennett Miller
@@ -87,3 +89,12 @@ chapters:
                 director: Bennett Miller
                 title: Moneyball
                 year: 2011
+  - synopsis: Search with parameters.
+    path: /{index}/_search
+    parameters:
+      index: movies
+      cancel_after_time_interval: 10s
+      phase_took: true
+    method: POST
+    response:
+      status: 200
