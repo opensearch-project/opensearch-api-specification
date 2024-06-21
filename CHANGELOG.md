@@ -36,6 +36,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Removed
 
+- Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358)
+ 
 ### Fixed
 
 - Fixed GitHub pages ([#215](https://github.com/opensearch-project/opensearch-api-specification/pull/215))
