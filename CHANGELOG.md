@@ -31,6 +31,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Refactored spec tester internals to improve reusability ([#302](https://github.com/opensearch-project/opensearch-api-specification/pull/302))
 - Renamed `main` release tag to `main-latest` ([#321](https://github.com/opensearch-project/opensearch-api-specification/pull/321))
 - Replaced usages of `Opensearch` with `OpenSearch` ([#335](https://github.com/opensearch-project/opensearch-api-specification/pull/335))
+- Made the InlineGet `source` field optional ([#350](https://github.com/opensearch-project/opensearch-api-specification/issues/350))
 
 ### Deprecated
 
