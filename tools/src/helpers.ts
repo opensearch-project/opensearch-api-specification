@@ -97,6 +97,10 @@ export function to_json(content: any, replacer?: (this: any, key: string, value:
   return JSON.stringify(content, replacer, 2)
 }
 
+export function to_ndjson(content: any[]): string {
+  return _.join(_.map(content, JSON.stringify), "\n") + "\n"
+}
+
 export function write_json (file_path: string, content: any, replacer?: (this: any, key: string, value: any) => any): void {
   write_text(file_path, to_json(content, replacer))
 }
