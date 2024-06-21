@@ -11,7 +11,7 @@ import { construct_tester_components, flatten_errors, load_expected_evaluation }
 import { type StoryEvaluation } from 'tester/types/eval.types'
 
 test('stories folder', async () => {
-  const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
+  const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
   const result = await test_runner.run('tools/tests/tester/fixtures/stories')
 
   expect(result.failed).toBeTruthy()
