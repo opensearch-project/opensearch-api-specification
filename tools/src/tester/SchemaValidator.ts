@@ -35,6 +35,7 @@ export default class SchemaValidator {
     if (! valid) {
       this.logger.info(`# ${to_json(schema)}`)
       this.logger.info(`* ${to_json(data)}`)
+      this.logger.info(`& ${to_json(validate.errors)}`)
     }
     return {
       result: valid ? Result.PASSED : Result.FAILED,
