@@ -251,17 +251,15 @@ paths:
       description: Returns help for the Cat APIs.
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/cat/index/
+      responses:
+        '200':
+          $ref: '#/components/responses/cat.help@200'
       parameters:
-        - $ref: '#/components/parameters/cat.help::query.help'
-        - $ref: '#/components/parameters/cat.help::query.s'
         - $ref: '#/components/parameters/_global::query.pretty'
         - $ref: '#/components/parameters/_global::query.human'
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
-      responses:
-        '200':
-          $ref: '#/components/responses/cat.help@200'
   /_cat/aliases:
     get:
       operationId: cat.aliases.0
@@ -12051,25 +12049,6 @@ components:
         type: boolean
         default: false
         description: Verbose mode. Display column headers.
-    cat.help::query.help:
-      name: help
-      in: query
-      description: Return help information.
-      schema:
-        type: boolean
-        default: false
-        description: Return help information.
-    cat.help::query.s:
-      name: s
-      in: query
-      description: Comma-separated list of column names or column aliases to sort by.
-      style: form
-      schema:
-        type: array
-        items:
-          type: string
-        description: Comma-separated list of column names or column aliases to sort by.
-      explode: true
     cat.indices::path.index:
       in: path
       name: index
@@ -23186,11 +23165,9 @@ components:
     cat.help@200:
       description: ''
       content:
-        application/json:
+        text/plain:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/cat.help:HelpRecord'
+            type: string
     cat.indices@200:
       description: ''
       content:
@@ -38438,13 +38415,6 @@ components:
         active_shards_percent:
           description: active number of shards in percent
           type: string
-    cat.help:HelpRecord:
-      type: object
-      properties:
-        endpoint:
-          type: string
-      required:
-        - endpoint
     cat.indices:IndicesRecord:
       type: object
       properties:
