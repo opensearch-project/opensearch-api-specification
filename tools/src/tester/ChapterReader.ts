@@ -11,9 +11,8 @@ import { type ChapterRequest, type ActualResponse, type Parameter } from './type
 import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
 import { type StoryOutputs } from './StoryOutputs'
 import { Logger } from 'Logger'
-import { to_json } from '../helpers'
+import { to_json, to_ndjson } from '../helpers'
 
-// A lightweight client for testing the API
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
   private readonly logger: Logger
@@ -27,11 +26,16 @@ export default class ChapterReader {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
-    const request_data = chapter.request_body?.payload !== undefined ? story_outputs.resolve_value(chapter.request_body.payload) : undefined
-    this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) | ${to_json(request_data)}`)
+    const content_type = chapter.request_body?.content_type ?? 'application/json'
+    const request_data = chapter.request_body?.payload !== undefined ? this.#serialize_payload(
+      story_outputs.resolve_value(chapter.request_body.payload),
+      content_type
+    ) : undefined
+    this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] | ${to_json(request_data)}`)
     await this._client.request({
       url: url_path,
       method: chapter.method,
+      headers: { 'Content-Type' : content_type },
       params,
       data: request_data
     }).then(r => {
@@ -52,6 +56,14 @@ export default class ChapterReader {
       response.error = e
     })
     return response as ActualResponse
+  }
+
+  #serialize_payload(payload: any, content_type: string): any {
+    if (payload === undefined) return undefined
+    switch(content_type) {
+      case 'application/x-ndjson': return to_ndjson(payload as any[])
+      default: return payload
+    }
   }
 
   #parse_url (path: string, parameters: Record<string, Parameter>): [string, Record<string, Parameter>] {

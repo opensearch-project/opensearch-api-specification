@@ -11,7 +11,7 @@ import { construct_tester_components, flatten_errors, load_expected_evaluation }
 import { type StoryEvaluation } from 'tester/types/eval.types'
 
 test('stories folder', async () => {
-  const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
+  const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
   const result = await test_runner.run('tools/tests/tester/fixtures/stories')
 
   expect(result.failed).toBeTruthy()
@@ -24,13 +24,12 @@ test('stories folder', async () => {
     actual_evaluations.push(rest)
   }
 
-  const skipped = load_expected_evaluation('skipped', true)
   const passed = load_expected_evaluation('passed', true)
   const not_found = load_expected_evaluation('failed/not_found', true)
   const invalid_data = load_expected_evaluation('failed/invalid_data', true)
   const chapter_error = load_expected_evaluation('error/chapter_error', true)
   const prologue_error = load_expected_evaluation('error/prologue_error', true)
 
-  const expected_evaluations = [passed, skipped, chapter_error, prologue_error, invalid_data, not_found]
+  const expected_evaluations = [passed, chapter_error, prologue_error, invalid_data, not_found]
   expect(actual_evaluations).toEqual(expected_evaluations)
 })

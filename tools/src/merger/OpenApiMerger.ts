@@ -69,7 +69,7 @@ export default class OpenApiMerger {
 
   // Redirect schema references in namespace files to local references in single-file spec.
   redirect_refs_in_namespace (obj: any): void {
-    const ref: string = obj.$ref
+    const ref: string = obj?.$ref
     if (ref?.startsWith('../schemas/')) { obj.$ref = ref.replace('../schemas/', '#/components/schemas/').replace('.yaml#/components/schemas/', ':') }
 
     for (const key in obj) {

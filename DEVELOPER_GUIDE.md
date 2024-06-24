@@ -167,7 +167,6 @@ Below is the simplified version of the test story that tests the [index operatio
 ```yaml
 $schema: ../json_schemas/test_story.schema.yaml # The schema of the test story. Include this line so that your editor can validate the test story on the fly.
 
-skip: false # Skip this test story if set to true.
 description: This story tests all endpoints relevant the lifecycle of an index, from creation to deletion.
 
 prologues: [] # No prologues are needed for this story.

@@ -31,15 +31,6 @@ export default class StoryEvaluator {
   }
 
   async evaluate({ story, display_path, full_path }: StoryFile, dry_run: boolean = false): Promise<StoryEvaluation> {
-    if (story.skip) {
-      return {
-        result: Result.SKIPPED,
-        display_path,
-        full_path,
-        description: story.description,
-        chapters: []
-      }
-    }
     const variables_error = StoryEvaluator.check_story_variables(story, display_path, full_path)
     if (variables_error !== undefined) {
       return variables_error

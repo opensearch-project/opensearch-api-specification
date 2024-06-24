@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { sort_array_by_keys } from '../src/helpers'
+import { sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
 
 describe('helpers', () => {
   describe('sort_array_by_keys', () => {
@@ -24,5 +24,16 @@ describe('helpers', () => {
       expect(sort_array_by_keys(arr, ['POST', 'GET'])).toEqual(['POST', 'GET'])
       expect(arr).toEqual(['GET', 'POST'])
     })
+  })
+
+  test('to_json', () => {
+    expect(to_json({})).toEqual("{}")
+    expect(to_json({x: 1})).toEqual("{\n  \"x\": 1\n}")
+  })
+
+  test('to_ndjson', () => {
+    expect(to_ndjson([])).toEqual("\n")
+    expect(to_ndjson([{x: 1}])).toEqual("{\"x\":1}\n")
+    expect(to_ndjson([{x: 1}, {y: 'z'}])).toEqual("{\"x\":1}\n{\"y\":\"z\"}\n")
   })
 })
