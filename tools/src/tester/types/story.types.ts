@@ -58,10 +58,6 @@ export type ReadChapter = Chapter & {
 
 export interface Story {
   $schema?: string;
-  /**
-   * If true, the story will be skipped.
-   */
-  skip?: boolean;
   description: string;
   prologues?: SupplementalChapter[];
   epilogues?: SupplementalChapter[];

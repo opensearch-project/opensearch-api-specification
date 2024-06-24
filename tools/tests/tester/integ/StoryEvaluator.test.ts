@@ -17,12 +17,6 @@ test('passed', async () => {
   expect(actual).toEqual(expected)
 })
 
-test('skipped', async () => {
-  const actual = await load_actual_evaluation(story_evaluator, 'skipped')
-  const expected = load_expected_evaluation('skipped')
-  expect(actual).toEqual(expected)
-})
-
 test('failed/not_found', async () => {
   const actual = await load_actual_evaluation(story_evaluator, 'failed/not_found')
   const expected = load_expected_evaluation('failed/not_found')
