@@ -9,7 +9,7 @@
 
 import { construct_tester_components, load_actual_evaluation, load_expected_evaluation } from '../helpers'
 
-const { story_evaluator } = construct_tester_components('tools/tests/tester/fixtures/specs/indices_excerpt.yaml')
+const { story_evaluator } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
 
 test('passed', async () => {
   const actual = await load_actual_evaluation(story_evaluator, 'passed')

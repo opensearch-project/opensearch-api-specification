@@ -43,9 +43,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed GitHub pages ([#215](https://github.com/opensearch-project/opensearch-api-specification/pull/215))
 - Fixed missing 201 response in `/{index}/_doc/{id}` ([#331](https://github.com/opensearch-project/opensearch-api-specification/pull/331))
 - Fixed `SlowlogThresholds` ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
-- Fixed `from_address` in notifications ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
-- Fixed `pages_processed` in rollups ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
+- Fixed `from_address` in `SmtpAccount` ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
+- Fixed `pages_processed` in `/_plugins/_rollup` ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
 - Fixed `_bulk` spec request and response types ([#355](https://github.com/opensearch-project/opensearch-api-specification/pull/355))
+- Fixed `text/plain` response in `/_cat` ([#357](https://github.com/opensearch-project/opensearch-api-specification/pull/357))
 
 ### Security
 
