@@ -26,6 +26,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added tests for response payload ([#347](https://github.com/opensearch-project/opensearch-api-specification/pull/347))
 - Added `cancel_after_time_interval` and `phase_took` in `_search` ([#353](https://github.com/opensearch-project/opensearch-api-specification/pull/353))
 - Added support for testing `application/x-ndjson` payloads ([#355](https://github.com/opensearch-project/opensearch-api-specification/pull/355))
+- Added SPECIFICATION_TESTING.md [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
 
 ### Changed
 
@@ -33,6 +34,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Refactored spec tester internals to improve reusability ([#302](https://github.com/opensearch-project/opensearch-api-specification/pull/302))
 - Renamed `main` release tag to `main-latest` ([#321](https://github.com/opensearch-project/opensearch-api-specification/pull/321))
 - Replaced usages of `Opensearch` with `OpenSearch` ([#335](https://github.com/opensearch-project/opensearch-api-specification/pull/335))
+- Prevented merger tool from printing warnings when used by tester tool [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
+- Replaced the deprecated fs.rmdirSync with fs.rmSync [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
+- Tester tool now provides better context for non-2XX responses when --verbose is used [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
 
 ### Deprecated
 

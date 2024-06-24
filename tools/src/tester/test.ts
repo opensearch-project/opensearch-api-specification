@@ -7,22 +7,23 @@
 * compatible open source license.
 */
 
-import { LogLevel, Logger } from '../Logger'
+import {Logger, LogLevel} from '../Logger'
 import TestRunner from './TestRunner'
-import { Command, Option } from '@commander-js/extra-typings'
+import {Command, Option} from '@commander-js/extra-typings'
 import {
   get_opensearch_opts_from_cli,
   OPENSEARCH_INSECURE_OPTION,
   OPENSEARCH_PASSWORD_OPTION,
   OPENSEARCH_URL_OPTION,
-  OPENSEARCH_USERNAME_OPTION, OpenSearchHttpClient
+  OPENSEARCH_USERNAME_OPTION,
+  OpenSearchHttpClient
 } from '../OpenSearchHttpClient'
 import ChapterReader from './ChapterReader'
 import ChapterEvaluator from './ChapterEvaluator'
 import OperationLocator from './OperationLocator'
 import SchemaValidator from './SchemaValidator'
 import StoryEvaluator from './StoryEvaluator'
-import { ConsoleResultLogger } from './ResultLogger'
+import {ConsoleResultLogger} from './ResultLogger'
 import * as process from 'node:process'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import MergedOpenApiSpec from './MergedOpenApiSpec'
@@ -48,7 +49,7 @@ const command = new Command()
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 
-const spec = (new MergedOpenApiSpec(opts.specPath, logger)).spec()
+const spec = (new MergedOpenApiSpec(opts.specPath, new Logger(LogLevel.error))).spec()
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli(opts))
 const chapter_reader = new ChapterReader(http_client, logger)
 const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec), chapter_reader, new SchemaValidator(spec, logger))
