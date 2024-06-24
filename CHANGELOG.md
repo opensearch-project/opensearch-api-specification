@@ -24,6 +24,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `created_time` and `last_updated_time` to `ml.get_model_group@200` ([#342](https://github.com/opensearch-project/opensearch-api-specification/pull/342))
 - Added spellcheck linter ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
 - Added tests for response payload ([#347](https://github.com/opensearch-project/opensearch-api-specification/pull/347))
+- Added `cancel_after_time_interval` and `phase_took` in `_search` ([#353](https://github.com/opensearch-project/opensearch-api-specification/pull/353))
 - Added support for testing `application/x-ndjson` payloads ([#355](https://github.com/opensearch-project/opensearch-api-specification/pull/355))
 
 ### Changed
