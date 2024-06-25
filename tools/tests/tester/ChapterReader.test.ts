@@ -48,7 +48,14 @@ describe('ChapterReader', () => {
 
     expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
     expect(mocked_axios.request.mock.calls).toEqual([
-      [{ url: 'path', method: 'GET', headers: { 'Content-Type': 'application/json' }, params: {}, data: undefined }]
+      [{
+        url: 'path',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        params: {},
+        paramsSerializer: expect.any(Function),
+        data: undefined
+      }]
     ])
   })
 
@@ -64,8 +71,41 @@ describe('ChapterReader', () => {
 
     expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
     expect(mocked_axios.request.mock.calls).toEqual([
-      [{ url: 'books/path', method: 'GET', headers: { 'Content-Type': 'application/json' }, params: {}, data: undefined }]
+      [{
+        url: 'books/path',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        params: {},
+        paramsSerializer: expect.any(Function),
+        data: undefined
+      }]
     ])
+  })
+
+  it('resolves array parameters', async () => {
+    const result = await reader.read({
+      id: 'id',
+      path: '/path',
+      method: 'GET',
+      parameters: { indexes: ['book1', 'book2'] },
+      request_body: undefined,
+      output: undefined
+    }, new StoryOutputs())
+
+    expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
+    expect(mocked_axios.request.mock.calls).toEqual([
+      [{
+        url: '/path',
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        params: { indexes: ['book1', 'book2'] },
+        paramsSerializer: expect.any(Function),
+        data: undefined
+      }]
+    ])
+
+    const call = mocked_axios.request.mock.calls[0][0] as any
+    expect(call.paramsSerializer(call.params)).toEqual(`indexes=${encodeURIComponent('book1,book2')}`)
   })
 
   it('sends a POST request', async () => {
@@ -80,7 +120,14 @@ describe('ChapterReader', () => {
 
     expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
     expect(mocked_axios.request.mock.calls).toEqual([
-      [{ url: 'path', method: 'POST', headers: { 'Content-Type': 'application/json' }, params: { 'x': 1 }, data: { 'body': 'present' } }]
+      [{
+        url: 'path',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        params: { 'x': 1 },
+        paramsSerializer: expect.any(Function),
+        data: { 'body': 'present' }
+      }]
     ])
   })
 
@@ -99,7 +146,14 @@ describe('ChapterReader', () => {
 
     expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
     expect(mocked_axios.request.mock.calls).toEqual([
-      [{ url: 'path', method: 'POST', headers: { 'Content-Type': 'application/x-ndjson' }, params: { 'x': 1 }, data: "{\"body\":\"present\"}\n" }]
+      [{
+        url: 'path',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-ndjson' },
+        params: { 'x': 1 },
+        paramsSerializer: expect.any(Function),
+        data: "{\"body\":\"present\"}\n"
+      }]
     ])
   })
 })
