@@ -28,12 +28,12 @@ describe('helpers', () => {
 
   test('to_json', () => {
     expect(to_json({})).toEqual("{}")
-    expect(to_json({x: 1})).toEqual("{\n  \"x\": 1\n}")
+    expect(to_json({ x: 1 })).toEqual("{\n  \"x\": 1\n}")
   })
 
   test('to_ndjson', () => {
     expect(to_ndjson([])).toEqual("\n")
-    expect(to_ndjson([{x: 1}])).toEqual("{\"x\":1}\n")
-    expect(to_ndjson([{x: 1}, {y: 'z'}])).toEqual("{\"x\":1}\n{\"y\":\"z\"}\n")
+    expect(to_ndjson([{ x: 1 }])).toEqual("{\"x\":1}\n")
+    expect(to_ndjson([{ x: 1 }, { y: 'z' }])).toEqual("{\"x\":1}\n{\"y\":\"z\"}\n")
   })
 })

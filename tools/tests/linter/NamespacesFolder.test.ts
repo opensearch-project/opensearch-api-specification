@@ -69,7 +69,7 @@ describe('validate()', () => {
     })
 
     afterAll(() => {
-      fs.rmdirSync(invalid_yaml_path, { recursive: true })
+      fs.rmSync(invalid_yaml_path, { recursive: true })
     })
 
     test('fails unable to parse YAML', () => {

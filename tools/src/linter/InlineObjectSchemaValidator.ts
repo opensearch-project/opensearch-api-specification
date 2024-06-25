@@ -10,8 +10,8 @@
 import type NamespacesFolder from './components/NamespacesFolder'
 import type SchemasFolder from './components/SchemasFolder'
 import { type ValidationError } from 'types'
-import { SchemaVisitor } from './utils/SpecificationVisitor'
-import { is_ref, type MaybeRef, SpecificationContext } from './utils'
+import { SchemaVisitor } from '../_utils/SpecificationVisitor'
+import { is_ref, type MaybeRef, SpecificationContext } from '../_utils'
 import { type OpenAPIV3 } from 'openapi-types'
 
 export default class InlineObjectSchemaValidator {

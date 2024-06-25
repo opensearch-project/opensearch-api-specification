@@ -48,12 +48,13 @@ export default class ChapterReader {
         this.logger.info(`<= ERROR: ${e}`)
         throw e
       }
-      this.logger.info(`<= ${e.response.status} (${e.response.headers['content-type']}) | ${to_json(e.response.data)}`)
       response.status = e.response.status
       response.content_type = e.response.headers['content-type'].split(';')[0]
       response.payload = e.response.data?.error
-      response.message = e.response.data?.error?.reason
+      response.message = e.response.data?.error?.reason ?? e.response.statusText
       response.error = e
+
+      this.logger.info(`<= ${response.status} (${response.content_type}) | ${to_json(response.payload ?? response.message)}`)
     })
     return response as ActualResponse
   }

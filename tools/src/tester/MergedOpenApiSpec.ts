@@ -9,8 +9,8 @@
 
 import { type OpenAPIV3 } from 'openapi-types'
 import { Logger } from '../Logger'
-import { SpecificationContext } from '../linter/utils';
-import { SchemaVisitor } from '../linter/utils/SpecificationVisitor';
+import { SpecificationContext } from '../_utils';
+import { SchemaVisitor } from '../_utils/SpecificationVisitor';
 import OpenApiMerger from '../merger/OpenApiMerger';
 
 // An augmented spec with additionalProperties: false.

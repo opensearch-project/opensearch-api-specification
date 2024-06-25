@@ -99,7 +99,7 @@ describe('ChapterReader', () => {
 
     expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
     expect(mocked_axios.request.mock.calls).toEqual([
-      [{ url: 'path', method: 'POST', headers: { 'Content-Type': 'application/x-ndjson' }, params: { 'x': 1 }, data: "{\"body\":\"present\"}\n"}]
+      [{ url: 'path', method: 'POST', headers: { 'Content-Type': 'application/x-ndjson' }, params: { 'x': 1 }, data: "{\"body\":\"present\"}\n" }]
     ])
   })
 })
