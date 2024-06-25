@@ -7,9 +7,9 @@
 * compatible open source license.
 */
 
-import {Logger, LogLevel} from '../Logger'
+import { Logger, LogLevel } from '../Logger'
 import TestRunner from './TestRunner'
-import {Command, Option} from '@commander-js/extra-typings'
+import { Command, Option } from '@commander-js/extra-typings'
 import {
   get_opensearch_opts_from_cli,
   OPENSEARCH_INSECURE_OPTION,
@@ -23,7 +23,7 @@ import ChapterEvaluator from './ChapterEvaluator'
 import OperationLocator from './OperationLocator'
 import SchemaValidator from './SchemaValidator'
 import StoryEvaluator from './StoryEvaluator'
-import {ConsoleResultLogger} from './ResultLogger'
+import { ConsoleResultLogger } from './ResultLogger'
 import * as process from 'node:process'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import MergedOpenApiSpec from './MergedOpenApiSpec'

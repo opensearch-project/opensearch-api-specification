@@ -7,6 +7,7 @@ import pluginLicenseHeader from 'eslint-plugin-license-header'
 import pluginTs from '@typescript-eslint/eslint-plugin'
 import pluginYml from 'eslint-plugin-yml'
 import pluginCspell from '@cspell/eslint-plugin'
+import pluginStylistic from '@stylistic/eslint-plugin'
 
 export default [
   pluginJs.configs.recommended,
@@ -26,12 +27,14 @@ export default [
       '@typescript-eslint': pluginTs,
       'license-header': pluginLicenseHeader,
       'eslint-comments': pluginComments,
-      '@cspell': pluginCspell
+      '@cspell': pluginCspell,
+      '@stylistic': pluginStylistic
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
       ...pluginComments.configs.recommended.rules,
       ...pluginTs.configs["recommended-type-checked"].rules,
+      '@stylistic/object-curly-spacing': ["error", "always"],
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',

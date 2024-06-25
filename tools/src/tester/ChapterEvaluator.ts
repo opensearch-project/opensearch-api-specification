@@ -94,7 +94,7 @@ export default class ChapterEvaluator {
           return `missing ${value.path.replace('$.', '')}='${value.value}'`
       }
     }))
-    return messages.length > 0 ? { result: Result.FAILED, message: _.join(messages, ', ')} : { result: Result.PASSED }
+    return messages.length > 0 ? { result: Result.FAILED, message: _.join(messages, ', ') } : { result: Result.PASSED }
   }
 
   #evaluate_payload_schema(response: ActualResponse, operation: ParsedOperation): Evaluation {
