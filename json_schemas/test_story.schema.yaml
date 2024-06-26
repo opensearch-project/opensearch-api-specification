@@ -1,4 +1,4 @@
-$schema: http://json-schema.org/draft-07/schema#
+$schema: https://json-schema.org/draft/2019-09/schema
 
 type: object
 properties:
@@ -18,13 +18,12 @@ properties:
     type: array
     items:
       $ref: '#/definitions/Chapter'
-    minItems: 1
-required: [description, chapters]
+required: [$schema, description, chapters]
 additionalProperties: false
 
 definitions:
   Chapter:
-    type: object
+    unevaluatedProperties: false
     allOf:
       - $ref: '#/definitions/ChapterRequest'
       - properties:
@@ -34,7 +33,6 @@ definitions:
           response:
             $ref: '#/definitions/ExpectedResponse'
         required: [synopsis]
-        additionalProperties: false
 
   ReadChapter:
     allOf:
@@ -47,6 +45,7 @@ definitions:
         additionalProperties: false
 
   SupplementalChapter:
+    unevaluatedProperties: false
     allOf:
       - $ref: '#/definitions/ChapterRequest'
       - type: object
@@ -57,7 +56,6 @@ definitions:
             default: [200, 201]
             items:
               type: integer
-        additionalProperties: false
 
   ChapterRequest:
     type: object
@@ -79,7 +77,6 @@ definitions:
       output:
         $ref: '#/definitions/Output'
     required: [path, method]
-    additionalProperties: false
 
   Output:
     description: |

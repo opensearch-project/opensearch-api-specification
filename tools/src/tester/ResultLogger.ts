@@ -29,15 +29,17 @@ export class ConsoleResultLogger implements ResultLogger {
   }
 
   log (evaluation: StoryEvaluation): void {
+    const with_padding = [Result.FAILED, Result.ERROR].includes(evaluation.result) || this._verbose
+    if (with_padding) console.log()
     this.#log_story(evaluation)
     this.#log_chapters(evaluation.prologues ?? [], 'PROLOGUES')
     this.#log_chapters(evaluation.chapters ?? [], 'CHAPTERS')
     this.#log_chapters(evaluation.epilogues ?? [], 'EPILOGUES')
-    console.log('\n')
+    if (with_padding) console.log()
   }
 
-  #log_story ({ result, full_path, description, display_path, message }: StoryEvaluation): void {
-    this.#log_evaluation({ result, message: message ?? full_path }, ansi.cyan(ansi.b(description ?? display_path)))
+  #log_story ({ result, full_path, display_path, message }: StoryEvaluation): void {
+    this.#log_evaluation({ result, message: message ?? full_path }, ansi.cyan(ansi.b(display_path)))
   }
 
   #log_chapters (evaluations: ChapterEvaluation[], title: string): void {

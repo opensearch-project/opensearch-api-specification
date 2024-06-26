@@ -39,9 +39,9 @@ test('displays story filename', () => {
   )
 })
 
-test('displays story description', () => {
-  expect(spec(['--tests', 'tools/tests/tester/fixtures/empty_with_description.yaml']).stdout).toContain(
-    `${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('A story with no beginning or end.'))}`
+test('invalid story', () => {
+  expect(spec(['--tests', 'tools/tests/tester/fixtures/invalid_story.yaml']).stdout).toContain(
+    `${ansi.gray("(Invalid Story: data/epilogues/0 must NOT have unevaluated properties, data/chapters/0 must have required property 'method', data/chapters/1/method must be equal to one of the allowed values)")}`
   )
 })
 
@@ -129,6 +129,7 @@ test('check_story_variables', () => {
     epilogues: []
   })
   expect(check_story_variables({
+    $schema: '',
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -139,6 +140,7 @@ test('check_story_variables', () => {
   })).toStrictEqual(undefined)
 
   expect(check_story_variables({
+    $schema: '',
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -154,6 +156,7 @@ test('check_story_variables', () => {
   )
 
   expect(check_story_variables({
+    $schema: '',
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -169,6 +172,7 @@ test('check_story_variables', () => {
   )
 
   expect(check_story_variables({
+    $schema: '',
     description: 'story1',
     prologues: [
       dummy_chapter_request(undefined, { x: 'payload.x' })
@@ -177,12 +181,13 @@ test('check_story_variables', () => {
   })).toStrictEqual(
     failed(
       [
-        { title: "GET /path", overall: { result: Result.FAILED, message: 'An episode must have an id to store its output' } }
+        { title: "GET /path", overall: { result: Result.FAILED, message: 'A chapter must have an id to store its output' } }
       ]
     )
   )
 
   expect(check_story_variables({
+    $schema: '',
     description: 'story1',
     prologues: [
       dummy_chapter_request('prologue1', { x: 'payload.x' })
@@ -204,12 +209,12 @@ test('--dry-run', () => {
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} CHAPTERS`)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} EPILOGUES`)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} PROLOGUES`)
-  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('A story with all its parts.'))} ${ansi.gray('(' + full_path + ')')}\n\n\n`)
+  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('empty_with_all_the_parts.yaml'))} ${ansi.gray('(' + full_path + ')')}`)
 })
 
 test('--dry-run --verbose', () => {
   const s = spec(['--dry-run', '--verbose', '--tests', 'tools/tests/tester/fixtures/empty_with_all_the_parts.yaml']).stdout
-  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('A story with all its parts.'))}`)
+  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('empty_with_all_the_parts.yaml'))}`)
   expect(s).toContain(`${ansi.yellow('SKIPPED')} CHAPTERS`)
   expect(s).toContain(`${ansi.yellow('SKIPPED')} EPILOGUES`)
   expect(s).toContain(`${ansi.yellow('SKIPPED')} PROLOGUES`)

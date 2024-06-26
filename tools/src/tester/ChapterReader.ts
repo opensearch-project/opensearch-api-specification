@@ -61,7 +61,7 @@ export default class ChapterReader {
 
   #serialize_payload(payload: any, content_type: string): any {
     if (payload === undefined) return undefined
-    switch(content_type) {
+    switch (content_type) {
       case 'application/x-ndjson': return to_ndjson(payload as any[])
       default: return payload
     }

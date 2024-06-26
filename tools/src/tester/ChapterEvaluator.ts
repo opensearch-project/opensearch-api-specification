@@ -87,7 +87,7 @@ export default class ChapterEvaluator {
     if (expected_payload == null) return { result: Result.PASSED }
     const delta = atomizeChangeset(diff(expected_payload, response.payload))
     const messages: string[] = _.compact(delta.map((value, _index, _array) => {
-      switch(value.type) {
+      switch (value.type) {
         case Operation.UPDATE:
           return `expected ${value.path.replace('$.', '')}='${value.oldValue}', got '${value.value}'`
         case Operation.REMOVE:

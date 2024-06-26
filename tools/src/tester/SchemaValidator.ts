@@ -32,7 +32,7 @@ export default class SchemaValidator {
   validate (schema: OpenAPIV3.SchemaObject, data: any): Evaluation {
     const validate = this.ajv.compile(schema)
     const valid = validate(data)
-    if (! valid) {
+    if (!valid) {
       this.logger.info(`# ${to_json(schema)}`)
       this.logger.info(`* ${to_json(data)}`)
       this.logger.info(`& ${to_json(validate.errors)}`)

@@ -8,18 +8,12 @@
 */
 
 import { ChapterRequest, Parameter, type Chapter, type Story, type SupplementalChapter } from './types/story.types'
-import { type ChapterEvaluation, Result, type StoryEvaluation, OutputReference } from './types/eval.types'
+import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation, OutputReference } from './types/eval.types'
 import type ChapterEvaluator from './ChapterEvaluator'
 import { overall_result } from './helpers'
 import { StoryOutputs } from './StoryOutputs'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import { ChapterOutput } from './ChapterOutput'
-
-export interface StoryFile {
-  display_path: string
-  full_path: string
-  story: Story
-}
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator
@@ -87,16 +81,17 @@ export default class StoryEvaluator {
     return { evaluations, has_errors }
   }
 
+  // TODO: Refactor and move this logic into StoryValidator
   static check_story_variables(story: Story, display_path: string, full_path: string): StoryEvaluation | undefined {
     const story_outputs = new StoryOutputs()
     const prologues = (story.prologues ?? []).map((prologue) => {
-      return StoryEvaluator.#check_episode_variables(prologue, story_outputs)
+      return StoryEvaluator.#check_chapter_variables(prologue, story_outputs)
     })
     const chapters = (story.chapters ?? []).map((chapter) => {
-      return StoryEvaluator.#check_episode_variables(chapter, story_outputs)
+      return StoryEvaluator.#check_chapter_variables(chapter, story_outputs)
     })
     const epilogues = (story.epilogues ?? []).map((epilogue) => {
-      return StoryEvaluator.#check_episode_variables(epilogue, story_outputs)
+      return StoryEvaluator.#check_chapter_variables(epilogue, story_outputs)
     })
     const evals = prologues.concat(chapters).concat(epilogues)
     if (overall_result(evals.map(e => e.overall)) === Result.FAILED) {
@@ -113,17 +108,17 @@ export default class StoryEvaluator {
     }
   }
 
-  static #check_episode_variables(episode: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
-    const title = `${episode.method} ${episode.path}`
-    const error = StoryEvaluator.#check_used_variables(episode, story_outputs)
+  static #check_chapter_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
+    const title = `${chapter.method} ${chapter.path}`
+    const error = StoryEvaluator.#check_used_variables(chapter, story_outputs)
     if (error !== undefined) {
       return error
     }
-    if (episode.id === undefined && episode.output !== undefined) {
-      return this.#failed_evaluation(title, 'An episode must have an id to store its output')
+    if (chapter.id === undefined && chapter.output !== undefined) {
+      return this.#failed_evaluation(title, 'A chapter must have an id to store its output')
     }
-    if (episode.id !== undefined && episode.output !== undefined) {
-      story_outputs.set_chapter_output(episode.id, new ChapterOutput(episode.output))
+    if (chapter.id !== undefined && chapter.output !== undefined) {
+      story_outputs.set_chapter_output(chapter.id, new ChapterOutput(chapter.output))
     }
     return { title, overall: { result: Result.PASSED } }
   }

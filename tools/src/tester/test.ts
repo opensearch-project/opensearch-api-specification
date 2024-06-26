@@ -27,6 +27,7 @@ import { ConsoleResultLogger } from './ResultLogger'
 import * as process from 'node:process'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import MergedOpenApiSpec from './MergedOpenApiSpec'
+import StoryValidator from "./StoryValidator";
 
 const command = new Command()
   .description('Run test stories against the OpenSearch spec.')
@@ -54,9 +55,10 @@ const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli(opts))
 const chapter_reader = new ChapterReader(http_client, logger)
 const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec), chapter_reader, new SchemaValidator(spec, logger))
 const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+const story_validator = new StoryValidator()
 const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)
-const runner = new TestRunner(story_evaluator, result_logger)
+const runner = new TestRunner(story_validator, story_evaluator, result_logger)
 
 runner.run(opts.testsPath, opts.dryRun)
   .then(

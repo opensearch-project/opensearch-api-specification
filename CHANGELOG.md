@@ -27,6 +27,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `cancel_after_time_interval` and `phase_took` in `_search` ([#353](https://github.com/opensearch-project/opensearch-api-specification/pull/353))
 - Added support for testing `application/x-ndjson` payloads ([#355](https://github.com/opensearch-project/opensearch-api-specification/pull/355))
 - Added SPECIFICATION_TESTING.md [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
+- Added StoryValidator to validate stories before running them ([#354](https://github.com/opensearch-project/opensearch-api-specification/issues/354))
 
 ### Changed
 
