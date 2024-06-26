@@ -9,9 +9,22 @@ paths:
       x-operation-group: cat.help
       x-version-added: '1.0'
       description: Returns help for the Cat APIs.
+      parameters:
+        - $ref: '#/components/parameters/cat.help::query.format'
       responses:
         '200':
           $ref: '#/components/responses/cat.help@200'  
+  /_cat/health:
+    get:
+      operationId: cat.health.0
+      x-operation-group: cat.health
+      x-version-added: '1.0'
+      description: Returns health for the Cat APIs.
+      parameters:
+        - $ref: '#/components/parameters/cat.health::query.format'
+      responses:
+        '200':
+          $ref: '#/components/responses/cat.health@200'
   /{index}:
     delete:
       operationId: indices.delete.0
@@ -73,6 +86,21 @@ components:
         text/plain:
           schema:
             type: string
+    cat.health@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+        application/yaml:
+          schema:
+            type: array
+            items:
+              type: object
     indices.delete@200:
       description: ''
       content:
@@ -101,6 +129,11 @@ components:
               - shards_acknowledged
               - acknowledged
   parameters:
+    cat.health::query.format:
+      in: query
+      name: format
+      schema:
+        type: string
     indices.delete::path.index:
       in: path
       name: index
