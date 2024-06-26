@@ -106,13 +106,12 @@ export default class ChapterEvaluator {
     const schema = content?.schema
     if (schema == null && content != null) return { result: Result.PASSED }
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
-    console.log(this.#deserialize_payload(response.payload, content_type))
     return this._schema_validator.validate(schema, this.#deserialize_payload(response.payload, content_type))
   }
 
   #deserialize_payload(payload: any, content_type: string): any {
     if (payload === undefined) return undefined
-    switch(content_type) {
+    switch (content_type) {
       case 'application/yaml': return YAML.parse(payload as string)
       default: return payload
     }

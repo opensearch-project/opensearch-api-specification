@@ -1,0 +1,73 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test cat/indices endpoints.
+prologues:
+  - synopsis: Create an index named `books` with mappings and settings.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request_body:
+      payload: {}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Cat with a default text response.
+    method: GET
+    path: /_cat/indices
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with verbose output (v=true).
+    method: GET
+    path: /_cat/indices
+    parameters:
+      v: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with headers (h=header1,header2).
+    method: GET
+    path: /_cat/indices
+    parameters:
+      h:
+        - health
+        - status
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat displaying all available headers (help=true).
+    method: GET
+    path: /_cat/indices
+    parameters:
+      help: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with sorted results.
+    method: GET
+    path: /_cat/indices
+    parameters:
+      s:
+        - status
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat in different formats (format=json).
+    method: GET
+    path: /_cat/indices
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: Cat in different formats (format=yaml).
+    method: GET
+    path: /_cat/indices
+    parameters:
+      format: yaml
+    response:
+      status: 200
+      content_type: application/yaml
