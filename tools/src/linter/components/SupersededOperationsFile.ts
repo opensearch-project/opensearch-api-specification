@@ -36,7 +36,7 @@ export default class SupersededOperationsFile extends FileValidator {
     return _.entries(this.superseded_ops()).map(([path, p]) => {
       const current_keys = p.operations
       const sorted_keys = sort_array_by_keys(p.operations as string[], HTTP_METHODS)
-      if(!_.isEqual(current_keys, sorted_keys)) {
+      if (!_.isEqual(current_keys, sorted_keys)) {
         return this.error(
           `Operations must be sorted. Expected ${_.join(sorted_keys, ', ')}.`,
           path)

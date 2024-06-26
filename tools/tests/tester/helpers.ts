@@ -22,6 +22,7 @@ import { NoOpResultLogger, type ResultLogger } from 'tester/ResultLogger'
 import * as process from 'node:process'
 import SupplementalChapterEvaluator from 'tester/SupplementalChapterEvaluator'
 import { Logger } from 'Logger'
+import StoryValidator from "../../src/tester/StoryValidator";
 
 export function construct_tester_components (spec_path: string): {
   specification: OpenAPIV3.Document
@@ -30,6 +31,7 @@ export function construct_tester_components (spec_path: string): {
   chapter_reader: ChapterReader
   schema_validator: SchemaValidator
   chapter_evaluator: ChapterEvaluator
+  story_validator: StoryValidator
   story_evaluator: StoryEvaluator
   result_logger: ResultLogger
   test_runner: TestRunner
@@ -46,9 +48,10 @@ export function construct_tester_components (spec_path: string): {
   const schema_validator = new SchemaValidator(specification, logger)
   const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator)
   const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+  const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
-  const test_runner = new TestRunner(story_evaluator, result_logger)
+  const test_runner = new TestRunner(story_validator, story_evaluator, result_logger)
   return {
     specification,
     operation_locator,
@@ -56,6 +59,7 @@ export function construct_tester_components (spec_path: string): {
     chapter_reader,
     schema_validator,
     chapter_evaluator,
+    story_validator,
     story_evaluator,
     result_logger,
     test_runner

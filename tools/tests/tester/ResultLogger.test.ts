@@ -45,10 +45,11 @@ describe('ConsoleResultLogger', () => {
       })
 
       expect(log.mock.calls).toEqual([
-        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('description'))} ${ansi.gray('(message)')}`],
+        [],
+        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
         [`   ${ansi.green('PASSED ')} CHAPTERS `],
         [`      ${ansi.green('PASSED ')} ${ansi.i('title')} `],
-        ["\n"]
+        []
       ])
     })
   })
@@ -74,8 +75,7 @@ describe('ConsoleResultLogger', () => {
       })
 
       expect(log.mock.calls).toEqual([
-        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('description'))} ${ansi.gray('(message)')}`],
-        ["\n"]
+        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`]
       ])
     })
   })

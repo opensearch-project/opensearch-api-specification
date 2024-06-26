@@ -116,7 +116,7 @@ export default class NamespaceFile extends FileValidator {
       const current_keys = _.keys(p)
       sort_by_keys(p as Record<string, any>, HTTP_METHODS)
       const sorted_keys = _.keys(p)
-      if(!_.isEqual(current_keys, sorted_keys)) {
+      if (!_.isEqual(current_keys, sorted_keys)) {
         return this.error(
           `Operations must be sorted. Expected ${_.join(sorted_keys, ', ')}.`,
           path)

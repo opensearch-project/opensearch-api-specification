@@ -35,6 +35,8 @@ export default [
       ...pluginComments.configs.recommended.rules,
       ...pluginTs.configs["recommended-type-checked"].rules,
       '@stylistic/object-curly-spacing': ["error", "always"],
+      '@stylistic/keyword-spacing': ["error", { "before": true, "after": true }],
+      '@stylistic/space-unary-ops': ["error", { "words": true, "nonwords": false }],
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',

@@ -57,13 +57,10 @@ export type ReadChapter = Chapter & {
 };
 
 export interface Story {
-  $schema?: string;
+  $schema: string;
   description: string;
   prologues?: SupplementalChapter[];
   epilogues?: SupplementalChapter[];
-  /**
-   * @minItems 1
-   */
   chapters: Chapter[];
 }
 /**

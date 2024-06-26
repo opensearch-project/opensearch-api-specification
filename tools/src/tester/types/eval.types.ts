@@ -9,8 +9,13 @@
 
 import { type ChapterOutput } from '../ChapterOutput'
 import { StoryOutputs } from '../StoryOutputs'
+import type { Story } from "./story.types";
 
-export type LibraryEvaluation = StoryEvaluation[]
+export interface StoryFile {
+  display_path: string
+  full_path: string
+  story: Story
+}
 
 export interface StoryEvaluation {
   result: Result
@@ -18,7 +23,7 @@ export interface StoryEvaluation {
   full_path: string
   description: string
   message?: string
-  chapters: ChapterEvaluation[]
+  chapters?: ChapterEvaluation[]
   epilogues?: ChapterEvaluation[]
   prologues?: ChapterEvaluation[]
 }
