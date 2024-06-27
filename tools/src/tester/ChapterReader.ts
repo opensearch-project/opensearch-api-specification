@@ -12,6 +12,7 @@ import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
 import { type StoryOutputs } from './StoryOutputs'
 import { Logger } from 'Logger'
 import { to_json, to_ndjson } from '../helpers'
+import qs from 'qs'
 
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
@@ -37,7 +38,10 @@ export default class ChapterReader {
       method: chapter.method,
       headers: { 'Content-Type' : content_type },
       params,
-      data: request_data
+      data: request_data,
+      paramsSerializer: (params) => { // eslint-disable-line @typescript-eslint/naming-convention
+        return qs.stringify(params, { arrayFormat: 'comma' })
+      }
     }).then(r => {
       this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(r.data)}`)
       response.status = r.status
