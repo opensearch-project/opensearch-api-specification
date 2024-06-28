@@ -938,6 +938,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.delete@200'
+  /{index}/_tier/warm:
+    post:
+      operationId: indices.tier_warm.0
+      x-operation-group: indices.tier
+      x-version-added: '1.0'
+      description: Tier the index from hot to warm in the cluster.
+      externalDocs:
+        url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      parameters:
+        - $ref: '#/components/parameters/indices.tier_warm::path.index'
+        - $ref: '#/components/parameters/indices.tier_warm::query.allow_no_indices'
+        - $ref: '#/components/parameters/indices.tier_warm::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.tier_warm::query.ignore_unavailable'
+        - $ref: '#/components/parameters/indices.tier_warm::query.timeout'
+        - $ref: '#/components/parameters/indices.tier_warm::query.wait_for_completion'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.tier_warm@200'
   /{index}/_alias:
     get:
       operationId: indices.get_alias.2
@@ -2602,6 +2620,29 @@ components:
             required:
               - _shards
               - _all
+    indices.tier_warm@200:
+      description: 'Hot to warm tiering response'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+              failed_indices:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - key
+                    - value
+            required:
+              - acknowledged
     indices.update_aliases@200:
       description: ''
       content:
@@ -4953,6 +4994,60 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Level'
       style: form
+
+    indices.tier_warm::path.index:
+      in: path
+      name: index
+      description: |-
+        Comma-separated list of data streams, indices, and aliases to tier from hot to warm.
+        Supports wildcards (`*`).
+        To search all data streams or indices, omit this parameter or use `*` or `_all`.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
+    indices.tier_warm::query.allow_no_indices:
+        in: query
+        name: allow_no_indices
+        description: |-
+          If `false`, the request returns an error if any wildcard expression, index alias, or `_all` value targets only missing or closed indices.
+          This behavior applies even if the request targets other open indices.
+        schema:
+          type: boolean
+          default: false
+        style: form
+    indices.tier_warm::query.cluster_manager_timeout:
+        name: cluster_manager_timeout
+        in: query
+        description: Operation timeout for connection to cluster-manager node.
+        schema:
+          $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+        x-version-added: 2.0.0
+    indices.tier_warm::query.ignore_unavailable:
+        in: query
+        name: ignore_unavailable
+        description: If `false`, the request returns an error if it targets a missing or closed index.
+        schema:
+          type: boolean
+          default: false
+        style: form
+    indices.tier_warm::query.timeout:
+        in: query
+        name: timeout
+        description: |-
+          Period to wait for a response.
+          If no response is received before the timeout expires, the request fails and returns an error.
+        schema:
+          $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+        style: form
+    indices.tier_warm::query.wait_for_completion:
+        name: wait_for_completion
+        in: query
+        description: Should this request wait until the operation has completed before returning.
+        schema:
+          type: boolean
+          default: true
+          description: Should this request wait until the operation has completed before returning.
     indices.update_aliases::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
