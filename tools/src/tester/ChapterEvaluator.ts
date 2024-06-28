@@ -17,6 +17,7 @@ import type SchemaValidator from './SchemaValidator'
 import { type StoryOutputs } from './StoryOutputs'
 import { ChapterOutput } from './ChapterOutput'
 import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
+import YAML from 'yaml'
 import _ from 'lodash'
 
 export default class ChapterEvaluator {
@@ -85,7 +86,9 @@ export default class ChapterEvaluator {
 
   #evaluate_payload_body(response: ActualResponse, expected_payload?: Payload): Evaluation {
     if (expected_payload == null) return { result: Result.PASSED }
-    const delta = atomizeChangeset(diff(expected_payload, response.payload))
+    const content_type = response.content_type ?? 'application/json'
+    const payload = this.#deserialize_payload(response.payload, content_type)
+    const delta = atomizeChangeset(diff(expected_payload, payload))
     const messages: string[] = _.compact(delta.map((value, _index, _array) => {
       switch (value.type) {
         case Operation.UPDATE:
@@ -103,6 +106,14 @@ export default class ChapterEvaluator {
     const schema = content?.schema
     if (schema == null && content != null) return { result: Result.PASSED }
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
-    return this._schema_validator.validate(schema, response.payload)
+    return this._schema_validator.validate(schema, this.#deserialize_payload(response.payload, content_type))
+  }
+
+  #deserialize_payload(payload: any, content_type: string): any {
+    if (payload === undefined) return undefined
+    switch (content_type) {
+      case 'application/yaml': return YAML.parse(payload as string)
+      default: return payload
+    }
   }
 }
