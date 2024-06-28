@@ -132,6 +132,32 @@ test('validate_parameters()', () => {
     .toEqual(invalid_parameters.error('Every parameter must be a reference object to \'#/components/parameters/{x-operation-group}::{path|query}.{parameter_name}\'.'))
 })
 
+test('validate_order_of_parameters()', () => {
+  const valid_parameters = operation({
+    parameters: [
+      { $ref: 'path.index' },
+      { $ref: 'query:pretty' },
+      { $ref: 'timeout' }
+    ]
+  })
+  expect(valid_parameters.validate_order_of_parameters())
+    .toBeUndefined()
+
+  const invalid_parameters = operation({
+    parameters: [
+      { $ref: 'query:pretty' },
+      { $ref: 'path.index' },
+      { $ref: 'timeout' }
+    ]
+  })
+  expect(invalid_parameters.validate_order_of_parameters())
+    .toEqual({
+      "file": "namespaces/indices.yaml",
+      "location": "/{index}/something/{abc_xyz}",
+      "message": "Parameters in /{index}/something/{abc_xyz} must be sorted. Expected path.index, query:pretty, timeout."
+    })
+})
+
 test('validate_path_parameters()', () => {
   const invalid_path_params = operation({ parameters: [{ $ref: '#/components/parameters/indices.create::path.index' }] })
   expect(invalid_path_params.validate_path_parameters())

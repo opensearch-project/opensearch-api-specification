@@ -41,6 +41,7 @@ export default class Operation extends ValidatorBase {
       this.validate_request_body(),
       this.validate_parameters(),
       this.validate_path_parameters(),
+      this.validate_order_of_parameters(),
       ...this.validate_responses()
     ].filter((e) => e) as ValidationError[]
   }
@@ -96,6 +97,17 @@ export default class Operation extends ValidatorBase {
     const regex = new RegExp(`^#/components/parameters/${this.group_regex}::((path)|(query))\\.[a-zA-Z0-9_.]+$`)
     for (const parameter of parameters) {
       if (!regex.test(parameter.$ref)) { return this.error('Every parameter must be a reference object to \'#/components/parameters/{x-operation-group}::{path|query}.{parameter_name}\'.') }
+    }
+  }
+
+  validate_order_of_parameters(): ValidationError | undefined {
+    const parameters = this.spec.parameters
+    const unsorted_refs = _.map(parameters, (parameter) => parameter.$ref)
+    const sorted_refs = _.sortBy(_.map(parameters, (parameter) => parameter.$ref))
+    if (!_.isEqual(sorted_refs, unsorted_refs)) {
+      return this.error(
+        `Parameters in ${this.path} must be sorted. Expected ${_.join(sorted_refs, ', ')}.`,
+        this.path)
     }
   }
 
