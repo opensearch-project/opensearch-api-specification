@@ -29,6 +29,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added SPECIFICATION_TESTING.md [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
 - Added StoryValidator to validate stories before running them ([#354](https://github.com/opensearch-project/opensearch-api-specification/issues/354))
 - Added support for `text/plain` responses in `_cat` APIs ([#360](https://github.com/opensearch-project/opensearch-api-specification/pull/360))
+- Added support for `application/yaml` responses ([#363](https://github.com/opensearch-project/opensearch-api-specification/pull/363))
+- Added test for search with seq_no_primary_term ([#367](https://github.com/opensearch-project/opensearch-api-specification/pull/367))
+- Added a linter for parameter sorting ([#369](https://github.com/opensearch-project/opensearch-api-specification/pull/369))
 
 ### Changed
 
