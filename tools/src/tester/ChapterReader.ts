@@ -13,6 +13,8 @@ import { type StoryOutputs } from './StoryOutputs'
 import { Logger } from 'Logger'
 import { to_json, to_ndjson } from '../helpers'
 import qs from 'qs'
+import YAML from 'yaml'
+import CBOR from 'cbor'
 
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
@@ -43,22 +45,23 @@ export default class ChapterReader {
         return qs.stringify(params, { arrayFormat: 'comma' })
       }
     }).then(r => {
-      this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(r.data)}`)
       response.status = r.status
-      response.content_type = r.headers['content-type'].split(';')[0]
-      response.payload = r.data
+      response.content_type = r.headers['content-type']?.split(';')[0]
+      response.payload = this.#deserialize_payload(r.data, response.content_type)
+      this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(response.payload)}`)
     }).catch(e => {
       if (e.response == null) {
         this.logger.info(`<= ERROR: ${e}`)
         throw e
       }
       response.status = e.response.status
-      response.content_type = e.response.headers['content-type'].split(';')[0]
-      response.payload = e.response.data?.error
-      response.message = e.response.data?.error?.reason ?? e.response.statusText
+      response.content_type = e.response.headers['content-type']?.split(';')[0]
+      const payload = this.#deserialize_payload(e.response.data, response.content_type)
+      response.payload = payload?.error
+      response.message = payload.error?.reason ?? e.response.statusText
       response.error = e
 
-      this.logger.info(`<= ${response.status} (${response.content_type}) | ${to_json(response.payload ?? response.message)}`)
+      this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload ?? response.message}`)
     })
     return response as ActualResponse
   }
@@ -79,5 +82,21 @@ export default class ChapterReader {
     })
     const query_params = Object.fromEntries(Object.entries(parameters).filter(([key]) => !path_params.has(key)))
     return [parsed_path, query_params]
+  }
+
+  #deserialize_payload(payload: any, content_type: any): any {
+    if (payload === undefined) return undefined
+    if (content_type === undefined) return payload
+    switch (content_type) {
+      case 'text/plain': return this.#deserialize_payload_data(payload as string)
+      case 'application/json': return payload.length == 0 ? {} : JSON.parse(this.#deserialize_payload_data(payload as string))
+      case 'application/yaml': return payload.length == 0 ? {} : YAML.parse(this.#deserialize_payload_data(payload as string))
+      case 'application/cbor': return payload.length == 0 ? {} : CBOR.decode(payload as string)
+      default: return this.#deserialize_payload_data(payload as string)
+    }
+  }
+
+  #deserialize_payload_data(payload: string): string {
+    return Buffer.from(payload, 'binary').toString()
   }
 }

@@ -8,7 +8,7 @@
 */
 
 import { Option } from '@commander-js/extra-typings'
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type ResponseType } from 'axios'
 import * as https from 'node:https'
 import { sleep } from './helpers'
 
@@ -34,7 +34,8 @@ export interface OpenSearchHttpClientOptions {
   url?: string
   username?: string
   password?: string
-  insecure?: boolean
+  insecure?: boolean,
+  responseType: ResponseType | undefined
 }
 
 export type OpenSearchHttpClientCliOptions = { [K in keyof OpenSearchHttpClientOptions as `opensearch${Capitalize<K>}`]: OpenSearchHttpClientOptions[K] }
@@ -44,7 +45,8 @@ export function get_opensearch_opts_from_cli (opts: OpenSearchHttpClientCliOptio
     url: opts.opensearchUrl,
     username: opts.opensearchUsername,
     password: opts.opensearchPassword,
-    insecure: opts.opensearchInsecure
+    insecure: opts.opensearchInsecure,
+    responseType: opts.opensearchResponseType
   }
 }
 
@@ -79,7 +81,8 @@ export class OpenSearchHttpClient {
           password: opts.password
         }
         : undefined,
-      httpsAgent: new https.Agent({ rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE) })
+      httpsAgent: new https.Agent({ rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE) }),
+      responseType: opts?.responseType,
     })
   }
 
