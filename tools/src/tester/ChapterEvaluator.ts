@@ -17,18 +17,21 @@ import type SchemaValidator from './SchemaValidator'
 import { type StoryOutputs } from './StoryOutputs'
 import { ChapterOutput } from './ChapterOutput'
 import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
-import YAML from 'yaml'
 import _ from 'lodash'
+import { Logger } from 'Logger'
+import { to_json } from '../helpers'
 
 export default class ChapterEvaluator {
+  private readonly logger: Logger
   private readonly _operation_locator: OperationLocator
   private readonly _chapter_reader: ChapterReader
   private readonly _schema_validator: SchemaValidator
 
-  constructor(spec_parser: OperationLocator, chapter_reader: ChapterReader, schema_validator: SchemaValidator) {
+  constructor(spec_parser: OperationLocator, chapter_reader: ChapterReader, schema_validator: SchemaValidator, logger: Logger) {
     this._operation_locator = spec_parser
     this._chapter_reader = chapter_reader
     this._schema_validator = schema_validator
+    this.logger = logger
   }
 
   async evaluate(chapter: Chapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
@@ -86,8 +89,8 @@ export default class ChapterEvaluator {
 
   #evaluate_payload_body(response: ActualResponse, expected_payload?: Payload): Evaluation {
     if (expected_payload == null) return { result: Result.PASSED }
-    const content_type = response.content_type ?? 'application/json'
-    const payload = this.#deserialize_payload(response.payload, content_type)
+    const payload = response.payload
+    this.logger.info(`${to_json(payload)}`)
     const delta = atomizeChangeset(diff(expected_payload, payload))
     const messages: string[] = _.compact(delta.map((value, _index, _array) => {
       switch (value.type) {
@@ -102,18 +105,12 @@ export default class ChapterEvaluator {
 
   #evaluate_payload_schema(response: ActualResponse, operation: ParsedOperation): Evaluation {
     const content_type = response.content_type ?? 'application/json'
-    const content = operation.responses[response.status]?.content[content_type]
-    const schema = content?.schema
+    const content = operation.responses[response.status]?.content
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    const content_type_content = content ? content[content_type] : undefined
+    const schema = content_type_content?.schema
     if (schema == null && content != null) return { result: Result.PASSED }
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
-    return this._schema_validator.validate(schema, this.#deserialize_payload(response.payload, content_type))
-  }
-
-  #deserialize_payload(payload: any, content_type: string): any {
-    if (payload === undefined) return undefined
-    switch (content_type) {
-      case 'application/yaml': return YAML.parse(payload as string)
-      default: return payload
-    }
+    return this._schema_validator.validate(schema, response.payload)
   }
 }
