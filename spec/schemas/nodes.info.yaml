@@ -21,10 +21,8 @@ components:
         - aggregations
         - indices
         - search_pipelines
-        - _all
     ResponseBase:
       allOf:
-        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
         - type: object
           properties:
             cluster_name:
@@ -33,9 +31,12 @@ components:
               type: object
               additionalProperties:
                 $ref: '#/components/schemas/NodeInfo'
+            _nodes:
+                $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
           required:
             - cluster_name
             - nodes
+            - _nodes
     NodeInfo:
       type: object
       properties:
@@ -99,9 +100,10 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/NodeInfoAggregation'
+        search_pipelines:
+            $ref: '#/components/schemas/NodeInfoSearchPipelines'
       required:
         - attributes
-        - build_flavor
         - build_hash
         - build_type
         - host
@@ -345,6 +347,8 @@ components:
           $ref: '#/components/schemas/NodeInfoSearch'
         ingest:
           $ref: '#/components/schemas/NodeInfoSettingsIngest'
+        index:
+          $ref: '#/components/schemas/NodeInfoSettingsIndex'
       required:
         - cluster
         - node
@@ -367,7 +371,6 @@ components:
           $ref: '#/components/schemas/DeprecationIndexing'
       required:
         - name
-        - election
     NodeInfoSettingsClusterElection:
       type: object
       properties:
@@ -390,9 +393,7 @@ components:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         attr:
-          type: object
-          additionalProperties:
-            type: object
+          $ref: '#/components/schemas/NodeInfoShardIndexingPressureEnabled'
         max_local_storage_nodes:
           type: string
       required:
@@ -416,7 +417,6 @@ components:
       required:
         - logs
         - home
-        - repo
     NodeInfoRepositories:
       type: object
       properties:
@@ -431,13 +431,18 @@ components:
           type: string
       required:
         - allowed_urls
+    NodeInfoShardIndexingPressureEnabled:
+      type: object
+      properties:
+        shard_indexing_pressure_enabled:
+          type: string
+      required:
+        - shard_indexing_pressure_enabled
     NodeInfoDiscover:
       type: object
       properties:
         seed_hosts:
           type: string
-      required:
-        - seed_hosts
     NodeInfoAction:
       type: object
       properties:
@@ -456,7 +461,7 @@ components:
       type: object
       properties:
         type:
-          $ref: '#/components/schemas/NodeInfoSettingsHttpType'
+          type: string
         type.default:
           type: string
         compression:
@@ -469,13 +474,6 @@ components:
             - type: string
       required:
         - type
-    NodeInfoSettingsHttpType:
-      type: object
-      properties:
-        default:
-          type: string
-      required:
-        - default
     NodeInfoBootstrap:
       type: object
       properties:
@@ -487,18 +485,11 @@ components:
       type: object
       properties:
         type:
-          $ref: '#/components/schemas/NodeInfoSettingsTransportType'
+          type: string
         type.default:
           type: string
       required:
         - type
-    NodeInfoSettingsTransportType:
-      type: object
-      properties:
-        default:
-          type: string
-      required:
-        - default
     NodeInfoSettingsNetwork:
       type: object
       properties:
@@ -615,6 +606,28 @@ components:
           type: string
       required:
         - enabled
+    NodeInfoSettingsIndex:
+      type: object
+      properties:
+        store:
+          $ref: '#/components/schemas/NodeInfoSettingsIndexStore'
+    NodeInfoSettingsIndexStore:
+      type: object
+      properties:
+        hybrid:
+          $ref: '#/components/schemas/NodeInfoSettingsIndexHybrid'
+    NodeInfoSettingsIndexHybrid:
+      type: object
+      properties:
+        mmap:
+          $ref: '#/components/schemas/NodeInfoSettingsIndexStoreMmap'
+    NodeInfoSettingsIndexStoreMmap:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
     NodeThreadPoolInfo:
       type: object
       properties:
@@ -675,3 +688,24 @@ components:
             type: string
       required:
         - types
+    NodeInfoSearchPipelines:
+      type: object
+      properties:
+        response_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeInfoIngestProcessor2'
+        request_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeInfoIngestProcessor2'
+      required:
+        - response_processors
+        - request_processors
+    NodeInfoIngestProcessor2:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
