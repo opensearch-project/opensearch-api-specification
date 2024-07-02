@@ -1,0 +1,49 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test cat/pit_segments endpoints.
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /games/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request_body:
+      payload:
+        title: Monopoly
+    status: [201]
+chapters:
+  - synopsis: Create a PIT.
+    id: create_pit
+    path: /{index}/_search/point_in_time
+    method: POST
+    parameters:
+      index:
+        - games
+      keep_alive: 1m
+    output:
+      pit_id: "payload.pit_id"
+  - synopsis: Cat _all with a json response.
+    path: /_cat/pit_segments/_all
+    method: GET
+    parameters:
+      format: json
+    response:
+      status: 200
+      payload:
+        - index: games
+  - synopsis: Cat pit_segments/pit_id with a json response.
+    path: /_cat/pit_segments
+    method: GET
+    parameters:
+      format: json
+    request_body:
+      payload:
+        pit_id:
+          - ${create_pit.pit_id}
+    response:
+      status: 200
+      payload:
+        - index: games

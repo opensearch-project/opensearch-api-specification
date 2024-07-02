@@ -58,6 +58,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `pages_processed` in `/_plugins/_rollup` ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
 - Fixed `_bulk` spec request and response types ([#355](https://github.com/opensearch-project/opensearch-api-specification/pull/355))
 - Fixed `text/plain` response in `/_cat` ([#357](https://github.com/opensearch-project/opensearch-api-specification/pull/357))
+- Fixed `/_cat/cluster_manager`, `/_cat/allocation`, `/_cat/shards`, and `/_cat/thread_pool` ([#373](https://github.com/opensearch-project/opensearch-api-specification/pull/373))
 
 ### Security
 
