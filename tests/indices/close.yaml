@@ -1,0 +1,38 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test closing an index.
+prologues:
+  - path: /movies
+    method: PUT
+    status: [200]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Close an index.
+    path: /{index}/_close
+    method: POST
+    parameters:
+      index: movies
+      allow_no_indices: true
+      expand_wildcards: all
+      ignore_unavailable: true
+      wait_for_active_shards: 0
+      cluster_manager_timeout: 30s
+      timeout: 30s
+    response:
+      status: 200
+      payload:
+        indices:
+          movies:
+            closed: true
+  - synopsis: Close an already closed index.
+    path: /{index}/_close
+    method: POST
+    parameters:
+      index: movies
+    response:
+      status: 200
+      payload:
+        indices: {}

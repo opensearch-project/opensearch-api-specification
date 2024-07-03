@@ -61,7 +61,7 @@ export default class ChapterReader {
       response.message = payload.error?.reason ?? e.response.statusText
       response.error = e
 
-      this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload ?? response.message}`)
+      this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
     })
     return response as ActualResponse
   }

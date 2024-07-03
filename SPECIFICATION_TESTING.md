@@ -40,7 +40,7 @@ Note: Remember to set the `OPENSEARCH_PASSWORD` environment variable everytime y
 
 ## Writing Spec Tests
 
-The spec tests reside in the [tests/](tests) directory. Tests are organized in folders that match [namespaces](spec/namespaces). For example, tests for APIs defined in [spec/namespaces/indices.yaml](spec/namespaces/indices.yaml) can be found in [tests/indices/index.yaml](tests/indices/index.yaml) (for `/{index}`), and [tests/indices/_doc.yaml](tests/indices/_doc.yaml) (for `/{index}/_doc`).
+The spec tests reside in the [tests/](tests) directory. Tests are organized in folders that match [namespaces](spec/namespaces). For example, tests for APIs defined in [spec/namespaces/indices.yaml](spec/namespaces/indices.yaml) can be found in [tests/indices/index.yaml](tests/indices/index.yaml) (for `/{index}`), and [tests/indices/doc.yaml](tests/indices/doc.yaml) (for `/{index}/_doc`).
 
 Each yaml file in the tests directory represents a test story that tests a collection of related operations.
 

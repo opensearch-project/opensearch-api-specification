@@ -1,0 +1,63 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test opening an index.
+prologues:
+  - path: /movies
+    method: PUT
+    status: [200]
+  - path: /games
+    method: PUT
+    status: [200]
+  - path: /movies/_close
+    method: POST
+    status: [200]
+  - path: /games/_close
+    method: POST
+    status: [200]
+epilogues:
+  - path: /movies,games
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Open a closed index.
+    path: /{index}/_open
+    method: POST
+    parameters:
+      index: movies
+      allow_no_indices: true
+      expand_wildcards: all
+      ignore_unavailable: true
+      wait_for_active_shards: 0
+      cluster_manager_timeout: 30s
+      timeout: 30s
+      wait_for_completion: true
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
+  - synopsis: Open a closed index (wait_for_completion=false).
+    path: /{index}/_open
+    method: POST
+    parameters:
+      index: movies
+      allow_no_indices: true
+      expand_wildcards: all
+      ignore_unavailable: true
+      wait_for_active_shards: 0
+      cluster_manager_timeout: 30s
+      timeout: 30s
+      wait_for_completion: false
+      task_execution_timeout: 1m
+    response:
+      status: 200
+  - synopsis: Open an already opened index.
+    path: /{index}/_open
+    method: POST
+    parameters:
+      index: movies
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
