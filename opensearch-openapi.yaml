@@ -26792,6 +26792,7 @@ components:
         - transform
         - remote_cluster_client
         - coordinating_only
+        - cluster_manager
     _common:NodeRoles:
       description: '* @doc_id node-roles'
       type: array
@@ -26959,6 +26960,8 @@ components:
           $ref: '#/components/schemas/_common:VersionString'
         licensed:
           type: boolean
+        custom_foldername:
+          type: string
         opensearch_version:
           $ref: '#/components/schemas/_common:VersionString'
       required:
@@ -26970,7 +26973,6 @@ components:
         - java_version
         - name
         - version
-        - licensed
     _common:QueryCacheStats:
       type: object
       properties:
@@ -45289,7 +45291,6 @@ components:
         - aggregations
         - indices
         - search_pipelines
-        - _all
     nodes.info:NodeInfo:
       type: object
       properties:
@@ -45353,9 +45354,10 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/nodes.info:NodeInfoAggregation'
+        search_pipelines:
+          $ref: '#/components/schemas/nodes.info:NodeInfoSearchPipelines'
       required:
         - attributes
-        - build_flavor
         - build_hash
         - build_type
         - host
@@ -45399,8 +45401,6 @@ components:
       properties:
         seed_hosts:
           type: string
-      required:
-        - seed_hosts
     nodes.info:NodeInfoHttp:
       type: object
       properties:
@@ -45442,6 +45442,13 @@ components:
       required:
         - downloader
     nodes.info:NodeInfoIngestProcessor:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    nodes.info:NodeInfoIngestProcessor2:
       type: object
       properties:
         type:
@@ -45556,7 +45563,6 @@ components:
       required:
         - logs
         - home
-        - repo
     nodes.info:NodeInfoRepositories:
       type: object
       properties:
@@ -45588,6 +45594,20 @@ components:
           $ref: '#/components/schemas/nodes.info:NodeInfoSearchRemote'
       required:
         - remote
+    nodes.info:NodeInfoSearchPipelines:
+      type: object
+      properties:
+        response_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/nodes.info:NodeInfoIngestProcessor2'
+        request_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/nodes.info:NodeInfoIngestProcessor2'
+      required:
+        - response_processors
+        - request_processors
     nodes.info:NodeInfoSearchRemote:
       type: object
       properties:
@@ -45626,6 +45646,8 @@ components:
           $ref: '#/components/schemas/nodes.info:NodeInfoSearch'
         ingest:
           $ref: '#/components/schemas/nodes.info:NodeInfoSettingsIngest'
+        index:
+          $ref: '#/components/schemas/nodes.info:NodeInfoSettingsIndex'
       required:
         - cluster
         - node
@@ -45648,7 +45670,6 @@ components:
           $ref: '#/components/schemas/nodes.info:DeprecationIndexing'
       required:
         - name
-        - election
     nodes.info:NodeInfoSettingsClusterElection:
       type: object
       properties:
@@ -45660,7 +45681,7 @@ components:
       type: object
       properties:
         type:
-          $ref: '#/components/schemas/nodes.info:NodeInfoSettingsHttpType'
+          type: string
         type.default:
           type: string
         compression:
@@ -45673,13 +45694,28 @@ components:
             - type: string
       required:
         - type
-    nodes.info:NodeInfoSettingsHttpType:
+    nodes.info:NodeInfoSettingsIndex:
       type: object
       properties:
-        default:
-          type: string
-      required:
-        - default
+        store:
+          $ref: '#/components/schemas/nodes.info:NodeInfoSettingsIndexStore'
+    nodes.info:NodeInfoSettingsIndexHybrid:
+      type: object
+      properties:
+        mmap:
+          $ref: '#/components/schemas/nodes.info:NodeInfoSettingsIndexStoreMmap'
+    nodes.info:NodeInfoSettingsIndexStore:
+      type: object
+      properties:
+        hybrid:
+          $ref: '#/components/schemas/nodes.info:NodeInfoSettingsIndexHybrid'
+    nodes.info:NodeInfoSettingsIndexStoreMmap:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
     nodes.info:NodeInfoSettingsIngest:
       type: object
       properties:
@@ -45764,9 +45800,7 @@ components:
         name:
           $ref: '#/components/schemas/_common:Name'
         attr:
-          type: object
-          additionalProperties:
-            type: object
+          $ref: '#/components/schemas/nodes.info:NodeInfoShardIndexingPressureEnabled'
         max_local_storage_nodes:
           type: string
       required:
@@ -45776,18 +45810,18 @@ components:
       type: object
       properties:
         type:
-          $ref: '#/components/schemas/nodes.info:NodeInfoSettingsTransportType'
+          type: string
         type.default:
           type: string
       required:
         - type
-    nodes.info:NodeInfoSettingsTransportType:
+    nodes.info:NodeInfoShardIndexingPressureEnabled:
       type: object
       properties:
-        default:
+        shard_indexing_pressure_enabled:
           type: string
       required:
-        - default
+        - shard_indexing_pressure_enabled
     nodes.info:NodeInfoTransport:
       type: object
       properties:
@@ -45830,6 +45864,8 @@ components:
           type: string
         vm_version:
           $ref: '#/components/schemas/_common:VersionString'
+        bundled_jdk:
+          type: boolean
         using_bundled_jdk:
           type: boolean
         using_compressed_ordinary_object_pointers:
@@ -45850,7 +45886,7 @@ components:
         - vm_name
         - vm_vendor
         - vm_version
-        - using_bundled_jdk
+        - bundled_jdk
         - input_arguments
     nodes.info:NodeOperatingSystemInfo:
       type: object
@@ -45920,7 +45956,6 @@ components:
         - type
     nodes.info:ResponseBase:
       allOf:
-        - $ref: '#/components/schemas/nodes._common:NodesResponseBase'
         - type: object
           properties:
             cluster_name:
@@ -45929,9 +45964,12 @@ components:
               type: object
               additionalProperties:
                 $ref: '#/components/schemas/nodes.info:NodeInfo'
+            _nodes:
+              $ref: '#/components/schemas/nodes._common:NodesResponseBase'
           required:
             - cluster_name
             - nodes
+            - _nodes
     nodes.reload_secure_settings:ResponseBase:
       allOf:
         - $ref: '#/components/schemas/nodes._common:NodesResponseBase'
