@@ -10,9 +10,8 @@
 import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from 'types'
 import { type OpenAPIV3 } from 'openapi-types'
-import { read_yaml, to_json } from '../../../helpers'
-import AJV from 'ajv'
-import addFormats from 'ajv-formats'
+import { read_yaml } from '../../../helpers'
+import JsonSchemaValidator from "../../../_utils/JsonSchemaValidator";
 
 export default class FileValidator extends ValidatorBase {
   file_path: string
@@ -61,11 +60,10 @@ export default class FileValidator extends ValidatorBase {
     const json_schema_path: string = (this.spec() as any).$schema ?? ''
     if (json_schema_path === '') return this.error('JSON Schema is required but not found in this file.', '$schema')
     const schema = read_yaml(json_schema_path)
-    const ajv = new AJV({ schemaId: 'id' })
-    addFormats(ajv)
-    const validator = ajv.compile(schema)
-    if (!validator(this.spec())) {
-      return this.error(`File content does not match JSON schema found in '${json_schema_path}':\n ${to_json(validator.errors)}`)
-    }
+    delete schema.$schema
+    const validator = new JsonSchemaValidator()
+    const message = validator.validate_data(this.spec(), schema)
+    if (message != null)
+      return this.error(`File content does not match JSON schema found in '${json_schema_path}': ${message}`)
   }
 }
