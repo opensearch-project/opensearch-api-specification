@@ -22,6 +22,7 @@ components:
         - indices
         - search_pipelines
         - _all
+        - _cluster_manager
     ResponseBase:
       allOf:
         - type: object
@@ -29,14 +30,15 @@ components:
             cluster_name:
               $ref: '_common.yaml#/components/schemas/Name'
             nodes:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/NodeInfo'
+              oneOf:
+                - type: object
+                  $ref: '#/components/schemas/NodeInfo'
+                - type: object
+                  additionalProperties: {}
             _nodes:
                 $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
           required:
             - cluster_name
-            - nodes
             - _nodes
     NodeInfo:
       type: object
