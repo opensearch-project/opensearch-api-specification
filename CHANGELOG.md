@@ -62,7 +62,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_cat/cluster_manager`, `/_cat/allocation`, `/_cat/shards`, and `/_cat/thread_pool` ([#373](https://github.com/opensearch-project/opensearch-api-specification/pull/373))
 - Fixed optional field in `/_nodes` ([#365](https://github.com/opensearch-project/opensearch-api-specification/pull/365))
 - Fixed `/{index}/_open` can return a `task` ([#376](https://github.com/opensearch-project/opensearch-api-specification/pull/376))
- 
+- Fixed `_source` in `bulk` responses ([#375](https://github.com/opensearch-project/opensearch-api-specification/pull/375))
+
 ### Security
 
 [Unreleased]: https://github.com/opensearch-project/opensearch-api-specification/commits/main/
