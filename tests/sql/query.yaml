@@ -1,0 +1,30 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test send SQL query to index.
+
+epilogues:
+  - path: /_plugins/_sql
+    method: POST
+    request_body:
+      payload:
+        query: SELECT name FROM books1
+    status: [200]
+chapters:
+  - synopsis: Create an index named `books` with mappings and settings.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: books1
+    request_body:
+      payload:
+        mappings:
+          properties:
+            name:
+              type: keyword
+            age:
+              type: integer
+        settings:
+          number_of_shards: 5
+          number_of_replicas: 2
+    response:
+      status: 200  
