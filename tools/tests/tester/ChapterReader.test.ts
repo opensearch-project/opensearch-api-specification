@@ -233,6 +233,24 @@ describe('ChapterReader', () => {
       expect(result.content_type).toEqual("application/cbor")
       expect(result.payload).toEqual(["x", { "y": 1 }])
     })
+
+    it('application/smile', async () => {
+      mocked_axios.request.mockResolvedValue({
+        status: 200,
+        headers: {
+          'content-type': 'application/smile'
+        },
+        data: new Uint8Array([
+          0x3a, 0x29, 0x0a, 0x00, 0xfa, 0x83, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x42, 0x6f,
+          0x62, 0x82, 0x61, 0x67, 0x65, 0x24, 0xb2, 0x84, 0x73, 0x63, 0x6f, 0x72, 0x65,
+          0x29, 0x00, 0x40, 0x2c, 0x0c, 0x66, 0x33, 0x19, 0x4c, 0x66, 0x33, 0xfb
+        ]).buffer
+      });
+
+      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, new StoryOutputs())
+      expect(result.content_type).toEqual("application/smile")
+      expect(result.payload).toEqual({ age: 25, name: "Bob", score: 96.8 })
+    })
   })
 })
 
