@@ -12,7 +12,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse,
 import * as https from 'node:https'
 import { sleep } from './helpers'
 
-const DEFAULT_URL = 'http://localhost:9201'
+const DEFAULT_URL = 'https://localhost:9200'
 const DEFAULT_USER = 'admin'
 const DEFAULT_INSECURE = false
 
