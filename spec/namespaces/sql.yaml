@@ -25,7 +25,7 @@ paths:
       operationId: sql.explain.0
       x-operation-group: sql.explain
       x-version-added: '1.0'
-      description: Shows how a query is executed against OpenSearch
+      description: Shows how a query is executed against OpenSearch.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -41,7 +41,7 @@ paths:
       operationId: sql.close.0
       x-operation-group: sql.close
       x-version-added: '1.0'
-      description: To explicitly clear the cursor context
+      description: To explicitly clear the cursor context.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -54,33 +54,33 @@ paths:
           $ref: '#/components/responses/sql.close@200'
   /_plugins/_sql/stats:
     get:
-      operationId: sql.stats.0
+      operationId: sql.get_stats.0
       x-operation-group: sql.stats
       x-version-added: '1.0'
       description: By a stats endpoint, you are able to collect metrics for the plugin within the interval.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
       parameters:
-        - $ref: '#/components/parameters/sql.stats::query.format'
-        - $ref: '#/components/parameters/sql.stats::query.sanitize'
+        - $ref: '#/components/parameters/sql.get_stats::query.format'
+        - $ref: '#/components/parameters/sql.get_stats::query.sanitize'
       responses:
         '200':
-          $ref: '#/components/responses/sql.stats@200'
+          $ref: '#/components/responses/sql.get_stats@200'
     post:
-      operationId: sql.stats.1
-      x-operation-group: sql.stats
+      operationId: sql.post_stats.1
+      x-operation-group: sql.post_stats
       x-version-added: '1.0'
       description: By a stats endpoint, you are able to collect metrics for the plugin within the interval.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
       parameters:
-        - $ref: '#/components/parameters/sql.stats::query.format'
-        - $ref: '#/components/parameters/sql.stats::query.sanitize'
+        - $ref: '#/components/parameters/sql.post_stats::query.format'
+        - $ref: '#/components/parameters/sql.post_stats::query.sanitize'
       requestBody:
-        $ref: '#/components/requestBodies/sql.stats'
+        $ref: '#/components/requestBodies/sql.post_stats'
       responses:
         '200':
-          $ref: '#/components/responses/sql.stats@200'
+          $ref: '#/components/responses/sql.post_stats@200'
 components:
   parameters:
     sql.query::query.format:
@@ -128,14 +128,29 @@ components:
         type: boolean
         default: true
         description: Specifies whether to escape special characters in the results
-    sql.stats::query.format:
+    sql.get_stats::query.format:
       name: format
       in: query
       description: A short version of the Accept header, e.g. json, yaml.
       schema:
         type: string
         description: A short version of the Accept header, e.g. json, yaml.
-    sql.stats::query.sanitize:
+    sql.get_stats::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results
+      schema:
+        type: boolean
+        default: true
+        description: Specifies whether to escape special characters in the results
+    sql.post_stats::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.
+    sql.post_stats::query.sanitize:
       name: sanitize
       in: query
       description: Specifies whether to escape special characters in the results
@@ -162,7 +177,7 @@ components:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/SqlClose'
       required: true
-    sql.stats:
+    sql.post_stats:
       content:
         application/json:
           schema:
@@ -187,7 +202,13 @@ components:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/SqlCloseResponse'
       required: true
-    sql.stats@200:
+    sql.get_stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlStatsResponse'
+      required: true
+    sql.post_stats@200:
       content:
         application/json:
           schema:
