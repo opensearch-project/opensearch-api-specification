@@ -90,10 +90,20 @@ export class ConsoleResultLogger implements ResultLogger {
 
   #log_evaluation (evaluation: Evaluation, title: string, prefix: number = 0): void {
     const result = ansi.padding(this.#result(evaluation.result), 0, prefix)
+
     var message = evaluation.message
-    if (message !== undefined && message?.length > 128 && !this._verbose) message = message.split(',')[0] + ', ...'
-    if (message !== undefined) message = ansi.gray(`${message}`)
-    console.log(`${result} ${title} ${message}`)
+
+    if (message !== undefined && message?.length > 128 && !this._verbose) {
+      const message_part = message.split(',')[0]
+      message = message_part === message ? message : message_part + ', ...'
+    }
+
+    if (message !== undefined) {
+      message = ansi.gray(`(${message})`)
+      console.log(`${result} ${title} ${message}`)
+    } else {
+      console.log(`${result} ${title}`)
+    }
   }
 
   #result (r: Result): string {

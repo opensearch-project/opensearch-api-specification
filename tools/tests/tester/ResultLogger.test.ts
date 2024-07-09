@@ -47,8 +47,8 @@ describe('ConsoleResultLogger', () => {
       expect(log.mock.calls).toEqual([
         [],
         [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
-        [`   ${ansi.green('PASSED ')} CHAPTERS `],
-        [`      ${ansi.green('PASSED ')} ${ansi.i('title')} `],
+        [`   ${ansi.green('PASSED ')} CHAPTERS`],
+        [`      ${ansi.green('PASSED ')} ${ansi.i('title')}`],
         []
       ])
     })

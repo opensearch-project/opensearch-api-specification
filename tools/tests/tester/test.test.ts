@@ -41,7 +41,7 @@ test('displays story filename', () => {
 
 test('invalid story', () => {
   expect(spec(['--tests', 'tools/tests/tester/fixtures/invalid_story.yaml']).stdout).toContain(
-    `${ansi.gray("(Invalid Story: data/epilogues/0 must NOT have unevaluated properties, data/chapters/0 must have required property 'method', data/chapters/1/method must be equal to one of the allowed values)")}`
+    `${ansi.gray("(Invalid Story: data/epilogues/0 must NOT have unevaluated properties, ...)")}`
   )
 })
 
