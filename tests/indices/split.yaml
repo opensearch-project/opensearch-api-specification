@@ -1,6 +1,6 @@
 $schema: ../../json_schemas/test_story.schema.yaml
 
-description: Test shrinking an index.
+description: Test splitting an index.
 prologues:
   - path: /movies
     method: PUT
@@ -28,8 +28,8 @@ chapters:
       payload:
         settings:
           index.blocks.write: true
-  - synopsis: Shrink an index (POST).
-    path: /{index}/_shrink/{target}
+  - synopsis: Split an index (POST).
+    path: /{index}/_split/{target}
     method: POST
     parameters:
       index: movies
@@ -38,14 +38,19 @@ chapters:
       cluster_manager_timeout: 10s
       timeout: 10s
       wait_for_completion: true
+    request_body:
+      payload:
+        settings:
+          index:
+            number_of_shards: 6
     response:
       status: 200
       payload:
         shards_acknowledged: true
         acknowledged: true
         index: movies1
-  - synopsis: Shrink an index (PUT).
-    path: /{index}/_shrink/{target}
+  - synopsis: Split an index (PUT).
+    path: /{index}/_split/{target}
     method: PUT
     parameters:
       index: movies
@@ -54,6 +59,11 @@ chapters:
       cluster_manager_timeout: 10s
       timeout: 10s
       wait_for_completion: true
+    request_body:
+      payload:
+        settings:
+          index:
+            number_of_shards: 6
     response:
       status: 200
       payload:
