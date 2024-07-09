@@ -1,14 +1,18 @@
 $schema: ../../json_schemas/test_story.schema.yaml
 
-description: Test cloning an index.
+description: Test shrinking an index.
 prologues:
   - path: /movies
     method: PUT
+    request_body:
+      payload:
+        settings:
+          index.number_of_shards: 3
 epilogues:
   - path: /movies
     method: DELETE
     status: [200, 404]
-  - path: /games
+  - path: /games1,games2
     method: DELETE
     status: [200, 404]
 chapters:
@@ -21,12 +25,12 @@ chapters:
       payload:
         settings:
           index.blocks.write: true
-  - synopsis: Clone an index.
-    path: /{index}/_clone/{target}
+  - synopsis: Shrink an index (POST).
+    path: /{index}/_shrink/{target}
     method: POST
     parameters:
       index: movies
-      target: games
+      target: games1
       wait_for_active_shards: 1
       cluster_manager_timeout: 10s
       timeout: 10s
@@ -36,4 +40,20 @@ chapters:
       payload:
         shards_acknowledged: true
         acknowledged: true
-        index: games
+        index: games1
+  - synopsis: Shrink an index (PUT).
+    path: /{index}/_shrink/{target}
+    method: PUT
+    parameters:
+      index: movies
+      target: games2
+      wait_for_active_shards: 1
+      cluster_manager_timeout: 10s
+      timeout: 10s
+      wait_for_completion: true
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
+        index: games2
