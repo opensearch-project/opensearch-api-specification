@@ -15,6 +15,7 @@ import { to_json, to_ndjson } from '../helpers'
 import qs from 'qs'
 import YAML from 'yaml'
 import CBOR from 'cbor'
+import SMILE from 'smile-js'
 
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
@@ -87,16 +88,14 @@ export default class ChapterReader {
   #deserialize_payload(payload: any, content_type: any): any {
     if (payload === undefined) return undefined
     if (content_type === undefined) return payload
+    const payload_buffer = Buffer.from(payload as string, 'binary')
     switch (content_type) {
-      case 'text/plain': return this.#deserialize_payload_data(payload as string)
-      case 'application/json': return payload.length == 0 ? {} : JSON.parse(this.#deserialize_payload_data(payload as string))
-      case 'application/yaml': return payload.length == 0 ? {} : YAML.parse(this.#deserialize_payload_data(payload as string))
-      case 'application/cbor': return payload.length == 0 ? {} : CBOR.decode(payload as string)
-      default: return this.#deserialize_payload_data(payload as string)
+      case 'text/plain': return payload_buffer.toString()
+      case 'application/json': return payload.length == 0 ? {} : JSON.parse(payload_buffer.toString())
+      case 'application/yaml': return payload.length == 0 ? {} : YAML.parse(payload_buffer.toString())
+      case 'application/cbor': return payload.length == 0 ? {} : CBOR.decode(payload_buffer)
+      case 'application/smile': return payload.length == 0 ? {} : SMILE.parse(payload_buffer)
+      default: return payload_buffer.toString()
     }
-  }
-
-  #deserialize_payload_data(payload: string): string {
-    return Buffer.from(payload, 'binary').toString()
   }
 }
