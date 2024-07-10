@@ -1,0 +1,78 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test index templates.
+epilogues:
+  - path: /_index_template/daily_logs
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index template.
+    path: /_index_template/{name}
+    method: POST
+    parameters:
+      name: daily_logs
+    request_body:
+      payload:
+        index_patterns:
+          - "logs*"
+        priority: 0
+        template:
+          settings:
+            number_of_shards: 2
+            number_of_replicas: 2
+    response:
+      status: 200
+  - synopsis: Update an index template.
+    path: /_index_template/{name}
+    method: PUT
+    parameters:
+      name: daily_logs
+    request_body:
+      payload:
+        index_patterns:
+          - "logs*"
+        priority: 0
+        template:
+          aliases:
+            my_logs: {}
+          settings:
+            number_of_shards: 4
+            number_of_replicas: 4
+          mappings:
+            properties:
+              timestamp:
+                type: date
+                format: yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis
+              value:
+                type: double
+    response:
+      status: 200
+  - synopsis: Retrieve all index templates.
+    path: /_index_template
+    method: GET
+    response:
+      status: 200
+  - synopsis: Retrieve an index template.
+    path: /_index_template/{name}
+    method: GET
+    parameters:
+      name: daily_logs
+    response:
+      status: 200
+      payload:
+        index_templates:
+          - name: daily_logs
+  - synopsis: Check that an index template exists.
+    path: /_index_template/{name}
+    method: HEAD
+    parameters:
+      name: daily_logs
+    response:
+      status: 200
+  - synopsis: Delete an index template.
+    path: /_index_template/{name}
+    method: DELETE
+    parameters:
+      name: daily_logs
+    response:
+      status: 200
