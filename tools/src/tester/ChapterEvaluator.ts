@@ -80,11 +80,20 @@ export default class ChapterEvaluator {
   #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {
     const expected_status = chapter.response?.status ?? 200
     if (response.status === expected_status) return { result: Result.PASSED }
-    return {
+
+    var result: Evaluation = {
       result: Result.ERROR,
-      message: `Expected status ${expected_status}, but received ${response.status}: ${response.content_type}. ${response.message}`,
-      error: response.error as Error
+      message: _.join(_.compact([
+        `Expected status ${expected_status}, but received ${response.status}: ${response.content_type}.`,
+        response.message
+      ]), ' ')
     }
+
+    if (response.error !== undefined) {
+      result.error = response.error as Error
+    }
+
+    return result
   }
 
   #evaluate_payload_body(response: ActualResponse, expected_payload?: Payload): Evaluation {
