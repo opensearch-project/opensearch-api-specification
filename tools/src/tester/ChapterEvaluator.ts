@@ -118,7 +118,7 @@ export default class ChapterEvaluator {
 
     if (response.content_type !== content_type) {
       return {
-        result: Result.ERROR,
+        result: Result.FAILED,
         message: `Expected content type ${content_type}, but received ${response.content_type}.`
       }
     }
