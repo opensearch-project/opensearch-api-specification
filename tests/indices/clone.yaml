@@ -1,0 +1,39 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test cloning an index.
+prologues:
+  - path: /movies
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Block writes to the source index.
+    path: /{index}/_settings
+    method: PUT
+    parameters:
+      index: movies
+    request_body:
+      payload:
+        settings:
+          index.blocks.write: true
+  - synopsis: Clone an index.
+    path: /{index}/_clone/{target}
+    method: POST
+    parameters:
+      index: movies
+      target: games
+      wait_for_active_shards: 1
+      cluster_manager_timeout: 10s
+      timeout: 10s
+      wait_for_completion: true
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
+        index: games

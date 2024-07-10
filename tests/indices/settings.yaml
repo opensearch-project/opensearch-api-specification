@@ -1,0 +1,69 @@
+
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test settings for an index.
+prologues:
+  - path: /movies
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get global settings.
+    path: /_settings
+    method: GET
+    parameters:
+      allow_no_indices: true
+      expand_wildcards: none
+      flat_settings: true
+      include_defaults: true
+      ignore_unavailable: true
+      local: true
+      cluster_manager_timeout: 1s
+    response:
+      status: 200
+  - synopsis: Write a setting to an index.
+    path: /{index}/_settings
+    method: PUT
+    parameters:
+      index: movies
+    request_body:
+      payload:
+        settings:
+          index.blocks.write: true
+          index:
+            number_of_replicas: 4
+  - synopsis: Get settings for an index.
+    path: /{index}/_settings
+    method: GET
+    parameters:
+      index: movies
+      allow_no_indices: true
+      expand_wildcards: none
+    response:
+      status: 200
+      payload:
+        movies:
+          settings:
+            index:
+              provided_name: movies
+              blocks:
+                write: 'true'
+  - synopsis: Get a specific setting for an index.
+    path: /{index}/_settings/{name}
+    method: GET
+    parameters:
+      index: movies
+      name: index.blocks.write
+    response:
+      status: 200
+      payload:
+        movies:
+          settings:
+            index:
+              blocks:
+                write: 'true'
+
+
+
