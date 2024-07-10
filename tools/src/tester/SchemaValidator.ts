@@ -45,9 +45,15 @@ export default class SchemaValidator {
       this.logger.info(`* ${to_json(data)}`)
       this.logger.info(`& ${to_json(validate.errors)}`)
     }
-    return {
+
+    var result: Evaluation = {
       result: valid ? Result.PASSED : Result.FAILED,
-      message: valid ? undefined : this.ajv.errorsText(validate.errors)
     }
+
+    if (!valid) {
+      result.message = this.ajv.errorsText(validate.errors)
+    }
+
+    return result
   }
 }
