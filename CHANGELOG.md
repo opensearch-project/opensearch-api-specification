@@ -34,7 +34,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a linter for parameter sorting ([#369](https://github.com/opensearch-project/opensearch-api-specification/pull/369))
 - Added support for `application/cbor` responses ([#371](https://github.com/opensearch-project/opensearch-api-specification/pull/371))
 - Added support for `application/smile` responses ([#386](https://github.com/opensearch-project/opensearch-api-specification/pull/386))
- 
+- Added `file` to `/_cache/clear` and `/{index}/_cache/clear` ([#396](https://github.com/opensearch-project/opensearch-api-specification/pull/396))
+
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))

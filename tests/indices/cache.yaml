@@ -1,0 +1,45 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test index clear cache.
+prologues:
+  - path: /movies
+    method: PUT
+  - path: /games
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Clear all cache (POST).
+    path: /_cache/clear
+    method: POST
+    parameters:
+      allow_no_indices: true
+      expand_wildcards: none
+      fielddata: true
+      fields: '*'
+      file: false
+      index:
+        - movies
+      ignore_unavailable: true
+      query: true
+      request: true
+    response:
+      status: 200
+      payload:
+        _shards: {}
+  - synopsis: Clear index cache (POST).
+    path: /{index}/_cache/clear
+    method: POST
+    parameters:
+      index:
+        - movies
+        - games
+    response:
+      status: 200
+      payload:
+        _shards: {}
