@@ -52,7 +52,7 @@ export function construct_tester_components (spec_path: string): {
   const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
-  const test_runner = new TestRunner(story_validator, story_evaluator, result_logger)
+  const test_runner = new TestRunner(opensearch_http_client, story_validator, story_evaluator, result_logger)
   return {
     specification,
     operation_locator,

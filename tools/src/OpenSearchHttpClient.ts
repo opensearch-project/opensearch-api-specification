@@ -71,8 +71,10 @@ export interface OpenSearchInfo {
 
 export class OpenSearchHttpClient {
   private readonly _axios: AxiosInstance
+  private readonly _opts?: OpenSearchHttpClientOptions
 
   constructor (opts?: OpenSearchHttpClientOptions) {
+    this._opts = opts
     this._axios = axios.create({
       baseURL: opts?.url ?? DEFAULT_URL,
       auth: opts?.username !== undefined && opts.password !== undefined
@@ -92,8 +94,17 @@ export class OpenSearchHttpClient {
       attempt += 1
       try {
         const info = await this.get('/')
-        return info.data
+        if (this._opts?.responseType == 'arraybuffer') {
+          return JSON.parse(info.data as string)
+        } else {
+          return info.data
+        }
       } catch (e) {
+        if (axios.isAxiosError(e)) {
+          if (e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+            throw e
+          }
+        }
         if (attempt >= max_attempts) {
           throw e
         }
