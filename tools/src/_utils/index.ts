@@ -11,7 +11,7 @@ import { type OpenAPIV3 } from 'openapi-types'
 import { type ValidationError } from 'types'
 
 export function is_ref<O extends object> (o: MaybeRef<O>): o is OpenAPIV3.ReferenceObject {
-  return '$ref' in o
+  return typeof (o) === 'object' && '$ref' in o
 }
 
 export function is_array_schema (schema: OpenAPIV3.SchemaObject): schema is OpenAPIV3.ArraySchemaObject {
