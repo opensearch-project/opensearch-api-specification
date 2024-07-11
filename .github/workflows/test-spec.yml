@@ -2,25 +2,32 @@ name: Test Spec
 
 on:
   push:
-    branches: ['**']
     paths:
-      - 'package*.json'
+      - .github/workflows/test-spec.yml
+      - package*.json
       - tsconfig.json
-      - 'tools/src/tester/**'
-      - 'spec/**'
+      - tools/src/tester/**'
+      - spec/**
   pull_request:
-    branches: ['**']
     paths:
-      - 'package*.json'
+      - .github/workflows/test-spec.yml
+      - package*.json
       - tsconfig.json
-      - 'tools/src/tester/**'
-      - 'spec/**'
+      - tools/src/tester/**
+      - spec/**
 
 jobs:
   test-opensearch-spec:
+    strategy:
+      matrix:
+        entry:
+          - { version: 2.15.0, hub: 'opensearchproject' }
+          - { version: 2.16.0, hub: 'opensearchstaging' }
+    name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub }})
     runs-on: ubuntu-latest
     env:
-      OPENSEARCH_VERSION: 2.15.0
+      OPENSEARCH_DOCKER_HUB_PROJECT: ${{ matrix.entry.hub }}
+      OPENSEARCH_VERSION: ${{ matrix.entry.version }}
       OPENSEARCH_PASSWORD: myStrongPassword123!
     steps:
       - name: Checkout Repo
