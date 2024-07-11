@@ -69,6 +69,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/{index}/_open` can return a `task` ([#376](https://github.com/opensearch-project/opensearch-api-specification/pull/376))
 - Fixed `_source` in `bulk` responses ([#375](https://github.com/opensearch-project/opensearch-api-specification/pull/375))
 - Fixed `/{index}/_dangling` that can return `nodes` and `cluster_name` ([#391](https://github.com/opensearch-project/opensearch-api-specification/pull/391))
+- Fixed `Metadata` schema ([#399](https://github.com/opensearch-project/opensearch-api-specification/pull/399))
 
 ### Security
 
