@@ -28,13 +28,42 @@ jobs:
         shell: bash
         run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
 
+      - name: Upload Artifacts
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: |
+            build/*
+
       - name: Release Specification to GitHub
+        id: release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: ${{ steps.branch.outputs.name }}-latest
           prerelease: true
           title: OpenSearch OpenAPI Spec (${{ steps.branch.outputs.name }})
           files: |
             LICENSE.txt
             build/*
+
+      - name: Extract Changelog
+        id: changelog
+        uses: sean0x42/markdown-extract@v2
+        with:
+          file: CHANGELOG.md
+          pattern: 'Unreleased'
+
+      - name: Update Release Description
+        id: update
+        uses: tubone24/update_release@v1.3.1
+        env:
+          TAG_NAME: ${{ steps.branch.outputs.name }}-latest
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body: |
+            ${{ steps.changelog.outputs.markdown }}
+
+            ### Links
+            - [Build Artifact](${{ steps.upload.outputs.artifact-url }})
