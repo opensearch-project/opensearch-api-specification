@@ -14,23 +14,36 @@ epilogues:
   - path: /_ingest/pipeline/transform-and-count
     method: DELETE
     status: [200, 404]
-chapters:
-  - synopsis: Create a document.
-    path: /{index}/_doc
+prologues:
+  - path: /_ingest/pipeline/transform-and-count
+    method: PUT
+    request_body:
+      payload:
+        description: |
+          Splits the `title`` field into a `words` list.
+          Computes the length of the title field and stores it in a new `length` field.
+          Removes the `year` field.
+        processors:
+          - split:
+              field: title
+              separator: '\s+'
+              target_field: words
+          - script:
+              lang: painless
+              source: 'ctx.length = ctx.words.length'
+          - remove:
+              field: year
+  - path: /{index}/_doc
     method: POST
     parameters:
       index: movies
+      refresh: true
     request_body:
       payload:
         title: Beauty and the Beast
         year: 91
-    response:
-      status: 201
-  - synopsis: Refresh the index.
-    path: /{index}/_refresh
-    method: POST
-    parameters:
-      index: movies
+    status: [201]
+chapters:
   - synopsis: Reindex from movies to films.
     path: /_reindex
     method: POST
@@ -122,27 +135,6 @@ chapters:
       status: 200
       payload:
         total: 1
-  - synopsis: Create an ingest pipeline.
-    path: /_ingest/pipeline/{id}
-    method: PUT
-    parameters:
-      id: transform-and-count
-    request_body:
-      payload:
-        description: |
-          Splits the `title`` field into a `words` list.
-          Computes the length of the title field and stores it in a new `length` field.
-          Removes the `year` field.
-        processors:
-          - split:
-              field: title
-              separator: '\s+'
-              target_field: words
-          - script:
-              lang: painless
-              source: 'ctx.length = ctx.words.length'
-          - remove:
-              field: year
   - synopsis: Transform documents using a pipeline.
     path: /_reindex
     method: POST
