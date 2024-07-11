@@ -26192,6 +26192,20 @@ components:
           type: number
       required:
         - count
+    _common:DocStatus:
+      description: Item level REST category class codes during indexing.
+      type: object
+      properties:
+        1xx:
+          type: number
+        2xx:
+          type: number
+        3xx:
+          type: number
+        4xx:
+          type: number
+        5xx:
+          type: number
     _common:Duration:
       description: |-
         A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
@@ -26519,6 +26533,8 @@ components:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         delete_total:
           type: number
+        doc_status:
+          $ref: '#/components/schemas/_common:DocStatus'
         is_throttled:
           type: boolean
         noop_update_total:
@@ -26709,6 +26725,8 @@ components:
           $ref: '#/components/schemas/_common:Duration'
         total_time_in_millis:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        unreferenced_file_cleanups_performed:
+          type: number
       required:
         - current
         - current_docs
@@ -27098,6 +27116,143 @@ components:
           type: number
       required:
         - failed_attempts
+    _common:RemoteStoreDownloadStats:
+      type: object
+      description: Statistics related to downloads to the remote segment store.
+      properties:
+        total_download_size:
+          description: The total amount of data download from the remote segment store.
+          $ref: '#/components/schemas/_common:RemoteStoreUploadDownloadStats'
+        total_time_spent_in_millis:
+          description: The total duration, in milliseconds, spent on downloads from the remote segment store.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+      required:
+        - total_download_size
+        - total_time_spent_in_millis
+    _common:RemoteStoreStats:
+      type: object
+      description: Statistics about remote segment store operations.
+      properties:
+        upload:
+          $ref: '#/components/schemas/_common:RemoteStoreUploadStats'
+        download:
+          $ref: '#/components/schemas/_common:RemoteStoreDownloadStats'
+      required:
+        - upload
+        - download
+    _common:RemoteStoreTranslogStats:
+      type: object
+      properties:
+        upload:
+          $ref: '#/components/schemas/_common:RemoteStoreTranslogUploadStats'
+      required:
+        - upload
+    _common:RemoteStoreTranslogUploadStats:
+      type: object
+      description: Statistics related to uploads to the remote translog store.
+      properties:
+        total_uploads:
+          $ref: '#/components/schemas/_common:RemoteStoreTranslogUploadTotalUploadsStats'
+        total_upload_size:
+          $ref: '#/components/schemas/_common:RemoteStoreTranslogUploadTotalUploadSizeStats'
+      required:
+        - total_uploads
+        - total_upload_size
+    _common:RemoteStoreTranslogUploadTotalUploadSizeStats:
+      type: object
+      description: The total amount of data uploaded to the remote translog store.
+      properties:
+        failed_bytes:
+          description: The number of bytes that failed to upload to the remote translog store.
+          $ref: '#/components/schemas/_common:ByteSize'
+        started_bytes:
+          description: The number of bytes successfully uploaded to the remote translog store.
+          $ref: '#/components/schemas/_common:ByteSize'
+        succeeded_bytes:
+          description: The number of bytes successfully uploaded to the remote translog store.
+          $ref: '#/components/schemas/_common:ByteSize'
+      required:
+        - failed_bytes
+        - started_bytes
+        - succeeded_bytes
+    _common:RemoteStoreTranslogUploadTotalUploadsStats:
+      type: object
+      description: The number of syncs to the remote translog store.
+      properties:
+        failed:
+          description: The number of failed upload syncs to the remote translog store.
+          type: number
+        started:
+          description: The number of upload syncs to the remote translog store that have started.
+          type: number
+        succeeded:
+          description: The number of successful upload syncs to the remote translog store.
+          type: number
+      required:
+        - failed
+        - started
+        - succeeded
+    _common:RemoteStoreUploadDownloadStats:
+      type: object
+      description: The amount of data, in bytes, uploaded or downloaded to/from the remote segment store.
+      properties:
+        failed_bytes:
+          description: The number of bytes that failed to upload/upload to/from the remote segment store.
+          $ref: '#/components/schemas/_common:ByteSize'
+        started_bytes:
+          description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
+          $ref: '#/components/schemas/_common:ByteSize'
+        succeeded_bytes:
+          description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
+          $ref: '#/components/schemas/_common:ByteSize'
+      required:
+        - failed_bytes
+        - started_bytes
+        - succeeded_bytes
+    _common:RemoteStoreUploadPressureStats:
+      type: object
+      description: Statistics related to segment store upload backpressure.
+      properties:
+        total_rejections:
+          description: The total number of requests rejected due to segment store upload backpressure.
+          type: number
+      required:
+        - total_rejections
+    _common:RemoteStoreUploadRefreshSizeLagStats:
+      type: object
+      description: The amount of lag during upload between the remote segment store and the local store.
+      properties:
+        max_bytes:
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
+          $ref: '#/components/schemas/_common:ByteSize'
+        total_bytes:
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
+          $ref: '#/components/schemas/_common:ByteSize'
+      required:
+        - max_bytes
+        - total_bytes
+    _common:RemoteStoreUploadStats:
+      type: object
+      description: Statistics related to uploads to the remote segment store.
+      properties:
+        max_refresh_time_lag_in_millis:
+          description: The maximum duration, in milliseconds, that the remote refresh is behind the local refresh.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        pressure:
+          $ref: '#/components/schemas/_common:RemoteStoreUploadPressureStats'
+        refresh_size_lag:
+          $ref: '#/components/schemas/_common:RemoteStoreUploadRefreshSizeLagStats'
+        total_time_spent_in_millis:
+          description: The total amount of time, in milliseconds, spent on uploads to the remote segment store.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        total_upload_size:
+          $ref: '#/components/schemas/_common:RemoteStoreUploadDownloadStats'
+      required:
+        - max_refresh_time_lag_in_millis
+        - pressure
+        - refresh_size_lag
+        - total_time_spent_in_millis
+        - total_upload_size
     _common:RequestCacheStats:
       type: object
       properties:
@@ -27219,39 +27374,83 @@ components:
     _common:SearchStats:
       type: object
       properties:
+        concurrent_query_total:
+          description: The total number of query operations that use concurrent segment search.
+          type: number
+        concurrent_query_time:
+          $ref: '#/components/schemas/_common:Duration'
+        concurrent_query_time_in_millis:
+          description: The total amount of time taken by all query operations that use concurrent segment search, in milliseconds.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        concurrent_query_current:
+          description: The number of currently running query operations that use concurrent segment search.
+          type: number
+        concurrent_avg_slice_count:
+          description: The average slice count of all search requests. This is computed as the total slice count divided by the total number of concurrent search requests.
+          type: number
         fetch_current:
+          description: The number of shard fetch operations that are currently running.
           type: number
         fetch_time:
+          description: The total amount of time for all shard fetch operations.
           $ref: '#/components/schemas/_common:Duration'
         fetch_time_in_millis:
+          description: The total amount of time for all shard fetch operations, in milliseconds.
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         fetch_total:
+          description: The total number of shard fetch operations.
           type: number
         open_contexts:
+          description: The number of open search contexts.
+          type: number
+        point_in_time_total:
+          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
+          type: number
+        point_in_time_time:
+          $ref: '#/components/schemas/_common:Duration'
+        point_in_time_time_in_millis:
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        point_in_time_current:
+          description: The number of shard PIT contexts currently open.
           type: number
         query_current:
+          description: The number of shard query operations that are currently running.
           type: number
         query_time:
+          description: The total amount of time for all shard query operations.
           $ref: '#/components/schemas/_common:Duration'
         query_time_in_millis:
+          description: The total amount of time for all shard query operations, in milliseconds.
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         query_total:
+          description: The total number of shard query operations.
+          type: number
+        search_idle_reactivate_count_total:
           type: number
         scroll_current:
+          description: The number of shard scroll operations that are currently running.
           type: number
         scroll_time:
+          description: The total amount of time for all shard scroll operations.
           $ref: '#/components/schemas/_common:Duration'
         scroll_time_in_millis:
+          description: The total amount of time for all shard scroll operations, in milliseconds.
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         scroll_total:
+          description: The total number of shard scroll operations.
           type: number
         suggest_current:
+          description: The number of shard suggest operations that are currently running.
           type: number
         suggest_time:
+          description: The total amount of time for all shard suggest operations.
           $ref: '#/components/schemas/_common:Duration'
         suggest_time_in_millis:
+          description: The total amount of time for all shard suggest operations, in milliseconds.
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         suggest_total:
+          description: The total number of shard suggest operations.
           type: number
         groups:
           type: object
@@ -27275,6 +27474,19 @@ components:
       enum:
         - query_then_fetch
         - dfs_query_then_fetch
+    _common:SegmentReplicationStats:
+      type: object
+      properties:
+        max_bytes_behind:
+          $ref: '#/components/schemas/_common:ByteSize'
+        max_replication_lag:
+          $ref: '#/components/schemas/_common:ByteSize'
+        total_bytes_behind:
+          $ref: '#/components/schemas/_common:ByteSize'
+      required:
+        - max_bytes_behind
+        - max_replication_lag
+        - total_bytes_behind
     _common:SegmentsStats:
       type: object
       properties:
@@ -27343,6 +27555,10 @@ components:
         version_map_memory_in_bytes:
           description: Total amount, in bytes, of memory used by all version maps across all shards assigned to selected nodes.
           type: number
+        remote_store:
+          $ref: '#/components/schemas/_common:RemoteStoreStats'
+        segment_replication:
+          $ref: '#/components/schemas/_common:SegmentReplicationStats'
       required:
         - count
         - doc_values_memory_in_bytes
@@ -27639,6 +27855,8 @@ components:
           type: number
         operations:
           type: number
+        remote_store:
+          $ref: '#/components/schemas/_common:RemoteStoreTranslogStats'
         size:
           type: string
         size_in_bytes:
