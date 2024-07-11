@@ -34,6 +34,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a linter for parameter sorting ([#369](https://github.com/opensearch-project/opensearch-api-specification/pull/369))
 - Added support for `application/cbor` responses ([#371](https://github.com/opensearch-project/opensearch-api-specification/pull/371))
 - Added support for `application/smile` responses ([#386](https://github.com/opensearch-project/opensearch-api-specification/pull/386))
+- Added `doc_status`, `remote_store`, `segment_replication` and `unreferenced_file_cleanups_performed` to `SegmentStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
+- Added `concurrent_query_*` and `search_idle_reactivate_count_total` fields to `SearchStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
+- Added `remote_store` to `TranslogStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
 - Added `file` to `/_cache/clear` and `/{index}/_cache/clear` ([#396](https://github.com/opensearch-project/opensearch-api-specification/pull/396))
 
 ### Changed

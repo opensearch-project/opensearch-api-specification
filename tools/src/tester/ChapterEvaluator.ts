@@ -20,6 +20,7 @@ import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
 import _ from 'lodash'
 import { Logger } from 'Logger'
 import { to_json } from '../helpers'
+import { APPLICATION_JSON } from "./MimeTypes";
 
 export default class ChapterEvaluator {
   private readonly logger: Logger
@@ -43,7 +44,7 @@ export default class ChapterEvaluator {
     const request_body = this.#evaluate_request_body(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
     const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
-    const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(response, operation) : { result: Result.SKIPPED }
+    const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
     const output_values = ChapterOutput.extract_output_values(response, chapter.output)
     return {
       title: chapter.synopsis,
@@ -71,7 +72,7 @@ export default class ChapterEvaluator {
 
   #evaluate_request_body(chapter: Chapter, operation: ParsedOperation): Evaluation {
     if (!chapter.request_body) return { result: Result.PASSED }
-    const content_type = chapter.request_body.content_type ?? 'application/json'
+    const content_type = chapter.request_body.content_type ?? APPLICATION_JSON
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }
     return this._schema_validator.validate(schema, chapter.request_body?.payload ?? {})
@@ -81,13 +82,13 @@ export default class ChapterEvaluator {
     const expected_status = chapter.response?.status ?? 200
     if (response.status === expected_status) return { result: Result.PASSED }
 
-    var result: Evaluation = {
+    const result: Evaluation = {
       result: Result.ERROR,
       message: _.join(_.compact([
         `Expected status ${expected_status}, but received ${response.status}: ${response.content_type}.`,
         response.message
       ]), ' ')
-    }
+    };
 
     if (response.error !== undefined) {
       result.error = response.error as Error
@@ -112,14 +113,27 @@ export default class ChapterEvaluator {
     return messages.length > 0 ? { result: Result.FAILED, message: _.join(messages, ', ') } : { result: Result.PASSED }
   }
 
-  #evaluate_payload_schema(response: ActualResponse, operation: ParsedOperation): Evaluation {
-    const content_type = response.content_type ?? 'application/json'
-    const content = operation.responses[response.status]?.content
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const content_type_content = content ? content[content_type] : undefined
-    const schema = content_type_content?.schema
-    if (schema == null && content != null) return { result: Result.PASSED }
-    if (schema == null) return { result: Result.FAILED, message: `Schema for "${response.status}: ${response.content_type}" response not found in the spec.` }
-    return this._schema_validator.validate(schema, response.payload)
+  #evaluate_payload_schema(chapter: Chapter, response: ActualResponse, operation: ParsedOperation): Evaluation {
+    const content_type = chapter.response?.content_type ?? APPLICATION_JSON
+
+    if (response.content_type !== content_type) {
+      return {
+        result: Result.FAILED,
+        message: `Expected content type ${content_type}, but received ${response.content_type}.`
+      }
+    }
+
+    const content = operation.responses[response.status]?.content?.[content_type]
+
+    if (content == null) {
+      return {
+        result: Result.FAILED,
+        message: `Schema for "${response.status}: ${content_type}" response not found in the spec.`
+      }
+    }
+
+    if (content.schema == null) return { result: Result.PASSED }
+
+    return this._schema_validator.validate(content.schema, response.payload)
   }
 }
