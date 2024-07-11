@@ -29,11 +29,12 @@ test('stories folder', async () => {
   }
 
   const passed = load_expected_evaluation('passed', true)
+  const skipped = load_expected_evaluation('skipped/semver', true)
   const not_found = load_expected_evaluation('failed/not_found', true)
   const invalid_data = load_expected_evaluation('failed/invalid_data', true)
   const chapter_error = load_expected_evaluation('error/chapter_error', true)
   const prologue_error = load_expected_evaluation('error/prologue_error', true)
 
-  const expected_evaluations = [passed, chapter_error, prologue_error, invalid_data, not_found]
+  const expected_evaluations = [passed, chapter_error, prologue_error, invalid_data, not_found, skipped]
   expect(actual_evaluations).toEqual(expected_evaluations)
 })

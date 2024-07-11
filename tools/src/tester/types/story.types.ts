@@ -65,11 +65,12 @@ export type ReadChapter = Chapter & {
 };
 
 export interface Story {
-  $schema: string;
+  $schema?: string;
   description: string;
   prologues?: SupplementalChapter[];
   epilogues?: SupplementalChapter[];
   chapters: Chapter[];
+  version?: Version;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

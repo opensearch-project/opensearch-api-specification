@@ -26,6 +26,16 @@ export default class StoryEvaluator {
   }
 
   async evaluate({ story, display_path, full_path }: StoryFile, version: string, dry_run: boolean = false): Promise<StoryEvaluation> {
+    if (story.version !== undefined && !semver.satisfies(version, story.version)) {
+      return {
+        result: Result.SKIPPED,
+        display_path,
+        full_path,
+        description: story.description,
+        message: `Skipped because version ${version} does not satisfy ${story.version}.`
+      }
+    }
+
     const variables_error = StoryEvaluator.check_story_variables(story, display_path, full_path)
     if (variables_error !== undefined) {
       return variables_error
@@ -53,7 +63,7 @@ export default class StoryEvaluator {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
       } else if (chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because ${version} does not satisfy ${chapter.version}.`, error: undefined } })
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.`, error: undefined } })
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR
