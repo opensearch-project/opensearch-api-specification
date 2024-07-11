@@ -14,6 +14,10 @@ describe('additionalProperties', () => {
   const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', new Logger())
   const responses: any = spec.spec().components?.responses
 
+  test('has an api version', () => {
+    expect(spec.api_version()).toEqual('1.2.3')
+  })
+
   test('is added with required fields', () => {
     const schema = responses['info@200'].content['application/json'].schema
     expect(schema.additionalProperties).toEqual({ not: true, errorMessage: 'property is not defined in the spec' })

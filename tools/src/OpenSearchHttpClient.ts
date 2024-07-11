@@ -101,7 +101,7 @@ export class OpenSearchHttpClient {
         }
       } catch (e) {
         if (axios.isAxiosError(e)) {
-          if (e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+          if (e.response?.status == 401 || e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
             throw e
           }
         }

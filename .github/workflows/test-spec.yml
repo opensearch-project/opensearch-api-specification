@@ -21,14 +21,18 @@ jobs:
     strategy:
       matrix:
         entry:
-          - {version: 2.15.0, hub: 'opensearchproject'}
+          - {version: 2.0.0, admin_password: 'admin'}
+          - {version: 2.15.0}
           - {version: 2.16.0, hub: 'opensearchstaging'}
-    name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub }})
+
+    name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }})
     runs-on: ubuntu-latest
+
     env:
-      OPENSEARCH_DOCKER_HUB_PROJECT: ${{ matrix.entry.hub }}
+      OPENSEARCH_DOCKER_HUB_PROJECT: ${{ matrix.entry.hub || 'opensearchproject' }}
       OPENSEARCH_VERSION: ${{ matrix.entry.version }}
-      OPENSEARCH_PASSWORD: myStrongPassword123!
+      OPENSEARCH_PASSWORD: ${{ matrix.entry.admin_password || 'myStrongPassword123!' }}
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4

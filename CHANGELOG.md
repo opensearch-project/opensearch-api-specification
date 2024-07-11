@@ -41,6 +41,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `remote_store` to `TranslogStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
 - Added `file` to `/_cache/clear` and `/{index}/_cache/clear` ([#396](https://github.com/opensearch-project/opensearch-api-specification/pull/396))
 - Added a workflow to run tests against the next version of OpenSearch ([#409](https://github.com/opensearch-project/opensearch-api-specification/pull/409))
+- Added support for skipping tests using semver range ([#410](https://github.com/opensearch-project/opensearch-api-specification/pull/410))
 
 ### Changed
 
