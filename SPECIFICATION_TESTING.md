@@ -142,7 +142,7 @@ It's common to add a feature to the next version of OpenSearch. When adding a ne
 
 ```yaml
 - synopsis: Search with `phase_took` added in OpenSearch 2.12.
-  version: '>= 2.12.0'
+  version: '>= 2.12'
   path: /{index}/_search
   parameters:
     index: movies
