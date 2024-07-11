@@ -16,13 +16,17 @@ import { Result, type StoryEvaluation } from './types/eval.types'
 import { type ResultLogger } from './ResultLogger'
 import { basename, resolve } from 'path'
 import type StoryValidator from "./StoryValidator";
+import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
+import * as ansi from './Ansi'
 
 export default class TestRunner {
+  private readonly _http_client: OpenSearchHttpClient
   private readonly _story_validator: StoryValidator
   private readonly _story_evaluator: StoryEvaluator
   private readonly _result_logger: ResultLogger
 
-  constructor (story_validator: StoryValidator, story_evaluator: StoryEvaluator, result_logger: ResultLogger) {
+  constructor (http_client: OpenSearchHttpClient, story_validator: StoryValidator, story_evaluator: StoryEvaluator, result_logger: ResultLogger) {
+    this._http_client = http_client
     this._story_validator = story_validator
     this._story_evaluator = story_evaluator
     this._result_logger = result_logger
@@ -32,6 +36,12 @@ export default class TestRunner {
     let failed = false
     const story_files = this.#sort_story_files(this.#collect_story_files(resolve(story_path), '', ''))
     const evaluations: StoryEvaluation[] = []
+
+    if (!dry_run) {
+      const info = await this._http_client.wait_until_available()
+      console.log(`OpenSearch ${ansi.green(info.version.number)}\n`)
+    }
+
     for (const story_file of story_files) {
       const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, dry_run)
       evaluations.push(evaluation)
