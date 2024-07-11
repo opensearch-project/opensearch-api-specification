@@ -138,5 +138,5 @@ export async function load_actual_evaluation (evaluator: StoryEvaluator, name: s
     full_path,
     display_path: `${name}.yaml`,
     story: read_yaml(full_path)
-  }))
+  }, process.env.OPENSEARCH_VERSION ?? '2.15.0'))
 }

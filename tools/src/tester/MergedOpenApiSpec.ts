@@ -33,6 +33,10 @@ export default class MergedOpenApiSpec {
     return this._spec
   }
 
+  api_version(): string {
+    return (this.spec().info as any)['x-api-version']
+  }
+
   private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3.Document): void {
     const visitor = new SchemaVisitor((_ctx, schema: any) => {
       if (schema.required !== undefined && schema.properties !== undefined && schema.additionalProperties === undefined) {

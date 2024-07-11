@@ -1,9 +1,10 @@
 <!-- TOC -->
-* [Specification Testing](#specification-testing)
-  * [Running Spec Tests Locally](#running-spec-tests-locally)
-  * [Writing Spec Tests](#writing-spec-tests)
-    * [Simple Test Story](#simple-test-story)
-    * [Using Output from Previous Chapters](#using-output-from-previous-chapters)
+- [Specification Testing](#specification-testing)
+  - [Running Spec Tests Locally](#running-spec-tests-locally)
+  - [Writing Spec Tests](#writing-spec-tests)
+    - [Simple Test Story](#simple-test-story)
+    - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
+    - [Managing Versions](#managing-versions)
 <!-- TOC -->
 
 # Specification Testing
@@ -134,3 +135,21 @@ Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml)
       status: 200
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
+
+### Managing Versions
+
+It's common to add a feature to the next version of OpenSearch. When adding a new API in the spec, make sure to specify `x-version-added`, `x-version-deprecated` or `x-version-removed`. Finally, specify a semver range in your test stories or chapters as follows.
+
+```yaml
+- synopsis: Search with `phase_took` added in OpenSearch 2.12.
+  version: '>= 2.12'
+  path: /{index}/_search
+  parameters:
+    index: movies
+    cancel_after_time_interval: 10s
+  method: POST
+  response:
+    status: 200
+```
+
+The [integration test workflow](.github/workflows/test-spec.yml) runs a matrix of OpenSearch versions, including the next version. Please check whether the workflow needs an update when adding version-specific tests.
