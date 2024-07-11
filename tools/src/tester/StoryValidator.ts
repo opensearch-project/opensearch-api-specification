@@ -9,20 +9,16 @@
 
 import { Result, StoryEvaluation, StoryFile } from "./types/eval.types";
 import * as path from "path";
-import { Ajv2019, ValidateFunction } from 'ajv/dist/2019'
-import addFormats from 'ajv-formats'
 import { read_yaml } from "../helpers";
+import JsonSchemaValidator from "../_utils/JsonSchemaValidator";
 
 export default class StoryValidator {
   private static readonly SCHEMA_FILE = path.resolve("./json_schemas/test_story.schema.yaml")
-  private readonly ajv: Ajv2019
-  private readonly validate_schema: ValidateFunction
+  private readonly json_validator: JsonSchemaValidator
 
   constructor() {
-    this.ajv = new Ajv2019({ allErrors: true, strict: false })
-    addFormats(this.ajv)
     const schema = read_yaml(StoryValidator.SCHEMA_FILE)
-    this.validate_schema = this.ajv.compile(schema)
+    this.json_validator = new JsonSchemaValidator(schema, { ajv_opts: { strictTypes: false } })
   }
 
   validate(story_file: StoryFile): StoryEvaluation | undefined {
@@ -39,8 +35,8 @@ export default class StoryValidator {
   }
 
   #validate_schema(story_file: StoryFile): StoryEvaluation | undefined {
-    const valid = this.validate_schema(story_file.story)
-    if (!valid) return this.#invalid(story_file, this.ajv.errorsText(this.validate_schema.errors))
+    const message = this.json_validator.validate_data(story_file.story)
+    if (message != null) return this.#invalid(story_file, message)
   }
 
   #invalid({ story, display_path, full_path }: StoryFile, message: string): StoryEvaluation {

@@ -7,16 +7,10 @@
 * compatible open source license.
 */
 
-import AJV from 'ajv'
-import addFormats from 'ajv-formats'
 import OpenApiMerger from '../merger/OpenApiMerger'
 import { type ValidationError } from '../types'
-import { type Logger } from '../Logger'
-
-const IGNORED_ERROR_PREFIXES = [
-  'can\'t resolve reference', // errors in referenced schemas will also cause reference errors
-  'discriminator: oneOf subschemas' // known bug in ajv: https://github.com/ajv-validator/ajv/issues/2281
-]
+import { Logger, LogLevel } from '../Logger'
+import JsonSchemaValidator from "../_utils/JsonSchemaValidator";
 
 const ADDITIONAL_KEYWORDS = [
   'x-version-added',
@@ -29,18 +23,16 @@ export default class SchemasValidator {
   logger: Logger
   root_folder: string
   spec: Record<string, any> = {}
-  ajv: AJV
+  json_validator: JsonSchemaValidator
 
   constructor (root_folder: string, logger: Logger) {
     this.logger = logger
     this.root_folder = root_folder
-    this.ajv = new AJV({ strict: true, discriminator: true })
-    addFormats(this.ajv)
-    for (const keyword of ADDITIONAL_KEYWORDS) this.ajv.addKeyword(keyword)
+    this.json_validator = new JsonSchemaValidator(undefined, { additional_keywords: ADDITIONAL_KEYWORDS })
   }
 
   validate (): ValidationError[] {
-    this.spec = new OpenApiMerger(this.root_folder, this.logger).merge().components as Record<string, any>
+    this.spec = new OpenApiMerger(this.root_folder, new Logger(LogLevel.error)).merge().components as Record<string, any>
     const named_schemas_errors = this.validate_named_schemas()
     if (named_schemas_errors.length > 0) return named_schemas_errors
     return [
@@ -52,25 +44,24 @@ export default class SchemasValidator {
 
   validate_named_schemas (): ValidationError[] {
     return Object.entries(this.spec.schemas as Record<string, any>).map(([key, _schema]) => {
-      const schema = _schema as Record<string, any>
-      const error = this.validate_schema(schema, `#/components/schemas/${key}`)
-      if (error == null) return
+      const message = this.json_validator.validate_schema(_schema)
+      if (message == null) return
 
       const file = `schemas/${key.split(':')[0]}.yaml`
       const location = `#/components/schemas/${key.split(':')[1]}`
-      return this.error(file, location, error)
+      return this.error(file, location, message)
     }).filter((error) => error != null) as ValidationError[]
   }
 
   validate_parameter_schemas (): ValidationError[] {
     return Object.entries(this.spec.parameters as Record<string, any>).map(([key, param]) => {
-      const error = this.validate_schema(param.schema as Record<string, any>)
-      if (error == null) return
+      const message = this.json_validator.validate_schema(param.schema)
+      if (message == null) return
 
       const namespace = this.group_to_namespace(key.split('::')[0])
       const file = namespace === '_global' ? '_global_parameters.yaml' : `namespaces/${namespace}.yaml`
       const location = namespace === '_global' ? param.name as string : `#/components/parameters/${key}`
-      return this.error(file, location, error)
+      return this.error(file, location, message)
     }).filter((error) => error != null) as ValidationError[]
   }
 
@@ -94,22 +85,9 @@ export default class SchemasValidator {
 
   validate_content_schemas (file: string, location: string, content: Record<string, any> | undefined): ValidationError[] {
     return Object.entries(content ?? {}).map(([media_type, value]) => {
-      const schema = value.schema as Record<string, any>
-      const error = this.validate_schema(schema)
-      if (error != null) return this.error(file, `${location}/content/${media_type}`, error)
+      const message = this.json_validator.validate_schema(value.schema)
+      if (message != null) return this.error(file, `${location}/content/${media_type}`, message)
     }).filter(e => e != null) as ValidationError[]
-  }
-
-  validate_schema (schema: Record<string, any>, key: string | undefined = undefined): Error | undefined {
-    if (schema == null || schema.$ref != null) return
-    try {
-      if (key != null) this.ajv.addSchema(schema, key)
-      this.ajv.compile(schema)
-    } catch (_e: any) {
-      const error = _e as Error
-      for (const prefix of IGNORED_ERROR_PREFIXES) if (error.message.startsWith(prefix)) return
-      return error
-    }
   }
 
   group_to_namespace (group: string): string {
@@ -118,7 +96,7 @@ export default class SchemasValidator {
     return namespace ?? '_core'
   }
 
-  error (file: string, location: string, error: Error): ValidationError {
-    return { file, location, message: error.message }
+  error (file: string, location: string, message: string): ValidationError {
+    return { file, location, message }
   }
 }
