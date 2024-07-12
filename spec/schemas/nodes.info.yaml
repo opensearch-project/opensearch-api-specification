@@ -21,8 +21,10 @@ components:
         - aggregations
         - indices
         - search_pipelines
+        - _all
     ResponseBase:
       allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
         - type: object
           properties:
             cluster_name:
@@ -31,12 +33,9 @@ components:
               type: object
               additionalProperties:
                 $ref: '#/components/schemas/NodeInfo'
-            _nodes:
-              $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
           required:
             - cluster_name
             - nodes
-            - _nodes
     NodeInfo:
       type: object
       properties:
@@ -328,7 +327,7 @@ components:
         repositories:
           $ref: '#/components/schemas/NodeInfoRepositories'
         discovery:
-          $ref: '#/components/schemas/NodeInfoDiscover'
+          $ref: '#/components/schemas/NodeInfoDiscovery'
         action:
           $ref: '#/components/schemas/NodeInfoAction'
         client:
@@ -365,6 +364,8 @@ components:
           $ref: 'indices._common.yaml#/components/schemas/IndexRouting'
         election:
           $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
+        initial_cluster_manager_nodes:
+          type: string
         initial_master_nodes:
           type: string
         deprecation_indexing:
@@ -438,9 +439,11 @@ components:
           type: string
       required:
         - shard_indexing_pressure_enabled
-    NodeInfoDiscover:
+    NodeInfoDiscovery:
       type: object
       properties:
+        type:
+          type: string
         seed_hosts:
           type: string
     NodeInfoAction:
@@ -694,18 +697,11 @@ components:
         response_processors:
           type: array
           items:
-            $ref: '#/components/schemas/NodeInfoIngestProcessor2'
+            $ref: '#/components/schemas/NodeInfoIngestProcessor'
         request_processors:
           type: array
           items:
-            $ref: '#/components/schemas/NodeInfoIngestProcessor2'
+            $ref: '#/components/schemas/NodeInfoIngestProcessor'
       required:
         - response_processors
         - request_processors
-    NodeInfoIngestProcessor2:
-      type: object
-      properties:
-        type:
-          type: string
-      required:
-        - type

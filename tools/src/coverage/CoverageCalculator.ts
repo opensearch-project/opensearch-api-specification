@@ -8,7 +8,8 @@
 */
 
 import { type OpenAPIV3 } from 'openapi-types'
-import { HTTP_METHODS, read_yaml, write_json } from '../helpers'
+import { read_yaml, write_json } from '../helpers'
+import { HTTP_METHODS } from "../_utils";
 
 export default class CoverageCalculator {
   private readonly _cluster_spec: OpenAPIV3.Document
