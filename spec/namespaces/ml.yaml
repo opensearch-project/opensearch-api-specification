@@ -116,7 +116,7 @@ components:
               model_format:
                 type: string
                 description: The portable format of the model file.
-                enum: [TORCH_SCRIPT, ONNX]
+                enum: [ONNX, TORCH_SCRIPT]
               description:
                 type: string
                 description: The model description.
@@ -124,9 +124,9 @@ components:
                 type: string
                 description: The ID of the model group to which to register the model.
             required:
+              - model_format
               - name
               - version
-              - model_format
     ml.search_models:
       content:
         application/json:
@@ -184,10 +184,10 @@ components:
                 type: integer
                 format: int64
             required:
-              - name
-              - latest_version
-              - description
               - access
+              - description
+              - latest_version
+              - name
     ml.delete_model_group@200:
       content:
         application/json:
@@ -209,10 +209,10 @@ components:
                 type: string
                 description: The status.
             required:
+              - status
               # model_id doesn't seem to be required in the response
               # it can be eventually retrieved through the task_id
               - task_id
-              - status
     ml.delete_model@200:
       content:
         application/json:
@@ -231,12 +231,12 @@ components:
                 type: string
                 description: The state.
                 enum:
-                  - CREATED
-                  - RUNNING
-                  - COMPLETED
-                  - FAILED
                   - CANCELLED
+                  - COMPLETED
                   - COMPLETED_WITH_ERROR
+                  - CREATED
+                  - FAILED
+                  - RUNNING
             required:
               - state
     ml.search_models@200:

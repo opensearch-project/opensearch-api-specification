@@ -118,7 +118,8 @@ export default [
       'yml/plain-scalar': ['error', 'always'],
       'yml/no-trailing-zeros': 'error',
       'yml/no-multiple-empty-lines': 'error',
-      '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }]
+      '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }],
+      'yml/sort-sequence-values': ['error', { pathPattern: '.*', order: { type: 'asc' } }]
     }
   }
 ]
