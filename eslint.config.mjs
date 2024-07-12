@@ -116,6 +116,8 @@ export default [
       'yml/no-empty-document': 'off',
       'yml/quotes': ['error', { prefer: 'single', avoidEscape: true }],
       'yml/plain-scalar': ['error', 'always'],
+      'yml/no-trailing-zeros': 'error',
+      'yml/no-multiple-empty-lines': 'error',
       '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }]
     }
   }
