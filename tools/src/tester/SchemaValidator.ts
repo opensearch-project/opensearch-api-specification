@@ -30,7 +30,12 @@ export default class SchemaValidator {
     this.logger = logger
     const component_schemas = spec.components?.schemas ?? {}
     const reference_schemas = _.mapKeys(component_schemas, (_, name) => `#/components/schemas/${name}`)
-    this.json_validator = new JsonSchemaValidator(undefined, { reference_schemas, additional_keywords: ADDITIONAL_KEYWORDS, ajv_errors_opts: { singleError: true } })
+    this.json_validator = new JsonSchemaValidator(undefined, {
+      reference_schemas,
+      additional_keywords: ADDITIONAL_KEYWORDS,
+      ajv_errors_opts: { singleError: true },
+      errors_text_opts: { separator: ', ' }
+    })
   }
 
   validate (schema: OpenAPIV3.SchemaObject, data: any): Evaluation {

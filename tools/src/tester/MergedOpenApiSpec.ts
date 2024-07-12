@@ -7,9 +7,9 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { OpenAPIV3 } from 'openapi-types'
 import { Logger } from '../Logger'
-import { SpecificationContext } from '../_utils';
+import { determine_possible_schema_types, SpecificationContext } from '../_utils';
 import { SchemaVisitor } from '../_utils/SpecificationVisitor';
 import OpenApiMerger from '../merger/OpenApiMerger';
 
@@ -38,13 +38,23 @@ export default class MergedOpenApiSpec {
   }
 
   private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3.Document): void {
-    const visitor = new SchemaVisitor((_ctx, schema: any) => {
-      if (schema.required !== undefined && schema.properties !== undefined && schema.additionalProperties === undefined) {
-        // causes any undeclared field in the response to produce an error
-        schema.additionalProperties = {
-          not: true,
-          errorMessage: "property is not defined in the spec"
-        }
+    const visitor = new SchemaVisitor((ctx, schema) => {
+      // If already has unevaluatedProperties then don't set
+      if ((schema as any).unevaluatedProperties !== undefined) return;
+
+      // Don't apply `unevaluatedProperties` to component schemas as we will apply it at usage points (i.e. $ref's)
+      // Also don't apply to sub-schemas of an allOf as it will conflict with other sub-schemas as we'll apply it to the upper level
+      if (ctx.parent().location === '#/components/schemas' || ctx.parent().key === 'allOf') return;
+
+      const types = determine_possible_schema_types(spec, schema)
+
+      if (types.length > 1 || types[0] !== 'object') return;
+
+      (schema as any).type = 'object';
+      // causes any undeclared field in the response to produce an error
+      (schema as any).unevaluatedProperties = {
+        not: true,
+        errorMessage: "property is not defined in the spec"
       }
     })
 
