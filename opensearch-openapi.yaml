@@ -21757,12 +21757,10 @@ components:
             properties:
               persistent:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: {}
               transient:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: {}
             description: The settings to be updated. Can be either `transient` or `persistent` (survives cluster restart).
       required: true
     cluster.reroute:
@@ -21968,7 +21966,7 @@ components:
               template:
                 $ref: '#/components/schemas/indices.put_index_template:IndexTemplateMapping'
               data_stream:
-                $ref: '#/components/schemas/indices._common:DataStreamVisibility'
+                $ref: '#/components/schemas/indices._common:IndexTemplateDataStreamConfiguration'
               priority:
                 description: |-
                   Priority to determine index template precedence when a new data stream or index is created.
@@ -22150,7 +22148,7 @@ components:
               template:
                 $ref: '#/components/schemas/indices.put_index_template:IndexTemplateMapping'
               data_stream:
-                $ref: '#/components/schemas/indices._common:DataStreamVisibility'
+                $ref: '#/components/schemas/indices._common:IndexTemplateDataStreamConfiguration'
               priority:
                 description: |-
                   Priority to determine index template precedence when a new data stream or index is created.
@@ -22182,8 +22180,7 @@ components:
               settings:
                 description: Configuration options for the target index.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: {}
             description: The configuration for the target index (`settings` and `aliases`)
     indices.update_aliases:
       content:
@@ -23591,12 +23588,10 @@ components:
                 type: boolean
               persistent:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: {}
               transient:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: {}
             required:
               - acknowledged
               - persistent
@@ -35821,7 +35816,7 @@ components:
           additionalProperties:
             anyOf:
               - $ref: '#/components/schemas/_common.query_dsl:MatchQuery'
-              - true
+              - {}
           minProperties: 1
           maxProperties: 1
         match_all:
@@ -38781,6 +38776,9 @@ components:
         active_shards_percent:
           description: active number of shards in percent
           type: string
+        discovered_cluster_manager:
+          description: cluster manager is discovered or not
+          type: string
     cat.indices:IndicesRecord:
       type: object
       properties:
@@ -41716,11 +41714,6 @@ components:
           $ref: '#/components/schemas/_common:Field'
       required:
         - name
-    indices._common:DataStreamVisibility:
-      type: object
-      properties:
-        hidden:
-          type: boolean
     indices._common:DownsampleConfig:
       type: object
       properties:
@@ -42014,6 +42007,7 @@ components:
           $ref: '#/components/schemas/indices._common:IndexingPressure'
         store:
           $ref: '#/components/schemas/indices._common:Storage'
+      additionalProperties: {}
       description: The index settings to be updated
     indices._common:IndexSettingsAnalysis:
       type: object
@@ -42138,6 +42132,8 @@ components:
         allow_custom_routing:
           description: If true, the data stream supports custom routing.
           type: boolean
+        timestamp_field:
+          $ref: '#/components/schemas/indices._common:DataStreamTimestampField'
     indices._common:IndexTemplateSummary:
       type: object
       properties:
@@ -45561,6 +45557,7 @@ components:
         - aggregations
         - indices
         - search_pipelines
+        - _all
     nodes.info:NodeInfo:
       type: object
       properties:
@@ -45666,9 +45663,11 @@ components:
           type: string
       required:
         - type
-    nodes.info:NodeInfoDiscover:
+    nodes.info:NodeInfoDiscovery:
       type: object
       properties:
+        type:
+          type: string
         seed_hosts:
           type: string
     nodes.info:NodeInfoHttp:
@@ -45712,13 +45711,6 @@ components:
       required:
         - downloader
     nodes.info:NodeInfoIngestProcessor:
-      type: object
-      properties:
-        type:
-          type: string
-      required:
-        - type
-    nodes.info:NodeInfoIngestProcessor2:
       type: object
       properties:
         type:
@@ -45870,11 +45862,11 @@ components:
         response_processors:
           type: array
           items:
-            $ref: '#/components/schemas/nodes.info:NodeInfoIngestProcessor2'
+            $ref: '#/components/schemas/nodes.info:NodeInfoIngestProcessor'
         request_processors:
           type: array
           items:
-            $ref: '#/components/schemas/nodes.info:NodeInfoIngestProcessor2'
+            $ref: '#/components/schemas/nodes.info:NodeInfoIngestProcessor'
       required:
         - response_processors
         - request_processors
@@ -45897,7 +45889,7 @@ components:
         repositories:
           $ref: '#/components/schemas/nodes.info:NodeInfoRepositories'
         discovery:
-          $ref: '#/components/schemas/nodes.info:NodeInfoDiscover'
+          $ref: '#/components/schemas/nodes.info:NodeInfoDiscovery'
         action:
           $ref: '#/components/schemas/nodes.info:NodeInfoAction'
         client:
@@ -45934,6 +45926,8 @@ components:
           $ref: '#/components/schemas/indices._common:IndexRouting'
         election:
           $ref: '#/components/schemas/nodes.info:NodeInfoSettingsClusterElection'
+        initial_cluster_manager_nodes:
+          type: string
         initial_master_nodes:
           type: string
         deprecation_indexing:
@@ -46226,6 +46220,7 @@ components:
         - type
     nodes.info:ResponseBase:
       allOf:
+        - $ref: '#/components/schemas/nodes._common:NodesResponseBase'
         - type: object
           properties:
             cluster_name:
@@ -46234,12 +46229,9 @@ components:
               type: object
               additionalProperties:
                 $ref: '#/components/schemas/nodes.info:NodeInfo'
-            _nodes:
-              $ref: '#/components/schemas/nodes._common:NodesResponseBase'
           required:
             - cluster_name
             - nodes
-            - _nodes
     nodes.reload_secure_settings:ResponseBase:
       allOf:
         - $ref: '#/components/schemas/nodes._common:NodesResponseBase'
