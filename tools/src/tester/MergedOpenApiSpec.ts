@@ -48,7 +48,11 @@ export default class MergedOpenApiSpec {
 
       const types = determine_possible_schema_types(spec, schema)
 
+      // Don't apply to multi-type or non-object schemas
       if (types.length > 1 || types[0] !== 'object') return;
+
+      // Don't apply to basic { type: object } schemas
+      if (Object.keys(schema).filter(k => k !== 'type' && k !== 'description').length === 0) return;
 
       (schema as any).type = 'object';
       // causes any undeclared field in the response to produce an error
