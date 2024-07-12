@@ -28,6 +28,11 @@ describe('unevaluatedProperties', () => {
     expect(schema.unevaluatedProperties).toEqual({ not: true, errorMessage: 'property is not defined in the spec' })
   })
 
+  test('is not added to empty object schema', () => {
+    const schema = responses['info@503'].content['application/json'].schema
+    expect(schema.unevaluatedProperties).toBeUndefined()
+  })
+
   test('is not added when true', () => {
     const schema = responses['info@201'].content['application/json'].schema
     expect(schema.unevaluatedProperties).toEqual(true)
