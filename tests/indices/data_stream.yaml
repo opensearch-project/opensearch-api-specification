@@ -1,19 +1,9 @@
 $schema: ../../json_schemas/test_story.schema.yaml
 
 description: Test data streams.
-epilogues:
-  - path: /_data_stream/logs-nginx
-    method: DELETE
-    status: [200, 404]
-  - path: /_index_template/logs-template
-    method: DELETE
-    status: [200, 404]
-chapters:
-  - synopsis: Create an index template.
-    path: /_index_template/{name}
+prologues:
+  - path: /_index_template/logs-template-nginx
     method: PUT
-    parameters:
-      name: logs-template-nginx
     request_body:
       payload:
         index_patterns:
@@ -23,6 +13,14 @@ chapters:
           timestamp_field:
             name: request_time
         priority: 100
+epilogues:
+  - path: /_data_stream/logs-nginx
+    method: DELETE
+    status: [200, 404]
+  - path: /_index_template/logs-template
+    method: DELETE
+    status: [200, 404]
+chapters:
   - synopsis: Create a data stream.
     path: /_data_stream/{name}
     method: PUT
