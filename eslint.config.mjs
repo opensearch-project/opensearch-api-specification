@@ -114,7 +114,7 @@ export default [
     },
     rules: {
       'yml/no-empty-document': 'off',
-      'yml/quotes': 'off',
+      'yml/quotes': ['error', { prefer: 'single', avoidEscape: true }],
       'yml/plain-scalar': ['error', 'always'],
       '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }]
     }
