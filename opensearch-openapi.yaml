@@ -2909,7 +2909,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/nodes.info@200'
-  /_nodes/{metric}:
+  /_nodes/{node_id_or_metric}:
     get:
       operationId: nodes.info.1
       x-operation-group: nodes.info
@@ -2918,27 +2918,7 @@ paths:
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-info/
       parameters:
-        - $ref: '#/components/parameters/nodes.info::path.metric'
-        - $ref: '#/components/parameters/nodes.info::query.flat_settings'
-        - $ref: '#/components/parameters/nodes.info::query.timeout'
-        - $ref: '#/components/parameters/_global::query.pretty'
-        - $ref: '#/components/parameters/_global::query.human'
-        - $ref: '#/components/parameters/_global::query.error_trace'
-        - $ref: '#/components/parameters/_global::query.source'
-        - $ref: '#/components/parameters/_global::query.filter_path'
-      responses:
-        '200':
-          $ref: '#/components/responses/nodes.info@200'
-  /_nodes/{node_id}:
-    get:
-      operationId: nodes.info.2
-      x-operation-group: nodes.info
-      x-version-added: '1.0'
-      description: Returns information about nodes in the cluster.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-info/
-      parameters:
-        - $ref: '#/components/parameters/nodes.info::path.node_id'
+        - $ref: '#/components/parameters/nodes.info::path.node_id_or_metric'
         - $ref: '#/components/parameters/nodes.info::query.flat_settings'
         - $ref: '#/components/parameters/nodes.info::query.timeout'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -18942,6 +18922,22 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/_common:NodeIds'
+      style: simple
+    nodes.info::path.node_id_or_metric:
+      in: path
+      name: node_id_or_metric
+      description: |
+        Limits the information returned to a list of node IDs or specific metrics.
+        Supports a comma-separated list, such as node1,node2 or http,ingest.
+      required: true
+      schema:
+        anyOf:
+          - title: node_id
+            $ref: '#/components/schemas/_common:NodeIds'
+          - title: metric
+            type: array
+            items:
+              $ref: '#/components/schemas/nodes.info:Metric'
       style: simple
     nodes.info::query.flat_settings:
       in: query
