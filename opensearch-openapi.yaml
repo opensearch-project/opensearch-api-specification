@@ -27311,6 +27311,15 @@ components:
         - hit_count
         - memory_size_in_bytes
         - miss_count
+    _common:RequestStats:
+      type: object
+      properties:
+        time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        current:
+          type: number
+        total:
+          type: number
     _common:Result:
       type: string
       enum:
@@ -27466,6 +27475,11 @@ components:
         query_total:
           description: The total number of shard query operations.
           type: number
+        request:
+          type: object
+          description: Statistics about coordinator search operations for the node.
+          additionalProperties:
+            $ref: '#/components/schemas/_common:RequestStats'
         search_idle_reactivate_count_total:
           type: number
         scroll_current:
@@ -44740,6 +44754,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/nodes._common:Recording'
+    nodes._common:ClusterStateOverallStats:
+      type: object
+      properties:
+        update_count:
+          type: number
+        total_time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        failed_count:
+          type: number
     nodes._common:ClusterStateQueue:
       type: object
       properties:
@@ -44752,6 +44775,11 @@ components:
         committed:
           description: Number of committed cluster states in queue.
           type: number
+    nodes._common:ClusterStateStats:
+      type: object
+      properties:
+        overall:
+          $ref: '#/components/schemas/nodes._common:ClusterStateOverallStats'
     nodes._common:ClusterStateUpdate:
       type: object
       properties:
@@ -44837,6 +44865,10 @@ components:
         available_in_bytes:
           description: Total number of bytes available to this Java virtual machine on this file store.
           type: number
+        cache_reserved_in_bytes:
+          x-version-added: '2.7'
+          description: Total number of cache bytes reserved available to this Java virtual machine on this file store.
+          type: number
         disk_queue:
           type: string
         disk_reads:
@@ -44877,6 +44909,8 @@ components:
       properties:
         cluster_state_queue:
           $ref: '#/components/schemas/nodes._common:ClusterStateQueue'
+        cluster_state_stats:
+          $ref: '#/components/schemas/nodes._common:ClusterStateStats'
         published_cluster_states:
           $ref: '#/components/schemas/nodes._common:PublishedClusterStates'
         cluster_state_update:
@@ -44946,6 +44980,10 @@ components:
           type: string
         total_in_bytes:
           description: Total size of all file stores in bytes.
+          type: number
+        cache_reserved_in_bytes:
+          x-version-added: '2.7'
+          description: Total size of cache bytes reserved in all file stores.
           type: number
     nodes._common:GarbageCollector:
       type: object
@@ -45147,6 +45185,15 @@ components:
           $ref: '#/components/schemas/nodes._common:Processor'
         type:
           type: string
+    nodes._common:LastGcStats:
+      type: object
+      properties:
+        used_in_bytes:
+          type: number
+        max_in_bytes:
+          type: number
+        usage_percent:
+          type: number
     nodes._common:MemoryStats:
       type: object
       properties:
@@ -45240,6 +45287,9 @@ components:
         peak_max_in_bytes:
           description: Largest amount of memory, in bytes, historically used by the heap.
           type: number
+        last_gc_stats:
+          description: Most recent GC cycle stats for a particular memory pool.
+          $ref: '#/components/schemas/nodes._common:LastGcStats'
     nodes._common:PressureMemory:
       type: object
       properties:
@@ -45396,6 +45446,191 @@ components:
           type: string
         compressed_size_in_bytes:
           type: number
+    nodes._common:ShardAdmissionControlStats:
+      type: object
+      properties:
+        global_io_usage:
+          $ref: '#/components/schemas/nodes._common:UsageStats'
+        global_cpu_usage:
+          $ref: '#/components/schemas/nodes._common:UsageStats'
+    nodes._common:ShardCachesStats:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/nodes._common:ShardCacheStats'
+    nodes._common:ShardCacheStats:
+      type: object
+      properties:
+        size_in_bytes:
+          type: number
+        evictions:
+          type: number
+        hit_count:
+          type: number
+        miss_count:
+          type: number
+        item_count:
+          type: number
+        store_name:
+          type: string
+    nodes._common:ShardClusterManagerThrottlingStats:
+      type: object
+      properties:
+        stats:
+          $ref: '#/components/schemas/nodes._common:ShardClusterManagerThrottlingStatsDetail'
+    nodes._common:ShardClusterManagerThrottlingStatsDetail:
+      type: object
+      properties:
+        total_throttled_tasks:
+          type: number
+        throttled_tasks_per_task_type:
+          type: object
+    nodes._common:ShardIndexingPressureStats:
+      type: object
+      properties:
+        stats:
+          type: object
+        enabled:
+          type: boolean
+        enforced:
+          type: boolean
+        total_rejections_breakup_shadow_mode:
+          $ref: '#/components/schemas/nodes._common:TotalRejectionsBreakupShadowMode'
+    nodes._common:ShardRepositoriesStats:
+      type: array
+    nodes._common:ShardResourceUsageStats:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/nodes._common:ShardResourceUsageStatsDetail'
+    nodes._common:ShardResourceUsageStatsDetail:
+      type: object
+      properties:
+        timestamp:
+          type: number
+        cpu_utilization_percent:
+          $ref: '#/components/schemas/_common:Percentage'
+        memory_utilization_percent:
+          $ref: '#/components/schemas/_common:Percentage'
+        io_usage_stats:
+          $ref: '#/components/schemas/nodes._common:ShardResourceUsageStatsIoUsageStats'
+    nodes._common:ShardResourceUsageStatsIoUsageStats:
+      type: object
+      properties:
+        max_io_utilization_percent:
+          $ref: '#/components/schemas/_common:Percentage'
+    nodes._common:ShardSearchBackpressureMode:
+      type: string
+      enum:
+        - disabled
+        - enforced
+        - monitor_only
+    nodes._common:ShardSearchBackpressureStats:
+      type: object
+      properties:
+        search_task:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskStats'
+        search_shard_task:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskStats'
+        mode:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureMode'
+    nodes._common:ShardSearchBackpressureTaskCancellationStats:
+      type: object
+      properties:
+        cancellation_count:
+          type: number
+        cancellation_limit_reached_count:
+          type: number
+    nodes._common:ShardSearchBackpressureTaskResourceTrackerCpuUsageTrackerStats:
+      type: object
+      properties:
+        cancellation_count:
+          type: number
+        current_max_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        current_avg_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+    nodes._common:ShardSearchBackpressureTaskResourceTrackerElapsedTimeTrackerStats:
+      type: object
+      properties:
+        cancellation_count:
+          type: number
+        current_max_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        current_avg_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+    nodes._common:ShardSearchBackpressureTaskResourceTrackerHeapUsageTrackerStats:
+      type: object
+      properties:
+        cancellation_count:
+          type: number
+        current_max_bytes:
+          type: number
+        current_avg_bytes:
+          type: number
+        rolling_avg_bytes:
+          type: number
+    nodes._common:ShardSearchBackpressureTaskResourceTrackerStats:
+      type: object
+      properties:
+        heap_usage_tracker:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskResourceTrackerHeapUsageTrackerStats'
+        elapsed_time_tracker:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskResourceTrackerElapsedTimeTrackerStats'
+        cpu_usage_tracker:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskResourceTrackerCpuUsageTrackerStats'
+    nodes._common:ShardSearchBackpressureTaskStats:
+      type: object
+      properties:
+        resource_tracker_stats:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskResourceTrackerStats'
+        cancellation_stats:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureTaskCancellationStats'
+    nodes._common:ShardSearchPipelineStats:
+      type: object
+      properties:
+        total_request:
+          $ref: '#/components/schemas/nodes._common:ShardSearchPipelineTotalStats'
+        total_response:
+          $ref: '#/components/schemas/nodes._common:ShardSearchPipelineTotalStats'
+        pipelines:
+          type: object
+    nodes._common:ShardSearchPipelineTotalStats:
+      type: object
+      properties:
+        count:
+          type: number
+        time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        current:
+          type: number
+        failed:
+          type: number
+    nodes._common:ShardSegmentReplicationBackpressureStats:
+      type: object
+      properties:
+        total_rejected_requests:
+          type: number
+    nodes._common:ShardTaskCancellationStats:
+      type: object
+      properties:
+        search_shard_task:
+          $ref: '#/components/schemas/nodes._common:ShardTaskCancellationStatsDetail'
+    nodes._common:ShardTaskCancellationStatsDetail:
+      type: object
+      properties:
+        current_count_post_cancel:
+          type: number
+        total_count_post_cancel:
+          type: number
+    nodes._common:ShardWeightedRoutingStats:
+      type: object
+      properties:
+        stats:
+          $ref: '#/components/schemas/nodes._common:ShardWeightedRoutingStatsDetail'
+    nodes._common:ShardWeightedRoutingStatsDetail:
+      type: object
+      properties:
+        fail_open_count:
+          type: number
     nodes._common:Stats:
       type: object
       properties:
@@ -45466,6 +45701,28 @@ components:
           $ref: '#/components/schemas/nodes._common:IndexingPressure'
         indices:
           $ref: '#/components/schemas/indices.stats:ShardStats'
+        shard_indexing_pressure:
+          $ref: '#/components/schemas/nodes._common:ShardIndexingPressureStats'
+        search_backpressure:
+          $ref: '#/components/schemas/nodes._common:ShardSearchBackpressureStats'
+        cluster_manager_throttling:
+          $ref: '#/components/schemas/nodes._common:ShardClusterManagerThrottlingStats'
+        weighted_routing:
+          $ref: '#/components/schemas/nodes._common:ShardWeightedRoutingStats'
+        task_cancellation:
+          $ref: '#/components/schemas/nodes._common:ShardTaskCancellationStats'
+        resource_usage_stats:
+          $ref: '#/components/schemas/nodes._common:ShardResourceUsageStats'
+        search_pipeline:
+          $ref: '#/components/schemas/nodes._common:ShardSearchPipelineStats'
+        segment_replication_backpressure:
+          $ref: '#/components/schemas/nodes._common:ShardSegmentReplicationBackpressureStats'
+        repositories:
+          $ref: '#/components/schemas/nodes._common:ShardRepositoriesStats'
+        admission_control:
+          $ref: '#/components/schemas/nodes._common:ShardAdmissionControlStats'
+        caches:
+          $ref: '#/components/schemas/nodes._common:ShardCachesStats'
     nodes._common:ThreadCount:
       type: object
       properties:
@@ -45486,6 +45743,20 @@ components:
           type: number
         threads:
           description: Number of threads in the thread pool.
+          type: number
+        total_wait_time_in_nanos:
+          description: |
+            The total amount of time that tasks spend waiting in the thread pool queue.
+            Currently, only `search`, `search_throttled`, and `index_searcher` thread pools support this metric.
+          type: number
+    nodes._common:TotalRejectionsBreakupShadowMode:
+      type: object
+      properties:
+        node_limits:
+          type: number
+        no_successful_request_limits:
+          type: number
+        throughput_degradation_limits:
           type: number
     nodes._common:Transport:
       type: object
@@ -45541,6 +45812,16 @@ components:
         ge_millis:
           description: The inclusive lower bound of the bucket in milliseconds. May be omitted on the first bucket if this bucket has no lower bound.
           type: number
+    nodes._common:TransportUsageStats:
+      type: object
+      properties:
+        rejection_count:
+          type: object
+    nodes._common:UsageStats:
+      type: object
+      properties:
+        transport:
+          $ref: '#/components/schemas/nodes._common:TransportUsageStats'
     nodes.info:DeprecationIndexing:
       type: object
       properties:
