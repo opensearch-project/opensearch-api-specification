@@ -253,7 +253,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/nodes.usage@200'
-  /_nodes/{node_id}:
+  /_nodes/{node_id_or_metric}:
     get:
       operationId: nodes.info.1
       x-operation-group: nodes.info
@@ -262,7 +262,7 @@ paths:
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/nodes-apis/nodes-info/
       parameters:
-        - $ref: '#/components/parameters/nodes.info::path.node_id'
+        - $ref: '#/components/parameters/nodes.info::path.node_id_or_metric'
         - $ref: '#/components/parameters/nodes.info::query.flat_settings'
         - $ref: '#/components/parameters/nodes.info::query.timeout'
       responses:
@@ -530,6 +530,28 @@ components:
       description: The type to sample.
       schema:
         $ref: '../schemas/nodes._common.yaml#/components/schemas/SampleType'
+    nodes.info::path.node_id_or_metric:
+      in: path
+      name: node_id_or_metric
+      description: |
+        Limits the information returned to a list of node IDs or specific metrics.
+        Supports a comma-separated list, such as node1,node2 or http,ingest.
+      required: true
+      schema:
+        type: array
+        items:
+          anyOf:
+            - $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
+            - $ref: '../schemas/nodes.info.yaml#/components/schemas/Metric'
+      style: simple
+    nodes.info::path.node_id:
+      in: path
+      name: node_id
+      description: Comma-separated list of node IDs or names used to limit returned information.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
+      style: simple
     nodes.info::path.metric:
       in: path
       name: metric
@@ -539,14 +561,6 @@ components:
         type: array
         items:
           $ref: '../schemas/nodes.info.yaml#/components/schemas/Metric'
-      style: simple
-    nodes.info::path.node_id:
-      in: path
-      name: node_id
-      description: Comma-separated list of node IDs or names used to limit returned information.
-      required: true
-      schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
       style: simple
     nodes.info::query.flat_settings:
       in: query
