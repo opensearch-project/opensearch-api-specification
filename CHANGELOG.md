@@ -77,6 +77,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_data_stream` health status and required fields ([#401](https://github.com/opensearch-project/opensearch-api-specification/pull/401))
 - Fixed query DSL `match` that supports a field name and value ([#405](https://github.com/opensearch-project/opensearch-api-specification/pull/405)) 
 - Fixed `/_mapping` with `index` in query ([#385](https://github.com/opensearch-project/opensearch-api-specification/pull/385))
+- Fixed required value for `constant_keyword` field type ([#419](https://github.com/opensearch-project/opensearch-api-specification/pull/419))
 
 ### Security
 
