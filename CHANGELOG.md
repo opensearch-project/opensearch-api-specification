@@ -45,6 +45,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `cluster_manager_timeout` to `HEAD /{index}` ([#421](https://github.com/opensearch-project/opensearch-api-specification/pull/421))
 - Added missing fields to `/_nodes/stats` ([#415](https://github.com/opensearch-project/opensearch-api-specification/pull/415))
 - Added missing metrics options to `/_nodes/stats` ([#422](https://github.com/opensearch-project/opensearch-api-specification/pull/422))
+- Added tests against OpenSearch 1.3 ([#424](https://github.com/opensearch-project/opensearch-api-specification/pull/424))
 
 ### Changed
 
