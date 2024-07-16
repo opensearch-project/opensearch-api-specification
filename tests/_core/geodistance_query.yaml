@@ -1,8 +1,8 @@
 $schema: ../../json_schemas/test_story.schema.yaml
 
-description: Test search endpoint with geodistance query.
+description: Test search endpoint with geo_distance query.
 prologues:
-  - path: /testindex1
+  - path: /test_index
     method: PUT
     request_body:
       payload:
@@ -10,33 +10,33 @@ prologues:
           properties:
             field:
               type: geo_point
-  - path: /testindex1/_doc/1
-    method: POST
+  - path: /test_index/_doc/1
+    method: POS
     parameters:
       refresh: true
     request_body:
       payload:
         field: 
-          lat: 74.00
+          lat: 74
           lon: 40.71
     status: [201]
 epilogues:
-  - path: /testindex1
+  - path: /test_index
     method: DELETE
     status: [200, 404]
 chapters:
   - synopsis: Search for documents whose point objects are within the specified distance from the specified point.
     path: /{index}/_search
     parameters:
-      index: testindex1
+      index: test_index
     method: GET
     request_body:
       payload:
         query:
           geo_distance:
-            distance: "50mi"
-            distance_type: "arc"
-            validation_method: "strict"
+            distance: 50mi
+            distance_type: arc
+            validation_method: strict
             ignore_unmapped: true
             field:
               lat: 73.5
@@ -51,7 +51,7 @@ chapters:
             relation: eq
           max_score: 1
           hits:
-            - _index: testindex1
+            - _index: test_index
               _score: 1
               _source:
                 field: 
