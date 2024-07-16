@@ -9,12 +9,55 @@
 
 import OpenApiMerger from 'merger/OpenApiMerger'
 import fs from 'fs'
-import { Logger, LogLevel } from 'Logger'
 
-test('merge()', () => {
-  const merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/', new Logger(LogLevel.error))
-  merger.merge('./tools/tests/merger/opensearch-openapi.yaml')
-  expect(fs.readFileSync('./tools/tests/merger/fixtures/expected.yaml', 'utf8'))
-    .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
-  fs.unlinkSync('./tools/tests/merger/opensearch-openapi.yaml')
+describe('OpenApiMerger', () => {
+  var merger: OpenApiMerger
+
+  describe('defaults', () => {
+    beforeEach(() => {
+      merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/')
+    })
+
+    describe('merge()', () => {
+      test('is not required', () => {
+        expect(merger.spec()).toBeDefined()
+      })
+
+      test('merges spec', () => {
+        merger.merge()
+        expect(merger.spec()).toBeDefined()
+      })
+
+      test('raises an error when called twice', () => {
+        merger.merge()
+        expect(() => {
+          merger.merge()
+        }).toThrow('Spec already merged.');
+      })
+    })
+
+    describe('write_to()', () => {
+      afterAll(() => {
+        fs.unlinkSync('./tools/tests/merger/opensearch-openapi.yaml')
+      })
+
+      test('writes a spec', () => {
+        merger.merge().write_to('./tools/tests/merger/opensearch-openapi.yaml')
+        expect(fs.readFileSync('./tools/tests/merger/fixtures/expected_2.0.yaml', 'utf8'))
+          .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
+      })
+    })
+  })
+
+  describe('1.3', () => {
+    beforeEach(() => {
+      merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/', '1.3')
+    })
+
+    test('writes a spec', () => {
+      merger.merge().write_to('./tools/tests/merger/opensearch-openapi.yaml')
+      expect(fs.readFileSync('./tools/tests/merger/fixtures/expected_1.3.yaml', 'utf8'))
+        .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
+    })
+  })
 })

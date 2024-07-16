@@ -18,16 +18,20 @@ import _ from 'lodash';
 export default class MergedOpenApiSpec {
   logger: Logger
   file_path: string
+  target_version?: string
+
   protected _spec: OpenAPIV3.Document | undefined
 
-  constructor (spec_path: string, logger: Logger = new Logger()) {
+  constructor (spec_path: string, target_version?: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.file_path = spec_path
+    this.target_version = target_version
   }
 
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
-    const spec = (new OpenApiMerger(this.file_path, this.logger)).merge()
+    const merger = new OpenApiMerger(this.file_path, this.target_version, this.logger)
+    const spec = merger.merge().spec()
     const ctx = new SpecificationContext(this.file_path)
     this.inject_additional_properties(ctx, spec)
     this._spec = spec

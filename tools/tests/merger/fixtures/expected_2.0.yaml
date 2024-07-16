@@ -9,12 +9,16 @@ paths:
       parameters:
         - $ref: '#/components/parameters/indices.create::path.index'
         - $ref: '#/components/parameters/indices.create::query.pretty'
+        - $ref: '#/components/parameters/indices.create::query.wait_for_active_shards'
         - $ref: '#/components/parameters/_global::query.human'
       requestBody:
         $ref: '#/components/requestBodies/indices.create'
       responses:
         '200':
           $ref: '#/components/responses/indices.create@200'
+        '201':
+          $ref: '#/components/responses/indices.create@201'
+          x-version-added: '2.0'
   /adopt/{animal}/dockets/{docket}:
     get:
       operationId: adopt.0
@@ -78,6 +82,12 @@ components:
       in: query
       schema:
         type: boolean
+    indices.create::query.wait_for_active_shards:
+      name: pretty
+      in: query
+      x-version-added: '2.0'
+      schema:
+        type: boolean
   requestBodies:
     adopt: {}
     indices.create: {}
@@ -89,6 +99,11 @@ components:
           type: object
     indices.create@200:
       description: ''
+      application/json:
+        schema:
+          type: object
+    indices.create@201:
+      description: Added in 2.0.
       application/json:
         schema:
           type: object

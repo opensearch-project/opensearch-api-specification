@@ -8,11 +8,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/indices.create::path.index'
         - $ref: '#/components/parameters/indices.create::query.pretty'
+        - $ref: '#/components/parameters/indices.create::query.wait_for_active_shards'
       requestBody:
         $ref: '#/components/requestBodies/indices.create'
       responses:
         '200':
           $ref: '#/components/responses/indices.create@200'
+        '201':
+          $ref: '#/components/responses/indices.create@201'
+          x-version-added: '2.0'
 components:
   requestBodies:
     indices.create: {}
@@ -27,9 +31,20 @@ components:
       in: query
       schema:
         type: boolean
+    indices.create::query.wait_for_active_shards:
+      name: pretty
+      in: query
+      x-version-added: '2.0'
+      schema:
+        type: boolean
   responses:
     indices.create@200:
       description: ''
+      application/json:
+        schema:
+          type: object
+    indices.create@201:
+      description: Added in 2.0.
       application/json:
         schema:
           type: object
