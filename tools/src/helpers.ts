@@ -11,9 +11,6 @@ import fs from 'fs'
 import path from 'path'
 import YAML from 'yaml'
 import _ from 'lodash'
-import { OpenAPIV3 } from 'openapi-types'
-
-export const HTTP_METHODS: OpenAPIV3.HttpMethods[] = Object.values(OpenAPIV3.HttpMethods)
 
 export function resolve_ref (ref: string, root: Record<string, any>): Record<string, any> | undefined {
   const paths = ref.replace('#/', '').split('/')

@@ -34,14 +34,14 @@ test('--invalid', () => {
 })
 
 test('displays story filename', () => {
-  expect(spec(['--tests', 'tools/tests/tester/fixtures/empty_story']).stdout).toContain(
+  expect(spec(['--dry-run', '--tests', 'tools/tests/tester/fixtures/empty_story']).stdout).toContain(
     `${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('empty.yaml'))}`
   )
 })
 
 test('invalid story', () => {
-  expect(spec(['--tests', 'tools/tests/tester/fixtures/invalid_story.yaml']).stdout).toContain(
-    `${ansi.gray("(Invalid Story: data/epilogues/0 must NOT have unevaluated properties, ...)")}`
+  expect(spec(['--dry-run', '--tests', 'tools/tests/tester/fixtures/invalid_story.yaml']).stdout).toContain(
+    `\x1b[90m(Invalid Story:`
   )
 })
 

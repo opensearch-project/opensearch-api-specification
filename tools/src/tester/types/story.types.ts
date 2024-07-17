@@ -38,6 +38,14 @@ export type Parameter = (string | number | boolean)[] | string | number | boolea
  */
 export type Payload = {} | any[] | string | number | boolean;
 /**
+ * The semver range to execute the chapter against.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Version".
+ */
+export type Version = string;
+/**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Chapter".
  */
@@ -57,11 +65,12 @@ export type ReadChapter = Chapter & {
 };
 
 export interface Story {
-  $schema: string;
+  $schema?: string;
   description: string;
   prologues?: SupplementalChapter[];
   epilogues?: SupplementalChapter[];
   chapters: Chapter[];
+  version?: Version;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -79,6 +88,7 @@ export interface ChapterRequest {
   };
   request_body?: RequestBody;
   output?: Output;
+  version?: Version;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

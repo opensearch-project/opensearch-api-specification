@@ -61,6 +61,29 @@ chapters:
                 director: Bennett Miller
                 title: Moneyball
                 year: 2011
+  - synopsis: Search with a match query object.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request_body:
+      payload:
+        size: 1
+        query:
+          match:
+            director:
+              query: Bennett Miller
+  - synopsis: Search with a match query field.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request_body:
+      payload:
+        size: 1
+        query:
+          match:
+            director: Bennett Miller
   - synopsis: Search with multi_match query.
     path: /{index}/_search
     parameters:
@@ -72,7 +95,7 @@ chapters:
         query:
           multi_match:
             query: miller
-            fields: ["title^2", "director"]
+            fields: [director, title^2]
     response:
       status: 200
       payload:
@@ -87,11 +110,19 @@ chapters:
                 director: Bennett Miller
                 title: Moneyball
                 year: 2011
-  - synopsis: Search with parameters.
+  - synopsis: Search with cancel_after_time_interval.
     path: /{index}/_search
     parameters:
       index: movies
       cancel_after_time_interval: 10s
+    method: POST
+    response:
+      status: 200
+  - synopsis: Search with phase_took.
+    version: '>= 2.12'
+    path: /{index}/_search
+    parameters:
+      index: movies
       phase_took: true
     method: POST
     response:

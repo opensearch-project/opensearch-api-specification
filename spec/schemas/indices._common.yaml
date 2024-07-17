@@ -137,6 +137,7 @@ components:
           $ref: '#/components/schemas/IndexingPressure'
         store:
           $ref: '#/components/schemas/Storage'
+      additionalProperties: {}
       description: The index settings to be updated
     SoftDeletes:
       type: object
@@ -184,19 +185,19 @@ components:
     SegmentSortMode:
       type: string
       enum:
-        - min
         - max
+        - min
     SegmentSortMissing:
       type: string
       enum:
-        - _last
         - _first
+        - _last
     IndexCheckOnStartup:
       type: string
       enum:
-        - 'true'
-        - 'false'
         - checksum
+        - 'false'
+        - 'true'
     Merge:
       type: object
       properties:
@@ -295,9 +296,9 @@ components:
       type: string
       enum:
         - all
-        - primaries
         - new_primaries
         - none
+        - primaries
     IndexRoutingAllocationInclude:
       type: object
       properties:
@@ -328,9 +329,9 @@ components:
       type: string
       enum:
         - all
+        - none
         - primaries
         - replicas
-        - none
     IndexSettingsLifecycle:
       type: object
       properties:
@@ -387,8 +388,8 @@ components:
     TranslogDurability:
       type: string
       enum:
-        - request
         - async
+        - request
     TranslogRetention:
       type: object
       properties:
@@ -684,9 +685,9 @@ components:
       type: string
       enum:
         - fs
-        - niofs
-        - mmapfs
         - hybridfs
+        - mmapfs
+        - niofs
     NumericFielddata:
       type: object
       properties:
@@ -876,7 +877,7 @@ components:
           description: If `true`, the data stream is created and managed by cross-cluster replication and the local cluster can not write into this data stream or change its mappings.
           type: boolean
         status:
-          $ref: '_common.yaml#/components/schemas/HealthStatus'
+          $ref: '_common.yaml#/components/schemas/HealthStatusCapitalized'
         system:
           description: If `true`, the data stream is created and managed by an OpenSearch stack component and cannot be modified through normal user interaction.
           type: boolean
@@ -886,9 +887,6 @@ components:
           $ref: '#/components/schemas/DataStreamTimestampField'
       required:
         - generation
-        - hidden
-        - next_generation_managed_by
-        - prefer_ilm
         - indices
         - name
         - status
@@ -897,8 +895,8 @@ components:
     ManagedBy:
       type: string
       enum:
-        - Index Lifecycle Management
         - Data stream lifecycle
+        - Index Lifecycle Management
         - Unmanaged
     DataStreamIndex:
       type: object
@@ -917,8 +915,6 @@ components:
       required:
         - index_name
         - index_uuid
-        - managed_by
-        - prefer_ilm
     DataStreamTimestampField:
       type: object
       properties:
@@ -957,7 +953,6 @@ components:
           $ref: '#/components/schemas/IndexTemplateDataStreamConfiguration'
       required:
         - index_patterns
-        - composed_of
       description: New index template definition to be simulated, if no index template name is specified
     IndexTemplateSummary:
       type: object
@@ -986,6 +981,8 @@ components:
         allow_custom_routing:
           description: If true, the data stream supports custom routing.
           type: boolean
+        timestamp_field:
+          $ref: '#/components/schemas/DataStreamTimestampField'
     TemplateMapping:
       type: object
       properties:
@@ -1013,8 +1010,3 @@ components:
         - mappings
         - order
         - settings
-    DataStreamVisibility:
-      type: object
-      properties:
-        hidden:
-          type: boolean

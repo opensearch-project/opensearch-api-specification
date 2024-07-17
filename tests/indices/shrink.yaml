@@ -18,6 +18,12 @@ epilogues:
   - path: /movies2
     method: DELETE
     status: [200, 404]
+  - path: /movies3
+    method: DELETE
+    status: [200, 404]
+  - path: /movies4
+    method: DELETE
+    status: [200, 404]
 chapters:
   - synopsis: Block writes to the source index.
     path: /{index}/_settings
@@ -35,28 +41,50 @@ chapters:
       index: movies
       target: movies1
       wait_for_active_shards: 1
-      cluster_manager_timeout: 10s
       timeout: 10s
-      wait_for_completion: true
     response:
       status: 200
       payload:
         shards_acknowledged: true
         acknowledged: true
         index: movies1
+  - synopsis: Shrink an index (wait_for_completion).
+    version: '>= 2.7'
+    path: /{index}/_shrink/{target}
+    method: POST
+    parameters:
+      index: movies
+      target: movies2
+      wait_for_completion: true
+    response:
+      status: 200
   - synopsis: Shrink an index (PUT).
     path: /{index}/_shrink/{target}
     method: PUT
     parameters:
       index: movies
-      target: movies2
+      target: movies3
       wait_for_active_shards: 1
-      cluster_manager_timeout: 10s
       timeout: 10s
-      wait_for_completion: true
     response:
       status: 200
       payload:
         shards_acknowledged: true
         acknowledged: true
-        index: movies2
+        index: movies3
+  - synopsis: Shrink an index (cluster_manager_timeout).
+    path: /{index}/_shrink/{target}
+    method: POST
+    version: '>= 2.0'
+    parameters:
+      index: movies
+      target: movies4
+      wait_for_active_shards: 1
+      cluster_manager_timeout: 10s
+      timeout: 10s
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
+        index: movies4

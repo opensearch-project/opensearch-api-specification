@@ -418,6 +418,7 @@ paths:
         - $ref: '#/components/parameters/indices.get_mapping::query.cluster_manager_timeout'
         - $ref: '#/components/parameters/indices.get_mapping::query.expand_wildcards'
         - $ref: '#/components/parameters/indices.get_mapping::query.ignore_unavailable'
+        - $ref: '#/components/parameters/indices.get_mapping::query.index'
         - $ref: '#/components/parameters/indices.get_mapping::query.local'
         - $ref: '#/components/parameters/indices.get_mapping::query.master_timeout'
       responses:
@@ -893,6 +894,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/indices.exists::path.index'
         - $ref: '#/components/parameters/indices.exists::query.allow_no_indices'
+        - $ref: '#/components/parameters/indices.exists::query.cluster_manager_timeout'
         - $ref: '#/components/parameters/indices.exists::query.expand_wildcards'
         - $ref: '#/components/parameters/indices.exists::query.flat_settings'
         - $ref: '#/components/parameters/indices.exists::query.ignore_unavailable'
@@ -1302,6 +1304,7 @@ paths:
         - $ref: '#/components/parameters/indices.get_mapping::query.cluster_manager_timeout'
         - $ref: '#/components/parameters/indices.get_mapping::query.expand_wildcards'
         - $ref: '#/components/parameters/indices.get_mapping::query.ignore_unavailable'
+        - $ref: '#/components/parameters/indices.get_mapping::query.index'
         - $ref: '#/components/parameters/indices.get_mapping::query.local'
         - $ref: '#/components/parameters/indices.get_mapping::query.master_timeout'
       responses:
@@ -1876,7 +1879,7 @@ components:
               template:
                 $ref: '../schemas/indices.put_index_template.yaml#/components/schemas/IndexTemplateMapping'
               data_stream:
-                $ref: '../schemas/indices._common.yaml#/components/schemas/DataStreamVisibility'
+                $ref: '../schemas/indices._common.yaml#/components/schemas/IndexTemplateDataStreamConfiguration'
               priority:
                 description: |-
                   Priority to determine index template precedence when a new data stream or index is created.
@@ -2058,7 +2061,7 @@ components:
               template:
                 $ref: '../schemas/indices.put_index_template.yaml#/components/schemas/IndexTemplateMapping'
               data_stream:
-                $ref: '../schemas/indices._common.yaml#/components/schemas/DataStreamVisibility'
+                $ref: '../schemas/indices._common.yaml#/components/schemas/IndexTemplateDataStreamConfiguration'
               priority:
                 description: |-
                   Priority to determine index template precedence when a new data stream or index is created.
@@ -2090,8 +2093,7 @@ components:
               settings:
                 description: Configuration options for the target index.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: {}
             description: The configuration for the target index (`settings` and `aliases`)
     indices.update_aliases:
       content:
@@ -2133,8 +2135,8 @@ components:
                   $ref: '../schemas/indices.add_block.yaml#/components/schemas/IndicesBlockStatus'
             required:
               - acknowledged
-              - shards_acknowledged
               - indices
+              - shards_acknowledged
     indices.analyze@200:
       description: ''
       content:
@@ -2204,9 +2206,9 @@ components:
               acknowledged:
                 type: boolean
             required:
+              - acknowledged
               - index
               - shards_acknowledged
-              - acknowledged
     indices.create_data_stream@200:
       description: ''
       content:
@@ -2475,9 +2477,9 @@ components:
                 items:
                   $ref: '../schemas/indices.resolve_index.yaml#/components/schemas/ResolveIndexDataStreamsItem'
             required:
-              - indices
               - aliases
               - data_streams
+              - indices
     indices.rollover@200:
       description: ''
       content:
@@ -2523,8 +2525,8 @@ components:
               _shards:
                 $ref: '../schemas/_common.yaml#/components/schemas/ShardStatistics'
             required:
-              - indices
               - _shards
+              - indices
     indices.shard_stores@200:
       description: ''
       content:
@@ -2553,8 +2555,8 @@ components:
                 $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
             required:
               - acknowledged
-              - shards_acknowledged
               - index
+              - shards_acknowledged
     indices.simulate_index_template@200:
       description: ''
       content:
@@ -2591,8 +2593,8 @@ components:
                 $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
             required:
               - acknowledged
-              - shards_acknowledged
               - index
+              - shards_acknowledged
     indices.stats@200:
       description: ''
       content:
@@ -2609,8 +2611,8 @@ components:
               _all:
                 $ref: '../schemas/indices.stats.yaml#/components/schemas/IndicesStats'
             required:
-              - _shards
               - _all
+              - _shards
     indices.update_aliases@200:
       description: ''
       content:
@@ -2668,7 +2670,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.add_block::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -2766,6 +2768,7 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/Fields'
       style: form
     indices.clear_cache::query.file:
+      x-version-added: '2.8'
       in: query
       name: file
       description: If true, clears the unused entries from the file cache on nodes with the Search role.
@@ -2827,7 +2830,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.clone::query.master_timeout:
       in: query
       name: master_timeout
@@ -2865,6 +2868,7 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/WaitForActiveShards'
       style: form
     indices.clone::query.wait_for_completion:
+      x-version-added: '2.7'
       name: wait_for_completion
       in: query
       description: Should this request wait until the operation has completed before returning.
@@ -2895,7 +2899,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.close::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -2958,7 +2962,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.create::query.master_timeout:
       in: query
       name: master_timeout
@@ -3042,7 +3046,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.delete::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -3109,7 +3113,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.delete_alias::query.master_timeout:
       in: query
       name: master_timeout
@@ -3153,7 +3157,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.delete_index_template::query.master_timeout:
       in: query
       name: master_timeout
@@ -3187,7 +3191,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.delete_template::query.master_timeout:
       in: query
       name: master_timeout
@@ -3217,6 +3221,13 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
       style: simple
+    indices.exists::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      x-version-added: '2.0'
     indices.exists::query.allow_no_indices:
       in: query
       name: allow_no_indices
@@ -3337,7 +3348,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.exists_index_template::query.flat_settings:
       name: flat_settings
       in: query
@@ -3378,7 +3389,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.exists_template::query.flat_settings:
       in: query
       name: flat_settings
@@ -3515,6 +3526,7 @@ components:
         type: boolean
       style: form
     indices.forcemerge::query.primary_only:
+      x-version-added: '2.13'
       name: primary_only
       in: query
       description: Specify whether the operation should only perform on primary shards. Defaults to false.
@@ -3523,6 +3535,7 @@ components:
         default: false
         description: Specify whether the operation should only perform on primary shards. Defaults to false.
     indices.forcemerge::query.wait_for_completion:
+      x-version-added: '2.7'
       in: query
       name: wait_for_completion
       description: Should the request wait until the force merge is completed.
@@ -3557,7 +3570,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.get::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -3752,7 +3765,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.get_index_template::query.flat_settings:
       in: query
       name: flat_settings
@@ -3805,7 +3818,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.get_mapping::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -3824,6 +3837,16 @@ components:
       schema:
         type: boolean
       style: form
+    indices.get_mapping::query.index:
+      in: query
+      name: index
+      description: |-
+        Comma-separated list of data streams, indices, and aliases used to limit the request.
+        Supports wildcards (`*`).
+        To target all data streams and indices, omit this parameter or use `*` or `_all`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
     indices.get_mapping::query.local:
       in: query
       name: local
@@ -3881,7 +3904,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.get_settings::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -3955,7 +3978,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.get_template::query.flat_settings:
       in: query
       name: flat_settings
@@ -4042,7 +4065,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.open::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -4098,6 +4121,7 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/WaitForActiveShards'
       style: form
     indices.open::query.wait_for_completion:
+      x-version-added: '2.7'
       name: wait_for_completion
       in: query
       description: Should this request wait until the operation has completed before returning.
@@ -4133,7 +4157,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.put_alias::query.master_timeout:
       in: query
       name: master_timeout
@@ -4177,7 +4201,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.put_index_template::query.create:
       in: query
       name: create
@@ -4218,7 +4242,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.put_mapping::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -4295,7 +4319,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.put_settings::query.expand_wildcards:
       in: query
       name: expand_wildcards
@@ -4366,7 +4390,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.put_template::query.create:
       in: query
       name: create
@@ -4510,7 +4534,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.rollover::query.dry_run:
       in: query
       name: dry_run
@@ -4662,7 +4686,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.shrink::query.copy_settings:
       name: copy_settings
       in: query
@@ -4708,6 +4732,7 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/WaitForActiveShards'
       style: form
     indices.shrink::query.wait_for_completion:
+      x-version-added: '2.7'
       name: wait_for_completion
       in: query
       description: Should this request wait until the operation has completed before returning.
@@ -4737,7 +4762,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.simulate_index_template::query.create:
       in: query
       name: create
@@ -4787,7 +4812,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.simulate_template::query.create:
       in: query
       name: create
@@ -4828,7 +4853,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.split::query.copy_settings:
       name: copy_settings
       in: query
@@ -4874,6 +4899,7 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/WaitForActiveShards'
       style: form
     indices.split::query.wait_for_completion:
+      x-version-added: '2.7'
       name: wait_for_completion
       in: query
       description: Should this request wait until the operation has completed before returning.
@@ -4976,7 +5002,7 @@ components:
       description: Operation timeout for connection to cluster-manager node.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-      x-version-added: 2.0.0
+      x-version-added: '2.0'
     indices.update_aliases::query.master_timeout:
       in: query
       name: master_timeout
@@ -5036,6 +5062,7 @@ components:
         type: boolean
         description: If true, only ancient (an older Lucene major release) segments will be upgraded.
     indices.upgrade::query.wait_for_completion:
+      x-version-added: '2.7'
       name: wait_for_completion
       in: query
       description: Should this request wait until the operation has completed before returning.

@@ -50,17 +50,17 @@ const command = new Command()
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 
-const spec = (new MergedOpenApiSpec(opts.specPath, new Logger(LogLevel.error))).spec()
+const spec = new MergedOpenApiSpec(opts.specPath, new Logger(LogLevel.error))
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli({ opensearchResponseType: 'arraybuffer', ...opts }))
 const chapter_reader = new ChapterReader(http_client, logger)
-const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec), chapter_reader, new SchemaValidator(spec, logger), logger)
+const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec.spec()), chapter_reader, new SchemaValidator(spec.spec(), logger), logger)
 const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
 const story_validator = new StoryValidator()
 const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)
-const runner = new TestRunner(story_validator, story_evaluator, result_logger)
+const runner = new TestRunner(http_client, story_validator, story_evaluator, result_logger)
 
-runner.run(opts.testsPath, opts.dryRun)
+runner.run(opts.testsPath, spec.api_version(), opts.dryRun)
   .then(
     ({ failed }) => {
       if (failed) process.exit(1)

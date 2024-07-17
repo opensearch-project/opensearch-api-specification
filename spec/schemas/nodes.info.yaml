@@ -9,20 +9,22 @@ components:
     Metric:
       type: string
       enum:
-        - settings
-        - os
-        - process
+        - _all
+        - aggregations
+        - http
+        - indices
+        - ingest
         - jvm
+        - os
+        - plugins
+        - process
+        - search_pipelines
+        - settings
         - thread_pool
         - transport
-        - http
-        - plugins
-        - ingest
-        - aggregations
-        - indices
-        - search_pipelines
     ResponseBase:
       allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
         - type: object
           properties:
             cluster_name:
@@ -31,12 +33,9 @@ components:
               type: object
               additionalProperties:
                 $ref: '#/components/schemas/NodeInfo'
-            _nodes:
-              $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
           required:
             - cluster_name
             - nodes
-            - _nodes
     NodeInfo:
       type: object
       properties:
@@ -167,7 +166,9 @@ components:
           items:
             type: string
       required:
+        - bundled_jdk
         - gc_collectors
+        - input_arguments
         - mem
         - memory_pools
         - pid
@@ -176,8 +177,6 @@ components:
         - vm_name
         - vm_vendor
         - vm_version
-        - bundled_jdk
-        - input_arguments
     NodeInfoJvmMemory:
       type: object
       properties:
@@ -328,7 +327,7 @@ components:
         repositories:
           $ref: '#/components/schemas/NodeInfoRepositories'
         discovery:
-          $ref: '#/components/schemas/NodeInfoDiscover'
+          $ref: '#/components/schemas/NodeInfoDiscovery'
         action:
           $ref: '#/components/schemas/NodeInfoAction'
         client:
@@ -350,11 +349,11 @@ components:
         index:
           $ref: '#/components/schemas/NodeInfoSettingsIndex'
       required:
+        - client
         - cluster
+        - http
         - node
         - path
-        - client
-        - http
         - transport
     NodeInfoSettingsCluster:
       type: object
@@ -365,6 +364,8 @@ components:
           $ref: 'indices._common.yaml#/components/schemas/IndexRouting'
         election:
           $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
+        initial_cluster_manager_nodes:
+          type: string
         initial_master_nodes:
           type: string
         deprecation_indexing:
@@ -397,8 +398,8 @@ components:
         max_local_storage_nodes:
           type: string
       required:
-        - name
         - attr
+        - name
     NodeInfoPath:
       type: object
       properties:
@@ -415,8 +416,8 @@ components:
           items:
             type: string
       required:
-        - logs
         - home
+        - logs
     NodeInfoRepositories:
       type: object
       properties:
@@ -438,9 +439,11 @@ components:
           type: string
       required:
         - shard_indexing_pressure_enabled
-    NodeInfoDiscover:
+    NodeInfoDiscovery:
       type: object
       properties:
+        type:
+          type: string
         seed_hosts:
           type: string
     NodeInfoAction:
@@ -661,8 +664,8 @@ components:
             type: string
       required:
         - bound_address
-        - publish_address
         - profiles
+        - publish_address
     NodeInfoIngest:
       type: object
       properties:
@@ -694,18 +697,11 @@ components:
         response_processors:
           type: array
           items:
-            $ref: '#/components/schemas/NodeInfoIngestProcessor2'
+            $ref: '#/components/schemas/NodeInfoIngestProcessor'
         request_processors:
           type: array
           items:
-            $ref: '#/components/schemas/NodeInfoIngestProcessor2'
+            $ref: '#/components/schemas/NodeInfoIngestProcessor'
       required:
-        - response_processors
         - request_processors
-    NodeInfoIngestProcessor2:
-      type: object
-      properties:
-        type:
-          type: string
-      required:
-        - type
+        - response_processors

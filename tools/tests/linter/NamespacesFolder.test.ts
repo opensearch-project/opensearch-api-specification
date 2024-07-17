@@ -56,6 +56,16 @@ describe('validate()', () => {
         file: 'invalid_folder/',
         location: 'Folder',
         message: "Duplicate path '/{index}/_rollover' found in namespaces: dup_path_a, dup_path_b, dup_path_c."
+      },
+      {
+        file: 'invalid_folder/',
+        location: 'Folder',
+        message: "Duplicate paths '/nodes/{metric}', '/nodes/{node_id}' found in namespace: dup_path_d."
+      },
+      {
+        file: 'invalid_folder/',
+        location: 'Folder',
+        message: "Duplicate paths '/indices/{metric}', '/indices/{node_id}' found in namespaces: dup_path_namespace_a, dup_path_namespace_b."
       }
     ])
   })

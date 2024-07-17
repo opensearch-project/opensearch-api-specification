@@ -18,7 +18,9 @@ properties:
     type: array
     items:
       $ref: '#/definitions/Chapter'
-required: [$schema, description, chapters]
+  version:
+    $ref: '#/definitions/Version'
+required: [chapters,description]
 additionalProperties: false
 
 definitions:
@@ -67,6 +69,7 @@ definitions:
         type: string
       method:
         type: string
+        # eslint-disable-next-line yml/sort-sequence-values
         enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
       parameters:
         type: object
@@ -76,7 +79,9 @@ definitions:
         $ref: '#/definitions/RequestBody'
       output:
         $ref: '#/definitions/Output'
-    required: [path, method]
+      version:
+        $ref: '#/definitions/Version'
+    required: [method, path]
 
   Output:
     description: |
@@ -89,6 +94,11 @@ definitions:
     type: object
     additionalProperties:
       type: string
+
+  Version:
+    description: |
+      The semver range to execute the story or chapter against.
+    type: string
 
   RequestBody:
     type: object
@@ -131,7 +141,7 @@ definitions:
       error:
         type: object
         description: Error object.
-    required: [status, content_type, payload]
+    required: [content_type, payload, status]
     additionalProperties: false
 
   Payload:

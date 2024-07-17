@@ -18,7 +18,8 @@ describe('helpers', () => {
   test('overall_result', () => {
     expect(overall_result(e(Result.PASSED, Result.SKIPPED, Result.FAILED, Result.ERROR))).toBe(Result.ERROR)
     expect(overall_result(e(Result.PASSED, Result.SKIPPED, Result.FAILED))).toBe(Result.FAILED)
-    expect(overall_result(e(Result.PASSED, Result.SKIPPED))).toBe(Result.SKIPPED)
+    expect(overall_result(e(Result.PASSED, Result.SKIPPED))).toBe(Result.PASSED)
+    expect(overall_result(e(Result.SKIPPED, Result.SKIPPED))).toBe(Result.SKIPPED)
     expect(overall_result(e(Result.PASSED))).toBe(Result.PASSED)
     expect(overall_result(e())).toBe(Result.PASSED)
   })
