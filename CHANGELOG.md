@@ -26,7 +26,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added tests for response payload ([#347](https://github.com/opensearch-project/opensearch-api-specification/pull/347))
 - Added `cancel_after_time_interval` and `phase_took` in `_search` ([#353](https://github.com/opensearch-project/opensearch-api-specification/pull/353))
 - Added support for testing `application/x-ndjson` payloads ([#355](https://github.com/opensearch-project/opensearch-api-specification/pull/355))
-- Added SPECIFICATION_TESTING.md [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
+- Added TESTING_GUIDE.md [#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359)
 - Added StoryValidator to validate stories before running them ([#354](https://github.com/opensearch-project/opensearch-api-specification/issues/354))
 - Added support for `text/plain` responses in `_cat` APIs ([#360](https://github.com/opensearch-project/opensearch-api-specification/pull/360))
 - Added support for `application/yaml` responses ([#363](https://github.com/opensearch-project/opensearch-api-specification/pull/363))
@@ -42,6 +42,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `file` to `/_cache/clear` and `/{index}/_cache/clear` ([#396](https://github.com/opensearch-project/opensearch-api-specification/pull/396))
 - Added a workflow to run tests against the next version of OpenSearch ([#409](https://github.com/opensearch-project/opensearch-api-specification/pull/409))
 - Added support for skipping tests using semver range ([#410](https://github.com/opensearch-project/opensearch-api-specification/pull/410))
+- Added `cluster_manager_timeout` to `HEAD /{index}` ([#421](https://github.com/opensearch-project/opensearch-api-specification/pull/421))
+- Added missing fields to `/_nodes/stats` ([#415](https://github.com/opensearch-project/opensearch-api-specification/pull/415))
+- Added missing metrics options to `/_nodes/stats` ([#422](https://github.com/opensearch-project/opensearch-api-specification/pull/422))
+- Added tests against OpenSearch 1.3 ([#424](https://github.com/opensearch-project/opensearch-api-specification/pull/424))
 
 ### Changed
 
@@ -77,6 +81,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_data_stream` health status and required fields ([#401](https://github.com/opensearch-project/opensearch-api-specification/pull/401))
 - Fixed query DSL `match` that supports a field name and value ([#405](https://github.com/opensearch-project/opensearch-api-specification/pull/405)) 
 - Fixed `/_mapping` with `index` in query ([#385](https://github.com/opensearch-project/opensearch-api-specification/pull/385))
+- Fixed duplicate `/_nodes/{node_id}` path ([#416](https://github.com/opensearch-project/opensearch-api-specification/pull/416))
 - Fixed required value for `constant_keyword` field type ([#419](https://github.com/opensearch-project/opensearch-api-specification/pull/419))
 
 ### Security

@@ -1,3 +1,12 @@
+- [Generate Clients for OpenSearch using OpenAPI Specification](#generate-clients-for-opensearch-using-openapi-specification)
+  - [The Grouping of API Operations](#the-grouping-of-api-operations)
+  - [Overloaded Name](#overloaded-name)
+  - [Handling Bulk Operations](#handling-bulk-operations)
+  - [Parameter Validation](#parameter-validation)
+  - [Global Parameters](#global-parameters)
+  - [Default Parameter Values](#default-parameter-values)
+  - [Duplicate Paths](#duplicate-paths)
+
 # Generate Clients for OpenSearch using OpenAPI Specification
 
 OpenSearch Clients are available in multiple programming languages. The biggest challenge with this is keeping the clients up to date with the latest changes in OpenSearch. To solve this problem, we're automating the process of generating clients for OpenSearch using the OpenAPI specification. While OpenAPI comes with many well established off-the-shelf client generators for most languages, the OpenSearch APIs come with a lot of quirkiness that makes it near impossible to use these off-the-shelf generators. For this reason, we've opted to write our own client generators that is specifically tailored to the OpenSearch APIs. This document will walk you through the process of generating clients from [the published OpenSearch OpenAPI spec](https://github.com/opensearch-project/opensearch-api-specification/releases), more specifically client API methods.
@@ -59,3 +68,22 @@ All operations in the spec contain a set of parameters that are common across al
 
 ## Default Parameter Values
 Parameters can have default values either through schema or the `x-default` vendor extension. When both are present, `x-default` will take precedence.
+
+## Duplicate Paths
+OpenAPI does not allow duplicate paths, which makes it challenging to express certain OpenSearch APIs, such as `/_nodes/{node_id}` and `/_nodes/{metric}`. In this example the server expects either a `node_id` or a `metric`. The API specification handles this by defining a `/_nodes/{node_id_or_metric}` path, and decorating the `node_id_or_metric` type with a `title` field.
+
+```yaml
+name: node_id_or_metric
+schema:
+anyOf:
+  - title: node_id
+    $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
+  - title: metric
+    type: array
+    items:
+      $ref: '../schemas/nodes.info.yaml#/components/schemas/Metric'
+```
+
+See [#416](https://github.com/opensearch-project/opensearch-api-specification/pull/416) for a complete example.
+
+Clients should generate multiple methods or a method that accepts multiple parameters in this case.
