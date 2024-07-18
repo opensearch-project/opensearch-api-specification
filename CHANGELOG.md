@@ -46,6 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing fields to `/_nodes/stats` ([#415](https://github.com/opensearch-project/opensearch-api-specification/pull/415))
 - Added missing metrics options to `/_nodes/stats` ([#422](https://github.com/opensearch-project/opensearch-api-specification/pull/422))
 - Added tests against OpenSearch 1.3 ([#424](https://github.com/opensearch-project/opensearch-api-specification/pull/424))
+- Added `is_hidden` to `/{index}/_alias/{name}` and `/{index}/_aliases/{name}` ([#429](https://github.com/opensearch-project/opensearch-api-specification/pull/429))
 
 ### Changed
 
