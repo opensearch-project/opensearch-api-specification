@@ -12,25 +12,25 @@
 - [Welcome!](#welcome)
 - [Project Resources](#project-resources)
 - [Code of Conduct](#code-of-conduct)
-- [Developer Guide](#developer-guide)
-- [Client Generator Guide](#client-generator-guide)
-- [Published Spec](#published-spec)
 - [Security](#security)
 - [License](#license)
 - [Copyright](#copyright)
 
 ## Welcome!
 
-`opensearch-api-specification` is an open source, community-driven collection of API model specifications for
-[OpenSearch](https://github.com/opensearch-project/OpenSearch) APIs. The API models are written in OpenAPI format and are used to generate client libraries and documentation.
+The `opensearch-api-specification` is an open source, community-driven collection of API model specifications for [OpenSearch](https://github.com/opensearch-project/OpenSearch) APIs. The API models are written in OpenAPI format and are used to generate client libraries and documentation. You can find the latest version of the API specification [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml).
 
-To contribute to this project or to track the developments head over to [Projects](https://github.com/opensearch-project/opensearch-api-specification/projects)
-board. Follow the [Developer guide](DEVELOPER_GUIDE.md) and [Contributing guidelines](CONTRIBUTING.md) for instructions
+To contribute to this project or to track the developments head over to [Projects](https://github.com/opensearch-project/opensearch-api-specification/projects) board. Follow the [Developer guide](DEVELOPER_GUIDE.md) and [Contributing guidelines](CONTRIBUTING.md) for instructions
 on building and contributing to opensearch-api-specification.
 
 ## Project Resources
 
+* [Current Release](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml)
+* [Developer Guide](DEVELOPER_GUIDE.md).
+* [Client Generator Guide](CLIENT_GENERATOR_GUIDE.md).
+* [Spec Publishing Guide](PUBLISHING_GUIDE.md).
 * [Project Website](https://opensearch.org/)
+* [API Playground](https://opensearch-project.github.io/opensearch-api-specification/)
 * [Downloads](https://opensearch.org/downloads.html)
 * [Documentation](https://opensearch.org/docs/)
 * Need help? Try [Forums](https://forum.opensearch.org/)
@@ -40,21 +40,6 @@ on building and contributing to opensearch-api-specification.
 ## Code of Conduct
 
 This project has adopted the [Amazon Open Source Code of Conduct](CODE_OF_CONDUCT.md). For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq), or contact [opensource-codeofconduct@amazon.com](mailto:opensource-codeofconduct@amazon.com) with any additional questions or comments.
-
-## Developer Guide
-
-See [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md).
-
-## Client Generator Guide
-
-See [CLIENT_GENERATOR_GUIDE](CLIENT_GENERATOR_GUIDE.md).
-
-## Published Spec
-
-OpenSearch API Specs are hosted at https://opensearch-project.github.io/opensearch-api-specification/. See [PUBLISHING_SPECS](PUBLISHING_SPECS.md) for more information.
-
-Click [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml) to download the latest OpenSearch OpenAPI yaml file.
-
 
 ## Security
 
