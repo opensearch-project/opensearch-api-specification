@@ -1,0 +1,50 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test account endpoint.
+
+prologues:
+  - path: _plugins/_security/api/internalusers/{username}
+    method: PUT
+    parameters:
+      username: test
+    request_body:
+      payload:
+        password: "myWeakPassword123!"
+        opendistro_security_roles: []
+        backend_roles: []
+        attributes: {}
+    response:
+      status: 200
+chapters:
+  - synopsis: Get account details.
+    path: /_plugins/_security/api/account
+    method: GET
+    parameters:
+      format: json
+    response:
+      status: 200
+# TODO: following test can be changed to interact with test user once https://github.com/opensearch-project/opensearch-api-specification/issues/438 is implemented
+# NOTE: this test assumes that admin password is set to `myStrongPassword123!`, please update this test to correct password. One more reason to have the above feature implemented to avoid this.
+  - synopsis: Change password.
+    path: /_plugins/_security/api/account
+    method: PUT
+    request_body:
+      payload:
+        current_password: "myStrongPassword123!"
+        password: "myWeakPassword123!"
+    response:
+      status: 200
+epilogues:
+  - path: /_plugins/_security/api/account
+    method: PUT
+    request_body:
+      payload:
+        current_password: "myWeakPassword123!"
+        password: "myStrongPassword123!"
+    response:
+      status: 200
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: test
+    status: [200, 404]
