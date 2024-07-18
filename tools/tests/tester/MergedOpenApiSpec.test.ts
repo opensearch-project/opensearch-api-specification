@@ -14,7 +14,7 @@ import MergedOpenApiSpec from "tester/MergedOpenApiSpec"
 describe('merged API spec', () => {
   describe('defaults', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', undefined, new Logger())
-  
+
     test('has an api version', () => {
       expect(spec.api_version()).toEqual('1.2.3')
     })
@@ -31,7 +31,7 @@ describe('merged API spec', () => {
       expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1'
       ])
-    })  
+    })
 
     describe('unevaluatedProperties', () => {
       const responses: any = spec.spec().components?.responses

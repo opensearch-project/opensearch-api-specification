@@ -10,7 +10,7 @@
 import { type OpenAPIV3 } from 'openapi-types'
 import fs from 'fs'
 import _, { isEmpty } from 'lodash'
-import { read_yaml, write_yaml } from '../helpers'
+import { delete_matching_keys, read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import { Logger } from '../Logger'
@@ -82,10 +82,10 @@ export default class OpenApiMerger {
 
   // Remove any refs that are x-version-added/removed incompatible with the target server version.
   #remove_refs_per_semver() : void {
-    this.#remove_per_semver(this._spec.paths)
+    this.#remove_keys_not_matching_semver(this._spec.paths)
 
     // parameters
-    const removed_params = this.#remove_per_semver(this._spec.components.parameters)
+    const removed_params = this.#remove_keys_not_matching_semver(this._spec.components.parameters)
     const removed_parameter_refs = _.map(removed_params, (ref) => `#/components/parameters/${ref}`)
     Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
       Object.entries(path_item as Document).forEach(([_method, method_item]) => {
@@ -94,7 +94,7 @@ export default class OpenApiMerger {
     })
 
     // responses
-    const removed_responses = this.#remove_per_semver(this._spec.components.responses)
+    const removed_responses = this.#remove_keys_not_matching_semver(this._spec.components.responses)
     const removed_response_refs = _.map(removed_responses, (ref) => `#/components/responses/${ref}`)
     Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
       Object.entries(path_item as Document).forEach(([_method, method_item]) => {
@@ -121,23 +121,9 @@ export default class OpenApiMerger {
   }
 
   // Remove any elements that are x-version-added/removed incompatible with the target server version.
-  #remove_per_semver(obj: any): string[] {
-    let removed: string[] = []
-    if (this.target_version === undefined) return removed
-
-    for (const key in obj) {
-      if (_.isObject(obj[key])) {
-        if (this.#exclude_per_semver(obj[key])) {
-          removed.push(key)
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-          delete obj[key]
-        } else {
-          removed = _.concat(removed, this.#remove_per_semver(obj[key]))
-        }
-      }
-    }
-
-    return removed
+  #remove_keys_not_matching_semver(obj: any): string[] {
+    if (this.target_version === undefined) return []
+    return delete_matching_keys(obj, this.#exclude_per_semver.bind(this))
   }
 
   // Redirect schema references in namespace files to local references in single-file spec.

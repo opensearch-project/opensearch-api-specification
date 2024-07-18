@@ -9,6 +9,7 @@
 
 import OpenApiMerger from 'merger/OpenApiMerger'
 import fs from 'fs'
+import tmp from 'tmp'
 
 describe('OpenApiMerger', () => {
   var merger: OpenApiMerger
@@ -29,27 +30,46 @@ describe('OpenApiMerger', () => {
     })
 
     describe('write_to()', () => {
-      afterAll(() => {
-        fs.unlinkSync('./tools/tests/merger/opensearch-openapi.yaml')
+      var temp: tmp.DirResult
+      var filename: string
+
+      beforeEach(() => {
+        temp = tmp.dirSync()
+        filename = `${temp.name}/opensearch-openapi.yaml`
+      })
+
+      afterEach(() => {
+        fs.unlinkSync(filename)
+        temp.removeCallback()
       })
 
       test('writes a spec', () => {
-        merger.write_to('./tools/tests/merger/opensearch-openapi.yaml')
+        merger.write_to(filename)
         expect(fs.readFileSync('./tools/tests/merger/fixtures/expected_2.0.yaml', 'utf8'))
-          .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
+          .toEqual(fs.readFileSync(filename, 'utf8'))
       })
     })
   })
 
   describe('1.3', () => {
+    var temp: tmp.DirResult
+    var filename: string
+
     beforeEach(() => {
       merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/', '1.3')
+      temp = tmp.dirSync()
+      filename = `${temp.name}/opensearch-openapi.yaml`
+    })
+
+    afterEach(() => {
+      fs.unlinkSync(filename)
+      temp.removeCallback()
     })
 
     test('writes a spec', () => {
-      merger.write_to('./tools/tests/merger/opensearch-openapi.yaml')
+      merger.write_to(filename)
       expect(fs.readFileSync('./tools/tests/merger/fixtures/expected_1.3.yaml', 'utf8'))
-        .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
+        .toEqual(fs.readFileSync(filename, 'utf8'))
     })
   })
 })
