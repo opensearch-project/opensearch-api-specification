@@ -28,9 +28,14 @@ export interface StoryEvaluation {
   prologues?: ChapterEvaluation[]
 }
 
+export interface StoryEvaluations {
+  evaluations: StoryEvaluation[]
+}
+
 export interface ChapterEvaluation {
-  title: string
-  overall: Evaluation
+  title: string,
+  overall: Evaluation,
+  path?: string,
   request?: {
     parameters?: Record<string, Evaluation>
     request_body?: Evaluation

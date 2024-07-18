@@ -50,6 +50,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `ignore_unmapped` to `GeoDistanceQuery` ([#427](https://github.com/opensearch-project/opensearch-api-specification/pull/427))
 - Added missing variants of `indices.put_alias` ([#434](https://github.com/opensearch-project/opensearch-api-specification/pull/434)) 
 - Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442)) 
+- Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 
 ### Changed
 

@@ -7,16 +7,20 @@
 * compatible open source license.
 */
 
-import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
+import { type StoryEvaluations, type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'
+import _ from 'lodash'
+import MergedOpenApiSpec from './MergedOpenApiSpec'
 
 export interface ResultLogger {
   log: (evaluation: StoryEvaluation) => void
+  log_coverage: (_spec: MergedOpenApiSpec, evaluations: StoryEvaluations) => void
 }
 
 export class NoOpResultLogger implements ResultLogger {
   log (_: StoryEvaluation): void { }
+  log_coverage(_spec: MergedOpenApiSpec, _evaluations: StoryEvaluations): void { }
 }
 
 export class ConsoleResultLogger implements ResultLogger {
@@ -36,6 +40,16 @@ export class ConsoleResultLogger implements ResultLogger {
     this.#log_chapters(evaluation.chapters ?? [], 'CHAPTERS')
     this.#log_chapters(evaluation.epilogues ?? [], 'EPILOGUES')
     if (with_padding) console.log()
+  }
+
+  log_coverage(spec: MergedOpenApiSpec, evaluations: StoryEvaluations): void {
+    const evaluated_paths = _.uniq(_.compact(_.flatten(_.map(evaluations.evaluations, (evaluation) =>
+      _.map(evaluation.chapters, (chapter) => chapter.path)
+    ))))
+
+    const total_paths = Object.values(spec.paths()).reduce((acc, methods) => acc + methods.length, 0);
+    console.log()
+    console.log(`Tested ${evaluated_paths.length}/${total_paths} paths.`)
   }
 
   #log_story ({ result, full_path, display_path, message }: StoryEvaluation): void {

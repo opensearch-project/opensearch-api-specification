@@ -62,7 +62,8 @@ const runner = new TestRunner(http_client, story_validator, story_evaluator, res
 
 runner.run(opts.testsPath, spec.api_version(), opts.dryRun)
   .then(
-    ({ failed }) => {
+    ({ results, failed }) => {
+      result_logger.log_coverage(spec, results)
       if (failed) process.exit(1)
     },
     err => { throw err })

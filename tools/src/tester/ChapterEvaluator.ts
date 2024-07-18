@@ -48,6 +48,7 @@ export default class ChapterEvaluator {
     const output_values = ChapterOutput.extract_output_values(response, chapter.output)
     return {
       title: chapter.synopsis,
+      path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(Object.values(params).concat([
         request_body, status, payload_body_evaluation, payload_schema_evaluation
       ]).concat(output_values ? [output_values] : [])) },
