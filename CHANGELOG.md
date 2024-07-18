@@ -60,6 +60,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replaced the deprecated fs.rmdirSync with fs.rmSync ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Tester tool now provides better context for non-2XX responses when --verbose is used ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Lock testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
+- Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
 
 ### Deprecated
 
