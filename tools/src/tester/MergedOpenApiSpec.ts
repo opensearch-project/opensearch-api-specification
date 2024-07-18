@@ -31,7 +31,7 @@ export default class MergedOpenApiSpec {
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
     const merger = new OpenApiMerger(this.file_path, this.target_version, this.logger)
-    const spec = merger.merge().spec()
+    const spec = merger.spec()
     const ctx = new SpecificationContext(this.file_path)
     this.inject_additional_properties(ctx, spec)
     this._spec = spec

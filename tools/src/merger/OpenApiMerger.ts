@@ -46,25 +46,21 @@ export default class OpenApiMerger {
   }
 
   write_to(output_path: string): OpenApiMerger {
-    if (!this._merged) { throw "Call merge() first." }
     this.logger.info(`Writing ${output_path} ...`)
-    write_yaml(output_path, this._spec)
-    return this
-  }
-
-  merge (): OpenApiMerger {
-    if (this._merged) { throw "Spec already merged." }
-    this.#merge_schemas()
-    this.#merge_namespaces()
-    this.#sort_spec_keys()
-    this.#generate_global_params()
-    this.#generate_superseded_ops()
-    this._merged = true
+    write_yaml(output_path, this.spec())
     return this
   }
 
   spec(): OpenAPIV3.Document {
-    if (!this._merged) { this.merge() }
+    if (!this._merged) {
+      this.#merge_schemas()
+      this.#merge_namespaces()
+      this.#sort_spec_keys()
+      this.#generate_global_params()
+      this.#generate_superseded_ops()
+      this._merged = true
+    }
+
     return this._spec as OpenAPIV3.Document
   }
 

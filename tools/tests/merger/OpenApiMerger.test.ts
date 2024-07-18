@@ -24,15 +24,7 @@ describe('OpenApiMerger', () => {
       })
 
       test('merges spec', () => {
-        merger.merge()
         expect(merger.spec()).toBeDefined()
-      })
-
-      test('raises an error when called twice', () => {
-        merger.merge()
-        expect(() => {
-          merger.merge()
-        }).toThrow('Spec already merged.');
       })
     })
 
@@ -42,7 +34,7 @@ describe('OpenApiMerger', () => {
       })
 
       test('writes a spec', () => {
-        merger.merge().write_to('./tools/tests/merger/opensearch-openapi.yaml')
+        merger.write_to('./tools/tests/merger/opensearch-openapi.yaml')
         expect(fs.readFileSync('./tools/tests/merger/fixtures/expected_2.0.yaml', 'utf8'))
           .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
       })
@@ -55,7 +47,7 @@ describe('OpenApiMerger', () => {
     })
 
     test('writes a spec', () => {
-      merger.merge().write_to('./tools/tests/merger/opensearch-openapi.yaml')
+      merger.write_to('./tools/tests/merger/opensearch-openapi.yaml')
       expect(fs.readFileSync('./tools/tests/merger/fixtures/expected_1.3.yaml', 'utf8'))
         .toEqual(fs.readFileSync('./tools/tests/merger/opensearch-openapi.yaml', 'utf8'))
     })
