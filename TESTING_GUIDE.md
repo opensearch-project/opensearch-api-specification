@@ -1,5 +1,5 @@
 <!-- TOC -->
-- [Specification Testing](#specification-testing)
+- [Spec Testing Guide](#spec-testing-guide)
   - [Running Spec Tests Locally](#running-spec-tests-locally)
   - [Writing Spec Tests](#writing-spec-tests)
     - [Simple Test Story](#simple-test-story)
@@ -7,7 +7,7 @@
     - [Managing Versions](#managing-versions)
 <!-- TOC -->
 
-# Specification Testing
+# Spec Testing Guide
 
 We have devised our own test framework to test the spec against an OpenSearch cluster. We're still adding more features to the framework as the needs arise, and this document will be updated accordingly. This test framework has also been integrated into the repo's CI/CD pipeline. Checkout the [test-spec](.github/workflows/test-spec.yml) workflow for more details.
 

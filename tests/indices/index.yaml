@@ -51,6 +51,15 @@ chapters:
     method: HEAD
     parameters:
       index: movies
+    response:
+      status: 404
+
+  - synopsis: Check if the index `movies` exists (cluster_manager_timeout). It should not.
+    path: /{index}
+    method: HEAD
+    version: '>= 2.0'
+    parameters:
+      index: movies
       cluster_manager_timeout: 10s
     response:
       status: 404
@@ -77,6 +86,15 @@ chapters:
   - synopsis: Delete the `books` and `games` indices.
     path: /{index}
     method: DELETE
+    version: < 2.0
+    parameters:
+      index: books,games
+
+  - synopsis: Delete the `books` index (cluster_manager_timeout).
+    path: /{index}
+    method: DELETE
+    version: '>= 2.0'
     parameters:
       index: books,games
       cluster_manager_timeout: 10s
+      

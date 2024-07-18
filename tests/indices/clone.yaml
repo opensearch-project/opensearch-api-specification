@@ -14,6 +14,9 @@ epilogues:
   - path: /games2
     method: DELETE
     status: [200, 404]
+  - path: /games3
+    method: DELETE
+    status: [200, 404]
 chapters:
   - synopsis: Block writes to the source index.
     path: /{index}/_settings
@@ -31,7 +34,6 @@ chapters:
       index: movies
       target: games1
       wait_for_active_shards: 1
-      cluster_manager_timeout: 10s
       timeout: 10s
     response:
       status: 200
@@ -47,5 +49,15 @@ chapters:
       index: movies
       target: games2
       wait_for_completion: true
+    response:
+      status: 200
+  - synopsis: Clone an index (cluster_manager_timeout).
+    version: '>= 2.0'
+    path: /{index}/_clone/{target}
+    method: POST
+    parameters:
+      index: movies
+      target: games3
+      cluster_manager_timeout: 10s
     response:
       status: 200
