@@ -10,6 +10,7 @@
 import MergedOpenApiSpec from "tester/MergedOpenApiSpec"
 import TestResults from "tester/TestResults"
 import { Result } from "tester/types/eval.types"
+import fs from 'fs'
 
 describe('TestResults', () => {
   const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete')
@@ -39,5 +40,15 @@ describe('TestResults', () => {
 
   test('spec_paths_count', () => {
     expect(test_results.spec_paths_count()).toEqual(4)
+  })
+
+  test('write_coverage', () => {
+    const filename = 'coverage.json'
+    test_results.write_coverage(filename)
+    expect(JSON.parse(fs.readFileSync(filename, 'utf8'))).toEqual({
+      evaluated_paths_count: 1,
+      paths_count: 4
+    })
+    fs.unlinkSync(filename)
   })
 })

@@ -65,8 +65,14 @@ const runner = new TestRunner(http_client, story_validator, story_evaluator, res
 runner.run(opts.testsPath, spec.api_version(), opts.dryRun)
   .then(
     ({ results, failed }) => {
+
       const test_results = new TestResults(spec, results)
       result_logger.log_coverage(test_results)
+      if (opts.coverage !== undefined) {
+        console.log(`Writing ${opts.coverage} ...`)
+        test_results.write_coverage(opts.coverage)
+      }
+
       if (failed) process.exit(1)
     },
     err => { throw err })

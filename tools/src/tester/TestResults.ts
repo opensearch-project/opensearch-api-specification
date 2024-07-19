@@ -10,6 +10,8 @@
 import _ from "lodash";
 import MergedOpenApiSpec from "./MergedOpenApiSpec";
 import { StoryEvaluations } from "./types/eval.types";
+import { SpecTestCoverage } from "./types/test.types";
+import { write_json } from "../helpers";
 
 export default class TestResults {
   protected _spec: MergedOpenApiSpec
@@ -28,5 +30,16 @@ export default class TestResults {
 
   spec_paths_count(): number {
     return Object.values(this._spec.paths()).reduce((acc, methods) => acc + methods.length, 0);
+  }
+
+  test_coverage(): SpecTestCoverage {
+    return {
+      evaluated_paths_count: this.evaluated_paths_count(),
+      paths_count: this.spec_paths_count()
+    }
+  }
+
+  write_coverage(file_path: string): void {
+    write_json(file_path, this.test_coverage())
   }
 }

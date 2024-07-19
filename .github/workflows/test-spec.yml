@@ -54,4 +54,10 @@ jobs:
         run: docker-compose up -d
 
       - name: Run Tests
-        run: npm run test:spec -- --opensearch-insecure
+        run: npm run test:spec -- --opensearch-insecure --coverage test-spec-coverage-${{ matrix.entry.version }}.json
+
+      - name: Upload Test Coverage Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-spec-coverage-${{ matrix.entry.version }}
+          path: test-spec-coverage-${{ matrix.entry.version }}.json      
