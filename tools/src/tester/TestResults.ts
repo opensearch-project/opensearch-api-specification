@@ -35,7 +35,10 @@ export default class TestResults {
   test_coverage(): SpecTestCoverage {
     return {
       evaluated_paths_count: this.evaluated_paths_count(),
-      paths_count: this.spec_paths_count()
+      paths_count: this.spec_paths_count(),
+      evaluated_paths_pct: this.spec_paths_count() > 0 ? Math.round(
+        this.evaluated_paths_count() / this.spec_paths_count() * 100 * 100
+      ) / 100 : 0,
     }
   }
 

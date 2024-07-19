@@ -47,6 +47,7 @@ describe('TestResults', () => {
     test_results.write_coverage(filename)
     expect(JSON.parse(fs.readFileSync(filename, 'utf8'))).toEqual({
       evaluated_paths_count: 1,
+      evaluated_paths_pct: 25,
       paths_count: 4
     })
     fs.unlinkSync(filename)
