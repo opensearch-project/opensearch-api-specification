@@ -28,6 +28,7 @@ import * as process from 'node:process'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import MergedOpenApiSpec from './MergedOpenApiSpec'
 import StoryValidator from "./StoryValidator";
+import TestResults from './TestResults'
 
 const command = new Command()
   .description('Run test stories against the OpenSearch spec.')
@@ -44,6 +45,7 @@ const command = new Command()
   .addOption(OPENSEARCH_USERNAME_OPTION)
   .addOption(OPENSEARCH_PASSWORD_OPTION)
   .addOption(OPENSEARCH_INSECURE_OPTION)
+  .addOption(new Option('--coverage <path>', 'path to write test coverage results to'))
   .allowExcessArguments(false)
   .parse()
 
@@ -63,7 +65,8 @@ const runner = new TestRunner(http_client, story_validator, story_evaluator, res
 runner.run(opts.testsPath, spec.api_version(), opts.dryRun)
   .then(
     ({ results, failed }) => {
-      result_logger.log_coverage(spec, results)
+      const test_results = new TestResults(spec, results)
+      result_logger.log_coverage(test_results)
       if (failed) process.exit(1)
     },
     err => { throw err })
