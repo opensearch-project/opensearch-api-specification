@@ -54,10 +54,61 @@ jobs:
         run: docker-compose up -d
 
       - name: Run Tests
-        run: npm run test:spec -- --opensearch-insecure --coverage test-spec-coverage-${{ matrix.entry.version }}.json
+        run: |
+          npm run test:spec -- --opensearch-insecure --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json
 
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
         with:
-          name: test-spec-coverage-${{ matrix.entry.version }}
-          path: test-spec-coverage-${{ matrix.entry.version }}.json      
+          name: coverage-${{ matrix.entry.version }}
+          path: coverage/test-spec-coverage-${{ matrix.entry.version }}.json
+
+  merge-coverage:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: test-opensearch-spec
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download Spec Coverage Data
+        uses: actions/download-artifact@v4
+        with:
+          path: coverage
+
+      - name: Combine Test Coverage Data
+        shell: bash -eo pipefail {0}
+        run: |
+          jq -sc '
+            map(to_entries) |
+            flatten |
+            group_by(.key) |
+            map({key: .[0].key, value: map(.value) | max}) |
+            from_entries |
+            .' $(find ./coverage -name "test-spec-coverage-*.json") > ./coverage/coverage.json
+
+          cat ./coverage/coverage.json
+
+      - name: Construct Comment Data Payload
+        shell: bash -eo pipefail {0}
+        run: |
+          jq \
+            --arg pr_number ${PR_NUMBER} \
+            --slurpfile test_coverage ./coverage/coverage.json \
+            --null-input '
+            {
+              "pr_number": ($pr_number),
+              "comment_identifier": "# Test Coverage Analysis",
+              "template_name": "pr-test-coverage-analysis",
+              "template_data": {
+                "test_coverage": ($test_coverage[0])
+              }
+            }
+            ' | tee pr-comment.json
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
+      - name: Upload PR Comment Payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-comment
+          path: pr-comment.json
