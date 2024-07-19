@@ -22,7 +22,8 @@ interface JsonSchemaValidatorOpts {
 
 const DEFAULT_AJV_OPTS = {
   strict: true,
-  allErrors: true
+  allErrors: true,
+  allowUnionTypes: true
 }
 
 // Wrapper for AJV
