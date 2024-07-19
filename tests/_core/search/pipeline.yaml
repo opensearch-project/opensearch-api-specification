@@ -1,0 +1,37 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: |
+  Test the creation of a search pipeline with sort and split response processors.
+epilogues:
+  - path: /_search/pipeline/sorting_pipeline
+    method: DELETE
+    status: [200, 404]
+version: '>= 2.16'
+chapters:
+  - synopsis: Create search pipeline for sorting and splitting.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: sorting_pipeline
+    request_body:
+      payload:
+        response_processors:
+          - sort:
+              field: "message"
+              order: "asc"
+              target_field: "sorted_message"
+          - split:
+              field: "message"
+              separator: ", "
+              target_field: "split_message"
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Query created pipeline.
+    path: /_search/pipeline/{id}
+    method: GET
+    parameters:
+      id: sorting_pipeline
+    response:
+      status: 200
