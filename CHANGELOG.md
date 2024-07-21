@@ -49,6 +49,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `is_hidden` to `/{index}/_alias/{name}` and `/{index}/_aliases/{name}` ([#429](https://github.com/opensearch-project/opensearch-api-specification/pull/429))
 - Added `ignore_unmapped` to `GeoDistanceQuery` ([#427](https://github.com/opensearch-project/opensearch-api-specification/pull/427))
 - Added missing variants of `indices.put_alias` ([#434](https://github.com/opensearch-project/opensearch-api-specification/pull/434)) 
+- Added `persian_stem` filter ([#444](https://github.com/opensearch-project/opensearch-api-specification))
 
 ### Changed
 
