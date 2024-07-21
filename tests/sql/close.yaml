@@ -1,6 +1,6 @@
 $schema: ../../json_schemas/test_story.schema.yaml
 
-description: Test send SQL query to index.
+description: Test to explicitly clear the cursor context
 
 prologues:
   - path: /{index}
@@ -15,9 +15,21 @@ epilogues:
     status: [200, 404]
 chapters:
   - synopsis: Get SQL query
-    path: /_plugins/_sql/
+    id: query_sql
+    path: /_plugins/_sql
     method: POST
     request_body:
       payload:
         query: SELECT * FROM books
+        fetch_size: 1
+    output:
+      cursor: "payload.cursor"
+    status: [200]
+  - synopsis: Close cursor
+    path: /_plugins/_sql/close
+    method: POST
+    request_body:
+      payload:
+        cursor:
+          - ${query_sql.cursor}
     status: [200]
