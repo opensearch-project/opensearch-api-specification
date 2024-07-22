@@ -9,18 +9,16 @@
 
 import { type OpenAPIV3 } from 'openapi-types'
 import fs from 'fs'
-import _, { isEmpty } from 'lodash'
-import { delete_matching_keys, read_yaml, write_yaml } from '../helpers'
+import _ from 'lodash'
+import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import { Logger } from '../Logger'
-import * as semver from 'semver'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
 export default class OpenApiMerger {
   root_folder: string
   logger: Logger
-  target_version?: string
 
   protected _spec: Record<string, any>
   protected _merged: boolean = false
@@ -28,10 +26,9 @@ export default class OpenApiMerger {
   paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
   schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
 
-  constructor (root_folder: string, target_version?: string, logger: Logger = new Logger()) {
+  constructor (root_folder: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.root_folder = fs.realpathSync(root_folder)
-    this.target_version = target_version === undefined ? undefined : semver.coerce(target_version)?.toString()
     this._spec = {
       openapi: '3.1.0',
       info: read_yaml(`${this.root_folder}/_info.yaml`, true),
@@ -76,54 +73,6 @@ export default class OpenApiMerger {
       this._spec.components.responses = { ...this._spec.components.responses, ...spec.components.responses }
       this._spec.components.requestBodies = { ...this._spec.components.requestBodies, ...spec.components.requestBodies }
     })
-
-    this.#remove_refs_per_semver()
-  }
-
-  // Remove any refs that are x-version-added/removed incompatible with the target server version.
-  #remove_refs_per_semver() : void {
-    this.#remove_keys_not_matching_semver(this._spec.paths)
-
-    // parameters
-    const removed_params = this.#remove_keys_not_matching_semver(this._spec.components.parameters)
-    const removed_parameter_refs = _.map(removed_params, (ref) => `#/components/parameters/${ref}`)
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        method_item.parameters = _.filter(method_item.parameters, (param) => !_.includes(removed_parameter_refs, param.$ref))
-      })
-    })
-
-    // responses
-    const removed_responses = this.#remove_keys_not_matching_semver(this._spec.components.responses)
-    const removed_response_refs = _.map(removed_responses, (ref) => `#/components/responses/${ref}`)
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        method_item.responses = _.omitBy(method_item.responses, (param) => _.includes(removed_response_refs, param.$ref))
-      })
-    })
-
-    this._spec.paths = _.omitBy(this._spec.paths, isEmpty)
-  }
-
-  #exclude_per_semver(obj: any): boolean {
-    if (this.target_version === undefined) return false
-
-    const x_version_added = semver.coerce(obj['x-version-added'] as string)
-    const x_version_removed = semver.coerce(obj['x-version-removed'] as string)
-
-    if (x_version_added && !semver.satisfies(this.target_version, `>=${x_version_added?.toString()}`)) {
-      return true
-    } else if (x_version_removed && !semver.satisfies(this.target_version, `<${x_version_removed?.toString()}`)) {
-      return true
-    }
-
-    return false
-  }
-
-  // Remove any elements that are x-version-added/removed incompatible with the target server version.
-  #remove_keys_not_matching_semver(obj: any): string[] {
-    if (this.target_version === undefined) return []
-    return delete_matching_keys(obj, this.#exclude_per_semver.bind(this))
   }
 
   // Redirect schema references in namespace files to local references in single-file spec.

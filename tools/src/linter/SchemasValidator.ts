@@ -32,7 +32,7 @@ export default class SchemasValidator {
   }
 
   validate (): ValidationError[] {
-    const merger = new OpenApiMerger(this.root_folder, undefined, new Logger(LogLevel.error))
+    const merger = new OpenApiMerger(this.root_folder, new Logger(LogLevel.error))
     this.spec = merger.spec().components as Record<string, any>
     const named_schemas_errors = this.validate_named_schemas()
     if (named_schemas_errors.length > 0) return named_schemas_errors

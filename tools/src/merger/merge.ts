@@ -8,9 +8,10 @@
 */
 
 import { Command, Option } from '@commander-js/extra-typings'
-import OpenApiMerger from './OpenApiMerger'
-import { resolve } from 'path'
 import { Logger, LogLevel } from '../Logger'
+import { resolve } from 'path'
+import OpenApiMerger from './OpenApiMerger'
+import OpenApiVersionExtractor from './OpenApiVersionExtractor'
 
 const command = new Command()
   .description('Merges the multi-file OpenSearch spec into a single file for programmatic use.')
@@ -23,7 +24,13 @@ const command = new Command()
 
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
-const merger = new OpenApiMerger(opts.source, opts.opensearchVersion, logger)
-logger.log(`Merging ${opts.source} into ${opts.output} (${opts.opensearchVersion}) ...`)
-merger.write_to(opts.output)
+const merger = new OpenApiMerger(opts.source, logger)
+if (opts.opensearchVersion === undefined) {
+  logger.log(`Merging ${opts.source} into ${opts.output} ...`)
+  merger.write_to(opts.output)
+} else {
+  logger.log(`Merging ${opts.source} into ${opts.output} (${opts.opensearchVersion}) ...`)
+  const extractor = new OpenApiVersionExtractor(merger.spec(), opts.opensearchVersion)
+  extractor.write_to(opts.output)
+}
 logger.log('Done.')
