@@ -43,7 +43,8 @@ export default class OpenApiVersionExtractor {
     return this
   }
 
-  // Remove any refs that are x-version-added/removed incompatible with the target server version.
+  // Remove any refs and objects that reference them that are x-version-added/removed
+  // incompatible with the target server version.
   #extract() : void {
     this._logger.info(`Extracting version ${this._target_version} ...`)
 
@@ -77,6 +78,10 @@ export default class OpenApiVersionExtractor {
     })
 
     this._spec.paths = _.omitBy(this._spec.paths, isEmpty)
+
+    this.#remove_unused_bodies()
+    this.#remove_unused_parameters()
+    this.#remove_unused_responses()
   }
 
   #exclude_per_semver(obj: any): boolean {
@@ -98,5 +103,62 @@ export default class OpenApiVersionExtractor {
   #remove_keys_not_matching_semver(obj: any): string[] {
     if (this._target_version === undefined) return []
     return delete_matching_keys(obj, this.#exclude_per_semver.bind(this))
+  }
+
+  #remove_unused_bodies(): void {
+    if (this._spec === undefined) return
+
+    var used_bodies: string[] = []
+    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
+      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
+        if (method_item.requestBody?.$ref !== undefined) {
+          used_bodies = _.concat(used_bodies, method_item.requestBody.$ref)
+        }
+      })
+    })
+
+    this._spec.components.requestBodies = _.pickBy(this._spec.components.requestBodies, (_value, key) =>
+      _.includes(used_bodies, `#/components/requestBodies/${key}`)
+    )
+  }
+
+
+  #remove_unused_responses(): void {
+    if (this._spec === undefined) return
+
+    var used_responses: string[] = []
+    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
+      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
+        Object.entries(method_item.responses as Document).forEach(([_response_code, response]) => {
+          if (response.$ref !== undefined) {
+            used_responses = _.concat(used_responses, response.$ref)
+          }
+        })
+      })
+    })
+
+    this._spec.components.responses = _.pickBy(this._spec.components.responses, (_value, key) =>
+      _.includes(used_responses, `#/components/responses/${key}`)
+    )
+  }
+
+
+  #remove_unused_parameters(): void {
+    if (this._spec === undefined) return
+
+    var used_parameters: string[] = []
+    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
+      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
+        Object.entries(method_item.parameters as Document).forEach(([_response_code, parameter]) => {
+          if (parameter.$ref !== undefined) {
+            used_parameters = _.concat(used_parameters, parameter.$ref)
+          }
+        })
+      })
+    })
+
+    this._spec.components.parameters = _.pickBy(this._spec.components.parameters, (_value, key) =>
+      _.includes(used_parameters, `#/components/parameters/${key}`)
+    )
   }
 }
