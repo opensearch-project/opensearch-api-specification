@@ -9,9 +9,10 @@
 
 import { OpenAPIV3 } from 'openapi-types'
 import { Logger } from '../Logger'
-import { determine_possible_schema_types, SpecificationContext } from '../_utils';
+import { determine_possible_schema_types, HTTP_METHODS, SpecificationContext } from '../_utils';
 import { SchemaVisitor } from '../_utils/SpecificationVisitor';
 import OpenApiMerger from '../merger/OpenApiMerger';
+import _ from 'lodash';
 
 // An augmented spec with additionalProperties: false.
 export default class MergedOpenApiSpec {
@@ -35,6 +36,16 @@ export default class MergedOpenApiSpec {
 
   api_version(): string {
     return (this.spec().info as any)['x-api-version']
+  }
+
+  paths(): Record<string, string[]> {
+    var obj: Record<string, string[]> = {}
+    _.entries(this.spec().paths).forEach(([path, ops]) => {
+      obj[path] = _.entries(_.pick(ops, HTTP_METHODS)).map(([verb, _]) => {
+        return verb
+      })
+    })
+    return obj
   }
 
   private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3.Document): void {

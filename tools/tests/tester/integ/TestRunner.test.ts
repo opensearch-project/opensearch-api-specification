@@ -16,13 +16,13 @@ test('stories folder', async () => {
   const info = await opensearch_http_client.wait_until_available()
   expect(info.version).toBeDefined()
 
-  const result = await test_runner.run('tools/tests/tester/fixtures/stories')
+  const run = await test_runner.run('tools/tests/tester/fixtures/stories')
 
-  expect(result.failed).toBeTruthy()
+  expect(run.failed).toBeTruthy()
 
   const actual_evaluations: Array<Omit<StoryEvaluation, 'full_path'>> = []
 
-  for (const evaluation of result.evaluations) {
+  for (const evaluation of run.results.evaluations) {
     const { full_path, ...rest } = flatten_errors(evaluation)
     expect(full_path.endsWith(rest.display_path)).toBeTruthy()
     actual_evaluations.push(rest)
