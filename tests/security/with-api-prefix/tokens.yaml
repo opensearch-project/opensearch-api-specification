@@ -1,0 +1,35 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test authtoken endpoints.
+
+chapters:
+  - synopsis: Create an auth token.
+    path: /_plugins/_security/api/authtoken
+    method: POST
+    response:
+      status: 200
+  - synopsis: Create an On-Behalf-Of token.
+    version: '>= 2.12'
+    path: /_plugins/_security/api/generateonbehalfoftoken
+    method: POST
+    request_body:
+      payload:
+        description: Auth token for admin
+        service: ""
+        duration: 60
+    response:
+      status: 200
+  - synopsis: Create internal user token.
+    path: /_plugins/_security/api/internalusers/{username}/authtoken
+    method: POST
+    parameters:
+      username: admin
+    response:
+      status: 200
+  - synopsis: Create user token.
+    path: /_plugins/_security/api/user/{username}/authtoken
+    method: POST
+    parameters:
+      username: admin
+    response:
+      status: 200
