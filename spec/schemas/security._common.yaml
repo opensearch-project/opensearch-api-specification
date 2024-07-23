@@ -194,6 +194,28 @@ components:
           type: string
         not_after:
           type: string
+    
+    CertificatesPerNode:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the node.
+        certificates:
+          type: object
+          properties:
+            http:
+              type: array
+              items:
+                type: object
+                properties:
+                  $ref: '#/components/schemas/CertificatesDetail'
+            transport:
+              type: array
+              items:
+                type: object
+                properties:
+                  $ref: '#/components/schemas/CertificatesDetail'
 
     GetCertificates:
       type: object
@@ -206,6 +228,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CertificatesDetail'
+      
+    GetCertificatesNew:
+      type: object
+      properties:
+        _nodes:
+          type: object
+          properties:
+            total:
+              type: number
+              description: Total number of nodes.
+            successful:
+              type: number
+              description: Number of nodes for which certificates could be fetched.
+            failed:
+              type: number
+              description: Number of nodes for which certificates could not be fetched.
+        cluster_name:
+          type: string
+          description: Name of this cluster.
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CertificatesPerNode'
+            
 
     ChangePasswordRequestContent:
       type: object
