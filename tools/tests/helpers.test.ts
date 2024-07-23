@@ -41,7 +41,7 @@ describe('helpers', () => {
   describe('delete_matching_keys', () => {
     test('empty collection', () => {
       var obj = {}
-      expect(delete_matching_keys(obj, (_obj) => false)).toEqual([])
+      delete_matching_keys(obj, (_obj) => false)
       expect(obj).toEqual({})
     })
 
@@ -64,23 +64,23 @@ describe('helpers', () => {
       })
 
       test('removes all keys', () => {
-        expect(delete_matching_keys(obj, (_item) => true)).toEqual(['foo', 'zar'])
+        delete_matching_keys(obj, (_item) => true)
         expect(obj).toStrictEqual({})
       })
 
       test('removes no keys', () => {
         const obj2 = _.cloneDeep(obj)
-        expect(delete_matching_keys(obj, (_item) => false)).toEqual([])
+        delete_matching_keys(obj, (_item) => false)
         expect(obj).toStrictEqual(obj2)
       })
 
       test('removes a value from a key', () => {
-        expect(delete_matching_keys(obj, (_item: any) => _item.x == 1)).toEqual(['bar1'])
+        delete_matching_keys(obj, (_item: any) => _item.x == 1)
         expect(obj).toStrictEqual({ foo: {}, zar: { bar2: { y: 2 } } })
       })
 
       test('removes multiple values from a key', () => {
-        expect(delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)).toEqual(['bar1', 'bar2'])
+        delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)
         expect(obj).toStrictEqual({ foo: {}, zar: {} })
       })
     })
@@ -102,23 +102,23 @@ describe('helpers', () => {
       })
 
       test('removes all keys', () => {
-        expect(delete_matching_keys(obj, (_item) => true)).toEqual(['foo'])
+        delete_matching_keys(obj, (_item) => true)
         expect(obj).toStrictEqual({})
       })
 
       test('removes no keys', () => {
         const obj2 = _.cloneDeep(obj)
-        expect(delete_matching_keys(obj, (_item) => false)).toEqual([])
+        delete_matching_keys(obj, (_item) => false)
         expect(obj).toStrictEqual(obj2)
       })
 
       test('removes a value from a key', () => {
-        expect(delete_matching_keys(obj, (_item: any) => _item.x == 1)).toEqual(['bar1'])
+        delete_matching_keys(obj, (_item: any) => _item.x == 1)
         expect(obj).toStrictEqual({ foo: [{ bar2: { y: 2 } }] })
       })
 
       test('removes multiple values from a key', () => {
-        expect(delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)).toEqual(['bar1', 'bar2'])
+        delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)
         expect(obj).toStrictEqual({ foo: [{}] })
       })
     })

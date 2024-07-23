@@ -9,7 +9,7 @@
 
 import { Logger } from '../Logger'
 import { delete_matching_keys, write_yaml } from '../helpers'
-import _, { isEmpty } from 'lodash'
+import _ from 'lodash'
 import { type OpenAPIV3 } from 'openapi-types'
 import semver from 'semver'
 
@@ -50,34 +50,7 @@ export default class OpenApiVersionExtractor {
 
     this._spec = _.cloneDeep(this._source_spec)
 
-    this._spec.components = this._spec.components ?? {
-      parameters: {},
-      requestBodies: {},
-      responses: {},
-      schemas: {}
-    }
-
-    this.#remove_keys_not_matching_semver(this._spec.paths)
-
-    // parameters
-    const removed_params = this.#remove_keys_not_matching_semver(this._spec.components.parameters)
-    const removed_parameter_refs = _.map(removed_params, (ref) => `#/components/parameters/${ref}`)
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        method_item.parameters = _.filter(method_item.parameters, (param) => !_.includes(removed_parameter_refs, param.$ref))
-      })
-    })
-
-    // responses
-    const removed_responses = this.#remove_keys_not_matching_semver(this._spec.components.responses)
-    const removed_response_refs = _.map(removed_responses, (ref) => `#/components/responses/${ref}`)
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        method_item.responses = _.omitBy(method_item.responses, (param) => _.includes(removed_response_refs, param.$ref))
-      })
-    })
-
-    this._spec.paths = _.omitBy(this._spec.paths, isEmpty)
+    this.#remove_keys_not_matching_semver()
 
     this.#remove_unused_bodies()
     this.#remove_unused_parameters()
@@ -100,9 +73,9 @@ export default class OpenApiVersionExtractor {
   }
 
   // Remove any elements that are x-version-added/removed incompatible with the target server version.
-  #remove_keys_not_matching_semver(obj: any): string[] {
-    if (this._target_version === undefined) return []
-    return delete_matching_keys(obj, this.#exclude_per_semver.bind(this))
+  #remove_keys_not_matching_semver(): void {
+    if (this._target_version === undefined) return
+    delete_matching_keys(this._spec, this.#exclude_per_semver.bind(this))
   }
 
   #remove_unused_bodies(): void {
@@ -110,9 +83,14 @@ export default class OpenApiVersionExtractor {
 
     var used_bodies: string[] = []
     Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        if (method_item.requestBody?.$ref !== undefined) {
-          used_bodies = _.concat(used_bodies, method_item.requestBody.$ref)
+      Object.entries(path_item as Document).forEach(([method, method_item]) => {
+        const ref = method_item.requestBody?.$ref
+        if (ref !== undefined) {
+          if (this._spec?.components.requestBodies[ref.split('/').pop()] !== undefined) {
+            used_bodies = _.concat(used_bodies, method_item.requestBody.$ref)
+          } else {
+            delete path_item[method]
+          }
         }
       })
     })
@@ -122,16 +100,20 @@ export default class OpenApiVersionExtractor {
     )
   }
 
-
   #remove_unused_responses(): void {
     if (this._spec === undefined) return
 
     var used_responses: string[] = []
     Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
       Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        Object.entries(method_item.responses as Document).forEach(([_response_code, response]) => {
+        Object.entries(method_item.responses as Document).forEach(([response_code, response]) => {
+          const ref = response.$ref
           if (response.$ref !== undefined) {
-            used_responses = _.concat(used_responses, response.$ref)
+            if (this._spec?.components.responses[ref.split('/').pop()] !== undefined) {
+              used_responses = _.concat(used_responses, ref)
+            } else {
+              delete method_item.responses[response_code]
+            }
           }
         })
       })
@@ -142,16 +124,20 @@ export default class OpenApiVersionExtractor {
     )
   }
 
-
   #remove_unused_parameters(): void {
     if (this._spec === undefined) return
 
     var used_parameters: string[] = []
     Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
       Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        Object.entries(method_item.parameters as Document).forEach(([_response_code, parameter]) => {
+        Object.entries(method_item.parameters as Document).forEach(([response_code, parameter]) => {
+          const ref = parameter.$ref
           if (parameter.$ref !== undefined) {
-            used_parameters = _.concat(used_parameters, parameter.$ref)
+            if (this._spec?.components.parameters[ref.split('/').pop()] !== undefined) {
+              used_parameters = _.concat(used_parameters, parameter.$ref)
+            } else {
+              delete method_item.parameters[response_code]
+            }
           }
         })
       })

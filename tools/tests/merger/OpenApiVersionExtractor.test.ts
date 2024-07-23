@@ -79,27 +79,27 @@ describe('extract() from a merged API spec', () => {
         '200', '201', '404', '500', '503', 'removed-2.0', 'added-1.3-removed-2.0'
       ])
     })
+  })
 
-    describe('2.0', () => {
-      const extractor = new OpenApiVersionExtractor(merger.spec(), '2.0')
+  describe('2.0', () => {
+    const extractor = new OpenApiVersionExtractor(merger.spec(), '2.0')
 
-      test('has matching responses', () => {
-        const spec = extractor.extract()
-        expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
-          '200', '201', '404', '500', '503', 'added-2.0'
-        ])
-      })
+    test('has matching responses', () => {
+      const spec = extractor.extract()
+      expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
+        '200', '201', '404', '500', '503', 'added-2.0'
+      ])
     })
+  })
 
-    describe('2.1', () => {
-      const extractor = new OpenApiVersionExtractor(merger.spec(), '2.1')
+  describe('2.1', () => {
+    const extractor = new OpenApiVersionExtractor(merger.spec(), '2.1')
 
-      test('has matching responses', () => {
-        const spec = extractor.extract()
-        expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
-          '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1'
-        ])
-      })
+    test('has matching responses', () => {
+      const spec = extractor.extract()
+      expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
+        '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1'
+      ])
     })
   })
 })

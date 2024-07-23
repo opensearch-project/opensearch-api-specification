@@ -47,7 +47,6 @@ export function sort_by_keys (obj: Record<string, any>, priorities: string[] = [
     return a[0].localeCompare(b[0])
   })
   sorted.forEach(([k, v]) => {
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete obj[k]
     obj[k] = v
   })
@@ -65,21 +64,17 @@ export function sort_array_by_keys (values: any[], priorities: string[] = []): s
   })
 }
 
-export function delete_matching_keys(obj: any, condition: (obj: any) => boolean): string[] {
-  let removed: string[] = []
+export function delete_matching_keys(obj: any, condition: (obj: any) => boolean): void {
   for (const key in obj) {
     var item = obj[key]
     if (_.isObject(item)) {
       if (condition(item)) {
-        removed.push(key)
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete obj[key]
       } else {
-        removed = _.concat(removed, delete_matching_keys(item, condition))
+        delete_matching_keys(item, condition)
       }
     }
   }
-  return removed
 }
 
 export function ensure_parent_dir (file_path: string): void {
