@@ -9,12 +9,12 @@ prologues:
       action_group: test
     request_body:
       payload:
-        reserved:
-        hidden:
+        reserved: false
+        hidden: false
         allowed_actions: []
-        type: 
-        description:
-        static: 
+        type: index
+        description: Test action group
+        static: false
     status: 200
 chapters:
   - synopsis: Get action groups bulk.
@@ -26,10 +26,13 @@ chapters:
     path: /_plugins/_security/api/actiongroups
     method: PATCH
     request_body:
-      payload:
-        op:
-        path:
-        value:
+      payload: 
+        - op: add
+          path: /test
+          value: 
+            allowed_actions: ['indices:admin/create', 'indices:admin/mapping/put']
+            
+          
     response:
       status: 200
   - synopsis: Get action group.
@@ -46,12 +49,12 @@ chapters:
       action_group: test2
     request_body:
       payload:
-        reserved:
-        hidden:
+        reserved: false
+        hidden: false
         allowed_actions: []
-        type: 
-        description:
-        static: 
+        type: index
+        description: Test action group
+        static: false
     response:
       status: 200
   - synopsis: Patch action group.
@@ -60,10 +63,11 @@ chapters:
     parameters:
       action_group: test2
     request_body:
-      payload:
-        op:
-        path:
-        value:
+      payload: 
+        - op: replace
+          path: /allowed_actions
+          value: 
+            allowed_actions: ['indices:admin/create', 'indices:admin/mapping/put']
     response:
       status: 200
   - synopsis: Delete action group.

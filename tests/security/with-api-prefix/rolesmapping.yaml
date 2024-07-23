@@ -12,10 +12,12 @@ chapters:
     path: /_plugins/_security/api/rolesmapping
     method: PATCH
     request_body:
-      payload:
-        op:
-        path:
-        value:
+      payload: 
+        - op: add
+          path: /all_access
+          value: 
+            users: [test]
+            backend_roles: [admin]
     response:
       status: 200
   - synopsis: Create rolesmapping.
@@ -25,13 +27,11 @@ chapters:
       role: test
     request_body:
       payload:
-        hosts: []
-        users: []
-        reserved:
-        hidden:
-        backend_roles: []
-        and_backend_roles: []
-        description:
+        backend_roles: [captains]
+        hosts: 
+          - '*.example.com'
+        
+        users: [test]
     response:
       status: 200
   - synopsis: Get rolesmapping.
@@ -47,10 +47,10 @@ chapters:
     parameters:
       role: test
     request_body:
-      payload:
-        op:
-        path:
-        value:
+      payload: 
+        - op: replace
+          path: /backend_roles
+          value: [admin]
     response:
       status: 200
   - synopsis: Delete rolesmapping.

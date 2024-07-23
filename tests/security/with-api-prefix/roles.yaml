@@ -12,10 +12,12 @@ chapters:
     path: /_plugins/_security/api/roles
     method: PATCH
     request_body:
-      payload:
-        op:
-        path:
-        value:
+      payload: 
+        - op: replace
+          path: /test/index_permissions/0/fls
+          value: ['random*', ~random1]
+        - op: remove
+          path: /test/index_permissions/0/dls
     response:
       status: 200
   - synopsis: Create role.
@@ -25,20 +27,22 @@ chapters:
       role: test
     request_body:
       payload:
-        reserved:
-        hidden:
-        description:
-        cluster_permissions:
-        index_permissions:
-          index_patterns: []
-          dls:
-          fls: []
-          masked_fields: []
-          allowed_actions: []
-        tenant_permissions:
-          tenant_patterns: []
-          allowed_actions: []
-        static:
+        cluster_permissions: 
+          - cluster_composite_ops
+          - indices_monitor
+        index_permissions: 
+          - index_patterns: 
+              - 'movies*'
+            dls: ''
+            fls: []
+            masked_fields: []
+            allowed_actions: 
+              - read
+        tenant_permissions: 
+          - tenant_patterns: 
+              - human_resources
+            allowed_actions: 
+              - kibana_all_read
     response:
       status: 200
   - synopsis: Get role.
@@ -55,9 +59,10 @@ chapters:
       role: test
     request_body:
       payload:
-        op:
-        path:
-        value:
+        op: replace
+        path: /index_permissions/0/fls
+        value: [random1, random2]
+        
     response:
       status: 200
   - synopsis: Delete role.
