@@ -10,13 +10,16 @@
 import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'
+import TestResults from './TestResults'
 
 export interface ResultLogger {
   log: (evaluation: StoryEvaluation) => void
+  log_coverage: (_results: TestResults) => void
 }
 
 export class NoOpResultLogger implements ResultLogger {
   log (_: StoryEvaluation): void { }
+  log_coverage(_results: TestResults): void { }
 }
 
 export class ConsoleResultLogger implements ResultLogger {
@@ -36,6 +39,11 @@ export class ConsoleResultLogger implements ResultLogger {
     this.#log_chapters(evaluation.chapters ?? [], 'CHAPTERS')
     this.#log_chapters(evaluation.epilogues ?? [], 'EPILOGUES')
     if (with_padding) console.log()
+  }
+
+  log_coverage(results: TestResults): void {
+    console.log()
+    console.log(`Tested ${results.evaluated_paths_count()}/${results.spec_paths_count()} paths.`)
   }
 
   #log_story ({ result, full_path, display_path, message }: StoryEvaluation): void {

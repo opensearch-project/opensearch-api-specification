@@ -48,6 +48,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing metrics options to `/_nodes/stats` ([#422](https://github.com/opensearch-project/opensearch-api-specification/pull/422))
 - Added tests against OpenSearch 1.3 ([#424](https://github.com/opensearch-project/opensearch-api-specification/pull/424))
 - Added `is_hidden` to `/{index}/_alias/{name}` and `/{index}/_aliases/{name}` ([#429](https://github.com/opensearch-project/opensearch-api-specification/pull/429))
+- Added `ignore_unmapped` to `GeoDistanceQuery` ([#427](https://github.com/opensearch-project/opensearch-api-specification/pull/427))
+- Added missing variants of `indices.put_alias` ([#434](https://github.com/opensearch-project/opensearch-api-specification/pull/434)) 
+- Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442)) 
+- Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 
 ### Changed
 
@@ -59,6 +63,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replaced the deprecated fs.rmdirSync with fs.rmSync ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Tester tool now provides better context for non-2XX responses when --verbose is used ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Lock testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
+- Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
 
 ### Deprecated
 
@@ -85,6 +90,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed query DSL `match` that supports a field name and value ([#405](https://github.com/opensearch-project/opensearch-api-specification/pull/405)) 
 - Fixed `/_mapping` with `index` in query ([#385](https://github.com/opensearch-project/opensearch-api-specification/pull/385))
 - Fixed duplicate `/_nodes/{node_id}` path ([#416](https://github.com/opensearch-project/opensearch-api-specification/pull/416))
+- Fixed `_source` accepting an array of fields in `/_search` ([#430](https://github.com/opensearch-project/opensearch-api-specification/pull/430))
 
 ### Security
 
