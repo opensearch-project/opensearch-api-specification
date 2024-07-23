@@ -49,6 +49,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `is_hidden` to `/{index}/_alias/{name}` and `/{index}/_aliases/{name}` ([#429](https://github.com/opensearch-project/opensearch-api-specification/pull/429))
 - Added `ignore_unmapped` to `GeoDistanceQuery` ([#427](https://github.com/opensearch-project/opensearch-api-specification/pull/427))
 - Added missing variants of `indices.put_alias` ([#434](https://github.com/opensearch-project/opensearch-api-specification/pull/434)) 
+- Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442)) 
+- Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 - Added tests for security APIs ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 
 ### Changed
@@ -61,6 +63,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replaced the deprecated fs.rmdirSync with fs.rmSync ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Tester tool now provides better context for non-2XX responses when --verbose is used ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Lock testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
+- Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
 
 ### Deprecated
 
