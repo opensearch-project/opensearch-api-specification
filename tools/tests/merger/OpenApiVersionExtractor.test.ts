@@ -43,7 +43,7 @@ describe('extract() from a merged API spec', () => {
 
       test('writes a spec', () => {
         extractor.write_to(filename)
-        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/expected_2.0.yaml', 'utf8'))
+        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/expected_default.yaml', 'utf8'))
           .toEqual(fs.readFileSync(filename, 'utf8'))
       })
     })
@@ -89,6 +89,27 @@ describe('extract() from a merged API spec', () => {
       expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0'
       ])
+    })
+
+    describe('write_to()', () => {
+      var temp: tmp.DirResult
+      var filename: string
+
+      beforeEach(() => {
+        temp = tmp.dirSync()
+        filename = `${temp.name}/opensearch-openapi.yaml`
+      })
+
+      afterEach(() => {
+        fs.unlinkSync(filename)
+        temp.removeCallback()
+      })
+
+      test('writes a spec', () => {
+        extractor.write_to(filename)
+        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/expected_2.0.yaml', 'utf8'))
+          .toEqual(fs.readFileSync(filename, 'utf8'))
+      })
     })
   })
 

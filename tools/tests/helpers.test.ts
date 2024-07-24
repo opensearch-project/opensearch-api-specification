@@ -8,7 +8,7 @@
 */
 
 import _ from 'lodash'
-import { delete_matching_keys, sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
+import { delete_matching_keys, find_refs, sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
 
 describe('helpers', () => {
   describe('sort_array_by_keys', () => {
@@ -121,6 +121,34 @@ describe('helpers', () => {
         delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)
         expect(obj).toStrictEqual({ foo: [{}] })
       })
+    })
+  })
+
+  describe('find_refs', () => {
+    test('empty collection', () => {
+      expect(find_refs({})).toEqual([])
+    })
+
+    test('with refs', () => {
+      expect(find_refs({
+        $ref: 1,
+        null: null,
+        undefined,
+        obj: {
+          $ref: 2,
+          obj: {
+            $ref: 3
+          }
+        },
+        arr: [{
+          obj1: {
+            $ref: 'dup',
+          },
+          obj2: {
+            $ref: 'dup',
+          },
+        }]
+      })).toEqual([1, 2, 3, 'dup'])
     })
   })
 })

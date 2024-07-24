@@ -7,9 +7,9 @@
 * compatible open source license.
 */
 
-import { Logger } from '../Logger'
-import { delete_matching_keys, write_yaml } from '../helpers'
 import _ from 'lodash'
+import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
+import { Logger } from '../Logger'
 import { type OpenAPIV3 } from 'openapi-types'
 import semver from 'semver'
 
@@ -51,10 +51,7 @@ export default class OpenApiVersionExtractor {
     this._spec = _.cloneDeep(this._source_spec)
 
     this.#remove_keys_not_matching_semver()
-
-    this.#remove_unused_bodies()
-    this.#remove_unused_parameters()
-    this.#remove_unused_responses()
+    this.#remove_unused()
   }
 
   #exclude_per_semver(obj: any): boolean {
@@ -78,73 +75,35 @@ export default class OpenApiVersionExtractor {
     delete_matching_keys(this._spec, this.#exclude_per_semver.bind(this))
   }
 
-  #remove_unused_bodies(): void {
+  #remove_unused(): void {
     if (this._spec === undefined) return
 
-    var used_bodies: string[] = []
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([method, method_item]) => {
-        const ref = method_item.requestBody?.$ref
-        if (ref !== undefined) {
-          if (this._spec?.components.requestBodies[ref.split('/').pop()] !== undefined) {
-            used_bodies = _.concat(used_bodies, method_item.requestBody.$ref)
-          } else {
-            delete path_item[method]
-          }
-        }
-      })
-    })
+    // remove anything that's not referenced
+    var references: string[] = find_refs(this._spec)
 
-    this._spec.components.requestBodies = _.pickBy(this._spec.components.requestBodies, (_value, key) =>
-      _.includes(used_bodies, `#/components/requestBodies/${key}`)
+    this._spec.components.schemas = _.pickBy(this._spec.components.schemas, (_value, key) =>
+      _.includes(references, `#/components/schemas/${key}`)
     )
-  }
-
-  #remove_unused_responses(): void {
-    if (this._spec === undefined) return
-
-    var used_responses: string[] = []
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        Object.entries(method_item.responses as Document).forEach(([response_code, response]) => {
-          const ref = response.$ref
-          if (response.$ref !== undefined) {
-            if (this._spec?.components.responses[ref.split('/').pop()] !== undefined) {
-              used_responses = _.concat(used_responses, ref)
-            } else {
-              delete method_item.responses[response_code]
-            }
-          }
-        })
-      })
-    })
-
-    this._spec.components.responses = _.pickBy(this._spec.components.responses, (_value, key) =>
-      _.includes(used_responses, `#/components/responses/${key}`)
-    )
-  }
-
-  #remove_unused_parameters(): void {
-    if (this._spec === undefined) return
-
-    var used_parameters: string[] = []
-    Object.entries(this._spec.paths as Document).forEach(([_path, path_item]) => {
-      Object.entries(path_item as Document).forEach(([_method, method_item]) => {
-        Object.entries(method_item.parameters as Document).forEach(([response_code, parameter]) => {
-          const ref = parameter.$ref
-          if (parameter.$ref !== undefined) {
-            if (this._spec?.components.parameters[ref.split('/').pop()] !== undefined) {
-              used_parameters = _.concat(used_parameters, parameter.$ref)
-            } else {
-              delete method_item.parameters[response_code]
-            }
-          }
-        })
-      })
-    })
 
     this._spec.components.parameters = _.pickBy(this._spec.components.parameters, (_value, key) =>
-      _.includes(used_parameters, `#/components/parameters/${key}`)
+      _.includes(references, `#/components/parameters/${key}`)
+    )
+
+    this._spec.components.responses = _.pickBy(this._spec.components.responses, (_value, key) =>
+      _.includes(references, `#/components/responses/${key}`)
+    )
+
+    this._spec.components.requestBodies = _.pickBy(this._spec.components.requestBodies, (_value, key) =>
+      _.includes(references, `#/components/requestBodies/${key}`)
+    )
+
+    // collect what's left
+    var remaining = _.flatMap(['schemas', 'parameters', 'responses', 'requestBodies'], (key) =>
+      _.keys(this._spec?.components?.[key]).map((ref) => `#/components/${key}/${ref}`)
+    )
+
+    delete_matching_keys(this._spec, (obj) =>
+      obj.$ref !== undefined && !_.includes(remaining, obj.$ref)
     )
   }
 }
