@@ -39,7 +39,7 @@ describe('TestResults', () => {
   })
 
   test('spec_paths_count', () => {
-    expect(test_results.spec_paths_count()).toEqual(4)
+    expect(test_results.spec_paths_count()).toEqual(6)
   })
 
   test('write_coverage', () => {
@@ -47,8 +47,8 @@ describe('TestResults', () => {
     test_results.write_coverage(filename)
     expect(JSON.parse(fs.readFileSync(filename, 'utf8'))).toEqual({
       evaluated_paths_count: 1,
-      evaluated_paths_pct: 25,
-      paths_count: 4
+      evaluated_paths_pct: 16.67,
+      paths_count: 6
     })
     fs.unlinkSync(filename)
   })

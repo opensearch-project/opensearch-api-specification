@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import _, { extend } from 'lodash'
+import _, { extend, isEmpty } from 'lodash'
 import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
 import { type OpenAPIV3 } from 'openapi-types'
@@ -98,5 +98,7 @@ export default class OpenApiVersionExtractor {
     delete_matching_keys(this._spec, (obj) =>
       obj.$ref !== undefined && !_.includes(remaining, obj.$ref)
     )
+
+    this._spec.paths = _.omitBy(this._spec.paths, isEmpty)
   }
 }
