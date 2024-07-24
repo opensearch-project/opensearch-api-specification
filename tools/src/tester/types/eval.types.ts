@@ -44,8 +44,9 @@ export interface ChapterEvaluation {
     status: Evaluation
     payload_body: Evaluation,
     payload_schema: Evaluation
-  }
-  output_values?: EvaluationWithOutput
+    output_values: Evaluation
+  },
+  output?: ChapterOutput
 }
 
 export class ChaptersEvaluations {

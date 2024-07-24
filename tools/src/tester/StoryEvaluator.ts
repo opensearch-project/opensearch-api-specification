@@ -67,8 +67,8 @@ export default class StoryEvaluator {
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR
-        if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-          story_outputs.set_chapter_output(chapter.id, evaluation.output_values?.output)
+        if (evaluation.output !== undefined && chapter.id !== undefined) {
+          story_outputs.set_chapter_output(chapter.id, evaluation.output)
         }
         evaluations.push(evaluation)
       }
@@ -86,8 +86,8 @@ export default class StoryEvaluator {
       } else {
         const { evaluation, evaluation_error } = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
         has_errors = has_errors || evaluation_error
-        if (evaluation.output_values?.output !== undefined && chapter.id !== undefined) {
-          story_outputs.set_chapter_output(chapter.id, evaluation.output_values?.output)
+        if (evaluation.output !== undefined && chapter.id !== undefined) {
+          story_outputs.set_chapter_output(chapter.id, evaluation.output)
         }
         evaluations.push(evaluation)
       }
@@ -117,7 +117,7 @@ export default class StoryEvaluator {
         prologues,
         chapters,
         epilogues,
-        message: 'The story was defined with incorrect variables'
+        message: 'The story was defined with incorrect variables.'
       }
     }
   }

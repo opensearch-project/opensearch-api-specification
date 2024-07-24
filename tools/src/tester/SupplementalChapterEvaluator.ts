@@ -7,6 +7,7 @@
 * compatible open source license.
 */
 
+import _ from "lodash";
 import { ChapterOutput } from "./ChapterOutput";
 import ChapterReader from "./ChapterReader";
 import { StoryOutputs } from "./StoryOutputs";
@@ -25,34 +26,53 @@ export default class SupplementalChapterEvaluator {
     const title = `${chapter.method} ${chapter.path}`
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const status = chapter.status ?? [200, 201]
-    const output_values = ChapterOutput.extract_output_values(response, chapter.output)
+    const output_values_evaluation_with_output = ChapterOutput.extract_output_values(response, chapter.output)
     let response_evaluation: ChapterEvaluation
     const passed_evaluation = { title, overall: { result: Result.PASSED } }
     if (status.includes(response.status)) {
       response_evaluation = passed_evaluation
     } else {
-      response_evaluation = { title, overall: { result: Result.ERROR, message: response.message, error: response.error as Error }, output_values }
+      response_evaluation = {
+        title,
+        overall: {
+          result: Result.ERROR,
+          message: response.message,
+          error: response.error as Error
+        }
+      }
     }
-    if (output_values) {
-      response_evaluation.output_values = output_values
+
+    if (output_values_evaluation_with_output.output) {
+      response_evaluation.output = output_values_evaluation_with_output.output
     }
-    const result = overall_result([response_evaluation.overall].concat(output_values ? [output_values] : []))
+
+    const evaluations = _.compact([response_evaluation.overall, output_values_evaluation_with_output])
+    const result = overall_result(evaluations)
+
     if (result === Result.PASSED) {
       return { evaluation: passed_evaluation, evaluation_error: false }
     } else {
       const message_segments = []
+
       if (response_evaluation.overall.result === Result.ERROR) {
         message_segments.push(`${response_evaluation.overall.message}`)
       }
-      if (output_values !== undefined && output_values.result === Result.ERROR) {
-        message_segments.push(`${output_values.message}`)
+
+      if (output_values_evaluation_with_output?.message !== undefined && output_values_evaluation_with_output.result === Result.ERROR) {
+        message_segments.push(`${output_values_evaluation_with_output.message}`)
       }
+
       const message = message_segments.join('\n')
-      const evaluation = {
+
+      var evaluation: ChapterEvaluation = {
         title,
-        overall: { result: Result.ERROR, message, error: response.error as Error },
-        ...(output_values ? { output_values } : {})
+        overall: { result: Result.ERROR, message, error: response.error as Error }
       }
+
+      if (output_values_evaluation_with_output?.output) {
+        evaluation.output = output_values_evaluation_with_output?.output
+      }
+
       return { evaluation, evaluation_error: true }
     }
   }

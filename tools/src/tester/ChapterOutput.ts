@@ -26,8 +26,8 @@ export class ChapterOutput {
     this.outputs[name] = value
   }
 
-  static extract_output_values(response: ActualResponse, output?: Output): EvaluationWithOutput | undefined {
-    if (!output) return undefined
+  static extract_output_values(response: ActualResponse, output?: Output): EvaluationWithOutput {
+    if (!output) return { result: Result.SKIPPED }
     const chapter_output = new ChapterOutput({})
     for (const [name, path] of Object.entries(output)) {
       const [source, ...rest] = path.split('.')

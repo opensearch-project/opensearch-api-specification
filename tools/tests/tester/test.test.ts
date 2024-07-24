@@ -123,7 +123,7 @@ test('check_story_variables', () => {
     description: 'story1',
     display_path: 'display_path',
     full_path: 'full_path',
-    message: 'The story was defined with incorrect variables',
+    message: 'The story was defined with incorrect variables.',
     prologues,
     chapters,
     epilogues: []
