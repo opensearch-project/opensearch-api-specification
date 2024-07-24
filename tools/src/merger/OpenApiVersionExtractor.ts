@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import _ from 'lodash'
+import _, { extend } from 'lodash'
 import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
 import { type OpenAPIV3 } from 'openapi-types'
@@ -81,21 +81,14 @@ export default class OpenApiVersionExtractor {
     // remove anything that's not referenced
     var references: string[] = find_refs(this._spec)
 
-    this._spec.components.schemas = _.pickBy(this._spec.components.schemas, (_value, key) =>
-      _.includes(references, `#/components/schemas/${key}`)
-    )
-
-    this._spec.components.parameters = _.pickBy(this._spec.components.parameters, (_value, key) =>
-      _.includes(references, `#/components/parameters/${key}`)
-    )
-
-    this._spec.components.responses = _.pickBy(this._spec.components.responses, (_value, key) =>
-      _.includes(references, `#/components/responses/${key}`)
-    )
-
-    this._spec.components.requestBodies = _.pickBy(this._spec.components.requestBodies, (_value, key) =>
-      _.includes(references, `#/components/requestBodies/${key}`)
-    )
+    this._spec.components = _.reduce(_.map(['parameters', 'requestBodies', 'responses', 'schemas'], (p) =>
+    {
+      return {
+        [p]: _.pickBy(this._spec?.components?.[p], (_value, key) =>
+          _.includes(references, `#/components/${p}/${key}`))
+      }
+    }
+    ), extend)
 
     // collect what's left
     var remaining = _.flatMap(['schemas', 'parameters', 'responses', 'requestBodies'], (key) =>
