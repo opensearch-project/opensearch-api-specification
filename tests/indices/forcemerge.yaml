@@ -1,0 +1,62 @@
+
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test force merging an index.
+prologues:
+  - path: /movies
+    method: PUT
+  - path: /games
+    method: PUT
+epilogues:
+  - path: /movies,games
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Force merge all indexes.
+    path: /_forcemerge
+    method: POST
+    parameters:
+      allow_no_indices: true
+      expand_wildcards: none
+      flush: true
+      max_num_segments: 1
+      only_expunge_deletes: true
+      ignore_unavailable: true
+    response:
+      status: 200
+      payload:
+        _shards: {}
+  - synopsis: Force merge all indexes (primary_only).
+    version: '>= 2.13'
+    path: /_forcemerge
+    method: POST
+    parameters:
+      primary_only: true
+    response:
+      status: 200
+  - synopsis: Force merge all indexes (wait_for_completion).
+    version: '>= 2.7'
+    path: /_forcemerge
+    method: POST
+    parameters:
+      wait_for_completion: true
+    response:
+      status: 200
+  - synopsis: Force merge an index.
+    path: /{index}/_forcemerge
+    method: POST
+    parameters:
+      index: movies
+    response:
+      status: 200
+      payload:
+        _shards: {}
+  - synopsis: Force merge multiple indexes.
+    path: /{index}/_forcemerge
+    method: POST
+    parameters:
+      index: movies,games
+    response:
+      status: 200
+      payload:
+        _shards: {}

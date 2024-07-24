@@ -15,26 +15,7 @@ describe('validate()', () => {
     expect(validator.validate()).toEqual([
       {
         file: 'superseded_operations/invalid_schema.yaml',
-        message: "File content does not match JSON schema found in './json_schemas/_superseded_operations.schema.yaml':\n " +
-          JSON.stringify([
-            {
-              "instancePath": "/~1hello~1world/operations/1",
-              "schemaPath": "#/patternProperties/%5E~1/properties/operations/items/enum",
-              "keyword": "enum",
-              "params": {
-                "allowedValues": [
-                  "GET",
-                  "POST",
-                  "PUT",
-                  "DELETE",
-                  "HEAD",
-                  "OPTIONS",
-                  "PATCH"
-                ]
-              },
-              "message": "must be equal to one of the allowed values"
-            }
-          ], null, 2),
+        message: "File content does not match JSON schema found in './json_schemas/_superseded_operations.schema.yaml': data/~1hello~1world/operations/1 MUST be equal to one of the allowed values: GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH"
       },
     ])
   })

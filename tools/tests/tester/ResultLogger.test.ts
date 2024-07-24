@@ -10,6 +10,8 @@
 import { ConsoleResultLogger } from "tester/ResultLogger"
 import { Result } from "tester/types/eval.types"
 import * as ansi from 'tester/Ansi'
+import MergedOpenApiSpec from "tester/MergedOpenApiSpec"
+import TestResults from "tester/TestResults"
 
 describe('ConsoleResultLogger', () => {
   let log: jest.Mock
@@ -47,9 +49,33 @@ describe('ConsoleResultLogger', () => {
       expect(log.mock.calls).toEqual([
         [],
         [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
-        [`   ${ansi.green('PASSED ')} CHAPTERS `],
-        [`      ${ansi.green('PASSED ')} ${ansi.i('title')} `],
+        [`   ${ansi.green('PASSED ')} CHAPTERS`],
+        [`      ${ansi.green('PASSED ')} ${ansi.i('title')}`],
         []
+      ])
+    })
+
+    test('log_coverage', () => {
+      const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete')
+      const test_results = new TestResults(spec, { evaluations: [{
+        result: Result.PASSED,
+        display_path: 'path',
+        full_path: 'path',
+        description: 'description',
+        chapters: [
+          {
+            title: 'title',
+            overall: { result: Result.PASSED },
+            path: 'path'
+          }
+        ]
+      }] })
+
+      logger.log_coverage(test_results)
+
+      expect(log.mock.calls).toEqual([
+        [],
+        ['Tested 1/4 paths.']
       ])
     })
   })

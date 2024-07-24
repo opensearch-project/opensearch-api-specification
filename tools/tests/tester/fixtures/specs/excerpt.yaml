@@ -25,6 +25,20 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cat.health@200'
+  /_cat/indices/{index}:
+    get:
+      operationId: cat.indices.1
+      x-operation-group: cat.indices
+      x-version-added: '1.0'
+      description: 'Returns information about indices: number of primaries and replicas, document counts, disk size, ...'
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cat/cat-indices/
+      parameters:
+        - $ref: '#/components/parameters/cat.indices::path.index'
+        - $ref: '#/components/parameters/cat.indices::query.format'
+      responses:
+        '200':
+          $ref: '#/components/responses/cat.indices@200'
   /{index}:
     delete:
       operationId: indices.delete.0
@@ -106,6 +120,37 @@ components:
             type: array
             items:
               type: object
+        application/smile:
+          schema:
+            type: array
+            items:
+              type: object
+    cat.indices@200:
+      description: ''
+      content:
+        text/plain:
+          schema:
+            type: string
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+        application/yaml:
+          schema:
+            type: array
+            items:
+              type: object
+        application/cbor:
+          schema:
+            type: array
+            items:
+              type: object
+        application/smile:
+          schema:
+            type: array
+            items:
+              type: object
     indices.delete@200:
       description: ''
       content:
@@ -130,11 +175,31 @@ components:
               acknowledged:
                 type: boolean
             required:
+              - acknowledged
               - index
               - shards_acknowledged
-              - acknowledged
   parameters:
     cat.health::query.format:
+      in: query
+      name: format
+      schema:
+        type: string
+    cat.help::query.format:
+      in: query
+      name: format
+      schema:
+        type: string
+    cat.indices::path.index:
+      in: path
+      name: index
+      description: |-
+        Comma-separated list of data streams, indices, and aliases used to limit the request.
+        Supports wildcards (`*`). To target all data streams and indices, omit this parameter or use `*` or `_all`.
+      required: true
+      schema:
+        $ref: '#/components/schemas/_common:Indices'
+      style: simple
+    cat.indices::query.format:
       in: query
       name: format
       schema:

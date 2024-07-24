@@ -149,7 +149,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 
 ## Writing Spec Tests
 
-To assure the correctness of the spec, you must add tests for the spec, when making changes. Check [SPECIFICATION_TESTING.md](SPECIFICATION_TESTING.md) for more information.
+To assure the correctness of the spec, you must add tests for the spec, when making changes. Check [TESTING_GUIDE.md](TESTING_GUIDE.md) for more information.
 
 ## Tools
 

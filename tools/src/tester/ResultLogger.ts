@@ -10,13 +10,16 @@
 import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'
+import TestResults from './TestResults'
 
 export interface ResultLogger {
   log: (evaluation: StoryEvaluation) => void
+  log_coverage: (_results: TestResults) => void
 }
 
 export class NoOpResultLogger implements ResultLogger {
   log (_: StoryEvaluation): void { }
+  log_coverage(_results: TestResults): void { }
 }
 
 export class ConsoleResultLogger implements ResultLogger {
@@ -36,6 +39,11 @@ export class ConsoleResultLogger implements ResultLogger {
     this.#log_chapters(evaluation.chapters ?? [], 'CHAPTERS')
     this.#log_chapters(evaluation.epilogues ?? [], 'EPILOGUES')
     if (with_padding) console.log()
+  }
+
+  log_coverage(results: TestResults): void {
+    console.log()
+    console.log(`Tested ${results.evaluated_paths_count()}/${results.spec_paths_count()} paths.`)
   }
 
   #log_story ({ result, full_path, display_path, message }: StoryEvaluation): void {
@@ -90,8 +98,20 @@ export class ConsoleResultLogger implements ResultLogger {
 
   #log_evaluation (evaluation: Evaluation, title: string, prefix: number = 0): void {
     const result = ansi.padding(this.#result(evaluation.result), 0, prefix)
-    const message = evaluation.message != null ? `${ansi.gray('(' + evaluation.message + ')')}` : ''
-    console.log(`${result} ${title} ${message}`)
+
+    const message = this.#maybe_shorten_error_message(evaluation.message);
+
+    if (message !== undefined) {
+      console.log(`${result} ${title} ${ansi.gray(`(${message})`)}`)
+    } else {
+      console.log(`${result} ${title}`)
+    }
+  }
+
+  #maybe_shorten_error_message(message: string | undefined): string | undefined {
+    if (message === undefined || message.length <= 128 || this._verbose) return message
+    const part = message.split(',')[0]
+    return part + (part !== message ? ', ...' : '')
   }
 
   #result (r: Result): string {

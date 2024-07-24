@@ -1,6 +1,6 @@
-$schema: ../../json_schemas/test_story.schema.yaml
+$schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test search endpoint.
+description: Test search endpoint (_source).
 prologues:
   - path: /movies/_doc
     method: POST
@@ -17,32 +17,14 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Search with size=0.
+  - synopsis: Search (_source=true).
     path: /{index}/_search
     parameters:
       index: movies
     method: POST
     request_body:
       payload:
-        size: 0
-    response:
-      status: 200
-      payload:
-        timed_out: false
-        hits:
-          total:
-            value: 1
-            relation: eq
-          max_score: null
-          hits: []
-  - synopsis: Search with size=1.
-    path: /{index}/_search
-    parameters:
-      index: movies
-    method: POST
-    request_body:
-      payload:
-        size: 1
+        _source: true
         query:
           match_all: {}
     response:
@@ -61,18 +43,16 @@ chapters:
                 director: Bennett Miller
                 title: Moneyball
                 year: 2011
-  - synopsis: Search with multi_match query.
+  - synopsis: Search (_source=false).
     path: /{index}/_search
     parameters:
       index: movies
     method: POST
     request_body:
       payload:
-        size: 1
+        _source: false
         query:
-          multi_match:
-            query: miller
-            fields: ["title^2", "director"]
+          match_all: {}
     response:
       status: 200
       payload:
@@ -81,27 +61,22 @@ chapters:
           total:
             value: 1
             relation: eq
+          max_score: 1
           hits:
             - _index: movies
-              _source:
-                director: Bennett Miller
-                title: Moneyball
-                year: 2011
-  - synopsis: Search with parameters.
+              _score: 1
+  - synopsis: Search (_source=[fields]).
     path: /{index}/_search
     parameters:
       index: movies
-      cancel_after_time_interval: 10s
-      phase_took: true
     method: POST
-    response:
-      status: 200
-  - synopsis: Search with seq_no_primary_term.
-    path: /{index}/_search
-    parameters:
-      index: movies
-      seq_no_primary_term: true
-    method: POST
+    request_body:
+      payload:
+        _source:
+          - director
+          - year
+        query:
+          match_all: {}
     response:
       status: 200
       payload:
@@ -110,11 +85,63 @@ chapters:
           total:
             value: 1
             relation: eq
+          max_score: 1
           hits:
             - _index: movies
+              _score: 1
+              _source:
+                director: Bennett Miller
+                year: 2011
+  - synopsis: Search (_source=filter).
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request_body:
+      payload:
+        _source:
+          includes: director
+          excludes: year
+        query:
+          match_all: {}
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          max_score: 1
+          hits:
+            - _index: movies
+              _score: 1
+              _source:
+                director: Bennett Miller
+  - synopsis: Search (_source=filter with wildcards).
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request_body:
+      payload:
+        _source:
+          includes: '*'
+          excludes: year
+        query:
+          match_all: {}
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          max_score: 1
+          hits:
+            - _index: movies
+              _score: 1
               _source:
                 director: Bennett Miller
                 title: Moneyball
-                year: 2011
-              _seq_no: 0
-              _primary_term: 1

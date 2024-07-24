@@ -8,14 +8,20 @@ prologues:
   - path: /games
     method: PUT
     status: [200]
+  - path: /films
+    method: PUT
+    status: [200]
   - path: /movies/_close
     method: POST
     status: [200]
   - path: /games/_close
     method: POST
     status: [200]
+  - path: /films/_close
+    method: POST
+    status: [200]
 epilogues:
-  - path: /movies,games
+  - path: /movies,games,films
     method: DELETE
     status: [200, 404]
 chapters:
@@ -28,27 +34,19 @@ chapters:
       expand_wildcards: all
       ignore_unavailable: true
       wait_for_active_shards: 0
-      cluster_manager_timeout: 30s
       timeout: 30s
-      wait_for_completion: true
     response:
       status: 200
       payload:
         shards_acknowledged: true
         acknowledged: true
   - synopsis: Open a closed index (wait_for_completion=false).
+    version: '>= 2.7'
     path: /{index}/_open
     method: POST
     parameters:
       index: movies
-      allow_no_indices: true
-      expand_wildcards: all
-      ignore_unavailable: true
-      wait_for_active_shards: 0
-      cluster_manager_timeout: 30s
-      timeout: 30s
       wait_for_completion: false
-      task_execution_timeout: 1m
     response:
       status: 200
   - synopsis: Open an already opened index.
@@ -56,6 +54,18 @@ chapters:
     method: POST
     parameters:
       index: movies
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
+  - synopsis: Open a closed index (cluster_manager_timeout).
+    path: /{index}/_open
+    method: POST
+    version: '>= 2.0'
+    parameters:
+      index: films
+      cluster_manager_timeout: 30s
     response:
       status: 200
       payload:

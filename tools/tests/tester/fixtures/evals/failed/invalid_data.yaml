@@ -1,7 +1,7 @@
 display_path: failed/invalid_data.yaml
 full_path: tools/tests/tester/fixtures/stories/failed/invalid_data.yaml
 
-result: FAILED
+result: ERROR
 description: This story should failed due invalid data.
 
 prologues: []
@@ -10,6 +10,7 @@ chapters:
   - title: This chapter should fail because the parameter is invalid.
     overall:
       result: FAILED
+    path: PUT /{index}
     request:
       parameters:
         index:
@@ -27,13 +28,14 @@ chapters:
   - title: This chapter should fail because the request body is invalid.
     overall:
       result: FAILED
+    path: PUT /{index}
     request:
       parameters:
         index:
           result: PASSED
       request_body:
         result: FAILED
-        message: data must NOT have additional properties
+        message: 'data contains unsupported properties: aliases'
     response:
       status:
         result: PASSED
@@ -41,9 +43,30 @@ chapters:
         result: PASSED
       payload_schema:
         result: PASSED
+  - title: This chapter should fail because the response content type does not match.
+    overall:
+      result: FAILED
+    path: GET /_cat/indices/{index}
+    request:
+      parameters:
+        format:
+          result: PASSED
+        index:
+          result: PASSED
+      request_body:
+        result: PASSED
+    response:
+      status:
+        result: PASSED
+      payload_body:
+        result: PASSED
+      payload_schema:
+        result: FAILED
+        message: 'Expected content type application/json, but received application/yaml.'
   - title: This chapter should fail because the response data and schema are invalid.
     overall:
       result: FAILED
+    path: DELETE /{index}
     request:
       parameters:
         index:
@@ -58,7 +81,25 @@ chapters:
         message: expected acknowledged='false', got 'true', missing shards_acknowledged='true'
       payload_schema:
         result: FAILED
-        message: data must NOT have additional properties
+        message: 'data contains unsupported properties: acknowledged'
+  - title: This chapter should fail because the response status does not match.
+    overall:
+      result: ERROR
+    path: PUT /{index}
+    request:
+      parameters:
+        index:
+          result: PASSED
+      request_body:
+        result: PASSED
+    response:
+      status:
+        result: ERROR
+        message: 'Expected status 404, but received 200: application/json.'
+      payload_body:
+        result: SKIPPED
+      payload_schema:
+        result: SKIPPED
 
 epilogues:
   - title: DELETE /books
