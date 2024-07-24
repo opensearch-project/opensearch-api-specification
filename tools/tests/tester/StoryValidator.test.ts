@@ -29,7 +29,10 @@ describe('StoryValidator', () => {
   test('invalid story', () => {
     const evaluation = validate('tools/tests/tester/fixtures/invalid_story.yaml')
     expect(evaluation?.result).toBe('ERROR')
-    expect(evaluation?.message).toBe("Invalid Story: data/epilogues/0 must NOT have unevaluated properties, data/chapters/0 must have required property 'method', data/chapters/1/method must be equal to one of the allowed values")
+    expect(evaluation?.message).toBe("Invalid Story: " +
+      "data/epilogues/0 contains unsupported properties: response --- " +
+      "data/chapters/0 MUST contain the missing properties: method --- " +
+      "data/chapters/1/method MUST be equal to one of the allowed values: GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS")
   })
 
   test('valid story', () => {

@@ -52,7 +52,7 @@ export function construct_tester_components (spec_path: string): {
   const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
-  const test_runner = new TestRunner(story_validator, story_evaluator, result_logger)
+  const test_runner = new TestRunner(opensearch_http_client, story_validator, story_evaluator, result_logger)
   return {
     specification,
     operation_locator,
@@ -72,34 +72,51 @@ export function print_yaml (obj: any): void {
 }
 
 export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
-  const flatten = <T extends Evaluation | undefined>(e: T): T => (e !== undefined
-    ? {
-      ...e,
-      error: typeof e.error === 'object' ? e.error.message : e.error
+  const flatten = <T extends Evaluation | undefined>(e: T): T => {
+
+    var result = e
+
+    if (e !== undefined && result !== undefined) {
+      if (typeof e.error === 'object' && e.error.message !== undefined) {
+        result.error = e.error.message
+      } else if (e.error !== undefined) {
+        result.error = e.error
+      }
     }
-    : undefined as T)
+
+    return result
+  }
 
   const flatten_chapters = <T extends ChapterEvaluation[] | undefined> (chapters: T): T => {
     if (chapters === undefined) return undefined as T
-    return chapters.map((c: ChapterEvaluation): ChapterEvaluation => ({
-      ...c,
-      overall: flatten(c.overall),
-      request: c.request !== undefined
-        ? {
-          parameters: c.request.parameters !== undefined
-            ? Object.fromEntries(Object.entries(c.request.parameters).map(([k, v]) => [k, flatten(v)]))
-            : undefined,
+    return chapters.map((c: ChapterEvaluation): ChapterEvaluation => {
+      var result = {
+        ...c,
+        overall: flatten(c.overall),
+      }
+
+      if (c.request !== undefined) {
+        result.request = {
           request_body: flatten(c.request.request_body)
         }
-        : undefined,
-      response: c.response !== undefined
-        ? {
+
+        if (c.request.parameters !== undefined) {
+          result.request.parameters = Object.fromEntries(
+            Object.entries(c.request.parameters).map(([k, v]) => [k, flatten(v)])
+          )
+        }
+      }
+
+      if (c.response !== undefined) {
+        result.response = {
           status: flatten(c.response.status),
           payload_body: flatten(c.response.payload_body),
           payload_schema: flatten(c.response.payload_schema)
         }
-        : undefined
-    })) as T
+      }
+
+      return result;
+    }) as T
   }
 
   return {
@@ -121,5 +138,5 @@ export async function load_actual_evaluation (evaluator: StoryEvaluator, name: s
     full_path,
     display_path: `${name}.yaml`,
     story: read_yaml(full_path)
-  }))
+  }, process.env.OPENSEARCH_VERSION ?? '2.15.0'))
 }

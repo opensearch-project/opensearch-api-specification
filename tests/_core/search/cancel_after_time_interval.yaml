@@ -1,0 +1,28 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with cancel_after_time_interval.
+prologues:
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request_body:
+      payload:
+        director: Bennett Miller
+        title: Moneyball
+        year: 2011
+    status: [201]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search with cancel_after_time_interval.
+    path: /{index}/_search
+    parameters:
+      index: movies
+      cancel_after_time_interval: 10s
+    method: POST
+    response:
+      status: 200
+  

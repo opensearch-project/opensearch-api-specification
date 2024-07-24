@@ -71,7 +71,9 @@ components:
             The provided text is analyzed before matching.
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/MatchQuery'
+            anyOf:
+              - $ref: '#/components/schemas/MatchQuery'
+              - { }
           minProperties: 1
           maxProperties: 1
         match_all:
@@ -285,8 +287,8 @@ components:
             positive:
               $ref: '#/components/schemas/QueryContainer'
           required:
-            - negative_boost
             - negative
+            - negative_boost
             - positive
     CommonTermsQuery:
       allOf:
@@ -337,13 +339,13 @@ components:
     CombinedFieldsOperator:
       type: string
       enum:
-        - or
         - and
+        - or
     CombinedFieldsZeroTerms:
       type: string
       enum:
-        - none
         - all
+        - none
     ConstantScoreQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -391,9 +393,9 @@ components:
             field:
               $ref: '_common.yaml#/components/schemas/Field'
           required:
+            - field
             - origin
             - pivot
-            - field
     DateDistanceFeatureQuery:
       allOf:
         - $ref: '#/components/schemas/DistanceFeatureQueryBaseDateMathDuration'
@@ -410,9 +412,9 @@ components:
             field:
               $ref: '_common.yaml#/components/schemas/Field'
           required:
+            - field
             - origin
             - pivot
-            - field
     ExistsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -447,12 +449,12 @@ components:
     FunctionBoostMode:
       type: string
       enum:
-        - multiply
-        - replace
-        - sum
         - avg
         - max
         - min
+        - multiply
+        - replace
+        - sum
     FunctionScoreContainer:
       allOf:
         - type: object
@@ -494,9 +496,9 @@ components:
     MultiValueMode:
       type: string
       enum:
-        - min
-        - max
         - avg
+        - max
+        - min
         - sum
     NumericDecayFunction:
       allOf:
@@ -516,7 +518,7 @@ components:
           type: number
         missing:
           description: |-
-            Value used if the document doesn’t have that field.
+            Value used if the document doesn't have that field.
             The modifier and factor are still applied to it as though it were read from the document.
           type: number
         modifier:
@@ -526,16 +528,16 @@ components:
     FieldValueFactorModifier:
       type: string
       enum:
-        - none
-        - log
-        - log1p
-        - log2p
         - ln
         - ln1p
         - ln2p
-        - square
-        - sqrt
+        - log
+        - log1p
+        - log2p
+        - none
         - reciprocal
+        - sqrt
+        - square
     RandomScoreFunction:
       type: object
       properties:
@@ -555,12 +557,12 @@ components:
     FunctionScoreMode:
       type: string
       enum:
-        - multiply
-        - sum
         - avg
         - first
         - max
         - min
+        - multiply
+        - sum
     FuzzyQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -604,8 +606,8 @@ components:
     GeoExecution:
       type: string
       enum:
-        - memory
         - indexed
+        - memory
     GeoValidationMethod:
       type: string
       enum:
@@ -623,8 +625,17 @@ components:
               $ref: '_common.yaml#/components/schemas/GeoDistanceType'
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
+            ignore_unmapped:
+              description: |-
+                Set to `true` to ignore an unmapped field and not match any documents for this query.
+                Set to `false` to throw an exception if the field is not mapped.
+              type: boolean
+              default: false
+            field:
+              type: object
           required:
             - distance
+            - field
     GeoPolygonQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -688,11 +699,11 @@ components:
     ChildScoreMode:
       type: string
       enum:
-        - none
         - avg
-        - sum
         - max
         - min
+        - none
+        - sum
     HasParentQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1185,11 +1196,11 @@ components:
       type: string
       enum:
         - best_fields
-        - most_fields
+        - bool_prefix
         - cross_fields
+        - most_fields
         - phrase
         - phrase_prefix
-        - bool_prefix
     NestedQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1303,7 +1314,7 @@ components:
             case_insensitive:
               description: |-
                 Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
-                Default is `false` which means the case sensitivity of matching depends on the underlying field’s mapping.
+                Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
               type: boolean
           required:
             - value
@@ -1406,13 +1417,11 @@ components:
             from:
               oneOf:
                 - $ref: '_common.yaml#/components/schemas/DateMath'
-                - nullable: true
-                  type: string
+                - type: 'null'
             to:
               oneOf:
                 - $ref: '_common.yaml#/components/schemas/DateMath'
-                - nullable: true
-                  type: string
+                - type: 'null'
             format:
               $ref: '_common.yaml#/components/schemas/DateFormat'
             time_zone:
@@ -1427,9 +1436,9 @@ components:
     RangeRelation:
       type: string
       enum:
-        - within
         - contains
         - intersects
+        - within
     NumberRangeQuery:
       allOf:
         - $ref: '#/components/schemas/RangeQueryBase'
@@ -1448,15 +1457,9 @@ components:
               description: Less than or equal to.
               type: number
             from:
-              oneOf:
-                - type: number
-                - nullable: true
-                  type: string
+              type: ['null', number, string]
             to:
-              oneOf:
-                - type: number
-                - nullable: true
-                  type: string
+              type: ['null', number, string]
     RankFeatureQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1510,8 +1513,8 @@ components:
               description: Configurable Exponent.
               type: number
           required:
-            - pivot
             - exponent
+            - pivot
     RegexpQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1520,7 +1523,7 @@ components:
             case_insensitive:
               description: |-
                 Allows case insensitive matching of the regular expression value with the indexed field values when set to `true`.
-                When `false`, case sensitivity of matching depends on the underlying field’s mapping.
+                When `false`, case sensitivity of matching depends on the underlying field's mapping.
               type: boolean
             flags:
               description: Enables optional operators for the regular expression.
@@ -1547,9 +1550,9 @@ components:
             match_criteria:
               type: object
           required:
+            - match_criteria
             - organic
             - ruleset_id
-            - match_criteria
     ScriptQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1638,19 +1641,19 @@ components:
     SimpleQueryStringFlag:
       type: string
       enum:
-        - NONE
+        - ALL
         - AND
-        - NOT
-        - OR
-        - PREFIX
-        - PHRASE
-        - PRECEDENCE
         - ESCAPE
-        - WHITESPACE
         - FUZZY
         - NEAR
+        - NONE
+        - NOT
+        - OR
+        - PHRASE
+        - PRECEDENCE
+        - PREFIX
         - SLOP
-        - ALL
+        - WHITESPACE
     SpanContainingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1759,7 +1762,7 @@ components:
           properties:
             dist:
               description: |-
-                The number of tokens from within the include span that can’t have overlap with the exclude span.
+                The number of tokens from within the include span that can't have overlap with the exclude span.
                 Equivalent to setting both `pre` and `post`.
               type: number
             exclude:
@@ -1767,10 +1770,10 @@ components:
             include:
               $ref: '#/components/schemas/SpanQuery'
             post:
-              description: The number of tokens after the include span that can’t have overlap with the exclude span.
+              description: The number of tokens after the include span that can't have overlap with the exclude span.
               type: number
             pre:
-              description: The number of tokens before the include span that can’t have overlap with the exclude span.
+              description: The number of tokens before the include span that can't have overlap with the exclude span.
               type: number
           required:
             - exclude
@@ -1818,7 +1821,7 @@ components:
             case_insensitive:
               description: |-
                 Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
-                When `false`, the case sensitivity of matching depends on the underlying field’s mapping.
+                When `false`, the case sensitivity of matching depends on the underlying field's mapping.
               type: boolean
           required:
             - value
@@ -1890,7 +1893,7 @@ components:
         - type: object
           properties:
             case_insensitive:
-              description: Allows case insensitive matching of the pattern with the indexed field values when set to true. Default is false which means the case sensitivity of matching depends on the underlying field’s mapping.
+              description: Allows case insensitive matching of the pattern with the indexed field values when set to `true`. Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
               type: boolean
             rewrite:
               $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'

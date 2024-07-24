@@ -9,7 +9,12 @@
 
 import { construct_tester_components, load_actual_evaluation, load_expected_evaluation } from '../helpers'
 
-const { story_evaluator } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
+const { story_evaluator, opensearch_http_client } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
+
+beforeAll(async () => {
+  const info = await opensearch_http_client.wait_until_available()
+  expect(info.version).toBeDefined()
+})
 
 test('passed', async () => {
   const actual = await load_actual_evaluation(story_evaluator, 'passed')
@@ -40,3 +45,4 @@ test('error/chapter_error', async () => {
   const expected = load_expected_evaluation('error/chapter_error')
   expect(actual).toEqual(expected)
 })
+

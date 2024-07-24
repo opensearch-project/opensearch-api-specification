@@ -7,13 +7,12 @@
 * compatible open source license.
 */
 
-import AJV from 'ajv'
-import ajv_errors from 'ajv-errors'
-import addFormats from 'ajv-formats'
+import JsonSchemaValidator from "../_utils/JsonSchemaValidator";
 import { type OpenAPIV3 } from 'openapi-types'
 import { type Evaluation, Result } from './types/eval.types'
 import { Logger } from 'Logger'
 import { to_json } from '../helpers'
+import _ from 'lodash'
 
 const ADDITIONAL_KEYWORDS = [
   'discriminator',
@@ -24,30 +23,29 @@ const ADDITIONAL_KEYWORDS = [
 ]
 
 export default class SchemaValidator {
-  private readonly ajv: AJV
+  private readonly json_validator: JsonSchemaValidator
   private readonly logger: Logger
 
   constructor (spec: OpenAPIV3.Document, logger: Logger) {
     this.logger = logger
-    this.ajv = new AJV({ allErrors: true, strict: true })
-    addFormats(this.ajv)
-    for (const keyword of ADDITIONAL_KEYWORDS) this.ajv.addKeyword(keyword)
-    ajv_errors(this.ajv, { singleError: true })
-    const schemas = spec.components?.schemas ?? {}
-    for (const key in schemas) this.ajv.addSchema(schemas[key], `#/components/schemas/${key}`)
+    const component_schemas = spec.components?.schemas ?? {}
+    const reference_schemas = _.mapKeys(component_schemas, (_, name) => `#/components/schemas/${name}`)
+    this.json_validator = new JsonSchemaValidator(undefined, {
+      reference_schemas,
+      additional_keywords: ADDITIONAL_KEYWORDS,
+      ajv_errors_opts: { singleError: true },
+      errors_text_opts: { separator: ', ' }
+    })
   }
 
   validate (schema: OpenAPIV3.SchemaObject, data: any): Evaluation {
-    const validate = this.ajv.compile(schema)
-    const valid = validate(data)
-    if (!valid) {
+    const message = this.json_validator.validate_data(data as Record<any, any>, schema)
+    if (message != null) {
       this.logger.info(`# ${to_json(schema)}`)
       this.logger.info(`* ${to_json(data)}`)
-      this.logger.info(`& ${to_json(validate.errors)}`)
+      this.logger.info(`& ${to_json(message)}`)
+      return { result: Result.FAILED, message }
     }
-    return {
-      result: valid ? Result.PASSED : Result.FAILED,
-      message: valid ? undefined : this.ajv.errorsText(validate.errors)
-    }
+    return { result: Result.PASSED }
   }
 }
