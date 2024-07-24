@@ -8,7 +8,7 @@
 */
 
 import { type Chapter, type ActualResponse, type Payload } from './types/story.types'
-import { type ChapterEvaluation, type Evaluation, Result } from './types/eval.types'
+import { type ChapterEvaluation, type Evaluation, Result, EvaluationWithOutput } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
 import type ChapterReader from './ChapterReader'
@@ -45,10 +45,7 @@ export default class ChapterEvaluator {
     const status = this.#evaluate_status(chapter, response)
     const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
-
-    const output_values_evaluation_with_output = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { result: Result.SKIPPED }
-    const output_values_evaluation: Evaluation = { result: output_values_evaluation_with_output.result }
-    if (output_values_evaluation_with_output?.message !== undefined) output_values_evaluation.message = output_values_evaluation_with_output?.message
+    const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
 
     const evaluations = _.compact(_.concat(
       Object.values(params),
@@ -56,9 +53,8 @@ export default class ChapterEvaluator {
       status,
       payload_body_evaluation,
       payload_schema_evaluation,
-      output_values_evaluation
+      output_values_evaluation.evaluation
     ))
-
 
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
@@ -69,12 +65,12 @@ export default class ChapterEvaluator {
         status,
         payload_body: payload_body_evaluation,
         payload_schema: payload_schema_evaluation,
-        output_values: output_values_evaluation
+        output_values: output_values_evaluation.evaluation
       }
     }
 
-    if (output_values_evaluation_with_output?.output !== undefined) {
-      result.output = output_values_evaluation_with_output?.output
+    if (output_values_evaluation?.output !== undefined) {
+      result.output = output_values_evaluation?.output
     }
 
     return result

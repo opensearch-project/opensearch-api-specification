@@ -64,7 +64,8 @@ export interface Evaluation {
   error?: Error | string
 }
 
-export type EvaluationWithOutput = Evaluation & {
+export type EvaluationWithOutput = {
+  evaluation: Evaluation,
   output?: ChapterOutput
 }
 

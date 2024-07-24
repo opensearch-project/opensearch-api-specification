@@ -27,7 +27,7 @@ export class ChapterOutput {
   }
 
   static extract_output_values(response: ActualResponse, output?: Output): EvaluationWithOutput {
-    if (!output) return { result: Result.SKIPPED }
+    if (!output) return { evaluation: { result: Result.SKIPPED } }
     const chapter_output = new ChapterOutput({})
     for (const [name, path] of Object.entries(output)) {
       const [source, ...rest] = path.split('.')
@@ -35,17 +35,17 @@ export class ChapterOutput {
       let value: any
       if (source === 'payload') {
         if (response.payload === undefined) {
-          return { result: Result.ERROR, message: 'No payload found in response, but expected output: ' + path }
+          return { evaluation: { result: Result.ERROR, message: 'No payload found in response, but expected output: ' + path } }
         }
         value = keys.length === 0 ? response.payload : _.get(response.payload, keys)
         if (value === undefined) {
-          return { result: Result.ERROR, message: `Expected to find non undefined value at \`${path}\`.` }
+          return { evaluation: { result: Result.ERROR, message: `Expected to find non undefined value at \`${path}\`.` } }
         }
       } else {
-        return { result: Result.ERROR, message: 'Unknown output source: ' + source }
+        return { evaluation: { result: Result.ERROR, message: 'Unknown output source: ' + source } }
       }
       chapter_output.set(name, value)
     }
-    return { result: Result.PASSED, output: chapter_output }
+    return { evaluation: { result: Result.PASSED }, output: chapter_output }
   }
 }

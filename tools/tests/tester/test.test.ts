@@ -55,7 +55,7 @@ function create_response(payload: any): ActualResponse {
 
 function passed_output(output: Record<string, any>): EvaluationWithOutput {
   return {
-    result: Result.PASSED,
+    evaluation: { result: Result.PASSED },
     output: new ChapterOutput(output)
   }
 }
@@ -86,8 +86,10 @@ test('extract_output_values', () => {
     passed_output({ x: response.payload })
   )
   expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0]' })).toEqual({
-    result: Result.ERROR,
-    message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
+    evaluation: {
+      result: Result.ERROR,
+      message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
+    }
   })
 })
 

@@ -26,7 +26,7 @@ export default class SupplementalChapterEvaluator {
     const title = `${chapter.method} ${chapter.path}`
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const status = chapter.status ?? [200, 201]
-    const output_values_evaluation_with_output = ChapterOutput.extract_output_values(response, chapter.output)
+    const output_values_evaluation = ChapterOutput.extract_output_values(response, chapter.output)
     let response_evaluation: ChapterEvaluation
     const passed_evaluation = { title, overall: { result: Result.PASSED } }
     if (status.includes(response.status)) {
@@ -42,12 +42,14 @@ export default class SupplementalChapterEvaluator {
       }
     }
 
-    if (output_values_evaluation_with_output.output) {
-      response_evaluation.output = output_values_evaluation_with_output.output
+    if (output_values_evaluation.output) {
+      response_evaluation.output = output_values_evaluation.output
     }
 
-    const evaluations = _.compact([response_evaluation.overall, output_values_evaluation_with_output])
-    const result = overall_result(evaluations)
+    const result = overall_result(_.compact([
+      response_evaluation.overall,
+      output_values_evaluation.evaluation
+    ]))
 
     if (result === Result.PASSED) {
       return { evaluation: passed_evaluation, evaluation_error: false }
@@ -58,8 +60,8 @@ export default class SupplementalChapterEvaluator {
         message_segments.push(`${response_evaluation.overall.message}`)
       }
 
-      if (output_values_evaluation_with_output?.message !== undefined && output_values_evaluation_with_output.result === Result.ERROR) {
-        message_segments.push(`${output_values_evaluation_with_output.message}`)
+      if (output_values_evaluation.evaluation.message !== undefined && output_values_evaluation.evaluation.result === Result.ERROR) {
+        message_segments.push(`${output_values_evaluation.evaluation.message}`)
       }
 
       const message = message_segments.join('\n')
@@ -69,8 +71,8 @@ export default class SupplementalChapterEvaluator {
         overall: { result: Result.ERROR, message, error: response.error as Error }
       }
 
-      if (output_values_evaluation_with_output?.output) {
-        evaluation.output = output_values_evaluation_with_output?.output
+      if (output_values_evaluation.output) {
+        evaluation.output = output_values_evaluation.output
       }
 
       return { evaluation, evaluation_error: true }
