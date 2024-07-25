@@ -9,13 +9,7 @@ prologues:
       index: books
     request_body:
       payload: {}
-epilogues:
-  - path: /books
-    method: DELETE
-    status: [200, 404]
-chapters:
-  - synopsis: Create few documents.
-    path: /_bulk
+  - path: /_bulk
     method: POST
     request_body:
       content_type: application/x-ndjson
@@ -24,13 +18,15 @@ chapters:
         - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
         - {create: {_index: books, _id: book_1392215}}
         - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
-  - synopsis: Refresh the index.
-    path: /{index}/_refresh
+  - path: /{index}/_refresh
     method: POST
     parameters:
       index: books
-    response:
-      status: 200
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
   - synopsis: Get SQL query.
     id: query_sql
     path: /_plugins/_sql
@@ -43,7 +39,7 @@ chapters:
       status: 200
     output:
       cursor: payload.cursor
-  - synopsis: Close cursor
+  - synopsis: Close cursor.
     path: /_plugins/_sql/close
     method: POST
     request_body:
