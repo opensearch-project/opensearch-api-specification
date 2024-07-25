@@ -77,18 +77,11 @@ export function delete_matching_keys(obj: any, condition: (obj: any) => boolean)
   }
 }
 
-export function find_refs(obj: Record<string, any>): string[] {
-  let results: string[] = []
-
-  if (obj !== undefined && obj !== null && obj.$ref !== undefined) {
-    results.push(obj.$ref as string)
-  }
-
-  if (_.isObject(obj)) {
-    results = _.concat(results, _.flatMap(obj, (v, _k) => find_refs(v as Record<string, any>)))
-  }
-
-  return _.uniq(results)
+export function find_refs (obj: any): Set<string> {
+  var results = new Set<string>()
+  if (obj?.$ref != null) results.add(obj.$ref as string)
+  if (_.isObject(obj)) _.forEach(obj, (v) => { find_refs(v).forEach((ref) => results.add(ref)); })
+  return results
 }
 
 export function ensure_parent_dir (file_path: string): void {

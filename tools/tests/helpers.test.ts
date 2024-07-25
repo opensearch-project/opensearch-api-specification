@@ -126,7 +126,7 @@ describe('helpers', () => {
 
   describe('find_refs', () => {
     test('empty collection', () => {
-      expect(find_refs({})).toEqual([])
+      expect(find_refs({})).toEqual(new Set())
     })
 
     test('with refs', () => {
@@ -148,7 +148,7 @@ describe('helpers', () => {
             $ref: 'dup',
           },
         }]
-      })).toEqual([1, 2, 3, 'dup'])
+      })).toEqual(new Set([1, 2, 3, 'dup']))
     })
   })
 })

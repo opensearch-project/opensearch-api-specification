@@ -52,9 +52,9 @@ export default class OpenApiVersionExtractor {
     const x_version_added = semver.coerce(obj['x-version-added'] as string)
     const x_version_removed = semver.coerce(obj['x-version-removed'] as string)
 
-    if (x_version_added && !semver.satisfies(this._target_version, `>=${x_version_added?.toString()}`)) {
+    if (x_version_added && !semver.satisfies(this._target_version, `>=${x_version_added.toString()}`)) {
       return true
-    } else if (x_version_removed && !semver.satisfies(this._target_version, `<${x_version_removed?.toString()}`)) {
+    } else if (x_version_removed && !semver.satisfies(this._target_version, `<${x_version_removed.toString()}`)) {
       return true
     }
 
@@ -70,13 +70,15 @@ export default class OpenApiVersionExtractor {
     if (this._spec === undefined) return
 
     // remove anything that's not referenced
-    var references: string[] = find_refs(this._spec)
+    var references = find_refs(this._spec)
 
     this._spec.components = _.reduce(_.map(['parameters', 'requestBodies', 'responses', 'schemas'], (p) =>
     {
       return {
-        [p]: _.pickBy(this._spec?.components?.[p], (_value, key) =>
-          _.includes(references, `#/components/${p}/${key}`))
+        [p]: _.pickBy(
+          this._spec?.components?.[p], (_value, key) =>
+            references.has(`#/components/${p}/${key}`)
+        )
       }
     }
     ), extend)
