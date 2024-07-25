@@ -17,23 +17,20 @@ import semver from 'semver'
 export default class OpenApiVersionExtractor {
   private _spec?: Record<string, any>
   private _source_spec: OpenAPIV3.Document
-  private _target_version?: string
+  private _target_version: string
   private _logger: Logger
 
-  constructor(source_spec: OpenAPIV3.Document, target_version?: string, logger: Logger = new Logger()) {
+  constructor(source_spec: OpenAPIV3.Document, target_version: string, logger: Logger = new Logger()) {
     this._source_spec = source_spec
-    this._target_version = target_version !== undefined ? semver.coerce(target_version)?.toString() : undefined
+    this._target_version = semver.coerce(target_version)?.toString() ?? target_version
     this._logger = logger
     this._spec = undefined
   }
 
   extract(): OpenAPIV3.Document {
     if (this._spec) return this._spec as OpenAPIV3.Document
-    if (this._target_version !== undefined) {
-      this.#extract()
-    } else {
-      this._spec = this._source_spec
-    }
+    this._spec = _.cloneDeep(this._source_spec)
+    this.#extract()
     return this._spec as OpenAPIV3.Document
   }
 
@@ -47,16 +44,11 @@ export default class OpenApiVersionExtractor {
   // incompatible with the target server version.
   #extract() : void {
     this._logger.info(`Extracting version ${this._target_version} ...`)
-
-    this._spec = _.cloneDeep(this._source_spec)
-
     this.#remove_keys_not_matching_semver()
     this.#remove_unused()
   }
 
   #exclude_per_semver(obj: any): boolean {
-    if (this._target_version === undefined) return false
-
     const x_version_added = semver.coerce(obj['x-version-added'] as string)
     const x_version_removed = semver.coerce(obj['x-version-removed'] as string)
 
@@ -71,7 +63,6 @@ export default class OpenApiVersionExtractor {
 
   // Remove any elements that are x-version-added/removed incompatible with the target server version.
   #remove_keys_not_matching_semver(): void {
-    if (this._target_version === undefined) return
     delete_matching_keys(this._spec, this.#exclude_per_semver.bind(this))
   }
 
