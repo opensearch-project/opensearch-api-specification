@@ -65,6 +65,7 @@ export class ConsoleResultLogger implements ResultLogger {
     this.#log_status(chapter.response?.status)
     this.#log_payload_body(chapter.response?.payload_body)
     this.#log_payload_schema(chapter.response?.payload_schema)
+    this.#log_output_values(chapter.response?.output_values)
   }
 
   #log_parameters (parameters: Record<string, Evaluation>): void {
@@ -94,6 +95,11 @@ export class ConsoleResultLogger implements ResultLogger {
   #log_payload_schema (evaluation: Evaluation | undefined): void {
     if (evaluation == null) return
     this.#log_evaluation(evaluation, 'RESPONSE PAYLOAD SCHEMA', this._tab_width * 3)
+  }
+
+  #log_output_values (evaluation: Evaluation | undefined): void {
+    if (evaluation == null) return
+    this.#log_evaluation(evaluation, 'RESPONSE OUTPUT VALUES', this._tab_width * 3)
   }
 
   #log_evaluation (evaluation: Evaluation, title: string, prefix: number = 0): void {

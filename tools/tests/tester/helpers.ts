@@ -111,7 +111,8 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
         result.response = {
           status: flatten(c.response.status),
           payload_body: flatten(c.response.payload_body),
-          payload_schema: flatten(c.response.payload_schema)
+          payload_schema: flatten(c.response.payload_schema),
+          output_values: flatten(c.response.output_values)
         }
       }
 
