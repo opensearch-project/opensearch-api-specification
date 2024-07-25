@@ -77,10 +77,27 @@ export function delete_matching_keys(obj: any, condition: (obj: any) => boolean)
   }
 }
 
-export function find_refs (obj: any): Set<string> {
+export function find_refs (current: Record<string, any>, root?: Record<string, any>): Set<string> {
   var results = new Set<string>()
-  if (obj?.$ref != null) results.add(obj.$ref as string)
-  if (_.isObject(obj)) _.forEach(obj, (v) => { find_refs(v).forEach((ref) => results.add(ref)); })
+
+  if (root === undefined) {
+    root = current
+    current = current.paths
+  }
+
+  if (current?.$ref != null) {
+    const ref = current.$ref as string
+    results.add(ref)
+    const ref_node = resolve_ref(ref, root)
+    if (ref_node !== undefined) find_refs(ref_node, root).forEach((ref) => results.add(ref))
+  }
+
+  if (_.isObject(current)) {
+    _.forEach(current, (v) => {
+      find_refs(v as Record<string, any>, root).forEach((ref) => results.add(ref));
+    })
+  }
+
   return results
 }
 

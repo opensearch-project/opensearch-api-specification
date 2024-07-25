@@ -131,24 +131,49 @@ describe('helpers', () => {
 
     test('with refs', () => {
       expect(find_refs({
-        $ref: 1,
-        null: null,
-        undefined,
-        obj: {
-          $ref: 2,
+        paths: {
+          $ref: '#1',
+          null: null,
+          undefined,
           obj: {
-            $ref: 3
+            $ref: '#2',
+            obj: {
+              $ref: '#3'
+            },
+            schema_obj: {
+              $ref: '#/schemas/schema1'
+            }
+          },
+          arr: [{
+            obj1: {
+              $ref: '#dup',
+            },
+            obj2: {
+              $ref: '#dup',
+            },
+          }]
+        },
+        schemas: {
+          schema1: {
+            items: {
+              $ref: '#/schemas/schema2'
+            }
+          },
+          schema2: {
+            x: 1
           }
         },
-        arr: [{
-          obj1: {
-            $ref: 'dup',
-          },
-          obj2: {
-            $ref: 'dup',
-          },
-        }]
-      })).toEqual(new Set([1, 2, 3, 'dup']))
+        unused1: {
+          $ref: '#unused2',
+          obj: {
+            $ref: '#unused3'
+          }
+        },
+        '#1': {},
+        '#2': {},
+        '#3': {},
+        '#dup': {}
+      })).toEqual(new Set(['#1', '#2', '#3', '#dup', '#/schemas/schema1', '#/schemas/schema2']))
     })
   })
 })
