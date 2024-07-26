@@ -11,28 +11,7 @@ epilogues:
   - path: /videos
     method: DELETE
     status: [200, 404]
-  - path: /_ingest/pipeline/transform-and-count
-    method: DELETE
-    status: [200, 404]
 prologues:
-  - path: /_ingest/pipeline/transform-and-count
-    method: PUT
-    request_body:
-      payload:
-        description: |
-          Splits the `title`` field into a `words` list.
-          Computes the length of the title field and stores it in a new `length` field.
-          Removes the `year` field.
-        processors:
-          - split:
-              field: title
-              separator: '\s+'
-              target_field: words
-          - script:
-              lang: painless
-              source: ctx.length = ctx.words.length
-          - remove:
-              field: year
   - path: /{index}/_doc
     method: POST
     parameters:
@@ -135,56 +114,6 @@ chapters:
       status: 200
       payload:
         total: 1
-  - synopsis: Transform documents using a pipeline.
-    path: /_reindex
-    method: POST
-    request_body:
-      payload:
-        source:
-          index: movies
-        dest:
-          index: videos
-          pipeline: transform-and-count
-    response:
-      status: 200
-  - synopsis: Refresh the index.
-    path: /{index}/_refresh
-    method: POST
-    parameters:
-      index: videos
-  - synopsis: Get all videos.
-    path: /{index}/_search
-    method: POST
-    parameters:
-      index: videos
-    request_body:
-      payload:
-        query:
-          match_all: {}
-    response:
-      status: 200
-      payload:
-        hits:
-          hits:
-            - _index: videos
-              _source:
-                words:
-                  - Beauty
-                  - and
-                  - the
-                  # eslint-disable-next-line yml/sort-sequence-values
-                  - Beast
-                length: 4
-                title: Beauty and the Beast
-  - synopsis: Update documents in the current index.
-    path: /{index}/_update_by_query
-    method: POST
-    parameters:
-      index: videos
-    response:
-      status: 200
-      payload:
-        updated: 1
   - synopsis: Reindex from movies to films with all options.
     path: /_reindex
     method: POST
