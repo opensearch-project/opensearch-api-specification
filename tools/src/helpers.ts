@@ -47,7 +47,6 @@ export function sort_by_keys (obj: Record<string, any>, priorities: string[] = [
     return a[0].localeCompare(b[0])
   })
   sorted.forEach(([k, v]) => {
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete obj[k]
     obj[k] = v
   })
@@ -63,6 +62,46 @@ export function sort_array_by_keys (values: any[], priorities: string[] = []): s
     if (order_b != null) return -1
     return a.localeCompare(b)
   })
+}
+
+export function delete_matching_keys(obj: any, condition: (obj: any) => boolean): void {
+  for (const key in obj) {
+    var item = obj[key]
+    if (_.isObject(item)) {
+      if (condition(item)) {
+        delete obj[key]
+      } else {
+        delete_matching_keys(item, condition)
+      }
+    }
+  }
+}
+
+export function find_refs (current: Record<string, any>, root?: Record<string, any>, call_stack: string[] = []): Set<string> {
+  var results = new Set<string>()
+
+  if (root === undefined) {
+    root = current
+    current = current.paths
+  }
+
+  if (current?.$ref != null) {
+    const ref = current.$ref as string
+    results.add(ref)
+    const ref_node = resolve_ref(ref, root)
+    if (ref_node !== undefined && !call_stack.includes(ref)) {
+      call_stack.push(ref)
+      find_refs(ref_node, root, call_stack).forEach((ref) => results.add(ref))
+    }
+  }
+
+  if (_.isObject(current)) {
+    _.forEach(current, (v) => {
+      find_refs(v as Record<string, any>, root, call_stack).forEach((ref) => results.add(ref));
+    })
+  }
+
+  return results
 }
 
 export function ensure_parent_dir (file_path: string): void {

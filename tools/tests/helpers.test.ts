@@ -7,7 +7,8 @@
 * compatible open source license.
 */
 
-import { sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
+import _ from 'lodash'
+import { delete_matching_keys, find_refs, sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
 
 describe('helpers', () => {
   describe('sort_array_by_keys', () => {
@@ -35,5 +36,144 @@ describe('helpers', () => {
     expect(to_ndjson([])).toEqual("\n")
     expect(to_ndjson([{ x: 1 }])).toEqual("{\"x\":1}\n")
     expect(to_ndjson([{ x: 1 }, { y: 'z' }])).toEqual("{\"x\":1}\n{\"y\":\"z\"}\n")
+  })
+
+  describe('delete_matching_keys', () => {
+    test('empty collection', () => {
+      var obj = {}
+      delete_matching_keys(obj, (_obj) => false)
+      expect(obj).toEqual({})
+    })
+
+    describe('an object', () => {
+      var obj: object
+
+      beforeEach(() => {
+        obj = {
+          foo: {
+            bar1: {
+              x: 1
+            }
+          },
+          zar: {
+            bar2: {
+              y: 2
+            }
+          }
+        }
+      })
+
+      test('removes all keys', () => {
+        delete_matching_keys(obj, (_item) => true)
+        expect(obj).toStrictEqual({})
+      })
+
+      test('removes no keys', () => {
+        const obj2 = _.cloneDeep(obj)
+        delete_matching_keys(obj, (_item) => false)
+        expect(obj).toStrictEqual(obj2)
+      })
+
+      test('removes a value from a key', () => {
+        delete_matching_keys(obj, (_item: any) => _item.x == 1)
+        expect(obj).toStrictEqual({ foo: {}, zar: { bar2: { y: 2 } } })
+      })
+
+      test('removes multiple values from a key', () => {
+        delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)
+        expect(obj).toStrictEqual({ foo: {}, zar: {} })
+      })
+    })
+
+    describe('an object with arrays', () => {
+      var obj: object
+
+      beforeEach(() => {
+        obj = {
+          foo: [{
+            bar1: {
+              x: 1
+            },
+            bar2: {
+              y: 2
+            }
+          }],
+        }
+      })
+
+      test('removes all keys', () => {
+        delete_matching_keys(obj, (_item) => true)
+        expect(obj).toStrictEqual({})
+      })
+
+      test('removes no keys', () => {
+        const obj2 = _.cloneDeep(obj)
+        delete_matching_keys(obj, (_item) => false)
+        expect(obj).toStrictEqual(obj2)
+      })
+
+      test('removes a value from a key', () => {
+        delete_matching_keys(obj, (_item: any) => _item.x == 1)
+        expect(obj).toStrictEqual({ foo: [{ bar2: { y: 2 } }] })
+      })
+
+      test('removes multiple values from a key', () => {
+        delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)
+        expect(obj).toStrictEqual({ foo: [{}] })
+      })
+    })
+  })
+
+  describe('find_refs', () => {
+    test('empty collection', () => {
+      expect(find_refs({})).toEqual(new Set())
+    })
+
+    test('with refs', () => {
+      expect(find_refs({
+        paths: {
+          $ref: '#1',
+          null: null,
+          undefined,
+          obj: {
+            $ref: '#2',
+            obj: {
+              $ref: '#3'
+            },
+            schema_obj: {
+              $ref: '#/schemas/schema1'
+            }
+          },
+          arr: [{
+            obj1: {
+              $ref: '#dup',
+            },
+            obj2: {
+              $ref: '#dup',
+            },
+          }]
+        },
+        schemas: {
+          schema1: {
+            items: {
+              $ref: '#/schemas/schema2'
+            }
+          },
+          schema2: {
+            x: 1
+          }
+        },
+        unused1: {
+          $ref: '#unused2',
+          obj: {
+            $ref: '#unused3'
+          }
+        },
+        '#1': {},
+        '#2': {},
+        '#3': {},
+        '#dup': {}
+      })).toEqual(new Set(['#1', '#2', '#3', '#dup', '#/schemas/schema1', '#/schemas/schema2']))
+    })
   })
 })

@@ -13,21 +13,30 @@ import { determine_possible_schema_types, HTTP_METHODS, SpecificationContext } f
 import { SchemaVisitor } from '../_utils/SpecificationVisitor';
 import OpenApiMerger from '../merger/OpenApiMerger';
 import _ from 'lodash';
+import OpenApiVersionExtractor from '../merger/OpenApiVersionExtractor';
 
 // An augmented spec with additionalProperties: false.
 export default class MergedOpenApiSpec {
   logger: Logger
   file_path: string
+  target_version?: string
+
   protected _spec: OpenAPIV3.Document | undefined
 
-  constructor (spec_path: string, logger: Logger = new Logger()) {
+  constructor (spec_path: string, target_version?: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.file_path = spec_path
+    this.target_version = target_version
   }
 
   spec (): OpenAPIV3.Document {
     if (this._spec) return this._spec
-    const spec = (new OpenApiMerger(this.file_path, this.logger)).merge()
+    const merger = new OpenApiMerger(this.file_path, this.logger)
+    var spec = merger.spec()
+    if (this.target_version !== undefined) {
+      const version_extractor = new OpenApiVersionExtractor(spec, this.target_version)
+      spec = version_extractor.extract()
+    }
     const ctx = new SpecificationContext(this.file_path)
     this.inject_additional_properties(ctx, spec)
     this._spec = spec

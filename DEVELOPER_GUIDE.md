@@ -173,12 +173,19 @@ The merger tool merges the multi-file OpenSearch spec into a single file for pro
 
 - `--source <path>`: The path to the root folder of the multi-file spec, defaults to `<repository-root>/spec`.
 - `--output <path>`: The path to write the final merged spec to, defaults to `<repository-root>/build/opensearch-openapi.yaml`.
+- `--opensearch-version`: An optional target version of OpenSearch, checking values of `x-version-added` and `x-version-removed`.
 
 #### Example
 
 We can take advantage of the default values and simply merge the specification via:
 ```bash
 npm run merge
+```
+
+To generate a spec that does not contain any APIs or fields removed in version 2.0 (e.g. document `_type` fields).
+
+```bash
+npm run merge -- --opensearch-version=2.0
 ```
 
 ### [Spec Linter](tools/src/linter)

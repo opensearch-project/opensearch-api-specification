@@ -75,7 +75,7 @@ describe('ConsoleResultLogger', () => {
 
       expect(log.mock.calls).toEqual([
         [],
-        ['Tested 1/4 paths.']
+        ['Tested 1/6 paths.']
       ])
     })
   })

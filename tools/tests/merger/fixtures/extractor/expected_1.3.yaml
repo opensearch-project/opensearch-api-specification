@@ -3,7 +3,19 @@ info:
   title: OpenSearch API
   description: OpenSearch API
   version: 1.0.0
+  x-api-version: 1.2.3
 paths:
+  /_nodes/{id}:
+    get:
+      operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '1.0'
+      description: Returns information about nodes in the cluster.
+      parameters:
+        - $ref: '#/components/parameters/nodes.info::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
   /index:
     get:
       operationId: get.0
@@ -14,21 +26,33 @@ paths:
           $ref: '#/components/responses/info@201'
         '404':
           $ref: '#/components/responses/info@404'
-        added-2.0:
-          $ref: '#/components/responses/info@added-2.0'
-          x-version-added: '2.0'
+        '500':
+          $ref: '#/components/responses/info@500'
+        '503':
+          $ref: '#/components/responses/info@503'
         removed-2.0:
           $ref: '#/components/responses/info@removed-2.0'
           x-version-removed: '2.0'
         added-1.3-removed-2.0:
           $ref: '#/components/responses/info@added-1.3-removed-2.0'
-        added-2.1:
-          $ref: '#/components/responses/info@added-2.1'
-        '500':
-          $ref: '#/components/responses/info@500'
-        '503':
-          $ref: '#/components/responses/info@503'
+      parameters: []
+  /nodes:
+    get:
+      operationId: nodes.0
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
+      parameters: []
 components:
+  parameters:
+    nodes.info::path.id:
+      in: path
+      name: id
+      description: Node ID.
+      required: true
+      schema:
+        type: string
+  requestBodies: {}
   responses:
     info@200:
       description: ''
@@ -38,7 +62,7 @@ components:
             type: object
             properties:
               _type:
-                $ref: '../schemas/_common.yaml#/components/schemas/Type'
+                $ref: '#/components/schemas/_common:Type'
               tagline:
                 type: string
             required:
@@ -68,17 +92,6 @@ components:
               - tagline
             unevaluatedProperties:
               type: object
-    info@added-2.0:
-      description: Added in 2.0 via attribute next to ref.
-    info@removed-2.0:
-      description: Removed in 2.0 via attribute next to ref.
-    info@added-1.3-removed-2.0:
-      description: 'Added in 1.3, removed in 2.0 via attribute in response body.'
-      x-version-added: '1.3'
-      x-version-removed: '2.0'
-    info@added-2.1:
-      description: Added in 2.1 via attribute in response body.
-      x-version-added: '2.1'
     info@500:
       description: ''
       content:
@@ -94,3 +107,19 @@ components:
         application/json:
           schema:
             type: object
+    info@added-1.3-removed-2.0:
+      description: Added in 1.3, removed in 2.0 via attribute in response body.
+      x-version-added: '1.3'
+      x-version-removed: '2.0'
+    info@removed-2.0:
+      description: Removed in 2.0 via attribute next to ref.
+    nodes.info@200:
+      description: All nodes.
+      content:
+        application/json:
+          schema:
+            type: object
+  schemas:
+    _common:Type:
+      type: string
+      x-version-removed: '2.0'
