@@ -77,7 +77,7 @@ export function delete_matching_keys(obj: any, condition: (obj: any) => boolean)
   }
 }
 
-export function find_refs (current: Record<string, any>, root?: Record<string, any>): Set<string> {
+export function find_refs (current: Record<string, any>, root?: Record<string, any>, call_stack: string[] = []): Set<string> {
   var results = new Set<string>()
 
   if (root === undefined) {
@@ -89,12 +89,15 @@ export function find_refs (current: Record<string, any>, root?: Record<string, a
     const ref = current.$ref as string
     results.add(ref)
     const ref_node = resolve_ref(ref, root)
-    if (ref_node !== undefined) find_refs(ref_node, root).forEach((ref) => results.add(ref))
+    if (ref_node !== undefined && !call_stack.includes(ref)) {
+      call_stack.push(ref)
+      find_refs(ref_node, root, call_stack).forEach((ref) => results.add(ref))
+    }
   }
 
   if (_.isObject(current)) {
     _.forEach(current, (v) => {
-      find_refs(v as Record<string, any>, root).forEach((ref) => results.add(ref));
+      find_refs(v as Record<string, any>, root, call_stack).forEach((ref) => results.add(ref));
     })
   }
 
