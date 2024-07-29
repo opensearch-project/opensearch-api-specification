@@ -65,7 +65,10 @@ export default class StoryEvaluator {
   }
 
   #warning_if_mismatched_chapter_paths(chapters: Chapter[]): string | undefined {
-    const paths = _.map(chapters, (chapter) => chapter.path)
+    const paths = _.compact(_.map(chapters, (chapter) => {
+      const multiple_paths_detected = chapter.warnings?.['multiple-paths-detected'] ?? true
+      if (multiple_paths_detected) return chapter.path
+    }))
     const normalized_paths = _.map(paths, (path) => path.replaceAll(/\/\{[^}]+}/g, '').replaceAll('//', '/'))
     const paths_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
     if (paths_counts.length > 1) {
