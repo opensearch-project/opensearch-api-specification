@@ -23,7 +23,7 @@ components:
         response_processors:
           type: array
           items:
-            $ref: '#/components/schemas/RequestProcessor'
+            $ref: '#/components/schemas/ResponseProcessor'
         phase_results_processors:
           type: array
           items:
@@ -187,6 +187,219 @@ components:
           type: string
       required:
         - sample_factor
+    ResponseProcessor:
+      oneOf:
+        - type: object
+          title: personalize_search_ranking
+          properties:
+            personalize_search_ranking:
+              $ref: '#/components/schemas/PersonalizeSearchRankingResponseProcessor'
+          required:
+            - personalize_search_ranking
+        - type: object
+          title: retrieval_augmented_generation
+          properties:
+            retrieval_augmented_generation:
+              $ref: '#/components/schemas/RetrievalAugmentedGenerationResponseProcessor'
+          required:
+            - retrieval_augmented_generation
+        - type: object
+          title: rename_field
+          properties:
+            rename_field:
+              $ref: '#/components/schemas/RenameFieldResponseProcessor'
+          required:
+            - rename_field
+        - type: object
+          title: rerank
+          properties:
+            rerank:
+              $ref: '#/components/schemas/RerankResponseProcessor'
+          required:
+            - rerank
+        - type: object
+          title: collapse
+          properties:
+            collapse:
+              $ref: '#/components/schemas/CollapseResponseProcessor'
+          required:
+            - collapse
+        - type: object
+          title: truncate_hits
+          properties:
+            truncate_hits:
+              $ref: '#/components/schemas/TruncateHitsResponseProcessor'
+          required:
+            - truncate_hits
+        - type: object
+          title: sort
+          properties:
+            sort:
+              $ref: '#/components/schemas/SortResponseProcessor'
+          required:
+            - sort
+        - type: object
+          title: split
+          properties:
+            split:
+              $ref: '#/components/schemas/SplitResponseProcessor'
+          required:
+            - split
+    PersonalizeSearchRankingResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        campaign_arn:
+          type: string
+        recipe:
+          type: string
+        weight:
+          type: number
+          format: float
+        item_id_field:
+          type: string
+        iam_role_arn:
+          type: string
+      required:
+        - campaign_arn
+        - recipe
+        - weight
+    RetrievalAugmentedGenerationResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        model_id:
+          type: string
+        context_field_list:
+          type: array
+          items:
+            type: string
+        system_prompt:
+          type: string
+        user_instructions:
+          type: string
+      required:
+        - context_field_list
+        - model_id
+    RenameFieldResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        target_field:
+          type: string
+      required:
+        - field
+        - target_field
+    RerankContext:
+      type: object
+      properties:
+        document_fields:
+          type: array
+          items:
+            type: string
+      required:
+        - document_fields
+    MLOpenSearchReranker:
+      type: object
+      properties:
+        model_id:
+          type: string
+      required:
+        - model_id
+    RerankResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        ml_opensearch:
+          $ref: '#/components/schemas/MLOpenSearchReranker'
+        context:
+          $ref: '#/components/schemas/RerankContext'
+    CollapseResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        context_prefix:
+          type: string
+      required:
+        - field
+    TruncateHitsResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        target_size:
+          type: integer
+          format: int32
+        context_prefix:
+          type: string
+    SortResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        order:
+          type: string
+        target_field:
+          type: string
+      required:
+        - field
+    SplitResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        separator:
+          type: string
+        preserve_trailing:
+          type: boolean
+        target_field:
+          type: string
+      required:
+        - field
+        - separator
     PhaseResultsProcessor:
       oneOf:
         - type: object
