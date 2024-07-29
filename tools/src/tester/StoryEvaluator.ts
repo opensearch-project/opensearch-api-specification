@@ -72,7 +72,7 @@ export default class StoryEvaluator {
     const normalized_paths = _.map(paths, (path) => path.replaceAll(/\/\{[^}]+}/g, '').replaceAll('//', '/'))
     const paths_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
     if (paths_counts.length > 1) {
-      return `Multiple paths detected, please group similar tests together and move paths not being tested to the prologue.\n  ${_.join(_.uniq(paths), "\n  ")}\n`
+      return `Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.\n  ${_.join(_.uniq(paths), "\n  ")}\n`
     }
   }
 

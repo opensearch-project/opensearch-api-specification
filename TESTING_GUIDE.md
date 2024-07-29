@@ -185,7 +185,7 @@ For example, an ML task returns `CREATED` when created, and `COMPLETED` when it'
 The test runner expects all tests in the same file to be variation of the same path in order to keep tests well-organized. Otherwise, a warning will be emitted.
 
 ```
-WARNING Multiple paths detected, please group similar tests together and move paths not being tested to the prologue.
+WARNING Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.
   /_component_template/{name}
   /_index_template/{name}
   /{index}
