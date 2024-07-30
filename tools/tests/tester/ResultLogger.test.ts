@@ -78,6 +78,34 @@ describe('ConsoleResultLogger', () => {
         ['Tested 1/6 paths.']
       ])
     })
+
+    test('with retries', () => {
+      logger.log({
+        result: Result.PASSED,
+        display_path: 'path',
+        full_path: 'full_path',
+        description: 'description',
+        message: 'message',
+        chapters: [{
+          title: 'title',
+          retries: 3,
+          overall: {
+            result: Result.PASSED,
+          }
+        }],
+        epilogues: [],
+        prologues: []
+      })
+
+      expect(log.mock.calls).toEqual([
+        [],
+        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
+        [`   ${ansi.green('PASSED ')} CHAPTERS`],
+        [`      ${ansi.green('PASSED ')} ${ansi.i('title')}`],
+        [`         ${ansi.green('RETRIES')} 3`],
+        []
+      ])
+    })
   })
 
   describe('verbose=false', () => {

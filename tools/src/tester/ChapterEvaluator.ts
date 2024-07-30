@@ -19,7 +19,7 @@ import { ChapterOutput } from './ChapterOutput'
 import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
 import _ from 'lodash'
 import { Logger } from 'Logger'
-import { to_json } from '../helpers'
+import { sleep, to_json } from '../helpers'
 import { APPLICATION_JSON } from "./MimeTypes";
 
 export default class ChapterEvaluator {
@@ -37,41 +37,58 @@ export default class ChapterEvaluator {
 
   async evaluate(chapter: Chapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
-    const response = await this._chapter_reader.read(chapter, story_outputs)
+
     const operation = this._operation_locator.locate_operation(chapter)
     if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
-    const params = this.#evaluate_parameters(chapter, operation)
-    const request_body = this.#evaluate_request_body(chapter, operation)
-    const status = this.#evaluate_status(chapter, response)
-    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
-    const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
-    const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
 
-    const evaluations = _.compact(_.concat(
-      Object.values(params),
-      request_body,
-      status,
-      payload_body_evaluation,
-      payload_schema_evaluation,
-      output_values_evaluation.evaluation
-    ))
+    var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
+    var retry = 0
+    var result: ChapterEvaluation
 
-    var result: ChapterEvaluation = {
-      title: chapter.synopsis,
-      path: `${chapter.method} ${chapter.path}`,
-      overall: { result: overall_result(evaluations) },
-      request: { parameters: params, request_body },
-      response: {
+    do {
+      const response = await this._chapter_reader.read(chapter, story_outputs)
+      const params = this.#evaluate_parameters(chapter, operation)
+      const request_body = this.#evaluate_request_body(chapter, operation)
+      const status = this.#evaluate_status(chapter, response)
+      const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
+      const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
+      const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
+
+      const evaluations = _.compact(_.concat(
+        Object.values(params),
+        request_body,
         status,
-        payload_body: payload_body_evaluation,
-        payload_schema: payload_schema_evaluation,
-        output_values: output_values_evaluation.evaluation
-      }
-    }
+        payload_body_evaluation,
+        payload_schema_evaluation,
+        output_values_evaluation.evaluation
+      ))
 
-    if (output_values_evaluation?.output !== undefined) {
-      result.output = output_values_evaluation?.output
-    }
+      result = {
+        title: chapter.synopsis,
+        path: `${chapter.method} ${chapter.path}`,
+        overall: { result: overall_result(evaluations) },
+        request: { parameters: params, request_body },
+        retries: ++retry > 1 ? retry - 1 : undefined,
+        response: {
+          status,
+          payload_body: payload_body_evaluation,
+          payload_schema: payload_schema_evaluation,
+          output_values: output_values_evaluation.evaluation
+        }
+      }
+
+      if (output_values_evaluation?.output !== undefined) {
+        result.output = output_values_evaluation?.output
+      }
+
+      if (result.overall.result === Result.PASSED || result.overall.result === Result.SKIPPED) {
+        return result
+      }
+
+      if (--tries == 0) break
+      this.logger.info(`Failed, retrying, ${tries == 1 ? '1 retry left' : `${tries} retries left`} ...`)
+      await sleep(chapter.retry?.wait ?? 1000)
+    } while (tries > 0)
 
     return result
   }

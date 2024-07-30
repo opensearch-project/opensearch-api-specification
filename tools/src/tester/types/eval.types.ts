@@ -46,6 +46,7 @@ export interface ChapterEvaluation {
     payload_schema: Evaluation
     output_values: Evaluation
   },
+  retries?: number,
   output?: ChapterOutput
 }
 
