@@ -43,43 +43,11 @@ export default class ChapterEvaluator {
 
     var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     var retry = 0
+
     var result: ChapterEvaluation
 
     do {
-      const response = await this._chapter_reader.read(chapter, story_outputs)
-      const params = this.#evaluate_parameters(chapter, operation)
-      const request_body = this.#evaluate_request_body(chapter, operation)
-      const status = this.#evaluate_status(chapter, response)
-      const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
-      const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
-      const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
-
-      const evaluations = _.compact(_.concat(
-        Object.values(params),
-        request_body,
-        status,
-        payload_body_evaluation,
-        payload_schema_evaluation,
-        output_values_evaluation.evaluation
-      ))
-
-      result = {
-        title: chapter.synopsis,
-        path: `${chapter.method} ${chapter.path}`,
-        overall: { result: overall_result(evaluations) },
-        request: { parameters: params, request_body },
-        retries: ++retry > 1 ? retry - 1 : undefined,
-        response: {
-          status,
-          payload_body: payload_body_evaluation,
-          payload_schema: payload_schema_evaluation,
-          output_values: output_values_evaluation.evaluation
-        }
-      }
-
-      if (output_values_evaluation?.output !== undefined) {
-        result.output = output_values_evaluation?.output
-      }
+      result = await this.#evaluate(chapter, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined)
 
       if (result.overall.result === Result.PASSED || result.overall.result === Result.SKIPPED) {
         return result
@@ -89,6 +57,45 @@ export default class ChapterEvaluator {
       this.logger.info(`Failed, retrying, ${tries == 1 ? '1 retry left' : `${tries} retries left`} ...`)
       await sleep(chapter.retry?.wait ?? 1000)
     } while (tries > 0)
+
+    return result
+  }
+
+  async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
+    const response = await this._chapter_reader.read(chapter, story_outputs)
+    const params = this.#evaluate_parameters(chapter, operation)
+    const request_body = this.#evaluate_request_body(chapter, operation)
+    const status = this.#evaluate_status(chapter, response)
+    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
+    const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
+    const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
+
+    const evaluations = _.compact(_.concat(
+      Object.values(params),
+      request_body,
+      status,
+      payload_body_evaluation,
+      payload_schema_evaluation,
+      output_values_evaluation.evaluation
+    ))
+
+    var result: ChapterEvaluation = {
+      title: chapter.synopsis,
+      path: `${chapter.method} ${chapter.path}`,
+      overall: { result: overall_result(evaluations) },
+      request: { parameters: params, request_body },
+      retries,
+      response: {
+        status,
+        payload_body: payload_body_evaluation,
+        payload_schema: payload_schema_evaluation,
+        output_values: output_values_evaluation.evaluation
+      }
+    }
+
+    if (output_values_evaluation?.output !== undefined) {
+      result.output = output_values_evaluation?.output
+    }
 
     return result
   }
