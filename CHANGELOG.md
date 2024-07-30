@@ -65,7 +65,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added metadata additionalProperties to `ErrorCause` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
- 
+- Added `/{index}/_tier` api spec for tiering of indices ([#368](https://github.com/opensearch-project/opensearch-api-specification/pull/368))
+
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))

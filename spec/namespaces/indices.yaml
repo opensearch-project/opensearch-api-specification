@@ -1793,6 +1793,22 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.stats@200'
+  /{index}/_tier/warm:
+    post:
+      operationId: indices.tier_warm.0
+      x-operation-group: indices.tier_warm
+      x-version-added: 2.16.0
+      description: Tier the index to warm in the cluster.
+      parameters:
+        - $ref: '#/components/parameters/indices.tier_warm::path.index'
+        - $ref: '#/components/parameters/indices.tier_warm::query.allow_no_indices'
+        - $ref: '#/components/parameters/indices.tier_warm::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.tier_warm::query.ignore_unavailable'
+        - $ref: '#/components/parameters/indices.tier_warm::query.timeout'
+        - $ref: '#/components/parameters/indices.tier_warm::query.wait_for_completion'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.tier_warm@200'
   /{index}/_upgrade:
     get:
       operationId: indices.get_upgrade.1
@@ -2697,6 +2713,24 @@ components:
             required:
               - _all
               - _shards
+    indices.tier_warm@200:
+      description: tiering response for indices target to warm tier
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                description: Whether the request has been acknowledged
+                type: boolean
+              failed_indices:
+                description: List of failed indices
+                type: array
+                items:
+                  $ref: '../schemas/tier.warm.yaml#/components/schemas/FailedIndex'
+            required:
+              - acknowledged
+              - failed_indices
     indices.update_aliases@200:
       content:
         application/json:
@@ -5077,6 +5111,59 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Level'
       style: form
+    indices.tier_warm::path.index:
+      in: path
+      name: index
+      description: |-
+        Comma-separated list of data streams, indices, and aliases to tier.
+        Supports wildcards (`*`).
+        To search all data streams or indices, omit this parameter or use `*` or `_all`.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
+    indices.tier_warm::query.allow_no_indices:
+      in: query
+      name: allow_no_indices
+      description: |-
+        If `false`, the request returns an error if any wildcard expression, index alias, or `_all` value targets only missing or closed indices.
+        This behavior applies even if the request targets other open indices.
+      schema:
+        type: boolean
+        default: false
+      style: form
+    indices.tier_warm::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      x-version-added: 2.0.0
+    indices.tier_warm::query.ignore_unavailable:
+      in: query
+      name: ignore_unavailable
+      description: If `false`, the request returns an error if it targets a missing or closed index.
+      schema:
+        type: boolean
+        default: false
+      style: form
+    indices.tier_warm::query.timeout:
+      in: query
+      name: timeout
+      description: |-
+        Period to wait for a response.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_warm::query.wait_for_completion:
+      name: wait_for_completion
+      in: query
+      description: Wait until the operation has completed before returning.
+      schema:
+        type: boolean
+        default: true
+        description: Wait until the operation has completed before returning.
     indices.update_aliases::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query

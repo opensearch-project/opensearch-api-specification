@@ -1,0 +1,23 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+version: '>= 2.17'
+description: Test endpoints relevant to tiering of index to warm.
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: games
+epilogues:
+  - path: /books,movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Tier the `books` and `games` indices from hot to warm.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: books,games
