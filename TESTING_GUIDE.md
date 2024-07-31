@@ -20,7 +20,7 @@ Set up an OpenSearch cluster with Docker:
 ```bash
 export OPENSEARCH_PASSWORD=<<your_password>>
 cd .github/opensearch-cluster
-docker-compose up -d
+docker compose up -d
 ```
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
