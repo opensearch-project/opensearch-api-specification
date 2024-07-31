@@ -24,13 +24,16 @@ paths:
     post:
       operationId: nodes.info.1
       x-operation-group: nodes.info
-      x-version-added: '1.0'
+      x-version-added: '2.0'
       description: Returns information about nodes in the cluster.
       parameters:
         - $ref: '#/components/parameters/nodes.info::path.id'
+        - $ref: '#/components/parameters/nodes.info::query.flag'
       requestBody:
         $ref: '#/components/requestBodies/nodes.info'
       responses:
+        '201':
+          $ref: '#/components/responses/nodes.info@201'
         '200':
           $ref: '#/components/responses/nodes.info@200'
 components:
@@ -43,6 +46,9 @@ components:
             properties:
               _all:
                 type: boolean
+              ids:
+                $ref: '../schemas/_common.yaml#/components/schemas/Ids'
+                x-version-added: '2.0'
             description: Nodes options.
   parameters:
     nodes.info::path.id:
@@ -52,8 +58,31 @@ components:
       required: true
       schema:
         type: string
+    nodes.info::query.flag:
+      in: query
+      name: flag
+      description: Flag.
+      required: false
+      schema:
+        type: boolean
+        default: false
+    nodes.info::query.new:
+      in: query
+      name: new
+      description: New option added in 2.1.
+      required: false
+      x-version-added: '2.1'
+      schema:
+        type: array
+        default: false
   responses:
     nodes.info@200:
+      description: All nodes.
+      content:
+        application/json:
+          schema:
+            type: object
+    nodes.info@201:
       description: All nodes.
       content:
         application/json:

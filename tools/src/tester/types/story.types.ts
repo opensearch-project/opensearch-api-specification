@@ -38,13 +38,30 @@ export type Parameter = (string | number | boolean)[] | string | number | boolea
  */
 export type Payload = {} | any[] | string | number | boolean;
 /**
- * The semver range to execute the chapter against.
+ * The semver range to execute the story or chapter against.
  *
  *
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Version".
  */
 export type Version = string;
+/**
+ * Number of times to retry on error.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Retry".
+ */
+export type Retry = {
+  /**
+   * Number of retries.
+   */
+  count: number;
+  /**
+   * Number of milliseconds to wait before retrying.
+   */
+  wait?: number;
+};
 /**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Chapter".
@@ -89,6 +106,7 @@ export interface ChapterRequest {
   request_body?: RequestBody;
   output?: Output;
   version?: Version;
+  retry?: Retry;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

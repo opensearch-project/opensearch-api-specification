@@ -56,7 +56,7 @@ export default [
         { selector: 'typeProperty', format: null }
       ],
       '@typescript-eslint/no-confusing-void-expression': 'error',
-      '@typescript-eslint/no-dynamic-delete': 'error',
+      '@typescript-eslint/no-dynamic-delete': 'off',
       '@typescript-eslint/no-invalid-void-type': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-unnecessary-type-assertion': 'error',

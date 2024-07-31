@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch API
+  description: OpenSearch API
+  version: 1.0.0
+  x-api-version: 1.2.3
+paths:
+  /_nodes/{id}:
+    get:
+      operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '1.0'
+      description: Returns information about nodes in the cluster.
+      parameters:
+        - $ref: '#/components/parameters/nodes.info::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
+    post:
+      operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '2.0'
+      description: Returns information about nodes in the cluster.
+      parameters:
+        - $ref: '#/components/parameters/nodes.info::path.id'
+        - $ref: '#/components/parameters/nodes.info::query.flag'
+      requestBody:
+        $ref: '#/components/requestBodies/nodes.info'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
+        '201':
+          $ref: '#/components/responses/nodes.info@201'
+  /cluster_manager:
+    get:
+      operationId: cluster_manager.0
+      x-version-added: '2.0'
+      parameters: []
+    post:
+      operationId: cluster_manager.0
+      x-version-added: '2.0'
+      parameters: []
+  /index:
+    get:
+      operationId: get.0
+      responses:
+        '200':
+          $ref: '#/components/responses/info@200'
+        '201':
+          $ref: '#/components/responses/info@201'
+        '404':
+          $ref: '#/components/responses/info@404'
+        '500':
+          $ref: '#/components/responses/info@500'
+        '503':
+          $ref: '#/components/responses/info@503'
+        added-2.0:
+          $ref: '#/components/responses/info@added-2.0'
+          x-version-added: '2.0'
+      parameters: []
+  /nodes:
+    get:
+      operationId: nodes.0
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info@200'
+      parameters: []
+components:
+  parameters:
+    nodes.info::path.id:
+      in: path
+      name: id
+      description: Node ID.
+      required: true
+      schema:
+        type: string
+    nodes.info::query.flag:
+      in: query
+      name: flag
+      description: Flag.
+      required: false
+      schema:
+        type: boolean
+        default: false
+  requestBodies:
+    nodes.info:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _all:
+                type: boolean
+              ids:
+                $ref: '#/components/schemas/_common:Ids'
+                x-version-added: '2.0'
+            description: Nodes options.
+  responses:
+    info@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+            required:
+              - tagline
+    info@201:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+            required:
+              - tagline
+            unevaluatedProperties: true
+    info@404:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+            required:
+              - tagline
+            unevaluatedProperties:
+              type: object
+    info@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+    info@503:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+    info@added-2.0:
+      description: Added in 2.0 via attribute next to ref.
+    nodes.info@200:
+      description: All nodes.
+      content:
+        application/json:
+          schema:
+            type: object
+    nodes.info@201:
+      description: All nodes.
+      content:
+        application/json:
+          schema:
+            type: object
+  schemas:
+    _common:Ids:
+      oneOf:
+        - $ref: '#/components/schemas/_common:OldId'
+        - type: array
+          items:
+            $ref: '#/components/schemas/_common:Ids'
+    _common:OldId:
+      type: string

@@ -26,7 +26,7 @@ jobs:
           - {version: 1.3.17, admin_password: admin}
           - {version: 2.0.0, admin_password: admin}
           - {version: 2.15.0}
-          - {version: 2.16.0, hub: opensearchstaging, ref: '@sha256:aa99ce3e2c9c94cd934cf98bab753a9920bfdbbb74bdc932d1b443d31c18d6b2'}
+          - {version: 2.16.0, hub: opensearchstaging, ref: '@sha256:50fbfe3b95c41e92a113ada3e80513ba4524dfc8a25dc6aaeff2bbe1e1145d5f'}
 
     name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }})
     runs-on: ubuntu-latest
@@ -51,11 +51,14 @@ jobs:
 
       - name: Run OpenSearch Cluster
         working-directory: .github/opensearch-cluster
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Run Tests
         run: |
-          npm run test:spec -- --opensearch-insecure --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json
+          npm run test:spec -- \
+            --opensearch-insecure \
+            --opensearch-version=${{ matrix.entry.version }} \
+            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json
 
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
@@ -97,7 +100,7 @@ jobs:
             --null-input '
             {
               "pr_number": ($pr_number),
-              "comment_identifier": "# Test Coverage Analysis",
+              "comment_identifier": "## Spec Test Coverage Analysis",
               "template_name": "pr-test-coverage-analysis",
               "template_data": {
                 "test_coverage": ($test_coverage[0])

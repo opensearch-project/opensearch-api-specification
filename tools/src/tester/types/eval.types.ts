@@ -44,8 +44,10 @@ export interface ChapterEvaluation {
     status: Evaluation
     payload_body: Evaluation,
     payload_schema: Evaluation
-  }
-  output_values?: EvaluationWithOutput
+    output_values: Evaluation
+  },
+  retries?: number,
+  output?: ChapterOutput
 }
 
 export class ChaptersEvaluations {
@@ -63,7 +65,8 @@ export interface Evaluation {
   error?: Error | string
 }
 
-export type EvaluationWithOutput = Evaluation & {
+export type EvaluationWithOutput = {
+  evaluation: Evaluation,
   output?: ChapterOutput
 }
 

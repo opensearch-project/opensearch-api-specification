@@ -1,0 +1,216 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch SQL API
+  description: OpenSearch SQL API
+  version: 1.0.0
+paths:
+  /_plugins/_sql:
+    post:
+      operationId: sql.query.0
+      x-operation-group: sql.query
+      x-version-added: '1.0'
+      description: Send a SQL/PPL query to the SQL plugin. 
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
+      parameters:
+        - $ref: '#/components/parameters/sql.query::query.format'
+        - $ref: '#/components/parameters/sql.query::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/sql.query'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.query@200'
+  /_plugins/_sql/_explain:
+    post:
+      operationId: sql.explain.0
+      x-operation-group: sql.explain
+      x-version-added: '1.0'
+      description: Shows how a query is executed against OpenSearch.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
+      parameters:
+        - $ref: '#/components/parameters/sql.explain::query.format'
+        - $ref: '#/components/parameters/sql.explain::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/sql.explain'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.explain@200'
+  /_plugins/_sql/close:
+    post:
+      operationId: sql.close.0
+      x-operation-group: sql.close
+      x-version-added: '1.0'
+      description: Clear the cursor context.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
+      parameters:
+        - $ref: '#/components/parameters/sql.close::query.format'
+        - $ref: '#/components/parameters/sql.close::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/sql.close'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.close@200'
+  /_plugins/_sql/stats:
+    get:
+      operationId: sql.get_stats.0
+      x-operation-group: sql.get_stats
+      x-version-added: '1.0'
+      description: Collect metrics for the plugin within the interval.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
+      parameters:
+        - $ref: '#/components/parameters/sql.get_stats::query.format'
+        - $ref: '#/components/parameters/sql.get_stats::query.sanitize'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.get_stats@200'
+    post:
+      operationId: sql.post_stats.1
+      x-operation-group: sql.post_stats
+      x-version-added: '1.0'
+      description: By a stats endpoint, you are able to collect metrics for the plugin within the interval.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
+      parameters:
+        - $ref: '#/components/parameters/sql.post_stats::query.format'
+        - $ref: '#/components/parameters/sql.post_stats::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/sql.post_stats'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.post_stats@200'
+components:
+  parameters:
+    sql.query::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.
+    sql.query::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results
+      schema:
+        type: boolean
+        default: true
+        description: Specifies whether to escape special characters in the results
+    sql.explain::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.
+    sql.explain::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results
+      schema:
+        type: boolean
+        default: true
+        description: Specifies whether to escape special characters in the results
+    sql.close::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.
+    sql.close::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results
+      schema:
+        type: boolean
+        default: true
+        description: Specifies whether to escape special characters in the results
+    sql.get_stats::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.
+    sql.get_stats::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results
+      schema:
+        type: boolean
+        default: true
+        description: Specifies whether to escape special characters in the results
+    sql.post_stats::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.
+    sql.post_stats::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results
+      schema:
+        type: boolean
+        default: true
+        description: Specifies whether to escape special characters in the results
+  requestBodies:
+    sql.query:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlQuery'
+      required: true
+    sql.explain:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlExplain'
+      required: true
+    sql.close:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlClose'
+      required: true
+    sql.post_stats:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlStats'
+      required: true
+  responses:
+    sql.query@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlQueryResponse'
+    sql.explain@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlExplainResponse'
+      required: true
+    sql.close@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlCloseResponse'
+      required: true
+    sql.get_stats@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+      required: true
+    sql.post_stats@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+      required: true
