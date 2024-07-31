@@ -386,33 +386,33 @@ paths:
           $ref: '#/components/responses/security.flush_cache@200'
   /_plugins/_security/api/certificates:
     get:
-      operationId: security.get_certificates_new.0
-      x-operation-group: security.get_certificates_new
+      operationId: security.get_all_certificates.0
+      x-operation-group: security.get_all_certificates
       x-version-added: '2.15'
       description: Retrieves the cluster security certificates.
       parameters:
-        - $ref: '#/components/parameters/security.get_certificates_new::query.cert_type'
-        - $ref: '#/components/parameters/security.get_certificates_new::query.timeout'
+        - $ref: '#/components/parameters/security.get_all_certificates::query.cert_type'
+        - $ref: '#/components/parameters/security.get_all_certificates::query.timeout'
       responses:
         '200':
-          $ref: '#/components/responses/security.get_certificates_new@200'
-        '400':
-          $ref: '#/components/responses/security.get_certificates_new@500'
+          $ref: '#/components/responses/security.get_all_certificates@200'
+        '500':
+          $ref: '#/components/responses/security.get_all_certificates@500'
   /_plugins/_security/api/certificates/{node_id}:
     get:
-      operationId: security.get_certificates_new.1
-      x-operation-group: security.get_certificates_new
+      operationId: security.get_node_certificates.0
+      x-operation-group: security.get_node_certificates
       x-version-added: '2.15'
       description: Retrieves the given node's security certificates.
       parameters:
-        - $ref: '#/components/parameters/security.get_certificates_new::path.node_id'
-        - $ref: '#/components/parameters/security.get_certificates_new::query.cert_type'
-        - $ref: '#/components/parameters/security.get_certificates_new::query.timeout'
+        - $ref: '#/components/parameters/security.get_node_certificates::path.node_id'
+        - $ref: '#/components/parameters/security.get_node_certificates::query.cert_type'
+        - $ref: '#/components/parameters/security.get_node_certificates::query.timeout'
       responses:
         '200':
-          $ref: '#/components/responses/security.get_certificates_new@200'
-        '400':
-          $ref: '#/components/responses/security.get_certificates_new@500'
+          $ref: '#/components/responses/security.get_node_certificates@200'
+        '500':
+          $ref: '#/components/responses/security.get_node_certificates@500'
   /_plugins/_security/api/generateonbehalfoftoken:
     post:
       operationId: security.generate_obo_token.0
@@ -1480,7 +1480,13 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/GetCertificates'
-    security.get_certificates_new@200:
+    security.get_all_certificates@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/GetCertificatesNew'
+    security.get_node_certificates@200:
       description: ''
       content:
         application/json:
@@ -1492,7 +1498,13 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/BadRequest'
-    security.get_certificates_new@500:
+    security.get_all_certificates@500:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
+    security.get_node_certificates@500:
       description: ''
       content:
         application/json:
@@ -2023,19 +2035,31 @@ components:
         type: string
         description: Action group to retrieve.
       required: true
-    security.get_certificates_new::path.node_id:
+    security.get_node_certificates::path.node_id:
       name: node_id
       in: path
       schema:
         type: string
       required: true
-    security.get_certificates_new::query.cert_type:
+    security.get_all_certificates::query.cert_type:
       name: cert_type
       in: query
       schema:
         type: string
       required: false
-    security.get_certificates_new::query.timeout:
+    security.get_node_certificates::query.cert_type:
+      name: cert_type
+      in: query
+      schema:
+        type: string
+      required: false
+    security.get_all_certificates::query.timeout:
+      name: timeout
+      in: query
+      schema:
+        type: string
+      required: false
+    security.get_node_certificates::query.timeout:
       name: timeout
       in: query
       schema:
