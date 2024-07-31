@@ -4,6 +4,21 @@ info:
   description: OpenSearch SQL API
   version: 1.0.0
 paths:
+  /_plugins/_query/settings:
+    put:
+        operationId: sql.settings.0
+        x-operation-group: sql.settings
+        x-version-added: '1.0'
+        description: Adds SQL settings to the standard OpenSearch cluster settings.
+        externalDocs:
+          url: https://opensearch.org/docs/latest/search-plugins/sql/settings/
+        parameters:
+          - $ref: '#/components/parameters/sql.settings::query.format'
+        requestBody:
+          $ref: '#/components/requestBodies/sql.settings'
+        responses:
+          '200':
+            $ref: '#/components/responses/sql.settings@200'
   /_plugins/_sql:
     post:
       operationId: sql.query.0
@@ -83,6 +98,13 @@ paths:
           $ref: '#/components/responses/sql.post_stats@200'
 components:
   parameters:
+    sql.settings::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+        description: A short version of the Accept header, e.g. json, yaml.  
     sql.query::query.format:
       name: format
       in: query
@@ -159,6 +181,12 @@ components:
         default: true
         description: Specifies whether to escape special characters in the results
   requestBodies:
+    sql.settings:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlSettings'
+      required: true
     sql.query:
       content:
         application/json:
@@ -184,6 +212,12 @@ components:
             $ref: '../schemas/sql._common.yaml#/components/schemas/SqlStats'
       required: true
   responses:
+    sql.settings@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/SqlSettingsResponse'
     sql.query@200:
       description: ''
       content:
