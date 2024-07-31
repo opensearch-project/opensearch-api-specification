@@ -22810,18 +22810,7 @@ components:
     ml.search_models:
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              query:
-                type: object
-                description: The query.
-              size:
-                type: integer
-                description: The number of models to return.
-            required:
-              - query
-              - size
+          $ref: '#/components/schemas/ml._common:SearchModelsQuery'
     msearch:
       content:
         application/x-ndjson:
@@ -25012,106 +25001,31 @@ components:
     ml.delete_model_group@200:
       content:
         application/json:
-          schema:
-            type: object
+          $ref: '#/components/schemas/ml._common:ModelGroup'
     ml.delete_model@200:
       content:
         application/json:
-          schema:
-            type: object
+          $ref: '#/components/schemas/ml._common:ModelGroup'
     ml.get_model_group@200:
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-                description: The model group name.
-              latest_version:
-                type: number
-                description: The latest version.
-              description:
-                type: string
-                description: The model group description.
-              access:
-                type: string
-                description: The model group access.
-              created_time:
-                type: integer
-                format: int64
-              last_updated_time:
-                type: integer
-                format: int64
-            required:
-              - access
-              - description
-              - latest_version
-              - name
+          $ref: '#/components/schemas/ml._common:ModelGroup'
     ml.get_task@200:
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              model_id:
-                type: string
-                description: The model ID.
-              state:
-                type: string
-                description: The state.
-                enum:
-                  - CANCELLED
-                  - COMPLETED
-                  - COMPLETED_WITH_ERROR
-                  - CREATED
-                  - FAILED
-                  - RUNNING
-            required:
-              - state
+          $ref: '#/components/schemas/ml._common:Task'
     ml.register_model_group@200:
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              model_group_id:
-                type: string
-                description: The model group ID.
-              status:
-                type: string
-                description: The status.
-            required:
-              - model_group_id
-              - status
+          $ref: '#/components/schemas/ml._common:ModelGroupRegistration'
     ml.register_model@200:
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              task_id:
-                type: string
-                description: The task ID.
-              model_id:
-                type: string
-                description: The model ID.
-              status:
-                type: string
-                description: The status.
-            required:
-              - status
-              - task_id
+          $ref: '#/components/schemas/ml._common:Task'
     ml.search_models@200:
       content:
         application/json:
-          schema:
-            type: object
-            properties:
-              hits:
-                $ref: '#/components/schemas/ml._common:SearchModelHits'
-            required:
-              - hits
+          $ref: '#/components/schemas/ml._common:SearchModelsResponse'
     msearch_template@200:
       description: ''
       content:
@@ -45082,7 +44996,45 @@ components:
       required:
         - relation
         - value
-    ml._common:SearchModelHits:
+    ml._common:ModelGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The model group name.
+        latest_version:
+          type: number
+          description: The latest version.
+        description:
+          type: string
+          description: The model group description.
+        access:
+          type: string
+          description: The model group access.
+        created_time:
+          type: integer
+          format: int64
+        last_updated_time:
+          type: integer
+          format: int64
+      required:
+        - access
+        - description
+        - latest_version
+        - name
+    ml._common:ModelGroupRegistration:
+      type: object
+      properties:
+        model_group_id:
+          type: string
+          description: The model group ID.
+        status:
+          type: string
+          description: The status.
+      required:
+        - model_group_id
+        - status
+    ml._common:SearchModelsHits:
       type: object
       properties:
         total:
@@ -45090,11 +45042,11 @@ components:
         hits:
           type: array
           items:
-            $ref: '#/components/schemas/ml._common:SearchModelHitsHit'
+            $ref: '#/components/schemas/ml._common:SearchModelsHitsHit'
       required:
         - hits
         - total
-    ml._common:SearchModelHitsHit:
+    ml._common:SearchModelsHitsHit:
       type: object
       properties:
         _index:
@@ -45109,6 +45061,62 @@ components:
       required:
         - _id
         - model_id
+    ml._common:SearchModelsQuery:
+      type: object
+      properties:
+        query:
+          type: object
+          description: The query.
+        size:
+          type: integer
+          description: The number of models to return.
+      required:
+        - query
+        - size
+    ml._common:SearchModelsResponse:
+      type: object
+      properties:
+        hits:
+          $ref: '#/components/schemas/ml._common:SearchModelsHits'
+      required:
+        - hits
+    ml._common:Task:
+      type: object
+      properties:
+        model_id:
+          type: string
+          description: The model ID.
+        state:
+          type: string
+          description: The state.
+          enum:
+            - CANCELLED
+            - COMPLETED
+            - COMPLETED_WITH_ERROR
+            - CREATED
+            - FAILED
+            - RUNNING
+        task_type:
+          type: string
+          description: Task type.
+          enum:
+            - DEPLOY_MODEL
+        function_name:
+          type: string
+        worker_node:
+          type: array
+          items:
+            $ref: '#/components/schemas/_common:NodeIds'
+        create_time:
+          type: integer
+          format: int64
+        last_update_time:
+          type: integer
+          format: int64
+        is_async:
+          type: boolean
+      required:
+        - state
     nodes._common:AdaptiveSelection:
       type: object
       properties:
