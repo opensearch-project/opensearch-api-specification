@@ -26,6 +26,7 @@ export interface StoryEvaluation {
   chapters?: ChapterEvaluation[]
   epilogues?: ChapterEvaluation[]
   prologues?: ChapterEvaluation[]
+  warnings?: string[]
 }
 
 export interface StoryEvaluations {

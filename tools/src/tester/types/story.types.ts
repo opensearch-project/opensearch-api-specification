@@ -72,6 +72,7 @@ export type Chapter = ChapterRequest & {
    */
   synopsis: string;
   response?: ExpectedResponse;
+  warnings?: Warnings;
 };
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -142,6 +143,13 @@ export interface ExpectedResponse {
   status: number;
   content_type?: string;
   payload?: Payload;
+}
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Warnings".
+ */
+export interface Warnings {
+  'multiple-paths-detected'?: boolean;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

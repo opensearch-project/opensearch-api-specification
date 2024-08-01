@@ -2,22 +2,18 @@ $schema: ../../json_schemas/test_story.schema.yaml
 
 description: Test cat/snapshots endpoints.
 epilogues:
-  - path: /_snapshot/{repository}
+  - path: /_snapshot/my-fs-repository
     method: DELETE
     status: [200, 404]
-    parameters:
-      repository: my-fs-repository
-chapters:
-  - synopsis: Create a snapshot repository.
-    path: /_snapshot/{repository}
+prologues:
+  - path: /_snapshot/my-fs-repository
     method: PUT
-    parameters:
-      repository: my-fs-repository
     request_body:
       payload:
         type: fs
         settings:
           location: /tmp/opensearch/repo
+chapters:
   - synopsis: Cat with a json response.
     path: /_cat/snapshots/{repository}
     method: GET

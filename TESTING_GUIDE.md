@@ -6,6 +6,9 @@
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
     - [Managing Versions](#managing-versions)
     - [Waiting for Tasks](#waiting-for-tasks)
+    - [Warnings](#warnings)
+      - [multiple-paths-detected](#multiple-paths-detected)
+      - [Suppressing Warnings](#suppressing-warnings)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -174,4 +177,35 @@ For example, an ML task returns `CREATED` when created, and `COMPLETED` when it'
     retry:
       count: 3
       wait: 30000
+```
+### Warnings
+
+#### multiple-paths-detected
+
+The test runner expects all tests in the same file to be variation of the same path in order to keep tests well-organized. Otherwise, a warning will be emitted.
+
+```
+WARNING Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.
+  /_component_template/{name}
+  /_index_template/{name}
+  /{index}
+```
+
+#### Suppressing Warnings
+
+The test runner may generate warnings that can be suppressed with `warnings:`. For example, to suppress the multiple paths detected warning.
+
+```yaml
+- synopsis: Create an index.
+  method: PUT
+  path: /{index}
+  parameters:
+    index: movies
+- synopsis: Search the index to make sure it has been created.
+  method: POST
+  warnings:
+    multiple-paths-detected: false
+  path: /{index}/_search
+  parameters:
+    index: movies
 ```
