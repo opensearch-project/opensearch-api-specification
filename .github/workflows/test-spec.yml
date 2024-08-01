@@ -60,7 +60,15 @@ jobs:
           npm run test:spec -- \
             --opensearch-insecure \
             --opensearch-version=${{ matrix.entry.version }} \
-            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json
+            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json \
+            --verbose
+
+      - name: Get Container Logs
+        if: failure()
+        run: |
+          CONTAINER_ID=$(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}")
+          echo Dumping logs from $CONTAINER_ID ...
+          docker logs $CONTAINER_ID
 
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
