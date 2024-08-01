@@ -56,6 +56,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 - Added `--opensearch-version` to `merger` that excludes schema elements per semver ([#428](https://github.com/opensearch-project/opensearch-api-specification/pull/428))
 - Added `retry` to `tester` to support asynchronous tasks ([453](https://github.com/opensearch-project/opensearch-api-specification/pull/453))
+- Added passing OPENSEARCH_JAVA_OPTS into the docker container used for tests ([#454](https://github.com/opensearch-project/opensearch-api-specification/pull/454))
 
 ### Changed
 
