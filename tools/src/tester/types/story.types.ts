@@ -104,16 +104,16 @@ export interface ChapterRequest {
   parameters?: {
     [k: string]: Parameter;
   };
-  request_body?: RequestBody;
+  request?: Request;
   output?: Output;
   version?: Version;
   retry?: Retry;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
- * via the `definition` "RequestBody".
+ * via the `definition` "Request".
  */
-export interface RequestBody {
+export interface Request {
   content_type?: string;
   payload: Payload;
 }

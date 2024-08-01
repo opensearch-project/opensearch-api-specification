@@ -38,7 +38,7 @@ export default class Operation extends ValidatorBase {
     return [
       this.validate_operation_id(),
       this.validate_description(),
-      this.validate_request_body(),
+      this.validate_request(),
       this.validate_parameters(),
       this.validate_path_parameters(),
       this.validate_order_of_parameters(),
@@ -75,7 +75,7 @@ export default class Operation extends ValidatorBase {
     if (!regex.test(id)) { return this.error(`Invalid operationId '${id}'. Must be in {x-operation-group}.{number} format.`) }
   }
 
-  validate_request_body (): ValidationError | undefined {
+  validate_request (): ValidationError | undefined {
     const body = this.spec.requestBody
     if (!body) return
     const expected = `#/components/requestBodies/${this.group}`

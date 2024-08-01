@@ -58,13 +58,13 @@ export class SpecificationVisitor {
 
   visit_operation (ctx: SpecificationContext, operation: OpenAPIV3.OperationObject): void {
     visit_each(ctx, operation, 'parameters', this.visit_parameter.bind(this))
-    visit(ctx, operation, 'requestBody', this.visit_request_body.bind(this))
+    visit(ctx, operation, 'requestBody', this.visit_request.bind(this))
     visit_each(ctx, operation, 'responses', this.visit_response.bind(this))
   }
 
   visit_components (ctx: SpecificationContext, components: OpenAPIV3.ComponentsObject): void {
     visit_each(ctx, components, 'parameters', this.visit_parameter.bind(this))
-    visit_each(ctx, components, 'requestBodies', this.visit_request_body.bind(this))
+    visit_each(ctx, components, 'requestBodies', this.visit_request.bind(this))
     visit_each(ctx, components, 'responses', this.visit_response.bind(this))
     visit_each(ctx, components, 'schemas', this.visit_schema.bind(this))
   }
@@ -75,10 +75,10 @@ export class SpecificationVisitor {
     visit(ctx, parameter, 'schema', this.visit_schema.bind(this))
   }
 
-  visit_request_body (ctx: SpecificationContext, request_body: MaybeRef<OpenAPIV3.RequestBodyObject>): void {
-    if (is_ref(request_body)) return
+  visit_request (ctx: SpecificationContext, request: MaybeRef<OpenAPIV3.RequestBodyObject>): void {
+    if (is_ref(request)) return
 
-    visit_each(ctx, request_body, 'content', this.visit_media_type.bind(this))
+    visit_each(ctx, request, 'content', this.visit_media_type.bind(this))
   }
 
   visit_response (ctx: SpecificationContext, response: MaybeRef<OpenAPIV3.ResponseObject>): void {

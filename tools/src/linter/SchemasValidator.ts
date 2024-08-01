@@ -38,7 +38,7 @@ export default class SchemasValidator {
     if (named_schemas_errors.length > 0) return named_schemas_errors
     return [
       ...this.validate_parameter_schemas(),
-      ...this.validate_request_body_schemas(),
+      ...this.validate_request_schemas(),
       ...this.validate_response_schemas()
     ]
   }
@@ -66,7 +66,7 @@ export default class SchemasValidator {
     }).filter((error) => error != null) as ValidationError[]
   }
 
-  validate_request_body_schemas (): ValidationError[] {
+  validate_request_schemas (): ValidationError[] {
     return Object.entries(this.spec.requestBodies as Record<string, any>).flatMap(([namespace, body]) => {
       const file = `namespaces/${namespace}.yaml`
       const location = `#/components/requestBodies/${namespace}`

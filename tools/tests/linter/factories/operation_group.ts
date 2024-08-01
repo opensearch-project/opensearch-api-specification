@@ -38,13 +38,13 @@ export function mocked_operation_group (returned_values: MockedReturnedValues, o
 
   op_group.validate_description = jest.fn()
   op_group.validate_external_docs = jest.fn()
-  op_group.validate_request_body = jest.fn()
+  op_group.validate_request = jest.fn()
   op_group.validate_responses = jest.fn()
   op_group.validate_query_parameters = jest.fn()
 
   if (returned_values.validate_description != null) (op_group.validate_description as jest.Mock).mockReturnValue(returned_values.validate_description)
   if (returned_values.validate_externalDocs != null) (op_group.validate_external_docs as jest.Mock).mockReturnValue(returned_values.validate_externalDocs)
-  if (returned_values.validate_requestBody != null) (op_group.validate_request_body as jest.Mock).mockReturnValue(returned_values.validate_requestBody)
+  if (returned_values.validate_requestBody != null) (op_group.validate_request as jest.Mock).mockReturnValue(returned_values.validate_requestBody)
   if (returned_values.validate_responses != null) (op_group.validate_responses as jest.Mock).mockReturnValue(returned_values.validate_responses)
   if (returned_values.validate_query_parameters != null) (op_group.validate_query_parameters as jest.Mock).mockReturnValue(returned_values.validate_query_parameters)
 

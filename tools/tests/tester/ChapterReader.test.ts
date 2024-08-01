@@ -44,7 +44,7 @@ describe('ChapterReader', () => {
         path: 'path',
         method: 'GET',
         parameters: undefined,
-        request_body: undefined,
+        request: undefined,
         output: undefined
       }, new StoryOutputs())
 
@@ -67,7 +67,7 @@ describe('ChapterReader', () => {
         path: '{index}/path',
         method: 'GET',
         parameters: { index: 'books' },
-        request_body: undefined,
+        request: undefined,
         output: undefined
       }, new StoryOutputs())
 
@@ -90,7 +90,7 @@ describe('ChapterReader', () => {
         path: '/path',
         method: 'GET',
         parameters: { indexes: ['book1', 'book2'] },
-        request_body: undefined,
+        request: undefined,
         output: undefined
       }, new StoryOutputs())
 
@@ -116,7 +116,7 @@ describe('ChapterReader', () => {
         path: 'path',
         method: 'POST',
         parameters: { 'x': 1 },
-        request_body: { payload: { "body": "present" } },
+        request: { payload: { "body": "present" } },
         output: undefined
       }, new StoryOutputs())
 
@@ -139,7 +139,7 @@ describe('ChapterReader', () => {
         path: 'path',
         method: 'POST',
         parameters: { 'x': 1 },
-        request_body: {
+        request: {
           content_type: 'application/x-ndjson',
           payload: [{ "body": "present" }]
         },

@@ -11,11 +11,11 @@ import { type OpenAPIV3 } from 'openapi-types'
 
 export type ParsedOperation = OpenAPIV3.OperationObject & {
   parameters: Record<string, ParsedParameter>
-  requestBody: ParsedRequestBody
+  requestBody: ParsedRequest
   responses: Record<string, ParsedResponse>
 }
 
-export type ParsedRequestBody = OpenAPIV3.RequestBodyObject & {
+export type ParsedRequest = OpenAPIV3.RequestBodyObject & {
   content: Record<string, ParsedMediaType>
 }
 

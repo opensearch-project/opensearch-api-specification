@@ -31,9 +31,9 @@ export default class ChapterReader {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
-    const content_type = chapter.request_body?.content_type ?? APPLICATION_JSON
-    const request_data = chapter.request_body?.payload !== undefined ? this.#serialize_payload(
-      story_outputs.resolve_value(chapter.request_body.payload),
+    const content_type = chapter.request?.content_type ?? APPLICATION_JSON
+    const request_data = chapter.request?.payload !== undefined ? this.#serialize_payload(
+      story_outputs.resolve_value(chapter.request.payload),
       content_type
     ) : undefined
     this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] | ${to_json(request_data)}`)
