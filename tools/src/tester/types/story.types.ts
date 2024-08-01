@@ -34,6 +34,11 @@ export type SupplementalChapter = ChapterRequest & {
 export type Parameter = (string | number | boolean)[] | string | number | boolean;
 /**
  * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Header".
+ */
+export type Header = string | number | boolean;
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Payload".
  */
 export type Payload = {} | any[] | string | number | boolean;
@@ -115,7 +120,10 @@ export interface ChapterRequest {
  */
 export interface Request {
   content_type?: string;
-  payload: Payload;
+  headers?: {
+    [k: string]: Header;
+  };
+  payload?: Payload;
 }
 /**
  * Describes output for a chapter.

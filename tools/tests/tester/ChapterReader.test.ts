@@ -48,7 +48,7 @@ describe('ChapterReader', () => {
         output: undefined
       }, new StoryOutputs())
 
-      expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
+      expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
         [{
           url: 'path',
@@ -71,15 +71,15 @@ describe('ChapterReader', () => {
         output: undefined
       }, new StoryOutputs())
 
-      expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
+      expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
         [{
           url: 'books/path',
           method: 'GET',
+          data: undefined,
           headers: { 'Content-Type': 'application/json' },
           params: {},
-          paramsSerializer: expect.any(Function),
-          data: undefined
+          paramsSerializer: expect.any(Function)
         }]
       ])
     })
@@ -94,7 +94,7 @@ describe('ChapterReader', () => {
         output: undefined
       }, new StoryOutputs())
 
-      expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
+      expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
         [{
           url: '/path',
@@ -120,7 +120,7 @@ describe('ChapterReader', () => {
         output: undefined
       }, new StoryOutputs())
 
-      expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
+      expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
         [{
           url: 'path',
@@ -146,7 +146,7 @@ describe('ChapterReader', () => {
         output: undefined
       }, new StoryOutputs())
 
-      expect(result).toEqual({ status: 200, content_type: 'application/json', payload: undefined })
+      expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
         [{
           url: 'path',
@@ -155,6 +155,67 @@ describe('ChapterReader', () => {
           params: { 'x': 1 },
           paramsSerializer: expect.any(Function),
           data: "{\"body\":\"present\"}\n"
+        }]
+      ])
+    })
+
+    it('sends headers', async () => {
+      const result = await reader.read({
+        id: 'id',
+        path: 'path',
+        method: 'GET',
+        request: {
+          headers: {
+            'string': 'bar',
+            'number': 1,
+            'boolean': true
+          },
+        },
+        output: undefined
+      }, new StoryOutputs())
+
+      expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
+      expect(mocked_axios.request.mock.calls).toStrictEqual([
+        [{
+          url: 'path',
+          method: 'GET',
+          data: undefined,
+          headers: {
+            'Content-Type': 'application/json',
+            'string': 'bar',
+            'number': 1,
+            'boolean': true
+          },
+          params: {},
+          paramsSerializer: expect.any(Function)
+        }]
+      ])
+    })
+
+    it('overwrites case-insensitive content-type', async () => {
+      const result = await reader.read({
+        id: 'id',
+        path: 'path',
+        method: 'GET',
+        request: {
+          headers: {
+            'content-type': 'application/overwritten'
+          },
+        },
+        output: undefined
+      }, new StoryOutputs())
+
+      expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
+      expect(mocked_axios.request.mock.calls).toStrictEqual([
+        [{
+          url: 'path',
+          method: 'GET',
+          data: undefined,
+          headers: {
+            'Content-Type': 'application/overwritten',
+          },
+          params: {},
+          paramsSerializer: expect.any(Function)
         }]
       ])
     })

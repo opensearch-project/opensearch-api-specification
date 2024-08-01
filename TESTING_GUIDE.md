@@ -78,6 +78,8 @@ chapters:
     parameters: # All parameters are validated against their schemas in the spec.
       index: books
     request: # The request.
+      headers: # Optional headers.
+        user-agent: OpenSearch API Spec/1.0
       payload: # The request body is validated against the schema of the requestBody in the spec.
         mappings:
           properties:

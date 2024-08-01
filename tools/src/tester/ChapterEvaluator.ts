@@ -110,7 +110,7 @@ export default class ChapterEvaluator {
   }
 
   #evaluate_request(chapter: Chapter, operation: ParsedOperation): Evaluation {
-    if (!chapter.request) return { result: Result.PASSED }
+    if (chapter.request?.payload === undefined) return { result: Result.PASSED }
     const content_type = chapter.request.content_type ?? APPLICATION_JSON
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }

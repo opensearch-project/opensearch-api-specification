@@ -54,12 +54,13 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442)) 
 - Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 - Added `--opensearch-version` to `merger` that excludes schema elements per semver ([#428](https://github.com/opensearch-project/opensearch-api-specification/pull/428))
-- Added `retry` to `tester` to support asynchronous tasks ([453](https://github.com/opensearch-project/opensearch-api-specification/pull/453))
+- Added `retry` to `tester` to support asynchronous tasks ([#453](https://github.com/opensearch-project/opensearch-api-specification/pull/453))
 - Added passing OPENSEARCH_JAVA_OPTS into the docker container used for tests ([#454](https://github.com/opensearch-project/opensearch-api-specification/pull/454))
 - Added a warning on mulitple paths being tested in the same file ([#452](https://github.com/opensearch-project/opensearch-api-specification/pull/452))
 - Added `/_plugins/_query/settings` ([#456](https://github.com/opensearch-project/opensearch-api-specification/pull/456))
 - Added `/_plugins/_ppl`, `explain` and `stats` ([#460](https://github.com/opensearch-project/opensearch-api-specification/pull/460))
 - Added tests against OpenSearch 3.0 ([#459](https://github.com/opensearch-project/opensearch-api-specification/pull/459))
+- Added support for request headers in tests [#461](https://github.com/opensearch-project/opensearch-api-specification/pull/461)
 
 ### Changed
 
