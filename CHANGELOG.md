@@ -59,6 +59,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a warning on mulitple paths being tested in the same file ([#452](https://github.com/opensearch-project/opensearch-api-specification/pull/452))
 - Added `/_plugins/_query/settings` ([#456](https://github.com/opensearch-project/opensearch-api-specification/pull/456))
 - Added `/_plugins/_ppl`, `explain` and `stats` ([#460](https://github.com/opensearch-project/opensearch-api-specification/pull/460))
+- Added tests against OpenSearch 3.0 ([#459](https://github.com/opensearch-project/opensearch-api-specification/pull/459))
 
 ### Changed
 
