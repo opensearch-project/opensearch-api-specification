@@ -134,10 +134,10 @@ components:
           type: string
           description: User's name.
         user_requested_tenant:
-          type: string
+          type: ['null', string]
           description: Name of the tenant the user wants to switch to.
         remote_address:
-          type: string
+          type: ['null', string]
           description: The IP address of remote user.
         backend_roles:
           type: array
@@ -152,13 +152,13 @@ components:
           type: object
           description: Tenants the user has access to with read-write or read-only access indicator.
         principal:
-          type: string
+          type: ['null', string]
           description: User principal.
         peer_certificates:
-          type: number
+          type: [number, string]
           description: Number of peer certificates.
         sso_logout_url:
-          type: string
+          type: ['null', string]
           description: Logout url.
         size_of_user:
           type: string
@@ -399,6 +399,17 @@ components:
         doNotFailOnForbiddenEmpty:
           type: boolean
 
+    Forbidden:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - 403
+        message:
+          type: string
+          description: Message returned as part of Forbidden response.
+
     GenerateOBOToken:
       type: object
       properties:
@@ -416,7 +427,7 @@ components:
       type: object
       properties:
         message:
-          type: string
+          type: ['null', string]
         mode:
           type: string
         status:
@@ -594,13 +605,13 @@ components:
       type: object
       properties:
         principal:
-          type: string
+          type: ['null', string]
           description: User principal.
         peer_certificates:
-          type: number
+          type: [number, string]
           description: Number of certificates.
         peer_certificates_list:
-          type: array
+          type: [array,'null']
           description: List of domain names from peer certificates.
         local_certificates_list:
           type: array
@@ -615,13 +626,13 @@ components:
           type: boolean
           description: A boolean to indicate if OpenSSL is available.
         ssl_openssl_version:
-          type: string
+          type: [number, string]
           description: Version of openssl.
         ssl_openssl_version_string:
-          type: string
+          type: ['null', string]
           description: Full version string for openssl version.
         ssl_openssl_non_available_cause:
-          type: string
+          type: ['null', string]
           description: Reason for openssl unavailability.
         ssl_openssl_supports_key_manager_factory:
           type: boolean
@@ -638,6 +649,20 @@ components:
         ssl_provider_transport_client:
           type: string
           description: Returns transport client's name.
+      required:
+        - peer_certificates
+        - principal
+        - ssl_cipher
+        - ssl_openssl_available
+        - ssl_openssl_non_available_cause
+        - ssl_openssl_supports_hostname_validation
+        - ssl_openssl_supports_key_manager_factory
+        - ssl_openssl_version
+        - ssl_openssl_version_string
+        - ssl_protocol
+        - ssl_provider_http
+        - ssl_provider_transport_client
+        - ssl_provider_transport_server
 
     Tenant:
       type: object
@@ -667,17 +692,6 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/Tenant'
-
-    Unauthorized:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-            - 403
-        message:
-          type: string
-          description: Message returned as part of FORBIDDEN response.
 
     UpgradeCheck:
       type: object
@@ -745,11 +759,11 @@ components:
       type: object
       properties:
         dn:
-          type: string
+          type: ['null', string]
         is_admin:
-          type: string
+          type: boolean
         is_node_certificate_request:
-          type: string
+          type: boolean
 
     TenantInfo:
       type: object
