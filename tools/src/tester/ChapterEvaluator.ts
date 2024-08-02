@@ -19,7 +19,7 @@ import { ChapterOutput } from './ChapterOutput'
 import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
 import _ from 'lodash'
 import { Logger } from 'Logger'
-import { to_json } from '../helpers'
+import { sleep, to_json } from '../helpers'
 import { APPLICATION_JSON } from "./MimeTypes";
 
 export default class ChapterEvaluator {
@@ -37,9 +37,32 @@ export default class ChapterEvaluator {
 
   async evaluate(chapter: Chapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
-    const response = await this._chapter_reader.read(chapter, story_outputs)
+
     const operation = this._operation_locator.locate_operation(chapter)
     if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
+
+    var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
+    var retry = 0
+
+    var result: ChapterEvaluation
+
+    do {
+      result = await this.#evaluate(chapter, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined)
+
+      if (result.overall.result === Result.PASSED || result.overall.result === Result.SKIPPED) {
+        return result
+      }
+
+      if (--tries == 0) break
+      this.logger.info(`Failed, retrying, ${tries == 1 ? '1 retry left' : `${tries} retries left`} ...`)
+      await sleep(chapter.retry?.wait ?? 1000)
+    } while (tries > 0)
+
+    return result
+  }
+
+  async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
+    const response = await this._chapter_reader.read(chapter, story_outputs)
     const params = this.#evaluate_parameters(chapter, operation)
     const request_body = this.#evaluate_request_body(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
@@ -61,6 +84,7 @@ export default class ChapterEvaluator {
       path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request_body },
+      retries,
       response: {
         status,
         payload_body: payload_body_evaluation,

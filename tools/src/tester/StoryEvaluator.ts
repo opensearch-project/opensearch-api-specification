@@ -15,6 +15,7 @@ import { StoryOutputs } from './StoryOutputs'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import { ChapterOutput } from './ChapterOutput'
 import * as semver from 'semver'
+import _ from 'lodash'
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator
@@ -51,7 +52,27 @@ export default class StoryEvaluator {
       chapters,
       prologues,
       epilogues,
-      result: overall_result(prologues.concat(chapters).concat(epilogues).concat(prologues).map(e => e.overall))
+      result: overall_result(prologues.concat(chapters).concat(epilogues).concat(prologues).map(e => e.overall)),
+      warnings: this.#chapter_warnings(story.chapters)
+    }
+  }
+
+  #chapter_warnings(chapters: Chapter[]): string[] | undefined {
+    const result = _.compact([
+      this.#warning_if_mismatched_chapter_paths(chapters)
+    ])
+    return result.length > 0 ? result : undefined
+  }
+
+  #warning_if_mismatched_chapter_paths(chapters: Chapter[]): string | undefined {
+    const paths = _.compact(_.map(chapters, (chapter) => {
+      const multiple_paths_detected = chapter.warnings?.['multiple-paths-detected'] ?? true
+      if (multiple_paths_detected) return chapter.path
+    }))
+    const normalized_paths = _.map(paths, (path) => path.replaceAll(/\/\{[^}]+}/g, '').replaceAll('//', '/'))
+    const paths_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
+    if (paths_counts.length > 1) {
+      return `Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.\n  ${_.join(_.uniq(paths), "\n  ")}\n`
     }
   }
 

@@ -6,7 +6,27 @@ info:
 paths: {}
 components:
   schemas:
-    SearchModelHits:
+    SearchModelsQuery:
+      type: object
+      properties:
+        query:
+          type: object
+          # TODO: Define the query schema
+          description: The query.
+        size:
+          type: integer
+          description: The number of models to return.
+      required:
+        - query
+        - size
+    SearchModelsResponse:
+      type: object
+      properties:
+        hits:
+          $ref: '#/components/schemas/SearchModelsHits'
+      required:
+        - hits
+    SearchModelsHits:
       type: object
       properties:
         total:
@@ -14,7 +34,7 @@ components:
         hits:
           type: array
           items:
-            $ref: '#/components/schemas/SearchModelHitsHit'
+            $ref: '#/components/schemas/SearchModelsHitsHit'
       required:
         - hits
         - total
@@ -30,7 +50,7 @@ components:
       required:
         - relation
         - value
-    SearchModelHitsHit:
+    SearchModelsHitsHit:
       type: object
       properties:
         _index:
@@ -44,4 +64,79 @@ components:
           description: The model ID.
       required:
         - _id
-        - model_id      
+        - model_id
+    ModelGroupRegistration:
+      type: object
+      properties:
+        model_group_id:
+          type: string
+          description: The model group ID.
+        status:
+          type: string
+          description: The status.
+      required:
+        - model_group_id
+        - status
+    ModelGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The model group name.
+        latest_version:
+          type: number
+          description: The latest version.
+        description:
+          type: string
+          description: The model group description.
+        access:
+          type: string
+          description: The model group access.
+        created_time:
+          type: integer
+          format: int64
+        last_updated_time:
+          type: integer
+          format: int64
+      required:
+        - access
+        - description
+        - latest_version
+        - name
+    Task:
+      type: object
+      properties:
+        model_id:
+          type: string
+          description: The model ID.
+        state:
+          type: string
+          description: The state.
+          enum:
+            - CANCELLED
+            - COMPLETED
+            - COMPLETED_WITH_ERROR
+            - CREATED
+            - FAILED
+            - RUNNING
+        task_type:
+          type: string
+          description: Task type.
+          enum:
+            - DEPLOY_MODEL
+        function_name:
+          type: string
+        worker_node:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/NodeIds'
+        create_time:
+          type: integer
+          format: int64
+        last_update_time:
+          type: integer
+          format: int64
+        is_async:
+          type: boolean
+      required:
+        - state

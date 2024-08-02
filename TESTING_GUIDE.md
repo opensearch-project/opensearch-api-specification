@@ -5,6 +5,10 @@
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
     - [Managing Versions](#managing-versions)
+    - [Waiting for Tasks](#waiting-for-tasks)
+    - [Warnings](#warnings)
+      - [multiple-paths-detected](#multiple-paths-detected)
+      - [Suppressing Warnings](#suppressing-warnings)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -19,7 +23,7 @@ Set up an OpenSearch cluster with Docker:
 ```bash
 export OPENSEARCH_PASSWORD=<<your_password>>
 cd .github/opensearch-cluster
-docker-compose up -d
+docker compose up -d
 ```
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
@@ -153,3 +157,55 @@ It's common to add a feature to the next version of OpenSearch. When adding a ne
 ```
 
 The [integration test workflow](.github/workflows/test-spec.yml) runs a matrix of OpenSearch versions, including the next version. Please check whether the workflow needs an update when adding version-specific tests.
+
+### Waiting for Tasks
+
+Some APIs behave asynchronously and may require a test to wait for a task to complete. This can be achived with a combination of `payload` and `retry`. 
+
+For example, an ML task returns `CREATED` when created, and `COMPLETED` when it's done. The example below will retry 3 times with an interval of 30 seconds until the task is complete. The default wait time is 1s.
+
+```yaml
+  - synopsis: Wait for task.
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${create_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    retry:
+      count: 3
+      wait: 30000
+```
+### Warnings
+
+#### multiple-paths-detected
+
+The test runner expects all tests in the same file to be variation of the same path in order to keep tests well-organized. Otherwise, a warning will be emitted.
+
+```
+WARNING Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.
+  /_component_template/{name}
+  /_index_template/{name}
+  /{index}
+```
+
+#### Suppressing Warnings
+
+The test runner may generate warnings that can be suppressed with `warnings:`. For example, to suppress the multiple paths detected warning.
+
+```yaml
+- synopsis: Create an index.
+  method: PUT
+  path: /{index}
+  parameters:
+    index: movies
+- synopsis: Search the index to make sure it has been created.
+  method: POST
+  warnings:
+    multiple-paths-detected: false
+  path: /{index}/_search
+  parameters:
+    index: movies
+```

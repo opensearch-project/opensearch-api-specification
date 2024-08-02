@@ -1,0 +1,42 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: |
+  Test the creation of models.
+version: '>= 2.11'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request_body:
+      payload:
+        persistent:
+          plugins:
+            ml_commons:
+              only_run_on_ml_node: false
+chapters:
+  - synopsis: Create model.
+    id: create_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request_body:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id
+  - synopsis: Wait for task.
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    warnings:
+      multiple-paths-detected: false
+    parameters:
+      task_id: ${create_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    retry:
+      count: 3
+      wait: 30000
