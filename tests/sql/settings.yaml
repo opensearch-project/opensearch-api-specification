@@ -1,0 +1,38 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test updating SQL settings in OS cluster.
+
+chapters:
+  - synopsis: Update SQL settings.
+    path: /_plugins/_query/settings
+    method: PUT
+    request_body:
+      payload:
+        transient: 
+          plugins:
+            sql:
+              enabled: true
+              slowlog: '2'
+              cursor:
+                keep_alive: 1m
+            ppl:
+              enabled: true
+            query:
+              memory_limit: '80%'
+              size_limit: 200
+    response:
+      status: 200
+  - synopsis: Update SQL settings with plain request body.
+    path: /_plugins/_query/settings
+    method: PUT
+    request_body:
+      payload:
+        transient: 
+          plugins.sql.enabled: true
+          plugins.ppl.enabled: true
+          plugins.sql.slowlog: 2
+          plugins.sql.cursor.keep_alive: 1m
+          plugins.query.memory_limit: '80%'
+          plugins.query.size_limit: 200
+    response:
+      status: 200

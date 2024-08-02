@@ -86,3 +86,85 @@ components:
           type: object
         execution_time:
           type: object
+    SqlSettings:
+      type: object
+      properties:
+        transient:
+          $ref: '#/components/schemas/Transient'
+    SqlSettingsPlain:
+      type: object
+      properties:
+        transient:
+          $ref: '#/components/schemas/TransientPlain'
+    SqlSettingsResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+        persistent:
+          type: object
+        transient:
+          $ref: '#/components/schemas/Transient'
+    Transient:
+      type: object
+      properties:
+        plugins:
+          $ref: '#/components/schemas/Plugins'
+    Plugins:
+      type: object
+      properties:
+        ppl:
+          $ref: '#/components/schemas/Ppl'
+        query:
+          $ref: '#/components/schemas/Query'
+        sql:
+          $ref: '#/components/schemas/Sql'
+    Ppl:
+      type: object
+      properties:
+        enabled:
+          anyOf:
+            - type: boolean
+            - type: string
+    Query:
+      type: object
+      properties:
+        memory_limit:
+          type: string
+        size_limit:
+          anyOf:
+            - type: string
+            - type: integer
+    Sql:
+      type: object
+      properties:
+        enabled:
+          anyOf:
+            - type: boolean
+            - type: string
+        slowlog:
+          anyOf:
+            - type: integer
+            - type: string
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    Cursor:
+      type: object
+      properties:
+        keep_alive:
+          type: string
+    TransientPlain:
+      type: object
+      properties:
+        plugins.sql.enabled:
+          type: boolean
+        plugins.ppl.enabled:
+          type: boolean
+        plugins.sql.slowlog:
+          type: integer
+        plugins.sql.cursor.keep_alive:
+          type: string
+        plugins.query.memory_limit:
+          type: string
+        plugins.query.size_limit:
+          type: integer
