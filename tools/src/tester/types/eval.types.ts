@@ -26,6 +26,7 @@ export interface StoryEvaluation {
   chapters?: ChapterEvaluation[]
   epilogues?: ChapterEvaluation[]
   prologues?: ChapterEvaluation[]
+  warnings?: string[]
 }
 
 export interface StoryEvaluations {
@@ -46,6 +47,7 @@ export interface ChapterEvaluation {
     payload_schema: Evaluation
     output_values: Evaluation
   },
+  retries?: number,
   output?: ChapterOutput
 }
 

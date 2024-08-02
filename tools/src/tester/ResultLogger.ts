@@ -46,8 +46,9 @@ export class ConsoleResultLogger implements ResultLogger {
     console.log(`Tested ${results.evaluated_paths_count()}/${results.spec_paths_count()} paths.`)
   }
 
-  #log_story ({ result, full_path, display_path, message }: StoryEvaluation): void {
+  #log_story ({ result, full_path, display_path, message, warnings }: StoryEvaluation): void {
     this.#log_evaluation({ result, message: message ?? full_path }, ansi.cyan(ansi.b(display_path)))
+    this.#log_warnings(warnings)
   }
 
   #log_chapters (evaluations: ChapterEvaluation[], title: string): void {
@@ -66,6 +67,7 @@ export class ConsoleResultLogger implements ResultLogger {
     this.#log_payload_body(chapter.response?.payload_body)
     this.#log_payload_schema(chapter.response?.payload_schema)
     this.#log_output_values(chapter.response?.output_values)
+    this.#log_retries(chapter.retries)
   }
 
   #log_parameters (parameters: Record<string, Evaluation>): void {
@@ -102,6 +104,12 @@ export class ConsoleResultLogger implements ResultLogger {
     this.#log_evaluation(evaluation, 'RESPONSE OUTPUT VALUES', this._tab_width * 3)
   }
 
+  #log_retries (retries?: number): void {
+    if (retries == null) return
+    const result = ansi.padding(ansi.green(`RETRIES`), 0, this._tab_width * 3)
+    console.log(`${result} ${retries}`)
+  }
+
   #log_evaluation (evaluation: Evaluation, title: string, prefix: number = 0): void {
     const result = ansi.padding(this.#result(evaluation.result), 0, prefix)
 
@@ -112,6 +120,11 @@ export class ConsoleResultLogger implements ResultLogger {
     } else {
       console.log(`${result} ${title}`)
     }
+  }
+
+  #log_warnings(warnings?: string[]): void {
+    if (!warnings) return
+    warnings.forEach((warning) => { console.log(ansi.gray(`WARNING ${(warning)}`)); })
   }
 
   #maybe_shorten_error_message(message: string | undefined): string | undefined {

@@ -78,6 +78,34 @@ describe('ConsoleResultLogger', () => {
         ['Tested 1/6 paths.']
       ])
     })
+
+    test('with retries', () => {
+      logger.log({
+        result: Result.PASSED,
+        display_path: 'path',
+        full_path: 'full_path',
+        description: 'description',
+        message: 'message',
+        chapters: [{
+          title: 'title',
+          retries: 3,
+          overall: {
+            result: Result.PASSED,
+          }
+        }],
+        epilogues: [],
+        prologues: []
+      })
+
+      expect(log.mock.calls).toEqual([
+        [],
+        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
+        [`   ${ansi.green('PASSED ')} CHAPTERS`],
+        [`      ${ansi.green('PASSED ')} ${ansi.i('title')}`],
+        [`         ${ansi.green('RETRIES')} 3`],
+        []
+      ])
+    })
   })
 
   describe('verbose=false', () => {
@@ -103,6 +131,31 @@ describe('ConsoleResultLogger', () => {
       expect(log.mock.calls).toEqual([
         [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`]
       ])
+    })
+
+    describe('with warnings', () => {
+      const logger = new ConsoleResultLogger(tab_width, true)
+
+      test('log', () => {
+        logger.log({
+          result: Result.PASSED,
+          display_path: 'path',
+          full_path: 'full_path',
+          description: 'description',
+          message: 'message',
+          warnings: ['warn1', 'warn2'],
+          epilogues: [],
+          prologues: []
+        })
+
+        expect(log.mock.calls).toEqual([
+          [],
+          [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
+          [ansi.gray("WARNING warn1")],
+          [ansi.gray("WARNING warn2")],
+          []
+        ])
+      })
     })
   })
 })
