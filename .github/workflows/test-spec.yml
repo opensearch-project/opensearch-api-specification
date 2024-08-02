@@ -61,6 +61,11 @@ jobs:
         working-directory: .github/opensearch-cluster
         run: docker compose up -d
 
+      - name: Get Container ID
+        id: container
+        run: |
+          echo "CONTAINER_ID=$(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}")" >> $GITHUB_OUTPUT
+
       - name: Run Tests
         run: |
           npm run test:spec -- \
@@ -69,11 +74,10 @@ jobs:
             --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json
 
       - name: Get Container Logs
-        if: failure()
+        if: failure() && steps.container.outputs.CONTAINER_ID
         run: |
-          CONTAINER_ID=$(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}")
-          echo Dumping logs from $CONTAINER_ID ...
-          docker logs $CONTAINER_ID
+          echo Dumping logs from ${{ steps.container.outputs.CONTAINER_ID }} ...
+          docker logs ${{ steps.container.outputs.CONTAINER_ID }}
 
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
