@@ -54,6 +54,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442)) 
 - Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 - Added `--opensearch-version` to `merger` that excludes schema elements per semver ([#428](https://github.com/opensearch-project/opensearch-api-specification/pull/428))
+- Added `/_plugins/_query/settings` ([#456](https://github.com/opensearch-project/opensearch-api-specification/pull/456))
 
 ### Changed
 
