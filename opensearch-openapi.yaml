@@ -4071,6 +4071,26 @@ paths:
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_query/settings:
+    put:
+      operationId: sql.settings.0
+      x-operation-group: sql.settings
+      x-version-added: '1.0'
+      description: Adds SQL settings to the standard OpenSearch cluster settings.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/settings/
+      parameters:
+        - $ref: '#/components/parameters/sql.settings::query.format'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/sql.settings'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.settings@200'
   /_plugins/_rollup/jobs/{id}:
     delete:
       operationId: rollups.delete.0
@@ -11772,6 +11792,28 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/sql.close@200'
+      deprecated: true
+      x-ignorable: true
+  /_opendistro/_sql/settings:
+    put:
+      operationId: sql.settings.0_superseded
+      x-operation-group: sql.settings
+      x-version-added: '1.0'
+      description: Adds SQL settings to the standard OpenSearch cluster settings.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/settings/
+      parameters:
+        - $ref: '#/components/parameters/sql.settings::query.format'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/sql.settings'
+      responses:
+        '200':
+          $ref: '#/components/responses/sql.settings@200'
       deprecated: true
       x-ignorable: true
   /_opendistro/_sql/stats:
@@ -21290,7 +21332,6 @@ components:
       description: A short version of the Accept header, e.g. json, yaml.
       schema:
         type: string
-        description: A short version of the Accept header, e.g. json, yaml.
     sql.close::query.sanitize:
       name: sanitize
       in: query
@@ -21298,14 +21339,12 @@ components:
       schema:
         type: boolean
         default: true
-        description: Specifies whether to escape special characters in the results
     sql.explain::query.format:
       name: format
       in: query
       description: A short version of the Accept header, e.g. json, yaml.
       schema:
         type: string
-        description: A short version of the Accept header, e.g. json, yaml.
     sql.explain::query.sanitize:
       name: sanitize
       in: query
@@ -21313,14 +21352,12 @@ components:
       schema:
         type: boolean
         default: true
-        description: Specifies whether to escape special characters in the results
     sql.get_stats::query.format:
       name: format
       in: query
       description: A short version of the Accept header, e.g. json, yaml.
       schema:
         type: string
-        description: A short version of the Accept header, e.g. json, yaml.
     sql.get_stats::query.sanitize:
       name: sanitize
       in: query
@@ -21328,14 +21365,12 @@ components:
       schema:
         type: boolean
         default: true
-        description: Specifies whether to escape special characters in the results
     sql.post_stats::query.format:
       name: format
       in: query
       description: A short version of the Accept header, e.g. json, yaml.
       schema:
         type: string
-        description: A short version of the Accept header, e.g. json, yaml.
     sql.post_stats::query.sanitize:
       name: sanitize
       in: query
@@ -21343,14 +21378,12 @@ components:
       schema:
         type: boolean
         default: true
-        description: Specifies whether to escape special characters in the results
     sql.query::query.format:
       name: format
       in: query
       description: A short version of the Accept header, e.g. json, yaml.
       schema:
         type: string
-        description: A short version of the Accept header, e.g. json, yaml.
     sql.query::query.sanitize:
       name: sanitize
       in: query
@@ -21358,7 +21391,12 @@ components:
       schema:
         type: boolean
         default: true
-        description: Specifies whether to escape special characters in the results
+    sql.settings::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
     tasks.cancel::path.task_id:
       in: path
       name: task_id
@@ -23513,6 +23551,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/sql._common:SqlQuery'
+      required: true
+    sql.settings:
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/sql._common:SqlSettingsPlain'
+              - $ref: '#/components/schemas/sql._common:SqlSettings'
       required: true
     termvectors:
       content:
@@ -26217,11 +26263,15 @@ components:
             type: string
       required: true
     sql.query@200:
-      description: ''
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/sql._common:SqlQueryResponse'
+    sql.settings@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sql._common:SqlSettingsResponse'
     tasks.cancel@200:
       description: ''
       content:
@@ -48855,6 +48905,11 @@ components:
           $ref: '#/components/schemas/_common:Name'
       required:
         - name
+    sql._common:Cursor:
+      type: object
+      properties:
+        keep_alive:
+          type: string
     sql._common:Explain:
       type: object
       properties:
@@ -48866,6 +48921,44 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/sql._common:Explain'
+    sql._common:Plugins:
+      type: object
+      properties:
+        ppl:
+          $ref: '#/components/schemas/sql._common:Ppl'
+        query:
+          $ref: '#/components/schemas/sql._common:Query'
+        sql:
+          $ref: '#/components/schemas/sql._common:Sql'
+    sql._common:Ppl:
+      type: object
+      properties:
+        enabled:
+          anyOf:
+            - type: boolean
+            - type: string
+    sql._common:Query:
+      type: object
+      properties:
+        memory_limit:
+          type: string
+        size_limit:
+          anyOf:
+            - type: string
+            - type: integer
+    sql._common:Sql:
+      type: object
+      properties:
+        enabled:
+          anyOf:
+            - type: boolean
+            - type: string
+        slowlog:
+          anyOf:
+            - type: integer
+            - type: string
+        cursor:
+          $ref: '#/components/schemas/sql._common:Cursor'
     sql._common:SqlClose:
       type: object
       properties:
@@ -48918,6 +49011,25 @@ components:
           type: integer
         status:
           type: integer
+    sql._common:SqlSettings:
+      type: object
+      properties:
+        transient:
+          $ref: '#/components/schemas/sql._common:Transient'
+    sql._common:SqlSettingsPlain:
+      type: object
+      properties:
+        transient:
+          $ref: '#/components/schemas/sql._common:TransientPlain'
+    sql._common:SqlSettingsResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+        persistent:
+          type: object
+        transient:
+          $ref: '#/components/schemas/sql._common:Transient'
     sql._common:SqlStats:
       type: object
       properties:
@@ -48935,6 +49047,26 @@ components:
           type: object
         execution_time:
           type: object
+    sql._common:Transient:
+      type: object
+      properties:
+        plugins:
+          $ref: '#/components/schemas/sql._common:Plugins'
+    sql._common:TransientPlain:
+      type: object
+      properties:
+        plugins.sql.enabled:
+          type: boolean
+        plugins.ppl.enabled:
+          type: boolean
+        plugins.sql.slowlog:
+          type: integer
+        plugins.sql.cursor.keep_alive:
+          type: string
+        plugins.query.memory_limit:
+          type: string
+        plugins.query.size_limit:
+          type: integer
     tasks._common:GroupBy:
       type: string
       enum:
