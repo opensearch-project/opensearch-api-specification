@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: Schemas of replication._common category.
+  description: Schemas of replication._common category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Replication:
+      type: object
+      properties:
+        leader_alias:
+          type: string
+        leader_index:
+          type: string
+        use_roles:
+          $ref: '#/components/schemas/UseRoles'
+    UseRoles:
+      type: object
+      properties:
+        leader_cluster_role:
+          type: string
+        follower_cluster_role:
+          type: string
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+        reason:
+          type: string
+        leader_alias:
+          type: string
+        leader_index:
+          type: string
+        follower_index:
+          type: string
+        syncing_details:
+          $ref: '#/components/schemas/SyncingDetails'
+    SyncingDetails:
+      type: object
+      properties:
+        leader_checkpoint:
+          type: integer
+        follower_checkpoint:
+          type: integer
+        seq_no:
+          type: integer
+    LeaderStatus:
+      type: object
+      properties:
+        num_replicated_indices:
+          type: number
+        operations_read:
+          type: number
+        translog_size_bytes:
+          type: number
+        operations_read_lucene:
+          type: number
+        operations_read_translog:
+          type: number
+        total_read_time_lucene_millis:
+          type: number
+        total_read_time_translog_millis:
+          type: number
+        bytes_read:
+          type: number
+        # index_stats:
+        #   type: Object
+          # additionalProperties:
+          #   type: object
+          #   properties:
+          #     $ref: '#/components/schemas/IndexStatus'
+    IndexStatus:
+      type: object
+      properties:
+        operations_read:
+          type: number
+        translog_size_bytes:
+          type: number
+        operations_read_lucene:
+          type: number
+        operations_read_translog:
+          type: number
+        total_read_time_lucene_millis:
+          type: number
+        total_read_time_translog_millis:
+          type: number
+        bytes_read:
+          type: number
+    FollowerStatus:
+      type: object
+      properties:
+        num_syncing_indices:
+          type: number
+        num_bootstrapping_indices:
+          type: number
+        num_paused_indices:
+          type: number
+        num_failed_indices:
+          type: number
+        num_shard_tasks:
+          type: number
+        num_index_tasks:
+          type: number
+        operations_written:
+          type: number
+        operations_read:
+          type: number
+        failed_read_requests:
+          type: number
+        throttled_read_requests:
+          type: number
+        failed_write_requests:
+          type: number
+        throttled_write_requests:
+          type: number
+        follower_checkpoint:
+          type: number
+        leader_checkpoint:
+          type: number
+        total_write_time_millis:
+          type: number
+        # index_stats:
+        #   type: Object
+        #   additionalProperties:
+        #     type: object
+        #     properties:
+        #       $ref: '#/components/schemas/IndexFollowerStatus'
+    IndexFollowerStatus:
+      type: object
+      properties:
+        operations_written:
+          type: number
+        operations_read:
+          type: number
+        failed_read_requests:
+          type: number
+        throttled_read_requests:
+          type: number
+        failed_write_requests:
+          type: number
+        throttled_write_requests:
+          type: number
+        follower_checkpoint:
+          type: number
+        leader_checkpoint:
+          type: number
+        total_write_time_millis:
+          type: number
+    AutoFollowStatus:
+      type: object
+      properties:
+        num_success_start_replication:
+          type: number
+        num_failed_start_replication:
+          type: number
+        num_failed_leader_calls:
+          type: number
+        failed_indices:
+          type: array
+          items:
+            type: string
+        autofollow_stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutoFollowStats'
+    AutoFollowStats:
+      type: object
+      properties:
+        name:
+          type: string  # Предполагается, что это строка
+        pattern:
+          type: string  # Предполагается, что это строка
+        num_success_start_replication:
+          type: number
+        num_failed_start_replication:
+          type: number
+        num_failed_leader_calls:
+          type: number
+        failed_indices:
+          type: array
+          items:
+            type: string
+    UpdateSettings:
+      type: object
+      properties:
+        settings:
+          type: string
+    CreateReplicationRule:
+      type: object
+      properties:
+        leader_alias:
+          type: string
+        name:
+          type: string
+        pattern:
+          type: string
+        use_roles:
+          $ref: '#/components/schemas/UseRoles'
+    DeleteReplicationRule:
+      type: object
+      properties:
+        leader_alias:
+          type: string
+        name:
+          type: string

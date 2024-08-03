@@ -1,0 +1,261 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Replication API
+  description: OpenSearch Replication API
+  version: 1.0.0
+paths:
+  /_plugins/_replication/{index}/_start:
+    put:
+      operationId: replication.start.0
+      x-operation-group: replication.start
+      x-version-added: '1.1'
+      description: Initiate replication of an index from the leader cluster to the follower cluster.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#start-replication
+      requestBody:
+        $ref: '#/components/requestBodies/replication.start'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.start@200'
+  /_plugins/_replication/{index}/_stop:
+    post:
+      operationId: replication.stop.0
+      x-operation-group: replication.stop
+      x-version-added: '1.1'
+      description: Terminates replication and converts the follower index to a standard index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#stop-replication
+      requestBody:
+        $ref: '#/components/requestBodies/replication.stop'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.stop@200'
+  /_plugins/_replication/{index}/_pause:
+    post:
+      operationId: replication.pause.0
+      x-operation-group: replication.pause
+      x-version-added: '1.1'
+      description: Pauses replication of the leader index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#pause-replication
+      requestBody:
+        $ref: '#/components/requestBodies/replication.pause'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.pause@200'
+  /_plugins/_replication/{index}/_resume:
+    post:
+      operationId: replication.resume.0
+      x-operation-group: replication.resume
+      x-version-added: '1.1'
+      description: Resumes replication of the leader index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#resume-replication
+      requestBody:
+        $ref: '#/components/requestBodies/replication.resume'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.resume@200'
+  /_plugins/_replication/{index}/_status:
+    get:
+      operationId: replication.status.0
+      x-operation-group: replication.status
+      x-version-added: '1.1'
+      description: Gets the status of index replication.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#get-replication-status
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.status@200'
+  /_plugins/_replication/leader_stats:
+    get:
+      operationId: replication.leader_stats.0
+      x-operation-group: replication.leader_stats
+      x-version-added: '1.1'
+      description: Gets information about replicated leader indexes on a specified cluster.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#get-leader-cluster-stats
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.leader_stats@200'
+  /_plugins/_replication/follower_stats:
+    get:
+      operationId: replication.follower_stats.0
+      x-operation-group: replication.follower_stats
+      x-version-added: '1.1'
+      description: Gets information about follower (syncing) indexes on a specified cluster.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#get-follower-cluster-stats
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.follower_stats@200'
+  /_plugins/_replication/autofollow_stats:
+    get:
+      operationId: replication.autofollow_stats.0
+      x-operation-group: replication.autofollow_stats
+      x-version-added: '1.1'
+      description: Gets information about auto-follow activity and any replication rules configured on the specified cluster.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#get-auto-follow-stats
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.autofollow_stats@200'
+  /_plugins/_replication/{follower-index}/_update:
+    put:
+      operationId: replication.update_settings.0
+      x-operation-group: replication.update_settings
+      x-version-added: '1.1'
+      description: Updates settings on the follower index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#update-settings
+      requestBody:
+        $ref: '#/components/requestBodies/replication.update_settings'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.update_settings@200'
+  /_plugins/_replication/_autofollow:
+    post:
+      operationId: replication.replication_rule.0
+      x-operation-group: replication.replication_rule
+      x-version-added: '1.1'
+      description: Automatically starts replication on indexes matching a specified pattern.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#create-replication-rule
+      requestBody:
+        $ref: '#/components/requestBodies/replication.create_replication_rule'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.create_replication_rule@200'
+    delete:
+      operationId: replication.delete_replication_rule.0
+      x-operation-group: replication.delete_replication_rule
+      x-version-added: '1.1'
+      description: Deletes the specified replication rule.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/tuning-your-cluster/replication-plugin/api/#delete-replication-rule
+      requestBody:
+        $ref: '#/components/requestBodies/replication.delete_replication_rule'
+      responses:
+        '200':
+          $ref: '#/components/responses/replication.delete_replication_rule@200'
+components:
+  requestBodies:
+    replication.start:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/Replication'
+      required: true
+    replication.stop:
+      content:
+        application/json:
+          schema:
+            type: Object
+      required: true
+    replication.pause:
+      content:
+        application/json:
+          schema:
+            type: Object
+      required: true
+    replication.resume:
+      content:
+        application/json:
+          schema:
+            type: Object
+      required: true
+    replication.update_settings:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/UpdateSettings'
+      required: true
+    replication.create_replication_rule:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/CreateReplicationRule'
+      required: true
+    replication.delete_replication_rule:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/DeleteReplicationRule'
+      required: true
+  responses:
+    replication.start@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    replication.stop@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    replication.pause@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    replication.resume@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    replication.status@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/Status'
+    replication.leader_stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/LeaderStatus'
+    replication.follower_stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/FollowerStatus'
+    replication.autofollow_stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/replication._common.yaml#/components/schemas/AutoFollowStatus'
+    replication.update_settings@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    replication.create_replication_rule@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    replication.delete_replication_rule@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
