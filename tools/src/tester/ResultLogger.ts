@@ -46,8 +46,9 @@ export class ConsoleResultLogger implements ResultLogger {
     console.log(`Tested ${results.evaluated_paths_count()}/${results.spec_paths_count()} paths.`)
   }
 
-  #log_story ({ result, full_path, display_path, message }: StoryEvaluation): void {
+  #log_story ({ result, full_path, display_path, message, warnings }: StoryEvaluation): void {
     this.#log_evaluation({ result, message: message ?? full_path }, ansi.cyan(ansi.b(display_path)))
+    this.#log_warnings(warnings)
   }
 
   #log_chapters (evaluations: ChapterEvaluation[], title: string): void {
@@ -119,6 +120,11 @@ export class ConsoleResultLogger implements ResultLogger {
     } else {
       console.log(`${result} ${title}`)
     }
+  }
+
+  #log_warnings(warnings?: string[]): void {
+    if (!warnings) return
+    warnings.forEach((warning) => { console.log(ansi.gray(`WARNING ${(warning)}`)); })
   }
 
   #maybe_shorten_error_message(message: string | undefined): string | undefined {

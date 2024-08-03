@@ -8,6 +8,12 @@ prologues:
       payload:
         settings:
           index.number_of_shards: 3
+  - path: /movies/_settings
+    method: PUT
+    request_body:
+      payload:
+        settings:
+          index.blocks.write: true
 epilogues:
   - path: /movies
     method: DELETE
@@ -25,15 +31,6 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Block writes to the source index.
-    path: /{index}/_settings
-    method: PUT
-    parameters:
-      index: movies
-    request_body:
-      payload:
-        settings:
-          index.blocks.write: true
   - synopsis: Split an index (POST).
     path: /{index}/_split/{target}
     method: POST

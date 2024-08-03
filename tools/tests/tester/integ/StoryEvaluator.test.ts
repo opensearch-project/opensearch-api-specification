@@ -40,9 +40,20 @@ test('error/prologue_error', async () => {
   expect(actual).toEqual(expected)
 })
 
+test('error/output_error', async () => {
+  const actual = await load_actual_evaluation(story_evaluator, 'error/output_error')
+  const expected = load_expected_evaluation('error/output_error')
+  expect(actual).toEqual(expected)
+})
+
 test('error/chapter_error', async () => {
   const actual = await load_actual_evaluation(story_evaluator, 'error/chapter_error')
   const expected = load_expected_evaluation('error/chapter_error')
   expect(actual).toEqual(expected)
 })
 
+test('skipped/semver', async () => {
+  const actual = await load_actual_evaluation(story_evaluator, 'skipped/semver')
+  const expected = load_expected_evaluation('skipped/semver')
+  expect(actual).toEqual(expected)
+})
