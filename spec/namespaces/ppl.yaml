@@ -1,0 +1,165 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch PPL API
+  description: OpenSearch PPL API
+  version: 1.0.0
+paths:
+  /_plugins/_ppl:
+    post:
+      operationId: ppl.query.0
+      x-operation-group: ppl.query
+      x-version-added: '1.0'
+      description: Send a PPL query to the PPL plugin. 
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
+      parameters:
+        - $ref: '#/components/parameters/ppl.query::query.format'
+        - $ref: '#/components/parameters/ppl.query::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/ppl.query'
+      responses:
+        '200':
+          $ref: '#/components/responses/ppl.query@200'
+  /_plugins/_ppl/_explain:
+    post:
+      operationId: ppl.explain.0
+      x-operation-group: ppl.explain
+      x-version-added: '1.0'
+      description: Shows how a query is executed against OpenSearch.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
+      parameters:
+        - $ref: '#/components/parameters/ppl.explain::query.format'
+        - $ref: '#/components/parameters/ppl.explain::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/ppl.explain'
+      responses:
+        '200':
+          $ref: '#/components/responses/ppl.explain@200'
+  /_plugins/_ppl/stats:
+    get:
+      operationId: ppl.get_stats.0
+      x-operation-group: ppl.get_stats
+      x-version-added: '1.0'
+      description: Collect metrics for the plugin within the interval.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
+      parameters:
+        - $ref: '#/components/parameters/ppl.get_stats::query.format'
+        - $ref: '#/components/parameters/ppl.get_stats::query.sanitize'
+      responses:
+        '200':
+          $ref: '#/components/responses/ppl.get_stats@200'
+    post:
+      operationId: ppl.post_stats.1
+      x-operation-group: ppl.post_stats
+      x-version-added: '1.0'
+      description: By a stats endpoint, you are able to collect metrics for the plugin within the interval.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
+      parameters:
+        - $ref: '#/components/parameters/ppl.post_stats::query.format'
+        - $ref: '#/components/parameters/ppl.post_stats::query.sanitize'
+      requestBody:
+        $ref: '#/components/requestBodies/ppl.post_stats'
+      responses:
+        '200':
+          $ref: '#/components/responses/ppl.post_stats@200'
+components:
+  parameters:
+    ppl.query::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+    ppl.query::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results.
+      schema:
+        type: boolean
+        default: true
+    ppl.explain::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+    ppl.explain::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results.
+      schema:
+        type: boolean
+        default: true
+    ppl.get_stats::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+    ppl.get_stats::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results.
+      schema:
+        type: boolean
+        default: true
+    ppl.post_stats::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, e.g. json, yaml.
+      schema:
+        type: string
+    ppl.post_stats::query.sanitize:
+      name: sanitize
+      in: query
+      description: Specifies whether to escape special characters in the results.
+      schema:
+        type: boolean
+        default: true
+  requestBodies:
+    ppl.query:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/Query'
+      required: true
+    ppl.explain:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/Explain'
+      required: true
+    ppl.post_stats:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/Stats'
+      required: true
+  responses:
+    ppl.query@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/QueryResponse'
+    ppl.explain@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sql._common.yaml#/components/schemas/ExplainResponse'
+      required: true
+    ppl.get_stats@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+      required: true
+    ppl.post_stats@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+      required: true
