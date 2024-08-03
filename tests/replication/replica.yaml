@@ -3,38 +3,38 @@ $schema: ../../json_schemas/test_story.schema.yaml
 description: Test to explicitly clear the cursor context
 
 prologues:
-- path: /{index}
-  method: PUT
-  parameters:
-    index: books
-  request_body:
-    payload: {}
-- path: /_bulk
-  method: POST
-  request_body:
-    content_type: application/x-ndjson
-    payload:
-      - {create: {_index: books, _id: book_1392214}}
-      - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
-      - {create: {_index: books, _id: book_1392215}}
-      - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
-- path: /{index}/_refresh
-  method: POST
-  parameters:
-    index: books
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request_body:
+      payload: {}
+  - path: /_bulk
+    method: POST
+    request_body:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book_1392215}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+  - path: /{index}/_refresh
+    method: POST
+    parameters:
+      index: books
 epilogues:
-- path: /_plugins/_replication/{index}/_stop
-  method: POST
-  parameters: 
-    index: books-names
-  request_body:
-    payload: {}
-- path: /books-names
-  method: DELETE
-  status: [200, 404]
-- path: /books
-  method: DELETE
-  status: [200, 404]
+  - path: /_plugins/_replication/{index}/_stop
+    method: POST
+    parameters: 
+      index: books-names
+    request_body:
+      payload: {}
+  - path: /books-names
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
 chapters:
   - synopsis: Establish connection.
     path: /_cluster/settings
@@ -45,7 +45,7 @@ chapters:
           cluster:
             remote:
               my-connection-alias:
-                seeds: ["172.18.0.3:9300"]
+                seeds: ['172.18.0.3:9300']
     response:
       status: 200
   - synopsis: Start replication.
@@ -56,11 +56,11 @@ chapters:
       index: books-names
     request_body:
       payload:
-        leader_alias: 'my-connection-alias'
-        leader_index: 'books'
+        leader_alias: my-connection-alias
+        leader_index: books
         use_roles: 
-          leader_cluster_role: 'leader_role'
-          follower_cluster_role: 'follower_role'
+          leader_cluster_role: leader_role
+          follower_cluster_role: follower_role
     response:
       status: 200
   - synopsis: Get replication stats.
@@ -108,12 +108,12 @@ chapters:
     method: POST
     request_body:
       payload:
-        leader_alias: "my-connection-alias"
-        name: "books"
-        pattern: "books-*"
+        leader_alias: my-connection-alias
+        name: books
+        pattern: 'books-*'
         use_roles:
-          leader_cluster_role: 'leader_role'
-          follower_cluster_role: 'follower_role'
+          leader_cluster_role: leader_role
+          follower_cluster_role: follower_role
     response:
       status: 200
   - synopsis: Delete replication rule.
@@ -122,7 +122,7 @@ chapters:
     method: DELETE
     request_body:
       payload:
-        leader_alias: "my-connection-alias"
-        name: "books"
+        leader_alias: my-connection-alias
+        name: books
     response:
       status: 200
