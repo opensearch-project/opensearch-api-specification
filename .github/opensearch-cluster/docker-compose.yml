@@ -1,13 +1,57 @@
 version: '3'
 
 services:
-  opensearch-cluster:
+  opensearch-node1:
     image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
-    ports:
-      - '9200:9200'
-      - '9600:9600'
+    container_name: opensearch-node1
     environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
       - 'OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}'
-      - discovery.type=single-node
       - path.repo=/tmp/opensearch/repo
       - plugins.index_state_management.job_interval=1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data1:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - opensearch-net
+
+  opensearch-node2:
+    image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
+    container_name: opensearch-node2
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node2
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - 'OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}'
+      - path.repo=/tmp/opensearch/repo
+      - plugins.index_state_management.job_interval=1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data2:/usr/share/opensearch/data
+    networks:
+      - opensearch-net
+
+volumes:
+  data1:
+  data2:
+
+networks:
+  opensearch-net:
+    driver: bridge
