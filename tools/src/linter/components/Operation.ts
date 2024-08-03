@@ -12,6 +12,8 @@ import _ from 'lodash'
 import ValidatorBase from './base/ValidatorBase'
 
 const GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z_]*[a-z]+)$/
+const DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u
+
 export default class Operation extends ValidatorBase {
   path: string
   verb: string
@@ -65,7 +67,7 @@ export default class Operation extends ValidatorBase {
   validate_description (): ValidationError | undefined {
     const description = this.spec.description ?? ''
     if (description === '') { return this.error('Missing description property.') }
-    if (!description.endsWith('.')) { return this.error('Description must end with a period.') }
+    if (!DESCRIPTION_REGEX.test(description)) return this.error('Description must start with a capital letter and end with a period.')
   }
 
   validate_operation_id (): ValidationError | undefined {
