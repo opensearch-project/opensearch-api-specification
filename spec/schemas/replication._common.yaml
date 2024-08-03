@@ -65,12 +65,10 @@ components:
           type: number
         bytes_read:
           type: number
-        # index_stats:
-        #   type: Object
-        # additionalProperties:
-        #   type: object
-        #   properties:
-        #     $ref: '#/components/schemas/IndexStatus'
+        index_stats:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IndexStatus'
     IndexStatus:
       type: object
       properties:
@@ -121,12 +119,10 @@ components:
           type: number
         total_write_time_millis:
           type: number
-        # index_stats:
-        #   type: Object
-        #   additionalProperties:
-        #     type: object
-        #     properties:
-        #       $ref: '#/components/schemas/IndexFollowerStatus'
+        index_stats:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IndexFollowerStatus'
     IndexFollowerStatus:
       type: object
       properties:
@@ -186,7 +182,24 @@ components:
       type: object
       properties:
         settings:
-          type: string
+          anyOf:
+            - type: object
+              properties:
+                index.number_of_shards:
+                  type: integer
+                index.number_of_replicas:
+                  type: integer
+            - $ref: '#/components/schemas/SettingsBody'
+    SettingsBody:
+      type: object
+      properties:
+        index:
+          type: object
+          properties:
+            number_of_shards:
+              type: integer
+            number_of_replicas:
+              type: integer
     CreateReplicationRule:
       type: object
       properties:

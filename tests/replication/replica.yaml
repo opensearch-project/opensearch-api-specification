@@ -2,38 +2,127 @@ $schema: ../../json_schemas/test_story.schema.yaml
 
 description: Test to explicitly clear the cursor context
 
-# prologues:
-# - path: /{index}
-#   method: PUT
-#   parameters:
-#     index: books
-#   request_body:
-#     payload: {}
-# - path: /_bulk
-#   method: POST
-#   request_body:
-#     content_type: application/x-ndjson
-#     payload:
-#       - {create: {_index: books, _id: book_1392214}}
-#       - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
-#       - {create: {_index: books, _id: book_1392215}}
-#       - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
-# - path: /{index}/_refresh
-#   method: POST
-#   parameters:
-#     index: books
-# epilogues:
-# - path: /books
-#   method: DELETE
-#   status: [200, 404]
+prologues:
+- path: /{index}
+  method: PUT
+  parameters:
+    index: books
+  request_body:
+    payload: {}
+- path: /_bulk
+  method: POST
+  request_body:
+    content_type: application/x-ndjson
+    payload:
+      - {create: {_index: books, _id: book_1392214}}
+      - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+      - {create: {_index: books, _id: book_1392215}}
+      - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+- path: /{index}/_refresh
+  method: POST
+  parameters:
+    index: books
+epilogues:
+- path: /_plugins/_replication/{index}/_stop
+  method: POST
+  parameters: 
+    index: books-names
+  request_body:
+    payload: {}
+- path: /books-names
+  method: DELETE
+  status: [200, 404]
+- path: /books
+  method: DELETE
+  status: [200, 404]
 chapters:
-  - synopsis: Cat with a json response.
-    path: /_cat/nodes
-    version: '>= 2.0'
-    method: GET
-    parameters:
-      format: json
+  - synopsis: Establish connection.
+    path: /_cluster/settings
+    method: PUT
+    request_body:
+      payload:
+        persistent:
+          cluster:
+            remote:
+              my-connection-alias:
+                seeds: ["172.18.0.3:9300"]
     response:
       status: 200
+  - synopsis: Start replication.
+    path: /_plugins/_replication/{index}/_start
+    version: '>= 1.1'
+    method: PUT
+    parameters:
+      index: books-names
+    request_body:
       payload:
-        - cluster_manager: '*'
+        leader_alias: 'my-connection-alias'
+        leader_index: 'books'
+        use_roles: 
+          leader_cluster_role: 'leader_role'
+          follower_cluster_role: 'follower_role'
+    response:
+      status: 200
+  - synopsis: Get replication stats.
+    path: /_plugins/_replication/{index}/_status
+    version: '>= 1.1'
+    method: GET
+    parameters:
+      index: books-names
+    response:
+      status: 200
+  - synopsis: Get leader stats.
+    path: /_plugins/_replication/leader_stats
+    version: '>= 1.1'
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get follower stats.
+    path: /_plugins/_replication/follower_stats
+    version: '>= 1.1'
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get auto-follow stats.
+    path: /_plugins/_replication/autofollow_stats
+    version: '>= 1.1'
+    method: GET
+    response:
+      status: 200
+  - synopsis: Update settings.
+    path: /_plugins/_replication/{index}/_update
+    version: '>= 1.1'
+    method: PUT
+    parameters:
+      index: books-names
+    request_body:
+      payload:
+        settings: 
+          index.number_of_shards: 4
+          index.number_of_replicas: 2
+    response:
+      status: 200
+  - synopsis: Create replication rule.
+    path: /_plugins/_replication/_autofollow
+    version: '>= 1.1'
+    method: POST
+    request_body:
+      payload:
+        leader_alias: "my-connection-alias"
+        name: "books"
+        pattern: "books-*"
+        use_roles:
+          leader_cluster_role: 'leader_role'
+          follower_cluster_role: 'follower_role'
+    response:
+      status: 200
+  - synopsis: Delete replication rule.
+    path: /_plugins/_replication/_autofollow
+    version: '>= 1.1'
+    method: DELETE
+    request_body:
+      payload:
+        leader_alias: "my-connection-alias"
+        name: "books"
+    response:
+      status: 200
