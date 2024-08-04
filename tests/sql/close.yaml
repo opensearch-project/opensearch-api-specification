@@ -22,7 +22,13 @@ prologues:
     method: POST
     parameters:
       index: books
-  - id: query_sql
+  - path: _plugins/_query/settings
+    method: PUT
+    request_body:
+      payload:
+        transient:
+          plugins.query.memory_limit: 100%
+  - id: sql_query
     path: /_plugins/_sql
     method: POST
     request_body:
@@ -41,6 +47,6 @@ chapters:
     method: POST
     request_body:
       payload:
-        cursor: ${query_sql.cursor}
+        cursor: ${sql_query.cursor}
     response:
       status: 200
