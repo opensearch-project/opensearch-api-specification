@@ -77,8 +77,8 @@ definitions:
         type: object
         additionalProperties:
           $ref: '#/definitions/Parameter'
-      request_body:
-        $ref: '#/definitions/RequestBody'
+      request:
+        $ref: '#/definitions/Request'
       output:
         $ref: '#/definitions/Output'
       version:
@@ -119,15 +119,18 @@ definitions:
         required:
           - count
 
-  RequestBody:
+  Request:
     type: object
     properties:
       content_type:
         type: string
         default: application/json
+      headers:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Header'
       payload:
         $ref: '#/definitions/Payload'
-    required: [payload]
     additionalProperties: false
 
   ExpectedResponse:
@@ -162,6 +165,12 @@ definitions:
         description: Error object.
     required: [content_type, payload, status]
     additionalProperties: false
+
+  Header:
+    anyOf:
+      - type: string
+      - type: number
+      - type: boolean
 
   Payload:
     anyOf:

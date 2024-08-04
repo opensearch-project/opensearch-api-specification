@@ -32,7 +32,7 @@ export default class OperationGroup extends ValidatorBase {
     return [
       this.validate_description(),
       this.validate_external_docs(),
-      this.validate_request_body(),
+      this.validate_request(),
       this.validate_responses(),
       this.validate_query_parameters()
     ].filter((e) => e) as ValidationError[]
@@ -48,7 +48,7 @@ export default class OperationGroup extends ValidatorBase {
     if (uniq_external_docs.size > 1) { return this.error(`${this.operations.length} '${this.name}' operations must have identical externalDocs property.`) }
   }
 
-  validate_request_body (): ValidationError | undefined {
+  validate_request (): ValidationError | undefined {
     const uniq_request_bodies = new Set(this.operations.map((op) => op.spec.requestBody?.$ref))
     if (uniq_request_bodies.size > 1) { return this.error(`${this.operations.length} '${this.name}' operations must have identical requestBody property.`) }
   }

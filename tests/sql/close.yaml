@@ -7,11 +7,11 @@ prologues:
     method: PUT
     parameters:
       index: books
-    request_body:
+    request:
       payload: {}
   - path: /_bulk
     method: POST
-    request_body:
+    request:
       content_type: application/x-ndjson
       payload:
         - {create: {_index: books, _id: book_1392214}}
@@ -24,14 +24,14 @@ prologues:
       index: books
   - path: _plugins/_query/settings
     method: PUT
-    request_body:
+    request:
       payload:
         transient:
           plugins.query.memory_limit: 100%
   - id: sql_query
     path: /_plugins/_sql
     method: POST
-    request_body:
+    request:
       payload:
         fetch_size: 1
         query: 'SELECT * FROM books'
@@ -45,7 +45,7 @@ chapters:
   - synopsis: Close cursor.
     path: /_plugins/_sql/close
     method: POST
-    request_body:
+    request:
       payload:
         cursor: ${sql_query.cursor}
     response:
