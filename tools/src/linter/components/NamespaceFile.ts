@@ -14,12 +14,14 @@ import _ from 'lodash'
 import Operation from './Operation'
 import { resolve_ref, sort_by_keys } from '../../helpers'
 import FileValidator from './base/FileValidator'
+import Info from './Info'
 
 const HTTP_METHODS = ['get', 'head', 'post', 'put', 'patch', 'delete', 'options', 'trace']
 const NAME_REGEX = /^[a-z]+[a-z_]*[a-z]+$/
 
 export default class NamespaceFile extends FileValidator {
   namespace: string
+  private _info: Info | undefined
   private _operation_groups: OperationGroup[] | undefined
   private _refs: Set<string> | undefined
 
@@ -36,11 +38,18 @@ export default class NamespaceFile extends FileValidator {
 
     return [
       this.validate_schemas(),
+      ...this.validate_info(),
       ...this.validate_unresolved_refs(),
       ...this.validate_unused_refs(),
       ...this.validate_parameter_refs(),
       ...this.validate_order_of_operations()
     ].filter((e) => e) as ValidationError[]
+  }
+
+  info (): Info {
+    if (this._info) return this._info
+    this._info = new Info(this.file, this.file_path, this.spec().info)
+    return this._info
   }
 
   operation_groups (): OperationGroup[] {
@@ -76,6 +85,10 @@ export default class NamespaceFile extends FileValidator {
 
   validate_schemas (): ValidationError | undefined {
     if (this.spec().components?.schemas) { return this.error('components/schemas is not allowed in namespace files', '#/components/schemas') }
+  }
+
+  validate_info(): ValidationError[] {
+    return this.info().validate()
   }
 
   validate_unresolved_refs (): ValidationError[] {

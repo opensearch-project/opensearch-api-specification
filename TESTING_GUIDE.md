@@ -115,8 +115,8 @@ Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml)
     method: POST
     request_body:
       payload:
-        name: "NLP_Group"
-        description: "Model group for NLP models"
+        name: NLP_Group
+        description: Model group for NLP models.
     response:
       status: 200
     output: # Save the model group id for later use.
