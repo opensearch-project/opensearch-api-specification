@@ -1,6 +1,9 @@
 <!-- TOC -->
 - [Spec Testing Guide](#spec-testing-guide)
   - [Running Spec Tests Locally](#running-spec-tests-locally)
+  - [Common Errors](#common-errors)
+    - [401 Unauthorized](#401-unauthorized)
+    - [FORBIDDEN/10/cluster create-index blocked (api)](#forbidden10cluster-create-index-blocked-api)
   - [Writing Spec Tests](#writing-spec-tests)
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
