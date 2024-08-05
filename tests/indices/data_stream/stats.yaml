@@ -1,0 +1,36 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test data streams.
+prologues:
+  - path: /_index_template/logs-template-nginx
+    method: PUT
+    request:
+      payload:
+        index_patterns:
+          - logs-*
+          - my-data-stream
+        data_stream:
+          timestamp_field:
+            name: request_time
+        priority: 100
+  - path: /_data_stream/logs-nginx
+    method: PUT
+  - path: /logs-nginx/_doc
+    method: POST
+    request:
+      payload:
+        message: login attempt failed
+        request_time: '2013-03-01T00:00:00'
+epilogues:
+  - path: /_data_stream/logs-nginx
+    method: DELETE
+    status: [200, 404]
+  - path: /_index_template/logs-template
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get data stream stats.
+    path: /_data_stream/{name}/_stats
+    method: GET
+    parameters:
+      name: logs-nginx

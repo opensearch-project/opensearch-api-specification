@@ -64,7 +64,7 @@ export default class ChapterEvaluator {
   async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const params = this.#evaluate_parameters(chapter, operation)
-    const request_body = this.#evaluate_request_body(chapter, operation)
+    const request = this.#evaluate_request(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
     const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
@@ -72,7 +72,7 @@ export default class ChapterEvaluator {
 
     const evaluations = _.compact(_.concat(
       Object.values(params),
-      request_body,
+      request,
       status,
       payload_body_evaluation,
       payload_schema_evaluation,
@@ -83,7 +83,7 @@ export default class ChapterEvaluator {
       title: chapter.synopsis,
       path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
-      request: { parameters: params, request_body },
+      request: { parameters: params, request },
       retries,
       response: {
         status,
@@ -109,12 +109,12 @@ export default class ChapterEvaluator {
     }))
   }
 
-  #evaluate_request_body(chapter: Chapter, operation: ParsedOperation): Evaluation {
-    if (!chapter.request_body) return { result: Result.PASSED }
-    const content_type = chapter.request_body.content_type ?? APPLICATION_JSON
+  #evaluate_request(chapter: Chapter, operation: ParsedOperation): Evaluation {
+    if (chapter.request?.payload === undefined) return { result: Result.PASSED }
+    const content_type = chapter.request.content_type ?? APPLICATION_JSON
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }
-    return this._schema_validator.validate(schema, chapter.request_body?.payload ?? {})
+    return this._schema_validator.validate(schema, chapter.request?.payload ?? {})
   }
 
   #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {

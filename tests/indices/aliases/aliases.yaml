@@ -6,10 +6,8 @@ epilogues:
     method: DELETE
     status: [200, 404]
 prologues:
-  - path: /{index}
+  - path: games
     method: PUT
-    parameters:
-      index: games
 chapters:
   - synopsis: Create an alias.
     path: /{index}/_aliases/{name}
@@ -17,35 +15,10 @@ chapters:
     parameters:
       index: games
       name: jeux
-  - synopsis: Get an alias from index.
-    method: GET
-    path: /{index}/_alias/{name}
-    parameters:
-      index: games
-      name: jeux
-    response:
-      status: 200
-      content_type: application/json
-      payload:
-        games:
-          aliases:
-            jeux: {}
-  - synopsis: Get an alias from _aliases.
-    method: GET
-    path: /_alias/{name}
-    parameters:
-      name: jeux
-    response:
-      status: 200
-      content_type: application/json
-      payload:
-        games:
-          aliases:
-            jeux: {}
   - synopsis: Multiple alias operations.
     path: /_aliases
     method: POST
-    request_body:
+    request:
       payload:
         actions:
           - remove:
@@ -61,45 +34,9 @@ chapters:
       status: 200
       payload:
         acknowledged: true
-  - synopsis: Delete an alias from _aliases.
+  - synopsis: Delete an alias.
     path: /{index}/_aliases/{name}
     method: DELETE
     parameters:
       index: games
       name: plays1
-  - synopsis: Delete an alias from _alias.
-    path: /{index}/_alias/{name}
-    method: DELETE
-    parameters:
-      index: games
-      name: plays2
-  - synopsis: Create an alias by Create or Update alias endpoint.
-    path: /{index}/_alias/{name}
-    method: PUT
-    parameters:
-      index: games
-      name: jeux
-  - synopsis: Create an alias with custom settings by Create or Update alias endpoint.
-    path: /{index}/_alias/{name}
-    method: PUT
-    parameters:
-      index: games
-      name: jeux
-    request_body:
-      payload:
-        index_routing: test1
-        search_routing: test2
-        routing: test
-        is_write_index: true
-        filter:
-          match_all: {}
-  - synopsis: Create an alias with is_hidden by Create or Update alias endpoint.
-    version: '>= 2.16'
-    path: /{index}/_alias/{name}
-    method: PUT
-    parameters:
-      index: games
-      name: jeux
-    request_body:
-      payload:
-        is_hidden: true

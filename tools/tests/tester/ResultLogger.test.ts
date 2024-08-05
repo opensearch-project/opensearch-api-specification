@@ -132,5 +132,30 @@ describe('ConsoleResultLogger', () => {
         [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`]
       ])
     })
+
+    describe('with warnings', () => {
+      const logger = new ConsoleResultLogger(tab_width, true)
+
+      test('log', () => {
+        logger.log({
+          result: Result.PASSED,
+          display_path: 'path',
+          full_path: 'full_path',
+          description: 'description',
+          message: 'message',
+          warnings: ['warn1', 'warn2'],
+          epilogues: [],
+          prologues: []
+        })
+
+        expect(log.mock.calls).toEqual([
+          [],
+          [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray('(message)')}`],
+          [ansi.gray("WARNING warn1")],
+          [ansi.gray("WARNING warn2")],
+          []
+        ])
+      })
+    })
   })
 })

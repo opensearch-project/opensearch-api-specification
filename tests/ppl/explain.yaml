@@ -1,0 +1,22 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test how a query is executed against OpenSearch.
+
+prologues:
+  - path: /books
+    method: PUT
+    request:
+      payload: {}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get explain of SQL Query
+    path: /_plugins/_ppl/_explain
+    method: POST
+    request:
+      payload:
+        query: search source=books
+    response:
+      status: 200

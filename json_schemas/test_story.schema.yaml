@@ -34,6 +34,8 @@ definitions:
             description: A brief description of the chapter.
           response:
             $ref: '#/definitions/ExpectedResponse'
+          warnings:
+            $ref: '#/definitions/Warnings'
         required: [synopsis]
 
   ReadChapter:
@@ -75,8 +77,8 @@ definitions:
         type: object
         additionalProperties:
           $ref: '#/definitions/Parameter'
-      request_body:
-        $ref: '#/definitions/RequestBody'
+      request:
+        $ref: '#/definitions/Request'
       output:
         $ref: '#/definitions/Output'
       version:
@@ -92,7 +94,7 @@ definitions:
       The values are paths to the values in the response.
       The values should be in the form:
       - `payload.<payload-path>` for the payload
-      - `headers.<header-name>` for the headers
+      - `headers.<header-name>` for the headers.
     type: object
     additionalProperties:
       type: string
@@ -117,15 +119,18 @@ definitions:
         required:
           - count
 
-  RequestBody:
+  Request:
     type: object
     properties:
       content_type:
         type: string
         default: application/json
+      headers:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Header'
       payload:
         $ref: '#/definitions/Payload'
-    required: [payload]
     additionalProperties: false
 
   ExpectedResponse:
@@ -161,6 +166,12 @@ definitions:
     required: [content_type, payload, status]
     additionalProperties: false
 
+  Header:
+    anyOf:
+      - type: string
+      - type: number
+      - type: boolean
+
   Payload:
     anyOf:
       - type: object
@@ -180,3 +191,12 @@ definitions:
       - type: string
       - type: number
       - type: boolean
+
+  Warnings:
+    type: object
+    properties:
+      multiple-paths-detected:
+        type: boolean
+        default: true
+        description: Enable/disable warnings about multiple paths being tested in the same story.
+    additionalProperties: false

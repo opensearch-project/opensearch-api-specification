@@ -45,13 +45,13 @@ test('validate_requestBody()', () => {
   const valid_request_bodies = operation_group([
     { requestBody: { $ref: '#/components/requestBodies/indices.create' } },
     { requestBody: { $ref: '#/components/requestBodies/indices.create' } }])
-  expect(valid_request_bodies.validate_request_body())
+  expect(valid_request_bodies.validate_request())
     .toBeUndefined()
 
   const invalid_request_bodies = operation_group([
     { requestBody: { $ref: '#/components/requestBodies/indices.create' } },
     {}])
-  expect(invalid_request_bodies.validate_request_body())
+  expect(invalid_request_bodies.validate_request())
     .toEqual(invalid_request_bodies.error('2 \'indices.create\' operations must have identical requestBody property.'))
 })
 

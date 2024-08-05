@@ -7,8 +7,14 @@ prologues:
     method: PUT
     parameters:
       index: books
-    request_body:
+    request:
       payload: {}
+  - path: _plugins/_query/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.query.memory_limit: 100%
 epilogues:
   - path: /books
     method: DELETE
@@ -17,7 +23,9 @@ chapters:
   - synopsis: Get SQL query
     path: /_plugins/_sql
     method: POST
-    request_body:
+    parameters:
+      sanitize: false
+    request:
       payload:
         query: 'SELECT * FROM books'
     response:

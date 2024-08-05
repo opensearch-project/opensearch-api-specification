@@ -26,6 +26,7 @@ export interface StoryEvaluation {
   chapters?: ChapterEvaluation[]
   epilogues?: ChapterEvaluation[]
   prologues?: ChapterEvaluation[]
+  warnings?: string[]
 }
 
 export interface StoryEvaluations {
@@ -38,7 +39,7 @@ export interface ChapterEvaluation {
   path?: string,
   request?: {
     parameters?: Record<string, Evaluation>
-    request_body?: Evaluation
+    request?: Evaluation
   }
   response?: {
     status: Evaluation

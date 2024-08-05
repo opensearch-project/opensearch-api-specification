@@ -6,6 +6,9 @@
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
     - [Managing Versions](#managing-versions)
     - [Waiting for Tasks](#waiting-for-tasks)
+    - [Warnings](#warnings)
+      - [multiple-paths-detected](#multiple-paths-detected)
+      - [Suppressing Warnings](#suppressing-warnings)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -72,10 +75,12 @@ chapters:
   - synopsis: Create an index named `books` with mappings and settings.
     path: /{index} # The test will fail if "PUT /{index}" operation is not found in the spec.
     method: PUT
-    parameters: # All parameters are validated against their schemas in the spec
+    parameters: # All parameters are validated against their schemas in the spec.
       index: books
-    request_body: # The request body is validated against the schema of the requestBody in the spec
-      payload:
+    request: # The request.
+      headers: # Optional headers.
+        user-agent: OpenSearch API Spec/1.0
+      payload: # The request body is validated against the schema of the requestBody in the spec.
         mappings:
           properties:
             name:
@@ -85,7 +90,8 @@ chapters:
         settings:
           number_of_shards: 5
           number_of_replicas: 2
-    response: # The response body is validated against the schema of the corresponding response in the spec
+    response: # The response.
+      payload: # Matching response payload. The entire payload is validated against the schema of the corresponding response in the spec.
       status: 200 # This is the expected status code of the response. Any other status code will fail the test.
 
   - synopsis: Retrieve the mappings and settings of the `books` index.
@@ -110,10 +116,10 @@ Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml)
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.
     path: /_plugins/_ml/model_groups/_register
     method: POST
-    request_body:
+    request:
       payload:
-        name: "NLP_Group"
-        description: "Model group for NLP models"
+        name: NLP_Group
+        description: Model group for NLP models.
     response:
       status: 200
     output: # Save the model group id for later use.
@@ -174,4 +180,35 @@ For example, an ML task returns `CREATED` when created, and `COMPLETED` when it'
     retry:
       count: 3
       wait: 30000
+```
+### Warnings
+
+#### multiple-paths-detected
+
+The test runner expects all tests in the same file to be variation of the same path in order to keep tests well-organized. Otherwise, a warning will be emitted.
+
+```
+WARNING Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.
+  /_component_template/{name}
+  /_index_template/{name}
+  /{index}
+```
+
+#### Suppressing Warnings
+
+The test runner may generate warnings that can be suppressed with `warnings:`. For example, to suppress the multiple paths detected warning.
+
+```yaml
+- synopsis: Create an index.
+  method: PUT
+  path: /{index}
+  parameters:
+    index: movies
+- synopsis: Search the index to make sure it has been created.
+  method: POST
+  warnings:
+    multiple-paths-detected: false
+  path: /{index}/_search
+  parameters:
+    index: movies
 ```

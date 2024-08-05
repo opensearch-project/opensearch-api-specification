@@ -1,0 +1,24 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test send PPL query to index.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload: {}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get PPL query
+    path: /_plugins/_ppl
+    method: POST
+    request:
+      payload:
+        query: search source=books
+    response:
+      status: 200

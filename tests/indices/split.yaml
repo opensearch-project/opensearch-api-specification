@@ -4,10 +4,16 @@ description: Test splitting an index.
 prologues:
   - path: /movies
     method: PUT
-    request_body:
+    request:
       payload:
         settings:
           index.number_of_shards: 3
+  - path: /movies/_settings
+    method: PUT
+    request:
+      payload:
+        settings:
+          index.blocks.write: true
 epilogues:
   - path: /movies
     method: DELETE
@@ -25,15 +31,6 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Block writes to the source index.
-    path: /{index}/_settings
-    method: PUT
-    parameters:
-      index: movies
-    request_body:
-      payload:
-        settings:
-          index.blocks.write: true
   - synopsis: Split an index (POST).
     path: /{index}/_split/{target}
     method: POST
@@ -42,7 +39,7 @@ chapters:
       target: movies1
       wait_for_active_shards: 1
       timeout: 10s
-    request_body:
+    request:
       payload:
         settings:
           index:
@@ -61,7 +58,7 @@ chapters:
       index: movies
       target: movies2
       wait_for_completion: true
-    request_body:
+    request:
       payload:
         settings:
           index:
@@ -76,7 +73,7 @@ chapters:
       target: movies3
       wait_for_active_shards: 1
       timeout: 10s
-    request_body:
+    request:
       payload:
         settings:
           index:
@@ -97,7 +94,7 @@ chapters:
       wait_for_active_shards: 1
       cluster_manager_timeout: 10s
       timeout: 10s
-    request_body:
+    request:
       payload:
         settings:
           index:

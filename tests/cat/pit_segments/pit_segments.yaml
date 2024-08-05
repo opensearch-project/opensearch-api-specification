@@ -1,4 +1,4 @@
-$schema: ../../json_schemas/test_story.schema.yaml
+$schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test cat/pit_segments endpoints.
 version: '>= 2.4'
@@ -11,13 +11,11 @@ prologues:
     method: POST
     parameters:
       refresh: true
-    request_body:
+    request:
       payload:
         title: Monopoly
     status: [201]
-chapters:
-  - synopsis: Create a PIT.
-    id: create_pit
+  - id: create_pit
     path: /{index}/_search/point_in_time
     method: POST
     parameters:
@@ -26,21 +24,13 @@ chapters:
       keep_alive: 1m
     output:
       pit_id: payload.pit_id
-  - synopsis: Cat _all with a json response.
-    path: /_cat/pit_segments/_all
-    method: GET
-    parameters:
-      format: json
-    response:
-      status: 200
-      payload:
-        - index: games
+chapters:
   - synopsis: Cat pit_segments/pit_id with a json response.
     path: /_cat/pit_segments
     method: GET
     parameters:
       format: json
-    request_body:
+    request:
       payload:
         pit_id:
           - ${create_pit.pit_id}

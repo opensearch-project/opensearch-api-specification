@@ -1,0 +1,68 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test alias endpoints.
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: games
+chapters:
+  - synopsis: Create an alias.
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Get an alias from index.
+    method: GET
+    path: /{index}/_alias/{name}
+    parameters:
+      index: games
+      name: jeux
+    response:
+      status: 200
+      content_type: application/json
+      payload:
+        games:
+          aliases:
+            jeux: {}
+  - synopsis: Delete an alias.
+    path: /{index}/_alias/{name}
+    method: DELETE
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Create an alias by Create or Update alias endpoint.
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Create an alias with custom settings by Create or Update alias endpoint.
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+    request:
+      payload:
+        index_routing: test1
+        search_routing: test2
+        routing: test
+        is_write_index: true
+        filter:
+          match_all: {}
+  - synopsis: Create an alias with is_hidden by Create or Update alias endpoint.
+    version: '>= 2.16'
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+    request:
+      payload:
+        is_hidden: true

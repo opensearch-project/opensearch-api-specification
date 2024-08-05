@@ -10,7 +10,7 @@
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
 import * as path from 'path'
-import { type Chapter, type ChapterRequest, type Output, type RequestBody, type ActualResponse, Story } from 'tester/types/story.types'
+import { type Chapter, type ChapterRequest, type Output, type Request, type ActualResponse, Story } from 'tester/types/story.types'
 import { type EvaluationWithOutput, Result, ChapterEvaluation, StoryEvaluation } from 'tester/types/eval.types'
 import { ChapterOutput } from 'tester/ChapterOutput'
 import StoryEvaluator from 'tester/StoryEvaluator'
@@ -102,11 +102,11 @@ function dummy_chapter_request(id?: string, output?: Output): ChapterRequest {
   }
 }
 
-function dummy_chapter_request_with_input(parameters?: Record<string, any>, request_body?: RequestBody, id?: string, output?: Output): ChapterRequest {
+function dummy_chapter_request_with_input(parameters?: Record<string, any>, request?: Request, id?: string, output?: Output): ChapterRequest {
   return {
     ...dummy_chapter_request(id, output),
     parameters,
-    request_body
+    request
   }
 }
 

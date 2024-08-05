@@ -18,6 +18,7 @@ export function namespace_file (fixture_file: string): NamespaceFile {
 interface MockedReturnedValues {
   validate?: string[]
   validate_name?: string | undefined
+  validate_info?: string[],
   validate_schemas?: string | undefined
   validate_unresolved_refs?: string[]
   validate_unused_refs?: string[]
@@ -41,12 +42,14 @@ export function mocked_namespace_file (ops: { returned_values?: MockedReturnedVa
       return ns_file
     }
 
+    ns_file.validate_info = jest.fn()
     ns_file.validate_name = jest.fn()
     ns_file.validate_schemas = jest.fn()
     ns_file.validate_unresolved_refs = jest.fn()
     ns_file.validate_unused_refs = jest.fn()
     ns_file.validate_parameter_refs = jest.fn()
 
+    if (ops.returned_values.validate_info != null) (ns_file.validate_info as jest.Mock).mockReturnValue(ops.returned_values.validate_info)
     if (ops.returned_values.validate_name != null) (ns_file.validate_name as jest.Mock).mockReturnValue(ops.returned_values.validate_name)
     if (ops.returned_values.validate_schemas != null) (ns_file.validate_schemas as jest.Mock).mockReturnValue(ops.returned_values.validate_schemas)
     if (ops.returned_values.validate_unresolved_refs != null) (ns_file.validate_unresolved_refs as jest.Mock).mockReturnValue(ops.returned_values.validate_unresolved_refs)

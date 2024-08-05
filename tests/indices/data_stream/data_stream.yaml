@@ -1,10 +1,10 @@
-$schema: ../../json_schemas/test_story.schema.yaml
+$schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test data streams.
 prologues:
   - path: /_index_template/logs-template-nginx
     method: PUT
-    request_body:
+    request:
       payload:
         index_patterns:
           - logs-*
@@ -27,11 +27,13 @@ chapters:
     parameters:
       name: logs-nginx
   - synopsis: Ingest data.
+    warnings:
+      multiple-paths-detected: false
     path: /{index}/_doc
     method: POST
     parameters:
       index: logs-nginx
-    request_body:
+    request:
       payload:
         message: login attempt failed
         request_time: '2013-03-01T00:00:00'
@@ -42,16 +44,6 @@ chapters:
     method: GET
     parameters:
       name: logs-nginx
-  - synopsis: Get data stream stats.
-    path: /_data_stream/{name}/_stats
-    method: GET
-    parameters:
-      name: logs-nginx
-  - synopsis: Manually roll over a data stream.
-    path: /{alias}/_rollover
-    method: POST
-    parameters:
-      alias: logs-nginx
   - synopsis: Get all data streams.
     path: /_data_stream
     method: GET
