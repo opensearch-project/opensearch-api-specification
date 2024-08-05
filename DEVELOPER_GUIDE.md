@@ -159,7 +159,7 @@ A number of [tools](tools) have been authored using TypeScript to aid in the dev
 
 To be able to use or develop the tools, some setup is required:
 1. Install [Node.js](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs).
-2. Run `npm install` from the repository's root.
+2. Run `npm ci` from the repository's root.
 
 ### [Spec Merger](tools/src/merger)
 
