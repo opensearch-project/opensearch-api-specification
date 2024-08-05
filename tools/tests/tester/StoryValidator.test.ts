@@ -39,9 +39,8 @@ describe('StoryValidator', () => {
     const evaluation = validate('tools/tests/tester/fixtures/invalid_description.yaml')
     expect(evaluation?.result).toBe('ERROR')
     expect(evaluation?.message).toBe("Invalid Story: " +
-      'The description must start with a capital letter and end with a period, got "This story description is missing a period".\n' +
-      'The synopsis must start with a capital letter and end with a period, got "this synopsis is not capitalized.".'
-    )
+      "data/description must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\" --- " +
+      "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\"")
   })
 
   test('valid story', () => {
