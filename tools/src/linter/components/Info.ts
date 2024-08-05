@@ -10,8 +10,6 @@
 import { type OpenAPIV3 } from 'openapi-types'
 import { type ValidationError } from 'types'
 import ValidatorBase from './base/ValidatorBase'
-import { toLaxTitleCase } from 'titlecase'
-
 
 export default class Info extends ValidatorBase {
   path: string

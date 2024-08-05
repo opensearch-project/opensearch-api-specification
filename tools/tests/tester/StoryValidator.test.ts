@@ -35,6 +35,15 @@ describe('StoryValidator', () => {
       "data/chapters/1/method MUST be equal to one of the allowed values: GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS")
   })
 
+  test('invalid description', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/invalid_description.yaml')
+    expect(evaluation?.result).toBe('ERROR')
+    expect(evaluation?.message).toBe("Invalid Story: " +
+      'The description must start with a capital letter and end with a period, got "This story description is missing a period".\n' +
+      'The synopsis must start with a capital letter and end with a period, got "this synopsis is not capitalized.".'
+    )
+  })
+
   test('valid story', () => {
     const evaluation = validate('tools/tests/tester/fixtures/valid_story.yaml')
     expect(evaluation).toBeUndefined()

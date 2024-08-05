@@ -12,7 +12,6 @@ import _ from 'lodash'
 import ValidatorBase from './base/ValidatorBase'
 
 const GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z_]*[a-z]+)$/
-const DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u
 
 export default class Operation extends ValidatorBase {
   path: string

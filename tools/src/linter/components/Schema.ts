@@ -12,7 +12,6 @@ import { type OpenAPIV3 } from 'openapi-types'
 import { type ValidationError } from 'types'
 
 const NAME_REGEX = /^[A-Za-z0-9]+$/
-const DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u
 
 export default class Schema extends ValidatorBase {
   name: string

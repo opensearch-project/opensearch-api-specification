@@ -110,7 +110,7 @@ test('validate_info() periods', () => {
     {
       file: 'namespaces/invalid_info_periods.yaml',
       location: 'Info',
-      message: 'The description must start with a capital letter and end with a period, got \"Description should have a period\".'
+      message: 'The description must start with a capital letter and end with a period, got "Description should have a period".'
     }
   ])
 })
