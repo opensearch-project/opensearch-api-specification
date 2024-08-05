@@ -1,6 +1,9 @@
 <!-- TOC -->
 - [Spec Testing Guide](#spec-testing-guide)
   - [Running Spec Tests Locally](#running-spec-tests-locally)
+  - [Common Errors](#common-errors)
+    - [401 Unauthorized](#401-unauthorized)
+    - [FORBIDDEN/10/cluster create-index blocked (api)](#forbidden10cluster-create-index-blocked-api)
   - [Writing Spec Tests](#writing-spec-tests)
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
@@ -41,7 +44,28 @@ Verbose output:
 npm run test:spec -- --opensearch-insecure --verbose
 ```
 
-Note: Remember to set the `OPENSEARCH_PASSWORD` environment variable everytime you start a new shell to run the tests. Failing to do so will result in 401 Unauthorized errors.
+### Common Errors
+
+#### 401 Unauthorized
+
+Remember to set the `OPENSEARCH_PASSWORD` environment variable everytime you start a new shell to run the tests.
+
+#### FORBIDDEN/10/cluster create-index blocked (api)
+
+The cluster is most likely hitting a disk watermark threshold. This example sets the disk watermark thresholds to 1500MB low, 100MB high, and 500MB flood stage, allowing the cluster to create indices even if the disk is almost full.
+
+```bash
+curl -k -X PUT --user "admin:${OPENSEARCH_PASSWORD}" https://localhost:9200/_cluster/settings -H 'Content-Type: application/json' -d'
+{
+  "persistent": {
+    "cluster.routing.allocation.disk.watermark.low": "1500mb",
+    "cluster.routing.allocation.disk.watermark.high": "1000mb",
+    "cluster.routing.allocation.disk.watermark.flood_stage": "500mb",
+    "cluster.blocks.create_index" : null
+  }
+}
+'
+```
 
 ## Writing Spec Tests
 
