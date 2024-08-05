@@ -105,12 +105,12 @@ test('validate_info() periods', () => {
     {
       file: 'namespaces/invalid_info_periods.yaml',
       location: 'Info',
-      message: 'Title must not end with a period.'
+      message: 'The title must not end with a period.'
     },
     {
       file: 'namespaces/invalid_info_periods.yaml',
       location: 'Info',
-      message: 'Description must start with a capital letter and end with a period.'
+      message: 'The description must start with a capital letter and end with a period, got \"Description should have a period\".'
     }
   ])
 })
@@ -126,12 +126,12 @@ test('validate_info() capitals', () => {
     {
       file: 'namespaces/invalid_info_capitals.yaml',
       location: 'Info',
-      message: "Title must be capitalized, expected 'Title Must Be Capitalized'."
+      message: "The title must be capitalized, expected \"Title Must Be Capitalized\", not \"Title must be capitalized\"."
     },
     {
       file: 'namespaces/invalid_info_capitals.yaml',
       location: 'Info',
-      message: "Description must start with a capital letter and end with a period."
+      message: "The description must start with a capital letter and end with a period, got \"description must start with a capital letter and end with a period.\"."
     }
   ])
 })

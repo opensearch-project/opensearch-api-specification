@@ -65,9 +65,7 @@ export default class Operation extends ValidatorBase {
   }
 
   validate_description (): ValidationError | undefined {
-    const description = this.spec.description ?? ''
-    if (description === '') { return this.error('Missing description property.') }
-    if (!DESCRIPTION_REGEX.test(description)) return this.error('Description must start with a capital letter and end with a period.')
+    return this.validate_description_field(this.spec?.description, true)
   }
 
   validate_operation_id (): ValidationError | undefined {

@@ -7,7 +7,9 @@
 * compatible open source license.
 */
 
+import { toLaxTitleCase } from 'titlecase'
 import { type ValidationError } from 'types'
+
 export default class ValidatorBase {
   file: string
   location: string | undefined
@@ -23,5 +25,21 @@ export default class ValidatorBase {
 
   validate (): ValidationError[] {
     throw new Error('Method not implemented.')
+  }
+
+  static DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u
+
+  validate_description_field (value?: string, required: boolean = false, key: string = 'description'): ValidationError | undefined {
+    if (value === undefined) { return required ? this.error(`Missing ${key} property.`) : undefined }
+    if (value === '') { return this.error(`Empty ${key} property.`) }
+    if (! ValidatorBase.DESCRIPTION_REGEX.test(value)) { return this.error(`The ${key} must start with a capital letter and end with a period, got "${value}".`) }
+  }
+
+  validate_title_field (value?: string, required: boolean = false, key: string = 'title'): ValidationError | undefined {
+    if (value === undefined) { return required ? this.error(`Missing ${key} property.`) : undefined }
+    if (value === '') { return this.error(`Empty ${key} property.`) }
+    const expected = toLaxTitleCase(value)
+    if (value.endsWith('.')) { return this.error(`The ${key} must not end with a period.`) }
+    if (value !== expected) return this.error(`The ${key} must be capitalized, expected "${expected}", not "${value}".`)
   }
 }
