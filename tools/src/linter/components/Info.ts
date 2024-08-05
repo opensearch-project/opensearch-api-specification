@@ -10,9 +10,6 @@
 import { type OpenAPIV3 } from 'openapi-types'
 import { type ValidationError } from 'types'
 import ValidatorBase from './base/ValidatorBase'
-import { toLaxTitleCase } from 'titlecase'
-
-const DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u
 
 export default class Info extends ValidatorBase {
   path: string
@@ -32,16 +29,10 @@ export default class Info extends ValidatorBase {
   }
 
   validate_description (): ValidationError | undefined {
-    const description = this.spec?.description ?? ''
-    if (description === '') { return this.error('Missing description property.') }
-    if (!DESCRIPTION_REGEX.test(description)) { return this.error('Description must start with a capital letter and end with a period.') }
+    return this.validate_description_field(this.spec?.description, true)
   }
 
   validate_title (): ValidationError | undefined {
-    const title = this.spec?.title ?? ''
-    if (title === '') { return this.error('Missing title property.') }
-    const expected_title = toLaxTitleCase(title)
-    if (title.endsWith('.')) { return this.error('Title must not end with a period.') }
-    if (title !== expected_title) return this.error(`Title must be capitalized, expected '${expected_title}'.`)
+    return this.validate_title_field(this.spec?.title)
   }
 }

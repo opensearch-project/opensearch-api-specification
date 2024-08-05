@@ -26,6 +26,6 @@ test('validate_description()', () => {
   expect(schema('Name', { description: 'Does not end with a period' }).validate_description()).toEqual({
     file: '_common.yaml',
     location: '#/components/schemas/Name',
-    message: "Description must start with a capital letter and end with a period."
+    message: "The description must start with a capital letter and end with a period, got \"Does not end with a period\"."
   })
 })

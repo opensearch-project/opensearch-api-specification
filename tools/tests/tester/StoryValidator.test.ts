@@ -35,6 +35,14 @@ describe('StoryValidator', () => {
       "data/chapters/1/method MUST be equal to one of the allowed values: GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS")
   })
 
+  test('invalid description', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/invalid_description.yaml')
+    expect(evaluation?.result).toBe('ERROR')
+    expect(evaluation?.message).toBe("Invalid Story: " +
+      "data/description must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\" --- " +
+      "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\"")
+  })
+
   test('valid story', () => {
     const evaluation = validate('tools/tests/tester/fixtures/valid_story.yaml')
     expect(evaluation).toBeUndefined()
