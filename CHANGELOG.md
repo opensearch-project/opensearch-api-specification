@@ -62,7 +62,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_plugins/_ppl`, `explain` and `stats` ([#460](https://github.com/opensearch-project/opensearch-api-specification/pull/460))
 - Added tests against OpenSearch 3.0 ([#459](https://github.com/opensearch-project/opensearch-api-specification/pull/459))
 - Added support for request headers in tests [#461](https://github.com/opensearch-project/opensearch-api-specification/pull/461)
-
+- Added metadata additionalProperties to `ErrorCause` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
+- Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
+ 
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))
