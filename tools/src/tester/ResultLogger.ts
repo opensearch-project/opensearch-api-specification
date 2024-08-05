@@ -62,7 +62,7 @@ export class ConsoleResultLogger implements ResultLogger {
   #log_chapter (chapter: ChapterEvaluation): void {
     this.#log_evaluation(chapter.overall, ansi.i(chapter.title), this._tab_width * 2)
     this.#log_parameters(chapter.request?.parameters ?? {})
-    this.#log_request_body(chapter.request?.request_body)
+    this.#log_request(chapter.request?.request)
     this.#log_status(chapter.response?.status)
     this.#log_payload_body(chapter.response?.payload_body)
     this.#log_payload_schema(chapter.response?.payload_schema)
@@ -79,7 +79,7 @@ export class ConsoleResultLogger implements ResultLogger {
     }
   }
 
-  #log_request_body (evaluation: Evaluation | undefined): void {
+  #log_request (evaluation: Evaluation | undefined): void {
     if (evaluation == null) return
     this.#log_evaluation(evaluation, 'REQUEST BODY', this._tab_width * 3)
   }

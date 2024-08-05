@@ -97,7 +97,7 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
 
       if (c.request !== undefined) {
         result.request = {
-          request_body: flatten(c.request.request_body)
+          request: flatten(c.request.request)
         }
 
         if (c.request.parameters !== undefined) {

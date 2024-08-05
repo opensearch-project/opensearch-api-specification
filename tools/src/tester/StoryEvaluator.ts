@@ -170,7 +170,7 @@ export default class StoryEvaluator {
     const variables = new Set<OutputReference>()
     const title = `${chapter.method} ${chapter.path}`
     StoryEvaluator.#extract_params_variables(chapter.parameters ?? {}, variables)
-    StoryEvaluator.#extract_request_body_variables(chapter.request_body?.payload ?? {}, variables)
+    StoryEvaluator.#extract_request_variables(chapter.request?.payload ?? {}, variables)
     for (const { chapter_id, output_name } of variables) {
       if (!story_outputs.has_chapter(chapter_id)) {
         return StoryEvaluator.#failed_evaluation(title, `Chapter makes reference to non existent chapter "${chapter_id}`)
@@ -192,24 +192,24 @@ export default class StoryEvaluator {
     })
   }
 
-  static #extract_request_body_variables(request_body: any, variables: Set<OutputReference>): void {
-    const request_body_type = typeof request_body
-    switch (request_body_type) {
+  static #extract_request_variables(request: any, variables: Set<OutputReference>): void {
+    const request_type = typeof request
+    switch (request_type) {
       case 'string': {
-        const ref = OutputReference.parse(request_body as string)
+        const ref = OutputReference.parse(request as string)
         if (ref !== undefined) {
           variables.add(ref)
         }
         break
       }
       case 'object': {
-        if (Array.isArray(request_body)) {
-          for (const value of request_body) {
-            StoryEvaluator.#extract_request_body_variables(value, variables)
+        if (Array.isArray(request)) {
+          for (const value of request) {
+            StoryEvaluator.#extract_request_variables(value, variables)
           }
         } else {
-          for (const [, value] of Object.entries(request_body as Record<string, any>)) {
-            StoryEvaluator.#extract_request_body_variables(value, variables)
+          for (const [, value] of Object.entries(request as Record<string, any>)) {
+            StoryEvaluator.#extract_request_variables(value, variables)
           }
         }
         break

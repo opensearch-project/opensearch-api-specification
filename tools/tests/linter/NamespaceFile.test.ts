@@ -99,23 +99,69 @@ test('validate_order_of_operations()', () => {
   ])
 })
 
+test('validate_info() periods', () => {
+  const validator = namespace_file('invalid_info_periods.yaml')
+  expect(validator.info().validate()).toEqual([
+    {
+      file: 'namespaces/invalid_info_periods.yaml',
+      location: 'Info',
+      message: 'Title must not end with a period.'
+    },
+    {
+      file: 'namespaces/invalid_info_periods.yaml',
+      location: 'Info',
+      message: 'Description must start with a capital letter and end with a period.'
+    }
+  ])
+})
+
+test('validate_info() multiline', () => {
+  const validator = namespace_file('valid_info_multiline_description.yaml')
+  expect(validator.info().validate()).toEqual([])
+})
+
+test('validate_info() capitals', () => {
+  const validator = namespace_file('invalid_info_capitals.yaml')
+  expect(validator.info().validate()).toEqual([
+    {
+      file: 'namespaces/invalid_info_capitals.yaml',
+      location: 'Info',
+      message: "Title must be capitalized, expected 'Title Must Be Capitalized'."
+    },
+    {
+      file: 'namespaces/invalid_info_capitals.yaml',
+      location: 'Info',
+      message: "Description must start with a capital letter and end with a period."
+    }
+  ])
+})
+
 test('validate()', () => {
-  const invalid_name = mocked_namespace_file({ returned_values: { validate_name: 'Invalid Name' }, groups_errors: [['group error']] })
+  const invalid_name = mocked_namespace_file({ returned_values: { validate_name: 'Invalid Name' } })
   expect(invalid_name.validate()).toEqual(['Invalid Name'])
 
-  const invalid_groups = mocked_namespace_file({ returned_values: { validate_schemas: 'Invalid schemas' }, groups_errors: [['error']] })
+  const invalid_groups = mocked_namespace_file({ groups_errors: [['error']] })
   expect(invalid_groups.validate()).toEqual(['error'])
 
   const typical = mocked_namespace_file({
     returned_values: {
+      validate_info: ['title error', 'description error'],
       validate_schemas: 'schemas error',
       validate_unresolved_refs: ['unresolved'],
       validate_unused_refs: ['unused'],
       validate_parameter_refs: ['parameter']
     }
   })
-  expect(typical.validate()).toEqual(['schemas error', 'unresolved', 'unused', 'parameter'])
 
-  const valid = mocked_namespace_file({ groups_errors: [[], []] })
+  expect(typical.validate()).toEqual([
+    'schemas error',
+    'title error',
+    'description error',
+    'unresolved',
+    'unused',
+    'parameter'
+  ])
+
+  const valid = mocked_namespace_file({ spec: { info: { title: 'Title', description: 'Description.' } }, groups_errors: [[], []] })
   expect(valid.validate()).toEqual([])
 })

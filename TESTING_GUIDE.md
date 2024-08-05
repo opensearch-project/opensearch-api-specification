@@ -96,10 +96,12 @@ chapters:
   - synopsis: Create an index named `books` with mappings and settings.
     path: /{index} # The test will fail if "PUT /{index}" operation is not found in the spec.
     method: PUT
-    parameters: # All parameters are validated against their schemas in the spec
+    parameters: # All parameters are validated against their schemas in the spec.
       index: books
-    request_body: # The request body is validated against the schema of the requestBody in the spec
-      payload:
+    request: # The request.
+      headers: # Optional headers.
+        user-agent: OpenSearch API Spec/1.0
+      payload: # The request body is validated against the schema of the requestBody in the spec.
         mappings:
           properties:
             name:
@@ -109,7 +111,8 @@ chapters:
         settings:
           number_of_shards: 5
           number_of_replicas: 2
-    response: # The response body is validated against the schema of the corresponding response in the spec
+    response: # The response.
+      payload: # Matching response payload. The entire payload is validated against the schema of the corresponding response in the spec.
       status: 200 # This is the expected status code of the response. Any other status code will fail the test.
 
   - synopsis: Retrieve the mappings and settings of the `books` index.
@@ -134,10 +137,10 @@ Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml)
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.
     path: /_plugins/_ml/model_groups/_register
     method: POST
-    request_body:
+    request:
       payload:
-        name: "NLP_Group"
-        description: "Model group for NLP models"
+        name: NLP_Group
+        description: Model group for NLP models.
     response:
       status: 200
     output: # Save the model group id for later use.
