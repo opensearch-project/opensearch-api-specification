@@ -30,19 +30,17 @@ export class ChapterOutput {
     if (!output) return { evaluation: { result: Result.SKIPPED } }
     const chapter_output = new ChapterOutput({})
     for (const [name, path] of Object.entries(output)) {
-      const [source, ...rest] = path.split('.')
-      const keys = rest.join('.')
       let value: any
-      if (source === 'payload') {
+      if (path == 'payload' || path.startsWith('payload.') || path.match(/^payload\[\d*\]/)) {
         if (response.payload === undefined) {
           return { evaluation: { result: Result.ERROR, message: 'No payload found in response, but expected output: ' + path } }
         }
-        value = keys.length === 0 ? response.payload : _.get(response.payload, keys)
+        value = _.get(response, path)
         if (value === undefined) {
           return { evaluation: { result: Result.ERROR, message: `Expected to find non undefined value at \`${path}\`.` } }
         }
       } else {
-        return { evaluation: { result: Result.ERROR, message: 'Unknown output source: ' + source } }
+        return { evaluation: { result: Result.ERROR, message: `Unknown output source: ${path.split('.')[0]}.` } }
       }
       chapter_output.set(name, value)
     }

@@ -14,12 +14,16 @@ import { StoryOutputs } from "./StoryOutputs";
 import { overall_result } from "./helpers";
 import { ChapterEvaluation, Result } from "./types/eval.types";
 import { SupplementalChapter } from "./types/story.types";
+import { Logger } from "../Logger";
+import { to_json } from "../helpers";
 
 export default class SupplementalChapterEvaluator {
   private readonly _chapter_reader: ChapterReader;
+  private readonly logger: Logger;
 
-  constructor(chapter_reader: ChapterReader) {
+  constructor(chapter_reader: ChapterReader, logger: Logger) {
     this._chapter_reader = chapter_reader;
+    this.logger = logger
   }
 
   async evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<{ evaluation: ChapterEvaluation, evaluation_error: boolean }> {
@@ -27,6 +31,7 @@ export default class SupplementalChapterEvaluator {
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const status = chapter.status ?? [200, 201]
     const output_values_evaluation = ChapterOutput.extract_output_values(response, chapter.output)
+    if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
     let response_evaluation: ChapterEvaluation
     const passed_evaluation = { title, overall: { result: Result.PASSED } }
     if (status.includes(response.status)) {
