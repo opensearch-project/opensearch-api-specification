@@ -1,0 +1,30 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Get index_state_management node info settings.
+prologues:
+  - path: /_cat/nodes
+    id: node
+    method: GET
+    parameters:
+      full_id: true
+      size: 1
+      format: json
+      h: id
+    output:
+      id: payload[0].id
+chapters:
+  - synopsis: Get node info.
+    path: /_nodes/{node_id_or_metric}
+    method: GET
+    parameters:
+      node_id_or_metric: ${node.id}
+    response:
+      status: 200
+      payload:
+        nodes:
+          ${node.id}:
+            settings:
+              plugins:
+                index_state_management:
+                  job_interval: '1'
+    

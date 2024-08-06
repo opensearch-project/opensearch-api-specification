@@ -41,7 +41,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `concurrent_query_*` and `search_idle_reactivate_count_total` fields to `SearchStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
 - Added `remote_store` to `TranslogStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
 - Added `file` to `/_cache/clear` and `/{index}/_cache/clear` ([#396](https://github.com/opensearch-project/opensearch-api-specification/pull/396))
-- Add `strict_allow_templates` option for the dynamic mapping parameter ([#408](https://github.com/opensearch-project/opensearch-api-specification/pull/408))
+- Added `strict_allow_templates` option for the dynamic mapping parameter ([#408](https://github.com/opensearch-project/opensearch-api-specification/pull/408))
 - Added a workflow to run tests against the next version of OpenSearch ([#409](https://github.com/opensearch-project/opensearch-api-specification/pull/409))
 - Added support for skipping tests using semver range ([#410](https://github.com/opensearch-project/opensearch-api-specification/pull/410))
 - Added `cluster_manager_timeout` to `HEAD /{index}` ([#421](https://github.com/opensearch-project/opensearch-api-specification/pull/421))
@@ -65,7 +65,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added metadata additionalProperties to `ErrorCause` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
- 
+- Added support for reusing output variables as keys in payload expectations ([#471](https://github.com/opensearch-project/opensearch-api-specification/pull/471))
+
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))

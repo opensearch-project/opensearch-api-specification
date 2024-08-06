@@ -167,6 +167,8 @@ Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml)
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
 
+You can also reuse output in payload expectations. See [tests/nodes/plugins/index_state_management.yaml](tests/nodes/plugins/index_state_management.yaml) for an example.
+
 ### Managing Versions
 
 It's common to add a feature to the next version of OpenSearch. When adding a new API in the spec, make sure to specify `x-version-added`, `x-version-deprecated` or `x-version-removed`. Finally, specify a semver range in your test stories or chapters as follows.
