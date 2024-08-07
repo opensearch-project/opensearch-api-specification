@@ -4,6 +4,7 @@
   - [Common Errors](#common-errors)
     - [401 Unauthorized](#401-unauthorized)
     - [FORBIDDEN/10/cluster create-index blocked (api)](#forbidden10cluster-create-index-blocked-api)
+    - [FAILED  Cat with a json response (from security-analytics).](#failed--cat-with-a-json-response-from-security-analytics)
   - [Writing Spec Tests](#writing-spec-tests)
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
@@ -53,6 +54,9 @@ Remember to set the `OPENSEARCH_PASSWORD` environment variable everytime you sta
 #### FORBIDDEN/10/cluster create-index blocked (api)
 
 The cluster is most likely hitting a disk watermark threshold. This example sets the disk watermark thresholds to 1500MB low, 100MB high, and 500MB flood stage, allowing the cluster to create indices even if the disk is almost full.
+
+#### FAILED  Cat with a json response (from security-analytics).
+The cluster is not loading plugins correctly, maybe it was stopped using `docker kill` instead of `docker stop`. Recreating the cluster should fix the issue: `docker-compose up --force-recreate -d`.
 
 ```bash
 curl -k -X PUT --user "admin:${OPENSEARCH_PASSWORD}" https://localhost:9200/_cluster/settings -H 'Content-Type: application/json' -d'
