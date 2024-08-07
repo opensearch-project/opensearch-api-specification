@@ -1,0 +1,148 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Observability Object API
+  description: API for retrieving and managing Observability Objects
+  version: 1.0.0
+paths:
+  /_plugins/_observability/_local/stats:
+    get:
+      operationId: observability.local.stats.get.0
+      x-operation-group: observability.local.stats.get
+      x-version-added: '1.1'
+      description: Retrieves Local Stats of all observability objects.
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.local.stats.get@200'
+  /_plugins/_observability/object:
+    get:
+      operationId: observability.object.list.0
+      x-operation-group: observability.object.list
+      x-version-added: '1.1'
+      description: Retrieves list of all observability objects.
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.object.list@200'
+    post:
+      operationId: observability.object.post.0
+      x-operation-group: observability.object.post
+      x-version-added: '1.1'
+      description: Creates a new observability object.
+      requestBody:
+        $ref: '#/components/requestBodies/observability.object'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.object.create@200'
+  /_plugins/_observability/object/{objectId}:
+    get:
+      operationId: observability.object.retrieve.0
+      x-operation-group: observability.object.retrieve
+      x-version-added: '1.1'
+      description: Retrieves specific observability object specified by ID.
+      parameters:
+        - $ref: '#/components/parameters/observability.object.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.object.retrieve@200'
+        '404':
+          $ref: '#/components/responses/observability.object.notfound@404'
+    put:
+      operationId: observability.object.update.0
+      x-operation-group: observability.object.update
+      x-version-added: '1.1'
+      description: Updates an existing observability object.
+      parameters:
+        - $ref: '#/components/parameters/observability.object.id'
+      requestBody:
+        $ref: '#/components/requestBodies/observability.object'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.object.update@200'
+        '404':
+          $ref: '#/components/responses/observability.object.notfound@404'
+    delete:
+      operationId: observability.object.delete.0
+      x-operation-group: observability.object.delete
+      x-version-added: '1.1'
+      description: Deletes specific observability object specified by ID.
+      parameters:
+        - $ref: '#/components/parameters/observability.object.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.object.delete@200'
+        '404':
+          $ref: '#/components/responses/observability.object.notfound@404'
+
+components:
+  requestBodies:
+    observability.object:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObject'
+
+  responses:
+    observability.object.list@200:
+      description: Successful response of retrieving all Observability Objects
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObjectList'
+    observability.object.create@200:
+      description: Created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              objectId:
+                type: string
+                example: "Atb9LZEBTh5nwsJHNA631"
+    observability.object.retrieve@200:
+      description: Successful response of retrieving specific Observability Object
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObjectList'
+    observability.object.update@200:
+      description: Updated
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              objectId:
+                type: string
+                example: "Atb9LZEBTh5nwsJHNA64"
+    observability.object.delete@200:
+      description: Deleted
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              deleteResponseList:
+                type: object
+                additionalProperties:
+                  type: string
+                  example: "OK"
+    observability.object.notfound@404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/NotFoundResponse'
+    observability.local.stats.get@200:
+      description: Retrieves
+      content:
+        application/json:
+          schema:
+            type: string
+
+  parameters:
+    observability.object.id:
+      name: objectId
+      in: path
+      description: The ID of the Observability Object.
+      schema:
+        type: string
+      required: true

@@ -1,0 +1,124 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Query Datasources API
+  description: OpenSearch Query Datasources API
+  version: 1.0.0
+paths:
+  /_plugins/_query/_datasources:
+    get:
+      operationId: query.datasources.list.0
+      x-operation-group: query.datasources.list
+      x-version-added: '1.1'
+      description: Retrieves list of all datasources.
+      responses:
+        '200':
+          $ref: '#/components/responses/datasources/list@200'
+    post:
+      operationId: query.datasources.post.0
+      x-operation-group: query.datasources.post
+      x-version-added: '1.1'
+      description: Creates a new query datasource.
+      requestBody:
+        $ref: '#/components/requestBodies/query.datasource'
+      responses:
+        '201':
+          $ref: '#/components/responses/datasource/create@200'
+    put:
+      operationId: query.datasource.put.0
+      x-operation-group: query.datasource.put
+      x-version-added: '1.1'
+      description: Updates an existing query datasource.
+      requestBody:
+        $ref: '#/components/requestBodies/query.datasource'
+      responses:
+        '200':
+          $ref: '#/components/responses/datasource/update@200'
+        '404':
+          description: DataSource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/datasource.notfound@404'
+  /_plugins/_query/_datasources/{dataSourceName}:
+    get:
+      operationId: query.datasource.retrieve.0
+      x-operation-group: query.datasource.retrieve
+      x-version-added: '1.1'
+      description: Retrieves specific datasource specified by name.
+      parameters:
+        - $ref: '#/components/parameters/query/datasource/get::path/dataSourceName'
+      responses:
+        '200':
+          $ref: '#/components/responses/datasource/retrieve@200'
+        '404':
+          $ref: '#/components/responses/datasource/notfound@404'
+    delete:
+      operationId: query.datasources.delete.0
+      x-operation-group: query.datasources.delete
+      x-version-added: '1.1'
+      description: Deletes specific datasource specified by name.
+      parameters:
+        - $ref: '#/components/parameters/query/datasource/delete::path/dataSourceName'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          $ref: '#/components/responses/datasource/notfound@404'
+
+components:
+  requestBodies:
+    query.datasource:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSource'
+
+  responses:
+    datasource.create@200:
+      description: Created
+      content:
+        application/json:
+          schema:
+            type: string
+            example: "Created DataSource with name my_prometheus"
+    datasource.update@200:
+      description: Updated
+      content:
+        application/json:
+          schema:
+            type: string
+            example: "Updated DataSource with name my_prometheus"
+    datasources.list@200:
+      description: Successful response of retrieving all Data Sources
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceList'
+    datasource.notfound@404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceNotFound'
+    datasource.retrieve@200:
+      description: Successful response of retrieving Data Source
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceRetrieve'
+
+  parameters:
+    query.datasource.delete::path.dataSourceName:
+      name: dataSourceName
+      in: path
+      description: The Name of the DataSource to delete.
+      schema:
+        type: string
+      required: true
+    query.datasource.get::path.dataSourceName:
+      name: dataSourceName
+      in: path
+      schema:
+        type: string
+      required: true
+

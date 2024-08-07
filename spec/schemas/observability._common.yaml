@@ -1,0 +1,184 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Observability Object API
+  description: Schemas for OpenSearch Observability Object API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ObservabilityObjectList:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+        totalHits:
+          type: integer
+        totalHitRelation:
+          type: string
+        observabilityObjectList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObservabilityObject'
+
+    ObservabilityObject:
+      type: object
+      properties:
+        objectId:
+          type: string
+        lastUpdatedTimeMs:
+          type: integer
+        createdTimeMs:
+          type: integer
+        tenant:
+          type: string
+        operationalPanel:
+          $ref: '#/components/schemas/OperationalPanel'
+        savedVisualization:
+          $ref: '#/components/schemas/SavedVisualization'
+        savedQuery:
+          $ref: '#/components/schemas/SavedQuery'
+
+    OperationalPanel:
+      type: object
+      properties:
+        name:
+          type: string
+        visualizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Visualization'
+        timeRange:
+          $ref: '#/components/schemas/TimeRange'
+        queryFilter:
+          $ref: '#/components/schemas/QueryFilter'
+        applicationId:
+          type: string
+
+    Visualization:
+      type: object
+      properties:
+        id:
+          type: string
+        savedVisualizationId:
+          type: string
+        x:
+          type: integer
+        y:
+          type: integer
+        w:
+          type: integer
+        h:
+          type: integer
+
+    TimeRange:
+      type: object
+      properties:
+        to:
+          type: string
+        from:
+          type: string
+
+    QueryFilter:
+      type: object
+      properties:
+        query:
+          type: string
+        language:
+          type: string
+
+    SavedVisualization:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        query:
+          type: string
+        type:
+          type: string
+        selected_date_range:
+          $ref: '#/components/schemas/SelectedDateRange'
+        selected_timestamp:
+          $ref: '#/components/schemas/SelectedTimestamp'
+        selected_fields:
+          $ref: '#/components/schemas/SelectedFields'
+
+    SelectedDateRange:
+      type: object
+      properties:
+        start:
+          type: string
+        end:
+          type: string
+        text:
+          type: string
+
+    SelectedTimestamp:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+
+    SelectedFields:
+      type: object
+      properties:
+        text:
+          type: string
+        tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/Token'
+
+    Token:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+
+    SavedQuery:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        query:
+          type: string
+        selected_date_range:
+          $ref: '#/components/schemas/SelectedDateRange'
+        selected_timestamp:
+          $ref: '#/components/schemas/SelectedTimestamp'
+        selected_fields:
+          $ref: '#/components/schemas/SelectedFields'
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            root_cause:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: "status_exception"
+                  reason:
+                    type: string
+                    example: "ObservabilityObject {objectId} not found"
+            type:
+              type: string
+              example: "status_exception"
+            reason:
+              type: string
+              example: "ObservabilityObject {objectId} not found"
+        status:
+          type: integer
+          example: 404
