@@ -55,9 +55,6 @@ Remember to set the `OPENSEARCH_PASSWORD` environment variable everytime you sta
 
 The cluster is most likely hitting a disk watermark threshold. This example sets the disk watermark thresholds to 1500MB low, 100MB high, and 500MB flood stage, allowing the cluster to create indices even if the disk is almost full.
 
-#### FAILED  Cat with a json response (from security-analytics).
-The cluster is not loading plugins correctly, maybe it was stopped using `docker kill` instead of `docker stop`. Recreating the cluster should fix the issue: `docker-compose up --force-recreate -d`.
-
 ```bash
 curl -k -X PUT --user "admin:${OPENSEARCH_PASSWORD}" https://localhost:9200/_cluster/settings -H 'Content-Type: application/json' -d'
 {
@@ -70,6 +67,9 @@ curl -k -X PUT --user "admin:${OPENSEARCH_PASSWORD}" https://localhost:9200/_clu
 }
 '
 ```
+
+#### FAILED  Cat with a json response (from security-analytics).
+The cluster is not loading plugins correctly, maybe it was stopped using `docker kill` instead of `docker stop`. Recreating the cluster should fix the issue: `docker-compose up --force-recreate -d`.
 
 ## Writing Spec Tests
 
