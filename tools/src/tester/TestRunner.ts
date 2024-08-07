@@ -54,12 +54,12 @@ export default class TestRunner {
   }
 
   #collect_story_files (folder: string, file: string, prefix: string): StoryFile[] {
-    if (file.startsWith('.')) {
-      return []
-    }
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
     if (fs.statSync(path).isFile()) {
+      if (!file.endsWith('.yaml')) {
+        return []
+      }
       const story: Story = read_yaml(path)
       return [{
         display_path: next_prefix === '' ? basename(path) : next_prefix,
