@@ -78,6 +78,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Tester tool now provides better context for non-2XX responses when --verbose is used ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Lock testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
 - Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
+- Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
 
 ### Deprecated
 

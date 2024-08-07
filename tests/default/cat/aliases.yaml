@@ -1,0 +1,38 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test cat/aliases endpoints.
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: games
+  - path: /{index}/_aliases/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+chapters:
+  - synopsis: Cat with a text response.
+    path: /_cat/aliases
+    method: GET
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with a json response.
+    path: /_cat/aliases/{name}
+    parameters:
+      format: json
+      name: je*
+      expand_wildcards: all
+      local: true
+    method: GET
+    response:
+      status: 200
+      content_type: application/json
+      payload:
+        - alias: jeux
+          index: games

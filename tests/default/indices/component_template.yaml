@@ -1,0 +1,119 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test component templates.
+epilogues:
+  - path: /logs-2020-01-01
+    method: DELETE
+    status: [200, 404]
+  - path: /_index_template/daily_logs
+    method: DELETE
+    status: [200, 404]
+  - path: /_component_template/component_template1
+    method: DELETE
+    status: [200, 404]
+  - path: /_component_template/component_template2
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a component template 1.
+    path: /_component_template/{name}
+    method: POST
+    parameters:
+      name: component_template_1
+    request:
+      payload:
+        template:
+          mappings:
+            properties:
+              '@timestamp':
+                type: date
+    response:
+      status: 200
+  - synopsis: Get component template 1.
+    path: /_component_template/{name}
+    method: GET
+    parameters:
+      name: component_template_1
+    response:
+      status: 200
+  - synopsis: Create a component template 2.
+    path: /_component_template/{name}
+    method: POST
+    parameters:
+      name: component_template_2
+    request:
+      payload:
+        template:
+          mappings:
+            properties:
+              ip_address:
+                type: ip
+    response:
+      status: 200
+  - synopsis: Create an index template composed of 2 component templates.
+    warnings:
+      multiple-paths-detected: false
+    path: /_index_template/{name}
+    method: POST
+    parameters:
+      name: daily_logs
+    request:
+      payload:
+        index_patterns:
+          - 'logs*'
+        template:
+          aliases:
+            my_logs: {}
+          settings:
+            number_of_shards: 2
+            number_of_replicas: 2
+          mappings:
+            properties:
+              timestamp:
+                type: date
+                format: yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis
+              value:
+                type: double
+        priority: 200
+        composed_of:
+          - component_template_1
+          - component_template_2
+        version: 3
+        _meta:
+          description: Template using component templates.
+    response:
+      status: 200
+  - synopsis: Create an index using the composite template.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}
+    method: PUT
+    parameters:
+      index: logs-2020-01-01
+    response:
+      status: 200
+  - synopsis: Get an index using the composite template.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}
+    method: GET
+    parameters:
+      index: logs-2020-01-01
+    response:
+      status: 200
+  - synopsis: Delete index template.
+    warnings:
+      multiple-paths-detected: false
+    path: /_index_template/{name}
+    method: DELETE
+    parameters:
+      name: daily_logs
+    response:
+      status: 200
+  - synopsis: Delete component template 1.
+    path: /_component_template/{name}
+    method: DELETE
+    parameters:
+      name: component_template_1
+    response:
+      status: 200
