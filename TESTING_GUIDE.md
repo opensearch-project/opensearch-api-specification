@@ -25,7 +25,7 @@ Set up an OpenSearch cluster with Docker:
 (Replace `<<your_password>>` with your desired password. If not provided, the default password inside the `docker-compose.yml` file will be used.)
 ```bash
 export OPENSEARCH_PASSWORD=<<your_password>>
-cd .github/opensearch-cluster/default
+cd tests/default
 docker compose up -d
 ```
 
@@ -71,7 +71,7 @@ curl -k -X PUT --user "admin:${OPENSEARCH_PASSWORD}" https://localhost:9200/_clu
 
 The spec tests reside in the [tests/](tests) directory. Tests are organized in suites ([default](tests/default/), etc.), and subsequently in folders that match [namespaces](spec/namespaces). For example, tests for APIs defined in [spec/namespaces/indices.yaml](spec/namespaces/indices.yaml) can be found in [tests/default/indices/index.yaml](tests/default/indices/index.yaml) (for `/{index}`), and [tests/default/indices/doc.yaml](tests/default/indices/doc.yaml) (for `/{index}/_doc`). 
 
-Additional suites require custom configuration that is defined in a separate `docker-compose.yml`. For example [.github/opensearch-cluster/plugins/index_state_management/docker-compose.yml](.github/opensearch-cluster/plugins/index_state_management/docker-compose.yml) uses a custom setting of `plugins.index_state_management.job_interval=1` to cause the `/_nodes` API to return plugin information tested in [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml).
+Additional suites require custom configuration that is defined in a separate `docker-compose.yml`. For example [tests/plugins/index_state_management/docker-compose.yml](tests/plugins/index_state_management/docker-compose.yml) uses a custom setting of `plugins.index_state_management.job_interval=1` to cause the `/_nodes` API to return plugin information tested in [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml).
 
 Each yaml file in the tests directory represents a test story that tests a collection of related operations.
 
