@@ -2,21 +2,19 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test action_groups endpoints.
 
-prologues:
-  - path: /_plugins/_security/api/actiongroups/{action_group}
+chapters:
+  - synopsis: Create action group.
+    path: /_plugins/_security/api/actiongroups/{action_group}
     method: PUT
     parameters:
       action_group: test
-    request_body:
+    request:
       payload:
-        reserved: false
-        hidden: false
         allowed_actions: []
         type: index
         description: Test action group
-        static: false
-    status: [200]
-chapters:
+    response:
+      status: 201
   - synopsis: Get action groups bulk.
     path: /_plugins/_security/api/actiongroups
     method: GET
@@ -25,7 +23,7 @@ chapters:
   - synopsis: Patch action groups bulk.
     path: /_plugins/_security/api/actiongroups
     method: PATCH
-    request_body:
+    request:
       payload: 
         - op: add
           path: /test
@@ -40,44 +38,22 @@ chapters:
       action_group: test
     response:
       status: 200
-  - synopsis: Create action group.
-    path: /_plugins/_security/api/actiongroups/{action_group}
-    method: PUT
-    parameters:
-      action_group: test2
-    request_body:
-      payload:
-        reserved: false
-        hidden: false
-        allowed_actions: []
-        type: index
-        description: Test action group
-        static: false
-    response:
-      status: 200
   - synopsis: Patch action group.
     path: /_plugins/_security/api/actiongroups/{action_group}
     method: PATCH
     parameters:
-      action_group: test2
-    request_body:
+      action_group: test
+    request:
       payload: 
         - op: replace
           path: /allowed_actions
-          value: 
-            allowed_actions: ['indices:admin/create', 'indices:admin/mapping/put']
+          value: ['indices:admin/create', 'indices:admin/mapping/get']
     response:
       status: 200
   - synopsis: Delete action group.
     path: /_plugins/_security/api/actiongroups/{action_group}
     method: DELETE
     parameters:
-      action_group: test2
+      action_group: test
     response:
       status: 200
-epilogues:
-  - path: /_plugins/_security/api/actiongroups/{action_group}
-    method: DELETE
-    parameters:
-      action_group: test
-    status: [200, 404]
