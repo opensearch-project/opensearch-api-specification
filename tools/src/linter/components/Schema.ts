@@ -12,7 +12,6 @@ import { type OpenAPIV3 } from 'openapi-types'
 import { type ValidationError } from 'types'
 
 const NAME_REGEX = /^[A-Za-z0-9]+$/
-const DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u
 
 export default class Schema extends ValidatorBase {
   name: string
@@ -36,8 +35,6 @@ export default class Schema extends ValidatorBase {
   }
 
   validate_description (): ValidationError | undefined {
-    const description = this.spec.description ?? ''
-    if (description === '') return
-    if (!DESCRIPTION_REGEX.test(description)) { return this.error('Description must start with a capital letter and end with a period.') }
+    return this.validate_description_field(this.spec.description)
   }
 }

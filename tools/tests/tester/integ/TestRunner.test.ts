@@ -39,3 +39,13 @@ test('stories folder', async () => {
   const expected_evaluations = [passed, chapter_error, output_error, prologue_error, invalid_data, not_found, skipped]
   expect(actual_evaluations).toEqual(expected_evaluations)
 })
+
+describe('story_files', () => {
+  const { test_runner } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
+
+  test('does not contain docker-compose.yml', () => {
+    expect(test_runner.story_files('tests/plugins/index_state_management').map(
+      story_file => story_file.display_path
+    )).not.toContain('nodes/plugins/docker-compose.yml')
+  })
+})

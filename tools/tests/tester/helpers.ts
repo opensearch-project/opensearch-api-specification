@@ -48,7 +48,7 @@ export function construct_tester_components (spec_path: string): {
   const chapter_reader = new ChapterReader(opensearch_http_client, logger)
   const schema_validator = new SchemaValidator(specification, logger)
   const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator, logger)
-  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader, logger)
   const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()

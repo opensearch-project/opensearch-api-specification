@@ -41,7 +41,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `concurrent_query_*` and `search_idle_reactivate_count_total` fields to `SearchStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
 - Added `remote_store` to `TranslogStats` ([#395](https://github.com/opensearch-project/opensearch-api-specification/pull/395))
 - Added `file` to `/_cache/clear` and `/{index}/_cache/clear` ([#396](https://github.com/opensearch-project/opensearch-api-specification/pull/396))
-- Add `strict_allow_templates` option for the dynamic mapping parameter ([#408](https://github.com/opensearch-project/opensearch-api-specification/pull/408))
+- Added `strict_allow_templates` option for the dynamic mapping parameter ([#408](https://github.com/opensearch-project/opensearch-api-specification/pull/408))
 - Added a workflow to run tests against the next version of OpenSearch ([#409](https://github.com/opensearch-project/opensearch-api-specification/pull/409))
 - Added support for skipping tests using semver range ([#410](https://github.com/opensearch-project/opensearch-api-specification/pull/410))
 - Added `cluster_manager_timeout` to `HEAD /{index}` ([#421](https://github.com/opensearch-project/opensearch-api-specification/pull/421))
@@ -64,8 +64,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added support for request headers in tests [#461](https://github.com/opensearch-project/opensearch-api-specification/pull/461)
 - Added metadata additionalProperties to `ErrorCause` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
+- Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
+- Added support for reusing output variables as keys in payload expectations ([#471](https://github.com/opensearch-project/opensearch-api-specification/pull/471))
 - Added tests for security APIs ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
- 
+
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))
@@ -77,6 +79,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Tester tool now provides better context for non-2XX responses when --verbose is used ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Lock testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
 - Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
+- Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
 
 ### Deprecated
 

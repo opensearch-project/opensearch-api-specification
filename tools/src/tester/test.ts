@@ -33,7 +33,7 @@ import TestResults from './TestResults'
 const command = new Command()
   .description('Run test stories against the OpenSearch spec.')
   .addOption(new Option('--spec, --spec-path <path>', 'path to the root folder of the multi-file spec').default('./spec'))
-  .addOption(new Option('--tests, --tests-path <path>', 'path to the root folder of the tests').default('./tests'))
+  .addOption(new Option('--tests, --tests-path <path>', 'path to the root folder of the tests').default('./tests/default'))
   .addOption(
     new Option('--tab-width <size>', 'tab width for displayed results')
       .default(4)
@@ -57,7 +57,7 @@ const spec = new MergedOpenApiSpec(opts.specPath, opts.opensearchVersion, new Lo
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli({ opensearchResponseType: 'arraybuffer', ...opts }))
 const chapter_reader = new ChapterReader(http_client, logger)
 const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec.spec()), chapter_reader, new SchemaValidator(spec.spec(), logger), logger)
-const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader, logger)
 const story_validator = new StoryValidator()
 const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)
