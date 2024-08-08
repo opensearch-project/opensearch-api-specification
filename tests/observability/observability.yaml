@@ -1,0 +1,56 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test various operations of the OpenSearch Observability Object API.
+
+prologues:
+  - path: /_plugins/_observability/object
+    method: POST
+    request:
+      payload:
+        objectId: test_object
+        lastUpdatedTimeMs: 1627580400000
+        createdTimeMs: 1627580400000
+        tenant: test_tenant
+        operationalPanel:
+          name: test_panel
+          visualizations: []
+          timeRange: { from: "now-1h", to: "now" }
+          queryFilter: { query: "", language: "ppl" }
+          applicationId: test_app
+        savedVisualization: { name: "viz1", description: "desc1", query: "", type: "line" }
+        savedQuery: { name: "query1", description: "desc1", query: "", selected_date_range: { start: "now-1d", end: "now" } }
+epilogues:
+  - path: /_plugins/_observability/object/test_object
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Retrieve specific Observability object.
+    path: /_plugins/_observability/object/test_object
+    method: GET
+    response:
+      status: 200
+
+  - synopsis: Update specific Observability object.
+    path: /_plugins/_observability/object/test_object
+    method: PUT
+    request:
+      payload:
+        objectId: test_object
+        lastUpdatedTimeMs: 1627580400000
+        createdTimeMs: 1627580400000
+        tenant: test_tenant
+        operationalPanel:
+          name: updated_test_panel
+          visualizations: []
+          timeRange: { from: "now-1h", to: "now" }
+          queryFilter: { query: "", language: "ppl" }
+          applicationId: test_app
+        savedVisualization: { name: "viz1", description: "desc1", query: "", type: "line" }
+        savedQuery: { name: "query1", description: "desc1", query: "", selected_date_range: { start: "now-1d", end: "now" } }
+    response:
+      status: 200
+  - synopsis: Retrieve list of Observability objects.
+    path: /_plugins/_observability/object
+    method: GET
+    response:
+      status: 200

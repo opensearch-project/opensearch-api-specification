@@ -1,0 +1,47 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test various operations of the OpenSearch Query Datasources API.
+
+prologues:
+  - path: /_plugins/_query/_datasources
+    method: POST
+    request:
+      payload:
+        name: test_datasource
+        type: prometheus
+        configuration:
+          endpoint: "http://localhost:9090"
+          credentials:
+            username: "admin"
+            password: "admin"
+epilogues:
+  - path: /_plugins/_query/_datasources/test_datasource
+    method: DELETE
+    status: [204, 404]
+chapters:
+  - synopsis: Retrieve specific datasource.
+    path: /_plugins/_query/_datasources/test_datasource
+    method: GET
+    response:
+      status: 200
+
+  - synopsis: Update specific datasource.
+    path: /_plugins/_query/_datasources
+    method: PUT
+    request:
+      payload:
+        name: test_datasource
+        type: prometheus
+        configuration:
+          endpoint: "http://localhost:9091"
+          credentials:
+            username: "admin"
+            password: "admin"
+    response:
+      status: 200
+
+  - synopsis: Retrieve list of datasources.
+    path: /_plugins/_query/_datasources
+    method: GET
+    response:
+      status: 200
