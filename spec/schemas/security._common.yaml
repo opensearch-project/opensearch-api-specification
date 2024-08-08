@@ -60,8 +60,13 @@ components:
     AllowListConfig:
       type: object
       properties:
-        config:
-          $ref: '#/components/schemas/AllowConfig'
+        # config:
+        #   $ref: '#/components/schemas/AllowConfig'
+        enabled:
+          type: boolean
+        requests:
+          type: object
+          description: An object with APIs as key and array of http methods as values.
 
     AllowConfig:
       type: object
@@ -100,6 +105,14 @@ components:
           items:
             type: string
         ignore_requests:
+          type: array
+          items:
+            type: string
+        ignore_headers:
+          type: array
+          items:
+            type: string
+        ignore_url_params:
           type: array
           items:
             type: string
@@ -413,14 +426,10 @@ components:
       type: object
       properties:
         status:
-          type: string
-          enum:
-            - 403
-            - FORBIDDEN
+          type: [ number, string]
         message:
           type: string
           description: Message returned as part of Forbidden response.
-      unevaluatedProperties: false
 
     GenerateOBOToken:
       type: object
