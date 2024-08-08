@@ -10,7 +10,7 @@
 import { Result } from 'tester/types/eval.types'
 import { construct_tester_components, load_actual_evaluation, load_expected_evaluation } from '../helpers'
 
-const { story_evaluator, chapter_evaluator, opensearch_http_client } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
+const { story_evaluator, opensearch_http_client } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
 
 beforeAll(async () => {
   const info = await opensearch_http_client.wait_until_available()
@@ -63,18 +63,41 @@ test('skipped/semver', async () => {
   expect(actual).toEqual(expected)
 })
 
-test('with an unexpected error', async () => {
-  chapter_evaluator.evaluate = jest.fn().mockImplementation(() => {
-    throw new Error('This was unexpected.');
-  })
+test('with an unexpected error deserializing data', async () => {
+  opensearch_http_client.request = jest.fn().mockRejectedValue(new Error('This was unexpected.'))
   const actual = await load_actual_evaluation(story_evaluator, 'passed')
   expect(actual.result).toEqual(Result.ERROR)
   expect(actual.chapters && actual.chapters[0]).toEqual({
     title: "This PUT /{index} chapter should pass.",
+    path: 'PUT /{index}',
     overall: {
-      error: 'This was unexpected.',
-      message: 'This was unexpected.',
       result: Result.ERROR
+    },
+    request: {
+      parameters: {
+        index: {
+          result: Result.PASSED
+        },
+      },
+      request: {
+        result: Result.PASSED
+      }
+    },
+    response: {
+      output_values: {
+        result: Result.SKIPPED
+      },
+      payload_body: {
+        result: Result.SKIPPED
+      },
+      payload_schema: {
+        result: Result.SKIPPED
+      },
+      status: {
+        error: 'This was unexpected.',
+        message: 'Expected status 200, but received none: unknown. This was unexpected.',
+        result: Result.ERROR
+      }
     }
   })
 })

@@ -86,24 +86,12 @@ export default class StoryEvaluator {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.`, error: undefined } })
       } else {
-        try {
-          const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
-          has_errors = has_errors || evaluation.overall.result === Result.ERROR
-          if (evaluation.output !== undefined && chapter.id !== undefined) {
-            story_outputs.set_chapter_output(chapter.id, evaluation.output)
-          }
-          evaluations.push(evaluation)
-        } catch (e) {
-          has_errors = true
-          const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-          const error = e as Error
-          evaluations.push({
-            title,
-            overall: {
-              result: Result.ERROR, message: error.message, error
-            }
-          })
+        const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
+        has_errors = has_errors || evaluation.overall.result === Result.ERROR
+        if (evaluation.output !== undefined && chapter.id !== undefined) {
+          story_outputs.set_chapter_output(chapter.id, evaluation.output)
         }
+        evaluations.push(evaluation)
       }
     }
     return evaluations
