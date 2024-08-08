@@ -68,12 +68,14 @@ export class StoryOutputs {
             resolved_array.push(this.resolve_value(value))
           }
           return resolved_array
-        } else {
+        } else if (payload !== null) {
           const resolved_obj: Record<string, any> = {}
           for (const [key, value] of Object.entries(payload as Record<string, any>)) {
-            resolved_obj[key] = this.resolve_value(value)
+            resolved_obj[this.resolve_value(key)] = this.resolve_value(value)
           }
           return resolved_obj
+        } else {
+          return payload
         }
       default:
         return payload

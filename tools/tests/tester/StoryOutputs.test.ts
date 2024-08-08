@@ -32,7 +32,8 @@ test('resolve_value', () => {
       e: 'str',
       f: true
     },
-    g: 123
+    g: 123,
+    '${chapter_id.x}': 345
   }
   expect(story_outputs.resolve_value(value)).toEqual(
     {
@@ -43,7 +44,8 @@ test('resolve_value', () => {
         e: 'str',
         f: true
       },
-      g: 123
+      g: 123,
+      1: 345
     }
   )
 })

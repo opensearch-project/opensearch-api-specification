@@ -66,9 +66,12 @@ export default class ChapterEvaluator {
     const params = this.#evaluate_parameters(chapter, operation)
     const request = this.#evaluate_request(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
-    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
     const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
+    const response_payload: Payload | undefined = status.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
+    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, response_payload) : { result: Result.SKIPPED }
+
+    if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
 
     const evaluations = _.compact(_.concat(
       Object.values(params),
