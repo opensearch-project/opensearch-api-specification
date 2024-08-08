@@ -54,7 +54,7 @@ export default class ChapterReader {
       if (payload !== undefined) response.payload = payload
       this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(response.payload)}`)
     }).catch(e => {
-      if (e.response === undefined) {
+      if (e.response == null) {
         this.logger.info(`<= ERROR: ${e}`)
         response.message = e.message
         response.error = e
@@ -64,7 +64,6 @@ export default class ChapterReader {
         const payload = this.#deserialize_payload(e.response.data, response.content_type)
         if (payload !== undefined) response.payload = payload.error
         response.message = payload.error?.reason ?? e.response.statusText
-        response.error = e
         this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
       }
     })

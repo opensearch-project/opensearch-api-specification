@@ -122,7 +122,7 @@ export default class ChapterEvaluator {
 
   #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {
     const expected_status = chapter.response?.status ?? 200
-    if (response.status === expected_status) return { result: Result.PASSED }
+    if (response.status === expected_status && response.error === undefined) return { result: Result.PASSED }
 
     let result: Evaluation = {
       result: Result.ERROR,
