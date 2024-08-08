@@ -7,13 +7,18 @@
 * compatible open source license.
 */
 
+import { Result } from 'tester/types/eval.types'
 import { construct_tester_components, load_actual_evaluation, load_expected_evaluation } from '../helpers'
 
-const { story_evaluator, opensearch_http_client } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
+const { story_evaluator, chapter_evaluator, opensearch_http_client } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
 
 beforeAll(async () => {
   const info = await opensearch_http_client.wait_until_available()
   expect(info.version).toBeDefined()
+})
+
+afterEach(() => {
+  jest.resetAllMocks()
 })
 
 test('passed', async () => {
@@ -56,4 +61,20 @@ test('skipped/semver', async () => {
   const actual = await load_actual_evaluation(story_evaluator, 'skipped/semver')
   const expected = load_expected_evaluation('skipped/semver')
   expect(actual).toEqual(expected)
+})
+
+test('with an unexpected error', async () => {
+  chapter_evaluator.evaluate = jest.fn().mockImplementation(() => {
+    throw new Error('This was unexpected.');
+  })
+  const actual = await load_actual_evaluation(story_evaluator, 'passed')
+  expect(actual.result).toEqual(Result.ERROR)
+  expect(actual.chapters && actual.chapters[0]).toEqual({
+    title: "This PUT /{index} chapter should pass.",
+    overall: {
+      error: 'This was unexpected.',
+      message: 'This was unexpected.',
+      result: Result.ERROR
+    }
+  })
 })
