@@ -2,6 +2,16 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test rolesmapping endpoint.
 
+prologues:
+  - path: /_plugins/_security/api/roles/{role}
+    method: PUT
+    parameters:
+      role: test
+    request:
+      payload:
+        cluster_permissions: 
+          - cluster_composite_ops
+    status: [201]
 chapters:
   - synopsis: Get rolesmapping bulk.
     path: /_plugins/_security/api/rolesmapping
@@ -11,7 +21,7 @@ chapters:
   - synopsis: Patch rolesmapping bulk.
     path: /_plugins/_security/api/rolesmapping
     method: PATCH
-    request_body:
+    request:
       payload: 
         - op: add
           path: /all_access
@@ -25,14 +35,14 @@ chapters:
     method: PUT
     parameters:
       role: test
-    request_body:
+    request:
       payload:
         backend_roles: [captains]
         hosts: 
           - '*.example.com'
         users: [test]
     response:
-      status: 200
+      status: 201
   - synopsis: Get rolesmapping.
     path: /_plugins/_security/api/rolesmapping/{role}
     method: GET
@@ -45,7 +55,7 @@ chapters:
     method: PATCH
     parameters:
       role: test
-    request_body:
+    request:
       payload: 
         - op: replace
           path: /backend_roles
@@ -59,3 +69,9 @@ chapters:
       role: test
     response:
       status: 200
+epilogues:
+  - path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    parameters:
+      role: test
+    status: [200]
