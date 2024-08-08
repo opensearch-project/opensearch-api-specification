@@ -27,8 +27,10 @@ describe('OpenSearchHttpClient', () => {
   it('uses password authentication', () => {
     new OpenSearchHttpClient({
       url: 'https://localhost:9200',
-      username: 'admin',
-      password: 'password'
+      basic_auth: {
+        username: 'admin',
+        password: 'password'
+      }
     })
 
     expect(mocked_axios.create.mock.calls[0][0]).toMatchObject({
@@ -45,11 +47,13 @@ describe('OpenSearchHttpClient', () => {
   it('assigns a request interceptor with SigV4 authentication', () => {
     new OpenSearchHttpClient({
       url: 'https://localhost:9200',
-      aws_access_key_id: 'key id',
-      aws_access_secret_key: 'secret key',
-      aws_access_session_token: 'session token',
-      aws_region: 'us-west-2',
-      aws_service: 'aoss'
+      aws_auth: {
+        aws_access_key_id: 'key id',
+        aws_access_secret_key: 'secret key',
+        aws_access_session_token: 'session token',
+        aws_region: 'us-west-2',
+        aws_service: 'aoss'
+      }
     })
 
     expect(mocked_axios.create.mock.calls[0][0]).toMatchObject({

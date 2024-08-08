@@ -41,8 +41,10 @@ export function construct_tester_components (spec_path: string): {
   const operation_locator = new OperationLocator(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
     insecure: true,
-    username: process.env.OPENSEARCH_USERNAME ?? 'admin',
-    password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!',
+    basic_auth: {
+      username: process.env.OPENSEARCH_USERNAME ?? 'admin',
+      password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
+    },
     responseType: 'arraybuffer'
   })
   const chapter_reader = new ChapterReader(opensearch_http_client, logger)

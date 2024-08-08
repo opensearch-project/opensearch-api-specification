@@ -11,8 +11,8 @@ import { Option } from '@commander-js/extra-typings'
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type ResponseType } from 'axios'
 import * as https from 'node:https'
 import { sleep } from './helpers'
-import { Logger } from 'Logger'
-import { aws4Interceptor } from "aws4-axios"
+import { Logger } from './Logger'
+import { aws4Interceptor } from 'aws4-axios'
 
 const DEFAULT_URL = 'https://localhost:9200'
 const DEFAULT_USER = 'admin'
@@ -49,18 +49,26 @@ export const AWS_SERVICE_OPTION = new Option('--aws-service <service>', 'AWS ser
   .env('AWS_SERVICE')
   .default('es')
 
-export interface OpenSearchHttpClientOptions {
-  url?: string
-  username?: string
-  password?: string
-  insecure?: boolean
-  aws_access_key_id?: string
-  aws_access_secret_key?: string
+export interface BasicAuth {
+  username: string
+  password: string
+}
+
+export interface AwsAuth {
+  aws_access_key_id: string
+  aws_access_secret_key: string
   aws_access_session_token?: string
   aws_region?: string
   aws_service?: string
+}
+
+export interface OpenSearchHttpClientOptions {
+  url?: string
+  insecure?: boolean
   responseType?: ResponseType
-  logger?: Logger
+  logger?: Logger,
+  basic_auth?: BasicAuth
+  aws_auth?: AwsAuth
 }
 
 export type OpenSearchHttpClientCliOptions = {
@@ -80,14 +88,18 @@ export type OpenSearchHttpClientCliOptions = {
 export function get_opensearch_opts_from_cli (opts: OpenSearchHttpClientCliOptions): OpenSearchHttpClientOptions {
   return {
     url: opts.opensearchUrl,
-    username: opts.opensearchUsername,
-    password: opts.opensearchPassword,
     insecure: opts.opensearchInsecure,
-    aws_access_key_id: opts?.awsAccessKeyId,
-    aws_access_secret_key: opts?.awsSecretAccessKey,
-    aws_access_session_token: opts?.awsSessionToken,
-    aws_region: opts?.awsRegion,
-    aws_service: opts?.awsService,
+    basic_auth: opts.opensearchUsername !== undefined && opts.opensearchPassword !== undefined ? {
+      username: opts.opensearchUsername,
+      password: opts.opensearchPassword
+    } : undefined,
+    aws_auth: opts.awsAccessKeyId !== undefined && opts.awsSecretAccessKey !== undefined ? {
+      aws_access_key_id: opts?.awsAccessKeyId,
+      aws_access_secret_key: opts?.awsSecretAccessKey,
+      aws_access_session_token: opts?.awsSessionToken,
+      aws_region: opts?.awsRegion,
+      aws_service: opts?.awsService,
+    } : undefined,
     responseType: opts.responseType,
     logger: opts?.logger
   }
@@ -115,39 +127,33 @@ export interface OpenSearchInfo {
 export class OpenSearchHttpClient {
   private readonly _axios: AxiosInstance
   private readonly _opts?: OpenSearchHttpClientOptions
-  private readonly _logger?: Logger
+  private readonly _logger: Logger
 
   constructor (opts?: OpenSearchHttpClientOptions) {
     this._opts = opts
-    this._logger = opts?.logger
+    this._logger = opts?.logger ?? new Logger()
 
     let auth = undefined
     let sigv4_interceptor = undefined
 
-    if (opts?.username !== undefined && opts.password !== undefined) {
-      this._logger?.info(`Authenticating with ${opts.username} ...`)
-      auth = {
-        username: opts.username,
-        password: opts.password
-      }
-    } else if (
-      opts?.aws_access_key_id !== undefined &&
-      opts?.aws_access_secret_key !== undefined
-    ) {
-      this._logger?.info(`Authenticating using SigV4 with ${opts.aws_access_key_id} (${opts.aws_region}) ...`)
+    if (opts?.basic_auth !== undefined) {
+      this._logger.info(`Authenticating with ${opts.basic_auth.username} ...`)
+      auth = opts.basic_auth
+    } else if (opts?.aws_auth !== undefined) {
+      this._logger.info(`Authenticating using SigV4 with ${opts.aws_auth.aws_access_key_id} (${opts.aws_auth.aws_region}) ...`)
       sigv4_interceptor = aws4Interceptor({
         options: {
-          region: opts.aws_region,
+          region: opts.aws_auth.aws_region,
           service: 'es'
         },
         credentials: {
-          accessKeyId: opts.aws_access_key_id,
-          secretAccessKey: opts.aws_access_secret_key,
-          sessionToken: opts.aws_access_session_token,
+          accessKeyId: opts.aws_auth.aws_access_key_id,
+          secretAccessKey: opts.aws_auth.aws_access_secret_key,
+          sessionToken: opts.aws_auth.aws_access_session_token,
         }
       });
     } else {
-      this._logger?.warn(`No credentials provided, did you forget to set OPENSEARCH_PASSWORD or AWS_ACCESS_KEY_ID?`)
+      this._logger.warn(`No credentials provided, did you forget to set OPENSEARCH_PASSWORD or AWS_ACCESS_KEY_ID?`)
     }
 
     this._axios = axios.create({
@@ -166,7 +172,7 @@ export class OpenSearchHttpClient {
     let attempt = 0
     while (true) {
       attempt += 1
-      this._logger?.info(`Connecting to ${this._opts?.url} ... (${attempt}/${max_attempts})`)
+      this._logger.info(`Connecting to ${this._opts?.url} ... (${attempt}/${max_attempts})`)
       try {
         const info = await this.get('/')
         if (this._opts?.responseType == 'arraybuffer') {
@@ -176,14 +182,14 @@ export class OpenSearchHttpClient {
         }
       } catch (e) {
         if (axios.isAxiosError(e)) {
-          this._logger?.warn(`Error connecting to ${this._opts?.url}: (${e.message})`)
+          this._logger.warn(`Error connecting to ${this._opts?.url}: (${e.message})`)
           if (e.response?.status == 401 || e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
             throw e.message
           } else if (e.response?.status == 403 || e.code === 'ERR_BAD_REQUEST') {
             throw e.message
           }
         } else {
-          this._logger?.warn(`Error connecting to ${this._opts?.url}: (${typeof (e)})`)
+          this._logger.warn(`Error connecting to ${this._opts?.url}: (${typeof (e)})`)
         }
         if (attempt >= max_attempts) {
           throw e
