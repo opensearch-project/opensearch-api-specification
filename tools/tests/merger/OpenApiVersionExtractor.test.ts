@@ -17,7 +17,7 @@ describe('extract() from a merged API spec', () => {
   const merger = new OpenApiMerger('tools/tests/tester/fixtures/specs/complete')
 
   describe('1.3', () => {
-    const extractor = new OpenApiVersionExtractor(merger.spec(), '1.3')
+    const extractor = new OpenApiVersionExtractor(merger.spec(), '1.3', 'ignore')
 
     describe('write_to', () => {
       var temp: tmp.DirResult
@@ -49,7 +49,7 @@ describe('extract() from a merged API spec', () => {
   })
 
   describe('2.0', () => {
-    const extractor = new OpenApiVersionExtractor(merger.spec(), '2.0')
+    const extractor = new OpenApiVersionExtractor(merger.spec(), '2.0', 'ignore')
 
     test('has matching responses', () => {
       const spec = extractor.extract()
@@ -81,7 +81,7 @@ describe('extract() from a merged API spec', () => {
   })
 
   describe('2.1', () => {
-    const extractor = new OpenApiVersionExtractor(merger.spec(), '2.1')
+    const extractor = new OpenApiVersionExtractor(merger.spec(), '2.1', 'ignore')
 
     test('has matching responses', () => {
       const spec = extractor.extract()
