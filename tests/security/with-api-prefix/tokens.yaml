@@ -2,6 +2,19 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test authtoken endpoints.
 
+prologues:
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: PUT
+    parameters:
+      username: test
+    request:
+      payload:
+        opendistro_security_roles: []
+        backend_roles: []
+        attributes:
+          service: true
+          enabled: true
+    status: [201]
 chapters:
   - synopsis: Create an auth token.
     path: /_plugins/_security/api/authtoken
@@ -9,27 +22,38 @@ chapters:
     response:
       status: 200
   - synopsis: Create an On-Behalf-Of token.
+    # Feature is disabled by default. https://opensearch.org/docs/latest/security/access-control/authentication-tokens/#configuration
     version: '>= 2.12'
     path: /_plugins/_security/api/generateonbehalfoftoken
     method: POST
-    request_body:
+    request:
       payload:
         description: Auth token for admin
         service: ''
-        duration: 60
+        duration: '60'
     response:
-      status: 200
+      content_type: text/plain
+      status: 400
+  # Auth-tokens can only be vended for service accounts.
   - synopsis: Create internal user token.
     path: /_plugins/_security/api/internalusers/{username}/authtoken
+    version: '>2.16' # Fixed via https://github.com/opensearch-project/security/pull/4628
     method: POST
     parameters:
-      username: admin
+      username: test
     response:
       status: 200
   - synopsis: Create user token.
     path: /_plugins/_security/api/user/{username}/authtoken
+    version: '>2.16' # Fixed via https://github.com/opensearch-project/security/pull/4628
     method: POST
     parameters:
-      username: admin
+      username: test
     response:
       status: 200
+epilogues:
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: test
+    status: [200]
