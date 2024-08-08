@@ -66,7 +66,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
 - Added support for reusing output variables as keys in payload expectations ([#471](https://github.com/opensearch-project/opensearch-api-specification/pull/471))
-- Added test for `indices/_segments` ([#1714](https://github.com/opensearch-project/opensearch-api-specification/pull/477))
 
 ### Changed
 
