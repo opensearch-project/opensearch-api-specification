@@ -33,7 +33,7 @@ import TestResults from './TestResults'
 const command = new Command()
   .description('Run test stories against the OpenSearch spec.')
   .addOption(new Option('--spec, --spec-path <path>', 'path to the root folder of the multi-file spec').default('./spec'))
-  .addOption(new Option('--tests, --tests-path <path>', 'path to the root folder of the tests').default('./tests'))
+  .addOption(new Option('--tests, --tests-path <path>', 'path to the root folder of the tests').default('./tests/default'))
   .addOption(
     new Option('--tab-width <size>', 'tab width for displayed results')
       .default(4)

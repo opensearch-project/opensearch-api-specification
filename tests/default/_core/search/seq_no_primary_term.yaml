@@ -1,0 +1,41 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with seq_no_primary_term.
+prologues:
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        director: Bennett Miller
+        title: Moneyball
+        year: 2011
+    status: [201]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search with seq_no_primary_term.
+    path: /{index}/_search
+    parameters:
+      index: movies
+      seq_no_primary_term: true
+    method: POST
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          hits:
+            - _index: movies
+              _source:
+                director: Bennett Miller
+                title: Moneyball
+                year: 2011
+              _seq_no: 0
+              _primary_term: 1

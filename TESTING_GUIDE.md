@@ -26,7 +26,7 @@ Set up an OpenSearch cluster with Docker:
 (Replace `<<your_password>>` with your desired password. If not provided, the default password inside the `docker-compose.yml` file will be used.)
 ```bash
 export OPENSEARCH_PASSWORD=<<your_password>>
-cd .github/opensearch-cluster
+cd tests/default
 docker compose up -d
 ```
 
@@ -37,7 +37,7 @@ npm run test:spec -- --opensearch-insecure
 
 Run a specific test story:
 ```bash
-npm run test:spec -- --opensearch-insecure --tests tests/_core/info.yaml
+npm run test:spec -- --opensearch-insecure --tests tests/default/_core/info.yaml
 ```
 
 Verbose output:
@@ -73,7 +73,9 @@ The cluster is not loading plugins correctly, maybe it was stopped using `docker
 
 ## Writing Spec Tests
 
-The spec tests reside in the [tests/](tests) directory. Tests are organized in folders that match [namespaces](spec/namespaces). For example, tests for APIs defined in [spec/namespaces/indices.yaml](spec/namespaces/indices.yaml) can be found in [tests/indices/index.yaml](tests/indices/index.yaml) (for `/{index}`), and [tests/indices/doc.yaml](tests/indices/doc.yaml) (for `/{index}/_doc`).
+The spec tests reside in the [tests/](tests) directory. Tests are organized in suites ([default](tests/default/), etc.), and subsequently in folders that match [namespaces](spec/namespaces). For example, tests for APIs defined in [spec/namespaces/indices.yaml](spec/namespaces/indices.yaml) can be found in [tests/default/indices/index.yaml](tests/default/indices/index.yaml) (for `/{index}`), and [tests/default/indices/doc.yaml](tests/default/indices/doc.yaml) (for `/{index}/_doc`). 
+
+Additional suites require custom configuration that is defined in a separate `docker-compose.yml`. For example [tests/plugins/index_state_management/docker-compose.yml](tests/plugins/index_state_management/docker-compose.yml) uses a custom setting of `plugins.index_state_management.job_interval=1` to cause the `/_nodes` API to return plugin information tested in [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml).
 
 Each yaml file in the tests directory represents a test story that tests a collection of related operations.
 
@@ -86,9 +88,9 @@ Check the [test_story JSON Schema](json_schemas/test_story.schema.yaml) for the 
 
 ### Simple Test Story
 
-Below is the simplified version of the test story that tests the [index operations](tests/indices/index.yaml):
+Below is the simplified version of the test story that tests the [index operations](tests/default/indices/index.yaml):
 ```yaml
-$schema: ../json_schemas/test_story.schema.yaml # The schema of the test story. Include this line so that your editor can validate the test story on the fly.
+$schema: ../../json_schemas/test_story.schema.yaml # The schema of the test story. Include this line so that your editor can validate the test story on the fly.
 
 description: This story tests all endpoints relevant the lifecycle of an index, from creation to deletion.
 
@@ -138,7 +140,7 @@ chapters:
 
 ### Using Output from Previous Chapters
 
-Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml) test story:
+Consider the following chapters in [ml/model_groups](tests/default/ml/model_groups.yaml) test story:
 ```yaml
   - synopsis: Create model group.
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.
@@ -171,7 +173,7 @@ Consider the following chapters in [ml/model_groups](tests/ml/model_groups.yaml)
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
 
-You can also reuse output in payload expectations. See [tests/nodes/plugins/index_state_management.yaml](tests/nodes/plugins/index_state_management.yaml) for an example.
+You can also reuse output in payload expectations. See [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml) for an example.
 
 ### Managing Versions
 

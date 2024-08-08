@@ -18,12 +18,18 @@ import { basename, resolve } from 'path'
 import type StoryValidator from "./StoryValidator";
 import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import * as ansi from './Ansi'
+import _ from 'lodash'
+
+const EXCLUDED_FILES = [
+  'docker-compose.yml'
+]
 
 export default class TestRunner {
   private readonly _http_client: OpenSearchHttpClient
   private readonly _story_validator: StoryValidator
   private readonly _story_evaluator: StoryEvaluator
   private readonly _result_logger: ResultLogger
+  private readonly _story_files: Record<string, StoryFile[]> = {}
 
   constructor (http_client: OpenSearchHttpClient, story_validator: StoryValidator, story_evaluator: StoryEvaluator, result_logger: ResultLogger) {
     this._http_client = http_client
@@ -34,7 +40,7 @@ export default class TestRunner {
 
   async run (story_path: string, version?: string, dry_run: boolean = false): Promise<{ results: StoryEvaluations, failed: boolean }> {
     let failed = false
-    const story_files = this.#sort_story_files(this.#collect_story_files(resolve(story_path), '', ''))
+    const story_files = this.story_files(story_path)
     const results: StoryEvaluations = { evaluations: [] }
 
     if (!dry_run) {
@@ -53,6 +59,12 @@ export default class TestRunner {
     return { results, failed }
   }
 
+  story_files(story_path: string): StoryFile[] {
+    if (this._story_files[story_path] !== undefined) return this._story_files[story_path]
+    this._story_files[story_path]  = this.#sort_story_files(this.#collect_story_files(resolve(story_path), '', ''))
+    return this._story_files[story_path]
+  }
+
   #collect_story_files (folder: string, file: string, prefix: string): StoryFile[] {
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
@@ -67,9 +79,11 @@ export default class TestRunner {
         story
       }]
     } else {
-      return fs.readdirSync(path).flatMap(next_file => {
-        return this.#collect_story_files(path, next_file, next_prefix)
-      })
+      return _.compact(fs.readdirSync(path).flatMap(next_file => {
+        if (!EXCLUDED_FILES.includes(next_file)) {
+          return this.#collect_story_files(path, next_file, next_prefix)
+        }
+      }))
     }
   }
 

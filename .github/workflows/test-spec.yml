@@ -28,6 +28,10 @@ jobs:
           - version: 2.0.0
             admin_password: admin
           - version: 2.15.0
+          - version: 2.15.0
+            tests: plugins/index_state_management
+          - version: 2.15.0
+            tests: snapshot
           - version: 2.16.0
             hub: opensearchstaging
             ref: '@sha256:bcd7f5d5d30231f24f266064248cc8d3306574948190f7bf93016dff29acf17e'
@@ -35,7 +39,7 @@ jobs:
             hub: opensearchstaging
             ref: '@sha256:db1918b2b8f7ef6c22dd6ff54a0640877c3d395a392a53864745024933981e3b'
 
-    name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }})
+    name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }}, tests=${{ matrix.entry.tests || 'default' }})
     runs-on: ubuntu-latest
 
     env:
@@ -58,7 +62,7 @@ jobs:
         run: npm ci
 
       - name: Run OpenSearch Cluster
-        working-directory: .github/opensearch-cluster
+        working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
 
       - name: Get Container ID
@@ -71,7 +75,8 @@ jobs:
           npm run test:spec -- \
             --opensearch-insecure \
             --opensearch-version=${{ matrix.entry.version }} \
-            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}.json
+            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json \
+            --tests=tests/${{ matrix.entry.tests || 'default' }}
 
       - name: Get Container Logs
         if: failure() && steps.container.outputs.CONTAINER_ID
@@ -82,8 +87,8 @@ jobs:
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.entry.version }}
-          path: coverage/test-spec-coverage-${{ matrix.entry.version }}.json
+          name: coverage-${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}
+          path: coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json
 
   merge-coverage:
     runs-on: ubuntu-latest
