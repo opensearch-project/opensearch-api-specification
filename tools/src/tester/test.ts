@@ -11,6 +11,11 @@ import { Logger, LogLevel } from '../Logger'
 import TestRunner from './TestRunner'
 import { Command, Option } from '@commander-js/extra-typings'
 import {
+  AWS_ACCESS_KEY_ID_OPTION,
+  AWS_REGION_OPTION,
+  AWS_SECRET_ACCESS_KEY_OPTION,
+  AWS_SERVICE_OPTION,
+  AWS_SESSION_TOKEN_OPTION,
   get_opensearch_opts_from_cli,
   OPENSEARCH_INSECURE_OPTION,
   OPENSEARCH_PASSWORD_OPTION,
@@ -46,6 +51,11 @@ const command = new Command()
   .addOption(OPENSEARCH_USERNAME_OPTION)
   .addOption(OPENSEARCH_PASSWORD_OPTION)
   .addOption(OPENSEARCH_INSECURE_OPTION)
+  .addOption(AWS_ACCESS_KEY_ID_OPTION)
+  .addOption(AWS_SECRET_ACCESS_KEY_OPTION)
+  .addOption(AWS_SESSION_TOKEN_OPTION)
+  .addOption(AWS_REGION_OPTION)
+  .addOption(AWS_SERVICE_OPTION)
   .addOption(new Option('--coverage <path>', 'path to write test coverage results to'))
   .allowExcessArguments(false)
   .parse()
@@ -54,7 +64,7 @@ const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 
 const spec = new MergedOpenApiSpec(opts.specPath, opts.opensearchVersion, new Logger(LogLevel.error))
-const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli({ opensearchResponseType: 'arraybuffer', ...opts }))
+const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli({ responseType: 'arraybuffer', logger, ...opts }))
 const chapter_reader = new ChapterReader(http_client, logger)
 const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec.spec()), chapter_reader, new SchemaValidator(spec.spec(), logger), logger)
 const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader, logger)
