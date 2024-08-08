@@ -66,6 +66,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
 - Added support for reusing output variables as keys in payload expectations ([#471](https://github.com/opensearch-project/opensearch-api-specification/pull/471))
+- Added support for running tests against Amazon OpenSearch ([#476](https://github.com/opensearch-project/opensearch-api-specification/pull/476))
 - Added tests for security APIs ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 
 ### Changed
@@ -107,7 +108,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_mapping` with `index` in query ([#385](https://github.com/opensearch-project/opensearch-api-specification/pull/385))
 - Fixed duplicate `/_nodes/{node_id}` path ([#416](https://github.com/opensearch-project/opensearch-api-specification/pull/416))
 - Fixed `_source` accepting an array of fields in `/_search` ([#430](https://github.com/opensearch-project/opensearch-api-specification/pull/430))
-- Fixed `_update_by_query` with a simple term ([451](https://github.com/opensearch-project/opensearch-api-specification/pull/451))
+- Fixed `_update_by_query` with a simple term ([#451](https://github.com/opensearch-project/opensearch-api-specification/pull/451))
+- Fixed `Duration` to allow for non-integers ([#479](https://github.com/opensearch-project/opensearch-api-specification/pull/479))
 
 ### Security
 

@@ -1,9 +1,11 @@
 <!-- TOC -->
 - [Spec Testing Guide](#spec-testing-guide)
-  - [Running Spec Tests Locally](#running-spec-tests-locally)
-  - [Common Errors](#common-errors)
-    - [401 Unauthorized](#401-unauthorized)
-    - [FORBIDDEN/10/cluster create-index blocked (api)](#forbidden10cluster-create-index-blocked-api)
+  - [Running Spec Tests](#running-spec-tests)
+    - [Running Spec Tests Locally](#running-spec-tests-locally)
+    - [Running Spec Tests with Amazon OpenSearch](#running-spec-tests-with-amazon-opensearch)
+    - [Common Errors](#common-errors)
+      - [401 Unauthorized](#401-unauthorized)
+      - [FORBIDDEN/10/cluster create-index blocked (api)](#forbidden10cluster-create-index-blocked-api)
   - [Writing Spec Tests](#writing-spec-tests)
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
@@ -18,7 +20,9 @@
 
 We have devised our own test framework to test the spec against an OpenSearch cluster. We're still adding more features to the framework as the needs arise, and this document will be updated accordingly. This test framework has also been integrated into the repo's CI/CD pipeline. Checkout the [test-spec](.github/workflows/test-spec.yml) workflow for more details.
 
-## Running Spec Tests Locally
+## Running Spec Tests
+
+### Running Spec Tests Locally
 
 Set up an OpenSearch cluster with Docker:
 
@@ -44,11 +48,25 @@ Verbose output:
 npm run test:spec -- --opensearch-insecure --verbose
 ```
 
+### Running Spec Tests with Amazon OpenSearch
+
+Use an Amazon OpenSearch service instance.
+
+```bash
+export AWS_ACCESS_KEY_ID=<<your AWS access key ID>>
+export AWS_SECRET_ACCESS_KEY=<<your AWS secret access key>>
+export AWS_SESSION_TOKEN=<<optional AWS session token>>
+export AWS_REGION=us-west-2
+export OPENSEARCH_URL=https://....us-west-2.es.amazonaws.com
+
+npm run test:spec
+```
+
 ### Common Errors
 
 #### 401 Unauthorized
 
-Remember to set the `OPENSEARCH_PASSWORD` environment variable everytime you start a new shell to run the tests.
+Remember to set the `OPENSEARCH_PASSWORD` or `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables every time you start a new shell to run the tests.
 
 #### FORBIDDEN/10/cluster create-index blocked (api)
 
