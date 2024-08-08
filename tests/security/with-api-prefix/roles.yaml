@@ -3,29 +3,12 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 description: Test roles endpoints.
 
 chapters:
-  - synopsis: Get roles bulk.
-    path: /_plugins/_security/api/roles
-    method: GET
-    response:
-      status: 200
-  - synopsis: Patch roles bulk.
-    path: /_plugins/_security/api/roles
-    method: PATCH
-    request_body:
-      payload: 
-        - op: replace
-          path: /test/index_permissions/0/fls
-          value: ['random*', ~random1]
-        - op: remove
-          path: /test/index_permissions/0/dls
-    response:
-      status: 200
   - synopsis: Create role.
     path: /_plugins/_security/api/roles/{role}
     method: PUT
     parameters:
       role: test
-    request_body:
+    request:
       payload:
         cluster_permissions: 
           - cluster_composite_ops
@@ -44,6 +27,23 @@ chapters:
             allowed_actions: 
               - kibana_all_read
     response:
+      status: 201
+  - synopsis: Get roles bulk.
+    path: /_plugins/_security/api/roles
+    method: GET
+    response:
+      status: 200
+  - synopsis: Patch roles bulk.
+    path: /_plugins/_security/api/roles
+    method: PATCH
+    request:
+      payload: 
+        - op: add
+          path: /test/index_permissions/0/fls
+          value:
+            - 'random*'
+            - ~random1
+    response:
       status: 200
   - synopsis: Get role.
     path: /_plugins/_security/api/roles/{role}
@@ -57,11 +57,13 @@ chapters:
     method: PATCH
     parameters:
       role: test
-    request_body:
+    request:
       payload:
-        op: replace
-        path: /index_permissions/0/fls
-        value: [random1, random2]
+        - op: add
+          path: /index_permissions/0/fls
+          value:
+            - 'random*'
+            - ~random1
     response:
       status: 200
   - synopsis: Delete role.
