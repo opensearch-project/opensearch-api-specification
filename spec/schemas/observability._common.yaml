@@ -19,6 +19,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ObservabilityObject'
+      required:
+        - observabilityObjectList
+        - startIndex
+        - totalHitRelation
+        - totalHits
 
     ObservabilityObject:
       type: object
@@ -37,6 +42,14 @@ components:
           $ref: '#/components/schemas/SavedVisualization'
         savedQuery:
           $ref: '#/components/schemas/SavedQuery'
+      required:
+        - createdTimeMs
+        - lastUpdatedTimeMs
+        - objectId
+        - operationalPanel
+        - savedQuery
+        - savedVisualization
+        - tenant
 
     OperationalPanel:
       type: object
@@ -53,6 +66,12 @@ components:
           $ref: '#/components/schemas/QueryFilter'
         applicationId:
           type: string
+      required:
+        - applicationId
+        - name
+        - queryFilter
+        - timeRange
+        - visualizations
 
     Visualization:
       type: object
@@ -69,6 +88,13 @@ components:
           type: integer
         h:
           type: integer
+      required:
+        - h
+        - id
+        - savedVisualizationId
+        - w
+        - x
+        - y
 
     TimeRange:
       type: object
@@ -77,6 +103,9 @@ components:
           type: string
         from:
           type: string
+      required:
+        - from
+        - to
 
     QueryFilter:
       type: object
@@ -85,6 +114,9 @@ components:
           type: string
         language:
           type: string
+      required:
+        - language
+        - query
 
     SavedVisualization:
       type: object
@@ -103,6 +135,14 @@ components:
           $ref: '#/components/schemas/SelectedTimestamp'
         selected_fields:
           $ref: '#/components/schemas/SelectedFields'
+      required:
+        - description
+        - name
+        - query
+        - selected_date_range
+        - selected_fields
+        - selected_timestamp
+        - type
 
     SelectedDateRange:
       type: object
@@ -113,6 +153,10 @@ components:
           type: string
         text:
           type: string
+      required:
+        - end
+        - start
+        - text
 
     SelectedTimestamp:
       type: object
@@ -121,6 +165,9 @@ components:
           type: string
         type:
           type: string
+      required:
+        - name
+        - type
 
     SelectedFields:
       type: object
@@ -131,6 +178,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Token'
+      required:
+        - text
+        - tokens
 
     Token:
       type: object
@@ -139,6 +189,9 @@ components:
           type: string
         type:
           type: string
+      required:
+        - name
+        - type
 
     SavedQuery:
       type: object
@@ -155,30 +208,53 @@ components:
           $ref: '#/components/schemas/SelectedTimestamp'
         selected_fields:
           $ref: '#/components/schemas/SelectedFields'
+      required:
+        - description
+        - name
+        - query
+        - selected_date_range
+        - selected_fields
+        - selected_timestamp
 
     NotFoundResponse:
       type: object
       properties:
         error:
-          type: object
-          properties:
-            root_cause:
-              type: array
-              items:
-                type: object
-                properties:
-                  type:
-                    type: string
-                    example: "status_exception"
-                  reason:
-                    type: string
-                    example: "ObservabilityObject {objectId} not found"
-            type:
-              type: string
-              example: "status_exception"
-            reason:
-              type: string
-              example: "ObservabilityObject {objectId} not found"
+          $ref: '#/components/schemas/ErrorResponse'
         status:
           type: integer
           example: 404
+      required:
+        - error
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootCause'
+        type:
+          type: string
+          example: status_exception
+        reason:
+          type: string
+          example: 'ObservabilityObject {objectId} not found'
+      required:
+        - reason
+        - root_cause
+        - type
+
+    RootCause:
+      type: object
+      properties:
+        type:
+          type: string
+          example: status_exception
+        reason:
+          type: string
+          example: 'ObservabilityObject {objectId} not found'
+      required:
+        - reason
+        - type

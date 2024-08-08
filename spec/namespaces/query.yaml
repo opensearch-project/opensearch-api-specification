@@ -1,124 +1,142 @@
 openapi: 3.1.0
 info:
   title: OpenSearch Query Datasources API
-  description: OpenSearch Query Datasources API
+  description: OpenSearch Query Datasources API.
   version: 1.0.0
 paths:
   /_plugins/_query/_datasources:
     get:
-      operationId: query.datasources.list.0
-      x-operation-group: query.datasources.list
+      operationId: query.datasources_list.0
+      x-operation-group: query.datasources_list
       x-version-added: '1.1'
       description: Retrieves list of all datasources.
       responses:
         '200':
-          $ref: '#/components/responses/datasources/list@200'
+          $ref: '#/components/responses/query.datasources_list@200'
     post:
-      operationId: query.datasources.post.0
-      x-operation-group: query.datasources.post
+      operationId: query.datasources_create.0
+      x-operation-group: query.datasources_create
       x-version-added: '1.1'
       description: Creates a new query datasource.
       requestBody:
-        $ref: '#/components/requestBodies/query.datasource'
+        $ref: '#/components/requestBodies/query.datasources_create'
       responses:
         '201':
-          $ref: '#/components/responses/datasource/create@200'
+          $ref: '#/components/responses/query.datasources_create@201'
     put:
-      operationId: query.datasource.put.0
-      x-operation-group: query.datasource.put
+      operationId: query.datasources_update.0
+      x-operation-group: query.datasources_update
       x-version-added: '1.1'
       description: Updates an existing query datasource.
       requestBody:
-        $ref: '#/components/requestBodies/query.datasource'
+        $ref: '#/components/requestBodies/query.datasources_update'
       responses:
         '200':
-          $ref: '#/components/responses/datasource/update@200'
+          $ref: '#/components/responses/query.datasources_update@200'
         '404':
-          description: DataSource not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/responses/datasource.notfound@404'
-  /_plugins/_query/_datasources/{dataSourceName}:
+          $ref: '#/components/responses/query.datasources_update@404'
+  /_plugins/_query/_datasources/{datasource_name}:
     get:
-      operationId: query.datasource.retrieve.0
-      x-operation-group: query.datasource.retrieve
+      operationId: query.datasource_retrieve.0
+      x-operation-group: query.datasource_retrieve
       x-version-added: '1.1'
       description: Retrieves specific datasource specified by name.
       parameters:
-        - $ref: '#/components/parameters/query/datasource/get::path/dataSourceName'
+        - $ref: '#/components/parameters/query.datasource_retrieve::path.datasource_name'
       responses:
         '200':
-          $ref: '#/components/responses/datasource/retrieve@200'
+          $ref: '#/components/responses/query.datasource_retrieve@200'
         '404':
-          $ref: '#/components/responses/datasource/notfound@404'
+          $ref: '#/components/responses/query.datasource_retrieve@404'
     delete:
-      operationId: query.datasources.delete.0
-      x-operation-group: query.datasources.delete
+      operationId: query.datasource_delete.0
+      x-operation-group: query.datasource_delete
       x-version-added: '1.1'
       description: Deletes specific datasource specified by name.
       parameters:
-        - $ref: '#/components/parameters/query/datasource/delete::path/dataSourceName'
+        - $ref: '#/components/parameters/query.datasource_delete::path.datasource_name'
       responses:
         '204':
-          description: No Content
+          $ref: '#/components/responses/query.datasource_delete@204'
         '404':
-          $ref: '#/components/responses/datasource/notfound@404'
+          $ref: '#/components/responses/query.datasource_delete@404'
 
 components:
   requestBodies:
-    query.datasource:
+    query.datasources_create:
       content:
         application/json:
           schema:
             $ref: '../schemas/query._common.yaml#/components/schemas/DataSource'
-
+    query.datasources_update:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSource'
   responses:
-    datasource.create@200:
-      description: Created
-      content:
-        application/json:
-          schema:
-            type: string
-            example: "Created DataSource with name my_prometheus"
-    datasource.update@200:
-      description: Updated
-      content:
-        application/json:
-          schema:
-            type: string
-            example: "Updated DataSource with name my_prometheus"
-    datasources.list@200:
+    query.datasources_list@200:
       description: Successful response of retrieving all Data Sources
       content:
         application/json:
           schema:
             $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceList'
-    datasource.notfound@404:
+    query.datasources_create@201:
+      description: Created
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Created DataSource with name my_prometheus
+    query.datasources_update@200:
+      description: Updated
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Updated DataSource with name my_prometheus
+    query.datasources_update@404:
       description: Not Found
       content:
         application/json:
           schema:
             $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceNotFound'
-    datasource.retrieve@200:
+    query.datasource_retrieve@200:
       description: Successful response of retrieving Data Source
       content:
         application/json:
           schema:
             $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceRetrieve'
-
+    query.datasource_retrieve@404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceNotFound'
+    query.datasource_delete@204:
+      description: No Content
+      content:
+        application/json:
+          schema:
+            type: string
+            example: ''
+    query.datasource_delete@404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/DataSourceNotFound'
   parameters:
-    query.datasource.delete::path.dataSourceName:
-      name: dataSourceName
+    query.datasource_delete::path.datasource_name:
+      name: datasource_name
       in: path
       description: The Name of the DataSource to delete.
       schema:
         type: string
       required: true
-    query.datasource.get::path.dataSourceName:
-      name: dataSourceName
+    query.datasource_retrieve::path.datasource_name:
+      name: datasource_name
       in: path
+      description: The Name of the DataSource to retrieve.
       schema:
         type: string
       required: true
-
