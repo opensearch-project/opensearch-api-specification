@@ -11,6 +11,7 @@
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
     - [Managing Versions](#managing-versions)
+    - [Managing Distributions](#managing-distributions)
     - [Waiting for Tasks](#waiting-for-tasks)
     - [Warnings](#warnings)
       - [multiple-paths-detected](#multiple-paths-detected)
@@ -209,7 +210,38 @@ It's common to add a feature to the next version of OpenSearch. When adding a ne
     status: 200
 ```
 
-The [integration test workflow](.github/workflows/test-spec.yml) runs a matrix of OpenSearch versions, including the next version. Please check whether the workflow needs an update when adding version-specific tests.
+The test tool will fetch the server version when it starts and use it automatically. The [integration test workflow](.github/workflows/test-spec.yml) runs a matrix of OpenSearch versions, including the next version. Please check whether the workflow needs an update when adding version-specific tests.
+
+### Managing Distributions
+
+OpenSearch consists of plugins that may or may not be present in various distributions. When adding a new API in the spec, you can specify `x-distributions` with a list of distributions that have a particular feature. For example, the Amazon Managed OpenSearch supports `GET /`, but Amazon Serverless OpenSearch does not.
+
+```yaml
+/:
+  get:
+    operationId: info.0
+    x-distributions:
+      - opensearch.org
+      - aos
+    description: Returns basic information about the cluster.
+```
+
+Similarly, skip tests that are not applicable to a distribution by listing the distributions that support it.
+
+```yaml
+description: Test root endpoint.
+distributions:
+  - opensearch.org
+  - aos
+chapters:
+  - synopsis: Get server info.
+    path: /
+    method: GET
+    response:
+      status: 200
+```
+
+To test a particular distribution pass `--opensearch-distribution` to the test tool.
 
 ### Waiting for Tasks
 

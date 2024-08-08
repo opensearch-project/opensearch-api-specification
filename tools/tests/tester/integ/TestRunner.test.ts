@@ -16,7 +16,7 @@ test('stories folder', async () => {
   const info = await opensearch_http_client.wait_until_available()
   expect(info.version).toBeDefined()
 
-  const run = await test_runner.run('tools/tests/tester/fixtures/stories')
+  const run = await test_runner.run('tools/tests/tester/fixtures/stories', undefined, 'opensearch.org')
 
   expect(run.failed).toBeTruthy()
 
@@ -29,14 +29,15 @@ test('stories folder', async () => {
   }
 
   const passed = load_expected_evaluation('passed', true)
-  const skipped = load_expected_evaluation('skipped/semver', true)
+  const skipped_semver = load_expected_evaluation('skipped/semver', true)
+  const skipped_distributions = load_expected_evaluation('skipped/distributions', true)
   const not_found = load_expected_evaluation('failed/not_found', true)
   const invalid_data = load_expected_evaluation('failed/invalid_data', true)
   const chapter_error = load_expected_evaluation('error/chapter_error', true)
   const output_error = load_expected_evaluation('error/output_error', true)
   const prologue_error = load_expected_evaluation('error/prologue_error', true)
 
-  const expected_evaluations = [passed, chapter_error, output_error, prologue_error, invalid_data, not_found, skipped]
+  const expected_evaluations = [passed, chapter_error, output_error, prologue_error, invalid_data, not_found, skipped_distributions, skipped_semver]
   expect(actual_evaluations).toEqual(expected_evaluations)
 })
 

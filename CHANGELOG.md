@@ -72,6 +72,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_plugins/_security/api/certificates/` ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Added `/_plugins/_ml/models/{model_id}/_deploy`, `_undeploy` and `knn_vector` type in `passage_embedding` ([#504](https://github.com/opensearch-project/opensearch-api-specification/pull/504))
 - Added `PersonalizeSearchRanking`, `RetrievalAugmentedGeneration`, `Rerank`, `Collapse`, `TruncateHits` and `SplitResponseProcessor` ([#505](https://github.com/opensearch-project/opensearch-api-specification/pull/505))
+- Added `/_plugins/_security/api/certificates/` to API spec  ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
+- Added support for annotating and testing the API spec against multiple OpenSearch distributions ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added `read_time`, `write_time`, `queue_size` and `io_time_in_millis` to `IoStatDevice` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added `total_rejections_breakup` to `ShardIndexingPressureStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 
 ### Changed
 
@@ -116,6 +121,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `Duration` to allow for non-integers ([#479](https://github.com/opensearch-project/opensearch-api-specification/pull/479))
 - Fixed accuracy of the index stats schemas ([#491](https://github.com/opensearch-project/opensearch-api-specification/pull/491))
 - Fixed security spec to add support for 400 and 403s ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
+- Fixed required parameters in `NodeInfo` and `NodeOperatingSystemInfo` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 
 ### Security
 

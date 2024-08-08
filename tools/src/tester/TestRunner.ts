@@ -34,19 +34,25 @@ export default class TestRunner {
     this._result_logger = result_logger
   }
 
-  async run (story_path: string, version?: string, dry_run: boolean = false): Promise<{ results: StoryEvaluations, failed: boolean }> {
+  async run (story_path: string, version?: string, distribution?: string, dry_run: boolean = false): Promise<{ results: StoryEvaluations, failed: boolean }> {
     let failed = false
     const story_files = this.story_files(story_path)
     const results: StoryEvaluations = { evaluations: [] }
 
     if (!dry_run) {
-      const info = await this._http_client.wait_until_available()
-      console.log(`OpenSearch ${ansi.green(info.version.number)}\n`)
-      version = info.version.number
+      if (distribution === 'aoss') {
+        // TODO: Fetch OpenSearch version when Amazon Serverless OpenSearch supports multiple.
+        version = '2.1'
+      } else {
+        const info = await this._http_client.wait_until_available()
+        version = info.version.number
+      }
+
+      console.log(`OpenSearch ${ansi.green(version)}\n`)
     }
 
     for (const story_file of story_files) {
-      const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, version, dry_run)
+      const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, version, distribution, dry_run)
       results.evaluations.push(evaluation)
       this._result_logger.log(evaluation)
       if ([Result.ERROR, Result.FAILED].includes(evaluation.result)) failed = true

@@ -51,6 +51,14 @@ export type Payload = {} | any[] | string | number | boolean;
  */
 export type Version = string;
 /**
+ * The list of distributions that support this API.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Distributions".
+ */
+export type Distributions = string[];
+/**
  * Number of times to retry on error.
  *
  *
@@ -94,6 +102,7 @@ export interface Story {
   epilogues?: SupplementalChapter[];
   chapters: Chapter[];
   version?: Version;
+  distributions?: Distributions;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -112,6 +121,7 @@ export interface ChapterRequest {
   request?: Request;
   output?: Output;
   version?: Version;
+  distributions?: Distributions;
   retry?: Retry;
 }
 /**
@@ -131,7 +141,7 @@ export interface Request {
  * The values are paths to the values in the response.
  * The values should be in the form:
  * - `payload.<payload-path>` for the payload
- * - `headers.<header-name>` for the headers
+ * - `headers.<header-name>` for the headers.
  *
  *
  * This interface was referenced by `Story`'s JSON-Schema
@@ -157,6 +167,9 @@ export interface ExpectedResponse {
  * via the `definition` "Warnings".
  */
 export interface Warnings {
+  /**
+   * Enable/disable warnings about multiple paths being tested in the same story.
+   */
   'multiple-paths-detected'?: boolean;
 }
 /**
