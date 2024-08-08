@@ -1,12 +1,14 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
+# ADMIN-CERT only (except GET). These tests require explicit rest api admin privileges.
+
 description: Test securityconfig endpoints.
 
 chapters:
   - synopsis: Update a security config.
     path: /_plugins/_security/api/securityconfig/config
     method: PUT
-    request_body:
+    request:
       payload:
         dynamic: 
           filtered_alias_mode: warn
@@ -38,7 +40,7 @@ chapters:
           hosts_resolver_mode: ip-only
           do_not_fail_on_forbidden_empty: false
     response:
-      status: 200
+      status: 403
   - synopsis: Get a security config.
     path: /_plugins/_security/api/securityconfig
     method: GET
@@ -47,10 +49,10 @@ chapters:
   - synopsis: Patch a security config.
     path: /_plugins/_security/api/securityconfig
     method: PATCH
-    request_body:
+    request:
       payload:
-        op: replace
-        path: /config/dynamic/authc/basic_internal_auth_domain/transport_enabled
-        value: 'true'
+        - op: replace
+          path: /config/dynamic/authc/basic_internal_auth_domain/transport_enabled
+          value: 'true'
     response:
-      status: 200
+      status: 403
