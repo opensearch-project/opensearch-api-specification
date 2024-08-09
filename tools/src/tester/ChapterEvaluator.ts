@@ -122,15 +122,17 @@ export default class ChapterEvaluator {
 
   #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {
     const expected_status = chapter.response?.status ?? 200
-    if (response.status === expected_status) return { result: Result.PASSED }
+    if (response.status === expected_status && response.error === undefined) return { result: Result.PASSED }
 
-    const result: Evaluation = {
+    let result: Evaluation = {
       result: Result.ERROR,
       message: _.join(_.compact([
-        `Expected status ${expected_status}, but received ${response.status}: ${response.content_type}.`,
+        expected_status == response.status ?
+          `Received ${response.status ?? 'none'}: ${response.content_type ?? 'unknown'}.` :
+          `Expected status ${expected_status}, but received ${response.status ?? 'none'}: ${response.content_type ?? 'unknown'}.`,
         response.message
       ]), ' ')
-    };
+    }
 
     if (response.error !== undefined) {
       result.error = response.error as Error
