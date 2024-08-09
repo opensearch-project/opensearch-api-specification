@@ -48,7 +48,7 @@ const command = new Command()
 
 const opts = command.opts()
 
-main({ output: opts.output, opensearch: get_opensearch_opts_from_cli({ opensearchResponseType: undefined, ...opts }) })
+main({ output: opts.output, opensearch: get_opensearch_opts_from_cli({ responseType: undefined, ...opts }) })
   .catch(e => {
     if (e instanceof Error) {
       console.error(`ERROR: ${e.stack}`)

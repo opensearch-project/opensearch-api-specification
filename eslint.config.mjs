@@ -8,6 +8,7 @@ import pluginTs from '@typescript-eslint/eslint-plugin'
 import pluginYml from 'eslint-plugin-yml'
 import pluginCspell from '@cspell/eslint-plugin'
 import pluginStylistic from '@stylistic/eslint-plugin'
+import pluginJest from 'eslint-plugin-jest'
 
 export default [
   pluginJs.configs.recommended,
@@ -28,7 +29,8 @@ export default [
       'license-header': pluginLicenseHeader,
       'eslint-comments': pluginComments,
       '@cspell': pluginCspell,
-      '@stylistic': pluginStylistic
+      '@stylistic': pluginStylistic,
+      'jest': pluginJest
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
@@ -78,6 +80,8 @@ export default [
       ],
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/unbound-method': 'off',
+      'jest/unbound-method': 'error',
       'array-callback-return': 'off',
       'indent': ['error', 2, { 'SwitchCase': 1 }],
       'new-cap': 'off',
