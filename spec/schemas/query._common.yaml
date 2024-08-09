@@ -1,0 +1,131 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Query Datasources API
+  description: Schemas for OpenSearch Query Datasources API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    DataSourceList:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataSource'
+
+    DataSource:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        connector:
+          type: string
+        allowedRoles:
+          type: array
+          items:
+            type: string
+        properties:
+          type: object
+          additionalProperties: true
+        resultIndex:
+          type: string
+        status:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/DataSourceConfiguration'
+      required:
+        - connector
+        - name
+        - properties
+        - resultIndex
+        - status
+
+    DataSourceConfiguration:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        credentials:
+          $ref: '#/components/schemas/Credentials'
+      required:
+        - credentials
+        - endpoint
+
+    Credentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - password
+        - username
+
+    DataSourceNotFound:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorResponse'
+      required:
+        - error
+
+    ErrorResponse:
+      type: object
+      properties:
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootCause'
+        type:
+          type: string
+          example: status_exception
+        reason:
+          type: string
+          example: DataSource not found
+      required:
+        - reason
+        - root_cause
+        - type
+
+    RootCause:
+      type: object
+      properties:
+        type:
+          type: string
+          example: status_exception
+        reason:
+          type: string
+          example: DataSource not found
+      required:
+        - reason
+        - type
+
+    DataSourceRetrieve:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        connector:
+          type: string
+        allowedRoles:
+          type: array
+          items:
+            type: string
+        properties:
+          type: object
+          additionalProperties: true
+        resultIndex:
+          type: string
+        status:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/DataSourceConfiguration'
+      required:
+        - connector
+        - name
+        - properties
+        - resultIndex
+        - status
