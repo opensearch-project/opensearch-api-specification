@@ -69,6 +69,9 @@ export default class TestRunner {
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
     if (fs.statSync(path).isFile()) {
+      if (!path.endsWith('.yaml')) {
+        return []
+      }
       const story: Story = read_yaml(path)
       return [{
         display_path: next_prefix === '' ? basename(path) : next_prefix,
