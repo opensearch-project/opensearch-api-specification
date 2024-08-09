@@ -13,7 +13,7 @@ import MergedOpenApiSpec from "tester/MergedOpenApiSpec"
 
 describe('merged API spec', () => {
   describe('defaults', () => {
-    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', undefined, new Logger())
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', undefined, undefined, new Logger())
 
     test('has an api version', () => {
       expect(spec.api_version()).toEqual('1.2.3')
@@ -30,7 +30,8 @@ describe('merged API spec', () => {
 
     test('has all responses', () => {
       expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500','503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1'
+        '200', '201', '404', '500','503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1',
+        'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
       ])
     })
 
@@ -65,31 +66,67 @@ describe('merged API spec', () => {
   })
 
   describe('1.3', () => {
-    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '1.3', new Logger())
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '1.3', undefined, new Logger())
 
     test('has matching responses', () => {
       expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500', '503', 'removed-2.0', 'added-1.3-removed-2.0'
+        '200', '201', '404', '500', '503', 'removed-2.0', 'added-1.3-removed-2.0',
+        'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
+      ])
+    })
+  })
+
+  describe('oracle-managed', () => {
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', undefined, 'oracle-managed', new Logger())
+
+    test('has matching responses', () => {
+      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+        '200', '201', '404', '500', '503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1',
+        'distributed-excluded-amazon-serverless'
       ])
     })
   })
 
   describe('2.0', () => {
-    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', new Logger())
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', undefined, new Logger())
 
     test('has matching responses', () => {
       expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500', '503', 'added-2.0'
+        '200', '201', '404', '500', '503', 'added-2.0',
+        'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
+      ])
+    })
+  })
+
+  describe('2.0 amazon-serverless', () => {
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', 'amazon-serverless', new Logger())
+
+    test('has matching responses', () => {
+      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+        '200', '201', '404', '500', '503', 'added-2.0',
+        'distributed-included-all'
+      ])
+    })
+  })
+
+  describe('2.0 oracle-managed', () => {
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', 'oracle-managed', new Logger())
+
+    test('has matching responses', () => {
+      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+        '200', '201', '404', '500', '503', 'added-2.0',
+        'distributed-excluded-amazon-serverless'
       ])
     })
   })
 
   describe('2.1', () => {
-    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.1', new Logger())
+    const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.1', undefined, new Logger())
 
     test('has matching responses', () => {
       expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1'
+        '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1',
+        'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
       ])
     })
   })

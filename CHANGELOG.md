@@ -67,6 +67,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
 - Added support for reusing output variables as keys in payload expectations ([#471](https://github.com/opensearch-project/opensearch-api-specification/pull/471))
 - Added support for running tests against Amazon OpenSearch ([#476](https://github.com/opensearch-project/opensearch-api-specification/pull/476))
+- Added support for annotating and testing the API spec against multiple OpenSearch distributions ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added `read_time`, `write_time`, `queue_size` and `io_time_in_millis` to `IoStatDevice` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added `total_rejections_breakup` to `ShardIndexingPressureStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 
 ### Changed
 
@@ -109,6 +113,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `_source` accepting an array of fields in `/_search` ([#430](https://github.com/opensearch-project/opensearch-api-specification/pull/430))
 - Fixed `_update_by_query` with a simple term ([#451](https://github.com/opensearch-project/opensearch-api-specification/pull/451))
 - Fixed `Duration` to allow for non-integers ([#479](https://github.com/opensearch-project/opensearch-api-specification/pull/479))
+- Fixed required parameters in `NodeInfo` and `NodeOperatingSystemInfo` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 
 ### Security
 
