@@ -69,9 +69,15 @@ export default class OpenApiVersionExtractor {
   #exclude_per_distribution(obj: any): boolean {
     if (this._target_distribution == undefined) return false
 
-    const x_distributions = obj['x-distributions'] as string[]
+    const x_distributions_included = obj['x-distributions-included'] as string[]
 
-    if (x_distributions?.length > 0 && !x_distributions.includes(this._target_distribution)) {
+    if (x_distributions_included?.length > 0 && !x_distributions_included.includes(this._target_distribution)) {
+      return true
+    }
+
+    const x_distributions_excluded = obj['x-distributions-excluded'] as string[]
+
+    if (x_distributions_excluded?.length > 0 && x_distributions_excluded.includes(this._target_distribution)) {
       return true
     }
 
@@ -84,7 +90,7 @@ export default class OpenApiVersionExtractor {
     delete_matching_keys(this._spec, this.#exclude_per_semver.bind(this))
   }
 
-  // Remove any elements that are x-distributions incompatible with the target distribution.
+  // Remove any elements that are x-distributions-included incompatible with the target distribution.
   #remove_keys_not_matching_distribution(): void {
     if (this._target_distribution === undefined) return
     delete_matching_keys(this._spec, this.#exclude_per_distribution.bind(this))
