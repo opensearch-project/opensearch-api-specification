@@ -23,6 +23,7 @@ export const OPENSEARCH_URL_OPTION = new Option('--opensearch-url <url>', 'URL a
   .env('OPENSEARCH_URL')
 
 export const OPENSEARCH_DISTRIBUTION_OPTION = new Option('--opensearch-distribution <key>', 'OpenSearch distribution')
+  .default('opensearch.org')
   .env('OPENSEARCH_DISTRIBUTION')
 
 export const OPENSEARCH_USERNAME_OPTION = new Option('--opensearch-username <username>', 'username to use when authenticating with OpenSearch')

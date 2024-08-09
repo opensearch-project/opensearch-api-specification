@@ -27,7 +27,7 @@ export default class StoryEvaluator {
   }
 
   async evaluate({ story, display_path, full_path }: StoryFile, version?: string, distribution?: string, dry_run: boolean = false): Promise<StoryEvaluation> {
-    if (version != undefined && story.version !== undefined && !semver.satisfies(version, story.version)) {
+    if (version !== undefined && story.version !== undefined && !StoryEvaluator.#semver_satisfies(version, story.version)) {
       return {
         result: Result.SKIPPED,
         display_path,
@@ -43,7 +43,7 @@ export default class StoryEvaluator {
         display_path,
         full_path,
         description: story.description,
-        message: `Skipped because distribution ${distribution} is not ${story.distributions.length > 1 ? 'one of ' : ''}${story.distributions.sort().join(', ')}.`
+        message: `Skipped because distribution ${distribution} is not ${story.distributions.length > 1 ? 'one of ' : ''}${story.distributions.join(', ')}.`
       }
     }
 
@@ -92,12 +92,12 @@ export default class StoryEvaluator {
       if (dry_run) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
-      } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
+      } else if (version != undefined && chapter.version !== undefined && !StoryEvaluator.#semver_satisfies(version, chapter.version)) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.`, error: undefined } })
       } else if (distribution != undefined && chapter.distributions !== undefined && !chapter.distributions.includes(distribution)) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.length > 1 ? 'one of ' : ''}${chapter.distributions.sort().join(', ')}.`, error: undefined } })
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.length > 1 ? 'one of ' : ''}${chapter.distributions.join(', ')}.`, error: undefined } })
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR
@@ -235,5 +235,9 @@ export default class StoryEvaluator {
 
   static #failed_evaluation(title: string, message: string): ChapterEvaluation {
     return { title, overall: { result: Result.FAILED, message } }
+  }
+
+  static #semver_satisfies(version: string, range: string): boolean {
+    return _.every(range.split(','), (portion) => semver.satisfies(version, portion))
   }
 }

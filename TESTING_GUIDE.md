@@ -214,15 +214,17 @@ The test tool will fetch the server version when it starts and use it automatica
 
 ### Managing Distributions
 
-OpenSearch consists of plugins that may or may not be present in various distributions. When adding a new API in the spec, you can specify `x-distributions` with a list of distributions that have a particular feature. For example, the Amazon Managed OpenSearch supports `GET /`, but Amazon Serverless OpenSearch does not.
+OpenSearch consists of plugins that may or may not be present in various distributions. When adding a new API in the spec, you can specify `x-distributions-included` or `x-distributions-excluded` with a list of distributions that have a particular feature. For example, the Amazon Managed OpenSearch supports `GET /`, but Amazon Serverless OpenSearch does not.
 
 ```yaml
 /:
   get:
     operationId: info.0
-    x-distributions:
+    x-distributions-included:
       - opensearch.org
-      - aos
+      - amazon-managed
+    x-distributions-excluded:
+      - amazon-serverless
     description: Returns basic information about the cluster.
 ```
 
@@ -231,8 +233,8 @@ Similarly, skip tests that are not applicable to a distribution by listing the d
 ```yaml
 description: Test root endpoint.
 distributions:
+  - amazon-managed
   - opensearch.org
-  - aos
 chapters:
   - synopsis: Get server info.
     path: /
@@ -241,7 +243,26 @@ chapters:
       status: 200
 ```
 
-To test a particular distribution pass `--opensearch-distribution` to the test tool.
+To test a particular distribution pass `--opensearch-distribution` to the test tool. For example, the following runs tests against an Amazon Managed OpenSearch instance.
+
+```bash
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...
+export AWS_REGION=us-west-2
+
+export OPENSEARCH_URL=https://....us-west-2.es.amazonaws.com
+
+npm run test:spec -- --opensearch-distribution=amazon-managed
+```
+
+The output will visible skip APIs that are not available in the `amazon-managed` distribution.
+
+```
+PASSED  _core/bulk.yaml (.../_core/bulk.yaml)
+PASSED  _core/info.yaml (.../_core/info.yaml)
+SKIPPED indices/forcemerge.yaml (Skipped because distribution amazon-managed is not opensearch.org.)
+```
 
 ### Waiting for Tasks
 
