@@ -3,54 +3,160 @@ $schema: ../../json_schemas/test_story.schema.yaml
 description: Test various operations of the OpenSearch Observability Object API.
 
 prologues:
+  - path: /_plugins/_observability/object/{object_id}
+    method: DELETE
+    parameters:
+      object_id: test_object
+    status: [200, 404]
   - path: /_plugins/_observability/object
     method: POST
     request:
       payload:
         objectId: test_object
-        lastUpdatedTimeMs: 1627580400000
-        createdTimeMs: 1627580400000
-        tenant: test_tenant
         operationalPanel:
           name: test_panel
           visualizations: []
-          timeRange: { from: "now-1h", to: "now" }
-          queryFilter: { query: "", language: "ppl" }
+          timeRange:
+            from: now-1h
+            to: now
+          queryFilter:
+            query: ''
+            language: ppl
           applicationId: test_app
-        savedVisualization: { name: "viz1", description: "desc1", query: "", type: "line" }
-        savedQuery: { name: "query1", description: "desc1", query: "", selected_date_range: { start: "now-1d", end: "now" } }
-epilogues:
-  - path: /_plugins/_observability/object/test_object
-    method: DELETE
-    status: [200, 404]
+        savedVisualization:
+          name: viz1
+          description: desc1
+          query: ''
+          type: line
+          selected_date_range:
+            start: now-1d
+            end: now
+            text: Last 24 hours
+          selected_timestamp:
+            name: timestamp
+            type: time
+          selected_fields:
+            text: field1
+            tokens:
+              - name: field1
+                type: text
+        savedQuery:
+          name: query1
+          description: desc1
+          query: ''
+          selected_date_range:
+            start: now-1d
+            end: now
+            text: Last 24 hours
+          selected_timestamp:
+            name: timestamp
+            type: time
+          selected_fields:
+            text: field1
+            tokens:
+              - name: field1
+                type: text
+    status: [200]
+
 chapters:
-  - synopsis: Retrieve specific Observability object.
-    path: /_plugins/_observability/object/test_object
+  - synopsis: Retrieve specific Observability object after creation.
+    path: /_plugins/_observability/object/{object_id}
+    id: observatory_object
     method: GET
+    parameters:
+      object_id: test_object
     response:
       status: 200
+      payload:
+        startIndex: 0
+        totalHits: 1
+        totalHitRelation: eq
+        observabilityObjectList: []
+
 
   - synopsis: Update specific Observability object.
-    path: /_plugins/_observability/object/test_object
+    path: /_plugins/_observability/object/{object_id}
     method: PUT
+    parameters:
+      object_id: test_object
     request:
       payload:
         objectId: test_object
-        lastUpdatedTimeMs: 1627580400000
-        createdTimeMs: 1627580400000
-        tenant: test_tenant
+        tenant: ''
         operationalPanel:
           name: updated_test_panel
           visualizations: []
-          timeRange: { from: "now-1h", to: "now" }
-          queryFilter: { query: "", language: "ppl" }
+          timeRange:
+            from: now-1h
+            to: now
+          queryFilter:
+            query: ''
+            language: ppl
           applicationId: test_app
-        savedVisualization: { name: "viz1", description: "desc1", query: "", type: "line" }
-        savedQuery: { name: "query1", description: "desc1", query: "", selected_date_range: { start: "now-1d", end: "now" } }
+        savedVisualization:
+          name: '[Logs] Count total requests by tags'
+          description: ''
+          query: 'source = opensearch_dashboards_sample_data_logs | stats count() by tags'
+          type: bar
+          selected_date_range:
+            start: now/y
+            end: now
+            text: ''
+          selected_timestamp:
+            name: timestamp
+            type: timestamp
+          selected_fields:
+            text: ''
+            tokens: []
+        savedQuery:
+          name: query1
+          description: desc1
+          query: ''
+          selected_date_range:
+            start: now-1d
+            end: now
+            text: Last 24 hours
+          selected_timestamp:
+            name: timestamp
+            type: time
+          selected_fields:
+            text: field1
+            tokens:
+              - name: field1
+                type: text
     response:
       status: 200
+      payload:
+        objectId: test_object
+
+  - synopsis: Retrieve specific Observability object after update.
+    path: /_plugins/_observability/object/{object_id}
+    method: GET
+    parameters:
+      object_id: test_object
+    response:
+      status: 200
+      payload:
+        startIndex: 0
+        totalHits: 1
+        totalHitRelation: eq
+        observabilityObjectList: []
+
   - synopsis: Retrieve list of Observability objects.
     path: /_plugins/_observability/object
     method: GET
     response:
       status: 200
+      payload:
+        startIndex: 0
+        totalHits: 0
+        totalHitRelation: eq
+        observabilityObjectList: []
+
+
+epilogues:
+  - path: /_plugins/_observability/object/{object_id}
+    method: DELETE
+    parameters:
+      object_id: test_object
+    status: [200, 404]
