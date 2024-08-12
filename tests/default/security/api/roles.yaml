@@ -1,0 +1,75 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test roles endpoints.
+
+chapters:
+  - synopsis: Create role.
+    path: /_plugins/_security/api/roles/{role}
+    method: PUT
+    parameters:
+      role: test
+    request:
+      payload:
+        cluster_permissions: 
+          - cluster_composite_ops
+          - indices_monitor
+        index_permissions: 
+          - index_patterns: 
+              - 'movies*'
+            dls: ''
+            fls: []
+            masked_fields: []
+            allowed_actions: 
+              - read
+        tenant_permissions: 
+          - tenant_patterns: 
+              - human_resources
+            allowed_actions: 
+              - kibana_all_read
+    response:
+      status: 201
+  - synopsis: Get roles bulk.
+    path: /_plugins/_security/api/roles
+    method: GET
+    response:
+      status: 200
+  - synopsis: Patch roles bulk.
+    path: /_plugins/_security/api/roles
+    method: PATCH
+    request:
+      payload: 
+        - op: add
+          path: /test/index_permissions/0/fls
+          value:
+            - 'random*'
+            - ~random1
+    response:
+      status: 200
+  - synopsis: Get role.
+    path: /_plugins/_security/api/roles/{role}
+    method: GET
+    parameters:
+      role: test
+    response:
+      status: 200
+  - synopsis: Patch role.
+    path: /_plugins/_security/api/roles/{role}
+    method: PATCH
+    parameters:
+      role: test
+    request:
+      payload:
+        - op: add
+          path: /index_permissions/0/fls
+          value:
+            - 'random*'
+            - ~random1
+    response:
+      status: 200
+  - synopsis: Delete role.
+    path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    parameters:
+      role: test
+    response:
+      status: 200

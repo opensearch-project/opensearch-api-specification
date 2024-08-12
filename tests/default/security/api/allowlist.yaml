@@ -1,0 +1,31 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test allowlist endpoints.
+version: '> 2.0'
+
+# ADMIN-CERT only. These tests require explicit rest api admin privileges.
+chapters:
+  - synopsis: Create an allowlist.
+    path: /_plugins/_security/api/allowlist
+    method: PUT
+    request:
+      payload:
+        enabled: true
+        requests:
+          /_cat/nodes: [GET]
+    response:
+      status: 403
+  - synopsis: Get an allowlist.
+    path: /_plugins/_security/api/allowlist
+    method: GET
+    response:
+      status: 403
+  - synopsis: Patch an allowlist.
+    path: /_plugins/_security/api/allowlist
+    method: PATCH
+    request:
+      payload:
+        - op: remove
+          path: /config/requests
+    response:
+      status: 403

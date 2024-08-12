@@ -1,0 +1,77 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test rolesmapping endpoint.
+
+prologues:
+  - path: /_plugins/_security/api/roles/{role}
+    method: PUT
+    parameters:
+      role: test
+    request:
+      payload:
+        cluster_permissions: 
+          - cluster_composite_ops
+    status: [201]
+chapters:
+  - synopsis: Get rolesmapping bulk.
+    path: /_plugins/_security/api/rolesmapping
+    method: GET
+    response:
+      status: 200
+  - synopsis: Patch rolesmapping bulk.
+    path: /_plugins/_security/api/rolesmapping
+    method: PATCH
+    request:
+      payload: 
+        - op: add
+          path: /all_access
+          value: 
+            users: [test]
+            backend_roles: [admin]
+    response:
+      status: 200
+  - synopsis: Create rolesmapping.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: PUT
+    parameters:
+      role: test
+    request:
+      payload:
+        backend_roles: [captains]
+        hosts: 
+          - '*.example.com'
+        users: [test]
+    response:
+      status: 201
+  - synopsis: Get rolesmapping.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: GET
+    parameters:
+      role: test
+    response:
+      status: 200
+  - synopsis: Patch rolesmapping.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: PATCH
+    parameters:
+      role: test
+    request:
+      payload: 
+        - op: replace
+          path: /backend_roles
+          value: [admin]
+    response:
+      status: 200
+  - synopsis: Delete rolesmapping.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: DELETE
+    parameters:
+      role: test
+    response:
+      status: 200
+epilogues:
+  - path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    parameters:
+      role: test
+    status: [200]
