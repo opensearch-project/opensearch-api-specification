@@ -25310,14 +25310,14 @@ components:
           schema:
             type: object
             properties:
+              _shards:
+                $ref: '#/components/schemas/_common:ShardStatistics'
+              _all:
+                $ref: '#/components/schemas/indices.stats:AllIndicesStats'
               indices:
                 type: object
                 additionalProperties:
                   $ref: '#/components/schemas/indices.stats:IndicesStats'
-              _shards:
-                $ref: '#/components/schemas/_common:ShardStatistics'
-              _all:
-                $ref: '#/components/schemas/indices.stats:IndicesStats'
             required:
               - _all
               - _shards
@@ -26861,33 +26861,6 @@ components:
         - index
         - status
         - type
-    _common:BulkStats:
-      type: object
-      properties:
-        total_operations:
-          type: number
-        total_time:
-          $ref: '#/components/schemas/_common:Duration'
-        total_time_in_millis:
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        total_size:
-          $ref: '#/components/schemas/_common:ByteSize'
-        total_size_in_bytes:
-          type: number
-        avg_time:
-          $ref: '#/components/schemas/_common:Duration'
-        avg_time_in_millis:
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        avg_size:
-          $ref: '#/components/schemas/_common:ByteSize'
-        avg_size_in_bytes:
-          type: number
-      required:
-        - avg_size_in_bytes
-        - avg_time_in_millis
-        - total_operations
-        - total_size_in_bytes
-        - total_time_in_millis
     _common:byte:
       type: number
     _common:Bytes:
@@ -27319,25 +27292,25 @@ components:
     _common:GetStats:
       type: object
       properties:
-        current:
-          type: number
-        exists_time:
-          $ref: '#/components/schemas/_common:Duration'
-        exists_time_in_millis:
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        exists_total:
-          type: number
-        missing_time:
-          $ref: '#/components/schemas/_common:Duration'
-        missing_time_in_millis:
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        missing_total:
+        total:
           type: number
         time:
           $ref: '#/components/schemas/_common:Duration'
         time_in_millis:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        total:
+        exists_total:
+          type: number
+        exists_time:
+          $ref: '#/components/schemas/_common:Duration'
+        exists_time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        missing_total:
+          type: number
+        missing_time:
+          $ref: '#/components/schemas/_common:Duration'
+        missing_time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        current:
           type: number
       required:
         - current
@@ -27406,40 +27379,39 @@ components:
     _common:IndexingStats:
       type: object
       properties:
+        index_total:
+          type: number
+        index_time:
+          $ref: '#/components/schemas/_common:Duration'
+        index_time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         index_current:
           type: number
-        delete_current:
+        index_failed:
+          type: number
+        delete_total:
           type: number
         delete_time:
           $ref: '#/components/schemas/_common:Duration'
         delete_time_in_millis:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        delete_total:
+        delete_current:
           type: number
-        doc_status:
-          $ref: '#/components/schemas/_common:DocStatus'
-        is_throttled:
-          type: boolean
         noop_update_total:
           type: number
+        is_throttled:
+          type: boolean
         throttle_time:
           $ref: '#/components/schemas/_common:Duration'
         throttle_time_in_millis:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        index_time:
-          $ref: '#/components/schemas/_common:Duration'
-        index_time_in_millis:
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        index_total:
-          type: number
-        index_failed:
-          type: number
+        doc_status:
+          $ref: '#/components/schemas/_common:DocStatus'
         types:
+          x-version-removed: '2.0'
           type: object
           additionalProperties:
             $ref: '#/components/schemas/_common:IndexingStats'
-        write_load:
-          type: number
       required:
         - delete_current
         - delete_time_in_millis
@@ -28265,6 +28237,21 @@ components:
     _common:SearchStats:
       type: object
       properties:
+        open_contexts:
+          description: The number of open search contexts.
+          type: number
+        query_current:
+          description: The number of shard query operations that are currently running.
+          type: number
+        query_time:
+          description: The total amount of time for all shard query operations.
+          $ref: '#/components/schemas/_common:Duration'
+        query_time_in_millis:
+          description: The total amount of time for all shard query operations, in milliseconds.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        query_total:
+          description: The total number of shard query operations.
+          type: number
         concurrent_query_total:
           description: The total number of query operations that use concurrent segment search.
           type: number
@@ -28291,39 +28278,6 @@ components:
         fetch_total:
           description: The total number of shard fetch operations.
           type: number
-        open_contexts:
-          description: The number of open search contexts.
-          type: number
-        point_in_time_total:
-          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
-          type: number
-        point_in_time_time:
-          $ref: '#/components/schemas/_common:Duration'
-        point_in_time_time_in_millis:
-          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        point_in_time_current:
-          description: The number of shard PIT contexts currently open.
-          type: number
-        query_current:
-          description: The number of shard query operations that are currently running.
-          type: number
-        query_time:
-          description: The total amount of time for all shard query operations.
-          $ref: '#/components/schemas/_common:Duration'
-        query_time_in_millis:
-          description: The total amount of time for all shard query operations, in milliseconds.
-          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-        query_total:
-          description: The total number of shard query operations.
-          type: number
-        request:
-          type: object
-          description: Statistics about coordinator search operations for the node.
-          additionalProperties:
-            $ref: '#/components/schemas/_common:RequestStats'
-        search_idle_reactivate_count_total:
-          type: number
         scroll_current:
           description: The number of shard scroll operations that are currently running.
           type: number
@@ -28335,6 +28289,17 @@ components:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
+          type: number
+        point_in_time_total:
+          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
+          type: number
+        point_in_time_time:
+          $ref: '#/components/schemas/_common:Duration'
+        point_in_time_time_in_millis:
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        point_in_time_current:
+          description: The number of shard PIT contexts currently open.
           type: number
         suggest_current:
           description: The number of shard suggest operations that are currently running.
@@ -28348,6 +28313,13 @@ components:
         suggest_total:
           description: The total number of shard suggest operations.
           type: number
+        search_idle_reactivate_count_total:
+          type: number
+        request:
+          type: object
+          description: Statistics about coordinator search operations for the node.
+          additionalProperties:
+            $ref: '#/components/schemas/_common:RequestStats'
         groups:
           type: object
           additionalProperties:
@@ -28612,13 +28584,6 @@ components:
           $ref: '#/components/schemas/_common:ByteSize'
         reserved_in_bytes:
           description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
-          type: number
-        total_data_set_size:
-          $ref: '#/components/schemas/_common:ByteSize'
-        total_data_set_size_in_bytes:
-          description: |-
-            Total data set size, in bytes, of all shards assigned to selected nodes.
-            This includes the size of shards not stored fully on the nodes, such as the cache for partially mounted indices.
           type: number
       required:
         - reserved_in_bytes
@@ -44078,83 +44043,89 @@ components:
         - aliases
         - mappings
         - settings
-    indices.stats:IndexMetadataState:
-      type: string
-      enum:
-        - close
-        - open
-    indices.stats:IndexStats:
-      type: object
-      properties:
-        completion:
-          $ref: '#/components/schemas/_common:CompletionStats'
-        docs:
-          $ref: '#/components/schemas/_common:DocStats'
-        fielddata:
-          $ref: '#/components/schemas/_common:FielddataStats'
-        flush:
-          $ref: '#/components/schemas/_common:FlushStats'
-        get:
-          $ref: '#/components/schemas/_common:GetStats'
-        indexing:
-          $ref: '#/components/schemas/_common:IndexingStats'
-        indices:
-          $ref: '#/components/schemas/indices.stats:IndicesStats'
-        merges:
-          $ref: '#/components/schemas/_common:MergesStats'
-        query_cache:
-          $ref: '#/components/schemas/_common:QueryCacheStats'
-        recovery:
-          $ref: '#/components/schemas/_common:RecoveryStats'
-        refresh:
-          $ref: '#/components/schemas/_common:RefreshStats'
-        request_cache:
-          $ref: '#/components/schemas/_common:RequestCacheStats'
-        search:
-          $ref: '#/components/schemas/_common:SearchStats'
-        segments:
-          $ref: '#/components/schemas/_common:SegmentsStats'
-        store:
-          $ref: '#/components/schemas/_common:StoreStats'
-        translog:
-          $ref: '#/components/schemas/_common:TranslogStats'
-        warmer:
-          $ref: '#/components/schemas/_common:WarmerStats'
-        bulk:
-          $ref: '#/components/schemas/_common:BulkStats'
-        shard_stats:
-          $ref: '#/components/schemas/indices.stats:ShardsTotalStats'
-    indices.stats:IndicesStats:
+    indices.stats:AllIndicesStats:
       type: object
       properties:
         primaries:
+          $ref: '#/components/schemas/indices.stats:IndexStats'
+        total:
+          $ref: '#/components/schemas/indices.stats:IndexStats'
+      required:
+        - primaries
+        - total
+    indices.stats:IndexShardStats:
+      allOf:
+        - $ref: '#/components/schemas/indices.stats:IndexStatsBase'
+        - type: object
+          properties:
+            routing:
+              $ref: '#/components/schemas/indices.stats:ShardRouting'
+            commit:
+              $ref: '#/components/schemas/indices.stats:ShardCommit'
+            seq_no:
+              $ref: '#/components/schemas/indices.stats:ShardSequenceNumber'
+            retention_leases:
+              $ref: '#/components/schemas/indices.stats:ShardRetentionLeases'
+            shard_path:
+              $ref: '#/components/schemas/indices.stats:ShardPath'
+    indices.stats:IndexStats:
+      allOf:
+        - $ref: '#/components/schemas/indices.stats:IndexStatsBase'
+        - type: object
+    indices.stats:IndexStatsBase:
+      type: object
+      properties:
+        docs:
+          $ref: '#/components/schemas/_common:DocStats'
+        store:
+          $ref: '#/components/schemas/_common:StoreStats'
+        indexing:
+          $ref: '#/components/schemas/_common:IndexingStats'
+        get:
+          $ref: '#/components/schemas/_common:GetStats'
+        search:
+          $ref: '#/components/schemas/_common:SearchStats'
+        merges:
+          $ref: '#/components/schemas/_common:MergesStats'
+        refresh:
+          $ref: '#/components/schemas/_common:RefreshStats'
+        flush:
+          $ref: '#/components/schemas/_common:FlushStats'
+        warmer:
+          $ref: '#/components/schemas/_common:WarmerStats'
+        query_cache:
+          $ref: '#/components/schemas/_common:QueryCacheStats'
+        fielddata:
+          $ref: '#/components/schemas/_common:FielddataStats'
+        completion:
+          $ref: '#/components/schemas/_common:CompletionStats'
+        segments:
+          $ref: '#/components/schemas/_common:SegmentsStats'
+        translog:
+          $ref: '#/components/schemas/_common:TranslogStats'
+        request_cache:
+          $ref: '#/components/schemas/_common:RequestCacheStats'
+        recovery:
+          $ref: '#/components/schemas/_common:RecoveryStats'
+    indices.stats:IndicesStats:
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/_common:Uuid'
+        primaries:
+          $ref: '#/components/schemas/indices.stats:IndexStats'
+        total:
           $ref: '#/components/schemas/indices.stats:IndexStats'
         shards:
           type: object
           additionalProperties:
             type: array
             items:
-              $ref: '#/components/schemas/indices.stats:ShardStats'
-        total:
-          $ref: '#/components/schemas/indices.stats:IndexStats'
-        uuid:
-          $ref: '#/components/schemas/_common:Uuid'
-        health:
-          $ref: '#/components/schemas/_common:HealthStatus'
-        status:
-          $ref: '#/components/schemas/indices.stats:IndexMetadataState'
-    indices.stats:MappingStats:
-      type: object
-      properties:
-        total_count:
-          type: number
-        total_estimated_overhead:
-          $ref: '#/components/schemas/_common:ByteSize'
-        total_estimated_overhead_in_bytes:
-          type: number
+              $ref: '#/components/schemas/indices.stats:IndexShardStats'
       required:
-        - total_count
-        - total_estimated_overhead_in_bytes
+        - primaries
+        - total
+        - uuid
     indices.stats:ShardCommit:
       type: object
       properties:
@@ -44220,31 +44191,6 @@ components:
         - data_path
         - is_custom_data_path
         - state_path
-    indices.stats:ShardQueryCache:
-      type: object
-      properties:
-        cache_count:
-          type: number
-        cache_size:
-          type: number
-        evictions:
-          type: number
-        hit_count:
-          type: number
-        memory_size_in_bytes:
-          type: number
-        miss_count:
-          type: number
-        total_count:
-          type: number
-      required:
-        - cache_count
-        - cache_size
-        - evictions
-        - hit_count
-        - memory_size_in_bytes
-        - miss_count
-        - total_count
     indices.stats:ShardRetentionLeases:
       type: object
       properties:
@@ -44297,70 +44243,6 @@ components:
         - global_checkpoint
         - local_checkpoint
         - max_seq_no
-    indices.stats:ShardStats:
-      type: object
-      properties:
-        commit:
-          $ref: '#/components/schemas/indices.stats:ShardCommit'
-        completion:
-          $ref: '#/components/schemas/_common:CompletionStats'
-        docs:
-          $ref: '#/components/schemas/_common:DocStats'
-        fielddata:
-          $ref: '#/components/schemas/_common:FielddataStats'
-        flush:
-          $ref: '#/components/schemas/_common:FlushStats'
-        get:
-          $ref: '#/components/schemas/_common:GetStats'
-        indexing:
-          $ref: '#/components/schemas/_common:IndexingStats'
-        mappings:
-          $ref: '#/components/schemas/indices.stats:MappingStats'
-        merges:
-          $ref: '#/components/schemas/_common:MergesStats'
-        shard_path:
-          $ref: '#/components/schemas/indices.stats:ShardPath'
-        query_cache:
-          $ref: '#/components/schemas/indices.stats:ShardQueryCache'
-        recovery:
-          $ref: '#/components/schemas/_common:RecoveryStats'
-        refresh:
-          $ref: '#/components/schemas/_common:RefreshStats'
-        request_cache:
-          $ref: '#/components/schemas/_common:RequestCacheStats'
-        retention_leases:
-          $ref: '#/components/schemas/indices.stats:ShardRetentionLeases'
-        routing:
-          $ref: '#/components/schemas/indices.stats:ShardRouting'
-        search:
-          $ref: '#/components/schemas/_common:SearchStats'
-        segments:
-          $ref: '#/components/schemas/_common:SegmentsStats'
-        seq_no:
-          $ref: '#/components/schemas/indices.stats:ShardSequenceNumber'
-        store:
-          $ref: '#/components/schemas/_common:StoreStats'
-        translog:
-          $ref: '#/components/schemas/_common:TranslogStats'
-        warmer:
-          $ref: '#/components/schemas/_common:WarmerStats'
-        bulk:
-          $ref: '#/components/schemas/_common:BulkStats'
-        shards:
-          type: object
-          additionalProperties:
-            type: object
-        shard_stats:
-          $ref: '#/components/schemas/indices.stats:ShardsTotalStats'
-        indices:
-          $ref: '#/components/schemas/indices.stats:IndicesStats'
-    indices.stats:ShardsTotalStats:
-      type: object
-      properties:
-        total_count:
-          type: number
-      required:
-        - total_count
     indices.update_aliases:Action:
       type: object
       properties:
@@ -46638,7 +46520,7 @@ components:
         indexing_pressure:
           $ref: '#/components/schemas/nodes._common:IndexingPressure'
         indices:
-          $ref: '#/components/schemas/indices.stats:ShardStats'
+          $ref: '#/components/schemas/indices.stats:IndexShardStats'
         shard_indexing_pressure:
           $ref: '#/components/schemas/nodes._common:ShardIndexingPressureStats'
         search_backpressure:
