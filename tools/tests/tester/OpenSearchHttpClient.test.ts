@@ -9,58 +9,68 @@
 
 import axios from "axios";
 import { OpenSearchHttpClient } from "OpenSearchHttpClient"
-
-jest.mock('axios')
+import AxiosMockAdapter from "axios-mock-adapter";
 
 describe('OpenSearchHttpClient', () => {
-  let mocked_axios: jest.Mocked<typeof axios> = axios as jest.Mocked<typeof axios>
-
-  beforeEach(() => {
-    mocked_axios.create.mockReturnThis()
-    mocked_axios.interceptors.request.use = jest.fn().mockReturnValue({ headers: {} })
-  })
+  var mock = new AxiosMockAdapter(axios)
 
   afterEach(() => {
-    jest.clearAllMocks()
+    mock.reset()
   })
 
-  it('uses password authentication', () => {
-    new OpenSearchHttpClient({
+  it('adds a Basic auth header', async () => {
+    let client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       basic_auth: {
-        username: 'admin',
-        password: 'password'
+        username: 'u',
+        password: 'p'
       }
     })
 
-    expect(mocked_axios.create.mock.calls[0][0]).toMatchObject({
-      auth: {
-        username: 'admin',
-        password: 'password'
-      },
-      baseURL: 'https://localhost:9200'
+    mock.onAny().reply((config) => {
+      expect(config.headers?.Authorization).toMatch(/^Basic /)
+      return [200, { called: true }]
     })
 
-    expect(mocked_axios.interceptors.request.use).not.toHaveBeenCalled()
+    expect((await client.get('/')).data).toEqual({ called: true })
   })
 
-  it('assigns a request interceptor with SigV4 authentication', () => {
-    new OpenSearchHttpClient({
+  it('allows to overwrite Authorization', async () => {
+    let client = new OpenSearchHttpClient({
+      url: 'https://localhost:9200',
+      basic_auth: {
+        username: 'u',
+        password: 'p'
+      }
+    })
+
+    mock.onAny().reply((config) => {
+      expect(config.headers?.Authorization).toEqual('custom')
+      return [200, { called: true }]
+    })
+
+    expect((await client.get('/', { headers: { Authorization: 'custom' } })).data).toEqual({ called: true })
+  })
+
+  it('adds a Sigv4 header', async () => {
+    let client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       aws_auth: {
         aws_access_key_id: 'key id',
         aws_access_secret_key: 'secret key',
         aws_access_session_token: 'session token',
-        aws_region: 'us-west-2',
+        aws_region: 'us-west-42',
         aws_service: 'aoss'
       }
     })
 
-    expect(mocked_axios.create.mock.calls[0][0]).toMatchObject({
-      auth: undefined,
-      baseURL: 'https://localhost:9200'
+    mock.onAny().reply((config) => {
+      expect(config.headers?.Authorization).toMatch(
+        /^AWS4-HMAC-SHA256 Credential=key id\/\d*\/us-west-42\/aoss\/aws4_request/
+      )
+      return [200, { called: true }]
     })
 
-    expect(mocked_axios.interceptors.request.use).toHaveBeenCalled()
+    expect((await client.get('/')).data).toEqual({ called: true })
   })
 })

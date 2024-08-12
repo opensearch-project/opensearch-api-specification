@@ -133,18 +133,23 @@ export class OpenSearchHttpClient {
     this._opts = opts
     this._logger = opts?.logger ?? new Logger()
 
-    let auth = undefined
-    let sigv4_interceptor = undefined
+    let auth_middleware = undefined
 
     if (opts?.basic_auth !== undefined) {
       this._logger.info(`Authenticating with ${opts.basic_auth.username} ...`)
-      auth = opts.basic_auth
+      auth_middleware = ((request: any): any => {
+        if (request.headers.Authorization === undefined) {
+          const base64 = Buffer.from(`${opts.basic_auth?.username}:${opts.basic_auth?.password}`, 'utf8').toString('base64');
+          request.headers.Authorization = `Basic ${base64}`
+        }
+        return request
+      })
     } else if (opts?.aws_auth !== undefined) {
       this._logger.info(`Authenticating using SigV4 with ${opts.aws_auth.aws_access_key_id} (${opts.aws_auth.aws_region}) ...`)
-      sigv4_interceptor = aws4Interceptor({
+      auth_middleware = aws4Interceptor({
         options: {
           region: opts.aws_auth.aws_region,
-          service: 'es'
+          service: opts.aws_auth.aws_service
         },
         credentials: {
           accessKeyId: opts.aws_auth.aws_access_key_id,
@@ -158,13 +163,12 @@ export class OpenSearchHttpClient {
 
     this._axios = axios.create({
       baseURL: opts?.url ?? DEFAULT_URL,
-      auth,
       httpsAgent: new https.Agent({ rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE) }),
       responseType: opts?.responseType,
     })
 
-    if (sigv4_interceptor !== undefined) {
-      this._axios.interceptors.request.use(sigv4_interceptor)
+    if (auth_middleware !== undefined) {
+      this._axios.interceptors.request.use(auth_middleware)
     }
   }
 
