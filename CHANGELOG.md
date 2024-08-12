@@ -109,6 +109,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `_source` accepting an array of fields in `/_search` ([#430](https://github.com/opensearch-project/opensearch-api-specification/pull/430))
 - Fixed `_update_by_query` with a simple term ([#451](https://github.com/opensearch-project/opensearch-api-specification/pull/451))
 - Fixed `Duration` to allow for non-integers ([#479](https://github.com/opensearch-project/opensearch-api-specification/pull/479))
+- Fixed accuracy of the index stats schemas ([#491](https://github.com/opensearch-project/opensearch-api-specification/pull/491))
 
 ### Security
 
