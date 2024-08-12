@@ -20,10 +20,6 @@ import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import * as ansi from './Ansi'
 import _ from 'lodash'
 
-const EXCLUDED_FILES = [
-  'docker-compose.yml'
-]
-
 export default class TestRunner {
   private readonly _http_client: OpenSearchHttpClient
   private readonly _story_validator: StoryValidator
@@ -69,6 +65,9 @@ export default class TestRunner {
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
     if (fs.statSync(path).isFile()) {
+      if (!path.endsWith('.yaml')) {
+        return []
+      }
       const story: Story = read_yaml(path)
       return [{
         display_path: next_prefix === '' ? basename(path) : next_prefix,
@@ -77,9 +76,7 @@ export default class TestRunner {
       }]
     } else {
       return _.compact(fs.readdirSync(path).flatMap(next_file => {
-        if (!EXCLUDED_FILES.includes(next_file)) {
-          return this.#collect_story_files(path, next_file, next_prefix)
-        }
+        return this.#collect_story_files(path, next_file, next_prefix)
       }))
     }
   }
