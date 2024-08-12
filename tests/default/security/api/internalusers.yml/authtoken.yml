@@ -1,8 +1,7 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
-$schema: ../../../../json_schemas/test_story.schema.yaml
-
-description: Test authtoken endpoints for user.
-version: '>2.16' # Fixed via https://github.com/opensearch-project/security/pull/4628
+description: Test internalusers/authtoken endpoint.
+version: '> 2.16' # Fixed via https://github.com/opensearch-project/security/pull/4628
 
 prologues:
   - path: /_plugins/_security/api/internalusers/{username}
@@ -17,6 +16,7 @@ prologues:
           service: true
           enabled: true
     status: [201]
+
 chapters:
   # Auth-tokens can only be vended for service accounts.
   - synopsis: Create internal user token.
@@ -26,13 +26,7 @@ chapters:
       username: test
     response:
       status: 200
-  - synopsis: Create user token.
-    path: /_plugins/_security/api/user/{username}/authtoken
-    method: POST
-    parameters:
-      username: test
-    response:
-      status: 501
+
 epilogues:
   - path: /_plugins/_security/api/internalusers/{username}
     method: DELETE
