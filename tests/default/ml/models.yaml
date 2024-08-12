@@ -11,6 +11,8 @@ prologues:
           plugins:
             ml_commons:
               only_run_on_ml_node: false
+  - path: /_plugins/_ml/tasks/*
+    method: DELETE
 chapters:
   - synopsis: Create model.
     id: create_model
@@ -26,6 +28,7 @@ chapters:
     output:
       task_id: payload.task_id
   - synopsis: Wait for task.
+    id: register_model
     path: /_plugins/_ml/tasks/{task_id}
     method: GET
     warnings:
@@ -36,6 +39,13 @@ chapters:
       status: 200
       payload:
         state: COMPLETED
+    output:
+      model_id: payload.model_id
     retry:
-      count: 3
+      count: 5
       wait: 30000
+  - synopsis: Delete model.
+    path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${register_model.model_id}
+    method: DELETE
