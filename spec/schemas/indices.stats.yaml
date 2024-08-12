@@ -24,66 +24,74 @@ components:
       required:
         - description
         - size_in_bytes
-    IndicesStats:
+    AllIndicesStats:
       type: object
       properties:
         primaries:
+          $ref: '#/components/schemas/IndexStats'
+        total:
+          $ref: '#/components/schemas/IndexStats'
+      required:
+        - primaries
+        - total
+    IndicesStats:
+      type: object
+      properties:
+        uuid:
+          $ref: '_common.yaml#/components/schemas/Uuid'
+        primaries:
+          $ref: '#/components/schemas/IndexStats'
+        total:
           $ref: '#/components/schemas/IndexStats'
         shards:
           type: object
           additionalProperties:
             type: array
             items:
-              $ref: '#/components/schemas/ShardStats'
-        total:
-          $ref: '#/components/schemas/IndexStats'
-        uuid:
-          $ref: '_common.yaml#/components/schemas/Uuid'
-        health:
-          $ref: '_common.yaml#/components/schemas/HealthStatus'
-        status:
-          $ref: '#/components/schemas/IndexMetadataState'
-    IndexStats:
+              $ref: '#/components/schemas/IndexShardStats'
+      required:
+        - primaries
+        - total
+        - uuid
+    IndexStatsBase:
       type: object
       properties:
-        completion:
-          $ref: '_common.yaml#/components/schemas/CompletionStats'
         docs:
           $ref: '_common.yaml#/components/schemas/DocStats'
-        fielddata:
-          $ref: '_common.yaml#/components/schemas/FielddataStats'
-        flush:
-          $ref: '_common.yaml#/components/schemas/FlushStats'
-        get:
-          $ref: '_common.yaml#/components/schemas/GetStats'
-        indexing:
-          $ref: '_common.yaml#/components/schemas/IndexingStats'
-        indices:
-          $ref: '#/components/schemas/IndicesStats'
-        merges:
-          $ref: '_common.yaml#/components/schemas/MergesStats'
-        query_cache:
-          $ref: '_common.yaml#/components/schemas/QueryCacheStats'
-        recovery:
-          $ref: '_common.yaml#/components/schemas/RecoveryStats'
-        refresh:
-          $ref: '_common.yaml#/components/schemas/RefreshStats'
-        request_cache:
-          $ref: '_common.yaml#/components/schemas/RequestCacheStats'
-        search:
-          $ref: '_common.yaml#/components/schemas/SearchStats'
-        segments:
-          $ref: '_common.yaml#/components/schemas/SegmentsStats'
         store:
           $ref: '_common.yaml#/components/schemas/StoreStats'
-        translog:
-          $ref: '_common.yaml#/components/schemas/TranslogStats'
+        indexing:
+          $ref: '_common.yaml#/components/schemas/IndexingStats'
+        get:
+          $ref: '_common.yaml#/components/schemas/GetStats'
+        search:
+          $ref: '_common.yaml#/components/schemas/SearchStats'
+        merges:
+          $ref: '_common.yaml#/components/schemas/MergesStats'
+        refresh:
+          $ref: '_common.yaml#/components/schemas/RefreshStats'
+        flush:
+          $ref: '_common.yaml#/components/schemas/FlushStats'
         warmer:
           $ref: '_common.yaml#/components/schemas/WarmerStats'
-        bulk:
-          $ref: '_common.yaml#/components/schemas/BulkStats'
-        shard_stats:
-          $ref: '#/components/schemas/ShardsTotalStats'
+        query_cache:
+          $ref: '_common.yaml#/components/schemas/QueryCacheStats'
+        fielddata:
+          $ref: '_common.yaml#/components/schemas/FielddataStats'
+        completion:
+          $ref: '_common.yaml#/components/schemas/CompletionStats'
+        segments:
+          $ref: '_common.yaml#/components/schemas/SegmentsStats'
+        translog:
+          $ref: '_common.yaml#/components/schemas/TranslogStats'
+        request_cache:
+          $ref: '_common.yaml#/components/schemas/RequestCacheStats'
+        recovery:
+          $ref: '_common.yaml#/components/schemas/RecoveryStats'
+    IndexStats:
+      allOf:
+        - $ref: '#/components/schemas/IndexStatsBase'
+        - type: object
     ShardsTotalStats:
       type: object
       properties:
@@ -91,63 +99,21 @@ components:
           type: number
       required:
         - total_count
-    ShardStats:
-      type: object
-      properties:
-        commit:
-          $ref: '#/components/schemas/ShardCommit'
-        completion:
-          $ref: '_common.yaml#/components/schemas/CompletionStats'
-        docs:
-          $ref: '_common.yaml#/components/schemas/DocStats'
-        fielddata:
-          $ref: '_common.yaml#/components/schemas/FielddataStats'
-        flush:
-          $ref: '_common.yaml#/components/schemas/FlushStats'
-        get:
-          $ref: '_common.yaml#/components/schemas/GetStats'
-        indexing:
-          $ref: '_common.yaml#/components/schemas/IndexingStats'
-        mappings:
-          $ref: '#/components/schemas/MappingStats'
-        merges:
-          $ref: '_common.yaml#/components/schemas/MergesStats'
-        shard_path:
-          $ref: '#/components/schemas/ShardPath'
-        query_cache:
-          $ref: '#/components/schemas/ShardQueryCache'
-        recovery:
-          $ref: '_common.yaml#/components/schemas/RecoveryStats'
-        refresh:
-          $ref: '_common.yaml#/components/schemas/RefreshStats'
-        request_cache:
-          $ref: '_common.yaml#/components/schemas/RequestCacheStats'
-        retention_leases:
-          $ref: '#/components/schemas/ShardRetentionLeases'
-        routing:
-          $ref: '#/components/schemas/ShardRouting'
-        search:
-          $ref: '_common.yaml#/components/schemas/SearchStats'
-        segments:
-          $ref: '_common.yaml#/components/schemas/SegmentsStats'
-        seq_no:
-          $ref: '#/components/schemas/ShardSequenceNumber'
-        store:
-          $ref: '_common.yaml#/components/schemas/StoreStats'
-        translog:
-          $ref: '_common.yaml#/components/schemas/TranslogStats'
-        warmer:
-          $ref: '_common.yaml#/components/schemas/WarmerStats'
-        bulk:
-          $ref: '_common.yaml#/components/schemas/BulkStats'
-        shards:
-          type: object
-          additionalProperties:
-            type: object
-        shard_stats:
-          $ref: '#/components/schemas/ShardsTotalStats'
-        indices:
-          $ref: '#/components/schemas/IndicesStats'
+    IndexShardStats:
+      allOf:
+        - $ref: '#/components/schemas/IndexStatsBase'
+        - type: object
+          properties:
+            routing:
+              $ref: '#/components/schemas/ShardRouting'
+            commit:
+              $ref: '#/components/schemas/ShardCommit'
+            seq_no:
+              $ref: '#/components/schemas/ShardSequenceNumber'
+            retention_leases:
+              $ref: '#/components/schemas/ShardRetentionLeases'
+            shard_path:
+              $ref: '#/components/schemas/ShardPath'
     ShardCommit:
       type: object
       properties:
@@ -282,8 +248,3 @@ components:
         - global_checkpoint
         - local_checkpoint
         - max_seq_no
-    IndexMetadataState:
-      type: string
-      enum:
-        - close
-        - open

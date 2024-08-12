@@ -1250,13 +1250,6 @@ components:
         reserved_in_bytes:
           description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
           type: number
-        total_data_set_size:
-          $ref: '#/components/schemas/ByteSize'
-        total_data_set_size_in_bytes:
-          description: |-
-            Total data set size, in bytes, of all shards assigned to selected nodes.
-            This includes the size of shards not stored fully on the nodes, such as the cache for partially mounted indices.
-          type: number
       required:
         - reserved_in_bytes
         - size_in_bytes
@@ -1503,25 +1496,25 @@ components:
     GetStats:
       type: object
       properties:
-        current:
-          type: number
-        exists_time:
-          $ref: '#/components/schemas/Duration'
-        exists_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        exists_total:
-          type: number
-        missing_time:
-          $ref: '#/components/schemas/Duration'
-        missing_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        missing_total:
+        total:
           type: number
         time:
           $ref: '#/components/schemas/Duration'
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-        total:
+        exists_total:
+          type: number
+        exists_time:
+          $ref: '#/components/schemas/Duration'
+        exists_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        missing_total:
+          type: number
+        missing_time:
+          $ref: '#/components/schemas/Duration'
+        missing_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        current:
           type: number
       required:
         - current
@@ -1534,40 +1527,39 @@ components:
     IndexingStats:
       type: object
       properties:
+        index_total:
+          type: number
+        index_time:
+          $ref: '#/components/schemas/Duration'
+        index_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
         index_current:
           type: number
-        delete_current:
+        index_failed:
+          type: number
+        delete_total:
           type: number
         delete_time:
           $ref: '#/components/schemas/Duration'
         delete_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-        delete_total:
+        delete_current:
           type: number
-        doc_status:
-          $ref: '#/components/schemas/DocStatus'
-        is_throttled:
-          type: boolean
         noop_update_total:
           type: number
+        is_throttled:
+          type: boolean
         throttle_time:
           $ref: '#/components/schemas/Duration'
         throttle_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-        index_time:
-          $ref: '#/components/schemas/Duration'
-        index_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        index_total:
-          type: number
-        index_failed:
-          type: number
+        doc_status:
+          $ref: '#/components/schemas/DocStatus'
         types:
+          x-version-removed: '2.0'
           type: object
           additionalProperties:
             $ref: '#/components/schemas/IndexingStats'
-        write_load:
-          type: number
       required:
         - delete_current
         - delete_time_in_millis
@@ -1684,6 +1676,21 @@ components:
     SearchStats:
       type: object
       properties:
+        open_contexts:
+          description: The number of open search contexts.
+          type: number
+        query_current:
+          description: The number of shard query operations that are currently running.
+          type: number
+        query_time:
+          description: The total amount of time for all shard query operations.
+          $ref: '#/components/schemas/Duration'
+        query_time_in_millis:
+          description: The total amount of time for all shard query operations, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        query_total:
+          description: The total number of shard query operations.
+          type: number
         concurrent_query_total:
           description: The total number of query operations that use concurrent segment search.
           type: number
@@ -1710,39 +1717,6 @@ components:
         fetch_total:
           description: The total number of shard fetch operations.
           type: number
-        open_contexts:
-          description: The number of open search contexts.
-          type: number
-        point_in_time_total:
-          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
-          type: number
-        point_in_time_time:
-          $ref: '#/components/schemas/Duration'
-        point_in_time_time_in_millis:
-          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        point_in_time_current:
-          description: The number of shard PIT contexts currently open.
-          type: number
-        query_current:
-          description: The number of shard query operations that are currently running.
-          type: number
-        query_time:
-          description: The total amount of time for all shard query operations.
-          $ref: '#/components/schemas/Duration'
-        query_time_in_millis:
-          description: The total amount of time for all shard query operations, in milliseconds.
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        query_total:
-          description: The total number of shard query operations.
-          type: number
-        request:
-          type: object
-          description: Statistics about coordinator search operations for the node.
-          additionalProperties:
-            $ref: '#/components/schemas/RequestStats'
-        search_idle_reactivate_count_total:
-          type: number
         scroll_current:
           description: The number of shard scroll operations that are currently running.
           type: number
@@ -1754,6 +1728,17 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
+          type: number
+        point_in_time_total:
+          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
+          type: number
+        point_in_time_time:
+          $ref: '#/components/schemas/Duration'
+        point_in_time_time_in_millis:
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        point_in_time_current:
+          description: The number of shard PIT contexts currently open.
           type: number
         suggest_current:
           description: The number of shard suggest operations that are currently running.
@@ -1767,6 +1752,13 @@ components:
         suggest_total:
           description: The total number of shard suggest operations.
           type: number
+        search_idle_reactivate_count_total:
+          type: number
+        request:
+          type: object
+          description: Statistics about coordinator search operations for the node.
+          additionalProperties:
+            $ref: '#/components/schemas/RequestStats'
         groups:
           type: object
           additionalProperties:
