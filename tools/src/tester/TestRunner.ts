@@ -40,7 +40,7 @@ export default class TestRunner {
     const results: StoryEvaluations = { evaluations: [] }
 
     if (!dry_run) {
-      if (distribution === 'aoss') {
+      if (distribution === 'amazon-serverless') {
         // TODO: Fetch OpenSearch version when Amazon Serverless OpenSearch supports multiple.
         version = '2.1'
       } else {

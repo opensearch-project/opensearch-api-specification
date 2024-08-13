@@ -149,7 +149,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-distributions-included`: Contains a list of distributions known to include the API.
 - `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
 
-Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-opensearch` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless. 
+Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless. 
 
 ## Writing Spec Tests
 
