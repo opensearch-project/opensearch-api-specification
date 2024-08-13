@@ -3839,6 +3839,36 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_model@200'
+  /_plugins/_ml/models/{model_id}/_deploy:
+    post:
+      operationId: ml.deploy_model.0
+      x-operation-group: ml.deploy_model
+      description: Deploys a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.deploy_model::path.model_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.deploy_model@200'
+  /_plugins/_ml/models/{model_id}/_undeploy:
+    post:
+      operationId: ml.undeploy_model.0
+      x-operation-group: ml.undeploy_model
+      description: Undeploys a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.undeploy_model::path.model_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.undeploy_model@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
@@ -19526,6 +19556,12 @@ components:
       required: true
       schema:
         type: string
+    ml.deploy_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.get_model_group::path.model_group_id:
       name: model_group_id
       in: path
@@ -19534,6 +19570,12 @@ components:
         type: string
     ml.get_task::path.task_id:
       name: task_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.undeploy_model::path.model_id:
+      name: model_id
       in: path
       required: true
       schema:
@@ -25611,6 +25653,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_common:WriteResponseBase'
+    ml.deploy_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
+              task_type:
+                type: string
+            required:
+              - status
+              - task_id
     ml.get_model_group@200:
       content:
         application/json:
@@ -25644,6 +25701,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ml._common:SearchModelsResponse'
+    ml.undeploy_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common:UndeployModelResponse'
     msearch_template@200:
       content:
         application/json:
@@ -35138,6 +35200,41 @@ components:
                 - keyword
           required:
             - type
+    _common.mapping:KnnVectorMethod:
+      type: object
+      properties:
+        name:
+          type: string
+        space_type:
+          type: string
+        engine:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+      required:
+        - name
+    _common.mapping:KnnVectorProperty:
+      allOf:
+        - $ref: '#/components/schemas/_common.mapping:KnnVectorPropertyBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - knn_vector
+          required:
+            - type
+    _common.mapping:KnnVectorPropertyBase:
+      type: object
+      properties:
+        dimension:
+          type: number
+        method:
+          $ref: '#/components/schemas/_common.mapping:KnnVectorMethod'
+      required:
+        - dimension
     _common.mapping:LongNumberProperty:
       allOf:
         - $ref: '#/components/schemas/_common.mapping:NumberPropertyBase'
@@ -35336,6 +35433,7 @@ components:
         - $ref: '#/components/schemas/_common.mapping:IntegerRangeProperty'
         - $ref: '#/components/schemas/_common.mapping:IpRangeProperty'
         - $ref: '#/components/schemas/_common.mapping:LongRangeProperty'
+        - $ref: '#/components/schemas/_common.mapping:KnnVectorProperty'
     _common.mapping:PropertyBase:
       type: object
       properties:
@@ -36724,6 +36822,32 @@ components:
           required:
             - path
             - query
+    _common.query_dsl:NeuralQuery:
+      allOf:
+        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
+        - type: object
+          additionalProperties:
+            $ref: '#/components/schemas/_common.query_dsl:NeuralQueryVectorField'
+    _common.query_dsl:NeuralQueryVectorField:
+      type: object
+      properties:
+        query_text:
+          type: string
+        query_image:
+          type: string
+          format: binary
+        model_id:
+          type: string
+        k:
+          type: integer
+        min_score:
+          type: number
+        max_distance:
+          type: number
+        filter:
+          $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
+      required:
+        - model_id
     _common.query_dsl:NumberRangeQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:RangeQueryBase'
@@ -36971,6 +37095,8 @@ components:
           $ref: '#/components/schemas/_common.query_dsl:MultiMatchQuery'
         nested:
           $ref: '#/components/schemas/_common.query_dsl:NestedQuery'
+        neural:
+          $ref: '#/components/schemas/_common.query_dsl:NeuralQuery'
         parent_id:
           $ref: '#/components/schemas/_common.query_dsl:ParentIdQuery'
         percolate:
@@ -45714,8 +45840,22 @@ components:
           format: int64
         is_async:
           type: boolean
+        error:
+          type: string
       required:
         - state
+    ml._common:UndeployModelResponse:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ml._common:UndeployModelResponseModels'
+    ml._common:UndeployModelResponseModels:
+      type: object
+      properties:
+        stats:
+          $ref: '#/components/schemas/ml._common:UndeployModelResponseStats'
+    ml._common:UndeployModelResponseStats:
+      type: object
+      additionalProperties: true
     nodes._common:AdaptiveSelection:
       type: object
       properties:
