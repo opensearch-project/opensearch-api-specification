@@ -112,6 +112,8 @@ components:
           $ref: '#/components/schemas/MultiMatchQuery'
         nested:
           $ref: '#/components/schemas/NestedQuery'
+        neural:
+          $ref: '#/components/schemas/NeuralQuery'
         parent_id:
           $ref: '#/components/schemas/ParentIdQuery'
         percolate:
@@ -1222,6 +1224,32 @@ components:
           required:
             - path
             - query
+    NeuralQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NeuralQueryVectorField'
+    NeuralQueryVectorField:
+      type: object
+      properties:
+        query_text:
+          type: string
+        query_image:
+          type: string
+          format: binary
+        model_id:
+          type: string
+        k:
+          type: integer
+        min_score:
+          type: number
+        max_distance:
+          type: number
+        filter:
+          $ref: '#/components/schemas/QueryContainer'
+      required:
+        - model_id
     ParentIdQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
