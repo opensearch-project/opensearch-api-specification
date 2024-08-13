@@ -195,11 +195,11 @@ You can also reuse output in payload expectations. See [tests/plugins/index_stat
 
 ### Managing Versions
 
-It's common to add a feature to the next version of OpenSearch. When adding a new API in the spec, make sure to specify `x-version-added`, `x-version-deprecated` or `x-version-removed`. Finally, specify a semver range in your test stories or chapters as follows.
+It's common to add a feature to the next version of OpenSearch. When adding a new API in the spec, make sure to specify `x-version-added`, `x-version-deprecated` or `x-version-removed`. Finally, specify a semver or a semver range in your test stories or chapters as follows.
 
 ```yaml
-- synopsis: Search with `phase_took` added in OpenSearch 2.12.
-  version: '>= 2.12'
+- synopsis: Search with `phase_took` added in OpenSearch 2.12 and removed in version 3.
+  version: '>=2.12 <3'
   path: /{index}/_search
   parameters:
     index: movies

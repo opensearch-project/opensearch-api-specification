@@ -14,7 +14,7 @@ import { overall_result } from './helpers'
 import { StoryOutputs } from './StoryOutputs'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import { ChapterOutput } from './ChapterOutput'
-import * as semver from 'semver'
+import * as semver from '../_utils/semver'
 import _ from 'lodash'
 
 export default class StoryEvaluator {
