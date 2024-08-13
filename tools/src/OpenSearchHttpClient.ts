@@ -22,10 +22,6 @@ export const OPENSEARCH_URL_OPTION = new Option('--opensearch-url <url>', 'URL a
   .default(DEFAULT_URL)
   .env('OPENSEARCH_URL')
 
-export const OPENSEARCH_DISTRIBUTION_OPTION = new Option('--opensearch-distribution <key>', 'OpenSearch distribution')
-  .default('opensearch.org')
-  .env('OPENSEARCH_DISTRIBUTION')
-
 export const OPENSEARCH_USERNAME_OPTION = new Option('--opensearch-username <username>', 'username to use when authenticating with OpenSearch')
   .default(DEFAULT_USER)
   .env('OPENSEARCH_USERNAME')
@@ -68,7 +64,6 @@ export interface AwsAuth {
 
 export interface OpenSearchHttpClientOptions {
   url?: string
-  distribution?: string,
   insecure?: boolean
   responseType?: ResponseType
   logger?: Logger,
@@ -94,7 +89,6 @@ export type OpenSearchHttpClientCliOptions = {
 export function get_opensearch_opts_from_cli (opts: OpenSearchHttpClientCliOptions): OpenSearchHttpClientOptions {
   return {
     url: opts.opensearchUrl,
-    distribution: opts.opensearchDistribution,
     insecure: opts.opensearchInsecure,
     basic_auth: opts.opensearchUsername !== undefined && opts.opensearchPassword !== undefined ? {
       username: opts.opensearchUsername,

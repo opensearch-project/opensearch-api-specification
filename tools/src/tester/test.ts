@@ -17,7 +17,6 @@ import {
   AWS_SERVICE_OPTION,
   AWS_SESSION_TOKEN_OPTION,
   get_opensearch_opts_from_cli,
-  OPENSEARCH_DISTRIBUTION_OPTION,
   OPENSEARCH_INSECURE_OPTION,
   OPENSEARCH_PASSWORD_OPTION,
   OPENSEARCH_URL_OPTION,
@@ -48,8 +47,10 @@ const command = new Command()
   .addOption(new Option('--verbose', 'whether to print the full stack trace of errors').default(false))
   .addOption(new Option('--dry-run', 'dry run only, do not make HTTP requests').default(false))
   .addOption(new Option('--opensearch-version <number>', 'target OpenSearch schema version').default(undefined))
+  .addOption(new Option('--opensearch-distribution <key>', 'OpenSearch distribution')
+    .default('opensearch.org')
+    .env('OPENSEARCH_DISTRIBUTION'))
   .addOption(OPENSEARCH_URL_OPTION)
-  .addOption(OPENSEARCH_DISTRIBUTION_OPTION)
   .addOption(OPENSEARCH_USERNAME_OPTION)
   .addOption(OPENSEARCH_PASSWORD_OPTION)
   .addOption(OPENSEARCH_INSECURE_OPTION)
