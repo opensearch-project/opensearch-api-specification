@@ -11,7 +11,7 @@ import _, { extend, isEmpty } from 'lodash'
 import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
 import { type OpenAPIV3 } from 'openapi-types'
-import semver from 'semver'
+import * as semver from '../_utils/semver'
 
 // Extract a versioned API
 export default class OpenApiVersionExtractor {
@@ -22,7 +22,7 @@ export default class OpenApiVersionExtractor {
 
   constructor(source_spec: OpenAPIV3.Document, target_version: string, logger: Logger = new Logger()) {
     this._source_spec = source_spec
-    this._target_version = semver.coerce(target_version)?.toString() ?? target_version
+    this._target_version = semver.coerce(target_version)
     this._logger = logger
     this._spec = undefined
   }
