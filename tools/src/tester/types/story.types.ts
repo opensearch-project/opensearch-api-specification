@@ -103,6 +103,7 @@ export interface Story {
   chapters: Chapter[];
   version?: Version;
   distributions?: Distributions;
+  warnings?: Warnings;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
