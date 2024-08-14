@@ -11,6 +11,7 @@
     - [Simple Test Story](#simple-test-story)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
     - [Managing Versions](#managing-versions)
+    - [Managing Distributions](#managing-distributions)
     - [Waiting for Tasks](#waiting-for-tasks)
     - [Warnings](#warnings)
       - [multiple-paths-detected](#multiple-paths-detected)
@@ -195,11 +196,11 @@ You can also reuse output in payload expectations. See [tests/plugins/index_stat
 
 ### Managing Versions
 
-It's common to add a feature to the next version of OpenSearch. When adding a new API in the spec, make sure to specify `x-version-added`, `x-version-deprecated` or `x-version-removed`. Finally, specify a semver range in your test stories or chapters as follows.
+It's common to add a feature to the next version of OpenSearch. When adding a new API in the spec, make sure to specify `x-version-added`, `x-version-deprecated` or `x-version-removed`. Finally, specify a semver or a semver range in your test stories or chapters as follows.
 
 ```yaml
-- synopsis: Search with `phase_took` added in OpenSearch 2.12.
-  version: '>= 2.12'
+- synopsis: Search with `phase_took` added in OpenSearch 2.12 and removed in version 3.
+  version: '>=2.12 <3'
   path: /{index}/_search
   parameters:
     index: movies
@@ -209,7 +210,59 @@ It's common to add a feature to the next version of OpenSearch. When adding a ne
     status: 200
 ```
 
-The [integration test workflow](.github/workflows/test-spec.yml) runs a matrix of OpenSearch versions, including the next version. Please check whether the workflow needs an update when adding version-specific tests.
+The test tool will fetch the server version when it starts and use it automatically. The [integration test workflow](.github/workflows/test-spec.yml) runs a matrix of OpenSearch versions, including the next version. Please check whether the workflow needs an update when adding version-specific tests.
+
+### Managing Distributions
+
+OpenSearch consists of plugins that may or may not be present in various distributions. When adding a new API in the spec, you can specify `x-distributions-included` or `x-distributions-excluded` with a list of distributions that have a particular feature. For example, the Amazon Managed OpenSearch supports `GET /`, but Amazon Serverless OpenSearch does not.
+
+```yaml
+/:
+  get:
+    operationId: info.0
+    x-distributions-included:
+      - opensearch.org
+      - amazon-managed
+    x-distributions-excluded:
+      - amazon-serverless
+    description: Returns basic information about the cluster.
+```
+
+Similarly, skip tests that are not applicable to a distribution by listing the distributions that support it.
+
+```yaml
+description: Test root endpoint.
+distributions:
+  - amazon-managed
+  - opensearch.org
+chapters:
+  - synopsis: Get server info.
+    path: /
+    method: GET
+    response:
+      status: 200
+```
+
+To test a particular distribution pass `--opensearch-distribution` to the test tool. For example, the following runs tests against an Amazon Managed OpenSearch instance.
+
+```bash
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...
+export AWS_REGION=us-west-2
+
+export OPENSEARCH_URL=https://....us-west-2.es.amazonaws.com
+
+npm run test:spec -- --opensearch-distribution=amazon-managed
+```
+
+The output will visible skip APIs that are not available in the `amazon-managed` distribution.
+
+```
+PASSED  _core/bulk.yaml (.../_core/bulk.yaml)
+PASSED  _core/info.yaml (.../_core/info.yaml)
+SKIPPED indices/forcemerge.yaml (Skipped because distribution amazon-managed is not opensearch.org.)
+```
 
 ### Waiting for Tasks
 

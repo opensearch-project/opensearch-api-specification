@@ -1,0 +1,71 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: |-
+  Test the creation of a search pipeline with a response processor.
+version: '>= 2.8'
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: 'true'
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Moneyball, year: 2011}
+        - {create: {_index: movies}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+epilogues:
+  - path: /_search/pipeline/filter_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create search pipeline.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: filter_pipeline
+    request:
+      payload:
+        request_processors:
+          - filter_query:
+              tag: tag
+              description: This processor restricts searches to 20th century movies.
+              query:
+                range:
+                  year:
+                    lte: 2000
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Query created pipeline.
+    path: /_search/pipeline/{id}
+    method: GET
+    parameters:
+      id: filter_pipeline
+    response:
+      status: 200
+  - synopsis: Search.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}/_search
+    method: GET
+    parameters:
+      index: movies
+      search_pipeline: filter_pipeline
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+          hits:
+            - _index: movies
+              _source:
+                title: Drive
+                director: Nicolas Winding Refn
+                year: 1960
