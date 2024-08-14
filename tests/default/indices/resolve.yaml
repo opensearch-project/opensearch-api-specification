@@ -1,0 +1,24 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Tests to see if the specified index exits using the `_resolve` endpoint.
+prologues:
+  - path: /movies
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: See if index `movies` exists. It should.
+    path: /_resolve/index/movies
+    method: GET
+    parameters:
+      expand_wildcards: none
+    response:
+      status: 200
+  - synopsis: See if index `books` exists. It shouldn't.
+    path: /_resolve/index/book
+    method: GET
+    response:
+      status: 404
