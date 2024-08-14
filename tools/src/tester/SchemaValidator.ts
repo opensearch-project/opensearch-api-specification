@@ -19,7 +19,9 @@ const ADDITIONAL_KEYWORDS = [
   'x-version-added',
   'x-version-deprecated',
   'x-version-removed',
-  'x-deprecation-message'
+  'x-deprecation-message',
+  'x-distributions-included',
+  'x-distributions-excluded'
 ]
 
 export default class SchemaValidator {

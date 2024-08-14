@@ -9,7 +9,8 @@
 
 import * as semver from 'semver'
 
-export function coerce(version: string) : string {
+export function coerce(version?: string): undefined | string {
+  if (version === undefined) return undefined
   return semver.coerce(version)?.toString() ?? version
 }
 

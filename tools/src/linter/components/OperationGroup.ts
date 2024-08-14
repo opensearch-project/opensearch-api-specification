@@ -13,7 +13,7 @@ import ValidatorBase from './base/ValidatorBase'
 
 export default class OperationGroup extends ValidatorBase {
   static readonly OP_PRIORITY = ['operationId', 'x-operation-group', 'x-ignorable', 'deprecated',
-    'x-deprecation-message', 'x-version-added', 'x-version-deprecated', 'x-version-removed',
+    'x-deprecation-message', 'x-version-added', 'x-version-deprecated', 'x-version-removed', 'x-distributions-included', 'x-distributions-excluded',
     'description', 'externalDocs', 'parameters', 'requestBody', 'responses']
 
   name: string

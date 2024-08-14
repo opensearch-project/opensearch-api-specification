@@ -47,6 +47,9 @@ const command = new Command()
   .addOption(new Option('--verbose', 'whether to print the full stack trace of errors').default(false))
   .addOption(new Option('--dry-run', 'dry run only, do not make HTTP requests').default(false))
   .addOption(new Option('--opensearch-version <number>', 'target OpenSearch schema version').default(undefined))
+  .addOption(new Option('--opensearch-distribution <key>', 'OpenSearch distribution')
+    .default('opensearch.org')
+    .env('OPENSEARCH_DISTRIBUTION'))
   .addOption(OPENSEARCH_URL_OPTION)
   .addOption(OPENSEARCH_USERNAME_OPTION)
   .addOption(OPENSEARCH_PASSWORD_OPTION)
@@ -63,7 +66,7 @@ const command = new Command()
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 
-const spec = new MergedOpenApiSpec(opts.specPath, opts.opensearchVersion, new Logger(LogLevel.error))
+const spec = new MergedOpenApiSpec(opts.specPath, opts.opensearchVersion, opts.opensearchDistribution, new Logger(LogLevel.error))
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli({ responseType: 'arraybuffer', logger, ...opts }))
 const chapter_reader = new ChapterReader(http_client, logger)
 const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec.spec()), chapter_reader, new SchemaValidator(spec.spec(), logger), logger)
@@ -73,7 +76,7 @@ const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapt
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)
 const runner = new TestRunner(http_client, story_validator, story_evaluator, result_logger)
 
-runner.run(opts.testsPath, spec.api_version(), opts.dryRun)
+runner.run(opts.testsPath, spec.api_version(), opts.opensearchDistribution, opts.dryRun)
   .then(
     ({ results, failed }) => {
 

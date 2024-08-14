@@ -73,6 +73,7 @@ export interface OpenSearchHttpClientOptions {
 
 export type OpenSearchHttpClientCliOptions = {
   opensearchUrl?: string
+  opensearchDistribution?: string,
   opensearchUsername?: string
   opensearchPassword?: string
   opensearchInsecure?: boolean

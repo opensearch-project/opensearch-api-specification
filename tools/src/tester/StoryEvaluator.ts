@@ -26,8 +26,8 @@ export default class StoryEvaluator {
     this._supplemental_chapter_evaluator = supplemental_chapter_evaluator
   }
 
-  async evaluate({ story, display_path, full_path }: StoryFile, version?: string, dry_run: boolean = false): Promise<StoryEvaluation> {
-    if (version != undefined && story.version !== undefined && !semver.satisfies(version, story.version)) {
+  async evaluate({ story, display_path, full_path }: StoryFile, version?: string, distribution?: string, dry_run: boolean = false): Promise<StoryEvaluation> {
+    if (version !== undefined && story.version !== undefined && !semver.satisfies(version, story.version)) {
       return {
         result: Result.SKIPPED,
         display_path,
@@ -37,13 +37,23 @@ export default class StoryEvaluator {
       }
     }
 
+    if (distribution != undefined && story.distributions !== undefined && !story.distributions.includes(distribution)) {
+      return {
+        result: Result.SKIPPED,
+        display_path,
+        full_path,
+        description: story.description,
+        message: `Skipped because distribution ${distribution} is not ${story.distributions.length > 1 ? 'one of ' : ''}${story.distributions.join(', ')}.`
+      }
+    }
+
     const variables_error = StoryEvaluator.check_story_variables(story, display_path, full_path)
     if (variables_error !== undefined) {
       return variables_error
     }
     const story_outputs = new StoryOutputs()
     const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [], dry_run, story_outputs)
-    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version)
+    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version, distribution)
     const { evaluations: epilogues } = await this.#evaluate_supplemental_chapters(story.epilogues ?? [], dry_run, story_outputs)
     return {
       display_path,
@@ -76,7 +86,7 @@ export default class StoryEvaluator {
     }
   }
 
-  async #evaluate_chapters(chapters: Chapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string): Promise<ChapterEvaluation[]> {
+  async #evaluate_chapters(chapters: Chapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       if (dry_run) {
@@ -85,6 +95,9 @@ export default class StoryEvaluator {
       } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
         const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.`, error: undefined } })
+      } else if (distribution != undefined && chapter.distributions !== undefined && !chapter.distributions.includes(distribution)) {
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.length > 1 ? 'one of ' : ''}${chapter.distributions.join(', ')}.`, error: undefined } })
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR
