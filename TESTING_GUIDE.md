@@ -228,13 +228,16 @@ OpenSearch consists of plugins that may or may not be present in various distrib
     description: Returns basic information about the cluster.
 ```
 
-Similarly, skip tests that are not applicable to a distribution by listing the distributions that support it.
+Similarly, skip tests that are not applicable to a distribution by listing the distributions that support or do not support it.
 
 ```yaml
 description: Test root endpoint.
 distributions:
-  - amazon-managed
-  - opensearch.org
+  included:
+    - amazon-managed
+    - opensearch.org
+  excluded:
+    - amazon-serverless
 chapters:
   - synopsis: Get server info.
     path: /
