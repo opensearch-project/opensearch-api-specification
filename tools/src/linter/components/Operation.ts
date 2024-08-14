@@ -12,6 +12,7 @@ import _ from 'lodash'
 import ValidatorBase from './base/ValidatorBase'
 
 const GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z_]*[a-z]+)$/
+
 export default class Operation extends ValidatorBase {
   path: string
   verb: string
@@ -38,7 +39,7 @@ export default class Operation extends ValidatorBase {
     return [
       this.validate_operation_id(),
       this.validate_description(),
-      this.validate_request_body(),
+      this.validate_request(),
       this.validate_parameters(),
       this.validate_path_parameters(),
       this.validate_order_of_parameters(),
@@ -63,9 +64,7 @@ export default class Operation extends ValidatorBase {
   }
 
   validate_description (): ValidationError | undefined {
-    const description = this.spec.description ?? ''
-    if (description === '') { return this.error('Missing description property.') }
-    if (!description.endsWith('.')) { return this.error('Description must end with a period.') }
+    return this.validate_description_field(this.spec?.description, true)
   }
 
   validate_operation_id (): ValidationError | undefined {
@@ -75,7 +74,7 @@ export default class Operation extends ValidatorBase {
     if (!regex.test(id)) { return this.error(`Invalid operationId '${id}'. Must be in {x-operation-group}.{number} format.`) }
   }
 
-  validate_request_body (): ValidationError | undefined {
+  validate_request (): ValidationError | undefined {
     const body = this.spec.requestBody
     if (!body) return
     const expected = `#/components/requestBodies/${this.group}`

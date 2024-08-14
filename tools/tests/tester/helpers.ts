@@ -41,14 +41,16 @@ export function construct_tester_components (spec_path: string): {
   const operation_locator = new OperationLocator(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
     insecure: true,
-    username: process.env.OPENSEARCH_USERNAME ?? 'admin',
-    password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!',
+    basic_auth: {
+      username: process.env.OPENSEARCH_USERNAME ?? 'admin',
+      password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
+    },
     responseType: 'arraybuffer'
   })
   const chapter_reader = new ChapterReader(opensearch_http_client, logger)
   const schema_validator = new SchemaValidator(specification, logger)
   const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator, logger)
-  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader, logger)
   const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
@@ -97,7 +99,7 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
 
       if (c.request !== undefined) {
         result.request = {
-          request_body: flatten(c.request.request_body)
+          request: flatten(c.request.request)
         }
 
         if (c.request.parameters !== undefined) {
@@ -139,5 +141,5 @@ export async function load_actual_evaluation (evaluator: StoryEvaluator, name: s
     full_path,
     display_path: `${name}.yaml`,
     story: read_yaml(full_path)
-  }, process.env.OPENSEARCH_VERSION ?? '2.15.0'))
+  }, process.env.OPENSEARCH_VERSION ?? '2.16.0', process.env.OPENSEARCH_DISTRIBUTION ?? 'opensearch.org'))
 }

@@ -21,3 +21,11 @@ test('validate_name()', () => {
   expect(schema('Valid1Name').validate_name()).toBeUndefined()
   expect(schema('uint').validate_name()).toBeUndefined()
 })
+
+test('validate_description()', () => {
+  expect(schema('Name', { description: 'Does not end with a period' }).validate_description()).toEqual({
+    file: '_common.yaml',
+    location: '#/components/schemas/Name',
+    message: "The description must start with a capital letter and end with a period, got \"Does not end with a period\"."
+  })
+})

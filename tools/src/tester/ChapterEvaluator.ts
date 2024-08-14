@@ -64,15 +64,18 @@ export default class ChapterEvaluator {
   async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const params = this.#evaluate_parameters(chapter, operation)
-    const request_body = this.#evaluate_request_body(chapter, operation)
+    const request = this.#evaluate_request(chapter, operation)
     const status = this.#evaluate_status(chapter, response)
-    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, chapter.response?.payload) : { result: Result.SKIPPED }
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
     const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
+    const response_payload: Payload | undefined = status.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
+    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, response_payload) : { result: Result.SKIPPED }
+
+    if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
 
     const evaluations = _.compact(_.concat(
       Object.values(params),
-      request_body,
+      request,
       status,
       payload_body_evaluation,
       payload_schema_evaluation,
@@ -83,7 +86,7 @@ export default class ChapterEvaluator {
       title: chapter.synopsis,
       path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
-      request: { parameters: params, request_body },
+      request: { parameters: params, request },
       retries,
       response: {
         status,
@@ -109,25 +112,27 @@ export default class ChapterEvaluator {
     }))
   }
 
-  #evaluate_request_body(chapter: Chapter, operation: ParsedOperation): Evaluation {
-    if (!chapter.request_body) return { result: Result.PASSED }
-    const content_type = chapter.request_body.content_type ?? APPLICATION_JSON
+  #evaluate_request(chapter: Chapter, operation: ParsedOperation): Evaluation {
+    if (chapter.request?.payload === undefined) return { result: Result.PASSED }
+    const content_type = chapter.request.content_type ?? APPLICATION_JSON
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }
-    return this._schema_validator.validate(schema, chapter.request_body?.payload ?? {})
+    return this._schema_validator.validate(schema, chapter.request?.payload ?? {})
   }
 
   #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {
     const expected_status = chapter.response?.status ?? 200
-    if (response.status === expected_status) return { result: Result.PASSED }
+    if (response.status === expected_status && response.error === undefined) return { result: Result.PASSED }
 
-    const result: Evaluation = {
+    let result: Evaluation = {
       result: Result.ERROR,
       message: _.join(_.compact([
-        `Expected status ${expected_status}, but received ${response.status}: ${response.content_type}.`,
+        expected_status == response.status ?
+          `Received ${response.status ?? 'none'}: ${response.content_type ?? 'unknown'}.` :
+          `Expected status ${expected_status}, but received ${response.status ?? 'none'}: ${response.content_type ?? 'unknown'}.`,
         response.message
       ]), ' ')
-    };
+    }
 
     if (response.error !== undefined) {
       result.error = response.error as Error

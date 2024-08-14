@@ -1,0 +1,170 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test nodes stats.
+chapters:
+  - synopsis: Get stats for all nodes.
+    path: /_nodes/stats
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get stats for all nodes with parameters.
+    path: /_nodes/stats
+    method: GET
+    parameters:
+      completion_fields: '*'
+      fielddata_fields: '*'
+      fields: '*'
+      groups:
+        - '*'
+      timeout: 10s
+      include_segment_file_sizes: true
+    response:
+      status: 200
+  - synopsis: Get _all node stats (node_id).
+    path: /_nodes/{node_id}/stats
+    method: GET
+    parameters:
+      node_id: _all
+    response:
+      status: 200
+  - synopsis: Get fs metic node stats (metric).
+    path: /_nodes/stats/{metric}
+    method: GET
+    parameters:
+      metric:
+        - fs
+    response:
+      status: 200
+  - synopsis: Get fs metric node stats (node_id_or_metric).
+    warnings:
+      multiple-paths-detected: false
+    path: /_nodes/{node_id_or_metric}
+    method: GET
+    parameters:
+      node_id_or_metric: fs
+    response:
+      status: 200
+  - synopsis: Get jvm and fs metric node stats from data nodes.
+    path: /_nodes/{node_id}/stats/{metric}
+    method: GET
+    parameters:
+      node_id: data:true
+      metric:
+        - fs
+        - jvm
+    response:
+      status: 200
+  - synopsis: Get jvm and fs metric node stats with multiple nodes.
+    path: /_nodes/{node_id}/stats/{metric}
+    method: GET
+    parameters:
+      node_id:
+        - cluster_manager:false
+        - data:true
+      metric:
+        - fs
+        - jvm
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache.
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    parameters:
+      metric:
+        - adaptive_selection
+        - breaker
+        - discovery
+        - fs
+        - http
+        - indexing_pressure
+        - indices
+        - ingest
+        - jvm
+        - os
+        - process
+        - script
+        - script_cache
+        - shard_indexing_pressure
+        - thread_pool
+        - transport
+      index_metric:
+        - request_cache
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache (2.4).
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    version: '>= 2.4'
+    parameters:
+      metric:
+        - indices
+        - search_backpressure
+      index_metric:
+        - request_cache
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache (2.6).
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    version: '>= 2.6'
+    parameters:
+      metric:
+        - cluster_manager_throttling
+        - indices
+        - weighted_routing
+      index_metric:
+        - request_cache
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache (2.7).
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    version: '>= 2.7'
+    parameters:
+      metric:
+        - file_cache
+        - indices
+      index_metric:
+        - request_cache
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache (2.9).
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    version: '>= 2.9'
+    parameters:
+      metric:
+        - indices
+        - search_pipeline
+        - task_cancellation
+      index_metric:
+        - request_cache
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache (2.12).
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    version: '>= 2.12'
+    parameters:
+      metric:
+        - admission_control
+        - indices
+        - repositories
+        - resource_usage_stats
+        - segment_replication_backpressure
+      index_metric:
+        - request_cache
+    response:
+      status: 200
+  - synopsis: Get statistics for the request_cache (2.14).
+    path: /_nodes/stats/{metric}/{index_metric}
+    method: GET
+    version: '>= 2.14'
+    parameters:
+      metric:
+        - caches
+        - indices
+      index_metric:
+        - request_cache
+    response:
+      status: 200

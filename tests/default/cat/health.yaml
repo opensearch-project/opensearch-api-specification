@@ -1,0 +1,119 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test cat/health endpoints.
+chapters:
+  - synopsis: Cat with a default text response.
+    method: GET
+    path: /_cat/health
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with verbose output (v=true).
+    method: GET
+    path: /_cat/health
+    parameters:
+      v: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with headers (h=header1,header2).
+    method: GET
+    path: /_cat/health
+    parameters:
+      h:
+        - status
+        - timestamp
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat displaying all available headers (help=true).
+    method: GET
+    path: /_cat/health
+    parameters:
+      help: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat with sorted results.
+    method: GET
+    path: /_cat/health
+    parameters:
+      s:
+        - status
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: Cat in different formats (format=json).
+    method: GET
+    path: /_cat/health
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+      payload:
+        - node.total: '1'
+          node.data: '1'
+  - synopsis: Cat with master response (format=json).
+    method: GET
+    path: /_cat/health
+    version: < 2.0
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+      payload:
+        - node.total: '1'
+          node.data: '1'
+          discovered_master: 'true'
+  - synopsis: Cat with cluster_manager response (format=json).
+    method: GET
+    path: /_cat/health
+    version: '>= 2.0'
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+      payload:
+        - node.total: '1'
+          node.data: '1'
+          discovered_cluster_manager: 'true'
+  - synopsis: Cat in different formats (format=yaml).
+    method: GET
+    path: /_cat/health
+    parameters:
+      format: yaml
+    response:
+      status: 200
+      content_type: application/yaml
+      payload:
+        - node.total: '1'
+          node.data: '1'
+  - synopsis: Cat in different formats (format=cbor).
+    distributions:
+      - opensearch.org
+    method: GET
+    path: /_cat/health
+    parameters:
+      format: cbor
+    response:
+      status: 200
+      content_type: application/cbor
+      payload:
+        - node.total: '1'
+          node.data: '1'
+  - synopsis: Cat in different formats (format=smile).
+    distributions:
+      - opensearch.org
+    method: GET
+    path: /_cat/health
+    parameters:
+      format: smile
+    response:
+      status: 200
+      content_type: application/smile
+      payload:
+        - node.total: '1'
+          node.data: '1'

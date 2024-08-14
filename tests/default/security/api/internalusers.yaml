@@ -1,0 +1,60 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test internalusers endpoints.
+
+chapters:
+  - synopsis: Get internal users bulk.
+    path: /_plugins/_security/api/internalusers
+    method: GET
+    response:
+      status: 200
+  - synopsis: Patch internal users bulk.
+    path: /_plugins/_security/api/internalusers
+    method: PATCH
+    request:
+      payload: 
+        - op: add
+          path: /test
+          value: 
+            backend_roles: [admin]
+    response:
+      status: 200
+  - synopsis: Create internal user.
+    path: /_plugins/_security/api/internalusers/{username}
+    method: PUT
+    parameters:
+      username: test
+    request:
+      payload:
+        password: myWeakPassword123!
+        opendistro_security_roles: []
+        backend_roles: []
+        attributes: {}
+    response:
+      status: 200
+  - synopsis: Get internal user.
+    path: /_plugins/_security/api/internalusers/{username}
+    method: GET
+    parameters:
+      username: test
+    response:
+      status: 200
+  - synopsis: Patch internal user.
+    path: /_plugins/_security/api/internalusers/{username}
+    method: PATCH
+    parameters:
+      username: test
+    request:
+      payload:
+        - op: add
+          path: /opendistro_security_roles
+          value: [all_access]
+    response:
+      status: 200
+  - synopsis: Delete internal user.
+    path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: test
+    response:
+      status: 200

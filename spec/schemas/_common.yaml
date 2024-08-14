@@ -38,7 +38,7 @@ components:
       description: |-
         A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
         `d` (days). Also accepts "0" without a unit and "-1" to indicate an unspecified value.
-      pattern: ^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$
+      pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
       type: string
     Metadata:
       type: object
@@ -49,7 +49,7 @@ components:
         - as 4 top/bottom/left/right coordinates
         - as 2 top_left / bottom_right points
         - as 2 top_right / bottom_left points
-        - as a WKT bounding box
+        - as a WKT bounding box.
       oneOf:
         - $ref: '#/components/schemas/CoordsGeoBounds'
         - $ref: '#/components/schemas/TopLeftBottomRightGeoBounds'
@@ -87,7 +87,7 @@ components:
         - as a `{lat, long}` object
         - as a geo hash value
         - as a `[lon, lat]` array
-        - as a string in `"<lat>, <lon>"` or WKT point formats
+        - as a string in `"<lat>, <lon>"` or WKT point formats.
       oneOf:
         - $ref: '#/components/schemas/LatLonGeoLocation'
         - $ref: '#/components/schemas/GeoHashLocation'
@@ -137,12 +137,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/UnitMillis'
     UnitMillis:
-      description: Time unit for milliseconds
+      description: Time unit for milliseconds.
       type: number
+      format: int64
     DurationLarge:
       description: |-
-        A date histogram interval. Similar to `Duration` with additional units: `w` (week), `M` (month), `q` (quarter) and
-        `y` (year)
+        A date histogram interval. Similar to `Duration` with additional units: `w` (week), `M` (month), `q` (quarter) and `y` (year).
       type: string
     FieldValue:
       description: A field value.
@@ -159,13 +159,13 @@ components:
         Although "void" is generally used for the unit type that has only one value, this is to be interpreted as
         the bottom type that has no value at all. Most languages have a unit type, but few have a bottom type.
 
-        See https://en.m.wikipedia.org/wiki/Unit_type and https://en.m.wikipedia.org/wiki/Bottom_type
+        See https://en.m.wikipedia.org/wiki/Unit_type and https://en.m.wikipedia.org/wiki/Bottom_type.
       type: object
     GeoTile:
-      description: A map tile reference, represented as `{zoom}/{x}/{y}`
+      description: A map tile reference, represented as `{zoom}/{x}/{y}`.
       type: string
     GeoHexCell:
-      description: A map hex cell (H3) reference
+      description: A map hex cell (H3) reference.
       type: string
     IndexName:
       type: string
@@ -315,11 +315,14 @@ components:
             $ref: '#/components/schemas/ErrorCause'
       required:
         - type
+      additionalProperties:
+        title: metadata
+        description: Additional details about the error.
     DurationValueUnitNanos:
       allOf:
         - $ref: '#/components/schemas/UnitNanos'
     UnitNanos:
-      description: Time unit for nanoseconds
+      description: Time unit for nanoseconds.
       type: number
     ScrollId:
       type: string
@@ -373,7 +376,7 @@ components:
         - missing
         - popular
     MinimumShouldMatch:
-      description: The minimum number of terms that should match as integer, percentage or range
+      description: The minimum number of terms that should match as integer, percentage or range.
       oneOf:
         - type: number
         - type: string
@@ -742,10 +745,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/UnitSeconds'
     UnitSeconds:
-      description: Time unit for seconds
+      description: Time unit for seconds.
       type: number
     TimeOfDay:
-      description: Time of day, expressed as HH:MM:SS
+      description: Time of day, expressed as HH:MM:SS.
       type: string
     TimeUnit:
       type: string
@@ -1247,13 +1250,6 @@ components:
         reserved_in_bytes:
           description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
           type: number
-        total_data_set_size:
-          $ref: '#/components/schemas/ByteSize'
-        total_data_set_size_in_bytes:
-          description: |-
-            Total data set size, in bytes, of all shards assigned to selected nodes.
-            This includes the size of shards not stored fully on the nodes, such as the cache for partially mounted indices.
-          type: number
       required:
         - reserved_in_bytes
         - size_in_bytes
@@ -1500,25 +1496,25 @@ components:
     GetStats:
       type: object
       properties:
-        current:
-          type: number
-        exists_time:
-          $ref: '#/components/schemas/Duration'
-        exists_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        exists_total:
-          type: number
-        missing_time:
-          $ref: '#/components/schemas/Duration'
-        missing_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        missing_total:
+        total:
           type: number
         time:
           $ref: '#/components/schemas/Duration'
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-        total:
+        exists_total:
+          type: number
+        exists_time:
+          $ref: '#/components/schemas/Duration'
+        exists_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        missing_total:
+          type: number
+        missing_time:
+          $ref: '#/components/schemas/Duration'
+        missing_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        current:
           type: number
       required:
         - current
@@ -1531,40 +1527,39 @@ components:
     IndexingStats:
       type: object
       properties:
+        index_total:
+          type: number
+        index_time:
+          $ref: '#/components/schemas/Duration'
+        index_time_in_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
         index_current:
           type: number
-        delete_current:
+        index_failed:
+          type: number
+        delete_total:
           type: number
         delete_time:
           $ref: '#/components/schemas/Duration'
         delete_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-        delete_total:
+        delete_current:
           type: number
-        doc_status:
-          $ref: '#/components/schemas/DocStatus'
-        is_throttled:
-          type: boolean
         noop_update_total:
           type: number
+        is_throttled:
+          type: boolean
         throttle_time:
           $ref: '#/components/schemas/Duration'
         throttle_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-        index_time:
-          $ref: '#/components/schemas/Duration'
-        index_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        index_total:
-          type: number
-        index_failed:
-          type: number
+        doc_status:
+          $ref: '#/components/schemas/DocStatus'
         types:
+          x-version-removed: '2.0'
           type: object
           additionalProperties:
             $ref: '#/components/schemas/IndexingStats'
-        write_load:
-          type: number
       required:
         - delete_current
         - delete_time_in_millis
@@ -1681,6 +1676,21 @@ components:
     SearchStats:
       type: object
       properties:
+        open_contexts:
+          description: The number of open search contexts.
+          type: number
+        query_current:
+          description: The number of shard query operations that are currently running.
+          type: number
+        query_time:
+          description: The total amount of time for all shard query operations.
+          $ref: '#/components/schemas/Duration'
+        query_time_in_millis:
+          description: The total amount of time for all shard query operations, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        query_total:
+          description: The total number of shard query operations.
+          type: number
         concurrent_query_total:
           description: The total number of query operations that use concurrent segment search.
           type: number
@@ -1707,39 +1717,6 @@ components:
         fetch_total:
           description: The total number of shard fetch operations.
           type: number
-        open_contexts:
-          description: The number of open search contexts.
-          type: number
-        point_in_time_total:
-          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
-          type: number
-        point_in_time_time:
-          $ref: '#/components/schemas/Duration'
-        point_in_time_time_in_millis:
-          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        point_in_time_current:
-          description: The number of shard PIT contexts currently open.
-          type: number
-        query_current:
-          description: The number of shard query operations that are currently running.
-          type: number
-        query_time:
-          description: The total amount of time for all shard query operations.
-          $ref: '#/components/schemas/Duration'
-        query_time_in_millis:
-          description: The total amount of time for all shard query operations, in milliseconds.
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        query_total:
-          description: The total number of shard query operations.
-          type: number
-        request:
-          type: object
-          description: Statistics about coordinator search operations for the node.
-          additionalProperties:
-            $ref: '#/components/schemas/RequestStats'
-        search_idle_reactivate_count_total:
-          type: number
         scroll_current:
           description: The number of shard scroll operations that are currently running.
           type: number
@@ -1751,6 +1728,17 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
+          type: number
+        point_in_time_total:
+          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
+          type: number
+        point_in_time_time:
+          $ref: '#/components/schemas/Duration'
+        point_in_time_time_in_millis:
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        point_in_time_current:
+          description: The number of shard PIT contexts currently open.
           type: number
         suggest_current:
           description: The number of shard suggest operations that are currently running.
@@ -1764,6 +1752,13 @@ components:
         suggest_total:
           description: The total number of shard suggest operations.
           type: number
+        search_idle_reactivate_count_total:
+          type: number
+        request:
+          type: object
+          description: Statistics about coordinator search operations for the node.
+          additionalProperties:
+            $ref: '#/components/schemas/RequestStats'
         groups:
           type: object
           additionalProperties:
@@ -1830,33 +1825,6 @@ components:
         - current
         - total
         - total_time_in_millis
-    BulkStats:
-      type: object
-      properties:
-        total_operations:
-          type: number
-        total_time:
-          $ref: '#/components/schemas/Duration'
-        total_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        total_size:
-          $ref: '#/components/schemas/ByteSize'
-        total_size_in_bytes:
-          type: number
-        avg_time:
-          $ref: '#/components/schemas/Duration'
-        avg_time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        avg_size:
-          $ref: '#/components/schemas/ByteSize'
-        avg_size_in_bytes:
-          type: number
-      required:
-        - avg_size_in_bytes
-        - avg_time_in_millis
-        - total_operations
-        - total_size_in_bytes
-        - total_time_in_millis
     GeoShapeRelation:
       type: string
       enum:
@@ -1907,7 +1875,7 @@ components:
         - name
         - transport_address
     NodeRoles:
-      description: '* @doc_id node-roles'
+      description: Node roles.
       type: array
       items:
         $ref: '#/components/schemas/NodeRole'

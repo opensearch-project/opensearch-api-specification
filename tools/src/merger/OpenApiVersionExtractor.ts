@@ -11,18 +11,20 @@ import _, { extend, isEmpty } from 'lodash'
 import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
 import { type OpenAPIV3 } from 'openapi-types'
-import semver from 'semver'
+import * as semver from '../_utils/semver'
 
 // Extract a versioned API
 export default class OpenApiVersionExtractor {
   private _spec?: Record<string, any>
   private _source_spec: OpenAPIV3.Document
-  private _target_version: string
+  private _target_version?: string
+  private _target_distribution?: string
   private _logger: Logger
 
-  constructor(source_spec: OpenAPIV3.Document, target_version: string, logger: Logger = new Logger()) {
+  constructor(source_spec: OpenAPIV3.Document, target_version?: string, target_distribution?: string, logger: Logger = new Logger()) {
     this._source_spec = source_spec
-    this._target_version = semver.coerce(target_version)?.toString() ?? target_version
+    this._target_version = semver.coerce(target_version)
+    this._target_distribution = target_distribution
     this._logger = logger
     this._spec = undefined
   }
@@ -45,16 +47,37 @@ export default class OpenApiVersionExtractor {
   #extract() : void {
     this._logger.info(`Extracting version ${this._target_version} ...`)
     this.#remove_keys_not_matching_semver()
+    this.#remove_keys_not_matching_distribution()
     this.#remove_unused()
   }
 
   #exclude_per_semver(obj: any): boolean {
+    if (this._target_version == undefined) return false
+
     const x_version_added = semver.coerce(obj['x-version-added'] as string)
     const x_version_removed = semver.coerce(obj['x-version-removed'] as string)
 
-    if (x_version_added && !semver.satisfies(this._target_version, `>=${x_version_added.toString()}`)) {
+    if (x_version_added !== undefined && !semver.satisfies(this._target_version, `>=${x_version_added.toString()}`)) {
       return true
-    } else if (x_version_removed && !semver.satisfies(this._target_version, `<${x_version_removed.toString()}`)) {
+    } else if (x_version_removed !== undefined && !semver.satisfies(this._target_version, `<${x_version_removed.toString()}`)) {
+      return true
+    }
+
+    return false
+  }
+
+  #exclude_per_distribution(obj: any): boolean {
+    if (this._target_distribution == undefined) return false
+
+    const x_distributions_included = obj['x-distributions-included'] as string[]
+
+    if (x_distributions_included?.length > 0 && !x_distributions_included.includes(this._target_distribution)) {
+      return true
+    }
+
+    const x_distributions_excluded = obj['x-distributions-excluded'] as string[]
+
+    if (x_distributions_excluded?.length > 0 && x_distributions_excluded.includes(this._target_distribution)) {
       return true
     }
 
@@ -63,7 +86,14 @@ export default class OpenApiVersionExtractor {
 
   // Remove any elements that are x-version-added/removed incompatible with the target server version.
   #remove_keys_not_matching_semver(): void {
+    if (this._target_version == undefined) return
     delete_matching_keys(this._spec, this.#exclude_per_semver.bind(this))
+  }
+
+  // Remove any elements that are x-distributions-included incompatible with the target distribution.
+  #remove_keys_not_matching_distribution(): void {
+    if (this._target_distribution === undefined) return
+    delete_matching_keys(this._spec, this.#exclude_per_distribution.bind(this))
   }
 
   #remove_unused(): void {

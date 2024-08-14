@@ -1,0 +1,59 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test actiongroups endpoints.
+
+chapters:
+  - synopsis: Create action group.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: PUT
+    parameters:
+      action_group: test
+    request:
+      payload:
+        allowed_actions: []
+        type: index
+        description: Test action group
+    response:
+      status: 201
+  - synopsis: Get action groups bulk.
+    path: /_plugins/_security/api/actiongroups
+    method: GET
+    response:
+      status: 200
+  - synopsis: Patch action groups bulk.
+    path: /_plugins/_security/api/actiongroups
+    method: PATCH
+    request:
+      payload: 
+        - op: add
+          path: /test
+          value: 
+            allowed_actions: ['indices:admin/create', 'indices:admin/mapping/put']
+    response:
+      status: 200
+  - synopsis: Get action group.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: GET
+    parameters:
+      action_group: test
+    response:
+      status: 200
+  - synopsis: Patch action group.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: PATCH
+    parameters:
+      action_group: test
+    request:
+      payload: 
+        - op: replace
+          path: /allowed_actions
+          value: ['indices:admin/create', 'indices:admin/mapping/get']
+    response:
+      status: 200
+  - synopsis: Delete action group.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: DELETE
+    parameters:
+      action_group: test
+    response:
+      status: 200

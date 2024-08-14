@@ -39,7 +39,7 @@ export interface ChapterEvaluation {
   path?: string,
   request?: {
     parameters?: Record<string, Evaluation>
-    request_body?: Evaluation
+    request?: Evaluation
   }
   response?: {
     status: Evaluation

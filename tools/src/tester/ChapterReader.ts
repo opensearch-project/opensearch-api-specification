@@ -17,6 +17,7 @@ import YAML from 'yaml'
 import CBOR from 'cbor'
 import SMILE from 'smile-js'
 import { APPLICATION_CBOR, APPLICATION_JSON, APPLICATION_SMILE, APPLICATION_YAML, TEXT_PLAIN } from "./MimeTypes";
+import _ from 'lodash'
 
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
@@ -31,16 +32,16 @@ export default class ChapterReader {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
-    const content_type = chapter.request_body?.content_type ?? APPLICATION_JSON
-    const request_data = chapter.request_body?.payload !== undefined ? this.#serialize_payload(
-      story_outputs.resolve_value(chapter.request_body.payload),
+    const [headers, content_type] = this.#serialize_headers(chapter.request?.headers, chapter.request?.content_type)
+    const request_data = chapter.request?.payload !== undefined ? this.#serialize_payload(
+      story_outputs.resolve_value(chapter.request.payload),
       content_type
     ) : undefined
-    this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] | ${to_json(request_data)}`)
+    this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] ${_.compact([to_json(headers), to_json(request_data)]).join(' | ')}`)
     await this._client.request({
       url: url_path,
       method: chapter.method,
-      headers: { 'Content-Type' : content_type },
+      headers: { 'Content-Type' : content_type, ...headers },
       params,
       data: request_data,
       paramsSerializer: (params) => { // eslint-disable-line @typescript-eslint/naming-convention
@@ -49,23 +50,37 @@ export default class ChapterReader {
     }).then(r => {
       response.status = r.status
       response.content_type = r.headers['content-type']?.split(';')[0]
-      response.payload = this.#deserialize_payload(r.data, response.content_type)
+      const payload = this.#deserialize_payload(r.data, response.content_type)
+      if (payload !== undefined) response.payload = payload
       this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(response.payload)}`)
     }).catch(e => {
       if (e.response == null) {
         this.logger.info(`<= ERROR: ${e}`)
-        throw e
+        response.message = e.message
+        response.error = e
+      } else {
+        response.status = e.response.status
+        response.content_type = e.response.headers['content-type']?.split(';')[0]
+        const payload = this.#deserialize_payload(e.response.data, response.content_type)
+        if (payload !== undefined) response.payload = payload.error
+        response.message = payload.error?.reason ?? e.response.statusText
+        this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
       }
-      response.status = e.response.status
-      response.content_type = e.response.headers['content-type']?.split(';')[0]
-      const payload = this.#deserialize_payload(e.response.data, response.content_type)
-      response.payload = payload?.error
-      response.message = payload.error?.reason ?? e.response.statusText
-      response.error = e
-
-      this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
     })
     return response as ActualResponse
+  }
+
+  #serialize_headers(headers?: Record<string, any>, content_type?: string): [Record<string, any> | undefined, string] {
+    headers = _.cloneDeep(headers)
+    content_type = content_type ?? APPLICATION_JSON
+    if (!headers) return [headers, content_type]
+    _.forEach(headers, (v, k) => {
+      if (k.toLowerCase() == 'content-type') {
+        content_type = v.toString()
+        if (headers) delete headers[k]
+      }
+    })
+    return [headers, content_type]
   }
 
   #serialize_payload(payload: any, content_type: string): any {

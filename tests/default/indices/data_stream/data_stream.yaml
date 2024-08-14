@@ -1,0 +1,54 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test data streams.
+prologues:
+  - path: /_index_template/logs-template-nginx
+    method: PUT
+    request:
+      payload:
+        index_patterns:
+          - logs-*
+          - my-data-stream
+        data_stream:
+          timestamp_field:
+            name: request_time
+        priority: 100
+epilogues:
+  - path: /_data_stream/logs-nginx
+    method: DELETE
+    status: [200, 404]
+  - path: /_index_template/logs-template
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a data stream.
+    path: /_data_stream/{name}
+    method: PUT
+    parameters:
+      name: logs-nginx
+  - synopsis: Ingest data.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}/_doc
+    method: POST
+    parameters:
+      index: logs-nginx
+    request:
+      payload:
+        message: login attempt failed
+        request_time: '2013-03-01T00:00:00'
+    response:
+      status: 201
+  - synopsis: Get a data stream.
+    path: /_data_stream/{name}
+    method: GET
+    parameters:
+      name: logs-nginx
+  - synopsis: Get all data streams.
+    path: /_data_stream
+    method: GET
+  - synopsis: Delete a data stream.
+    path: /_data_stream/{name}
+    method: DELETE
+    parameters:
+      name: logs-nginx

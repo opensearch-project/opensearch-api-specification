@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: OpenSearch ML API
-  description: OpenSearch ML API
+  description: OpenSearch ML API.
   version: 1.0.0
 paths:
   /_plugins/_ml/model_groups/_register:
@@ -53,6 +53,26 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_model@200'
+  /_plugins/_ml/models/{model_id}/_deploy:
+    post:
+      operationId: ml.deploy_model.0
+      x-operation-group: ml.deploy_model
+      description: Deploys a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.deploy_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.deploy_model@200'
+  /_plugins/_ml/models/{model_id}/_undeploy:
+    post:
+      operationId: ml.undeploy_model.0
+      x-operation-group: ml.undeploy_model
+      description: Undeploys a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.undeploy_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.undeploy_model@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
@@ -130,36 +150,72 @@ components:
     ml.search_models:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsQuery'
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsQuery'
   responses:
     ml.register_model_group@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroupRegistration'
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroupRegistration'
     ml.get_model_group@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroup'
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroup'
     ml.delete_model_group@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroup'
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     ml.register_model@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/Task'
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
+            required:
+              - status
+              - task_id
+    ml.deploy_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
+              task_type:
+                type: string
+            required:
+              - status
+              - task_id
+    ml.undeploy_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UndeployModelResponse'
     ml.delete_model@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroup'
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     ml.get_task@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/Task'
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Task'
     ml.search_models@200:
       content:
         application/json:
-          $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsResponse'
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsResponse'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -174,6 +230,18 @@ components:
       schema:
         type: string
     ml.delete_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.deploy_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.undeploy_model::path.model_id:
       name: model_id
       in: path
       required: true

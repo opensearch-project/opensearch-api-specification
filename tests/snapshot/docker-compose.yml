@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  opensearch-node1:
+    image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
+    container_name: opensearch-node1
+    environment:
+      - 'OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}'
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - bootstrap.memory_lock=true
+      - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
+      - cluster.name=opensearch-cluster
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - node.name=opensearch-node1
+      - path.repo=/tmp/opensearch/repo
+      - plugins.index_state_management.job_interval=1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9600:9600
+    environment:
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - discovery.type=single-node
+      - path.repo=/tmp/opensearch/repo
+

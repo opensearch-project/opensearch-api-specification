@@ -24,10 +24,17 @@ export default class Schema extends ValidatorBase {
   }
 
   validate (): ValidationError[] {
-    return [this.validate_name()].filter(e => e) as ValidationError[]
+    return [
+      this.validate_name(),
+      this.validate_description()
+    ].filter(e => e) as ValidationError[]
   }
 
   validate_name (): ValidationError | undefined {
     if (!NAME_REGEX.test(this.name)) { return this.error(`Invalid schema name '${this.name}'. Only alphanumeric characters are allowed.`) }
+  }
+
+  validate_description (): ValidationError | undefined {
+    return this.validate_description_field(this.spec.description)
   }
 }

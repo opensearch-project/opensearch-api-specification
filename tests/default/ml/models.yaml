@@ -1,0 +1,51 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of models.
+distributions:
+  - opensearch.org
+version: '>= 2.11'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins:
+            ml_commons:
+              only_run_on_ml_node: false
+chapters:
+  - synopsis: Register model.
+    id: register_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id
+  - synopsis: Wait to get completed task.
+    id: get_completed_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    warnings:
+      multiple-paths-detected: false
+    parameters:
+      task_id: ${register_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+    retry:
+      count: 5
+      wait: 30000
+  - synopsis: Delete model.
+    path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    method: DELETE

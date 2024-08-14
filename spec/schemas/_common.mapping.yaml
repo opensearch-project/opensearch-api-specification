@@ -208,6 +208,7 @@ components:
         - $ref: '#/components/schemas/IntegerRangeProperty'
         - $ref: '#/components/schemas/IpRangeProperty'
         - $ref: '#/components/schemas/LongRangeProperty'
+        - $ref: '#/components/schemas/KnnVectorProperty'
     BinaryProperty:
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
@@ -1129,6 +1130,30 @@ components:
               type: boolean
             index:
               type: boolean
+    KnnVectorPropertyBase:
+      type: object
+      properties:
+        dimension:
+          type: number
+        method:
+          $ref: '#/components/schemas/KnnVectorMethod'
+      required:
+        - dimension
+    KnnVectorMethod:
+      type: object
+      properties:
+        name:
+          type: string
+        space_type:
+          type: string
+        engine:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+      required:
+        - name
     DoubleRangeProperty:
       allOf:
         - $ref: '#/components/schemas/RangePropertyBase'
@@ -1182,6 +1207,17 @@ components:
               type: string
               enum:
                 - long_range
+          required:
+            - type
+    KnnVectorProperty:
+      allOf:
+        - $ref: '#/components/schemas/KnnVectorPropertyBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - knn_vector
           required:
             - type
     MatchType:

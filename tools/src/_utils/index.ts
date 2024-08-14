@@ -53,7 +53,7 @@ export function determine_possible_schema_types (doc: OpenAPIV3.Document, schema
   if (schema?.anyOf !== undefined) return collect_all(schema.anyOf)
   if (schema?.oneOf !== undefined) return collect_all(schema.oneOf)
 
-  if (schema == null || Object.keys(schema).filter(k => k !== 'description').length == 0) return SCHEMA_OBJECT_TYPES
+  if (schema == null || Object.keys(schema).filter(k => k !== 'description' && k !== 'title').length == 0) return SCHEMA_OBJECT_TYPES
 
   throw new Error(`Unable to determine possible types of schema: ${to_json(schema)}`)
 }

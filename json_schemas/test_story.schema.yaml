@@ -6,6 +6,7 @@ properties:
     type: string
   description:
     type: string
+    pattern: ^\p{Lu}[\s\S]*\.$
   prologues:
     type: array
     items:
@@ -20,6 +21,8 @@ properties:
       $ref: '#/definitions/Chapter'
   version:
     $ref: '#/definitions/Version'
+  distributions:
+    $ref: '#/definitions/Distributions'
 required: [chapters,description]
 additionalProperties: false
 
@@ -32,6 +35,7 @@ definitions:
           synopsis:
             type: string
             description: A brief description of the chapter.
+            pattern: ^\p{Lu}[\s\S]*\.$
           response:
             $ref: '#/definitions/ExpectedResponse'
           warnings:
@@ -77,12 +81,14 @@ definitions:
         type: object
         additionalProperties:
           $ref: '#/definitions/Parameter'
-      request_body:
-        $ref: '#/definitions/RequestBody'
+      request:
+        $ref: '#/definitions/Request'
       output:
         $ref: '#/definitions/Output'
       version:
         $ref: '#/definitions/Version'
+      distributions:
+        $ref: '#/definitions/Distributions'
       retry:
         $ref: '#/definitions/Retry'
     required: [method, path]
@@ -94,7 +100,7 @@ definitions:
       The values are paths to the values in the response.
       The values should be in the form:
       - `payload.<payload-path>` for the payload
-      - `headers.<header-name>` for the headers
+      - `headers.<header-name>` for the headers.
     type: object
     additionalProperties:
       type: string
@@ -103,6 +109,13 @@ definitions:
     description: |
       The semver range to execute the story or chapter against.
     type: string
+
+  Distributions:
+    description: |
+      The list of distributions that support this API.
+    type: array
+    items:
+      type: string
 
   Retry:
     description: |
@@ -119,15 +132,18 @@ definitions:
         required:
           - count
 
-  RequestBody:
+  Request:
     type: object
     properties:
       content_type:
         type: string
         default: application/json
+      headers:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Header'
       payload:
         $ref: '#/definitions/Payload'
-    required: [payload]
     additionalProperties: false
 
   ExpectedResponse:
@@ -162,6 +178,12 @@ definitions:
         description: Error object.
     required: [content_type, payload, status]
     additionalProperties: false
+
+  Header:
+    anyOf:
+      - type: string
+      - type: number
+      - type: boolean
 
   Payload:
     anyOf:
