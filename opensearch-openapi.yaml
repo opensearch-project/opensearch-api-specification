@@ -48747,6 +48747,21 @@ components:
           type: string
         target_field:
           type: string
+    search_pipeline._common:CollapseResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        context_prefix:
+          type: string
+      required:
+        - field
     search_pipeline._common:FilterQueryRequestProcessor:
       type: object
       properties:
@@ -48758,6 +48773,13 @@ components:
           type: boolean
         query:
           $ref: '#/components/schemas/search_pipeline._common:UserDefinedObjectStructure'
+    search_pipeline._common:MLOpenSearchReranker:
+      type: object
+      properties:
+        model_id:
+          type: string
+      required:
+        - model_id
     search_pipeline._common:NeuralFieldMap:
       type: object
       additionalProperties:
@@ -48802,6 +48824,30 @@ components:
           type: string
       required:
         - sample_factor
+    search_pipeline._common:PersonalizeSearchRankingResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        campaign_arn:
+          type: string
+        recipe:
+          type: string
+        weight:
+          type: number
+          format: float
+        item_id_field:
+          type: string
+        iam_role_arn:
+          type: string
+      required:
+        - campaign_arn
+        - recipe
+        - weight
     search_pipeline._common:PhaseResultsProcessor:
       oneOf:
         - type: object
@@ -48811,6 +48857,22 @@ components:
               $ref: '#/components/schemas/search_pipeline._common:NormalizationPhaseResultsProcessor'
           required:
             - normalization-processor
+    search_pipeline._common:RenameFieldResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        target_field:
+          type: string
+      required:
+        - field
+        - target_field
     search_pipeline._common:RequestProcessor:
       oneOf:
         - type: object
@@ -48841,6 +48903,106 @@ components:
               $ref: '#/components/schemas/search_pipeline._common:OversampleRequestProcessor'
           required:
             - oversample
+    search_pipeline._common:RerankContext:
+      type: object
+      properties:
+        document_fields:
+          type: array
+          items:
+            type: string
+      required:
+        - document_fields
+    search_pipeline._common:RerankResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        ml_opensearch:
+          $ref: '#/components/schemas/search_pipeline._common:MLOpenSearchReranker'
+        context:
+          $ref: '#/components/schemas/search_pipeline._common:RerankContext'
+    search_pipeline._common:ResponseProcessor:
+      oneOf:
+        - type: object
+          title: personalize_search_ranking
+          properties:
+            personalize_search_ranking:
+              $ref: '#/components/schemas/search_pipeline._common:PersonalizeSearchRankingResponseProcessor'
+          required:
+            - personalize_search_ranking
+        - type: object
+          title: retrieval_augmented_generation
+          properties:
+            retrieval_augmented_generation:
+              $ref: '#/components/schemas/search_pipeline._common:RetrievalAugmentedGenerationResponseProcessor'
+          required:
+            - retrieval_augmented_generation
+        - type: object
+          title: rename_field
+          properties:
+            rename_field:
+              $ref: '#/components/schemas/search_pipeline._common:RenameFieldResponseProcessor'
+          required:
+            - rename_field
+        - type: object
+          title: rerank
+          properties:
+            rerank:
+              $ref: '#/components/schemas/search_pipeline._common:RerankResponseProcessor'
+          required:
+            - rerank
+        - type: object
+          title: collapse
+          properties:
+            collapse:
+              $ref: '#/components/schemas/search_pipeline._common:CollapseResponseProcessor'
+          required:
+            - collapse
+        - type: object
+          title: truncate_hits
+          properties:
+            truncate_hits:
+              $ref: '#/components/schemas/search_pipeline._common:TruncateHitsResponseProcessor'
+          required:
+            - truncate_hits
+        - type: object
+          title: sort
+          properties:
+            sort:
+              $ref: '#/components/schemas/search_pipeline._common:SortResponseProcessor'
+          required:
+            - sort
+        - type: object
+          title: split
+          properties:
+            split:
+              $ref: '#/components/schemas/search_pipeline._common:SplitResponseProcessor'
+          required:
+            - split
+    search_pipeline._common:RetrievalAugmentedGenerationResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        model_id:
+          type: string
+        context_field_list:
+          type: array
+          items:
+            type: string
+        system_prompt:
+          type: string
+        user_instructions:
+          type: string
+      required:
+        - context_field_list
+        - model_id
     search_pipeline._common:ScoreCombination:
       type: object
       properties:
@@ -48884,7 +49046,7 @@ components:
         response_processors:
           type: array
           items:
-            $ref: '#/components/schemas/search_pipeline._common:RequestProcessor'
+            $ref: '#/components/schemas/search_pipeline._common:ResponseProcessor'
         phase_results_processors:
           type: array
           items:
@@ -48904,6 +49066,57 @@ components:
           type: string
       required:
         - source
+    search_pipeline._common:SortResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        order:
+          type: string
+        target_field:
+          type: string
+      required:
+        - field
+    search_pipeline._common:SplitResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        field:
+          type: string
+        separator:
+          type: string
+        preserve_trailing:
+          type: boolean
+        target_field:
+          type: string
+      required:
+        - field
+        - separator
+    search_pipeline._common:TruncateHitsResponseProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        target_size:
+          type: integer
+          format: int32
+        context_prefix:
+          type: string
     search_pipeline._common:UserDefinedObjectStructure:
       type: object
       properties:
