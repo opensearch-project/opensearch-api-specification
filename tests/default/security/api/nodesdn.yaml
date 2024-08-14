@@ -1,0 +1,61 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test nodesdn endpoints.
+
+# ADMIN-CERT only. These tests require explicit rest api admin privileges.
+# The setting `plugins. security. nodes_dn_dynamic_config_enabled` must be enabled.
+chapters:
+  - synopsis: Get distinguished names.
+    path: /_plugins/_security/api/nodesdn
+    method: GET
+    parameters:
+      show_all: true
+    response:
+      status: 400
+  - synopsis: Patch distinguished names.
+    path: /_plugins/_security/api/nodesdn
+    method: PATCH
+    request:
+      payload: 
+        - op: replace
+          path: /cluster1/nodes_dn/0
+          value: ['']
+    response:
+      status: 400
+  - synopsis: Create distinguished name.
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: PUT
+    parameters:
+      cluster_name: test
+    request:
+      payload:
+        nodes_dn: 
+          - CN=cluster3.example.com
+    response:
+      status: 400
+  - synopsis: Get distinguished name.
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: GET
+    parameters:
+      cluster_name: test
+    response:
+      status: 400
+  - synopsis: Patch distinguished name.
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: PATCH
+    parameters:
+      cluster_name: test
+    request:
+      payload:
+        op: replace
+        path: /test/nodes_dn/0
+        value: [CN=cluster2.example.com]
+    response:
+      status: 400
+  - synopsis: Delete distinguished name.
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: DELETE
+    parameters:
+      cluster_name: test
+    response:
+      status: 400

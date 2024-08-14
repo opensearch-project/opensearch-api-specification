@@ -27,17 +27,17 @@ jobs:
             admin_password: admin
           - version: 2.0.0
             admin_password: admin
-          - version: 2.15.0
-          - version: 2.15.0
-            tests: plugins/index_state_management
-          - version: 2.15.0
-            tests: snapshot
           - version: 2.16.0
+          - version: 2.16.0
+            tests: plugins/index_state_management
+          - version: 2.16.0
+            tests: snapshot
+          - version: 2.17.0
             hub: opensearchstaging
-            ref: '@sha256:bcd7f5d5d30231f24f266064248cc8d3306574948190f7bf93016dff29acf17e'
+            ref: '@sha256:ed4274522a50228f41b50f1a7ea86e6b52fa6737072fc151b2624d22aff80d56'
           - version: 3.0.0
             hub: opensearchstaging
-            ref: '@sha256:db1918b2b8f7ef6c22dd6ff54a0640877c3d395a392a53864745024933981e3b'
+            ref: '@sha256:cab6f71b284485c44306f8f4849ad520283c2a32ece617109b38183ba29cc401'
 
     name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }}, tests=${{ matrix.entry.tests || 'default' }})
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
       OPENSEARCH_DOCKER_REF: ${{ matrix.entry.ref }}
       OPENSEARCH_VERSION: ${{ matrix.entry.version }}
       OPENSEARCH_PASSWORD: ${{ matrix.entry.admin_password || 'myStrongPassword123!' }}
-      OPENSEARCH_JAVA_OPTS: ${{ matrix.entry.opts }} -Xms2g -Xmx2g
+      OPENSEARCH_JAVA_OPTS: ${{ matrix.entry.opts }} -Xms8g -Xmx8g
 
     steps:
       - name: Checkout Repo
@@ -95,7 +95,7 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: test-opensearch-spec
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download Spec Coverage Data
         uses: actions/download-artifact@v4

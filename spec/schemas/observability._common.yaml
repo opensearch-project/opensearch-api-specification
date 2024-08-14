@@ -1,0 +1,255 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Observability Object API
+  description: Schemas for OpenSearch Observability Object API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ObservabilityObjectList:
+      type: object
+      properties:
+        startIndex:
+          type: integer
+        totalHits:
+          type: integer
+        totalHitRelation:
+          type: string
+        observabilityObjectList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObservabilityObject'
+      required:
+        - observabilityObjectList
+        - startIndex
+        - totalHitRelation
+        - totalHits
+
+    ObservabilityObject:
+      type: object
+      properties:
+        objectId:
+          type: string
+        lastUpdatedTimeMs:
+          type: integer
+        createdTimeMs:
+          type: integer
+        tenant:
+          type: string
+        operationalPanel:
+          $ref: '#/components/schemas/OperationalPanel'
+        savedVisualization:
+          $ref: '#/components/schemas/SavedVisualization'
+        savedQuery:
+          $ref: '#/components/schemas/SavedQuery'
+      required:
+        - objectId
+        - tenant
+
+    OperationalPanel:
+      type: object
+      properties:
+        name:
+          type: string
+        visualizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Visualization'
+        timeRange:
+          $ref: '#/components/schemas/TimeRange'
+        queryFilter:
+          $ref: '#/components/schemas/QueryFilter'
+        applicationId:
+          type: string
+      required:
+        - applicationId
+        - name
+        - queryFilter
+        - timeRange
+        - visualizations
+
+    Visualization:
+      type: object
+      properties:
+        id:
+          type: string
+        savedVisualizationId:
+          type: string
+        x:
+          type: integer
+        y:
+          type: integer
+        w:
+          type: integer
+        h:
+          type: integer
+      required:
+        - h
+        - id
+        - savedVisualizationId
+        - w
+        - x
+        - y
+
+    TimeRange:
+      type: object
+      properties:
+        to:
+          type: string
+        from:
+          type: string
+      required:
+        - from
+        - to
+
+    QueryFilter:
+      type: object
+      properties:
+        query:
+          type: string
+        language:
+          type: string
+      required:
+        - language
+        - query
+
+    SavedVisualization:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        query:
+          type: string
+        type:
+          type: string
+        selected_date_range:
+          $ref: '#/components/schemas/SelectedDateRange'
+        selected_timestamp:
+          $ref: '#/components/schemas/SelectedTimestamp'
+        selected_fields:
+          $ref: '#/components/schemas/SelectedFields'
+      required:
+        - description
+        - name
+        - query
+        - selected_date_range
+        - selected_fields
+        - selected_timestamp
+        - type
+
+    SelectedDateRange:
+      type: object
+      properties:
+        start:
+          type: string
+        end:
+          type: string
+        text:
+          type: string
+      required:
+        - end
+        - start
+        - text
+
+    SelectedTimestamp:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      required:
+        - name
+        - type
+
+    SelectedFields:
+      type: object
+      properties:
+        text:
+          type: string
+        tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/Token'
+      required:
+        - text
+        - tokens
+
+    Token:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      required:
+        - name
+        - type
+
+    SavedQuery:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        query:
+          type: string
+        selected_date_range:
+          $ref: '#/components/schemas/SelectedDateRange'
+        selected_timestamp:
+          $ref: '#/components/schemas/SelectedTimestamp'
+        selected_fields:
+          $ref: '#/components/schemas/SelectedFields'
+      required:
+        - description
+        - name
+        - query
+        - selected_date_range
+        - selected_fields
+        - selected_timestamp
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorResponse'
+        status:
+          type: integer
+          example: 404
+      required:
+        - error
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootCause'
+        type:
+          type: string
+          example: status_exception
+        reason:
+          type: string
+          example: 'ObservabilityObject {objectId} not found'
+      required:
+        - reason
+        - root_cause
+        - type
+
+    RootCause:
+      type: object
+      properties:
+        type:
+          type: string
+          example: status_exception
+        reason:
+          type: string
+          example: 'ObservabilityObject {objectId} not found'
+      required:
+        - reason
+        - type

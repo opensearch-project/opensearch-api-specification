@@ -1,0 +1,33 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test certificates endpoints.
+version: '> 2.14'
+
+# ADMIN-CERT only. These tests require explicit rest api admin privileges.
+prologues:
+  - path: /_cat/nodes
+    id: node
+    method: GET
+    parameters:
+      full_id: true
+      size: 1
+      format: json
+      h: id
+    output:
+      id: payload[0].id
+chapters:
+  - synopsis: Get all certificates.
+    path: /_plugins/_security/api/certificates
+    method: GET
+    parameters:
+      cert_type: all
+    response:
+      status: 403
+  - synopsis: Get node certificates.
+    path: /_plugins/_security/api/certificates/{node_id}
+    method: GET
+    parameters:
+      node_id: ${node.id}
+      cert_type: all
+    response:
+      status: 403

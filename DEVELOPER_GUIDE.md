@@ -146,6 +146,10 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-ignorable`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 - `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [spec/_global_parameters.yaml](spec/_global_parameters.yaml).
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
+- `x-distributions-included`: Contains a list of distributions known to include the API.
+- `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
+
+Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless. 
 
 ## Writing Spec Tests
 

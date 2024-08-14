@@ -250,7 +250,7 @@ components:
         indexing_pressure:
           $ref: '#/components/schemas/IndexingPressure'
         indices:
-          $ref: 'indices.stats.yaml#/components/schemas/ShardStats'
+          $ref: 'indices.stats.yaml#/components/schemas/IndexShardStats'
         shard_indexing_pressure:
           $ref: '#/components/schemas/ShardIndexingPressureStats'
         search_backpressure:
@@ -562,6 +562,14 @@ components:
         write_operations:
           description: The total number of write operations for the device completed since starting OpenSearch.
           type: number
+        read_time:
+          type: number
+        write_time:
+          type: number
+        queue_size:
+          type: number
+        io_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
     Jvm:
       type: object
       properties:
@@ -1068,8 +1076,10 @@ components:
           type: boolean
         enforced:
           type: boolean
+        total_rejections_breakup:
+          $ref: '#/components/schemas/TotalRejectionsBreakup'
         total_rejections_breakup_shadow_mode:
-          $ref: '#/components/schemas/TotalRejectionsBreakupShadowMode'
+          $ref: '#/components/schemas/TotalRejectionsBreakup'
     ShardSearchBackpressureStats:
       type: object
       properties:
@@ -1140,7 +1150,11 @@ components:
           type: number
         cancellation_limit_reached_count:
           type: number
-    TotalRejectionsBreakupShadowMode:
+        cancelled_task_percentage:
+          type: number
+        current_cancellation_eligible_tasks_count:
+          type: number
+    TotalRejectionsBreakup:
       type: object
       properties:
         node_limits:

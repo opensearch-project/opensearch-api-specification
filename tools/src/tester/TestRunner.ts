@@ -20,10 +20,6 @@ import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import * as ansi from './Ansi'
 import _ from 'lodash'
 
-const EXCLUDED_FILES = [
-  'docker-compose.yml'
-]
-
 export default class TestRunner {
   private readonly _http_client: OpenSearchHttpClient
   private readonly _story_validator: StoryValidator
@@ -38,19 +34,25 @@ export default class TestRunner {
     this._result_logger = result_logger
   }
 
-  async run (story_path: string, version?: string, dry_run: boolean = false): Promise<{ results: StoryEvaluations, failed: boolean }> {
+  async run (story_path: string, version?: string, distribution?: string, dry_run: boolean = false): Promise<{ results: StoryEvaluations, failed: boolean }> {
     let failed = false
     const story_files = this.story_files(story_path)
     const results: StoryEvaluations = { evaluations: [] }
 
     if (!dry_run) {
-      const info = await this._http_client.wait_until_available()
-      console.log(`OpenSearch ${ansi.green(info.version.number)}\n`)
-      version = info.version.number
+      if (distribution === 'amazon-serverless') {
+        // TODO: Fetch OpenSearch version when Amazon Serverless OpenSearch supports multiple.
+        version = '2.1'
+      } else {
+        const info = await this._http_client.wait_until_available()
+        version = info.version.number
+      }
+
+      console.log(`OpenSearch ${ansi.green(version)}\n`)
     }
 
     for (const story_file of story_files) {
-      const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, version, dry_run)
+      const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, version, distribution, dry_run)
       results.evaluations.push(evaluation)
       this._result_logger.log(evaluation)
       if ([Result.ERROR, Result.FAILED].includes(evaluation.result)) failed = true
@@ -68,7 +70,9 @@ export default class TestRunner {
   #collect_story_files (folder: string, file: string, prefix: string): StoryFile[] {
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
-    if (fs.statSync(path).isFile()) {
+    if (file.startsWith('.') || file == 'docker-compose.yml') {
+      return []
+    } else if (fs.statSync(path).isFile()) {
       const story: Story = read_yaml(path)
       return [{
         display_path: next_prefix === '' ? basename(path) : next_prefix,
@@ -77,9 +81,7 @@ export default class TestRunner {
       }]
     } else {
       return _.compact(fs.readdirSync(path).flatMap(next_file => {
-        if (!EXCLUDED_FILES.includes(next_file)) {
-          return this.#collect_story_files(path, next_file, next_prefix)
-        }
+        return this.#collect_story_files(path, next_file, next_prefix)
       }))
     }
   }
