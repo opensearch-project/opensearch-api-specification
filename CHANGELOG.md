@@ -71,6 +71,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for security plugin  ([#271](https://github.com/opensearch-project/opensearch-api-specification/pull/271))
 - Added `/_plugins/_security/api/certificates/` ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Added `/_plugins/_ml/models/{model_id}/_deploy`, `_undeploy` and `knn_vector` type in `passage_embedding` ([#504](https://github.com/opensearch-project/opensearch-api-specification/pull/504))
+- Added nodes/stats indices search test ([#509])(https://github.com/opensearch-project/opensearch-api-specification/pull/509)
 
 ### Changed
 
