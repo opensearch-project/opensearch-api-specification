@@ -21,7 +21,8 @@ services:
       - '9200:9200'
       - '9600:9600'
     networks:
-      - opensearch-net
+      opensearch-net:
+        ipv4_address: 172.22.0.3
 
   opensearch-node2:
     image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
@@ -40,7 +41,11 @@ services:
         soft: -1
         hard: -1
     networks:
-      - opensearch-net
+      opensearch-net:
+        ipv4_address: 172.22.0.4
 networks:
   opensearch-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
