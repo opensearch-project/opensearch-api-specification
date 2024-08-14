@@ -1,17 +1,16 @@
 $schema: ../../json_schemas/test_story.schema.yaml
 
-description: Test to explicitly clear the cursor context
-
+description: Test to explicitly clear the cursor context.
 prologues:
   - path: /{index}
     method: PUT
     parameters:
       index: books
-    request_body:
+    request:
       payload: {}
   - path: /_bulk
     method: POST
-    request_body:
+    request:
       content_type: application/x-ndjson
       payload:
         - {create: {_index: books, _id: book_1392214}}
@@ -27,7 +26,7 @@ epilogues:
     method: POST
     parameters: 
       index: books-names
-    request_body:
+    request:
       payload: {}
   - path: /books-names
     method: DELETE
@@ -39,7 +38,7 @@ chapters:
   - synopsis: Establish connection.
     path: /_cluster/settings
     method: PUT
-    request_body:
+    request:
       payload:
         persistent:
           cluster:
@@ -54,7 +53,7 @@ chapters:
     method: PUT
     parameters:
       index: books-names
-    request_body:
+    request:
       payload:
         leader_alias: my-connection-alias
         leader_index: books
@@ -95,7 +94,7 @@ chapters:
     method: PUT
     parameters:
       index: books-names
-    request_body:
+    request:
       payload:
         settings: 
           index.number_of_shards: 4
@@ -106,7 +105,7 @@ chapters:
     path: /_plugins/_replication/_autofollow
     version: '>= 1.1'
     method: POST
-    request_body:
+    request:
       payload:
         leader_alias: my-connection-alias
         name: books
@@ -120,7 +119,7 @@ chapters:
     path: /_plugins/_replication/_autofollow
     version: '>= 1.1'
     method: DELETE
-    request_body:
+    request:
       payload:
         leader_alias: my-connection-alias
         name: books
