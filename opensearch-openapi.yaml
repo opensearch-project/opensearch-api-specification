@@ -9,6 +9,8 @@ paths:
       operationId: info.0
       x-operation-group: info
       x-version-added: '1.0'
+      x-distributions-excluded:
+        - amazon-serverless
       description: Returns basic information about the cluster.
       externalDocs:
         url: https://opensearch.org/docs/latest
@@ -46335,6 +46337,14 @@ components:
         write_operations:
           description: The total number of write operations for the device completed since starting OpenSearch.
           type: number
+        read_time:
+          type: number
+        write_time:
+          type: number
+        queue_size:
+          type: number
+        io_time_in_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
     nodes._common:IoStats:
       type: object
       properties:
@@ -46736,8 +46746,10 @@ components:
           type: boolean
         enforced:
           type: boolean
+        total_rejections_breakup:
+          $ref: '#/components/schemas/nodes._common:TotalRejectionsBreakup'
         total_rejections_breakup_shadow_mode:
-          $ref: '#/components/schemas/nodes._common:TotalRejectionsBreakupShadowMode'
+          $ref: '#/components/schemas/nodes._common:TotalRejectionsBreakup'
     nodes._common:ShardRepositoriesStats:
       type: array
     nodes._common:ShardResourceUsageStats:
@@ -46781,6 +46793,10 @@ components:
         cancellation_count:
           type: number
         cancellation_limit_reached_count:
+          type: number
+        cancelled_task_percentage:
+          type: number
+        current_cancellation_eligible_tasks_count:
           type: number
     nodes._common:ShardSearchBackpressureTaskResourceTrackerCpuUsageTrackerStats:
       type: object
@@ -46995,7 +47011,7 @@ components:
             The total amount of time that tasks spend waiting in the thread pool queue.
             Currently, only `search`, `search_throttled`, and `index_searcher` thread pools support this metric.
           type: number
-    nodes._common:TotalRejectionsBreakupShadowMode:
+    nodes._common:TotalRejectionsBreakup:
       type: object
       properties:
         node_limits:
@@ -47159,14 +47175,10 @@ components:
         search_pipelines:
           $ref: '#/components/schemas/nodes.info:NodeInfoSearchPipelines'
       required:
-        - attributes
         - build_hash
         - build_type
-        - host
-        - ip
         - name
         - roles
-        - transport_address
         - version
     nodes.info:NodeInfoAction:
       type: object
@@ -47672,7 +47684,9 @@ components:
         bundled_jdk:
           type: boolean
         using_bundled_jdk:
-          type: boolean
+          type:
+            - boolean
+            - 'null'
         using_compressed_ordinary_object_pointers:
           oneOf:
             - type: boolean
@@ -47683,16 +47697,9 @@ components:
             type: string
       required:
         - bundled_jdk
-        - gc_collectors
-        - input_arguments
         - mem
-        - memory_pools
         - pid
         - start_time_in_millis
-        - version
-        - vm_name
-        - vm_vendor
-        - vm_version
     nodes.info:NodeOperatingSystemInfo:
       type: object
       properties:
@@ -47720,12 +47727,8 @@ components:
         swap:
           $ref: '#/components/schemas/nodes.info:NodeInfoMemory'
       required:
-        - arch
         - available_processors
-        - name
-        - pretty_name
         - refresh_interval_in_millis
-        - version
     nodes.info:NodeProcessInfo:
       type: object
       properties:
