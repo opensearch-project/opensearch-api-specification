@@ -21,10 +21,6 @@ prologues:
     method: POST
     parameters:
       index: books
-  - path: /_plugins/_security/api/roles
-    method: GET
-  - path: /_plugins/_security/api/rolesmapping/all_access
-    method: GET
 epilogues:
   - path: /_plugins/_replication/{index}/_stop
     method: POST
@@ -39,24 +35,6 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Get current user info.
-    path: /_plugins/_security/whoami
-    method: GET
-    response:
-      status: 200
-      payload:
-        dn: null
-        is_admin: false
-        is_node_certificate_request: false
-  - synopsis: Patch rolesmapping bulk.
-    path: /_plugins/_security/api/rolesmapping
-    method: PATCH
-    request:
-      payload: 
-        - op: add
-          path: /all_access
-          value: 
-            users: [admin]
   - synopsis: Establish connection.
     path: /_cluster/settings
     method: PUT
@@ -81,7 +59,7 @@ chapters:
         leader_index: books
         use_roles: 
           leader_cluster_role: leader_role
-          follower_cluster_role: all_access
+          follower_cluster_role: cross_cluster_replication_follower_full_access
     response:
       status: 200
   - synopsis: Get replication stats.
