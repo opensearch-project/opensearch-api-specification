@@ -35,15 +35,6 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Get user bulk.
-    path: /_plugins/_security/api/user
-    method: GET
-  - synopsis: Get user.
-    path: /_plugins/_security/api/user/{username}
-    method: GET
-    parameters:
-      username: admin
-
   - synopsis: Create leader role.
     path: /_plugins/_security/api/roles/{role}
     parameters:
@@ -58,12 +49,11 @@ chapters:
             allowed_actions: ["indices:data/read/*"]
     response:
       status: 200
-
   - synopsis: Create follower role.
     path: /_plugins/_security/api/roles/{role}
     method: PUT
     parameters:
-      role: cross_cluster_replication_follower_full_access
+      role: follower
     request:
       payload:
         cluster_permissions:
@@ -73,7 +63,6 @@ chapters:
             allowed_actions: ["indices:data/write/*"]
     response:
       status: 200
-
   - synopsis: Map leader role to user.
     path: /_plugins/_security/api/rolesmapping/{role}
     method: PUT
@@ -85,19 +74,17 @@ chapters:
         users: ["admin"]
     response:
       status: 200
-
   - synopsis: Map follower role to user.
     path: /_plugins/_security/api/rolesmapping/{role}
     method: PUT
     parameters:
-      role: cross_cluster_replication_follower_full_access
+      role: follower
     request:
       payload:
         backend_roles: ["admin"]
         users: ["admin"]
     response:
       status: 200
-
   - synopsis: Establish connection.
     path: /_cluster/settings
     method: PUT
@@ -110,7 +97,6 @@ chapters:
                 seeds: ['172.22.0.3:9300']
     response:
       status: 200
-
   - synopsis: Start replication.
     path: /_plugins/_replication/{index}/_start
     version: '>= 1.1'
@@ -123,10 +109,9 @@ chapters:
         leader_index: books
         use_roles: 
           leader_cluster_role: leader_role
-          follower_cluster_role: cross_cluster_replication_follower_full_access
+          follower_cluster_role: follower
     response:
       status: 200
-
   - synopsis: Get replication stats.
     path: /_plugins/_replication/{index}/_status
     version: '>= 1.1'
@@ -135,28 +120,24 @@ chapters:
       index: books-names
     response:
       status: 200
-
   - synopsis: Get leader stats.
     path: /_plugins/_replication/leader_stats
     version: '>= 1.1'
     method: GET
     response:
       status: 200
-
   - synopsis: Get follower stats.
     path: /_plugins/_replication/follower_stats
     version: '>= 1.1'
     method: GET
     response:
       status: 200
-
   - synopsis: Get auto-follow stats.
     path: /_plugins/_replication/autofollow_stats
     version: '>= 1.1'
     method: GET
     response:
       status: 200
-
   - synopsis: Update settings.
     path: /_plugins/_replication/{index}/_update
     version: '>= 1.1'
@@ -170,7 +151,6 @@ chapters:
           index.number_of_replicas: 2
     response:
       status: 200
-
   - synopsis: Create replication rule.
     path: /_plugins/_replication/_autofollow
     version: '>= 1.1'
@@ -185,7 +165,6 @@ chapters:
           follower_cluster_role: admin
     response:
       status: 200
-
   - synopsis: Delete replication rule.
     path: /_plugins/_replication/_autofollow
     version: '>= 1.1'
