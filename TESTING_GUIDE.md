@@ -302,7 +302,7 @@ WARNING Multiple paths detected, please group similar tests together and move pa
 
 #### Suppressing Warnings
 
-The test runner may generate warnings that can be suppressed with `warnings:`. For example, to suppress the multiple paths detected warning.
+The test runner may generate warnings that can be suppressed with `warnings:` at story or chapter level. For example, to suppress the multiple paths detected warning.
 
 ```yaml
 - synopsis: Create an index.

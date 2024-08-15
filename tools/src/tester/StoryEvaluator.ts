@@ -61,6 +61,7 @@ export default class StoryEvaluator {
     if (variables_error !== undefined) {
       return variables_error
     }
+
     const story_outputs = new StoryOutputs()
     const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [], dry_run, story_outputs)
     const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version, distribution)
@@ -76,7 +77,7 @@ export default class StoryEvaluator {
       result: overall_result(prologues.concat(chapters).concat(epilogues).concat(prologues).map(e => e.overall)),
     }
 
-    const warnings = this.#chapter_warnings(story.chapters)
+    const warnings = this.#chapter_warnings(story)
     if (warnings !== undefined) {
       result.warnings = warnings
     }
@@ -84,17 +85,18 @@ export default class StoryEvaluator {
     return result
   }
 
-  #chapter_warnings(chapters: Chapter[]): string[] | undefined {
+  #chapter_warnings(story: Story): string[] | undefined {
     const result = _.compact([
-      this.#warning_if_mismatched_chapter_paths(chapters)
+      this.#warning_if_mismatched_chapter_paths(story)
     ])
     return result.length > 0 ? result : undefined
   }
 
-  #warning_if_mismatched_chapter_paths(chapters: Chapter[]): string | undefined {
-    const paths = _.compact(_.map(chapters, (chapter) => {
-      const multiple_paths_detected = chapter.warnings?.['multiple-paths-detected'] ?? true
-      if (multiple_paths_detected) return chapter.path
+  #warning_if_mismatched_chapter_paths(story: Story): string | undefined {
+    if (story.warnings?.['multiple-paths-detected'] === false) return
+    const paths = _.compact(_.map(story.chapters, (chapter) => {
+      if (chapter.warnings?.['multiple-paths-detected'] === false) return
+      return chapter.path
     }))
     const normalized_paths = _.map(paths, (path) => path.replaceAll(/\/\{[^}]+}/g, '').replaceAll('//', '/'))
     const paths_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
