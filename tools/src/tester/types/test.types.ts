@@ -8,7 +8,7 @@
 */
 
 export interface SpecTestCoverage {
-  paths_count: number
-  evaluated_paths_count: number,
+  total_operations_count: number
+  evaluated_operations_count: number,
   evaluated_paths_pct: number
 }

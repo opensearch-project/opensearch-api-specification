@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation } from './types/eval.types'
+import { type ChapterEvaluation, type Evaluation, Operation, Result, type StoryEvaluation } from './types/eval.types'
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'
 import TestResults from './TestResults'
@@ -44,29 +44,29 @@ export class ConsoleResultLogger implements ResultLogger {
 
   log_coverage(results: TestResults): void {
     console.log()
-    console.log(`Tested ${results.evaluated_paths().length}/${results.spec_paths().length} paths.`)
+    console.log(`Tested ${results.evaluated_operations().length}/${results.operations().length} paths.`)
   }
 
   log_coverage_report(results: TestResults): void {
     console.log()
-    console.log(`${results.unevaluated_paths().length} paths remaining.`)
-    const groups = _.groupBy(results.unevaluated_paths(), (path) => path.split(' ', 2)[1].split('/')[1])
-    Object.entries(groups).forEach(([root, paths]) => {
-      this.#log_coverage_group(root, paths)
+    console.log(`${results.unevaluated_operations().length} paths remaining.`)
+    const groups = _.groupBy(results.unevaluated_operations(), (operation) => operation.path.split('/')[1])
+    Object.entries(groups).forEach(([root, operations]) => {
+      this.#log_coverage_group(root, operations)
     });
   }
 
-  #log_coverage_group(key: string, paths: string[], index: number = 2): void {
-    if (paths.length == 0 || key == undefined) return
-    console.log(`${' '.repeat(index)}/${key} (${paths.length})`)
-    const current_level_paths = paths.filter((path) => path.split('/').length == index)
-    current_level_paths.forEach((path) => {
-      console.log(`${' '.repeat(index + 2)}${path}`)
+  #log_coverage_group(key: string, operations: Operation[], index: number = 2): void {
+    if (operations.length == 0 || key == undefined) return
+    console.log(`${' '.repeat(index)}/${key} (${operations.length})`)
+    const current_level_operations = operations.filter((operation) => operation.path.split('/').length == index)
+    current_level_operations.forEach((operation) => {
+      console.log(`${' '.repeat(index + 2)}${operation.method} ${operation.path}`)
     })
-    const next_level_paths = paths.filter((path) => path.split('/').length > index)
-    const subgroups = _.groupBy(next_level_paths, (path) => path.split('/')[index])
-    Object.entries(subgroups).forEach(([root, paths]) => {
-      this.#log_coverage_group(root, paths, index + 1)
+    const next_level_operations = operations.filter((operation) => operation.path.split('/').length > index)
+    const subgroups = _.groupBy(next_level_operations, (operation) => operation.path.split('/')[index])
+    Object.entries(subgroups).forEach(([root, operations]) => {
+      this.#log_coverage_group(root, operations, index + 1)
     });
   }
 

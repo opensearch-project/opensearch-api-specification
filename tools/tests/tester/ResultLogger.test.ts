@@ -66,7 +66,11 @@ describe('ConsoleResultLogger', () => {
           {
             title: 'title',
             overall: { result: Result.PASSED },
-            path: 'path'
+            path: 'path',
+            operation: {
+              method: 'GET',
+              path: '/_nodes/{id}'
+            }
           }
         ]
       }] })
@@ -90,7 +94,11 @@ describe('ConsoleResultLogger', () => {
           {
             title: 'title',
             overall: { result: Result.PASSED },
-            path: 'GET /_nodes/{id}'
+            path: 'GET /_nodes/{id}',
+            operation: {
+              method: 'GET',
+              path: '/_nodes/{id}'
+            }
           }
         ]
       }] })

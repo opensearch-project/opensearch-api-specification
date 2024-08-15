@@ -330,8 +330,8 @@ The test tool can generate a test coverage summary using `--coverage <path>` wit
 
 ```json
 {
-  "evaluated_paths_count": 214,
-  "paths_count": 550,
+  "evaluated_operations_count": 214,
+  "operations_count": 550,
   "evaluated_paths_pct": 38.91
 }
 ```

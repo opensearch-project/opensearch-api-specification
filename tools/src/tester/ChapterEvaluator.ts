@@ -84,6 +84,10 @@ export default class ChapterEvaluator {
 
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
+      operation: {
+        method: chapter.method,
+        path: chapter.path
+      },
       path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request },
