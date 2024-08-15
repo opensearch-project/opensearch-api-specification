@@ -17,7 +17,7 @@ describe('TestResults', () => {
 
   const evaluations = [{
     result: Result.PASSED,
-    display_path: 'path',
+    display_path: 'PUT /{index}',
     full_path: 'full_path',
     description: 'description',
     message: 'message',
@@ -26,7 +26,7 @@ describe('TestResults', () => {
       overall: {
         result: Result.PASSED
       },
-      path: 'path'
+      path: 'PUT /{index}'
     }],
     epilogues: [],
     prologues: []
@@ -34,12 +34,30 @@ describe('TestResults', () => {
 
   const test_results = new TestResults(spec, { evaluations })
 
-  test('evaluated_paths_count', () => {
-    expect(test_results.evaluated_paths_count()).toEqual(1)
+  test('unevaluated_paths', () => {
+    expect(test_results.unevaluated_paths()).toEqual([
+      "GET /_nodes/{id}",
+      "POST /_nodes/{id}",
+      "GET /cluster_manager",
+      "POST /cluster_manager",
+      "GET /index",
+      "GET /nodes"
+    ])
   })
 
-  test('spec_paths_count', () => {
-    expect(test_results.spec_paths_count()).toEqual(6)
+  test('evaluated_paths', () => {
+    expect(test_results.evaluated_paths()).toEqual(['PUT /{index}'])
+  })
+
+  test('spec_paths', () => {
+    expect(test_results.spec_paths()).toEqual([
+      "GET /_nodes/{id}",
+      "POST /_nodes/{id}",
+      "GET /cluster_manager",
+      "POST /cluster_manager",
+      "GET /index",
+      "GET /nodes"
+    ])
   })
 
   test('write_coverage', () => {

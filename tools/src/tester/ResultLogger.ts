@@ -11,6 +11,7 @@ import { type ChapterEvaluation, type Evaluation, Result, type StoryEvaluation }
 import { overall_result } from './helpers'
 import * as ansi from './Ansi'
 import TestResults from './TestResults'
+import _ from 'lodash'
 
 export interface ResultLogger {
   log: (evaluation: StoryEvaluation) => void
@@ -43,7 +44,30 @@ export class ConsoleResultLogger implements ResultLogger {
 
   log_coverage(results: TestResults): void {
     console.log()
-    console.log(`Tested ${results.evaluated_paths_count()}/${results.spec_paths_count()} paths.`)
+    console.log(`Tested ${results.evaluated_paths().length}/${results.spec_paths().length} paths.`)
+  }
+
+  log_coverage_report(results: TestResults): void {
+    console.log()
+    console.log(`${results.unevaluated_paths().length} paths remaining.`)
+    const groups = _.groupBy(results.unevaluated_paths(), (path) => path.split(' ', 2)[1].split('/')[1])
+    Object.entries(groups).forEach(([root, paths]) => {
+      this.#log_coverage_group(root, paths)
+    });
+  }
+
+  #log_coverage_group(key: string, paths: string[], index: number = 2): void {
+    if (paths.length == 0 || key == undefined) return
+    console.log(`${' '.repeat(index)}/${key} (${paths.length})`)
+    const current_level_paths = paths.filter((path) => path.split('/').length == index)
+    current_level_paths.forEach((path) => {
+      console.log(`${' '.repeat(index + 2)}${path}`)
+    })
+    const next_level_paths = paths.filter((path) => path.split('/').length > index)
+    const subgroups = _.groupBy(next_level_paths, (path) => path.split('/')[index])
+    Object.entries(subgroups).forEach(([root, paths]) => {
+      this.#log_coverage_group(root, paths, index + 1)
+    });
   }
 
   #log_story ({ result, full_path, display_path, message, warnings }: StoryEvaluation): void {

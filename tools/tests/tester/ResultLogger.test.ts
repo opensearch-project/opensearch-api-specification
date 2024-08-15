@@ -79,6 +79,41 @@ describe('ConsoleResultLogger', () => {
       ])
     })
 
+    test('log_coverage_report', () => {
+      const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete')
+      const test_results = new TestResults(spec, { evaluations: [{
+        result: Result.PASSED,
+        display_path: 'path',
+        full_path: 'path',
+        description: 'description',
+        chapters: [
+          {
+            title: 'title',
+            overall: { result: Result.PASSED },
+            path: 'GET /_nodes/{id}'
+          }
+        ]
+      }] })
+
+      logger.log_coverage_report(test_results)
+
+      expect(log.mock.calls).not.toContain(["GET /_nodes/{id}"])
+      expect(log.mock.calls).toEqual([
+        [],
+        ["5 paths remaining."],
+        ["  /_nodes (1)"],
+        ["   /{id} (1)"],
+        ["     POST /_nodes/{id}"],
+        ["  /cluster_manager (2)"],
+        ["    GET /cluster_manager"],
+        ["    POST /cluster_manager"],
+        ["  /index (1)"],
+        ["    GET /index"],
+        ["  /nodes (1)"],
+        ["    GET /nodes"]
+      ])
+    })
+
     test('with retries', () => {
       logger.log({
         result: Result.PASSED,

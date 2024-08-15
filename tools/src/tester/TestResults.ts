@@ -16,28 +16,44 @@ import { write_json } from "../helpers";
 export default class TestResults {
   protected _spec: MergedOpenApiSpec
   protected _evaluations: StoryEvaluations
+  protected _evaluated_paths?: string[]
+  protected _unevaluated_paths?: string[]
+  protected _spec_paths?: string[]
 
   constructor(spec: MergedOpenApiSpec, evaluations: StoryEvaluations) {
     this._spec = spec
     this._evaluations = evaluations
   }
 
-  evaluated_paths_count(): number {
-    return _.uniq(_.compact(_.flatten(_.map(this._evaluations.evaluations, (evaluation) =>
+  evaluated_paths(): string[] {
+    if (this._evaluated_paths !== undefined) return this._evaluated_paths
+    this._evaluated_paths = _.uniq(_.compact(_.flatten(_.map(this._evaluations.evaluations, (evaluation) =>
       _.map(evaluation.chapters, (chapter) => chapter.path)
-    )))).length
+    ))))
+    return this._evaluated_paths
   }
 
-  spec_paths_count(): number {
-    return Object.values(this._spec.paths()).reduce((acc, methods) => acc + methods.length, 0);
+  unevaluated_paths(): string[] {
+    if (this._unevaluated_paths !== undefined) return this._unevaluated_paths
+    this._unevaluated_paths = this.spec_paths().filter((path => !this.evaluated_paths().includes(path)))
+    return this._unevaluated_paths
+  }
+
+  spec_paths(): string[] {
+    if (this._spec_paths !== undefined) return this._spec_paths
+    this._spec_paths = _.uniq(Object.entries(this._spec.paths()).flatMap(([path, path_item]) => {
+      return Object.values(path_item).map((method) => `${method.toUpperCase()} ${path}`)
+    }))
+
+    return this._spec_paths
   }
 
   test_coverage(): SpecTestCoverage {
     return {
-      evaluated_paths_count: this.evaluated_paths_count(),
-      paths_count: this.spec_paths_count(),
-      evaluated_paths_pct: this.spec_paths_count() > 0 ? Math.round(
-        this.evaluated_paths_count() / this.spec_paths_count() * 100 * 100
+      evaluated_paths_count: this.evaluated_paths().length,
+      paths_count: this.spec_paths().length,
+      evaluated_paths_pct: this.spec_paths().length > 0 ? Math.round(
+        this.evaluated_paths().length / this.spec_paths().length * 100 * 100
       ) / 100 : 0,
     }
   }
