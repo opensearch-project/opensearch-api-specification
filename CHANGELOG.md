@@ -77,6 +77,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `read_time`, `write_time`, `queue_size` and `io_time_in_millis` to `IoStatDevice` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added `total_rejections_breakup` to `ShardIndexingPressureStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added detailed test coverage report ([#513](https://github.com/opensearch-project/opensearch-api-specification/pull/513))
 
 ### Changed
 

@@ -16,6 +16,9 @@
     - [Warnings](#warnings)
       - [multiple-paths-detected](#multiple-paths-detected)
       - [Suppressing Warnings](#suppressing-warnings)
+  - [Collecting Test Coverage](#collecting-test-coverage)
+    - [Coverage Summary](#coverage-summary)
+    - [Coverage Report](#coverage-report)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -317,4 +320,33 @@ The test runner may generate warnings that can be suppressed with `warnings:` at
   path: /{index}/_search
   parameters:
     index: movies
+```
+
+## Collecting Test Coverage
+
+### Coverage Summary
+
+The test tool can generate a test coverage summary using `--coverage <path>` with the number of evaluated verb + path combinations, a total number of paths and the % of paths tested. 
+
+```json
+{
+  "evaluated_operations_count": 214,
+  "operations_count": 550,
+  "evaluated_paths_pct": 38.91
+}
+```
+
+The report is then used by the [test-spec.yml](.github/workflows/test-spec.yml) workflow, uploaded with every run, combined across various versions of OpenSearch, and reported as a comment on each pull request.
+
+### Coverage Report
+
+The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. For example, the [put_alias.yaml](tests/default/indices/aliases/put_alias.yaml) test exercises `PUT /_alias/{name}`, but not the other verbs. The report produces the following output with the missing ones.
+
+```
+/_alias (4)
+  GET /_alias
+  /{name} (3)
+    GET /_alias/{name}
+    POST /_alias/{name}
+    HEAD /_alias/{name}
 ```

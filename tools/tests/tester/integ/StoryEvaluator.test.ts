@@ -70,6 +70,10 @@ test('with an unexpected error deserializing data', async () => {
   expect(actual.chapters && actual.chapters[0]).toEqual({
     title: "This PUT /{index} chapter should pass.",
     path: 'PUT /{index}',
+    operation: {
+      method: 'PUT',
+      path: '/{index}'
+    },
     overall: {
       result: Result.ERROR
     },
