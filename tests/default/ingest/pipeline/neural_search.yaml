@@ -158,7 +158,7 @@ chapters:
         - {director: Nicolas Winding Refn, title: Drive, year: 1960}
     response:
       status: 200
-  - synopsis: Search.
+  - synopsis: Search by Text.
     path: /{index}/_search
     method: POST
     parameters:
@@ -185,6 +185,23 @@ chapters:
                       title: Moneyball
                   script:
                     source: _score * 1.7
+  - synopsis: Search by Image - Invalid Model.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        _source:
+          excludes: [passage_embedding]
+        query:
+          neural:
+            passage_embedding:
+              query_image: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAAqo0jMgAAAAd0SU1FB+gIDhYxKXooT6EAAAEPSURBVCjPfdExS4IBFIXhJ/lWs8GwKZHaWxsKlaAcamxzUvsB7S1KDQ1B0NoYVLZEjS1Sof9C+krNxKVRCWowi6A64z1w73vPYaRATlXHwEDbmVXByJgACTs2NdW8ICEjpWpPz6d9JVQQRVkZUUWhS9Oj5UdCaSRVPHlSkUTag0MBOV0FxN1oamlpuhFHwbNVqupi2NCTderUir51xNSdRSypecW7MXbDgUe8qllmqMjXibbwkwGKhhFj9W058SaQdyw+Hkf0zYEFefsabpUsWATz+hH3MmKYtW3xiwSmZN3992ZJ19rfQWWEjkaNJFx5+BH1pJLQtcTvZc3ISLmw6+UbKJBzrmNoqOPc2rjuDx+YYcUqo2MMAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDI0LTA4LTE0VDIyOjQ5OjI4KzAwOjAwtj8PBwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyNC0wOC0xNFQyMjo0OToyOCswMDowMMdit7sAAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjQtMDgtMTRUMjI6NDk6NDErMDA6MDDDgNowAAAAAElFTkSuQmCC
+              model_id: UNKNOWN # This 
+              k: 100
+    response:
+      status: 404
   - synopsis: Undeploy a model.
     path: /_plugins/_ml/models/{model_id}/_undeploy
     method: POST
