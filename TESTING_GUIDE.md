@@ -29,6 +29,16 @@ We have devised our own test framework to test the spec against an OpenSearch cl
 
 ### Running Spec Tests Locally
 
+Downloading and installing latest version of Node.js and npm
+
+https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+
+```bash
+Note: to download the latest version of npm, on the command line, run the following command:
+
+npm install -g npm
+```
+
 Set up an OpenSearch cluster with Docker:
 
 (Replace `<<your_password>>` with your desired password. If not provided, the default password inside the `docker-compose.yml` file will be used.)
@@ -36,6 +46,10 @@ Set up an OpenSearch cluster with Docker:
 export OPENSEARCH_PASSWORD=<<your_password>>
 cd tests/default
 docker compose up -d
+```
+In Windows env:
+``` 
+$Env:OPENSEARCH_PASSWORD="MyPassword!"
 ```
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
