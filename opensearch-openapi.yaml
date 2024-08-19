@@ -7104,6 +7104,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
     post:
       operationId: search.1
       x-operation-group: search
@@ -7168,6 +7172,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
   /_search_shards:
     get:
       operationId: search_shards.0
@@ -10098,6 +10106,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
     post:
       operationId: search.3
       x-operation-group: search
@@ -10163,6 +10175,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
   /{index}/_search_shards:
     get:
       operationId: search_shards.2
@@ -26681,6 +26697,16 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_core.search:ResponseBody'
+    search@400:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/query._common:ErrorResponse'
+    search@404:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/query._common:ErrorResponse'
     security.authinfo@200:
       content:
         application/json:
@@ -37287,7 +37313,7 @@ components:
           type: string
         query_image:
           type: string
-          format: binary
+          contentEncoding: base64
         model_id:
           type: string
         k:
@@ -37298,8 +37324,6 @@ components:
           type: number
         filter:
           $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
-      required:
-        - model_id
     _common.query_dsl:NumberRangeQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:RangeQueryBase'
@@ -48971,10 +48995,8 @@ components:
             $ref: '#/components/schemas/query._common:RootCause'
         type:
           type: string
-          example: status_exception
         reason:
           type: string
-          example: DataSource not found
       required:
         - reason
         - root_cause
@@ -48984,10 +49006,8 @@ components:
       properties:
         type:
           type: string
-          example: status_exception
         reason:
           type: string
-          example: DataSource not found
       required:
         - reason
         - type
