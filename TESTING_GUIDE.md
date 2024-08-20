@@ -346,7 +346,7 @@ The report is then used by the [test-spec.yml](.github/workflows/test-spec.yml) 
 
 ### Coverage Report
 
-The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. For example, the [put_alias.yaml](tests/default/indices/aliases/put_alias.yaml) test exercises `PUT /_alias/{name}`, but not the other verbs. The report produces the following output with the missing ones.
+The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. The report produces the following output with the missing ones.
 
 ```
 /_alias (4)
