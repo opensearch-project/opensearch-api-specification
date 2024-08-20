@@ -40,6 +40,7 @@ docker compose up -d
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
+export OPENSEARCH_PASSWORD=<<your_password>>
 npm run test:spec -- --opensearch-insecure
 ```
 
@@ -51,6 +52,11 @@ npm run test:spec -- --opensearch-insecure --tests tests/default/_core/info.yaml
 Verbose output:
 ```bash
 npm run test:spec -- --opensearch-insecure --verbose
+```
+
+Want to help with some missing tests? Choose from the remaining paths in the test coverage report:
+```bash
+npm run test:spec -- --opensearch-insecure --coverage-report
 ```
 
 ### Running Spec Tests with Amazon OpenSearch
