@@ -2,11 +2,29 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test cat/segment_replication endpoints.
 version: '>= 2.7'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
 chapters:
-  - synopsis: Cat with a json response.
+  - synopsis: List information about active and last completed segment replication events on each replica shard.
     path: /_cat/segment_replication
     method: GET
     parameters:
       format: json
+    response:
+      status: 200
+  - synopsis: List information about active and last completed segment replication events on each replica shard for an index.
+    path: /_cat/segment_replication/{index}
+    method: GET
+    parameters:
+      format: json
+      index:
+        - books
     response:
       status: 200
