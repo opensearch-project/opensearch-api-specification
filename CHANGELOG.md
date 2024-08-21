@@ -78,6 +78,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `total_rejections_breakup` to `ShardIndexingPressureStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added detailed test coverage report ([#513](https://github.com/opensearch-project/opensearch-api-specification/pull/513))
+- Added 404 responses to `/_alias/{name}` and `/{index}/_alias/{name}` ([#519](https://github.com/opensearch-project/opensearch-api-specification/pull/519))
 
 ### Changed
 

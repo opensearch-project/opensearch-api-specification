@@ -1,26 +1,30 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test bulk endpoint.
+description: Test bulk index endpoint.
 epilogues:
   - path: /books,movies
     method: DELETE
     status: [200, 404]
 chapters:
   - synopsis: Create an index.
-    path: /_bulk
+    path: /{index}/_bulk
     method: POST
+    parameters:
+      index: movies
     request:
       content_type: application/x-ndjson
       payload:
-        - {create: {_index: movies}}
+        - {create: {}}
         - {director: Bennett Miller, title: Moneyball, year: 2011}
   - synopsis: Delete document in an index.
-    path: /_bulk
+    path: /{index}/_bulk
     method: PUT
+    parameters:
+      index: movies
     request:
       content_type: application/x-ndjson
       payload:
-        - {delete: {_index: movies, _id: invalid}}
+        - {delete: {_id: invalid}}
     response:
       status: 200
       payload:
@@ -31,21 +35,23 @@ chapters:
               _id: invalid
               result: not_found
               status: 404
-  - synopsis: Bulk document CRUD.
-    path: /_bulk
+  - synopsis: Bulk index document CRUD.
     method: POST
+    path: /{index}/_bulk
+    parameters:
+      index: books
     request:
       content_type: application/x-ndjson
       payload:
-        - {create: {_index: books, _id: book_1392214}}
+        - {create: {_id: book_1392214}}
         - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
-        - {update: {_index: books, _id: book_1392214}}
+        - {update: {_id: book_1392214}}
         - {doc: {pages: 376}}
-        - {update: {_index: books, _id: book_1392214}}
+        - {update: {_id: book_1392214}}
         - {doc: {pages: 376}, _source: true}
-        - {update: {_index: books, _id: book_1392214}}
+        - {update: {_id: book_1392214}}
         - {script: {source: ctx._source.pages = 376;}}
-        - {update: {_index: books, _id: does_not_exist}}
+        - {update: {_id: does_not_exist}}
         - {script: {source: 'ctx.op = "none";'}, scripted_upsert: true, upsert: {pages: 375}}
-        - {delete: {_index: books, _id: book_1392214}}
+        - {delete: {_id: book_1392214}}
 
