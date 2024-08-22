@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Asynchronous Search API
+  description: OpenSearch Asynchronous Search API.
+  version: 1.0.0
+paths:
+  /_plugins/_asynchronous_search:
+    post:
+      operationId: asynchronous_search.search.0
+      x-operation-group: asynchronous_search.search
+      x-version-added: '1.0'
+      description: Perform an asynchronous search.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/async/index/#rest-api
+      parameters:
+        - $ref: '#/components/parameters/asynchronous_search.search::query.wait_for_completion_timeout'
+        - $ref: '#/components/parameters/asynchronous_search.search::query.keep_on_completion'
+        - $ref: '#/components/parameters/asynchronous_search.search::query.keep_alive'
+        - $ref: '#/components/parameters/asynchronous_search.search::query.index'
+      requestBody:
+        $ref: '#/components/requestBodies/asynchronous_search.search'
+      responses:
+        '200':
+          $ref: '#/components/responses/asynchronous_search.search@200'
+  /_plugins/_asynchronous_search/{id}:
+    get:
+      operationId: asynchronous_search.search.get.0
+      x-operation-group: asynchronous_search.get
+      x-version-added: '1.0'
+      description: Get partial responses from asynchronous search.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/async/index/#get-partial-results
+      parameters:
+        - $ref: '#/components/parameters/asynchronous_search.get::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/asynchronous_search.get@200'
+    delete:
+      operationId: asynchronous_search.search.delete.0
+      x-operation-group: asynchronous_search.delete
+      x-version-added: '1.0'
+      description: Delete asynchronous search.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/async/index/#delete-searches-and-results
+      parameters:
+        - $ref: '#/components/parameters/asynchronous_search.delete::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/asynchronous_search.delete@200'
+  /_plugins/_asynchronous_search/stats:
+    get:
+      operationId: asynchronous_search.search.stats.0
+      x-operation-group: asynchronous_search.stats
+      x-version-added: '1.0'
+      description: Monitoring of asynchronous searches that are running, completed, and/or persisted.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/search-plugins/async/index/#monitor-stats
+      responses:
+        '200':
+          $ref: '#/components/responses/asynchronous_search.stats@200'
+  
+components:
+  parameters:
+    asynchronous_search.search::query.wait_for_completion_timeout:
+      name: wait_for_completion_timeout
+      in: query
+      description: The amount of time that you plan to wait for the results.
+      schema:
+        type: string
+    asynchronous_search.search::query.keep_on_completion:
+      name: keep_on_completion
+      in: query
+      description: Whether you want to save the results in the cluster after the search is complete.
+      schema:
+        type: boolean
+    asynchronous_search.search::query.keep_alive:
+      name: keep_alive
+      in: query
+      description: The amount of time that the result is saved in the cluster.
+      schema:
+        type: string
+    asynchronous_search.search::query.index:
+      name: index
+      in: query
+      description: The name of the index to be searched.
+      schema:
+        type: string
+    asynchronous_search.get::path.id:
+      name: id
+      in: path
+      schema:
+        type: string
+    asynchronous_search.delete::path.id:
+      name: id
+      in: path
+      schema:
+        type: string
+    
+  requestBodies:
+    asynchronous_search.search:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/asynchronous_search._common.yaml#/components/schemas/Search'
+            # $ref: '_core.yaml#/components/requestBodies/search'
+
+  responses:
+    asynchronous_search.search@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/asynchronous_search._common.yaml#/components/schemas/ResponseBody'
+    asynchronous_search.get@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/asynchronous_search._common.yaml#/components/schemas/ResponseBody'
+    asynchronous_search.delete@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    asynchronous_search.stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/asynchronous_search._common.yaml#/components/schemas/StatsResponse'
