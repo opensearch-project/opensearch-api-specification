@@ -1,11 +1,36 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test cat/count endpoints.
+prologues:
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        director: Bennett Miller
+        title: Moneyball
+        year: 2011
+    status: [201]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
 chapters:
-  - synopsis: Cat with a json response.
+  - synopsis: List the number of documents in the cluster.
     path: /_cat/count
     method: GET
     parameters:
       format: json
     response:
       status: 200
+  - synopsis: List the number of documents in an index.
+    path: /_cat/count/{index}
+    method: GET
+    parameters:
+      index: movies
+      format: json
+    response:
+      status: 200
+      payload:
+        - count: '1'

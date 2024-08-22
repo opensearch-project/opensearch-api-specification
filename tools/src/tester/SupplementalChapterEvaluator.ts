@@ -12,7 +12,7 @@ import { ChapterOutput } from "./ChapterOutput";
 import ChapterReader from "./ChapterReader";
 import { StoryOutputs } from "./StoryOutputs";
 import { overall_result } from "./helpers";
-import { ChapterEvaluation, Result } from "./types/eval.types";
+import { ChapterEvaluation, Evaluation, Result } from "./types/eval.types";
 import { SupplementalChapter } from "./types/story.types";
 import { Logger } from "../Logger";
 import { to_json } from "../helpers";
@@ -71,9 +71,11 @@ export default class SupplementalChapterEvaluator {
 
       const message = message_segments.join('\n')
 
+      var overall: Evaluation = { result: Result.ERROR, message }
+      if (response.error !== undefined) overall.error = response.error as Error
+
       var evaluation: ChapterEvaluation = {
-        title,
-        overall: { result: Result.ERROR, message, error: response.error as Error }
+        title, overall
       }
 
       if (output_values_evaluation.output) {

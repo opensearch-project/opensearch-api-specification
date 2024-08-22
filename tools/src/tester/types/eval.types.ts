@@ -17,6 +17,11 @@ export interface StoryFile {
   story: Story
 }
 
+export interface Operation {
+  method: string
+  path: string
+}
+
 export interface StoryEvaluation {
   result: Result
   display_path: string
@@ -36,6 +41,7 @@ export interface StoryEvaluations {
 export interface ChapterEvaluation {
   title: string,
   overall: Evaluation,
+  operation?: Operation,
   path?: string,
   request?: {
     parameters?: Record<string, Evaluation>

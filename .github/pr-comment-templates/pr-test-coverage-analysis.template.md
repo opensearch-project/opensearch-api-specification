@@ -1,8 +1,8 @@
 ## Spec Test Coverage Analysis
 {{with .test_coverage}}
 
-| Total             | Tested                                                   |
-|-------------------|----------------------------------------------------------|
-| {{.paths_count}}  | {{.evaluated_paths_count}} ({{.evaluated_paths_pct}} %)  |
+| Total                        | Tested                                                        |
+|------------------------------|---------------------------------------------------------------|
+| {{.total_operations_count}}  | {{.evaluated_operations_count}} ({{.evaluated_paths_pct}} %)  |
 
 {{end}}

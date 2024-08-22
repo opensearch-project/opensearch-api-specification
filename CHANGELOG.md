@@ -77,6 +77,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `read_time`, `write_time`, `queue_size` and `io_time_in_millis` to `IoStatDevice` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added `total_rejections_breakup` to `ShardIndexingPressureStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Added detailed test coverage report ([#513](https://github.com/opensearch-project/opensearch-api-specification/pull/513))
+- Added 404 responses to `/_alias/{name}` and `/{index}/_alias/{name}` ([#519](https://github.com/opensearch-project/opensearch-api-specification/pull/519))
 
 ### Changed
 
@@ -122,6 +124,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed accuracy of the index stats schemas ([#491](https://github.com/opensearch-project/opensearch-api-specification/pull/491))
 - Fixed security spec to add support for 400 and 403s ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Fixed required parameters in `NodeInfo` and `NodeOperatingSystemInfo` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
+- Fixed query DSL `neural` field `query_image` set `contentEncoding` and `model_id` as optional ([#512](https://github.com/opensearch-project/opensearch-api-specification/pull/512))
 
 ### Security
 

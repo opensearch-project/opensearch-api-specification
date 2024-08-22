@@ -593,6 +593,12 @@ components:
                 - type: boolean
           required:
             - value
+    IgnoreUnmapped:
+      type: boolean
+      default: false
+      description: |-
+        Set to `true` to ignore an unmapped field and not match any documents for this query.
+        Set to `false` to throw an exception if the field is not mapped.
     GeoBoundingBoxQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -603,10 +609,7 @@ components:
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
-              description: |-
-                Set to `true` to ignore an unmapped field and not match any documents for this query.
-                Set to `false` to throw an exception if the field is not mapped.
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
     GeoExecution:
       type: string
       enum:
@@ -630,11 +633,7 @@ components:
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
-              description: |-
-                Set to `true` to ignore an unmapped field and not match any documents for this query.
-                Set to `false` to throw an exception if the field is not mapped.
-              type: boolean
-              default: false
+              $ref: '#/components/schemas/IgnoreUnmapped'
             field:
               type: object
           required:
@@ -648,25 +647,22 @@ components:
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
     GeoShapeQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
             ignore_unmapped:
-              description: |-
-                Set to `true` to ignore an unmapped field and not match any documents for this query.
-                Set to `false` to throw an exception if the field is not mapped.
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
     HasChildQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: Indicates whether to ignore an unmapped `type` and not return any documents instead of an error.
-              type: boolean
             inner_hits:
               $ref: '_core.search.yaml#/components/schemas/InnerHits'
             max_children:
@@ -714,10 +710,10 @@ components:
         - type: object
           properties:
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: |-
                 Indicates whether to ignore an unmapped `parent_type` and not return any documents instead of an error.
                 You can use this parameter to query multiple indices that may not contain the `parent_type`.
-              type: boolean
             inner_hits:
               $ref: '_core.search.yaml#/components/schemas/InnerHits'
             parent_type:
@@ -1211,8 +1207,8 @@ components:
         - type: object
           properties:
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: Indicates whether to ignore an unmapped path and not return any documents instead of an error.
-              type: boolean
             inner_hits:
               $ref: '_core.search.yaml#/components/schemas/InnerHits'
             path:
@@ -1237,7 +1233,7 @@ components:
           type: string
         query_image:
           type: string
-          format: binary
+          contentEncoding: base64
         model_id:
           type: string
         k:
@@ -1248,8 +1244,6 @@ components:
           type: number
         filter:
           $ref: '#/components/schemas/QueryContainer'
-      required:
-        - model_id
     ParentIdQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1258,8 +1252,8 @@ components:
             id:
               $ref: '_common.yaml#/components/schemas/Id'
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: Indicates whether to ignore an unmapped `type` and not return any documents instead of an error.
-              type: boolean
             type:
               $ref: '_common.yaml#/components/schemas/RelationName'
     PercolateQuery:
@@ -1613,8 +1607,7 @@ components:
         - type: object
           properties:
             ignore_unmapped:
-              description: When set to `true` the query ignores an unmapped field and will not match any documents.
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
     SimpleQueryStringQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'

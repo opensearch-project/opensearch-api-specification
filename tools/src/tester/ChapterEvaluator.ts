@@ -84,16 +84,23 @@ export default class ChapterEvaluator {
 
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
+      operation: {
+        method: chapter.method,
+        path: chapter.path
+      },
       path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request },
-      retries,
       response: {
         status,
         payload_body: payload_body_evaluation,
         payload_schema: payload_schema_evaluation,
         output_values: output_values_evaluation.evaluation
       }
+    }
+
+    if (retries !== undefined) {
+      result.retries = retries
     }
 
     if (output_values_evaluation?.output !== undefined) {

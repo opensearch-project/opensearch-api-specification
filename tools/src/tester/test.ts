@@ -60,6 +60,7 @@ const command = new Command()
   .addOption(AWS_REGION_OPTION)
   .addOption(AWS_SERVICE_OPTION)
   .addOption(new Option('--coverage <path>', 'path to write test coverage results to'))
+  .addOption(new Option('--coverage-report', 'display a detailed test coverage report'))
   .allowExcessArguments(false)
   .parse()
 
@@ -82,6 +83,7 @@ runner.run(opts.testsPath, spec.api_version(), opts.opensearchDistribution, opts
 
       const test_results = new TestResults(spec, results)
       result_logger.log_coverage(test_results)
+      if (opts.coverageReport) result_logger.log_coverage_report(test_results)
       if (opts.coverage !== undefined) {
         console.log(`Writing ${opts.coverage} ...`)
         test_results.write_coverage(opts.coverage)

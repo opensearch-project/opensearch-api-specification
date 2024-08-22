@@ -16,6 +16,9 @@
     - [Warnings](#warnings)
       - [multiple-paths-detected](#multiple-paths-detected)
       - [Suppressing Warnings](#suppressing-warnings)
+  - [Collecting Test Coverage](#collecting-test-coverage)
+    - [Coverage Summary](#coverage-summary)
+    - [Coverage Report](#coverage-report)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -37,6 +40,7 @@ docker compose up -d
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
+export OPENSEARCH_PASSWORD=<<your_password>>
 npm run test:spec -- --opensearch-insecure
 ```
 
@@ -48,6 +52,11 @@ npm run test:spec -- --opensearch-insecure --tests tests/default/_core/info.yaml
 Verbose output:
 ```bash
 npm run test:spec -- --opensearch-insecure --verbose
+```
+
+Want to help with some missing tests? Choose from the remaining paths in the test coverage report:
+```bash
+npm run test:spec -- --opensearch-insecure --coverage-report
 ```
 
 ### Running Spec Tests with Amazon OpenSearch
@@ -228,13 +237,16 @@ OpenSearch consists of plugins that may or may not be present in various distrib
     description: Returns basic information about the cluster.
 ```
 
-Similarly, skip tests that are not applicable to a distribution by listing the distributions that support it.
+Similarly, skip tests that are not applicable to a distribution by listing the distributions that support or do not support it.
 
 ```yaml
 description: Test root endpoint.
 distributions:
-  - amazon-managed
-  - opensearch.org
+  included:
+    - amazon-managed
+    - opensearch.org
+  excluded:
+    - amazon-serverless
 chapters:
   - synopsis: Get server info.
     path: /
@@ -299,7 +311,7 @@ WARNING Multiple paths detected, please group similar tests together and move pa
 
 #### Suppressing Warnings
 
-The test runner may generate warnings that can be suppressed with `warnings:`. For example, to suppress the multiple paths detected warning.
+The test runner may generate warnings that can be suppressed with `warnings:` at story or chapter level. For example, to suppress the multiple paths detected warning.
 
 ```yaml
 - synopsis: Create an index.
@@ -314,4 +326,33 @@ The test runner may generate warnings that can be suppressed with `warnings:`. F
   path: /{index}/_search
   parameters:
     index: movies
+```
+
+## Collecting Test Coverage
+
+### Coverage Summary
+
+The test tool can generate a test coverage summary using `--coverage <path>` with the number of evaluated verb + path combinations, a total number of paths and the % of paths tested. 
+
+```json
+{
+  "evaluated_operations_count": 214,
+  "operations_count": 550,
+  "evaluated_paths_pct": 38.91
+}
+```
+
+The report is then used by the [test-spec.yml](.github/workflows/test-spec.yml) workflow, uploaded with every run, combined across various versions of OpenSearch, and reported as a comment on each pull request.
+
+### Coverage Report
+
+The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. The report produces the following output with the missing ones.
+
+```
+/_alias (4)
+  GET /_alias
+  /{name} (3)
+    GET /_alias/{name}
+    POST /_alias/{name}
+    HEAD /_alias/{name}
 ```

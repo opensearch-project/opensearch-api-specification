@@ -14,6 +14,23 @@ chapters:
       payload:
         - {create: {_index: movies}}
         - {director: Bennett Miller, title: Moneyball, year: 2011}
+  - synopsis: Delete document in an index.
+    path: /_bulk
+    method: PUT
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {delete: {_index: movies, _id: invalid}}
+    response:
+      status: 200
+      payload:
+        errors: false
+        items:
+          - delete:
+              _index: movies
+              _id: invalid
+              result: not_found
+              status: 404
   - synopsis: Bulk document CRUD.
     path: /_bulk
     method: POST
