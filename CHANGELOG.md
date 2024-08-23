@@ -71,7 +71,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for security plugin  ([#271](https://github.com/opensearch-project/opensearch-api-specification/pull/271))
 - Added `/_plugins/_security/api/certificates/` ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Added `/_plugins/_ml/models/{model_id}/_deploy`, `_undeploy` and `knn_vector` type in `passage_embedding` ([#504](https://github.com/opensearch-project/opensearch-api-specification/pull/504))
-- Added `PersonalizeSearchRanking`, `RetrievalAugmentedGeneration`, `Rerank`, `Collapse`, `TruncateHits` and `SplitResponseProcessor` ([#505](https://github.com/opensearch-project/opensearch-api-specification/pull/505))
+- Added `PersonalizeSearchRanking`, `RetrievalAugmentedGeneration`, `Rerank`, `Collapse`, `TruncateHits`, `SortResponseProcessor` and `SplitResponseProcessor` ([#505](https://github.com/opensearch-project/opensearch-api-specification/pull/505))
 - Added `/_plugins/_security/api/certificates/` to API spec  ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Added support for annotating and testing the API spec against multiple OpenSearch distributions ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added `read_time`, `write_time`, `queue_size` and `io_time_in_millis` to `IoStatDevice` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
@@ -79,6 +79,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added detailed test coverage report ([#513](https://github.com/opensearch-project/opensearch-api-specification/pull/513))
 - Added 404 responses to `/_alias/{name}` and `/{index}/_alias/{name}` ([#519](https://github.com/opensearch-project/opensearch-api-specification/pull/519))
+- Added tests for `SplitResponseProcessor` ([#526](https://github.com/opensearch-project/opensearch-api-specification/pull/526))
 
 ### Changed
 
