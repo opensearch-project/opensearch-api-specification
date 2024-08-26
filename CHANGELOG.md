@@ -79,6 +79,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `cancelled_task_percentage` and `current_cancellation_eligible_tasks_count` to `ShardSearchBackpressureTaskCancellationStats` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Added detailed test coverage report ([#513](https://github.com/opensearch-project/opensearch-api-specification/pull/513))
 - Added 404 responses to `/_alias/{name}` and `/{index}/_alias/{name}` ([#519](https://github.com/opensearch-project/opensearch-api-specification/pull/519))
+- Added `asynchronous_search` ([#525](https://github.com/opensearch-project/opensearch-api-specification/pull/525))
+- Added `DELETE /_plugins/_ml/tasks/{task_id}` ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 
 ### Changed
 
@@ -92,6 +94,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Lock testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
 - Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
 - Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
+- Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 
 ### Deprecated
 
