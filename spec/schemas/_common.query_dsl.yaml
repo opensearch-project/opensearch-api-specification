@@ -151,8 +151,6 @@ components:
           $ref: '#/components/schemas/ScriptQuery'
         script_score:
           $ref: '#/components/schemas/ScriptScoreQuery'
-        shape:
-          $ref: '#/components/schemas/ShapeQuery'
         simple_query_string:
           $ref: '#/components/schemas/SimpleQueryStringQuery'
         span_containing:
@@ -207,6 +205,8 @@ components:
             $ref: '#/components/schemas/TextExpansionQuery'
           minProperties: 1
           maxProperties: 1
+        type:
+          $ref: '#/components/schemas/TypeQuery'
         weighted_tokens:
           description: Supports returning text_expansion query results by sending in precomputed tokens with the query.
           type: object
@@ -223,8 +223,6 @@ components:
           maxProperties: 1
         wrapper:
           $ref: '#/components/schemas/WrapperQuery'
-        type:
-          $ref: '#/components/schemas/TypeQuery'
         xy_shape:
           $ref: '#/components/schemas/XyShapeQuery'
       minProperties: 1
@@ -606,6 +604,8 @@ components:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
+            field:
+              $ref: '_common.yaml#/components/schemas/GeoBounds'
             type:
               $ref: '#/components/schemas/GeoExecution'
             validation_method:
@@ -655,8 +655,24 @@ components:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
+            field:
+              type: object
+              properties:
+                shape:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    coordinates:
+                      type: array
+                relation: 
+                  $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+              required:
+                - shape
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          required:
+            - field
     HasChildQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1898,6 +1914,15 @@ components:
         only_score_pruned_tokens:
           description: Whether to only score pruned tokens, vs only scoring kept tokens.
           type: boolean
+    TypeQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            value:
+              type: string
+          required:
+            - value      
     WeightedTokensQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1940,15 +1965,6 @@ components:
               type: string
           required:
             - query
-    TypeQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            value:
-              type: string
-          required:
-            - value
     XyShapeQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1968,3 +1984,5 @@ components:
                   $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
               required:
                 - shape
+          required:
+            - field
