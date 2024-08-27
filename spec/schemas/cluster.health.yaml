@@ -17,11 +17,25 @@ components:
           type: number
         active_shards_percent_as_number:
           $ref: '_common.yaml#/components/schemas/Percentage'
+        awareness_attributes:
+          description: Cluster health information for each awareness attribute.
+          type: object
+          x-version-added: '2.5'
+          additionalProperties:
+            $ref: '#/components/schemas/AwarenessAttributeStats'
         cluster_name:
           $ref: '_common.yaml#/components/schemas/Name'
         delayed_unassigned_shards:
           description: The number of shards whose allocation has been delayed by the timeout settings.
           type: number
+        discovered_master:
+          description: True if the master node has been discovered.
+          type: boolean
+          x-version-deprecated: 2
+        discovered_cluster_manager:
+          description: True if the cluster manager node has been discovered.
+          type: boolean
+          x-version-added: 2
         indices:
           type: object
           additionalProperties:
@@ -51,7 +65,7 @@ components:
         task_max_waiting_in_queue_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         timed_out:
-          description: If false the response returned within the period of time that is specified by the timeout parameter (30s by default)
+          description: If false the response returned within the period of time that is specified by the timeout parameter (30s by default).
           type: boolean
         unassigned_shards:
           description: The number of shards that are not allocated.
@@ -111,6 +125,22 @@ components:
         - cluster
         - indices
         - shards
+    AwarenessAttributeStats:
+      type: object
+      x-version-added: '2.5'
+      properties:
+        active_shards:
+          type: number
+        initializing_shards:
+          type: number
+        relocating_shards:
+          type: number
+        unassigned_shards:
+          type: number
+        data_nodes:
+          type: number
+        weight:
+          type: number
     ShardHealthStats:
       type: object
       properties:
