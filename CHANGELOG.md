@@ -82,6 +82,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `asynchronous_search` ([#525](https://github.com/opensearch-project/opensearch-api-specification/pull/525))
 - Added `DELETE /_plugins/_ml/tasks/{task_id}` ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 - Added `AwarenessAttributeStats` to `/_cluster/health` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
+- Added `cache_reserved_in_bytes` to `ClusterFileSystem` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
+- Added `cluster_manager` to `ClusterNodeCount` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
 
 ### Changed
 
