@@ -87,15 +87,20 @@ export enum Result {
 export class OutputReference {
   chapter_id: string
   output_name: string
-  private constructor (chapter_id: string, output_name: string) {
+  default_value?: string
+  private constructor (chapter_id: string, output_name: string, default_value?: string) {
     this.chapter_id = chapter_id
     this.output_name = output_name
+    this.default_value = default_value
   }
 
   static parse (str: string): OutputReference | undefined {
     if (str.startsWith('${') && str.endsWith('}')) {
-      const spl = str.slice(2, -1).split('.', 2)
-      return { chapter_id: spl[0], output_name: spl[1] }
+      const spl = str.slice(2, -1).replaceAll(' ', '').split('.', 2)
+      const rhs = spl[1].split('?', 2)
+      let default_value: any = parseFloat(rhs[1])
+      if (Number.isNaN(default_value)) default_value = rhs[1]
+      return { chapter_id: spl[0], output_name: rhs[0], default_value }
     }
     return undefined
   }

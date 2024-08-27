@@ -36,7 +36,8 @@ describe('with an object response', () => {
         { d: 2 },
         { e: 3 }
       ]
-    }
+    },
+    zero: 0
   })
 
   test('returns nested values', () => {
@@ -66,6 +67,18 @@ describe('with an object response', () => {
         message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
       }
     })
+  })
+
+  test('uses a default value', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0] ? -1' })).toEqual(
+      passed_output({ x: -1 })
+    )
+  })
+
+  test('does not use a default value on a numeric zero', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: 'payload.zero ? -1' })).toEqual(
+      passed_output({ x: 0 })
+    )
   })
 
   test('errors on invalid source', () => {

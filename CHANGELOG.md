@@ -86,6 +86,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `cluster_manager` to `ClusterNodeCount` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
 - Added support for `query` with `terms` in `_search` ([#546](https://github.com/opensearch-project/opensearch-api-specification/pull/546))
 - Added `h`, `bytes`, `time` parameters to cat API tests ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
+- Added request and response schemas for `/_cluster/routing/awareness/{attribute}/weights` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 
 ### Changed
 

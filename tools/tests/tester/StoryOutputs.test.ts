@@ -13,13 +13,18 @@ import { StoryOutputs } from 'tester/StoryOutputs'
 const story_outputs = new StoryOutputs({
   chapter_id: new ChapterOutput({
     x: 1,
-    y: 2
+    y: 2,
+    n: null,
+    z: 0
   })
 })
 
 test('resolve_string', () => {
   expect(story_outputs.resolve_string('${chapter_id.x}')).toEqual(1)
   expect(story_outputs.resolve_string('${invalid_id.x}')).toBeUndefined()
+  expect(story_outputs.resolve_string('${chapter_id.n ? x}')).toEqual('x')
+  expect(story_outputs.resolve_string('${chapter_id.n ? 0}')).toEqual(0)
+  expect(story_outputs.resolve_string('${chapter_id.z ? -1}')).toEqual(0)
   expect(story_outputs.resolve_string('some_str')).toEqual('some_str')
 })
 

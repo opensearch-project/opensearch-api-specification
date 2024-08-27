@@ -1,0 +1,34 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test cluster routing settings.
+version: '>= 2.16'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          cluster.routing.allocation.awareness.attributes: zone
+          cluster.routing.allocation.awareness.force.zone.values:
+            - zoneA
+chapters:
+  - synopsis: Get zone routing weights.
+    id: weights
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: GET
+    parameters:
+      attribute: zone
+    output:
+      version: payload._version ? -1
+  - synopsis: Update zone routing weights.
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: PUT
+    parameters:
+      attribute: zone
+    request:
+      payload:
+        weights:
+          zoneA: '2'
+        _version: ${weights.version}
+    response:
+      status: 200

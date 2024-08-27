@@ -35,7 +35,11 @@ export class ChapterOutput {
         if (response.payload === undefined) {
           return { evaluation: { result: Result.ERROR, message: 'No payload found in response, but expected output: ' + path } }
         }
-        value = _.get(response, path)
+        const rhs = path.replaceAll(' ', '').split('?', 2)
+        let default_value: any = parseFloat(rhs[1])
+        if (Number.isNaN(default_value)) default_value = rhs[1]
+        value = _.get(response, rhs[0])
+        if (value === undefined) value = default_value
         if (value === undefined) {
           return { evaluation: { result: Result.ERROR, message: `Expected to find non undefined value at \`${path}\`.` } }
         }
