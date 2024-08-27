@@ -168,7 +168,7 @@ chapters:
 
 ### Using Output from Previous Chapters
 
-Consider the following chapters in [ml/model_groups](tests/default/ml/model_groups.yaml) test story:
+Consider the following chapters in [ml/model_groups](tests/plugins/ml/ml/model_groups.yaml) test story:
 ```yaml
   - synopsis: Create model group.
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.

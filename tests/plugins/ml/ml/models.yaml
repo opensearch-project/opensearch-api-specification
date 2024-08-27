@@ -1,4 +1,4 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 
 description: Test the creation of models.
 distributions:
@@ -6,15 +6,8 @@ distributions:
     - amazon-managed
     - amazon-serverless
 version: '>= 2.11'
-prologues:
-  - path: /_cluster/settings
-    method: PUT
-    request:
-      payload:
-        persistent:
-          plugins:
-            ml_commons:
-              only_run_on_ml_node: false
+warnings:
+  multiple-paths-detected: false
 chapters:
   - synopsis: Register model.
     id: register_model
@@ -33,8 +26,6 @@ chapters:
     id: get_completed_task
     path: /_plugins/_ml/tasks/{task_id}
     method: GET
-    warnings:
-      multiple-paths-detected: false
     parameters:
       task_id: ${register_model.task_id}
     response:
