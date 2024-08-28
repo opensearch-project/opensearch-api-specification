@@ -22,6 +22,7 @@ paths:
       description: Returns health for the Cat APIs.
       parameters:
         - $ref: '#/components/parameters/cat.health::query.format'
+        - $ref: '#/components/parameters/cat.health::query.v'
       responses:
         '200':
           $ref: '#/components/responses/cat.health@200'
@@ -40,6 +41,20 @@ paths:
         '200':
           $ref: '#/components/responses/cat.indices@200'
   /{index}:
+    put:
+      operationId: indices.create.0
+      x-operation-group: indices.create
+      x-version-added: '1.0'
+      description: Creates an index with optional settings and mappings.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/index-apis/create-index/
+      parameters:
+        - $ref: '#/components/parameters/indices.create::path.index'
+      requestBody:
+        $ref: '#/components/requestBodies/indices.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.create@200'
     delete:
       operationId: indices.delete.0
       x-operation-group: indices.delete
@@ -65,20 +80,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.exists@200'
-    put:
-      operationId: indices.create.0
-      x-operation-group: indices.create
-      x-version-added: '1.0'
-      description: Creates an index with optional settings and mappings.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/api-reference/index-apis/create-index/
-      parameters:
-        - $ref: '#/components/parameters/indices.create::path.index'
-      requestBody:
-        $ref: '#/components/requestBodies/indices.create'
-      responses:
-        '200':
-          $ref: '#/components/responses/indices.create@200'
 components:
   requestBodies:
     indices.create:
@@ -90,6 +91,12 @@ components:
               settings:
                 type: object
                 description: Optional settings for the index.
+                properties:
+                  shard:
+                    type: object
+                    properties:
+                      check_on_startup:
+                        type: boolean
               mappings:
                 type: object
                 description: Optional mappings for the index.
@@ -180,6 +187,11 @@ components:
       name: format
       schema:
         type: string
+    cat.health::query.v:
+      in: query
+      name: v
+      schema:
+        type: boolean
     cat.help::query.format:
       in: query
       name: format
