@@ -131,6 +131,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed security spec to add support for 400 and 403s ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Fixed required parameters in `NodeInfo` and `NodeOperatingSystemInfo` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Fixed query DSL `neural` field `query_image` set `contentEncoding` and `model_id` as optional ([#512](https://github.com/opensearch-project/opensearch-api-specification/pull/512))
+- Fixed `knn` query specification ([#538](https://github.com/opensearch-project/opensearch-api-specification/pull/538))
 
 ### Security
 
