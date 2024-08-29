@@ -69,11 +69,6 @@ jobs:
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
 
-      - name: Get Container ID
-        id: container
-        run: |
-          echo "CONTAINER_ID=$(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}")" >> $GITHUB_OUTPUT
-
       - name: Run Tests
         run: |
           npm run test:spec -- \
@@ -83,10 +78,12 @@ jobs:
             --tests=tests/${{ matrix.entry.tests || 'default' }}
 
       - name: Get Container Logs
-        if: failure() && steps.container.outputs.CONTAINER_ID
+        if: failure()
         run: |
-          echo Dumping logs from ${{ steps.container.outputs.CONTAINER_ID }} ...
-          docker logs ${{ steps.container.outputs.CONTAINER_ID }}
+          for container_id in $(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}"); do \
+            echo Dumping logs from $container_id ... && \
+            docker logs $container_id \
+          ; done
 
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
