@@ -213,7 +213,7 @@ Consider the following chapters in [ml/model_groups](tests/plugins/ml/ml/model_g
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
 
-You can also supply defaults in both output and input values, e.g. `version: payload.version ? 0` or `${weights._version ? 0}` used in [cluster/routing/awareness/weights.yaml](tests/default/cluster/routing/awareness/weights.yaml).
+You can also supply defaults in both output and input values, e.g. `version: payload.version ? 0` or `${weights._version ? 0}` used in [cluster/routing/awareness/weights.yaml](tests/routing/cluster/routing/awareness/weights.yaml).
 
 You can also reuse output in payload expectations. See [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml) for an example.
 

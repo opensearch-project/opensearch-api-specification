@@ -69,9 +69,21 @@ describe('with an object response', () => {
     })
   })
 
-  test('uses a default value', () => {
+  test('uses a default numeric value', () => {
     expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0] ? -1' })).toEqual(
       passed_output({ x: -1 })
+    )
+  })
+
+  test('uses a default string value', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0] ? a_string' })).toEqual(
+      passed_output({ x: 'a_string' })
+    )
+  })
+
+  test('uses a default quoted string value', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0] ? \'0\'' })).toEqual(
+      passed_output({ x: '0' })
     )
   })
 
