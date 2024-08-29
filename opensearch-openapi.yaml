@@ -24541,10 +24541,10 @@ components:
               knn:
                 description: Defines the approximate kNN search to run.
                 oneOf:
-                  - $ref: '#/components/schemas/_common:KnnQuery'
+                  - $ref: '#/components/schemas/_common.query_dsl:KnnQuery'
                   - type: array
                     items:
-                      $ref: '#/components/schemas/_common:KnnQuery'
+                      $ref: '#/components/schemas/_common.query_dsl:KnnQuery'
               rank:
                 $ref: '#/components/schemas/_common:RankContainer'
               min_score:
@@ -28583,38 +28583,34 @@ components:
             - source
     _common:Ip:
       type: string
-    _common:KnnQuery:
+    _common:KnnField:
       type: object
       properties:
-        field:
-          $ref: '#/components/schemas/_common:Field'
-        query_vector:
+        vector:
           $ref: '#/components/schemas/_common:QueryVector'
-        query_vector_builder:
-          $ref: '#/components/schemas/_common:QueryVectorBuilder'
         k:
-          description: The final number of nearest neighbors to return as top hits
+          description: The final number of nearest neighbors to return as top hits.
           type: number
-        num_candidates:
-          description: The number of nearest neighbor candidates to consider per shard
+        min_score:
+          description: The minimum similarity score for a neighbor to be considered a hit.
           type: number
-        boost:
-          description: Boost value to apply to kNN scores
+          x-version-added: '2.14'
+        max_distance:
+          description: The maximum physical distance in vector space for a neighbor to be considered a hit.
           type: number
+          x-version-added: '2.14'
         filter:
-          description: Filters for the kNN search query
+          description: Filters for the kNN search query.
           oneOf:
             - $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
             - type: array
               items:
                 $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
-        similarity:
-          description: The minimum similarity for a vector to be considered a match
+        boost:
+          description: Boost value to apply to kNN scores
           type: number
       required:
-        - field
-        - k
-        - num_candidates
+        - vector
     _common:LatLonGeoLocation:
       type: object
       properties:
@@ -28992,13 +28988,6 @@ components:
       type: array
       items:
         type: number
-    _common:QueryVectorBuilder:
-      type: object
-      properties:
-        text_embedding:
-          $ref: '#/components/schemas/_common:TextEmbedding'
-      minProperties: 1
-      maxProperties: 1
     _common:RankBase:
       type: object
     _common:RankContainer:
@@ -29753,16 +29742,6 @@ components:
       oneOf:
         - type: string
         - type: number
-    _common:TextEmbedding:
-      type: object
-      properties:
-        model_id:
-          type: string
-        model_text:
-          type: string
-      required:
-        - model_id
-        - model_text
     _common:TimeOfDay:
       description: Time of day, expressed as HH:MM:SS.
       type: string
@@ -37245,6 +37224,12 @@ components:
           $ref: '#/components/schemas/_common:Field'
       required:
         - pattern
+    _common.query_dsl:KnnQuery:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/_common:KnnField'
+      minProperties: 1
+      maxProperties: 1
     _common.query_dsl:Like:
       description: Text that we want similar documents for or a lookup to a document's field for the text.
       oneOf:
@@ -37786,6 +37771,8 @@ components:
             $ref: '#/components/schemas/_common.query_dsl:IntervalsQuery'
           minProperties: 1
           maxProperties: 1
+        knn:
+          $ref: '#/components/schemas/_common.query_dsl:KnnQuery'
         match:
           description: |-
             Returns documents that match a provided text, number, date or boolean value.
@@ -38969,10 +38956,10 @@ components:
         knn:
           description: Defines the approximate kNN search to run.
           oneOf:
-            - $ref: '#/components/schemas/_common:KnnQuery'
+            - $ref: '#/components/schemas/_common.query_dsl:KnnQuery'
             - type: array
               items:
-                $ref: '#/components/schemas/_common:KnnQuery'
+                $ref: '#/components/schemas/_common.query_dsl:KnnQuery'
         from:
           description: |-
             Starting document offset. By default, you cannot page through more than 10,000
