@@ -30,8 +30,9 @@ export class ChapterOutput {
     if (!output) return { evaluation: { result: Result.SKIPPED } }
     const chapter_output = new ChapterOutput({})
     for (const [name, output_value] of Object.entries(output)) {
-      const path: string = typeof output_value === 'string' ? output_value : output_value.path
-      const default_value = typeof output_value === 'string' ? undefined : output_value.default
+      const [path, default_value] = (typeof output_value === 'string')
+        ? [output_value, undefined]
+        : [output_value.path, output_value.default]
       let value: any
       if (path == 'payload' || path.startsWith('payload.') || path.match(/^payload\[\d*\]/)) {
         if (response.payload === undefined) {
