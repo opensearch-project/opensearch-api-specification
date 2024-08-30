@@ -108,13 +108,14 @@ jobs:
         shell: bash -eo pipefail {0}
         run: |
           jq -sc '
-            map(to_entries) |
-            flatten |
-            group_by(.key) |
-            map({key: .[0].key, value: map(.value) | max}) |
-            from_entries |
-            .' $(find ./coverage -name "test-spec-coverage-*.json") > ./coverage/coverage.json
-
+            (map(.operations) | add | unique | length) as $total_operations_count |
+            (map(.evaluated_operations) | add | unique | length) as $evaluated_operations_count |
+            { 
+              total_operations_count: $total_operations_count,
+              evaluated_operations_count: $evaluated_operations_count,
+              evaluated_paths_pct: $evaluated_operations_count | (10000 * . / $total_operations_count | round / 100)
+            }
+          ' $(find ./coverage -name "test-spec-coverage-*.json") > ./coverage/coverage.json
           cat ./coverage/coverage.json
 
       - name: Construct Comment Data Payload
