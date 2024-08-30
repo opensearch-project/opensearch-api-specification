@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test cat/pending_tasks endpoints.
+description: Test cluster-level changes that have not yet been executed.
 epilogues:
   - path: /movies
     method: DELETE
@@ -30,10 +30,11 @@ prologues:
         dest:
           index: films
 chapters:
-  - synopsis: List the progress of all pending tasks.
-    path: /_cat/pending_tasks
+  - synopsis: Returns cluster-level changes that have not yet been executed.
+    path: /_cluster/pending_tasks
     method: GET
-    parameters:
-      format: json
     response:
       status: 200
+      payload:
+        tasks:
+          - executing: true
