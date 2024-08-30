@@ -13,9 +13,7 @@ import { StoryOutputs } from 'tester/StoryOutputs'
 const story_outputs = new StoryOutputs({
   chapter_id: new ChapterOutput({
     x: 1,
-    y: 2,
-    n: null,
-    z: 0
+    y: 2
   })
 })
 
