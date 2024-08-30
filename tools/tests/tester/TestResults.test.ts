@@ -70,9 +70,22 @@ describe('TestResults', () => {
     const filename = 'coverage.json'
     test_results.write_coverage(filename)
     expect(JSON.parse(fs.readFileSync(filename, 'utf8'))).toEqual({
-      evaluated_operations_count: 1,
-      evaluated_paths_pct: 16.67,
-      total_operations_count: 6
+      summary: {
+        evaluated_operations_count: 1,
+        evaluated_paths_pct: 16.67,
+        total_operations_count: 6
+      },
+      evaluated_operations: [
+        { method: 'PUT', path: '/{index}' },
+      ],
+      operations: [
+        { method: 'GET', path: '/_nodes/{id}' },
+        { method: 'POST', path: '/_nodes/{id}' },
+        { method: 'GET', path: '/cluster_manager' },
+        { method: 'POST', path: '/cluster_manager' },
+        { method: 'GET', path: '/index' },
+        { method: 'GET', path: '/nodes' }
+      ]
     })
     fs.unlinkSync(filename)
   })
