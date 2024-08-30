@@ -133,6 +133,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed query DSL `neural` field `query_image` set `contentEncoding` and `model_id` as optional ([#512](https://github.com/opensearch-project/opensearch-api-specification/pull/512))
 - Fixed `knn` query specification ([#538](https://github.com/opensearch-project/opensearch-api-specification/pull/538))
 - Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
+- Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
 
 ### Security
 
