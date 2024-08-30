@@ -50,7 +50,7 @@ export class StoryOutputs {
   resolve_string (str: string): any {
     const ref = OutputReference.parse(str)
     if (ref) {
-      return this.get_output_value(ref.chapter_id, ref.output_name) ?? ref.default_value
+      return this.get_output_value(ref.chapter_id, ref.output_name)
     } else {
       return str
     }

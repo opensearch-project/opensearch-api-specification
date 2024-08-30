@@ -25,16 +25,6 @@ test('resolve_string', () => {
   expect(story_outputs.resolve_string('some_str')).toEqual('some_str')
 })
 
-test('resolve_string defaults', () => {
-  expect(story_outputs.resolve_string('${chapter_id.n ? x}')).toEqual('x')
-  expect(story_outputs.resolve_string('${chapter_id.n ? 0}')).toEqual(0)
-  expect(story_outputs.resolve_string('${chapter_id.z ? -1}')).toEqual(0)
-  expect(story_outputs.resolve_string('${chapter_id.n ? a_string }')).toEqual('a_string')
-  expect(story_outputs.resolve_string('${chapter_id.n ? \'-1\'}')).toEqual('-1')
-  expect(story_outputs.resolve_string('${chapter_id.z ? a_string }')).toEqual(0)
-  expect(story_outputs.resolve_string('${chapter_id.z ? \'-1\'}')).toEqual(0)
-})
-
 test('resolve_value', () => {
   const value = {
     a: '${chapter_id.x}',
