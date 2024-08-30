@@ -6,38 +6,61 @@ info:
 paths:
   /_plugins/_flow_framework/workflow:
     post:
-      operationId: flow_framework.create_workflow.0
-      x-operation-group: flow_framework.create_workflow
-      description: Creates a workflow.
+      operationId: flow_framework.create.0
+      x-operation-group: flow_framework.create
+      description: Create a workflow.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
-        - $ref: '#/components/parameters/flow_framework.create_workflow::query.provision'
+        - $ref: '#/components/parameters/flow_framework.create::query.provision'
       requestBody:
-        $ref: '#/components/requestBodies/flow_framework.create_workflow'
+        $ref: '#/components/requestBodies/flow_framework.create'
       responses:
         '201':
-          $ref: '#/components/responses/flow_framework.create_workflow'
+          $ref: '#/components/responses/flow_framework.create'
 
 
-#
-#  /_plugins/_flow_framework/workflow/{workflow_id}:
-#    delete: { }
+
+  /_plugins/_flow_framework/workflow/{workflow_id}:
+    delete:
+      operationId: flow_framework.delete.0
+      x-operation-group: flow_framework.delete
+      description: Delete a workflow.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/delete-workflow/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.delete::query.clear_status'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.delete'
+        '404':
+          description: Workflow not found.
+
 #    put: { }
 #    get: { }
 
 
 components:
   parameters:
-    flow_framework.create_workflow::query.provision:
+    flow_framework.create::query.provision:
       in: query
       name: provision
       schema:
         description: Whether to provision the workflow as part of the request
         type: boolean
         default: false
+
+    flow_framework.delete::query.clear_status:
+      in: query
+      name: clear_status
+      schema:
+        description: Determines whether to delete the workflow state (without deprovisioning resources) after deleting the template. OpenSearch deletes the workflow state only if the provisioning status is not IN_PROGRESS. Default is false.
+        type: boolean
+        default: false
+
+
   requestBodies:
-    flow_framework.create_workflow:
+    flow_framework.create:
       content:
         application/json:
           schema:
@@ -61,7 +84,7 @@ components:
             required:
               - name
   responses:
-    flow_framework.create_workflow:
+    flow_framework.create:
       content:
         application/json:
           schema:
@@ -72,9 +95,55 @@ components:
                 description: The ID of the workflow to be updated. Required for the PUT method.
             required:
               - workflow_id
+    flow_framework.delete:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _index:
+                type: string
+                description: The name of the index where the document was stored.
+              _id:
+                type: string
+                description: The unique identifier of the deleted document.
+              _version:
+                type: integer
+                description: The version of the document after the deletion.
+              result:
+                type: string
+                description: The result of the deletion operation.
+                enum: [ "deleted", "not_found" ]
+              _shards:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: The total number of shards involved in the deletion.
+                  successful:
+                    type: integer
+                    description: The number of shards where the deletion was successful.
+                  failed:
+                    type: integer
+                    description: The number of shards where the deletion failed.
+              _seq_no:
+                type: integer
+                description: The sequence number assigned to the document after the deletion.
+              _primary_term:
+                type: integer
+                description: The primary term assigned to the document after the deletion.
+            required:
+              - _index
+              - _id
+              - _version
+              - result
+              - _shards
+              - _seq_no
+              - _primary_term
+
 
 # below is for update query field , will change to update workflow
-#    flow_framework.create_workflow::query.update_fields:
+#    flow_framework.create::query.update_fields:
 #      in: query
 #      name: update_fields
 #      schema:
@@ -83,7 +152,7 @@ components:
 #        default: false
 #
 #
-#    flow_framework.create_workflow::query.validation:
+#    flow_framework.create::query.validation:
 #      in: query
 #      name: validation
 #      schema:
