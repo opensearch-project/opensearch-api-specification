@@ -1,7 +1,11 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 description: Test flow_framework endpoints.
-
-
+epilogues:
+  - path: /_plugins/_flow_framework/workflow/{workflow_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      workflow_id: ${create_flow_framework.test_workflow_id}
 chapters:
   - synopsis: Create workflow.
     id: create_flow_framework
@@ -14,8 +18,6 @@ chapters:
       status: 201
     output:
       test_workflow_id: payload.workflow_id
-
-
   - synopsis: Get workflow.
     id: get_flow_framework
     path: /_plugins/_flow_framework/workflow/{workflow_id}
@@ -24,7 +26,6 @@ chapters:
       workflow_id: ${create_flow_framework.test_workflow_id}
     response:
       status: 200
-
   - synopsis: Update workflow.
     id: get_flow_framework
     path: /_plugins/_flow_framework/workflow/{workflow_id}
@@ -36,7 +37,6 @@ chapters:
         name: test_update_work_flow
     response:
       status: 201
-
   - synopsis: Delete workflow.
     id: delete_flow_framework
     path: /_plugins/_flow_framework/workflow/{workflow_id}

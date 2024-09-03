@@ -14,7 +14,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/flow_framework.create::query.provision'
         - $ref: '#/components/parameters/flow_framework.create::query.validation'
-
+        - $ref: '#/components/parameters/flow_framework.create::query.reprovision'
       requestBody:
         $ref: '#/components/requestBodies/flow_framework.create'
       responses:
@@ -58,8 +58,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/flow_framework.get'
-
-
 components:
   parameters:
     flow_framework.get::path.workflow_id:
@@ -72,33 +70,41 @@ components:
       in: query
       name: provision
       schema:
-        description: Whether to provision the workflow as part of the request
+        description: Provision the workflow as part of the request
+        type: boolean
+        default: false
+    flow_framework.create::query.reprovision:
+      x-version-added: 2.17
+      in: query
+      name: reprovision
+      schema:
+        description:
         type: boolean
         default: false
     flow_framework.create::query.validation:
       in: query
       name: validation
       schema:
-        description: Whether to validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
+        description: Validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
         type: string
+        enum:
+          - all
+          - none
         default: all
     flow_framework.update::query.update_fields:
       in: query
       name: update_fields
       schema:
-        description: Whether to update only the fields included in the request body.
+        description: Update only the fields included in the request body.
         type: boolean
         default: false
-
     flow_framework.delete::query.clear_status:
       in: query
       name: clear_status
       schema:
-        description: Determines whether to delete the workflow state (without deprovisioning resources) after deleting the template. OpenSearch deletes the workflow state only if the provisioning status is not IN_PROGRESS. Default is false.
+        description: Delete the workflow state (without deprovisioning resources) after deleting the template. OpenSearch deletes the workflow state only if the provisioning status is not IN_PROGRESS. Default is false.
         type: boolean
         default: false
-
-
   requestBodies:
     flow_framework.create:
       content:
@@ -127,13 +133,11 @@ components:
                     items:
                       type: string
                     description: A list of minimum required OpenSearch versions.
-
               workflows:
                 type: object
                 description: A map of workflows. Presently, only the provision key is supported. The value for the workflow key is a key-value map that includes fields for user_params and lists of nodes and edges.
             required:
               - name
-
     flow_framework.update:
       content:
         application/json:
@@ -161,14 +165,11 @@ components:
                     items:
                       type: string
                     description: A list of minimum required OpenSearch versions.
-
           oneOf:
-            - required: [name]
-            - required: [description]
-            - required: [use_case]
-            - required: [version]
-
-
+            - required: [ name ]
+            - required: [ description ]
+            - required: [ use_case ]
+            - required: [ version ]
   responses:
     flow_framework.create:
       content:
@@ -199,7 +200,7 @@ components:
               result:
                 type: string
                 description: The result of the deletion operation.
-                enum: [deleted, not_found]
+                enum: [ deleted, not_found ]
               _shards:
                 type: object
                 properties:
@@ -218,7 +219,6 @@ components:
               _primary_term:
                 type: integer
                 description: The primary term assigned to the document after the deletion.
-
     flow_framework.get:
       content:
         application/json:
@@ -257,5 +257,3 @@ components:
                 type: integer
               last_updated_time:
                 type: integer
-
-
