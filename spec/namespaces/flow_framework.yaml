@@ -13,14 +13,13 @@ paths:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
         - $ref: '#/components/parameters/flow_framework.create::query.provision'
+        - $ref: '#/components/parameters/flow_framework.create::query.validation'
+
       requestBody:
         $ref: '#/components/requestBodies/flow_framework.create'
       responses:
         '201':
           $ref: '#/components/responses/flow_framework.create'
-
-
-
   /_plugins/_flow_framework/workflow/{workflow_id}:
     delete:
       operationId: flow_framework.delete.0
@@ -33,20 +32,61 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/flow_framework.delete'
-        '404':
-          description: Workflow not found.
-
-#    put: { }
-#    get: { }
+        '403':
+          description: if workflow id is null.
+    put:
+      operationId: flow_framework.update.0
+      x-operation-group: flow_framework.update
+      description: Update a workflow. You can only update a complete workflow if it has not yet been provisioned.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.update::query.update_fields'
+        - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
+      requestBody:
+        $ref: '#/components/requestBodies/flow_framework.update'
+      responses:
+        '201':
+          $ref: '#/components/responses/flow_framework.create'
+          description: It returns the workflow_id
+    get:
+      operationId: flow_framework.get.0
+      x-operation-group: flow_framework.get
+      description: Get a workflow.
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.get'
 
 
 components:
   parameters:
+    flow_framework.get::path.workflow_id:
+      name: workflow_id
+      in: path
+      required: true
+      schema:
+        type: string
     flow_framework.create::query.provision:
       in: query
       name: provision
       schema:
         description: Whether to provision the workflow as part of the request
+        type: boolean
+        default: false
+    flow_framework.create::query.validation:
+      in: query
+      name: validation
+      schema:
+        description: Whether to validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
+        type: string
+        default: all
+    flow_framework.update::query.update_fields:
+      in: query
+      name: update_fields
+      schema:
+        description: Whether to update only the fields included in the request body.
         type: boolean
         default: false
 
@@ -78,11 +118,58 @@ components:
               version:
                 type: object
                 description: A key-value map with two fields, template, which identifies the template version, and compatibility, which identifies a list of minimum required OpenSearch versions.
+                properties:
+                  template:
+                    type: string
+                    description: The template version of the workflow.
+                  compatibility:
+                    type: array
+                    items:
+                      type: string
+                    description: A list of minimum required OpenSearch versions.
+
               workflows:
                 type: object
                 description: A map of workflows. Presently, only the provision key is supported. The value for the workflow key is a key-value map that includes fields for user_params and lists of nodes and edges.
             required:
               - name
+
+    flow_framework.update:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the workflow.
+              description:
+                type: string
+                description: A description of the workflow.
+              use_case:
+                type: string
+                description: A use case, which can be used with the Search Workflow API to find related workflows.
+              version:
+                type: object
+                description: A key-value map with two fields, template, which identifies the template version, and compatibility, which identifies a list of minimum required OpenSearch versions.
+                properties:
+                  template:
+                    type: string
+                    description: The template version of the workflow.
+                  compatibility:
+                    type: array
+                    items:
+                      type: string
+                    description: A list of minimum required OpenSearch versions.
+
+          oneOf:
+            - required: [ "name" ]
+            - required: [ "description" ]
+            - required: [ "use_case" ]
+            - required: [ "version" ]
+
+
+
   responses:
     flow_framework.create:
       content:
@@ -132,32 +219,46 @@ components:
               _primary_term:
                 type: integer
                 description: The primary term assigned to the document after the deletion.
-            required:
-              - _index
-              - _id
-              - _version
-              - result
-              - _shards
-              - _seq_no
-              - _primary_term
+
+    flow_framework.get:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              use_case:
+                type: string
+              workflows:
+                type: object
+              user:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  backend_roles:
+                    type: array
+                    items:
+                      type: string
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                  custom_attribute_names:
+                    type: array
+                    items:
+                      type: string
+                  user_requested_tenant:
+                    type: string
+                    nullable: true
+              created_time:
+                type: integer
+              last_updated_time:
+                type: integer
 
 
-# below is for update query field , will change to update workflow
-#    flow_framework.create::query.update_fields:
-#      in: query
-#      name: update_fields
-#      schema:
-#        description: Whether to update only the fields included in the request body.
-#        type: boolean
-#        default: false
-#
-#
-#    flow_framework.create::query.validation:
-#      in: query
-#      name: validation
-#      schema:
-#        description: Whether to validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
-#        type: string
-#        default: all
 
 
