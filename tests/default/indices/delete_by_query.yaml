@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test updating documents that match a query.
+description: Test deleting documents that match a query.
 epilogues:
   - path: /books
     method: DELETE
@@ -18,18 +18,8 @@ prologues:
         - {create: {_index: books, _id: book_1392215}}
         - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 91}
 chapters:
-  - synopsis: Update documents in the index.
-    path: /{index}/_update_by_query
-    method: POST
-    parameters:
-      index: books
-      refresh: true
-    response:
-      status: 200
-      payload:
-        updated: 2
-  - synopsis: Update documents in the index (full query term, script).
-    path: /{index}/_update_by_query
+  - synopsis: Delete documents in the index (full query term, script).
+    path: /{index}/_delete_by_query
     method: POST
     parameters:
       index: books
@@ -42,31 +32,24 @@ chapters:
               value: beauty
               case_insensitive: true
               boost: 1
-        script:
-          source: ctx._source.year += params.century
-          lang: painless
-          params:
-            century: 1900
     response:
       status: 200
       payload:
-        updated: 1
-  - synopsis: Update documents in the index (simple term, script).
-    path: /{index}/_update_by_query
+        total: 1
+        deleted: 1
+  - synopsis: Delete remaining documents in the index.
+    path: /{index}/_delete_by_query
     method: POST
     parameters:
       index: books
+      refresh: true
+      conflicts: proceed
     request:
       payload:
         query:
-          term:
-            year: 60
-        script:
-          source: ctx._source.year += params.century
-          lang: painless
-          params:
-            century: 1900
+          match_all: {}
     response:
       status: 200
       payload:
-        updated: 1
+        total: 2
+        deleted: 1
