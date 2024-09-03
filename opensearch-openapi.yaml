@@ -38406,10 +38406,27 @@ components:
               type: boolean
           required:
             - value
-    _common.query_dsl:TermsQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
+    _common.query_dsl:Terms:
+      oneOf:
+        - type: array
+          items:
+            type: string
         - type: object
+          properties:
+            index:
+              $ref: '#/components/schemas/_common:IndexName'
+            id:
+              $ref: '#/components/schemas/_common:Id'
+            path:
+              $ref: '#/components/schemas/_common:Field'
+            routing:
+              $ref: '#/components/schemas/_common:Routing'
+          additionalProperties: true
+          description: Object for fetching terms.
+    _common.query_dsl:TermsQuery:
+      anyOf:
+        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
+        - $ref: '#/components/schemas/_common.query_dsl:Terms'
     _common.query_dsl:TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
@@ -38420,10 +38437,7 @@ components:
             minimum_should_match_script:
               $ref: '#/components/schemas/_common:Script'
             terms:
-              description: Array of terms you wish to find in the provided field.
-              type: array
-              items:
-                type: string
+              $ref: '#/components/schemas/_common.query_dsl:Terms'
           required:
             - terms
     _common.query_dsl:TextExpansionQuery:
