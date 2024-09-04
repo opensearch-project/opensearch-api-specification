@@ -14,16 +14,16 @@ paths:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
         - $ref: '#/components/parameters/flow_framework.create::query.provision'
-        - $ref: '#/components/parameters/flow_framework.create::query.validation'
-        # eslint-disable-next-line @cspell/spellchecker
         - $ref: '#/components/parameters/flow_framework.create::query.reprovision'
+        - $ref: '#/components/parameters/flow_framework.create::query.use_case'
+        - $ref: '#/components/parameters/flow_framework.create::query.validation'
       requestBody:
         $ref: '#/components/requestBodies/flow_framework.create'
       responses:
         '201':
-          $ref: '#/components/responses/flow_framework.create'
+          $ref: '#/components/responses/flow_framework.create@201'
         '403':
-          $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+          $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/FlowFrameworkAPIDisabledException'
         '400':
           description: Bad Request - Multiple possible reasons
           oneOf:
@@ -43,14 +43,14 @@ paths:
         url: https://opensearch.org/docs/latest/automating-configurations/api/delete-workflow/
       parameters:
         - $ref: '#/components/parameters/flow_framework.delete::query.clear_status'
-        - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
+        - $ref: '#/components/parameters/flow_framework.delete::path.workflow_id'
       responses:
         '200':
-          $ref: '#/components/responses/flow_framework.delete'
+          $ref: '#/components/responses/flow_framework.delete@200'
         '400':
           $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/WorkFlowIdNullError'
         '403':
-          $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+          $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/FlowFrameworkAPIDisabledException'
         '404':
           $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/TemplateNotFoundError'
     put:
@@ -61,13 +61,13 @@ paths:
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
+        - $ref: '#/components/parameters/flow_framework.update::path.workflow_id'
         - $ref: '#/components/parameters/flow_framework.update::query.update_fields'
-        - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
       requestBody:
         $ref: '#/components/requestBodies/flow_framework.update'
       responses:
         '201':
-          $ref: '#/components/responses/flow_framework.create'
+          $ref: '#/components/responses/flow_framework.update@201'
           description: It returns the workflow_id
         '404':
           $ref: '../schemas/flow_framework._errors.yaml#/components/schemas/TemplateNotFoundError'
@@ -93,6 +93,18 @@ components:
       required: true
       schema:
         type: string
+    flow_framework.update::path.workflow_id:
+      name: workflow_id
+      in: path
+      required: true
+      schema:
+        type: string
+    flow_framework.delete::path.workflow_id:
+      name: workflow_id
+      in: path
+      required: true
+      schema:
+        type: string
     flow_framework.create::query.provision:
       in: query
       name: provision
@@ -100,15 +112,21 @@ components:
         description: Provision the workflow as part of the request
         type: boolean
         default: false
-        # eslint-disable-next-line @cspell/spellchecker
     flow_framework.create::query.reprovision:
       x-version-added: '2.17'
       in: query
-      # eslint-disable-next-line @cspell/spellchecker
       name: reprovision
       schema:
         type: boolean
         default: false
+    flow_framework.create::query.use_case:
+      description: To use a workflow template, specify it in the use_case query parameter when creating a workflow.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/workflow-templates/#supported-workflow-templates
+      in: query
+      name: use_case
+      schema:
+        type: string
     flow_framework.create::query.validation:
       in: query
       name: validation
@@ -196,7 +214,7 @@ components:
             - required: [use_case]
             - required: [version]
   responses:
-    flow_framework.create:
+    flow_framework.create@201:
       content:
         application/json:
           schema:
@@ -207,7 +225,18 @@ components:
                 description: The ID of the workflow to be updated. Required for the PUT method.
             required:
               - workflow_id
-    flow_framework.delete:
+    flow_framework.update@201:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              workflow_id:
+                type: string
+                description: The ID of the workflow to be updated. Required for the PUT method.
+            required:
+              - workflow_id
+    flow_framework.delete@200:
       content:
         application/json:
           schema:
