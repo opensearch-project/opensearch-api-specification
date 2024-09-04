@@ -2,6 +2,9 @@
 - [Spec Testing Guide](#spec-testing-guide)
   - [Running Spec Tests](#running-spec-tests)
     - [Running Spec Tests Locally](#running-spec-tests-locally)
+      - [Prerequisites](#prerequisites)
+      - [OpenSearch Cluster](#opensearch-cluster)
+      - [Run Tests](#run-tests)
     - [Running Spec Tests with Amazon OpenSearch](#running-spec-tests-with-amazon-opensearch)
     - [Common Errors](#common-errors)
       - [401 Unauthorized](#401-unauthorized)
@@ -29,6 +32,14 @@ We have devised our own test framework to test the spec against an OpenSearch cl
 
 ### Running Spec Tests Locally
 
+#### Prerequisites 
+
+Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and run `npm install`.
+
+Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
+
+#### OpenSearch Cluster 
+
 Set up an OpenSearch cluster with Docker:
 
 (Replace `<<your_password>>` with your desired password. If not provided, the default password inside the `docker-compose.yml` file will be used.)
@@ -37,6 +48,7 @@ export OPENSEARCH_PASSWORD=<<your_password>>
 cd tests/default
 docker compose up -d
 ```
+#### Run Tests
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
