@@ -21,6 +21,17 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/flow_framework.create'
+        '403':
+          $ref: '../schemas/flow_framework._common.yaml#/components/schemas/FlowFrameworkException'
+        '400':
+          description: Bad Request - Multiple possible reasons
+          oneOf:
+            - $ref: '../schemas/flow_framework._common.yaml#/components/schemas/BadRequestError'
+            - $ref: '../schemas/flow_framework._common.yaml#/components/schemas/ConflictError'
+            - $ref: '../schemas/flow_framework._common.yaml#/components/schemas/MissingParameterError'
+            - $ref: '../schemas/flow_framework._common.yaml#/components/schemas/ParameterConflictError'
+            - $ref: '../schemas/flow_framework._common.yaml#/components/schemas/MaxWorkflowsLimitError'
+            - $ref: '../schemas/flow_framework._common.yaml#/components/schemas/WorkflowSaveError'
   /_plugins/_flow_framework/workflow/{workflow_id}:
     delete:
       operationId: flow_framework.delete.0
@@ -35,8 +46,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/flow_framework.delete'
+        '400':
+          $ref: '../schemas/flow_framework._common.yaml#/components/schemas/WorkFlowIdNullError'
         '403':
-          description: if workflow id is null.
+          $ref: '../schemas/flow_framework._common.yaml#/components/schemas/FlowFrameworkException'
+        '404':
+          $ref: '../schemas/flow_framework._common.yaml#/components/schemas/TemplateNotFoundError'
     put:
       operationId: flow_framework.update.0
       x-operation-group: flow_framework.update
@@ -53,16 +68,22 @@ paths:
         '201':
           $ref: '#/components/responses/flow_framework.create'
           description: It returns the workflow_id
+        '404':
+          $ref: '../schemas/flow_framework._common.yaml#/components/schemas/TemplateNotFoundError'
     get:
       operationId: flow_framework.get.0
       x-operation-group: flow_framework.get
       x-version-added: '2.12'
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow/
       description: Get a workflow.
       parameters:
         - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
       responses:
         '200':
           $ref: '#/components/responses/flow_framework.get'
+        '404':
+          $ref: '../schemas/flow_framework._common.yaml#/components/schemas/TemplateNotFoundError'
 components:
   parameters:
     flow_framework.get::path.workflow_id:
@@ -83,7 +104,6 @@ components:
       in: query
       name: reprovision
       schema:
-        description:
         type: boolean
         default: false
     flow_framework.create::query.validation:
@@ -259,3 +279,13 @@ components:
                 type: integer
               last_updated_time:
                 type: integer
+    flow_framework.update@404:
+      content:
+        application/json: { }
+    flow_framework.create@400:
+      content:
+        application/json: { }
+    flow_framework.delete@400:
+      content:
+        description: Workflow ID can not be null
+        application/json: { }
