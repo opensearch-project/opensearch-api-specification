@@ -90,7 +90,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `terminated_early` to `count@200` ([#547](https://github.com/opensearch-project/opensearch-api-specification/pull/547))
 - Added request and response schemas for `/_cluster/routing/awareness/{attribute}/weights` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 - Added request and response schemas for `/_cluster/decommission/awareness` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
-- Added API spec for flow framework plugin ([#508](https://github.com/opensearch-project/opensearch-api-specification/issues/508))
 
 ### Changed
 
@@ -105,6 +104,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
 - Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
 - Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
+- Adjust indices, shards cat API to test against unassigned indices ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 
 ### Deprecated
 
@@ -138,7 +138,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed security spec to add support for 400 and 403s ([#439](https://github.com/opensearch-project/opensearch-api-specification/pull/439))
 - Fixed required parameters in `NodeInfo` and `NodeOperatingSystemInfo` ([#483](https://github.com/opensearch-project/opensearch-api-specification/pull/483))
 - Fixed query DSL `neural` field `query_image` set `contentEncoding` and `model_id` as optional ([#512](https://github.com/opensearch-project/opensearch-api-specification/pull/512))
-
+- Fixed `knn` query specification ([#538](https://github.com/opensearch-project/opensearch-api-specification/pull/538))
+- Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
+- Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
+- Fixed missing fields in cat API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 ### Security
 
 [Unreleased]: https://github.com/opensearch-project/opensearch-api-specification/commits/main/
