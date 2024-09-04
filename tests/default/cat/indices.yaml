@@ -8,8 +8,23 @@ prologues:
       index: books
     request:
       payload: {}
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unassigned
+      wait_for_active_shards: 0
+    request:
+      payload:
+        settings:
+          routing:
+            allocation:
+              require:
+                test: test
 epilogues:
   - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /unassigned
     method: DELETE
     status: [200, 404]
 chapters:
