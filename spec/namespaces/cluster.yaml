@@ -170,6 +170,8 @@ paths:
       description: Delete weighted shard routing weights.
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-deleting-weights
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.delete_weighted_routing'
       responses:
         '200':
           $ref: '#/components/responses/cluster.delete_weighted_routing@200'
@@ -195,6 +197,8 @@ paths:
         url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-weighted-round-robin-search
       parameters:
         - $ref: '#/components/parameters/cluster.put_weighted_routing::path.attribute'
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.put_weighted_routing'
       responses:
         '200':
           $ref: '#/components/responses/cluster.put_weighted_routing@200'
@@ -465,6 +469,16 @@ paths:
           $ref: '#/components/responses/cluster.remote_info@200'
 components:
   requestBodies:
+    cluster.put_weighted_routing:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/Weights'
+    cluster.delete_weighted_routing:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
     cluster.allocation_explain:
       content:
         application/json:
@@ -605,11 +619,19 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
-    cluster.delete_decommission_awareness@200: {}
+    cluster.delete_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.delete_voting_config_exclusions@200:
       content:
         application/json: {}
-    cluster.delete_weighted_routing@200: {}
+    cluster.delete_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.exists_component_template@200:
       content:
         application/json: {}
@@ -625,7 +647,11 @@ components:
                   $ref: '../schemas/cluster._common.yaml#/components/schemas/ComponentTemplate'
             required:
               - component_templates
-    cluster.get_decommission_awareness@200: {}
+    cluster.get_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatusResponse'
     cluster.get_settings@200:
       content:
         application/json:
@@ -644,7 +670,11 @@ components:
             required:
               - persistent
               - transient
-    cluster.get_weighted_routing@200: {}
+    cluster.get_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsResponse'
     cluster.health@200:
       content:
         application/json:
@@ -670,7 +700,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
-    cluster.put_decommission_awareness@200: {}
+    cluster.put_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.put_settings@200:
       content:
         application/json:
@@ -689,7 +723,11 @@ components:
               - acknowledged
               - persistent
               - transient
-    cluster.put_weighted_routing@200: {}
+    cluster.put_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            type: object
     cluster.remote_info@200:
       content:
         application/json:
