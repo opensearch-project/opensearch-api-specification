@@ -84,7 +84,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `AwarenessAttributeStats` to `/_cluster/health` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
 - Added `cache_reserved_in_bytes` to `ClusterFileSystem` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
 - Added `cluster_manager` to `ClusterNodeCount` ([#534](https://github.com/opensearch-project/opensearch-api-specification/pull/534))
-- Added support for `query` with `terms` in `_search` ([#546](https://github.com/opensearch-project/opensearch-api-specification/pull/546)).
+- Added support for `query` with `terms` in `_search` ([#546](https://github.com/opensearch-project/opensearch-api-specification/pull/546))
+- Added `h`, `bytes`, `time` parameters to cat API tests ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 
 ### Changed
 
@@ -99,6 +100,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replace nullable with null type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
 - Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
 - Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
+- Adjust indices, shards cat API to test against unassigned indices ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 
 ### Deprecated
 
@@ -135,6 +137,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `knn` query specification ([#538](https://github.com/opensearch-project/opensearch-api-specification/pull/538))
 - Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
 - Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
+- Fixed missing fields in cat API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 
 ### Security
 

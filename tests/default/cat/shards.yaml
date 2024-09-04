@@ -5,17 +5,34 @@ epilogues:
   - path: /games
     method: DELETE
     status: [200, 404]
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unassigned
+      wait_for_active_shards: 0
+    request:
+      payload:
+        settings:
+          routing:
+            allocation:
+              require:
+                test: test
 prologues:
   - path: /{index}
     method: PUT
     parameters:
       index: games
+  - path: /unassigned
+    method: DELETE
+    status: [200, 404]
 chapters:
   - synopsis: List the state of all primary and replica shards and how they are distributed.
     path: /_cat/shards
     method: GET
     parameters:
       format: json
+      h:
+        - '*'
   - synopsis: List the state of all primary and replica shards and how they are distributed for an index.
     path: /_cat/shards/{index}
     method: GET
@@ -26,6 +43,8 @@ chapters:
       bytes: kb
       local: true
       time: s
+      h:
+        - '*'
     response:
       status: 200
       payload:
