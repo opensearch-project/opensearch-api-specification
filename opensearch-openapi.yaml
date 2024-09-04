@@ -1608,6 +1608,8 @@ paths:
         - $ref: '#/components/parameters/_global::query.error_trace'
         - $ref: '#/components/parameters/_global::query.source'
         - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.put_weighted_routing'
       responses:
         '200':
           $ref: '#/components/responses/cluster.put_weighted_routing@200'
@@ -1619,6 +1621,8 @@ paths:
       description: Delete weighted shard routing weights.
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-deleting-weights
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.delete_weighted_routing'
       responses:
         '200':
           $ref: '#/components/responses/cluster.delete_weighted_routing@200'
@@ -23607,6 +23611,11 @@ components:
                 description: Specifies the ID of the shard that you would like an explanation for.
                 type: number
             description: The index, shard, and primary flag to explain. Empty means 'explain the first unassigned shard'
+    cluster.delete_weighted_routing:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cluster.weighted_routing:WeightsBase'
     cluster.put_component_template:
       content:
         application/json:
@@ -23644,6 +23653,11 @@ components:
                 additionalProperties: {}
             description: The settings to be updated. Can be either `transient` or `persistent` (survives cluster restart).
       required: true
+    cluster.put_weighted_routing:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cluster.weighted_routing:Weights'
     cluster.reroute:
       content:
         application/json:
@@ -25431,11 +25445,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_common:AcknowledgedResponseBase'
-    cluster.delete_decommission_awareness@200: {}
+    cluster.delete_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:AcknowledgedResponseBase'
     cluster.delete_voting_config_exclusions@200:
       content:
         application/json: {}
-    cluster.delete_weighted_routing@200: {}
+    cluster.delete_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:AcknowledgedResponseBase'
     cluster.exists_component_template@200:
       content:
         application/json: {}
@@ -25451,7 +25473,11 @@ components:
                   $ref: '#/components/schemas/cluster._common:ComponentTemplate'
             required:
               - component_templates
-    cluster.get_decommission_awareness@200: {}
+    cluster.get_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cluster.decommission_awareness:DecommissionStatusResponse'
     cluster.get_settings@200:
       content:
         application/json:
@@ -25470,7 +25496,11 @@ components:
             required:
               - persistent
               - transient
-    cluster.get_weighted_routing@200: {}
+    cluster.get_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/cluster.weighted_routing:WeightsResponse'
     cluster.health@200:
       content:
         application/json:
@@ -25496,7 +25526,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_common:AcknowledgedResponseBase'
-    cluster.put_decommission_awareness@200: {}
+    cluster.put_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:AcknowledgedResponseBase'
     cluster.put_settings@200:
       content:
         application/json:
@@ -25515,7 +25549,11 @@ components:
               - acknowledged
               - persistent
               - transient
-    cluster.put_weighted_routing@200: {}
+    cluster.put_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            type: object
     cluster.remote_info@200:
       content:
         application/json:
@@ -43048,6 +43086,19 @@ components:
         - REINITIALIZED
         - REPLICA_ADDED
         - REROUTE_CANCELLED
+    cluster.decommission_awareness:DecommissionStatusResponse:
+      oneOf:
+        - $ref: '#/components/schemas/cluster.decommission_awareness:ZoneDecommissionStatusResponse'
+    cluster.decommission_awareness:ZoneDecommissionStatusResponse:
+      type: object
+      additionalProperties:
+        type: string
+        enum:
+          - DRAINING
+          - FAILED
+          - INIT
+          - IN_PROGRESS
+          - SUCCESSFUL
     cluster.health:AwarenessAttributeStats:
       type: object
       x-version-added: '2.5'
@@ -44150,6 +44201,25 @@ components:
             - nodes
             - status
             - timestamp
+    cluster.weighted_routing:Weights:
+      allOf:
+        - $ref: '#/components/schemas/cluster.weighted_routing:WeightsBase'
+        - type: object
+          properties:
+            weights:
+              type: object
+    cluster.weighted_routing:WeightsBase:
+      type: object
+      properties:
+        _version:
+          $ref: '#/components/schemas/_common:VersionNumber'
+    cluster.weighted_routing:WeightsResponse:
+      allOf:
+        - $ref: '#/components/schemas/cluster.weighted_routing:Weights'
+        - type: object
+          properties:
+            discovered_cluster_manager:
+              type: boolean
     dangling_indices.list_dangling_indices:DanglingIndex:
       type: object
       properties:
