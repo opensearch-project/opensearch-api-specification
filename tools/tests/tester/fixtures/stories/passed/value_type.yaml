@@ -1,0 +1,31 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: This story has an error trying to reuse a variable of a different type.
+
+prologues:
+  - method: GET
+    id: root
+    path: /
+    output:
+      boolean: payload.version.build_snapshot
+epilogues:
+  - method: DELETE
+    path: /movies
+    status: [200, 404]
+chapters:
+  - synopsis: This chapter requires a boolean in the parameters.
+    method: GET
+    path: /_cat/health
+    parameters:
+      format: json
+      v: ${root.boolean}
+  - synopsis: This chapter requires a boolean in the body.
+    method: PUT
+    path: /{index}
+    parameters:
+      index: movies
+    request:
+      payload:
+        settings:
+          shard:
+            check_on_startup: ${root.boolean}

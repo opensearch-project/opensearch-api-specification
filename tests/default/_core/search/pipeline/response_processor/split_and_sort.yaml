@@ -1,0 +1,79 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: |-
+  Test the creation of a search pipeline with split and sort response processors.
+version: '>= 2.17'
+prologues:
+  - path: /numbers/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        number_string: 'zero,one,two,three'
+    status: [201]
+epilogues:
+  - path: /_search/pipeline/numbers_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /numbers
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create search pipeline.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: numbers_pipeline
+    request:
+      payload:
+        response_processors:
+          - split:
+              field: number_string
+              separator: ','
+              target_field: number_strings
+          - sort:
+              field: number_strings
+              order: asc
+              target_field: sorted_number_strings
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Query created pipeline.
+    path: /_search/pipeline/{id}
+    method: GET
+    parameters:
+      id: numbers_pipeline
+    response:
+      status: 200
+  - synopsis: Search.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}/_search
+    method: GET
+    parameters:
+      index: numbers
+      search_pipeline: numbers_pipeline
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+          hits:
+            - _index: numbers
+              _source:
+                number_string: 'zero,one,two,three'
+                number_strings:
+                  # eslint-disable yml/sort-sequence-values
+                  - zero
+                  - one
+                  - two
+                  - three
+                  # eslint-enable yml/sort-sequence-values
+                sorted_number_strings:
+                  - one
+                  - three
+                  - two
+                  - zero

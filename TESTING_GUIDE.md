@@ -52,6 +52,7 @@ docker compose up -d
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
+export OPENSEARCH_PASSWORD=<<your_password>>
 npm run test:spec -- --opensearch-insecure
 ```
 
@@ -63,6 +64,11 @@ npm run test:spec -- --opensearch-insecure --tests tests/default/_core/info.yaml
 Verbose output:
 ```bash
 npm run test:spec -- --opensearch-insecure --verbose
+```
+
+Want to help with some missing tests? Choose from the remaining paths in the test coverage report:
+```bash
+npm run test:spec -- --opensearch-insecure --coverage-report
 ```
 
 ### Running Spec Tests with Amazon OpenSearch
@@ -174,7 +180,7 @@ chapters:
 
 ### Using Output from Previous Chapters
 
-Consider the following chapters in [ml/model_groups](tests/default/ml/model_groups.yaml) test story:
+Consider the following chapters in [ml/model_groups](tests/plugins/ml/ml/model_groups.yaml) test story:
 ```yaml
   - synopsis: Create model group.
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.
@@ -352,7 +358,7 @@ The report is then used by the [test-spec.yml](.github/workflows/test-spec.yml) 
 
 ### Coverage Report
 
-The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. For example, the [put_alias.yaml](tests/default/indices/aliases/put_alias.yaml) test exercises `PUT /_alias/{name}`, but not the other verbs. The report produces the following output with the missing ones.
+The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. The report produces the following output with the missing ones.
 
 ```
 /_alias (4)

@@ -1,0 +1,59 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test aliases endpoints.
+epilogues:
+  - path: /games/_alias/*
+    method: DELETE
+    status: [200, 404]
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: games
+    method: PUT
+  - path: /games/_aliases/jeux
+    method: PUT
+chapters:
+  - synopsis: Multiple alias operations.
+    path: /_aliases
+    method: POST
+    request:
+      payload:
+        actions:
+          - remove:
+              index: games
+              alias: jeux 
+          - add:
+              index: games
+              alias: plays1
+          - add:
+              index: games
+              alias: plays2
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Create an alias.
+    path: /_aliases/{name}
+    method: POST
+    parameters:
+      name: plays3
+    request:
+      payload:
+        index: games
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Update an alias.
+    path: /_aliases/{name}
+    method: PUT
+    parameters:
+      name: plays4
+    request:
+      payload:
+        index: games
+    response:
+      status: 200
+      payload:
+        acknowledged: true

@@ -29,19 +29,20 @@ test('stories folder', async () => {
   }
 
   const expected_evaluations = [
-    'passed',
     'error/chapter_error',
     'error/output_error',
     'error/prologue_error',
     'failed/invalid_data',
     'failed/not_found',
+    'passed/passed',
+    'passed/value_type',
     'skipped/semver',
     'skipped/distributions/chapters',
     'skipped/distributions/excluded',
     'skipped/distributions/included'
   ].map((fixture) => { return load_expected_evaluation(fixture, true) })
 
-  expect(actual_evaluations).toStrictEqual(expected_evaluations)
+  expect(actual_evaluations).toEqual(expected_evaluations)
 })
 
 describe('story_files', () => {

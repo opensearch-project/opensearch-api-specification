@@ -1,8 +1,36 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test cat/pending_tasks endpoints.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /films
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /{index}/_doc
+    method: POST
+    parameters:
+      index: movies
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 91
+    status: [201]
+  - path: /_reindex
+    method: POST
+    parameters:
+      wait_for_completion: false
+    request:
+      payload:
+        source:
+          index: movies
+        dest:
+          index: films
 chapters:
-  - synopsis: Cat with a json response.
+  - synopsis: List the progress of all pending tasks.
     path: /_cat/pending_tasks
     method: GET
     parameters:

@@ -22,8 +22,14 @@ afterEach(() => {
 })
 
 test('passed', async () => {
-  const actual = await load_actual_evaluation(story_evaluator, 'passed')
-  const expected = load_expected_evaluation('passed')
+  const actual = await load_actual_evaluation(story_evaluator, 'passed/passed')
+  const expected = load_expected_evaluation('passed/passed')
+  expect(actual).toEqual(expected)
+})
+
+test('value_type.yaml', async () => {
+  const actual = await load_actual_evaluation(story_evaluator, 'passed/value_type')
+  const expected = load_expected_evaluation('passed/value_type')
   expect(actual).toEqual(expected)
 })
 
@@ -65,7 +71,7 @@ test('skipped/semver', async () => {
 
 test('with an unexpected error deserializing data', async () => {
   opensearch_http_client.request = jest.fn().mockRejectedValue(new Error('This was unexpected.'))
-  const actual = await load_actual_evaluation(story_evaluator, 'passed')
+  const actual = await load_actual_evaluation(story_evaluator, 'passed/passed')
   expect(actual.result).toEqual(Result.ERROR)
   expect(actual.chapters && actual.chapters[0]).toEqual({
     title: "This PUT /{index} chapter should pass.",
