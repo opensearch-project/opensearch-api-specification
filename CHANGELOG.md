@@ -141,6 +141,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
 - Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
 - Fixed missing fields in cat API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
+- Removed `shape` query from the spec and replaced with `xy_query`. Added specs for `xy_point` and `xy_shape`. Updated spec for `geo_shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 
 ### Security
 
