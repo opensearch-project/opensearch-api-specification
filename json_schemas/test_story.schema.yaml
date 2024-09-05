@@ -23,6 +23,8 @@ properties:
     $ref: '#/definitions/Version'
   distributions:
     $ref: '#/definitions/Distributions'
+  warnings:
+    $ref: '#/definitions/Warnings'
 required: [chapters,description]
 additionalProperties: false
 
@@ -103,14 +105,38 @@ definitions:
       - `headers.<header-name>` for the headers.
     type: object
     additionalProperties:
-      type: string
+      anyOf:
+        - type: string
+        - $ref: '#/definitions/DetailedOutput'
 
+  DetailedOutput:
+    properties:
+      path:
+        type: string
+      default:
+        type:
+          - boolean
+          - number
+          - string
+    required:
+      - path
+    
   Version:
     description: |
       The semver range to execute the story or chapter against.
     type: string
 
   Distributions:
+    description: |
+      The list of distributions that support this API.
+    type: object
+    properties:
+      included:
+        $ref: '#/definitions/DistributionsList'
+      excluded:
+        $ref: '#/definitions/DistributionsList'
+        
+  DistributionsList:
     description: |
       The list of distributions that support this API.
     type: array

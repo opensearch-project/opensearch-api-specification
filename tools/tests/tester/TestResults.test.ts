@@ -17,16 +17,20 @@ describe('TestResults', () => {
 
   const evaluations = [{
     result: Result.PASSED,
-    display_path: 'path',
+    display_path: 'PUT /{index}',
     full_path: 'full_path',
     description: 'description',
     message: 'message',
     chapters: [{
       title: 'title',
+      operation: {
+        method: 'PUT',
+        path: '/{index}'
+      },
       overall: {
         result: Result.PASSED
       },
-      path: 'path'
+      path: 'PUT /{index}'
     }],
     epilogues: [],
     prologues: []
@@ -34,21 +38,54 @@ describe('TestResults', () => {
 
   const test_results = new TestResults(spec, { evaluations })
 
-  test('evaluated_paths_count', () => {
-    expect(test_results.evaluated_paths_count()).toEqual(1)
+  test('unevaluated_operations', () => {
+    expect(test_results.unevaluated_operations()).toEqual([
+      { method: "GET", path: "/_nodes/{id}" },
+      { method: "POST", path: "/_nodes/{id}" },
+      { method: "GET", path: "/cluster_manager" },
+      { method: "POST", path: "/cluster_manager" },
+      { method: "GET", path: "/index" },
+      { method: "GET", path: "/nodes" }
+    ])
   })
 
-  test('spec_paths_count', () => {
-    expect(test_results.spec_paths_count()).toEqual(6)
+  test('evaluated_operations', () => {
+    expect(test_results.evaluated_operations()).toStrictEqual([
+      { method: 'PUT', path: '/{index}' }
+    ])
+  })
+
+  test('operations', () => {
+    expect(test_results.operations()).toEqual([
+      { method: "GET", path: "/_nodes/{id}" },
+      { method: "POST", path: "/_nodes/{id}" },
+      { method: "GET", path: "/cluster_manager" },
+      { method: "POST", path: "/cluster_manager" },
+      { method: "GET", path: "/index" },
+      { method: "GET", path: "/nodes" }
+    ])
   })
 
   test('write_coverage', () => {
     const filename = 'coverage.json'
     test_results.write_coverage(filename)
     expect(JSON.parse(fs.readFileSync(filename, 'utf8'))).toEqual({
-      evaluated_paths_count: 1,
-      evaluated_paths_pct: 16.67,
-      paths_count: 6
+      summary: {
+        evaluated_operations_count: 1,
+        evaluated_paths_pct: 16.67,
+        total_operations_count: 6
+      },
+      evaluated_operations: [
+        { method: 'PUT', path: '/{index}' },
+      ],
+      operations: [
+        { method: 'GET', path: '/_nodes/{id}' },
+        { method: 'POST', path: '/_nodes/{id}' },
+        { method: 'GET', path: '/cluster_manager' },
+        { method: 'POST', path: '/cluster_manager' },
+        { method: 'GET', path: '/index' },
+        { method: 'GET', path: '/nodes' }
+      ]
     })
     fs.unlinkSync(filename)
   })

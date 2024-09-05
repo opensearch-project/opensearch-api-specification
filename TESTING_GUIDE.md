@@ -2,6 +2,9 @@
 - [Spec Testing Guide](#spec-testing-guide)
   - [Running Spec Tests](#running-spec-tests)
     - [Running Spec Tests Locally](#running-spec-tests-locally)
+      - [Prerequisites](#prerequisites)
+      - [OpenSearch Cluster](#opensearch-cluster)
+      - [Run Tests](#run-tests)
     - [Running Spec Tests with Amazon OpenSearch](#running-spec-tests-with-amazon-opensearch)
     - [Common Errors](#common-errors)
       - [401 Unauthorized](#401-unauthorized)
@@ -16,6 +19,9 @@
     - [Warnings](#warnings)
       - [multiple-paths-detected](#multiple-paths-detected)
       - [Suppressing Warnings](#suppressing-warnings)
+  - [Collecting Test Coverage](#collecting-test-coverage)
+    - [Coverage Summary](#coverage-summary)
+    - [Coverage Report](#coverage-report)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -26,6 +32,14 @@ We have devised our own test framework to test the spec against an OpenSearch cl
 
 ### Running Spec Tests Locally
 
+#### Prerequisites 
+
+Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and run `npm install`.
+
+Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
+
+#### OpenSearch Cluster 
+
 Set up an OpenSearch cluster with Docker:
 
 (Replace `<<your_password>>` with your desired password. If not provided, the default password inside the `docker-compose.yml` file will be used.)
@@ -34,9 +48,11 @@ export OPENSEARCH_PASSWORD=<<your_password>>
 cd tests/default
 docker compose up -d
 ```
+#### Run Tests
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
+export OPENSEARCH_PASSWORD=<<your_password>>
 npm run test:spec -- --opensearch-insecure
 ```
 
@@ -48,6 +64,11 @@ npm run test:spec -- --opensearch-insecure --tests tests/default/_core/info.yaml
 Verbose output:
 ```bash
 npm run test:spec -- --opensearch-insecure --verbose
+```
+
+Want to help with some missing tests? Choose from the remaining paths in the test coverage report:
+```bash
+npm run test:spec -- --opensearch-insecure --coverage-report
 ```
 
 ### Running Spec Tests with Amazon OpenSearch
@@ -159,7 +180,7 @@ chapters:
 
 ### Using Output from Previous Chapters
 
-Consider the following chapters in [ml/model_groups](tests/default/ml/model_groups.yaml) test story:
+Consider the following chapters in [ml/model_groups](tests/plugins/ml/ml/model_groups.yaml) test story:
 ```yaml
   - synopsis: Create model group.
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.
@@ -192,7 +213,15 @@ Consider the following chapters in [ml/model_groups](tests/default/ml/model_grou
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
 
-You can also reuse output in payload expectations. See [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml) for an example.
+You can also supply defaults for output values, e.g. for `payload._version` used in [cluster/routing/awareness/weights.yaml](tests/routing/cluster/routing/awareness/weights.yaml).
+
+```
+version:
+  path: payload._version
+  default: -1
+```
+
+You can reuse output in payload expectations. See [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml) for an example.
 
 ### Managing Versions
 
@@ -228,13 +257,16 @@ OpenSearch consists of plugins that may or may not be present in various distrib
     description: Returns basic information about the cluster.
 ```
 
-Similarly, skip tests that are not applicable to a distribution by listing the distributions that support it.
+Similarly, skip tests that are not applicable to a distribution by listing the distributions that support or do not support it.
 
 ```yaml
 description: Test root endpoint.
 distributions:
-  - amazon-managed
-  - opensearch.org
+  included:
+    - amazon-managed
+    - opensearch.org
+  excluded:
+    - amazon-serverless
 chapters:
   - synopsis: Get server info.
     path: /
@@ -299,7 +331,7 @@ WARNING Multiple paths detected, please group similar tests together and move pa
 
 #### Suppressing Warnings
 
-The test runner may generate warnings that can be suppressed with `warnings:`. For example, to suppress the multiple paths detected warning.
+The test runner may generate warnings that can be suppressed with `warnings:` at story or chapter level. For example, to suppress the multiple paths detected warning.
 
 ```yaml
 - synopsis: Create an index.
@@ -314,4 +346,33 @@ The test runner may generate warnings that can be suppressed with `warnings:`. F
   path: /{index}/_search
   parameters:
     index: movies
+```
+
+## Collecting Test Coverage
+
+### Coverage Summary
+
+The test tool can generate a test coverage summary using `--coverage <path>` with the number of evaluated verb + path combinations, a total number of paths and the % of paths tested. 
+
+```json
+{
+  "evaluated_operations_count": 214,
+  "operations_count": 550,
+  "evaluated_paths_pct": 38.91
+}
+```
+
+The report is then used by the [test-spec.yml](.github/workflows/test-spec.yml) workflow, uploaded with every run, combined across various versions of OpenSearch, and reported as a comment on each pull request.
+
+### Coverage Report
+
+The test tool can display detailed and hierarchal test coverage with `--coverage-report`. This is useful to identify untested paths. The report produces the following output with the missing ones.
+
+```
+/_alias (4)
+  GET /_alias
+  /{name} (3)
+    GET /_alias/{name}
+    POST /_alias/{name}
+    HEAD /_alias/{name}
 ```

@@ -122,12 +122,13 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
     }) as T
   }
 
-  return {
-    ...evaluation,
-    chapters: flatten_chapters(evaluation.chapters),
-    epilogues: flatten_chapters(evaluation.epilogues),
-    prologues: flatten_chapters(evaluation.prologues)
-  }
+  const result = evaluation
+
+  if (evaluation.chapters !== undefined) result.chapters = flatten_chapters(evaluation.chapters)
+  if (evaluation.epilogues !== undefined) result.epilogues = flatten_chapters(evaluation.epilogues)
+  if (evaluation.prologues !== undefined) result.prologues = flatten_chapters(evaluation.prologues)
+
+  return result
 }
 
 export function load_expected_evaluation (name: string, exclude_full_path: boolean = false): Omit<StoryEvaluation, 'full_path'> & { full_path?: string } {

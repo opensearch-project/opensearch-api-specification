@@ -1,0 +1,59 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test asynchronous_search.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload: {}
+  - path: /_bulk
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book_1392215}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - id: async_search
+    synopsis: Asynchronous Search.
+    path: /_plugins/_asynchronous_search
+    method: POST
+    version: < 3.0
+    parameters:
+      index: books
+      keep_on_completion: true
+    request:
+      payload:
+        query:
+          match:
+            author:
+              query: Bennett Miller
+    output:
+      id: payload.id
+    response:
+      status: 200
+  - synopsis: Get partial response from asynchronous search.
+    path: /_plugins/_asynchronous_search/{id}
+    method: GET
+    version: < 3.0
+    parameters:
+      id: ${async_search.id}
+    response:
+      status: 200
+  - synopsis: Delete partial response from asynchronous search.
+    path: /_plugins/_asynchronous_search/{id}
+    method: DELETE
+    version: < 3.0
+    parameters:
+      id: ${async_search.id}
+    response:
+      status: 200

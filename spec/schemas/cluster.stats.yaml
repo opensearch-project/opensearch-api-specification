@@ -213,10 +213,10 @@ components:
           description: Total number of fields in all non-system indices, accounting for mapping deduplication.
           type: number
         total_deduplicated_mapping_size:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         total_deduplicated_mapping_size_in_bytes:
           description: Total size of all mappings, in bytes, after deduplication and compression.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
       required:
         - field_types
     RuntimeFieldTypes:
@@ -288,7 +288,7 @@ components:
         primary_shard_count:
           type: number
         total_primary_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         version:
           $ref: '_common.yaml#/components/schemas/VersionString'
       required:
@@ -341,7 +341,6 @@ components:
         - count
         - discovery_types
         - fs
-        - indexing_pressure
         - ingest
         - jvm
         - network_types
@@ -371,10 +370,16 @@ components:
           type: number
         master:
           type: number
+        cluster_manager:
+          type: number
+          x-version-added: '2.0'
         ml:
           type: number
         remote_cluster_client:
           type: number
+        search:
+          type: number
+          x-version-added: '2.4'
         total:
           type: number
         transform:
@@ -384,32 +389,45 @@ components:
       required:
         - coordinating_only
         - data
-        - data_cold
-        - data_content
-        - data_hot
-        - data_warm
         - ingest
         - master
-        - ml
         - remote_cluster_client
         - total
-        - transform
-        - voting_only
     ClusterFileSystem:
       type: object
       properties:
+        available:
+          description: |-
+            Total number of bytes available to JVM in file stores across all selected nodes.
+            Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
+            This is the actual amount of free disk space the selected OpenSearch nodes can use.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         available_in_bytes:
           description: |-
             Total number of bytes available to JVM in file stores across all selected nodes.
             Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
             This is the actual amount of free disk space the selected OpenSearch nodes can use.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
+        free:
+          description: Total number of unallocated bytes in file stores across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         free_in_bytes:
           description: Total number of unallocated bytes in file stores across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
+        total:
+          description: Total size, of all file stores across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         total_in_bytes:
           description: Total size, in bytes, of all file stores across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
+        cache_reserved:
+          description: Total size, of all cache reserved across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
+          x-version-added: '2.7'
+        cache_reserved_in_bytes:
+          description: Total size, in bytes, of all cache reserved across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/Bytes'
+          x-version-added: '2.7'
       required:
         - available_in_bytes
         - free_in_bytes
@@ -427,7 +445,7 @@ components:
         current:
           $ref: '#/components/schemas/IndexingPressureMemorySummary'
         limit_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         total:
           $ref: '#/components/schemas/IndexingPressureMemorySummary'
       required:
@@ -438,19 +456,19 @@ components:
       type: object
       properties:
         all_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         combined_coordinating_and_primary_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         coordinating_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         coordinating_rejections:
           type: number
         primary_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         primary_rejections:
           type: number
         replica_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         replica_rejections:
           type: number
       required:
@@ -492,6 +510,8 @@ components:
     ClusterJvm:
       type: object
       properties:
+        max_uptime:
+          $ref: '_common.yaml#/components/schemas/Duration'
         max_uptime_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         mem:
@@ -512,12 +532,18 @@ components:
     ClusterJvmMemory:
       type: object
       properties:
+        heap_max:
+          description: Maximum amount of memory available for use by the heap across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         heap_max_in_bytes:
           description: Maximum amount of memory, in bytes, available for use by the heap across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
+        heap_used:
+          description: Memory currently in use by the heap across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         heap_used_in_bytes:
           description: Memory, in bytes, currently in use by the heap across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
       required:
         - heap_max_in_bytes
         - heap_used_in_bytes
@@ -619,19 +645,28 @@ components:
       properties:
         adjusted_total_in_bytes:
           description: Total amount, in bytes, of memory across all selected nodes, but using the value specified using the `es.total_memory_bytes` system property instead of measured total memory for those nodes where that system property was set.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
+        free:
+          description: Amount, in bytes, of free physical memory across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         free_in_bytes:
           description: Amount, in bytes, of free physical memory across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         free_percent:
           description: Percentage of free physical memory across all selected nodes.
           type: number
+        total:
+          description: Total amount of physical memory across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         total_in_bytes:
           description: Total amount, in bytes, of physical memory across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
+        used:
+          description: Amount of physical memory in use across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/StorageSize'
         used_in_bytes:
           description: Amount, in bytes, of physical memory in use across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/Bytes'
         used_percent:
           description: Percentage of physical memory in use across all selected nodes.
           type: number
@@ -677,7 +712,6 @@ components:
           type: string
       required:
         - count
-        - flavor
         - type
     ClusterProcess:
       type: object

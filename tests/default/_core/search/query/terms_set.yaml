@@ -1,0 +1,66 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test TermsSetQuery functionality with complex example using movies.
+version: '>= 1.2'
+
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: keyword
+            genres:
+              type: keyword
+            min_required_genres:
+              type: integer
+
+  - path: /movies/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: The Lion King
+        genres: [Adventure, Animation, Family]
+        min_required_genres: 2
+    status: [201]
+
+  - path: /movies/_doc/2
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        genres: [Animation, Family, Musical]
+        min_required_genres: 2
+    status: [201]
+
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Search using TermsSetQuery with terms array and minimum_should_match_field.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        query:
+          terms_set:
+            genres:
+              terms: [Adventure, Animation, Family]
+              minimum_should_match_field: min_required_genres
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2

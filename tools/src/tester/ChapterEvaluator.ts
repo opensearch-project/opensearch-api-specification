@@ -63,8 +63,8 @@ export default class ChapterEvaluator {
 
   async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
     const response = await this._chapter_reader.read(chapter, story_outputs)
-    const params = this.#evaluate_parameters(chapter, operation)
-    const request = this.#evaluate_request(chapter, operation)
+    const params = this.#evaluate_parameters(chapter, operation, story_outputs)
+    const request = this.#evaluate_request(chapter, operation, story_outputs)
     const status = this.#evaluate_status(chapter, response)
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
     const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
@@ -84,16 +84,23 @@ export default class ChapterEvaluator {
 
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
+      operation: {
+        method: chapter.method,
+        path: chapter.path
+      },
       path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request },
-      retries,
       response: {
         status,
         payload_body: payload_body_evaluation,
         payload_schema: payload_schema_evaluation,
         output_values: output_values_evaluation.evaluation
       }
+    }
+
+    if (retries !== undefined) {
+      result.retries = retries
     }
 
     if (output_values_evaluation?.output !== undefined) {
@@ -103,8 +110,9 @@ export default class ChapterEvaluator {
     return result
   }
 
-  #evaluate_parameters(chapter: Chapter, operation: ParsedOperation): Record<string, Evaluation> {
-    return Object.fromEntries(Object.entries(chapter.parameters ?? {}).map(([name, parameter]) => {
+  #evaluate_parameters(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs): Record<string, Evaluation> {
+    const parameters: Record<string, any> = story_outputs.resolve_value(chapter.parameters) ?? {}
+    return Object.fromEntries(Object.entries(parameters).map(([name, parameter]) => {
       const schema = operation.parameters[name]?.schema
       if (schema == null) return [name, { result: Result.FAILED, message: `Schema for "${name}" parameter not found.` }]
       const evaluation = this._schema_validator.validate(schema, parameter)
@@ -112,12 +120,13 @@ export default class ChapterEvaluator {
     }))
   }
 
-  #evaluate_request(chapter: Chapter, operation: ParsedOperation): Evaluation {
+  #evaluate_request(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs): Evaluation {
     if (chapter.request?.payload === undefined) return { result: Result.PASSED }
     const content_type = chapter.request.content_type ?? APPLICATION_JSON
     const schema = operation.requestBody?.content[content_type]?.schema
     if (schema == null) return { result: Result.FAILED, message: `Schema for "${content_type}" request body not found in the spec.` }
-    return this._schema_validator.validate(schema, chapter.request?.payload ?? {})
+    const payload = story_outputs.resolve_value(chapter.request?.payload) ?? {}
+    return this._schema_validator.validate(schema, payload)
   }
 
   #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {

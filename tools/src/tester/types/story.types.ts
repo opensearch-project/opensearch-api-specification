@@ -55,9 +55,9 @@ export type Version = string;
  *
  *
  * This interface was referenced by `Story`'s JSON-Schema
- * via the `definition` "Distributions".
+ * via the `definition` "DistributionsList".
  */
-export type Distributions = string[];
+export type DistributionsList = string[];
 /**
  * Number of times to retry on error.
  *
@@ -103,6 +103,7 @@ export interface Story {
   chapters: Chapter[];
   version?: Version;
   distributions?: Distributions;
+  warnings?: Warnings;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -148,7 +149,26 @@ export interface Request {
  * via the `definition` "Output".
  */
 export interface Output {
-  [k: string]: string;
+  [k: string]: string | DetailedOutput;
+}
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "DetailedOutput".
+ */
+export interface DetailedOutput {
+  path: string;
+  default?: boolean | number | string;
+}
+/**
+ * The list of distributions that support this API.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Distributions".
+ */
+export interface Distributions {
+  included?: DistributionsList;
+  excluded?: DistributionsList;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

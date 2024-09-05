@@ -1,0 +1,92 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test /_analyze.
+epilogues: []
+prologues: []
+chapters:
+  - synopsis: Analyze text.
+    path: /_analyze
+    method: POST
+    request:
+      payload:
+        analyzer: standard
+        text: Moneyball, directed by Bennett Miller
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: moneyball
+            start_offset: 0
+            end_offset: 9
+            position: 0
+  - synopsis: Analyze text as a multi-value field.
+    path: /_analyze
+    method: GET
+    request:
+      payload:
+        analyzer: standard
+        text:
+          - Drive, directed by Nicolas Winding Refn
+          - Moneyball, directed by Bennett Miller
+    response:
+      status: 200
+  - synopsis: Apply a filter.
+    path: /_analyze
+    method: GET
+    request:
+      payload:
+        tokenizer: keyword
+        filter:
+          - uppercase
+        text: Moneyball
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: MONEYBALL
+            type: word
+            start_offset: 0
+            end_offset: 9
+            position: 0
+  - synopsis: Apply a character filter.
+    path: /_analyze
+    method: GET
+    request:
+      payload:
+        tokenizer: keyword
+        filter:
+          - lowercase
+        char_filter:
+          - html_strip
+        text: <b>Moneyball</b>
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: moneyball
+            type: word
+            start_offset: 3
+            end_offset: 16
+            position: 0
+  - synopsis: Combine a lowercase translation with a stop filter.
+    path: /_analyze
+    method: GET
+    request:
+      payload:
+        tokenizer: whitespace
+        filter:
+          - lowercase
+          - type: stop
+            stopwords:
+              - in
+              - to
+        text: Moneyball directed by Bennett Miller
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: moneyball
+            type: word
+            start_offset: 0
+            end_offset: 9
+            position: 0

@@ -696,6 +696,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
     post:
       operationId: search.1
       x-operation-group: search
@@ -755,6 +759,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
   /_search/point_in_time:
     delete:
       operationId: delete_pit.0
@@ -1724,6 +1732,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
     post:
       operationId: search.3
       x-operation-group: search
@@ -1784,6 +1796,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search@200'
+        '400':
+          $ref: '#/components/responses/search@400'
+        '404':
+          $ref: '#/components/responses/search@404'
   /{index}/_search/point_in_time:
     post:
       operationId: create_pit.0
@@ -2421,10 +2437,10 @@ components:
               knn:
                 description: Defines the approximate kNN search to run.
                 oneOf:
-                  - $ref: '../schemas/_common.yaml#/components/schemas/KnnQuery'
+                  - $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/KnnQuery'
                   - type: array
                     items:
-                      $ref: '../schemas/_common.yaml#/components/schemas/KnnQuery'
+                      $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/KnnQuery'
               rank:
                 $ref: '../schemas/_common.yaml#/components/schemas/RankContainer'
               min_score:
@@ -2657,6 +2673,8 @@ components:
           schema:
             type: object
             properties:
+              terminated_early:
+                type: boolean
               count:
                 type: number
               _shards:
@@ -3044,6 +3062,16 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+    search@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/ErrorResponse'
+    search@404:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/query._common.yaml#/components/schemas/ErrorResponse'
     search_shards@200:
       content:
         application/json:
@@ -3964,7 +3992,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     delete_script::query.timeout:
       in: query
@@ -4426,7 +4454,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     get_source::path.id:
       in: path
@@ -4942,7 +4970,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     put_script::query.timeout:
       in: query
