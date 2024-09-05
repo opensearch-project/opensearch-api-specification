@@ -200,8 +200,10 @@ components:
       type: string
     SequenceNumber:
       type: number
+      format: int64
     VersionNumber:
       type: number
+      format: int64
     SortResults:
       type: array
       items:
@@ -615,59 +617,38 @@ components:
       type: number
     EmptyObject:
       type: object
-    KnnQuery:
+    KnnField:
       type: object
       properties:
-        field:
-          $ref: '#/components/schemas/Field'
-        query_vector:
+        vector:
           $ref: '#/components/schemas/QueryVector'
-        query_vector_builder:
-          $ref: '#/components/schemas/QueryVectorBuilder'
         k:
-          description: The final number of nearest neighbors to return as top hits
+          description: The final number of nearest neighbors to return as top hits.
           type: number
-        num_candidates:
-          description: The number of nearest neighbor candidates to consider per shard
+        min_score:
+          description: The minimum similarity score for a neighbor to be considered a hit.
           type: number
-        boost:
-          description: Boost value to apply to kNN scores
+          x-version-added: '2.14'
+        max_distance:
+          description: The maximum physical distance in vector space for a neighbor to be considered a hit.
           type: number
+          x-version-added: '2.14'
         filter:
-          description: Filters for the kNN search query
+          description: Filters for the kNN search query.
           oneOf:
             - $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
             - type: array
               items:
                 $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-        similarity:
-          description: The minimum similarity for a vector to be considered a match
+        boost:
+          description: Boost value to apply to kNN scores
           type: number
       required:
-        - field
-        - k
-        - num_candidates
+        - vector
     QueryVector:
       type: array
       items:
         type: number
-    QueryVectorBuilder:
-      type: object
-      properties:
-        text_embedding:
-          $ref: '#/components/schemas/TextEmbedding'
-      minProperties: 1
-      maxProperties: 1
-    TextEmbedding:
-      type: object
-      properties:
-        model_id:
-          type: string
-        model_text:
-          type: string
-      required:
-        - model_id
-        - model_text
     SlicedScroll:
       type: object
       properties:
@@ -1344,6 +1325,7 @@ components:
           $ref: '#/components/schemas/IndexName'
         _primary_term:
           type: number
+          format: int64
         result:
           $ref: '#/components/schemas/Result'
         _seq_no:

@@ -1,0 +1,45 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test cluster routing settings.
+version: '>= 2.16'
+prologues:
+  - id: weights
+    path: /_cluster/routing/awareness/zone/weights
+    method: GET
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - path: /_cluster/routing/awareness/zone/weights
+    method: PUT
+    request:
+      payload:
+        weights:
+          zoneA: '1'
+          zoneB: '0'
+        _version: ${weights.version}
+  - path: /_cluster/decommission/awareness/zone/zoneB
+    method: PUT
+epilogues:    
+  - path: /_cluster/decommission/awareness
+    method: DELETE
+  - id: epilogue_weights
+    path: /_cluster/routing/awareness/zone/weights
+    method: GET
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - path: /_cluster/routing/awareness/weights
+    method: DELETE
+    request:
+      payload:
+        _version: ${epilogue_weights.version}
+chapters:
+  - synopsis: Get the decommissioned zoneB status.
+    path: /_cluster/decommission/awareness/{awareness_attribute_name}/_status
+    method: GET
+    parameters:
+      awareness_attribute_name: zone
+    response:
+      status: 200

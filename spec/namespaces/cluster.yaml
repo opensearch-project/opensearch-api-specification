@@ -170,6 +170,8 @@ paths:
       description: Delete weighted shard routing weights.
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-deleting-weights
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.delete_weighted_routing'
       responses:
         '200':
           $ref: '#/components/responses/cluster.delete_weighted_routing@200'
@@ -195,6 +197,8 @@ paths:
         url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-awareness/#example-weighted-round-robin-search
       parameters:
         - $ref: '#/components/parameters/cluster.put_weighted_routing::path.attribute'
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.put_weighted_routing'
       responses:
         '200':
           $ref: '#/components/responses/cluster.put_weighted_routing@200'
@@ -465,6 +469,16 @@ paths:
           $ref: '#/components/responses/cluster.remote_info@200'
 components:
   requestBodies:
+    cluster.put_weighted_routing:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/Weights'
+    cluster.delete_weighted_routing:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
     cluster.allocation_explain:
       content:
         application/json:
@@ -605,11 +619,19 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
-    cluster.delete_decommission_awareness@200: {}
+    cluster.delete_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.delete_voting_config_exclusions@200:
       content:
         application/json: {}
-    cluster.delete_weighted_routing@200: {}
+    cluster.delete_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.exists_component_template@200:
       content:
         application/json: {}
@@ -625,7 +647,11 @@ components:
                   $ref: '../schemas/cluster._common.yaml#/components/schemas/ComponentTemplate'
             required:
               - component_templates
-    cluster.get_decommission_awareness@200: {}
+    cluster.get_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatusResponse'
     cluster.get_settings@200:
       content:
         application/json:
@@ -634,20 +660,21 @@ components:
             properties:
               persistent:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               transient:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               defaults:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
             required:
               - persistent
               - transient
-    cluster.get_weighted_routing@200: {}
+    cluster.get_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsResponse'
     cluster.health@200:
       content:
         application/json:
@@ -673,7 +700,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
-    cluster.put_decommission_awareness@200: {}
+    cluster.put_decommission_awareness@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.put_settings@200:
       content:
         application/json:
@@ -692,7 +723,11 @@ components:
               - acknowledged
               - persistent
               - transient
-    cluster.put_weighted_routing@200: {}
+    cluster.put_weighted_routing@200:
+      content:
+        application/json:
+          schema:
+            type: object
     cluster.remote_info@200:
       content:
         application/json:
@@ -774,7 +809,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.delete_component_template::query.timeout:
       in: query
@@ -837,7 +872,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.get_component_template::path.name:
       in: path
@@ -876,7 +911,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.get_decommission_awareness::path.awareness_attribute_name:
       name: awareness_attribute_name
@@ -919,7 +954,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.get_settings::query.timeout:
       in: query
@@ -990,7 +1025,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.health::query.timeout:
       in: query
@@ -1070,7 +1105,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.post_voting_config_exclusions::query.node_ids:
       in: query
@@ -1139,7 +1174,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.put_component_template::query.timeout:
       name: timeout
@@ -1186,7 +1221,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.put_settings::query.timeout:
       in: query
@@ -1232,7 +1267,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.reroute::query.metric:
       in: query
@@ -1325,7 +1360,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     cluster.state::query.wait_for_metadata_version:
       in: query

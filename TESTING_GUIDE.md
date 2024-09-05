@@ -2,6 +2,9 @@
 - [Spec Testing Guide](#spec-testing-guide)
   - [Running Spec Tests](#running-spec-tests)
     - [Running Spec Tests Locally](#running-spec-tests-locally)
+      - [Prerequisites](#prerequisites)
+      - [OpenSearch Cluster](#opensearch-cluster)
+      - [Run Tests](#run-tests)
     - [Running Spec Tests with Amazon OpenSearch](#running-spec-tests-with-amazon-opensearch)
     - [Common Errors](#common-errors)
       - [401 Unauthorized](#401-unauthorized)
@@ -29,6 +32,14 @@ We have devised our own test framework to test the spec against an OpenSearch cl
 
 ### Running Spec Tests Locally
 
+#### Prerequisites 
+
+Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and run `npm install`.
+
+Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
+
+#### OpenSearch Cluster 
+
 Set up an OpenSearch cluster with Docker:
 
 (Replace `<<your_password>>` with your desired password. If not provided, the default password inside the `docker-compose.yml` file will be used.)
@@ -37,6 +48,7 @@ export OPENSEARCH_PASSWORD=<<your_password>>
 cd tests/default
 docker compose up -d
 ```
+#### Run Tests
 
 Run the tests (use `--opensearch-insecure` for a local cluster running in Docker that does not have a valid SSL certificate):
 ```bash
@@ -168,7 +180,7 @@ chapters:
 
 ### Using Output from Previous Chapters
 
-Consider the following chapters in [ml/model_groups](tests/default/ml/model_groups.yaml) test story:
+Consider the following chapters in [ml/model_groups](tests/plugins/ml/ml/model_groups.yaml) test story:
 ```yaml
   - synopsis: Create model group.
     id: create_model_group # Only needed if you want to refer to this chapter in another chapter.
@@ -201,7 +213,15 @@ Consider the following chapters in [ml/model_groups](tests/default/ml/model_grou
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
 
-You can also reuse output in payload expectations. See [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml) for an example.
+You can also supply defaults for output values, e.g. for `payload._version` used in [cluster/routing/awareness/weights.yaml](tests/routing/cluster/routing/awareness/weights.yaml).
+
+```
+version:
+  path: payload._version
+  default: -1
+```
+
+You can reuse output in payload expectations. See [tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml](tests/plugins/index_state_management/nodes/plugins/index_state_management.yaml) for an example.
 
 ### Managing Versions
 
