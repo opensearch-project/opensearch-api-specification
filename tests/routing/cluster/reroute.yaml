@@ -20,19 +20,28 @@ prologues:
         - {director: Bennett Miller, title: Moneyball, year: 2011}
         - {create: {_index: movies}}
         - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+  # force the shard on node1 in case it was created on node2
+  - path: /_cluster/reroute
+    method: POST
+    request:
+      payload:
+        commands:
+          - move:
+              index: movies
+              shard: 0
+              from_node: opensearch-node2
+              to_node: opensearch-node1
+    status: [200, 400]
 epilogues:
   - path: /movies
     method: DELETE
     status: [200, 404]
 chapters:
   - synopsis: Shows the allocation of shards in a cluster.
-    id: shard
     path: /_cluster/reroute
     method: POST
     response:
       status: 200
-    output:
-      node: payload.state.routing_table.indices.movies.shards.0[0].node
   - synopsis: Shows the allocation of shards in a cluster with parameters.
     path: /_cluster/reroute
     method: POST
@@ -52,8 +61,11 @@ chapters:
           - move:
               index: movies
               shard: 0
-              from_node: ${shard.node}
+              from_node: opensearch-node1
               to_node: opensearch-node2
+    retry:
+      count: 3
+      wait: 1000
     response:
       status: 200
       payload:
