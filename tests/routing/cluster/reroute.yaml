@@ -26,10 +26,13 @@ epilogues:
     status: [200, 404]
 chapters:
   - synopsis: Shows the allocation of shards in a cluster.
+    id: shard
     path: /_cluster/reroute
     method: POST
     response:
       status: 200
+    output:
+      node: payload.state.routing_table.indices.movies.shards.0[0].node
   - synopsis: Shows the allocation of shards in a cluster with parameters.
     path: /_cluster/reroute
     method: POST
@@ -49,7 +52,7 @@ chapters:
           - move:
               index: movies
               shard: 0
-              from_node: opensearch-node1
+              from_node: ${shard.node}
               to_node: opensearch-node2
     response:
       status: 200
