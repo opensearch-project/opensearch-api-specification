@@ -152,8 +152,9 @@ export class ConsoleResultLogger implements ResultLogger {
   }
 
   #maybe_shorten_error_message(message: string | undefined): string | undefined {
-    if (message === undefined || message.length <= 128 || this._verbose) return message
-    const part = message.split(',')[0]
+    const cut_at = 256
+    if (message === undefined || message.length <= cut_at || this._verbose) return message
+    const part = message.substring(0, cut_at)
     return part + (part !== message ? ', ...' : '')
   }
 

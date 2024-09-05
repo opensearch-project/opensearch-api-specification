@@ -20,6 +20,18 @@ prologues:
         - {director: Bennett Miller, title: Moneyball, year: 2011}
         - {create: {_index: movies}}
         - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+  # force the shard on node1 in case it was created on node2
+  - path: /_cluster/reroute
+    method: POST
+    request:
+      payload:
+        commands:
+          - move:
+              index: movies
+              shard: 0
+              from_node: opensearch-node2
+              to_node: opensearch-node1
+    status: [200, 400]
 epilogues:
   - path: /movies
     method: DELETE
@@ -51,6 +63,9 @@ chapters:
               shard: 0
               from_node: opensearch-node1
               to_node: opensearch-node2
+    retry:
+      count: 3
+      wait: 1000
     response:
       status: 200
       payload:
