@@ -89,6 +89,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `terminated_early` to `count@200` ([#547](https://github.com/opensearch-project/opensearch-api-specification/pull/547))
 - Added request and response schemas for `/_cluster/routing/awareness/{attribute}/weights` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 - Added request and response schemas for `/_cluster/decommission/awareness` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
+- Added `Bytes` component of type number ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 
 ### Changed
 
@@ -104,6 +105,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
 - Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 - Adjust indices, shards cat API to test against unassigned indices ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
+- Rename `Bytes` component to `StorageType` ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
+- Rename `ByteSize` to `StorageSize` ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 
 ### Deprecated
 
