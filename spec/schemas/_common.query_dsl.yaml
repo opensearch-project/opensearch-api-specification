@@ -642,6 +642,22 @@ components:
         - coerce
         - ignore_malformed
         - strict
+    GeoShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    GeoShapeField:
+      type: object
+      properties:
+        shape:
+          $ref: '#/components/schemas/GeoShape'
+        relation: 
+          $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+      required:
+        - shape
     GeoDistanceQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -675,19 +691,7 @@ components:
         - type: object
           properties:
             field:
-              type: object
-              properties:
-                shape:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                    coordinates:
-                      type: array
-                relation: 
-                  $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
-              required:
-                - shape
+              $ref: '#/components/schemas/GeoShapeField'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
           required:
@@ -1980,6 +1984,22 @@ components:
               type: string
           required:
             - query
+    XyShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    XyShapeField:
+      type: object
+      properties:
+        shape:
+          $ref: '#/components/schemas/XyShape'
+        relation: 
+          $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+      required:
+        - shape
     XyShapeQuery:
       x-version-added: 2.4
       allOf:
@@ -1990,12 +2010,7 @@ components:
               type: object
               properties:
                 shape:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                    coordinates:
-                      type: array
+                  $ref: '#/components/schemas/XyShape'
                 relation: 
                   $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
               required:
