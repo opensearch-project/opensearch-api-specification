@@ -36,18 +36,21 @@ epilogues:
     status: [200, 404]
 chapters:
   - synopsis: Create leader role.
-    path: /_plugins/_security/api/roles/{role}
-    parameters:
-      role: leader_role
-    method: PUT
-    request:
-      payload:
-        cluster_permissions:
-          - "cluster:monitor/state"
-          - "cluster:admin/plugins/replication/index/setup/validate"
-        index_permissions:
-          - index_patterns: ["*"]
-            allowed_actions: ["indices:data/read/*", "indices:admin/plugins/replication/*"]
+  path: /_plugins/_security/api/roles/{role}
+  parameters:
+    role: leader_role
+  method: PUT
+  request:
+    payload:
+      cluster_permissions:
+        - "cluster:monitor/state"
+        - "cluster:admin/plugins/replication/index/setup/validate"
+      index_permissions:
+        - index_patterns: ["your-leader-index-pattern"]  # Укажите конкретный шаблон индекса
+          allowed_actions:
+            - "indices:admin/plugins/replication/index/setup/validate"
+            - "indices:data/read/plugins/replication/file_chunk"
+            - "indices:data/read/plugins/replication/changes"
     response:
       status: 201
   - synopsis: Create follower role.
@@ -58,13 +61,21 @@ chapters:
     request:
       payload:
         cluster_permissions:
-          - "cluster:admin/xpack/ccr/auto_follow_pattern/*"
           - "cluster:admin/plugins/replication/index/setup/validate"
+          - "cluster:admin/plugins/replication/autofollow/update"
         index_permissions:
-          - index_patterns: ["*"]
-            allowed_actions: ["indices:data/write/*", "indices:admin/plugins/replication/*"]
-    response:
-      status: 201
+          - index_patterns: ["your-follower-index-pattern"]  # Укажите конкретный шаблон индекса
+            allowed_actions:
+              - "indices:admin/plugins/replication/index/setup/validate"
+              - "indices:admin/plugins/replication/index/start"
+              - "indices:admin/plugins/replication/index/pause"
+              - "indices:admin/plugins/replication/index/resume"
+              - "indices:admin/plugins/replication/index/stop"
+              - "indices:admin/plugins/replication/index/update"
+              - "indices:admin/plugins/replication/index/status_check"
+              - "indices:data/write/plugins/replication/changes"
+      response:
+        status: 201
   - synopsis: Map leader role to user.
     path: /_plugins/_security/api/rolesmapping/{role}
     method: PUT
