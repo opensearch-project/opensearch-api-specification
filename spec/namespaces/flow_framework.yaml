@@ -27,6 +27,38 @@ paths:
         '400':
           $ref: '#/components/responses/flow_framework.create@400'
   /_plugins/_flow_framework/workflow/{workflow_id}:
+    get:
+      operationId: flow_framework.get.0
+      x-operation-group: flow_framework.get
+      x-version-added: '2.12'
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow/
+      description: Get a workflow.
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.get@200'
+        '404':
+          $ref: '#/components/responses/flow_framework.get@404'
+    put:
+      operationId: flow_framework.update.0
+      x-operation-group: flow_framework.update
+      x-version-added: '2.12'
+      description: Update a workflow. You can only update a complete workflow if it has not yet been provisioned.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.update::path.workflow_id'
+        - $ref: '#/components/parameters/flow_framework.update::query.update_fields'
+      requestBody:
+        $ref: '#/components/requestBodies/flow_framework.update'
+      responses:
+        '201':
+          $ref: '#/components/responses/flow_framework.update@201'
+          description: It returns the workflow_id
+        '404':
+          $ref: '#/components/responses/flow_framework.update@404'
     delete:
       operationId: flow_framework.delete.0
       x-operation-group: flow_framework.delete
@@ -46,38 +78,6 @@ paths:
           $ref: '#/components/responses/flow_framework.delete@403'
         '404':
           $ref: '#/components/responses/flow_framework.delete@404'
-    put:
-      operationId: flow_framework.update.0
-      x-operation-group: flow_framework.update
-      x-version-added: '2.12'
-      description: Update a workflow. You can only update a complete workflow if it has not yet been provisioned.
-      externalDocs:
-        url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
-      parameters:
-        - $ref: '#/components/parameters/flow_framework.update::path.workflow_id'
-        - $ref: '#/components/parameters/flow_framework.update::query.update_fields'
-      requestBody:
-        $ref: '#/components/requestBodies/flow_framework.update'
-      responses:
-        '201':
-          $ref: '#/components/responses/flow_framework.update@201'
-          description: It returns the workflow_id
-        '404':
-          $ref: '#/components/responses/flow_framework.update@404'
-    get:
-      operationId: flow_framework.get.0
-      x-operation-group: flow_framework.get
-      x-version-added: '2.12'
-      externalDocs:
-        url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow/
-      description: Get a workflow.
-      parameters:
-        - $ref: '#/components/parameters/flow_framework.get::path.workflow_id'
-      responses:
-        '200':
-          $ref: '#/components/responses/flow_framework.get@200'
-        '404':
-          $ref: '#/components/responses/flow_framework.get@404'
 components:
   parameters:
     flow_framework.get::path.workflow_id:
@@ -202,10 +202,10 @@ components:
                       type: string
                     description: A list of minimum required OpenSearch versions.
           oneOf:
-            - required: [ name ]
-            - required: [ description ]
-            - required: [ use_case ]
-            - required: [ version ]
+            - required: [name]
+            - required: [description]
+            - required: [use_case]
+            - required: [version]
   responses:
     flow_framework.create@201:
       content:
@@ -221,18 +221,18 @@ components:
     flow_framework.create@403:
       content:
         application/json:
-            $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
     flow_framework.create@400:
       description: Bad Request - Multiple possible reasons
       content:
         application/json:
-            oneOf:
-              - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/BadRequestError'
-              - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ConflictError'
-              - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MissingParameterError'
-              - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ParameterConflictError'
-              - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MaxWorkflowsLimitError'
-              - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkflowSaveError'
+          oneOf:
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/BadRequestError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ConflictError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MissingParameterError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ParameterConflictError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MaxWorkflowsLimitError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkflowSaveError'
     flow_framework.update@201:
       content:
         application/json:
@@ -262,7 +262,7 @@ components:
               result:
                 type: string
                 description: The result of the deletion operation.
-                enum: [ deleted, not_found ]
+                enum: [deleted, not_found]
               _shards:
                 type: object
                 properties:
@@ -323,24 +323,24 @@ components:
       description: Template Not Found Error
       content:
         application/json:
-            $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
     flow_framework.delete@400:
       description: Work Flow Id Null Error
       content:
         application/json:
-            $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkFlowIdNullError'
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkFlowIdNullError'
     flow_framework.delete@403:
       description: Flow Framework API Disabled Error
       content:
         application/json:
-            $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
     flow_framework.delete@404:
       description: Template Not Found Error
       content:
         application/json:
-            $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
     flow_framework.get@404:
       description: Template Not Found Error
       content:
         application/json:
-            $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
