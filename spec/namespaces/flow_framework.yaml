@@ -15,6 +15,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/flow_framework.create::query.provision'
         - $ref: '#/components/parameters/flow_framework.create::query.reprovision'
+        - $ref: '#/components/parameters/flow_framework.create::query.update_fields'
         - $ref: '#/components/parameters/flow_framework.create::query.use_case'
         - $ref: '#/components/parameters/flow_framework.create::query.validation'
       requestBody:
@@ -50,7 +51,11 @@ paths:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
         - $ref: '#/components/parameters/flow_framework.update::path.workflow_id'
+        - $ref: '#/components/parameters/flow_framework.update::query.provision'
+        - $ref: '#/components/parameters/flow_framework.update::query.reprovision'
         - $ref: '#/components/parameters/flow_framework.update::query.update_fields'
+        - $ref: '#/components/parameters/flow_framework.update::query.use_case'
+        - $ref: '#/components/parameters/flow_framework.update::query.validation'
       requestBody:
         $ref: '#/components/requestBodies/flow_framework.update'
       responses:
@@ -59,6 +64,8 @@ paths:
           description: It returns the workflow_id
         '404':
           $ref: '#/components/responses/flow_framework.update@404'
+        '400':
+          $ref: '#/components/responses/flow_framework.update@400'
     delete:
       operationId: flow_framework.delete.0
       x-operation-group: flow_framework.delete
@@ -76,8 +83,6 @@ paths:
           $ref: '#/components/responses/flow_framework.delete@400'
         '403':
           $ref: '#/components/responses/flow_framework.delete@403'
-        '404':
-          $ref: '#/components/responses/flow_framework.delete@404'
 components:
   parameters:
     flow_framework.get::path.workflow_id:
@@ -85,33 +90,41 @@ components:
       in: path
       required: true
       schema:
-        type: string
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
     flow_framework.update::path.workflow_id:
       name: workflow_id
       in: path
       required: true
       schema:
-        type: string
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
     flow_framework.delete::path.workflow_id:
       name: workflow_id
       in: path
       required: true
       schema:
-        type: string
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
     flow_framework.create::query.provision:
       in: query
       name: provision
       schema:
-        description: Provision the workflow as part of the request
-        type: boolean
-        default: false
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Provision'
+    flow_framework.update::query.provision:
+      in: query
+      name: provision
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Provision'
     flow_framework.create::query.reprovision:
       x-version-added: '2.17'
       in: query
       name: reprovision
       schema:
-        type: boolean
-        default: false
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Reprovision'
+    flow_framework.update::query.reprovision:
+      x-version-added: '2.17'
+      in: query
+      name: reprovision
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Reprovision'
     flow_framework.create::query.use_case:
       description: To use a workflow template, specify it in the use_case query parameter when creating a workflow.
       externalDocs:
@@ -119,21 +132,35 @@ components:
       in: query
       name: use_case
       schema:
-        type: string
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/UseCase'
+    flow_framework.update::query.use_case:
+      description: To use a workflow template, specify it in the use_case query parameter when creating a workflow.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/workflow-templates/#supported-workflow-templates
+      in: query
+      name: use_case
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/UseCase'
     flow_framework.create::query.validation:
       in: query
       name: validation
       schema:
-        description: Validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
-        type: string
-        default: all
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Validation'
+    flow_framework.update::query.validation:
+      in: query
+      name: validation
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Validation'
     flow_framework.update::query.update_fields:
       in: query
       name: update_fields
       schema:
-        description: Update only the fields included in the request body.
-        type: boolean
-        default: false
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/UpdateFields'
+    flow_framework.create::query.update_fields:
+      in: query
+      name: update_fields
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/UpdateFields'
     flow_framework.delete::query.clear_status:
       in: query
       name: clear_status
@@ -173,7 +200,18 @@ components:
       content:
         application/json:
           oneOf:
-            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/BadRequestError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/InvalidParameterError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ConflictError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MissingParameterError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ParameterConflictError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MaxWorkflowsLimitError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkflowSaveError'
+    flow_framework.update@400:
+      description: Bad Request - Multiple possible reasons
+      content:
+        application/json:
+          oneOf:
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/InvalidParameterError'
             - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ConflictError'
             - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/MissingParameterError'
             - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/ParameterConflictError'
@@ -213,11 +251,6 @@ components:
       content:
         application/json:
           $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
-    flow_framework.delete@404:
-      description: Template Not Found Error
-      content:
-        application/json:
-          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
     flow_framework.get@404:
       description: Template Not Found Error
       content:
