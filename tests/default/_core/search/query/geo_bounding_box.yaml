@@ -1,0 +1,61 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with geo_bounding_box query.
+prologues:
+  - path: /point_index
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            field:
+              type: geo_point
+  - path: /point_index/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        field:
+          lat: 74
+          lon: 40
+    status: [201]
+epilogues:
+  - path: /point_index
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search point_index for documents whose point objects are within the specified bounding box.
+    path: /{index}/_search
+    parameters:
+      index: point_index
+    method: GET
+    request:
+      payload:
+        query:
+          geo_bounding_box:
+            field:
+              top: 75
+              left: 28
+              bottom: 73
+              right: 41
+            validation_method: strict
+            type: memory
+            ignore_unmapped: false
+           # _name: my_query  
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          max_score: 1
+          hits:
+            - _index: point_index
+              _score: 1
+              _source:
+                field:
+                  lat: 74
+                  lon: 40

@@ -89,6 +89,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `terminated_early` to `count@200` ([#547](https://github.com/opensearch-project/opensearch-api-specification/pull/547))
 - Added request and response schemas for `/_cluster/routing/awareness/{attribute}/weights` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 - Added request and response schemas for `/_cluster/decommission/awareness` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
+- Added `xy_shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 
 ### Changed
 
@@ -110,6 +111,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Removed
 
 - Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358))
+- Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
  
 ### Fixed
 
@@ -141,7 +143,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
 - Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
 - Fixed missing fields in cat API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
-- Removed `shape` query from the spec and replaced with `xy_query`. Added specs for `xy_point` and `xy_shape`. Updated spec for `geo_shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
+- Fixed `geo_bounding_box` and `geo_shape` queries ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 
 ### Security
 
