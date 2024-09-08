@@ -164,7 +164,7 @@ components:
         - $ref: '#/components/schemas/UnitMillis'
     UnitMillis:
       description: Time unit for milliseconds.
-      type: number
+      type: integer
       format: int64
     DurationLarge:
       description: |-
@@ -199,10 +199,10 @@ components:
       description: Path to field or array of paths. Some API's support wildcards in the path to select multiple fields.
       type: string
     SequenceNumber:
-      type: number
+      type: integer
       format: int64
     VersionNumber:
-      type: number
+      type: integer
       format: int64
     SortResults:
       type: array
@@ -302,7 +302,7 @@ components:
         - successful
         - total
     uint:
-      type: number
+      type: integer
     ShardFailure:
       type: object
       properties:
@@ -313,7 +313,7 @@ components:
         reason:
           $ref: '#/components/schemas/ErrorCause'
         shard:
-          type: number
+          type: integer
         status:
           type: string
       required:
@@ -351,7 +351,8 @@ components:
         - $ref: '#/components/schemas/UnitNanos'
     UnitNanos:
       description: Time unit for nanoseconds.
-      type: number
+      type: integer
+      format: int64
     ScrollId:
       type: string
     Routing:
@@ -712,7 +713,10 @@ components:
             $ref: '#/components/schemas/NodeId'
     NodeId:
       type: string
-    Bytes:
+    StorageSize:
+      type: string
+      pattern: '\d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p)'
+    StorageType:
       type: string
       enum:
         - b
@@ -726,10 +730,8 @@ components:
         - pb
         - t
         - tb
-    ByteSize:
-      oneOf:
-        - type: number
-        - type: string
+    Bytes:
+      type: integer
     Percentage:
       oneOf:
         - type: string
@@ -914,9 +916,9 @@ components:
       properties:
         size_in_bytes:
           description: Total amount, in bytes, of memory used for completion across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         size:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         fields:
           type: object
           additionalProperties:
@@ -927,9 +929,9 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
       required:
         - size_in_bytes
     DocStats:
@@ -954,9 +956,9 @@ components:
         evictions:
           type: number
         memory_size:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         memory_size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         fields:
           type: object
           additionalProperties:
@@ -967,9 +969,9 @@ components:
       type: object
       properties:
         memory_size:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         memory_size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
       required:
         - memory_size_in_bytes
     QueryCacheStats:
@@ -990,10 +992,10 @@ components:
           description: Total count of query cache hits across all shards assigned to selected nodes.
           type: number
         memory_size:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         memory_size_in_bytes:
           description: Total amount, in bytes, of memory used for the query cache across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         miss_count:
           description: Total count of query cache misses across all shards assigned to selected nodes.
           type: number
@@ -1058,15 +1060,24 @@ components:
       type: object
       description: The total amount of data uploaded to the remote translog store.
       properties:
+        failed:
+          description: The number of bytes that failed to upload to the remote translog store.
+          $ref: '#/components/schemas/StorageSize'
         failed_bytes:
           description: The number of bytes that failed to upload to the remote translog store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        started:
+          description: The number of bytes successfully uploaded to the remote translog store.
+          $ref: '#/components/schemas/StorageSize'
         started_bytes:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        succeeded:
+          description: The number of bytes successfully uploaded to the remote translog store.
+          $ref: '#/components/schemas/StorageSize'
         succeeded_bytes:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
       required:
         - failed_bytes
         - started_bytes
@@ -1075,6 +1086,9 @@ components:
       type: object
       description: Statistics related to uploads to the remote segment store.
       properties:
+        max_refresh_time_lag:
+          description: The maximum duration that the remote refresh is behind the local refresh.
+          $ref: '#/components/schemas/Duration'
         max_refresh_time_lag_in_millis:
           description: The maximum duration, in milliseconds, that the remote refresh is behind the local refresh.
           $ref: '#/components/schemas/DurationValueUnitMillis'
@@ -1082,6 +1096,9 @@ components:
           $ref: '#/components/schemas/RemoteStoreUploadPressureStats'
         refresh_size_lag:
           $ref: '#/components/schemas/RemoteStoreUploadRefreshSizeLagStats'
+        total_time_spent:
+          description: The total amount of time, spent on uploads to the remote segment store.
+          $ref: '#/components/schemas/Duration'
         total_time_spent_in_millis:
           description: The total amount of time, in milliseconds, spent on uploads to the remote segment store.
           $ref: '#/components/schemas/DurationValueUnitMillis'
@@ -1097,15 +1114,24 @@ components:
       type: object
       description: The amount of data, in bytes, uploaded or downloaded to/from the remote segment store.
       properties:
+        failed:
+          description: The number of bytes that failed to upload/upload to/from the remote segment store.
+          $ref: '#/components/schemas/StorageSize'
         failed_bytes:
           description: The number of bytes that failed to upload/upload to/from the remote segment store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        started:
+          description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
+          $ref: '#/components/schemas/StorageSize'
         started_bytes:
           description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        succeeded:
+          description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
+          $ref: '#/components/schemas/StorageSize'
         succeeded_bytes:
           description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
       required:
         - failed_bytes
         - started_bytes
@@ -1123,12 +1149,18 @@ components:
       type: object
       description: The amount of lag during upload between the remote segment store and the local store.
       properties:
+        max:
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
+          $ref: '#/components/schemas/StorageSize'
         max_bytes:
           description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        total:
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
+          $ref: '#/components/schemas/StorageSize'
         total_bytes:
           description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
       required:
         - max_bytes
         - total_bytes
@@ -1139,6 +1171,9 @@ components:
         total_download_size:
           description: The total amount of data download from the remote segment store.
           $ref: '#/components/schemas/RemoteStoreUploadDownloadStats'
+        total_time_spent:
+          description: The total duration, spent on downloads from the remote segment store.
+          $ref: '#/components/schemas/Duration'
         total_time_spent_in_millis:
           description: The total duration, in milliseconds, spent on downloads from the remote segment store.
           $ref: '#/components/schemas/DurationValueUnitMillis'
@@ -1149,11 +1184,11 @@ components:
       type: object
       properties:
         max_bytes_behind:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
         max_replication_lag:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
         total_bytes_behind:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
       required:
         - max_bytes_behind
         - max_replication_lag
@@ -1165,10 +1200,10 @@ components:
           description: Total number of segments across all shards assigned to selected nodes.
           type: number
         doc_values_memory:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         doc_values_memory_in_bytes:
           description: Total amount, in bytes, of memory used for doc values across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         file_sizes:
           description: |-
             This object is not populated by the cluster stats API.
@@ -1177,55 +1212,62 @@ components:
           additionalProperties:
             $ref: 'indices.stats.yaml#/components/schemas/ShardFileSizeInfo'
         fixed_bit_set:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         fixed_bit_set_memory_in_bytes:
           description: Total amount of memory, in bytes, used by fixed bit sets across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         index_writer_memory:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         index_writer_max_memory_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         index_writer_memory_in_bytes:
           description: Total amount, in bytes, of memory used by all index writers across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         max_unsafe_auto_id_timestamp:
           description: Unix timestamp, in milliseconds, of the most recently retried indexing request.
           type: number
         memory:
-          $ref: '#/components/schemas/ByteSize'
+          description: Total amount, of memory used for segments across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         memory_in_bytes:
           description: Total amount, in bytes, of memory used for segments across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         norms_memory:
-          $ref: '#/components/schemas/ByteSize'
+          description: Total amount of memory used for normalization factors across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         norms_memory_in_bytes:
           description: Total amount, in bytes, of memory used for normalization factors across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         points_memory:
-          $ref: '#/components/schemas/ByteSize'
+          description: Total amount of memory used for points across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         points_memory_in_bytes:
           description: Total amount, in bytes, of memory used for points across all shards assigned to selected nodes.
-          type: number
-        stored_memory:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        stored_fields_memory:
+          description: Total amount of memory used for stored fields across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         stored_fields_memory_in_bytes:
           description: Total amount, in bytes, of memory used for stored fields across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
+        terms_memory:
+          description: Total amount of memory used for terms across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         terms_memory_in_bytes:
           description: Total amount, in bytes, of memory used for terms across all shards assigned to selected nodes.
-          type: number
-        terms_memory:
-          $ref: '#/components/schemas/ByteSize'
-        term_vectory_memory:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/Bytes'
+        term_vectors_memory:
+          description: Total amount of memory used for term vectors across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         term_vectors_memory_in_bytes:
           description: Total amount, in bytes, of memory used for term vectors across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         version_map_memory:
-          $ref: '#/components/schemas/ByteSize'
+          description: Total amount of memory used by all version maps across all shards assigned to selected nodes.
+          $ref: '#/components/schemas/StorageSize'
         version_map_memory_in_bytes:
           description: Total amount, in bytes, of memory used by all version maps across all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         remote_store:
           $ref: '#/components/schemas/RemoteStoreStats'
         segment_replication:
@@ -1248,15 +1290,15 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         size_in_bytes:
           description: Total size, in bytes, of all shards assigned to selected nodes.
-          type: number
+          $ref: '#/components/schemas/Bytes'
         reserved:
-          $ref: '#/components/schemas/ByteSize'
+          $ref: '#/components/schemas/StorageSize'
         reserved_in_bytes:
           description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
-          type: number
+          $ref: '#/components/schemas/Bytes'
       required:
         - reserved_in_bytes
         - size_in_bytes
@@ -1303,13 +1345,13 @@ components:
             $ref: '#/components/schemas/ErrorCause'
         total:
           description: Total number of nodes selected by the request.
-          type: number
+          type: integer
         successful:
           description: Number of nodes that responded successfully to the request.
-          type: number
+          type: integer
         failed:
           description: Number of nodes that rejected the request or failed to respond. If this value is not 0, a reason for the rejection or failure is included in the response.
-          type: number
+          type: integer
       required:
         - failed
         - successful
@@ -1324,7 +1366,7 @@ components:
         _index:
           $ref: '#/components/schemas/IndexName'
         _primary_term:
-          type: number
+          type: integer
           format: int64
         result:
           $ref: '#/components/schemas/Result'
@@ -1389,9 +1431,11 @@ components:
       type: object
       properties:
         bulk:
-          type: number
+          type: integer
+          format: int64
         search:
-          type: number
+          type: integer
+          format: int64
       required:
         - bulk
         - search
@@ -1403,7 +1447,7 @@ components:
       type: object
       properties:
         task_id:
-          type: number
+          type: integer
         node_id:
           $ref: '#/components/schemas/NodeId'
         status:
@@ -1506,7 +1550,7 @@ components:
       properties:
         total:
           type: number
-        time:
+        getTime:
           $ref: '#/components/schemas/Duration'
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
@@ -1587,21 +1631,21 @@ components:
         current_docs:
           type: number
         current_size:
-          type: string
+          $ref: '#/components/schemas/StorageSize'
         current_size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         total:
           type: number
         total_auto_throttle:
-          type: string
+          $ref: '#/components/schemas/StorageSize'
         total_auto_throttle_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         total_docs:
           type: number
         total_size:
-          type: string
+          $ref: '#/components/schemas/StorageSize'
         total_size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         total_stopped_time:
           $ref: '#/components/schemas/Duration'
         total_stopped_time_in_millis:
@@ -1647,6 +1691,8 @@ components:
       properties:
         external_total:
           type: number
+        external_total_time:
+          $ref: '#/components/schemas/Duration'
         external_total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         listeners:
@@ -1671,9 +1717,9 @@ components:
         hit_count:
           type: number
         memory_size:
-          type: string
+          $ref: '#/components/schemas/StorageSize'
         memory_size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         miss_count:
           type: number
       required:
@@ -1794,15 +1840,15 @@ components:
         remote_store:
           $ref: '#/components/schemas/RemoteStoreTranslogStats'
         size:
-          type: string
+          $ref: '#/components/schemas/StorageSize'
         size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
         uncommitted_operations:
           type: number
         uncommitted_size:
-          type: string
+          $ref: '#/components/schemas/StorageSize'
         uncommitted_size_in_bytes:
-          type: number
+          $ref: '#/components/schemas/Bytes'
       required:
         - earliest_last_modified_age
         - operations
@@ -1812,8 +1858,10 @@ components:
     RequestStats:
       type: object
       properties:
+        time:
+          $ref: '#/components/schemas/Duration'
         time_in_millis:
-          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'    
+          $ref: '#/components/schemas/DurationValueUnitMillis'    
         current:
           type: number
         total:
