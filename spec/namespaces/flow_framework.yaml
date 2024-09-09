@@ -100,6 +100,24 @@ paths:
           $ref: '#/components/responses/flow_framework.get_steps@403'
         '400':
           $ref: '#/components/responses/flow_framework.get_steps@400'
+  /_plugins/_flow_framework/workflow/{workflow_id}/_status:
+    get:
+      operationId: flow_framework.get_status.0
+      x-operation-group: flow_framework.get_status
+      x-version-added: '2.12'
+      description: Get the provisioning deployment status until it is complete.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow-status/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.get_status::path.workflow_id'
+        - $ref: '#/components/parameters/flow_framework.get_status::query.all'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.get_status@200'
+        '403':
+          $ref: '#/components/responses/flow_framework.get_status@403'
+        '404':
+          $ref: '#/components/responses/flow_framework.get_status@404'
 #    /_plugins/_flow_framework/workflow/_search:
 #      post: { }
 #      get: { }
@@ -110,11 +128,16 @@ paths:
 #      post: { }
 #    /_plugins/_flow_framework/workflow/{workflow_id}/_provision:
 #      post: { }
-#    /_plugins/_flow_framework/workflow/{workflow_id}/_status:
-#      get: {}
+
 components:
   parameters:
     flow_framework.get::path.workflow_id:
+      name: workflow_id
+      in: path
+      required: true
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
+    flow_framework.get_status::path.workflow_id:
       name: workflow_id
       in: path
       required: true
@@ -162,6 +185,12 @@ components:
       name: use_case
       schema:
         $ref: '../schemas/flow_framework.common.yaml#/components/schemas/UseCase'
+    flow_framework.get_status::query.all:
+      description: The all parameter specifies whether the response should return all fields.
+      in: query
+      name: all
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/All'
     flow_framework.update::query.use_case:
       description: To use a workflow template, specify it in the use_case query parameter when creating a workflow.
       externalDocs:
@@ -305,3 +334,18 @@ components:
       content:
         application/json:
           $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkflowStepsRetrieveError'
+    flow_framework.get_status@403:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+    flow_framework.get_status@404:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
+    flow_framework.get_status@200:
+      content:
+        application/json:
+          oneOf:
+            - $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkFlowStatusFullResponse'
+            - $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkFlowStatusDefaultResponse'
+
