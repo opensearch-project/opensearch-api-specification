@@ -91,6 +91,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added request and response schemas for `/_cluster/routing/awareness/{attribute}/weights` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 - Added request and response schemas for `/_cluster/decommission/awareness` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 - Added `Bytes` component of type number ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
+- Added `xy_shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 
 ### Changed
 
@@ -114,6 +115,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Removed
 
 - Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358))
+- Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
  
 ### Fixed
 
@@ -143,9 +145,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed query DSL `neural` field `query_image` set `contentEncoding` and `model_id` as optional ([#512](https://github.com/opensearch-project/opensearch-api-specification/pull/512))
 - Fixed `knn` query specification ([#538](https://github.com/opensearch-project/opensearch-api-specification/pull/538))
 - Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
+- Fixed `geo_distance` query spec ([#560](https://github.com/opensearch-project/opensearch-api-specification/pull/560))
 - Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
 - Fixed missing fields in `_cat` API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
-- Fixed `geo_distance` query spec ([#560](https://github.com/opensearch-project/opensearch-api-specification/pull/560))
+- Fixed `geo_bounding_box` and `geo_shape` queries ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 
 ### Security
 
