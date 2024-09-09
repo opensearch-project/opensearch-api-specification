@@ -190,7 +190,15 @@ components:
           minProperties: 1
           maxProperties: 1
         terms:
-          $ref: '#/components/schemas/TermsQuery'
+          type: object
+          additionalProperties:
+            anyOf:
+              - $ref: '#/components/schemas/TermsQuery'
+              - type: array
+                items:
+                  type: string
+          minProperties: 1
+          maxProperties: 1
         terms_set:
           description: |-
             Returns documents that contain a minimum number of exact terms in a provided field.
@@ -280,23 +288,6 @@ components:
           type: number
         _name:
           type: string
-    Terms:
-      oneOf:
-        - type: array
-          items:
-            type: string
-        - type: object
-          properties:
-            index:
-              $ref: '_common.yaml#/components/schemas/IndexName'
-            id:
-              $ref: '_common.yaml#/components/schemas/Id'
-            path:
-              $ref: '_common.yaml#/components/schemas/Field'
-            routing:
-              $ref: '_common.yaml#/components/schemas/Routing'
-          additionalProperties: true
-          description: Object for fetching terms.
     BoostingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1891,7 +1882,16 @@ components:
     TermsQuery:
       anyOf:
         - $ref: '#/components/schemas/QueryBase'
-        - $ref: '#/components/schemas/Terms'
+        - type: object
+          properties:
+            index:
+              $ref: '_common.yaml#/components/schemas/IndexName'
+            id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            path:
+              $ref: '_common.yaml#/components/schemas/Field'
+            routing:
+              $ref: '_common.yaml#/components/schemas/Routing'
     TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1902,7 +1902,9 @@ components:
             minimum_should_match_script:
               $ref: '_common.yaml#/components/schemas/Script'
             terms:
-              $ref: '#/components/schemas/Terms'
+              type: array
+              items:
+                type: string
           required:
             - terms
     TextExpansionQuery:
