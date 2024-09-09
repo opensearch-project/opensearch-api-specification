@@ -138,8 +138,31 @@ paths:
           $ref: '#/components/responses/flow_framework.deprovision@403'
         '404':
           $ref: '#/components/responses/flow_framework.deprovision@404'
-#    /_plugins/_flow_framework/workflow/{workflow_id}/_provision:
-#      post: { }
+  /_plugins/_flow_framework/workflow/{workflow_id}/_provision:
+    post:
+      operationId: flow_framework.provision.0
+      x-operation-group: flow_framework.provision
+      x-version-added: '2.12'
+      description: Provisioning a workflow. This API is also executed when the Create or Update Workflow API is called with the provision parameter set to true.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/provision-workflow/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.provision::path.workflow_id'
+      requestBody:
+        description: |-
+          Pass dynamic substitution expressions as key-value pairs, either as query parameters or in the request body.
+          For example, if you specified a credential field in the template as `openai_key: '$'`,
+          you can pass `openai_key` as a query parameter or in the request body.
+        $ref: '#/components/requestBodies/flow_framework.provision'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.provision@200'
+        '403':
+          $ref: '#/components/responses/flow_framework.provision@403'
+        '400':
+          $ref: '#/components/responses/flow_framework.provision@400'
+
+
 #    /_plugins/_flow_framework/workflow/_search:
 #      post: { }
 #      get: { }
@@ -161,6 +184,12 @@ components:
       schema:
         $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
     flow_framework.deprovision::path.workflow_id:
+      name: workflow_id
+      in: path
+      required: true
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
+    flow_framework.provision::path.workflow_id:
       name: workflow_id
       in: path
       required: true
@@ -272,6 +301,12 @@ components:
         application/json:
           schema:
             $ref: '../schemas/flow_framework.common.yaml#/components/schemas/FlowFrameworkUpdate'
+    flow_framework.provision:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/flow_framework.common.yaml#/components/schemas/UserProvidedSubstitutionExpressions'
   responses:
     flow_framework.create@201:
       content:
@@ -380,6 +415,10 @@ components:
       content:
         application/json:
           $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
+    flow_framework.provision@200:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
     flow_framework.deprovision@202:
       content:
         application/json:
@@ -394,3 +433,16 @@ components:
       content:
         application/json:
           $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
+    flow_framework.provision@403:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+    flow_framework.provision@400:
+      content:
+        application/json:
+          oneOf:
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkFlowIdNullError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/RequestBodyParsingFailedError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/InvalidRequestBodyFieldError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/DuplicateKeyError'
+
