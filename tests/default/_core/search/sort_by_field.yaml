@@ -1,0 +1,163 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test different ways to sort by field.
+
+epilogues:
+  - path: /sorted_movies
+    method: DELETE
+    status: [200]
+
+prologues:
+  - path: /sorted_movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: keyword
+            year:
+              type: integer
+
+  - path: /sorted_movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: The Lion King
+        year: 1994
+    status: [ 201 ]
+  - path: /sorted_movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: The Lion King
+        year: 2019
+    status: [ 201 ]
+  - path: /sorted_movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Frozen
+        year: 2013
+    status: [ 201 ]
+
+chapters:
+  - synopsis: QueryString Sort by year.
+    path: /{index}/_search
+    parameters:
+      index: sorted_movies
+      sort: year
+    method: GET
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                title: The Lion King
+                year: 1994
+            - _source:
+                title: Frozen
+                year: 2013
+            - _source:
+                title: The Lion King
+                year: 2019
+
+  - synopsis: QueryString Sort  by title:desc.
+    path: /{index}/_search
+    parameters:
+      index: sorted_movies
+      sort: title:desc
+    method: GET
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                title: The Lion King
+                year: 1994
+            - _source:
+                title: The Lion King
+                year: 2019
+            - _source:
+                title: Frozen
+                year: 2013
+
+  - synopsis: QueryString Sort  by title:desc,year:desc.
+    path: /{index}/_search
+    parameters:
+      index: sorted_movies
+      sort: title:desc,year:desc
+    method: GET
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                title: The Lion King
+                year: 2019
+            - _source:
+                title: The Lion King
+                year: 1994
+            - _source:
+                title: Frozen
+                year: 2013
+
+  - synopsis: Body Sort by [title, year].
+    path: /{index}/_search
+    parameters:
+      index: sorted_movies
+    method: GET
+    request:
+      payload:
+        sort:
+          - title
+          - year
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                title: Frozen
+                year: 2013
+            - _source:
+                title: The Lion King
+                year: 1994
+            - _source:
+                title: The Lion King
+                year: 2019
+
+  - synopsis: Body Sort by year:asc,title:desc.
+    path: /{index}/_search
+    parameters:
+      index: sorted_movies
+    method: GET
+    request:
+      payload:
+        sort:
+          - title: { order: asc }
+          - year: { order: desc }
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                title: Frozen
+                year: 2013
+            - _source:
+                title: The Lion King
+                year: 2019
+            - _source:
+                title: The Lion King
+                year: 1994
+
