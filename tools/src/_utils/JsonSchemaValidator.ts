@@ -38,7 +38,13 @@ export default class JsonSchemaValidator {
     addFormats(this.ajv);
     if (options.ajv_errors_opts != null) ajv_errors(this.ajv, options.ajv_errors_opts)
     for (const keyword of options.additional_keywords ?? []) this.ajv.addKeyword(keyword)
-    Object.entries(options.reference_schemas ?? {}).forEach(([key, schema]) => this.ajv.addSchema(schema, key))
+    Object.entries(options.reference_schemas ?? {}).forEach(([key, schema]) => {
+      try {
+        this.ajv.addSchema(schema, key);
+      } catch (e) {
+        throw new Error(`Failed to add schema ${key}: \`${JSON.stringify(schema)}\``, { cause: e })
+      }
+    })
     this.errors_parser = new AjvErrorsParser(this.ajv, options.errors_text_opts)
     if (default_schema) this._validate = this.ajv.compile(default_schema)
   }
