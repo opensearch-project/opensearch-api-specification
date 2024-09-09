@@ -191,8 +191,8 @@ components:
         - $ref: '#/components/schemas/TokenCountProperty'
         - $ref: '#/components/schemas/GeoPointProperty'
         - $ref: '#/components/schemas/GeoShapeProperty'
-        - $ref: '#/components/schemas/PointProperty'
-        - $ref: '#/components/schemas/ShapeProperty'
+        - $ref: '#/components/schemas/XyPointProperty'
+        - $ref: '#/components/schemas/XyShapeProperty'
         - $ref: '#/components/schemas/ByteNumberProperty'
         - $ref: '#/components/schemas/DoubleNumberProperty'
         - $ref: '#/components/schemas/FloatNumberProperty'
@@ -913,6 +913,10 @@ components:
               $ref: '#/components/schemas/GeoOrientation'
             strategy:
               $ref: '#/components/schemas/GeoStrategy'
+              deprecated: true
+            distance_error_pct:
+              type: number
+              deprecated: true
             type:
               type: string
               enum:
@@ -929,7 +933,8 @@ components:
       enum:
         - recursive
         - term
-    PointProperty:
+    XyPointProperty:
+      # x-version-added: 2.4
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
@@ -939,14 +944,15 @@ components:
             ignore_z_value:
               type: boolean
             null_value:
-              type: string
+              $ref: '_common.yaml#/components/schemas/XyLocation'
             type:
               type: string
               enum:
-                - point
+                - xy_point
           required:
             - type
-    ShapeProperty:
+    XyShapeProperty:
+      # x-version-added: 2.4
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
@@ -962,7 +968,7 @@ components:
             type:
               type: string
               enum:
-                - shape
+                - xy_shape
           required:
             - type
     ByteNumberProperty:
