@@ -118,17 +118,34 @@ paths:
           $ref: '#/components/responses/flow_framework.get_status@403'
         '404':
           $ref: '#/components/responses/flow_framework.get_status@404'
+  /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision:
+    post:
+      operationId: flow_framework.deprovision.0
+      x-operation-group: flow_framework.deprovision
+      x-version-added: '2.12'
+      description: Deprovision workflow's resources when you no longer need it.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/deprovision-workflow/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.deprovision::path.workflow_id'
+        - $ref: '#/components/parameters/flow_framework.deprovision::query.allow_delete'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.deprovision@200'
+        '202':
+          $ref: '#/components/responses/flow_framework.deprovision@202'
+        '403':
+          $ref: '#/components/responses/flow_framework.deprovision@403'
+        '404':
+          $ref: '#/components/responses/flow_framework.deprovision@404'
+#    /_plugins/_flow_framework/workflow/{workflow_id}/_provision:
+#      post: { }
 #    /_plugins/_flow_framework/workflow/_search:
 #      post: { }
 #      get: { }
 #    /_plugins/_flow_framework/workflow/state/_search:
 #      post: { }
 #      get: { }
-#    /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision:
-#      post: { }
-#    /_plugins/_flow_framework/workflow/{workflow_id}/_provision:
-#      post: { }
-
 components:
   parameters:
     flow_framework.get::path.workflow_id:
@@ -138,6 +155,12 @@ components:
       schema:
         $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
     flow_framework.get_status::path.workflow_id:
+      name: workflow_id
+      in: path
+      required: true
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
+    flow_framework.deprovision::path.workflow_id:
       name: workflow_id
       in: path
       required: true
@@ -171,6 +194,11 @@ components:
       name: reprovision
       schema:
         $ref: '../schemas/flow_framework.common.yaml#/components/schemas/Reprovision'
+    flow_framework.deprovision::query.allow_delete:
+      in: query
+      name: allow_delete
+      schema:
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/AllowDelete'
     flow_framework.update::query.reprovision:
       x-version-added: '2.17'
       in: query
@@ -348,4 +376,21 @@ components:
           oneOf:
             - $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkFlowStatusFullResponse'
             - $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkFlowStatusDefaultResponse'
-
+    flow_framework.deprovision@200:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowID'
+    flow_framework.deprovision@202:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/DeprovisioningError'
+    flow_framework.deprovision@403:
+      content:
+        application/json:
+          oneOf:
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+            - $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/DeprovisioningForbiddenError'
+    flow_framework.deprovision@404:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
