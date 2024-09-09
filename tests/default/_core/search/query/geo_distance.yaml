@@ -1,34 +1,34 @@
-$schema: ../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
 description: Test search endpoint with geo_distance query.
 prologues:
-  - path: /map
+  - path: /cinemas
     method: PUT
     request:
       payload:
         mappings:
           properties:
-            field:
+            location:
               type: geo_point
-  - path: /map/_doc/1
+  - path: /cinemas/_doc/1
     method: POST
     parameters:
       refresh: true
     request:
       payload:
-        field: 
+        location: 
           lat: 74
           lon: 40.71
     status: [201]
 epilogues:
-  - path: /map
+  - path: /cinemas
     method: DELETE
     status: [200, 404]
 chapters:
   - synopsis: Search for documents whose point objects are within the specified distance from the specified point.
     path: /{index}/_search
     parameters:
-      index: map
+      index: cinemas
     method: GET
     request:
       payload:
@@ -38,7 +38,7 @@ chapters:
             distance_type: arc
             validation_method: strict
             ignore_unmapped: true
-            field:
+            location:
               lat: 73.5
               lon: 40.5
     response:
@@ -51,10 +51,10 @@ chapters:
             relation: eq
           max_score: 1
           hits:
-            - _index: map
+            - _index: cinemas
               _score: 1
               _source:
-                field: 
+                location: 
                   lat: 74
                   lon: 40.71
                 
