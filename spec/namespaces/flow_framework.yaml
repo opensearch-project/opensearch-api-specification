@@ -83,6 +83,35 @@ paths:
           $ref: '#/components/responses/flow_framework.delete@400'
         '403':
           $ref: '#/components/responses/flow_framework.delete@403'
+  /_plugins/_flow_framework/workflow/_steps:
+    get:
+      operationId: flow_framework.get_steps.0
+      x-operation-group: flow_framework.get_steps
+      x-version-added: '2.12'
+      description: Get a list of workflow steps.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow-steps/
+      parameters:
+        - $ref: '#/components/parameters/flow_framework.get_steps::query.workflow_step'
+      responses:
+        '200':
+          $ref: '#/components/responses/flow_framework.get_steps@200'
+        '403':
+          $ref: '#/components/responses/flow_framework.get_steps@403'
+        '400':
+          $ref: '#/components/responses/flow_framework.get_steps@400'
+#    /_plugins/_flow_framework/workflow/_search:
+#      post: { }
+#      get: { }
+#    /_plugins/_flow_framework/workflow/state/_search:
+#      post: { }
+#      get: { }
+#    /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision:
+#      post: { }
+#    /_plugins/_flow_framework/workflow/{workflow_id}/_provision:
+#      post: { }
+#    /_plugins/_flow_framework/workflow/{workflow_id}/_status:
+#      get: {}
 components:
   parameters:
     flow_framework.get::path.workflow_id:
@@ -168,6 +197,13 @@ components:
         description: Delete the workflow state (without deprovisioning resources) after deleting the template. OpenSearch deletes the workflow state only if the provisioning status is not IN_PROGRESS. Default is false.
         type: boolean
         default: false
+    flow_framework.get_steps::query.workflow_step:
+      in: query
+      name: workflow_step
+      required: false
+      schema:
+        description: The name of the step to retrieve.
+        $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowStepName'
   requestBodies:
     flow_framework.create:
       content:
@@ -256,3 +292,16 @@ components:
       content:
         application/json:
           $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/TemplateNotFoundError'
+    flow_framework.get_steps@200:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.common.yaml#/components/schemas/WorkflowStep'
+    flow_framework.get_steps@403:
+      description: Flow Framework API Disabled Error
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/FlowFrameworkAPIDisabledError'
+    flow_framework.get_steps@400:
+      content:
+        application/json:
+          $ref: '../schemas/flow_framework.errors.yaml#/components/schemas/WorkflowStepsRetrieveError'
