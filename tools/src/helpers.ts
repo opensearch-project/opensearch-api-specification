@@ -67,11 +67,15 @@ export function sort_array_by_keys (values: any[], priorities: string[] = []): s
 export function delete_matching_keys(obj: any, condition: (obj: any) => boolean): void {
   for (const key in obj) {
     var item = obj[key]
+
     if (_.isObject(item)) {
       if (condition(item)) {
         delete obj[key]
       } else {
         delete_matching_keys(item, condition)
+        if (_.isArray(item)) {
+          obj[key] = _.compact(item)
+        }
       }
     }
   }
