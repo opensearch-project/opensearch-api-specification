@@ -30234,6 +30234,32 @@ components:
         - _shards
         - _version
         - result
+    _common:XyCartesianCoordinates:
+      x-version-added: '2.4'
+      type: object
+      properties:
+        x:
+          description: The x coordinate.
+          type: number
+        y:
+          description: The y coordinate.
+          type: number
+      required:
+        - x
+        - y
+    _common:XyLocation:
+      x-version-added: 2.4
+      description: |-
+        A two-dimensional Cartesian point specified by x and y coordinates. It can be represented in various ways:
+        - as a `{x, y}` object
+        - as a `[x, y]` array
+        - as a string in `"x, y"` or WKT point formats.
+      oneOf:
+        - $ref: '#/components/schemas/_common:XyCartesianCoordinates'
+        - type: array
+          items:
+            type: number
+        - type: string
     _common.aggregations:AdjacencyMatrixAggregate:
       allOf:
         - $ref: '#/components/schemas/_common.aggregations:MultiBucketAggregateBaseAdjacencyMatrixBucket'
@@ -36078,6 +36104,10 @@ components:
               $ref: '#/components/schemas/_common.mapping:GeoOrientation'
             strategy:
               $ref: '#/components/schemas/_common.mapping:GeoStrategy'
+              deprecated: true
+            distance_error_pct:
+              type: number
+              deprecated: true
             type:
               type: string
               enum:
@@ -36405,23 +36435,6 @@ components:
                 - percolator
           required:
             - type
-    _common.mapping:PointProperty:
-      allOf:
-        - $ref: '#/components/schemas/_common.mapping:DocValuesPropertyBase'
-        - type: object
-          properties:
-            ignore_malformed:
-              type: boolean
-            ignore_z_value:
-              type: boolean
-            null_value:
-              type: string
-            type:
-              type: string
-              enum:
-                - point
-          required:
-            - type
     _common.mapping:Property:
       type: object
       discriminator:
@@ -36457,8 +36470,8 @@ components:
         - $ref: '#/components/schemas/_common.mapping:TokenCountProperty'
         - $ref: '#/components/schemas/_common.mapping:GeoPointProperty'
         - $ref: '#/components/schemas/_common.mapping:GeoShapeProperty'
-        - $ref: '#/components/schemas/_common.mapping:PointProperty'
-        - $ref: '#/components/schemas/_common.mapping:ShapeProperty'
+        - $ref: '#/components/schemas/_common.mapping:XyPointProperty'
+        - $ref: '#/components/schemas/_common.mapping:XyShapeProperty'
         - $ref: '#/components/schemas/_common.mapping:ByteNumberProperty'
         - $ref: '#/components/schemas/_common.mapping:DoubleNumberProperty'
         - $ref: '#/components/schemas/_common.mapping:FloatNumberProperty'
@@ -36624,25 +36637,6 @@ components:
               type: string
               enum:
                 - search_as_you_type
-          required:
-            - type
-    _common.mapping:ShapeProperty:
-      allOf:
-        - $ref: '#/components/schemas/_common.mapping:DocValuesPropertyBase'
-        - type: object
-          properties:
-            coerce:
-              type: boolean
-            ignore_malformed:
-              type: boolean
-            ignore_z_value:
-              type: boolean
-            orientation:
-              $ref: '#/components/schemas/_common.mapping:GeoOrientation'
-            type:
-              type: string
-              enum:
-                - shape
           required:
             - type
     _common.mapping:ShortNumberProperty:
@@ -36885,6 +36879,42 @@ components:
                 - wildcard
             null_value:
               type: string
+          required:
+            - type
+    _common.mapping:XyPointProperty:
+      allOf:
+        - $ref: '#/components/schemas/_common.mapping:DocValuesPropertyBase'
+        - type: object
+          properties:
+            ignore_malformed:
+              type: boolean
+            ignore_z_value:
+              type: boolean
+            null_value:
+              $ref: '#/components/schemas/_common:XyLocation'
+            type:
+              type: string
+              enum:
+                - xy_point
+          required:
+            - type
+    _common.mapping:XyShapeProperty:
+      allOf:
+        - $ref: '#/components/schemas/_common.mapping:DocValuesPropertyBase'
+        - type: object
+          properties:
+            coerce:
+              type: boolean
+            ignore_malformed:
+              type: boolean
+            ignore_z_value:
+              type: boolean
+            orientation:
+              $ref: '#/components/schemas/_common.mapping:GeoOrientation'
+            type:
+              type: string
+              enum:
+                - xy_shape
           required:
             - type
     _common.query_dsl:BoolQuery:
@@ -37262,6 +37292,9 @@ components:
               $ref: '#/components/schemas/_common.query_dsl:GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl:IgnoreUnmapped'
+          additionalProperties:
+            $ref: '#/components/schemas/_common:GeoBounds'
+          minProperties: 1
     _common.query_dsl:GeoDecayFunction:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:DecayFunctionBase'
@@ -37302,6 +37335,22 @@ components:
               $ref: '#/components/schemas/_common.query_dsl:GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl:IgnoreUnmapped'
+    _common.query_dsl:GeoShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    _common.query_dsl:GeoShapeField:
+      type: object
+      properties:
+        shape:
+          $ref: '#/components/schemas/_common.query_dsl:GeoShape'
+        relation:
+          $ref: '#/components/schemas/_common:GeoShapeRelation'
+      required:
+        - shape
     _common.query_dsl:GeoShapeQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
@@ -37309,6 +37358,9 @@ components:
           properties:
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl:IgnoreUnmapped'
+          additionalProperties:
+            $ref: '#/components/schemas/_common.query_dsl:GeoShapeField'
+          minProperties: 1
     _common.query_dsl:GeoValidationMethod:
       type: string
       enum:
@@ -38177,8 +38229,6 @@ components:
           $ref: '#/components/schemas/_common.query_dsl:ScriptQuery'
         script_score:
           $ref: '#/components/schemas/_common.query_dsl:ScriptScoreQuery'
-        shape:
-          $ref: '#/components/schemas/_common.query_dsl:ShapeQuery'
         simple_query_string:
           $ref: '#/components/schemas/_common.query_dsl:SimpleQueryStringQuery'
         span_containing:
@@ -38233,6 +38283,8 @@ components:
             $ref: '#/components/schemas/_common.query_dsl:TextExpansionQuery'
           minProperties: 1
           maxProperties: 1
+        type:
+          $ref: '#/components/schemas/_common.query_dsl:TypeQuery'
         weighted_tokens:
           description: Supports returning text_expansion query results by sending in precomputed tokens with the query.
           type: object
@@ -38249,8 +38301,8 @@ components:
           maxProperties: 1
         wrapper:
           $ref: '#/components/schemas/_common.query_dsl:WrapperQuery'
-        type:
-          $ref: '#/components/schemas/_common.query_dsl:TypeQuery'
+        xy_shape:
+          $ref: '#/components/schemas/_common.query_dsl:XyShapeQuery'
       minProperties: 1
       maxProperties: 1
     _common.query_dsl:QueryStringQuery:
@@ -38482,13 +38534,6 @@ components:
           required:
             - query
             - script
-    _common.query_dsl:ShapeQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
-        - type: object
-          properties:
-            ignore_unmapped:
-              $ref: '#/components/schemas/_common.query_dsl:IgnoreUnmapped'
     _common.query_dsl:SimpleQueryStringFlag:
       type: string
       enum:
@@ -38851,6 +38896,31 @@ components:
               type: string
           required:
             - query
+    _common.query_dsl:XyShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    _common.query_dsl:XyShapeField:
+      type: object
+      properties:
+        shape:
+          $ref: '#/components/schemas/_common.query_dsl:XyShape'
+        relation:
+          $ref: '#/components/schemas/_common:GeoShapeRelation'
+      required:
+        - shape
+    _common.query_dsl:XyShapeQuery:
+      x-version-added: 2.4
+      allOf:
+        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
+        - type: object
+          additionalProperties:
+            $ref: '#/components/schemas/_common.query_dsl:XyShapeField'
+          minProperties: 1
+          maxProperties: 1
     _common.query_dsl:ZeroTermsQuery:
       type: string
       enum:
