@@ -42,7 +42,7 @@ export default class JsonSchemaValidator {
       try {
         this.ajv.addSchema(schema, key);
       } catch (e) {
-        throw new Error(`Failed to add schema ${key}: \`${JSON.stringify(schema)}\``, { cause: e })
+        throw new Error(`Failed to add schema ${key} (${JSON.stringify(schema)}):\n\t${e instanceof Error ? e.message : e as string}`)
       }
     })
     this.errors_parser = new AjvErrorsParser(this.ajv, options.errors_text_opts)
