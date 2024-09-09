@@ -145,6 +145,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed content-type for `/hot_threads` ([#543](https://github.com/opensearch-project/opensearch-api-specification/pull/543))
 - Fixed `/_cluster/settings` returning flat results ([#545](https://github.com/opensearch-project/opensearch-api-specification/pull/545))
 - Fixed missing fields in `_cat` API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
+- Fixed `geo_distance` query spec ([#561](https://github.com/opensearch-project/opensearch-api-specification/pull/561))
 
 ### Security
 
