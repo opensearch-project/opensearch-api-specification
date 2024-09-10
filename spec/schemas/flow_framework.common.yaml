@@ -83,7 +83,7 @@ components:
         result:
           type: string
           description: The result of the deletion operation.
-          enum: [deleted, not_found]
+          enum: [ deleted, not_found ]
         _shards:
           $ref: '#/components/schemas/shards'
         _seq_no:
@@ -133,6 +133,47 @@ components:
         failed:
           type: integer
           description: The number of shards where the deletion failed.
+    query:
+      type: object
+      description: The search query to match workflows. Use `match_all` to retrieve all workflows, or `match` to search by specific fields like `use_case`.
+      properties:
+        match:
+          type: object
+        match_all:
+          type: string
+    total:
+      type: object
+      properties:
+        value:
+          type: integer
+          description: Total number of matching documents.
+        relation:
+          type: string
+          description: The relation of the total hits.
+    itemsObject:
+      type: object
+      properties:
+        _index:
+          type: string
+          description: The index name where the document resides.
+        _id:
+          type: string
+          description: The document ID.
+        _version:
+          type: integer
+          description: The version of the document.
+        _seq_no:
+          type: integer
+          description: The sequence number of the document.
+        _primary_term:
+          type: integer
+          description: The primary term of the document.
+        _score:
+          type: number
+          format: float
+          description: The score of the search hit.
+        _source:
+          $ref: '#/components/schemas/FlowFrameworkGetResponse'
     user:
       type: object
       properties:
@@ -153,6 +194,19 @@ components:
         user_requested_tenant:
           type: string
           nullable: true
+    hits:
+      type: object
+      properties:
+        total:
+          $ref: '#/components/schemas/total'
+        max_score:
+          type: number
+          format: float
+          description: The maximum score of the search hits.
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/itemsObject'
     WorkflowStep:
       type: object
       properties:
@@ -231,3 +285,21 @@ components:
       additionalProperties:
         type: string
         description: The value for the user-provided key. Keys represent substitution expressions.
+    SearchWorkflowRequest:
+      type: object
+      properties:
+        query:
+          $ref: '#/components/schemas/query'
+    WorkflowSearchResponse:
+      type: object
+      properties:
+        took:
+          type: integer
+          description: Time in milliseconds that the request took to complete.
+        timed_out:
+          type: boolean
+          description: Indicates if the request timed out.
+        _shards:
+          $ref: '#/components/schemas/shards'
+        hits:
+          $ref: '#/components/schemas/hits'
