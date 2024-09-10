@@ -25834,42 +25834,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              batches:
-                type: number
-              deleted:
-                type: number
-              failures:
-                type: array
-                items:
-                  $ref: '#/components/schemas/_common:BulkIndexByScrollFailure'
-              noops:
-                type: number
-              requests_per_second:
-                type: number
-              retries:
-                $ref: '#/components/schemas/_common:Retries'
-              slice_id:
-                type: number
-              task:
-                $ref: '#/components/schemas/_common:TaskId'
-              throttled:
-                $ref: '#/components/schemas/_common:Duration'
-              throttled_millis:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-              throttled_until:
-                $ref: '#/components/schemas/_common:Duration'
-              throttled_until_millis:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-              timed_out:
-                type: boolean
-              took:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-              total:
-                type: number
-              version_conflicts:
-                type: number
+            oneOf:
+              - $ref: '#/components/schemas/_common:BulkByScrollResponseBase'
+              - type: object
+                properties:
+                  task:
+                    $ref: '#/components/schemas/_common:TaskId'
     delete_pit@200:
       content:
         application/json:
@@ -27031,42 +27001,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              batches:
-                type: number
-              created:
-                type: number
-              deleted:
-                type: number
-              failures:
-                type: array
-                items:
-                  $ref: '#/components/schemas/_common:BulkIndexByScrollFailure'
-              noops:
-                type: number
-              retries:
-                $ref: '#/components/schemas/_common:Retries'
-              requests_per_second:
-                type: number
-              slice_id:
-                type: number
-              task:
-                $ref: '#/components/schemas/_common:TaskId'
-              throttled_millis:
-                $ref: '#/components/schemas/_common:EpochTimeUnitMillis'
-              throttled_until_millis:
-                $ref: '#/components/schemas/_common:EpochTimeUnitMillis'
-              timed_out:
-                type: boolean
-              took:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-              total:
-                type: number
-              updated:
-                type: number
-              version_conflicts:
-                type: number
+            oneOf:
+              - $ref: '#/components/schemas/_common:BulkByScrollResponseBase'
+              - type: object
+                properties:
+                  task:
+                    $ref: '#/components/schemas/_common:TaskId'
     remote_store.restore@200:
       content:
         application/json:
@@ -28031,7 +27971,7 @@ components:
               task:
                 $ref: '#/components/schemas/tasks._common:TaskInfo'
               response:
-                type: object
+                $ref: '#/components/schemas/tasks._common:TaskResponse'
               error:
                 $ref: '#/components/schemas/_common:ErrorCause'
             required:
@@ -28120,42 +28060,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              batches:
-                type: number
-              failures:
-                type: array
-                items:
-                  $ref: '#/components/schemas/_common:BulkIndexByScrollFailure'
-              noops:
-                type: number
-              deleted:
-                type: number
-              requests_per_second:
-                type: number
-              retries:
-                $ref: '#/components/schemas/_common:Retries'
-              task:
-                $ref: '#/components/schemas/_common:TaskId'
-              timed_out:
-                type: boolean
-              took:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-              total:
-                type: number
-              updated:
-                type: number
-              version_conflicts:
-                type: number
-              throttled:
-                $ref: '#/components/schemas/_common:Duration'
-              throttled_millis:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
-              throttled_until:
-                $ref: '#/components/schemas/_common:Duration'
-              throttled_until_millis:
-                $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+            oneOf:
+              - $ref: '#/components/schemas/_common:BulkByScrollResponseBase'
+              - type: object
+                properties:
+                  task:
+                    $ref: '#/components/schemas/_common:TaskId'
     update@200:
       content:
         application/json:
@@ -28195,12 +28105,100 @@ components:
         transport_address:
           $ref: '#/components/schemas/_common:TransportAddress'
       required:
-        - attributes
-        - host
-        - ip
         - name
-        - transport_address
-    _common:BulkIndexByScrollFailure:
+    _common:BulkByScrollFailure:
+      anyOf:
+        - $ref: '#/components/schemas/_common:BulkItemResponseFailure'
+        - $ref: '#/components/schemas/_common:ScrollableHitSourceSearchFailure'
+    _common:BulkByScrollResponseBase:
+      allOf:
+        - $ref: '#/components/schemas/_common:BulkByScrollTaskStatus'
+        - type: object
+          properties:
+            took:
+              type: integer
+              format: int64
+            timed_out:
+              type: boolean
+            failures:
+              type: array
+              items:
+                $ref: '#/components/schemas/_common:BulkByScrollFailure'
+          required:
+            - failures
+            - timed_out
+            - took
+    _common:BulkByScrollTaskStatus:
+      type: object
+      properties:
+        slice_id:
+          type: integer
+          format: int32
+        total:
+          description: The number of documents that were successfully processed.
+          type: integer
+          format: int64
+        updated:
+          description: The number of documents that were successfully updated, for example, a document with same ID already existed prior to reindex updating it.
+          type: integer
+          format: int64
+        created:
+          description: The number of documents that were successfully created.
+          type: integer
+          format: int64
+        deleted:
+          description: The number of documents that were successfully deleted.
+          type: integer
+          format: int64
+        batches:
+          description: The number of scroll responses pulled back by the reindex.
+          type: integer
+          format: int32
+        version_conflicts:
+          description: The number of version conflicts that reindex hits.
+          type: integer
+          format: int64
+        noops:
+          description: The number of documents that were ignored.
+          type: integer
+          format: int64
+        retries:
+          $ref: '#/components/schemas/_common:Retries'
+        throttled_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        throttled:
+          $ref: '#/components/schemas/_common:Duration'
+        requests_per_second:
+          description: The number of requests per second effectively executed during the reindex.
+          type: number
+          format: float
+        canceled:
+          type: string
+        throttled_until_millis:
+          $ref: '#/components/schemas/_common:DurationValueUnitMillis'
+        throttled_until:
+          $ref: '#/components/schemas/_common:Duration'
+        slices:
+          type: array
+          items:
+            $ref: '#/components/schemas/_common:BulkByScrollTaskStatusOrException'
+      required:
+        - batches
+        - deleted
+        - noops
+        - requests_per_second
+        - retries
+        - throttled_millis
+        - throttled_until_millis
+        - total
+        - version_conflicts
+    _common:BulkByScrollTaskStatusOrException:
+      oneOf:
+        - title: status
+          $ref: '#/components/schemas/_common:BulkByScrollTaskStatus'
+        - title: exception
+          $ref: '#/components/schemas/_common:ErrorCause'
+    _common:BulkItemResponseFailure:
       type: object
       properties:
         cause:
@@ -28210,15 +28208,12 @@ components:
         index:
           $ref: '#/components/schemas/_common:IndexName'
         status:
-          type: number
-        type:
-          type: string
+          type: integer
+          format: int32
       required:
         - cause
-        - id
         - index
         - status
-        - type
     _common:byte:
       type: number
     _common:Bytes:
@@ -29015,23 +29010,32 @@ components:
     _common:NodeName:
       type: string
     _common:NodeRole:
-      type: string
-      enum:
-        - client
-        - cluster_manager
-        - coordinating_only
-        - data
-        - data_cold
-        - data_content
-        - data_frozen
-        - data_hot
-        - data_warm
-        - ingest
-        - master
-        - ml
-        - remote_cluster_client
-        - transform
-        - voting_only
+      oneOf:
+        - type: string
+          enum:
+            - client
+            - coordinating_only
+            - data
+            - data_cold
+            - data_content
+            - data_frozen
+            - data_hot
+            - data_warm
+            - ingest
+            - ml
+            - remote_cluster_client
+            - transform
+            - voting_only
+        - type: string
+          enum:
+            - master
+          deprecated: true
+          x-version-deprecated: '2.0'
+          x-deprecation-message: To promote inclusive language, use 'cluster_manager' instead.
+        - type: string
+          enum:
+            - cluster_manager
+          x-version-added: '2.0'
     _common:NodeRoles:
       description: Node roles.
       type: array
@@ -29607,6 +29611,24 @@ components:
         - number
         - string
         - version
+    _common:ScrollableHitSourceSearchFailure:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/_common:IndexName'
+        shard:
+          type: integer
+          format: int32
+        node:
+          type: string
+        status:
+          type: integer
+          format: int32
+        reason:
+          $ref: '#/components/schemas/_common:ErrorCause'
+      required:
+        - reason
+        - status
     _common:ScrollId:
       type: string
     _common:ScrollIds:
@@ -52600,32 +52622,43 @@ components:
         - nodes
         - none
         - parents
-    tasks._common:NodeTasks:
+    tasks._common:PersistentTaskStatus:
       type: object
       properties:
-        name:
-          $ref: '#/components/schemas/_common:NodeId'
-        transport_address:
-          $ref: '#/components/schemas/_common:TransportAddress'
-        host:
-          $ref: '#/components/schemas/_common:Host'
-        ip:
-          $ref: '#/components/schemas/_common:Ip'
-        roles:
-          type: array
-          items:
-            type: string
-        attributes:
-          type: object
-          additionalProperties:
-            type: string
-        tasks:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/tasks._common:TaskInfo'
+        state:
+          type: string
       required:
-        - tasks
-    tasks._common:ParentTaskInfo:
+        - state
+    tasks._common:RawTaskStatus:
+      type: object
+      additionalProperties:
+        title: metadata
+    tasks._common:ReplicationTaskStatus:
+      type: object
+      properties:
+        phase:
+          type: string
+      required:
+        - phase
+    tasks._common:Status:
+      description: Task status information can vary wildly from task to task.
+      anyOf:
+        - $ref: '#/components/schemas/tasks._common:ReplicationTaskStatus'
+        - $ref: '#/components/schemas/_common:BulkByScrollTaskStatus'
+        - $ref: '#/components/schemas/tasks._common:PersistentTaskStatus'
+        - $ref: '#/components/schemas/tasks._common:RawTaskStatus'
+    tasks._common:TaskExecutingNode:
+      allOf:
+        - $ref: '#/components/schemas/_common:BaseNode'
+        - type: object
+          properties:
+            tasks:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/tasks._common:TaskInfo'
+          required:
+            - tasks
+    tasks._common:TaskGroup:
       allOf:
         - $ref: '#/components/schemas/tasks._common:TaskInfo'
         - type: object
@@ -52633,7 +52666,7 @@ components:
             children:
               type: array
               items:
-                $ref: '#/components/schemas/tasks._common:TaskInfo'
+                $ref: '#/components/schemas/tasks._common:TaskGroup'
     tasks._common:TaskInfo:
       type: object
       properties:
@@ -52661,8 +52694,7 @@ components:
         start_time_in_millis:
           $ref: '#/components/schemas/_common:EpochTimeUnitMillis'
         status:
-          description: Task status information can vary wildly from task to task.
-          type: object
+          $ref: '#/components/schemas/tasks._common:Status'
         type:
           type: string
         parent_task_id:
@@ -52678,12 +52710,14 @@ components:
         - type
     tasks._common:TaskInfos:
       oneOf:
-        - type: array
+        - title: grouped_by_none
+          type: array
           items:
             $ref: '#/components/schemas/tasks._common:TaskInfo'
-        - type: object
+        - title: grouped_by_parents
+          type: object
           additionalProperties:
-            $ref: '#/components/schemas/tasks._common:ParentTaskInfo'
+            $ref: '#/components/schemas/tasks._common:TaskGroup'
     tasks._common:TaskListResponseBase:
       type: object
       properties:
@@ -52699,9 +52733,12 @@ components:
           description: Task information grouped by node, if `group_by` was set to `node` (the default).
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/tasks._common:NodeTasks'
+            $ref: '#/components/schemas/tasks._common:TaskExecutingNode'
         tasks:
           $ref: '#/components/schemas/tasks._common:TaskInfos'
+    tasks._common:TaskResponse:
+      anyOf:
+        - $ref: '#/components/schemas/_common:BulkByScrollResponseBase'
     transforms._common:ContinuousStats:
       type: object
       properties:
