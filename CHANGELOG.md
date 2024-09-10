@@ -151,6 +151,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed missing fields in `_cat` API ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 - Fixed `geo_distance` query spec ([#561](https://github.com/opensearch-project/opensearch-api-specification/pull/561))
 - Fixed `geo_bounding_box` and `geo_shape` queries ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
+- Fixed tasks namespace schemas ([#520](https://github.com/opensearch-project/opensearch-api-specification/pull/520))
 
 ### Security
 

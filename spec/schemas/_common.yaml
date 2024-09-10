@@ -1420,25 +1420,6 @@ components:
       type: string
       enum:
         - auto
-    BulkIndexByScrollFailure:
-      type: object
-      properties:
-        cause:
-          $ref: '#/components/schemas/ErrorCause'
-        id:
-          $ref: '#/components/schemas/Id'
-        index:
-          $ref: '#/components/schemas/IndexName'
-        status:
-          type: number
-        type:
-          type: string
-      required:
-        - cause
-        - id
-        - index
-        - status
-        - type
     Retries:
       type: object
       properties:
@@ -1948,23 +1929,32 @@ components:
       items:
         $ref: '#/components/schemas/NodeRole'
     NodeRole:
-      type: string
-      enum:
-        - client
-        - cluster_manager
-        - coordinating_only
-        - data
-        - data_cold
-        - data_content
-        - data_frozen
-        - data_hot
-        - data_warm
-        - ingest
-        - master
-        - ml
-        - remote_cluster_client
-        - transform
-        - voting_only
+      oneOf:
+        - type: string
+          enum:
+            - client
+            - coordinating_only
+            - data
+            - data_cold
+            - data_content
+            - data_frozen
+            - data_hot
+            - data_warm
+            - ingest
+            - ml
+            - remote_cluster_client
+            - transform
+            - voting_only
+        - type: string
+          enum:
+            - master
+          deprecated: true
+          x-version-deprecated: '2.0'
+          x-deprecation-message: To promote inclusive language, use 'cluster_manager' instead.
+        - type: string
+          enum:
+            - cluster_manager
+          x-version-added: '2.0'
     HttpHeaders:
       type: object
       additionalProperties:
@@ -1995,11 +1985,7 @@ components:
         transport_address:
           $ref: '#/components/schemas/TransportAddress'
       required:
-        - attributes
-        - host
-        - ip
         - name
-        - transport_address
     RankContainer:
       type: object
       properties:
@@ -2116,3 +2102,129 @@ components:
         - expand
         - fetch
         - query
+    BulkByScrollTaskStatus:
+      type: object
+      properties:
+        slice_id:
+          type: integer
+          format: int32
+        total:
+          description: The number of documents that were successfully processed.
+          type: integer
+          format: int64
+        updated:
+          description: The number of documents that were successfully updated, for example, a document with same ID already existed prior to reindex updating it.
+          type: integer
+          format: int64
+        created:
+          description: The number of documents that were successfully created.
+          type: integer
+          format: int64
+        deleted:
+          description: The number of documents that were successfully deleted.
+          type: integer
+          format: int64
+        batches:
+          description: The number of scroll responses pulled back by the reindex.
+          type: integer
+          format: int32
+        version_conflicts:
+          description: The number of version conflicts that reindex hits.
+          type: integer
+          format: int64
+        noops:
+          description: The number of documents that were ignored.
+          type: integer
+          format: int64
+        retries:
+          $ref: '#/components/schemas/Retries'
+        throttled_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        throttled:
+          $ref: '#/components/schemas/Duration'
+        requests_per_second:
+          description: The number of requests per second effectively executed during the reindex.
+          type: number
+          format: float
+        canceled:
+          type: string
+        throttled_until_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        throttled_until:
+          $ref: '#/components/schemas/Duration'
+        slices:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkByScrollTaskStatusOrException'
+      required:
+        - batches
+        - deleted
+        - noops
+        - requests_per_second
+        - retries
+        - throttled_millis
+        - throttled_until_millis
+        - total
+        - version_conflicts
+    BulkByScrollTaskStatusOrException:
+      oneOf:
+        - title: status
+          $ref: '#/components/schemas/BulkByScrollTaskStatus'
+        - title: exception
+          $ref: '#/components/schemas/ErrorCause'
+    BulkByScrollResponseBase:
+      allOf:
+        - $ref: '#/components/schemas/BulkByScrollTaskStatus'
+        - type: object
+          properties:
+            took:
+              type: integer
+              format: int64
+            timed_out:
+              type: boolean
+            failures:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkByScrollFailure'
+          required:
+            - failures
+            - timed_out
+            - took
+    BulkByScrollFailure:
+      anyOf:
+        - $ref: '#/components/schemas/BulkItemResponseFailure'
+        - $ref: '#/components/schemas/ScrollableHitSourceSearchFailure'
+    BulkItemResponseFailure:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ErrorCause'
+        id:
+          $ref: '#/components/schemas/Id'
+        index:
+          $ref: '#/components/schemas/IndexName'
+        status:
+          type: integer
+          format: int32
+      required:
+        - cause
+        - index
+        - status
+    ScrollableHitSourceSearchFailure:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/IndexName'
+        shard:
+          type: integer
+          format: int32
+        node:
+          type: string
+        status:
+          type: integer
+          format: int32
+        reason:
+          $ref: '#/components/schemas/ErrorCause'
+      required:
+        - reason
+        - status
