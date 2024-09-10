@@ -107,6 +107,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
 - Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 - Adjusted indices, shards cat API to test against unassigned indices ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
+- Corrected Sort schema for `/_search`'s request body ([#529](https://github.com/opensearch-project/opensearch-api-specification/issues/529))
 - Rename `Bytes` component to `StorageType` ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 - Rename `ByteSize` to `StorageSize` ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 
