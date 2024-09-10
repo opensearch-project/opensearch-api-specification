@@ -1,0 +1,53 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test field capabilities API.
+prologues:
+  - path: /movies
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get information about the capabilities of all fields.
+    path: /_field_caps
+    method: GET
+    parameters:
+      fields: '*'
+      allow_no_indices: false
+      expand_wildcards: all
+      ignore_unavailable: true
+      include_unmapped: true
+    response:
+      status: 200
+  - synopsis: Get information about the capabilities of all fields for a given index.
+    path: /{index}/_field_caps
+    method: GET
+    parameters:
+      fields: type
+      index: movies
+    response:
+      status: 200
+  - synopsis: Get information about the capabilities of specific fields.
+    path: /_field_caps
+    method: POST
+    parameters:
+      fields: type
+    request:
+      payload:
+        index_filter:
+          match_all: {}
+    response:
+      status: 200
+  - synopsis: Get information about the capabilities of all fields for a given index.
+    path: /{index}/_field_caps
+    method: POST
+    parameters:
+      fields: type
+      index: movies
+    request:
+      payload:
+        index_filter:
+          match_all: {}
+    response:
+      status: 200
