@@ -38275,7 +38275,15 @@ components:
           minProperties: 1
           maxProperties: 1
         terms:
-          $ref: '#/components/schemas/_common.query_dsl:TermsQuery'
+          type: object
+          additionalProperties:
+            anyOf:
+              - $ref: '#/components/schemas/_common.query_dsl:TermsQuery'
+              - type: array
+                items:
+                  type: string
+          minProperties: 1
+          maxProperties: 1
         terms_set:
           description: |-
             Returns documents that contain a minimum number of exact terms in a provided field.
@@ -38783,11 +38791,9 @@ components:
               type: boolean
           required:
             - value
-    _common.query_dsl:Terms:
-      oneOf:
-        - type: array
-          items:
-            type: string
+    _common.query_dsl:TermsQuery:
+      anyOf:
+        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
         - type: object
           properties:
             index:
@@ -38798,12 +38804,6 @@ components:
               $ref: '#/components/schemas/_common:Field'
             routing:
               $ref: '#/components/schemas/_common:Routing'
-          additionalProperties: true
-          description: Object for fetching terms.
-    _common.query_dsl:TermsQuery:
-      anyOf:
-        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
-        - $ref: '#/components/schemas/_common.query_dsl:Terms'
     _common.query_dsl:TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
@@ -38814,7 +38814,9 @@ components:
             minimum_should_match_script:
               $ref: '#/components/schemas/_common:Script'
             terms:
-              $ref: '#/components/schemas/_common.query_dsl:Terms'
+              type: array
+              items:
+                type: string
           required:
             - terms
     _common.query_dsl:TextExpansionQuery:
