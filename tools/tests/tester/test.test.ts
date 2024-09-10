@@ -9,7 +9,6 @@
 
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
-import * as path from 'path'
 import { type Chapter, type ChapterRequest, type Output, type Request, Story } from 'tester/types/story.types'
 import { ChapterEvaluation, Result, StoryEvaluation } from 'tester/types/eval.types'
 import StoryEvaluator from 'tester/StoryEvaluator'
@@ -158,11 +157,10 @@ test.todo('--tab-width')
 test('--dry-run', () => {
   const test_yaml = 'tools/tests/tester/fixtures/empty_with_all_the_parts.yaml'
   const s = spec(['--dry-run', '--tests', test_yaml]).stdout
-  const full_path = path.join(__dirname, '../../../' + test_yaml)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} CHAPTERS`)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} EPILOGUES`)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} PROLOGUES`)
-  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('empty_with_all_the_parts.yaml'))} ${ansi.gray('(' + full_path + ')')}`)
+  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('empty_with_all_the_parts.yaml'))} ${ansi.gray('(' + test_yaml + ')')}`)
 })
 
 test('--dry-run --verbose', () => {
