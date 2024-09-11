@@ -13567,7 +13567,7 @@ components:
       in: query
       description: The unit in which to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
     cat.all_pit_segments::query.format:
       name: format
       in: query
@@ -13626,7 +13626,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.allocation::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -13836,7 +13836,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.fielddata::query.fields:
       in: query
@@ -13965,7 +13965,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.indices::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -14216,7 +14216,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.nodes::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -14386,7 +14386,7 @@ components:
       in: query
       description: The unit in which to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
     cat.pit_segments::query.format:
       name: format
       in: query
@@ -14524,7 +14524,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.recovery::query.detailed:
       in: query
@@ -14695,7 +14695,7 @@ components:
       in: query
       description: The unit in which to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
     cat.segment_replication::query.completed_only:
       name: completed_only
       in: query
@@ -14827,7 +14827,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.segments::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -14906,7 +14906,7 @@ components:
       name: bytes
       description: The unit used to display byte values.
       schema:
-        $ref: '#/components/schemas/_common:StorageType'
+        $ref: '#/components/schemas/_common:ByteUnit'
       style: form
     cat.shards::query.cluster_manager_timeout:
       name: cluster_manager_timeout
@@ -26533,10 +26533,10 @@ components:
                 items:
                   $ref: '#/components/schemas/indices.data_streams_stats:DataStreamsStatsItem'
               total_store_sizes:
-                $ref: '#/components/schemas/_common:StorageSize'
+                $ref: '#/components/schemas/_common:HumanReadableByteCount'
               total_store_size_bytes:
                 description: Total size, in bytes, of all shards for the selected data streams.
-                $ref: '#/components/schemas/_common:Bytes'
+                $ref: '#/components/schemas/_common:ByteCount'
             required:
               - _shards
               - backing_indices
@@ -28592,8 +28592,23 @@ components:
         - status
     _common:byte:
       type: number
-    _common:Bytes:
+    _common:ByteCount:
       type: integer
+      format: int64
+    _common:ByteUnit:
+      type: string
+      enum:
+        - b
+        - g
+        - gb
+        - k
+        - kb
+        - m
+        - mb
+        - p
+        - pb
+        - t
+        - tb
     _common:ClusterDetails:
       type: object
       properties:
@@ -28654,9 +28669,9 @@ components:
       properties:
         size_in_bytes:
           description: Total amount, in bytes, of memory used for completion across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         fields:
           type: object
           additionalProperties:
@@ -28853,9 +28868,9 @@ components:
         evictions:
           type: number
         memory_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         memory_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         fields:
           type: object
           additionalProperties:
@@ -28866,9 +28881,9 @@ components:
       type: object
       properties:
         memory_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         memory_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - memory_size_in_bytes
     _common:Fields:
@@ -28881,9 +28896,9 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - size_in_bytes
     _common:FieldValue:
@@ -29073,6 +29088,9 @@ components:
           - type: array
             items:
               type: string
+    _common:HumanReadableByteCount:
+      type: string
+      pattern: \d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p)
     _common:IBDistribution:
       type: string
       enum:
@@ -29266,21 +29284,21 @@ components:
         current_docs:
           type: number
         current_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         current_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
           type: number
         total_auto_throttle:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_auto_throttle_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total_docs:
           type: number
         total_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total_stopped_time:
           $ref: '#/components/schemas/_common:Duration'
         total_stopped_time_in_millis:
@@ -29611,10 +29629,10 @@ components:
           description: Total count of query cache hits across all shards assigned to selected nodes.
           type: number
         memory_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         memory_size_in_bytes:
           description: Total amount, in bytes, of memory used for the query cache across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         miss_count:
           description: Total count of query cache misses across all shards assigned to selected nodes.
           type: number
@@ -29746,22 +29764,22 @@ components:
       properties:
         failed:
           description: The number of bytes that failed to upload to the remote translog store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         failed_bytes:
           description: The number of bytes that failed to upload to the remote translog store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         started:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         started_bytes:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         succeeded:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         succeeded_bytes:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - failed_bytes
         - started_bytes
@@ -29789,22 +29807,22 @@ components:
       properties:
         failed:
           description: The number of bytes that failed to upload/upload to/from the remote segment store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         failed_bytes:
           description: The number of bytes that failed to upload/upload to/from the remote segment store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         started:
           description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         started_bytes:
           description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         succeeded:
           description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         succeeded_bytes:
           description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - failed_bytes
         - started_bytes
@@ -29824,16 +29842,16 @@ components:
       properties:
         max:
           description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_bytes:
           description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
           description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_bytes:
           description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - max_bytes
         - total_bytes
@@ -29873,9 +29891,9 @@ components:
         hit_count:
           type: number
         memory_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         memory_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         miss_count:
           type: number
       required:
@@ -30125,11 +30143,11 @@ components:
       type: object
       properties:
         max_bytes_behind:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max_replication_lag:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total_bytes_behind:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - max_bytes_behind
         - max_replication_lag
@@ -30141,10 +30159,10 @@ components:
           description: Total number of segments across all shards assigned to selected nodes.
           type: number
         doc_values_memory:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         doc_values_memory_in_bytes:
           description: Total amount, in bytes, of memory used for doc values across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         file_sizes:
           description: |-
             This object is not populated by the cluster stats API.
@@ -30153,62 +30171,62 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/indices.stats:ShardFileSizeInfo'
         fixed_bit_set:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         fixed_bit_set_memory_in_bytes:
           description: Total amount of memory, in bytes, used by fixed bit sets across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         index_writer_memory:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         index_writer_max_memory_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         index_writer_memory_in_bytes:
           description: Total amount, in bytes, of memory used by all index writers across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max_unsafe_auto_id_timestamp:
           description: Unix timestamp, in milliseconds, of the most recently retried indexing request.
           type: number
         memory:
           description: Total amount, of memory used for segments across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         memory_in_bytes:
           description: Total amount, in bytes, of memory used for segments across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         norms_memory:
           description: Total amount of memory used for normalization factors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         norms_memory_in_bytes:
           description: Total amount, in bytes, of memory used for normalization factors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         points_memory:
           description: Total amount of memory used for points across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         points_memory_in_bytes:
           description: Total amount, in bytes, of memory used for points across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         stored_fields_memory:
           description: Total amount of memory used for stored fields across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         stored_fields_memory_in_bytes:
           description: Total amount, in bytes, of memory used for stored fields across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         terms_memory:
           description: Total amount of memory used for terms across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         terms_memory_in_bytes:
           description: Total amount, in bytes, of memory used for terms across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         term_vectors_memory:
           description: Total amount of memory used for term vectors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         term_vectors_memory_in_bytes:
           description: Total amount, in bytes, of memory used for term vectors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         version_map_memory:
           description: Total amount of memory used by all version maps across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         version_map_memory_in_bytes:
           description: Total amount, in bytes, of memory used by all version maps across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         remote_store:
           $ref: '#/components/schemas/_common:RemoteStoreStats'
         segment_replication:
@@ -30336,23 +30354,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/_common:FieldValue'
-    _common:StorageSize:
-      type: string
-      pattern: \d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p)
-    _common:StorageType:
-      type: string
-      enum:
-        - b
-        - g
-        - gb
-        - k
-        - kb
-        - m
-        - mb
-        - p
-        - pb
-        - t
-        - tb
     _common:StoredScript:
       type: object
       properties:
@@ -30381,15 +30382,15 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
           description: Total size, in bytes, of all shards assigned to selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         reserved:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         reserved_in_bytes:
           description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - reserved_in_bytes
         - size_in_bytes
@@ -30514,15 +30515,15 @@ components:
         remote_store:
           $ref: '#/components/schemas/_common:RemoteStoreTranslogStats'
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         uncommitted_operations:
           type: number
         uncommitted_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         uncommitted_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - earliest_last_modified_age
         - operations
@@ -42947,7 +42948,7 @@ components:
             Also, OpenSearch creates extra deleted documents to internally track the recent history of operations on a shard.
           type: string
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size.memory:
           type: string
         committed:
@@ -43661,7 +43662,7 @@ components:
         in_sync:
           type: boolean
         matching_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         matching_sync_id:
           type: boolean
         store_exception:
@@ -43684,8 +43685,8 @@ components:
           type: object
           additionalProperties:
             oneOf:
-              - $ref: '#/components/schemas/_common:Bytes'
-              - $ref: '#/components/schemas/_common:StorageSize'
+              - $ref: '#/components/schemas/_common:ByteCount'
+              - $ref: '#/components/schemas/_common:HumanReadableByteCount'
         shard_data_set_sizes:
           type: object
           additionalProperties:
@@ -43741,17 +43742,17 @@ components:
         path:
           type: string
         total:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         used:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         used_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         free_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free_disk_percent:
           type: number
         used_disk_percent:
@@ -44322,32 +44323,32 @@ components:
             Total number of bytes available to JVM in file stores across all selected nodes.
             Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
             This is the actual amount of free disk space the selected OpenSearch nodes can use.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         available_in_bytes:
           description: |-
             Total number of bytes available to JVM in file stores across all selected nodes.
             Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
             This is the actual amount of free disk space the selected OpenSearch nodes can use.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free:
           description: Total number of unallocated bytes in file stores across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         free_in_bytes:
           description: Total number of unallocated bytes in file stores across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
           description: Total size, of all file stores across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
           description: Total size, in bytes, of all file stores across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         cache_reserved:
           description: Total size, of all cache reserved across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
           x-version-added: '2.7'
         cache_reserved_in_bytes:
           description: Total size, in bytes, of all cache reserved across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
           x-version-added: '2.7'
       required:
         - available_in_bytes
@@ -44459,16 +44460,16 @@ components:
       properties:
         heap_max:
           description: Maximum amount of memory available for use by the heap across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_max_in_bytes:
           description: Maximum amount of memory, in bytes, available for use by the heap across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         heap_used:
           description: Memory currently in use by the heap across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_used_in_bytes:
           description: Memory, in bytes, currently in use by the heap across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - heap_max_in_bytes
         - heap_used_in_bytes
@@ -44807,10 +44808,10 @@ components:
           description: Total number of fields in all non-system indices, accounting for mapping deduplication.
           type: number
         total_deduplicated_mapping_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_deduplicated_mapping_size_in_bytes:
           description: Total size of all mappings, in bytes, after deduplication and compression.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - field_types
     cluster.stats:IndexingPressure:
@@ -44826,7 +44827,7 @@ components:
         current:
           $ref: '#/components/schemas/cluster.stats:IndexingPressureMemorySummary'
         limit_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
           $ref: '#/components/schemas/cluster.stats:IndexingPressureMemorySummary'
       required:
@@ -44837,19 +44838,19 @@ components:
       type: object
       properties:
         all_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         combined_coordinating_and_primary_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         coordinating_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         coordinating_rejections:
           type: number
         primary_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         primary_rejections:
           type: number
         replica_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         replica_rejections:
           type: number
       required:
@@ -44866,7 +44867,7 @@ components:
         primary_shard_count:
           type: number
         total_primary_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         version:
           $ref: '#/components/schemas/_common:VersionString'
       required:
@@ -44894,28 +44895,28 @@ components:
       properties:
         adjusted_total_in_bytes:
           description: Total amount, in bytes, of memory across all selected nodes, but using the value specified using the `es.total_memory_bytes` system property instead of measured total memory for those nodes where that system property was set.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free:
           description: Amount, in bytes, of free physical memory across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         free_in_bytes:
           description: Amount, in bytes, of free physical memory across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free_percent:
           description: Percentage of free physical memory across all selected nodes.
           type: number
         total:
           description: Total amount of physical memory across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
           description: Total amount, in bytes, of physical memory across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         used:
           description: Amount of physical memory in use across all selected nodes.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         used_in_bytes:
           description: Amount, in bytes, of physical memory in use across all selected nodes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         used_percent:
           description: Percentage of physical memory in use across all selected nodes.
           type: number
@@ -45730,13 +45731,13 @@ components:
         max_docs:
           type: number
         min_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         min_primary_shard_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_primary_shard_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         min_primary_shard_docs:
           type: number
         max_primary_shard_docs:
@@ -46570,7 +46571,7 @@ components:
         durability:
           $ref: '#/components/schemas/indices._common:TranslogDurability'
         flush_threshold_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         retention:
           $ref: '#/components/schemas/indices._common:TranslogRetention'
     indices._common:TranslogDurability:
@@ -46582,7 +46583,7 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         age:
           $ref: '#/components/schemas/_common:Duration'
     indices.add_block:IndicesBlockOptions:
@@ -46745,10 +46746,10 @@ components:
         maximum_timestamp:
           $ref: '#/components/schemas/_common:EpochTimeUnitMillis'
         store_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         store_size_bytes:
           description: Total size, in bytes, of all shards for the data stream's backing indices.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - backing_indices
         - data_stream
@@ -46828,21 +46829,21 @@ components:
         percent:
           $ref: '#/components/schemas/_common:Percentage'
         recovered:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         recovered_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         recovered_from_snapshot:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         recovered_from_snapshot_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         reused:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         reused_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - percent
         - recovered_in_bytes
@@ -47082,21 +47083,21 @@ components:
         max_docs:
           type: number
         max_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_size_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         min_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         min_size_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max_primary_shard_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_primary_shard_size_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         min_primary_shard_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         min_primary_shard_size_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max_primary_shard_docs:
           type: number
         min_primary_shard_docs:
@@ -47124,13 +47125,13 @@ components:
         deleted_docs:
           type: integer
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         memory:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         memory_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         committed:
           type: boolean
         search:
@@ -47370,15 +47371,15 @@ components:
         description:
           type: string
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         min_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         average_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         count:
           type: number
       required:
@@ -48695,16 +48696,16 @@ components:
       properties:
         estimated_size:
           description: Estimated memory used for the operation.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         estimated_size_in_bytes:
           description: Estimated memory used, in bytes, for the operation.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         limit_size:
           description: Memory limit for the circuit breaker.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         limit_size_in_bytes:
           description: Memory limit, in bytes, for the circuit breaker.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         overhead:
           description: A constant that all estimates for the circuit breaker are multiplied with to calculate a final estimate.
           type: number
@@ -48796,7 +48797,7 @@ components:
           type: number
         request_size_bytes:
           description: Cumulative size in bytes of all requests from this client.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         x_opaque_id:
           description: |-
             Value from the client's `x-opaque-id` HTTP header.
@@ -48916,38 +48917,38 @@ components:
       properties:
         available:
           description: Total amount of disk space available to this Java virtual machine on this file store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         available_in_bytes:
           description: Total number of bytes available to this Java virtual machine on this file store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         cache_reserved:
           x-version-added: '2.7'
           description: Total number of cache bytes reserved available to this Java virtual machine on this file store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         cache_reserved_in_bytes:
           x-version-added: '2.7'
           description: Total number of cache bytes reserved available to this Java virtual machine on this file store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         disk_queue:
           type: string
         disk_reads:
           type: number
         disk_read_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         disk_read_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         disk_writes:
           type: number
         disk_write_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         disk_write_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free:
           description: Total amount of unallocated disk space in the file store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         free_in_bytes:
           description: Total number of unallocated bytes in the file store.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         mount:
           description: 'Mount point of the file store (for example: `/dev/sda2`).'
           type: string
@@ -48956,10 +48957,10 @@ components:
           type: string
         total:
           description: Total size of the file store.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
           description: Total size of the file store in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         type:
           description: 'Type of the file store (ex: ext4).'
           type: string
@@ -49021,33 +49022,33 @@ components:
             Total disk space available to this Java virtual machine on all file stores.
             Depending on OS or process level restrictions, this might appear less than `free`.
             This is the actual amount of free disk space the OpenSearch node can utilize.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         available_in_bytes:
           description: |-
             Total number of bytes available to this Java virtual machine on all file stores.
             Depending on OS or process level restrictions, this might appear less than `free_in_bytes`.
             This is the actual amount of free disk space the OpenSearch node can utilize.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free:
           description: Total unallocated disk space in all file stores.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         free_in_bytes:
           description: Total number of unallocated bytes in all file stores.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
           description: Total size of all file stores.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
           description: Total size of all file stores in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         cache_reserved:
           x-version-added: '2.7'
           description: Total size of cache bytes reserved in all file stores.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         cache_reserved_in_bytes:
           x-version-added: '2.7'
           description: Total size of cache bytes reserved in all file stores.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
     nodes._common:GarbageCollector:
       type: object
       properties:
@@ -49093,12 +49094,12 @@ components:
       type: object
       properties:
         limit:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         limit_in_bytes:
           description: |-
             Configured memory limit, in bytes, for the indexing requests.
             Replica requests have an automatic limit that is 1.5x this value.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         current:
           $ref: '#/components/schemas/nodes._common:PressureMemory'
         total:
@@ -49221,37 +49222,37 @@ components:
       properties:
         heap_used:
           description: Memory currently in use by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_used_in_bytes:
           description: Memory, in bytes, currently in use by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         heap_used_percent:
           description: Percentage of memory currently in use by the heap.
           type: number
         heap_committed:
           description: Amount of memory available for use by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_committed_in_bytes:
           description: Amount of memory, in bytes, available for use by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         heap_max:
           description: Maximum amount of memory available for use by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_max_in_bytes:
           description: Maximum amount of memory, in bytes, available for use by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         non_heap_used:
           description: Non-heap memory used.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         non_heap_used_in_bytes:
           description: Non-heap memory used, in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         non_heap_committed:
           description: Amount of non-heap memory available.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         non_heap_committed_in_bytes:
           description: Amount of non-heap memory available, in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         pools:
           description: Contains statistics about heap memory usage for the node.
           type: object
@@ -49277,13 +49278,13 @@ components:
       type: object
       properties:
         used:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         used_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         usage_percent:
           type: number
     nodes._common:MemoryStats:
@@ -49293,37 +49294,37 @@ components:
           description: |-
             If the amount of physical memory has been overridden using the `es`.`total_memory_bytes` system property then this reports the overridden value in bytes.
             Otherwise it reports the same value as `total_in_bytes`.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         resident:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         resident_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         share:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         share_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total_virtual:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_virtual_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total:
           description: Total amount of physical memory.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
           description: Total amount of physical memory in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         free:
           description: Amount of free physical memory.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         free_in_bytes:
           description: Amount of free physical memory in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         used:
           description: Amount of used physical memory.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         used_in_bytes:
           description: Amount of used physical memory in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
     nodes._common:NodeBufferPool:
       type: object
       properties:
@@ -49332,16 +49333,16 @@ components:
           type: number
         total_capacity:
           description: Total capacity of buffer pools.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_capacity_in_bytes:
           description: Total capacity of buffer pools in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         used:
           description: Size of buffer pools.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         used_in_bytes:
           description: Size of buffer pools in bytes.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
     nodes._common:NodeReloadError:
       type: object
       properties:
@@ -49378,28 +49379,28 @@ components:
       properties:
         used:
           description: Memory used by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         used_in_bytes:
           description: Memory, in bytes, used by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max:
           description: Maximum amount of memory available for use by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_in_bytes:
           description: Maximum amount of memory, in bytes, available for use by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         peak_used:
           description: Largest amount of memory historically used by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         peak_used_in_bytes:
           description: Largest amount of memory, in bytes, historically used by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         peak_max:
           description: Largest amount of memory historically used by the heap.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         peak_max_in_bytes:
           description: Largest amount of memory, in bytes, historically used by the heap.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         last_gc_stats:
           description: Most recent GC cycle stats for a particular memory pool.
           $ref: '#/components/schemas/nodes._common:LastGcStats'
@@ -49407,32 +49408,32 @@ components:
       type: object
       properties:
         all:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         all_in_bytes:
           description: Memory consumed, in bytes, by indexing requests in the coordinating, primary, or replica stage.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         combined_coordinating_and_primary:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         combined_coordinating_and_primary_in_bytes:
           description: |-
             Memory consumed, in bytes, by indexing requests in the coordinating or primary stage.
             This value is not the sum of coordinating and primary as a node can reuse the coordinating memory if the primary stage is executed locally.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         coordinating:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         coordinating_in_bytes:
           description: Memory consumed, in bytes, by indexing requests in the coordinating stage.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         primary:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         primary_in_bytes:
           description: Memory consumed, in bytes, by indexing requests in the primary stage.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         replica:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         replica_in_bytes:
           description: Memory consumed, in bytes, by indexing requests in the replica stage.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         coordinating_rejections:
           description: Number of indexing requests rejected in the coordinating stage.
           type: number
@@ -49552,13 +49553,13 @@ components:
         count:
           type: number
         uncompressed_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         uncompressed_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         compressed_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         compressed_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
     nodes._common:ShardAdmissionControlStats:
       type: object
       properties:
@@ -49574,9 +49575,9 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         evictions:
           type: number
         hit_count:
@@ -49692,17 +49693,17 @@ components:
         cancellation_count:
           type: number
         current_max:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         current_max_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         current_avg:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         current_avg_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         rolling_avg:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         rolling_avg_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
     nodes._common:ShardSearchBackpressureTaskResourceTrackerStats:
       type: object
       properties:
@@ -49921,10 +49922,10 @@ components:
           type: number
         rx_size:
           description: Size of RX packets received by the node during internal cluster communication.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         rx_size_in_bytes:
           description: Size, in bytes, of RX packets received by the node during internal cluster communication.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         server_open:
           description: Current number of inbound TCP connections used for internal communication between nodes.
           type: number
@@ -49933,10 +49934,10 @@ components:
           type: number
         tx_size:
           description: Size of TX packets sent by the node during internal cluster communication.
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         tx_size_in_bytes:
           description: Size, in bytes, of TX packets sent by the node during internal cluster communication.
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         total_outbound_connections:
           description: |-
             The cumulative number of outbound transport connections that this node has opened since it started.
@@ -50038,7 +50039,7 @@ components:
           description: Total heap allowed to be used to hold recently indexed documents before they must be written to disk. This size is a shared pool across all shards on this node, and is controlled by Indexing Buffer settings.
           type: number
         total_indexing_buffer_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         transport:
           $ref: '#/components/schemas/nodes.info:NodeInfoTransport'
         transport_address:
@@ -50108,9 +50109,9 @@ components:
           items:
             type: string
         max_content_length:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         max_content_length_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         publish_address:
           type: string
       required:
@@ -50151,25 +50152,25 @@ components:
       type: object
       properties:
         direct_max:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         direct_max_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         heap_init:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_init_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         heap_max:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         heap_max_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         non_heap_init:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         non_heap_init_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         non_heap_max:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         non_heap_max_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - direct_max_in_bytes
         - heap_init_in_bytes
@@ -50180,9 +50181,9 @@ components:
       type: object
       properties:
         total:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         total_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - total
         - total_in_bytes
@@ -50213,9 +50214,9 @@ components:
       type: object
       properties:
         cache_size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         cache_size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         cores_per_socket:
           type: number
         mhz:
@@ -52835,7 +52836,7 @@ components:
         file_count:
           type: number
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - file_count
         - size_in_bytes
@@ -52845,9 +52846,9 @@ components:
         shard_count:
           type: number
         size:
-          $ref: '#/components/schemas/_common:StorageSize'
+          $ref: '#/components/schemas/_common:HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
         max_segments_per_shard:
           type: number
       required:
@@ -52951,7 +52952,7 @@ components:
         file_count:
           type: number
         size_in_bytes:
-          $ref: '#/components/schemas/_common:Bytes'
+          $ref: '#/components/schemas/_common:ByteCount'
       required:
         - file_count
         - size_in_bytes
