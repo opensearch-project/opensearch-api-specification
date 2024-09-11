@@ -16,7 +16,7 @@ components:
               example: This API is disabled. To enable it, set [flow_framework.enabled] to true.
             status:
               type: integer
-    BadRequestError:
+    InvalidParameterError:
       content:
         application/json:
           type: object
@@ -66,6 +66,35 @@ components:
               example: Workflow ID can not be null
             status:
               type: integer
+    DuplicateKeyError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message when a duplicate key is found in the request.
+        status:
+          type: integer
+          description: HTTP status code for the error.
+          example: 400
+    InvalidRequestBodyFieldError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message when a request body field is not a string.
+        status:
+          type: integer
+          description: HTTP status code for the error.
+    RequestBodyParsingFailedError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message when request body parsing fails.
+        status:
+          type: integer
+          description: HTTP status code for the error.
+          example: 400
     WorkflowSaveError:
       content:
         application/json:
@@ -96,3 +125,52 @@ components:
               example: Failed to retrieve template (12345) from global context.
             code:
               type: integer
+    WorkflowStepsRetrieveError:
+      content:
+        application/json:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Failed to retrieve workflow step json.
+            code:
+              type: integer
+    DeprovisioningError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Describes the deprovisioning error and identifies resources that were not deprovisioned
+          example: Failed to deprovision some resources [connector_id Lw7PX4wBfVtHp98y06wV].
+      required:
+        - error
+    DeprovisioningForbiddenError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Describes the resources that require the allow_delete parameter for deprovisioning
+          example: These resources require the allow_delete parameter to deprovision [index_name my-index].
+      required:
+        - error
+    RequestTimeoutError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message when the request times out.
+        status:
+          type: integer
+          description: HTTP status code for the error.
+          example: 408
+    BadRequestError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message when the request body or parameters are invalid.
+          example: Invalid request body or query parameters.
+        status:
+          type: integer
+          description: HTTP status code for the error.
+          example: 400
