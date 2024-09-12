@@ -114,6 +114,40 @@ chapters:
                 title: Beauty and the Beast
                 genre: adventure
 
+  - synopsis: Search using TermsQuery with an array of terms with boost.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: GET
+    request:
+      payload:
+        query:
+          terms:
+            genre:
+              - adventure
+              - animation
+            boost: 1.6
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2
+            relation: eq
+          max_score: 1.6,
+          hits:
+            - _index: movies
+              _score: 1.6
+              _source:
+                title: The Lion King
+                genre: animation
+            - _index: movies
+              _score: 1.6
+              _source:
+                title: Beauty and the Beast
+                genre: adventure
+
   - synopsis: Search using TermsQuery with an array of terms in the games index.
     path: /{index}/_search
     parameters:
