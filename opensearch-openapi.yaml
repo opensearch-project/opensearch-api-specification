@@ -29537,10 +29537,11 @@ components:
         - index
     _common:Password:
       type: string
-    _common:Percentage:
-      oneOf:
-        - type: string
-        - type: number
+    _common:PercentageNumber:
+      type: number
+    _common:PercentageString:
+      type: string
+      pattern: \d+(\.\d+)?
     _common:PhaseTook:
       type: object
       properties:
@@ -41553,11 +41554,11 @@ components:
         files_fetched:
           type: string
         files_percent:
-          type: string
+          $ref: '#/components/schemas/_common:PercentageString'
         bytes_fetched:
           type: string
         bytes_percent:
-          type: string
+          $ref: '#/components/schemas/_common:PercentageString'
         start_time:
           type: string
         stop_time:
@@ -41638,7 +41639,7 @@ components:
         disk.percent:
           description: Total percentage of disk space in use. Calculated as `disk.used / disk.total`.
           oneOf:
-            - $ref: '#/components/schemas/_common:Percentage'
+            - $ref: '#/components/schemas/_common:PercentageString'
             - type: 'null'
         host:
           description: Network host for the node. Set using the `network.host` setting.
@@ -41741,7 +41742,7 @@ components:
           type: string
         active_shards_percent:
           description: active number of shards in percent
-          type: string
+          $ref: '#/components/schemas/_common:PercentageString'
         discovered_cluster_manager:
           description: cluster manager is discovered or not
           type: string
@@ -42521,12 +42522,12 @@ components:
         disk.avail:
           type: string
         disk.used_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         heap.current:
           description: The used heap.
           type: string
         heap.percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         heap.max:
           description: The maximum configured heap.
           type: string
@@ -42534,7 +42535,7 @@ components:
           description: The used machine memory.
           type: string
         ram.percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         ram.max:
           description: The total machine memory.
           type: string
@@ -42542,7 +42543,7 @@ components:
           description: The used file descriptors.
           type: string
         file_desc.percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         file_desc.max:
           description: The maximum number of file descriptors.
           type: string
@@ -42876,7 +42877,7 @@ components:
           description: The files recovered.
           type: string
         files_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         files_total:
           description: The total number of files.
           type: string
@@ -42887,7 +42888,7 @@ components:
           description: The bytes recovered.
           type: string
         bytes_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         bytes_total:
           description: The total number of bytes.
           type: string
@@ -42898,7 +42899,7 @@ components:
           description: The translog operations recovered.
           type: string
         translog_ops_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
     cat.repositories:RepositoriesRecord:
       type: object
       properties:
@@ -43752,9 +43753,9 @@ components:
         free_bytes:
           $ref: '#/components/schemas/_common:ByteCount'
         free_disk_percent:
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
         used_disk_percent:
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
       required:
         - free_bytes
         - free_disk_percent
@@ -43900,8 +43901,10 @@ components:
         active_shards:
           description: The total number of active primary and replica shards.
           type: number
+        active_shards_percent:
+          $ref: '#/components/schemas/_common:PercentageString'
         active_shards_percent_as_number:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageNumber'
         awareness_attributes:
           description: Cluster health information for each awareness attribute.
           type: object
@@ -44700,7 +44703,7 @@ components:
           description: |-
             Percentage of CPU used across all selected nodes.
             Returns `-1` if not supported.
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
       required:
         - percent
     cluster.stats:ClusterProcessOpenFileDescriptors:
@@ -44902,7 +44905,7 @@ components:
           $ref: '#/components/schemas/_common:ByteCount'
         free_percent:
           description: Percentage of free physical memory across all selected nodes.
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
         total:
           description: Total amount of physical memory across all selected nodes.
           $ref: '#/components/schemas/_common:HumanReadableByteCount'
@@ -44917,7 +44920,7 @@ components:
           $ref: '#/components/schemas/_common:ByteCount'
         used_percent:
           description: Percentage of physical memory in use across all selected nodes.
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
       required:
         - free_in_bytes
         - free_percent
@@ -46825,7 +46828,7 @@ components:
       type: object
       properties:
         percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         recovered:
           $ref: '#/components/schemas/_common:HumanReadableByteCount'
         recovered_in_bytes:
@@ -46855,7 +46858,7 @@ components:
           items:
             $ref: '#/components/schemas/indices.recovery:FileDetails'
         percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         recovered:
           type: number
         reused:
@@ -46995,7 +46998,7 @@ components:
       type: object
       properties:
         percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         recovered:
           type: number
         total:
@@ -48885,7 +48888,7 @@ components:
       type: object
       properties:
         percent:
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
         sys:
           $ref: '#/components/schemas/_common:Duration'
         sys_in_millis:
@@ -48991,10 +48994,10 @@ components:
           properties:
             free_percent:
               description: Percentage of free memory.
-              type: number
+              $ref: '#/components/schemas/_common:PercentageNumber'
             used_percent:
               description: Percentage of used memory.
-              type: number
+              $ref: '#/components/schemas/_common:PercentageNumber'
     nodes._common:FileSystem:
       type: object
       properties:
@@ -49226,7 +49229,7 @@ components:
           $ref: '#/components/schemas/_common:ByteCount'
         heap_used_percent:
           description: Percentage of memory currently in use by the heap.
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
         heap_committed:
           description: Amount of memory available for use by the heap.
           $ref: '#/components/schemas/_common:HumanReadableByteCount'
@@ -49284,7 +49287,7 @@ components:
         max_in_bytes:
           $ref: '#/components/schemas/_common:ByteCount'
         usage_percent:
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
     nodes._common:MemoryStats:
       type: object
       properties:
@@ -49471,6 +49474,8 @@ components:
         failed:
           description: Number of failed operations for the processor.
           type: number
+        time:
+          $ref: '#/components/schemas/_common:Duration'
         time_in_millis:
           $ref: '#/components/schemas/_common:DurationValueUnitMillis'
     nodes._common:PublishedClusterStates:
@@ -49623,16 +49628,16 @@ components:
         timestamp:
           type: number
         cpu_utilization_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         memory_utilization_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
         io_usage_stats:
           $ref: '#/components/schemas/nodes._common:ShardResourceUsageStatsIoUsageStats'
     nodes._common:ShardResourceUsageStatsIoUsageStats:
       type: object
       properties:
         max_io_utilization_percent:
-          $ref: '#/components/schemas/_common:Percentage'
+          $ref: '#/components/schemas/_common:PercentageString'
     nodes._common:ShardSearchBackpressureMode:
       type: string
       enum:
@@ -49656,7 +49661,7 @@ components:
         cancellation_limit_reached_count:
           type: number
         cancelled_task_percentage:
-          type: number
+          $ref: '#/components/schemas/_common:PercentageNumber'
         current_cancellation_eligible_tasks_count:
           type: number
     nodes._common:ShardSearchBackpressureTaskResourceTrackerCpuUsageTrackerStats:
