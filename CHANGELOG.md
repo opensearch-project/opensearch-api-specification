@@ -93,6 +93,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `Bytes` component of type number ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 - Added `xy_shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Added `/_plugins/_flow_framework/` ,`_search`,`state/_search`,`_provision`,`_deprovision`,`_steps`,`_status`([#508](https://github.com/opensearch-project/opensearch-api-specification/issues/508))
+- Added `/_plugins/_ism/policies`, `add`, `remove`, `change_policy`, `explain` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
 
 ### Changed
 
@@ -154,6 +155,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `geo_distance` query spec ([#561](https://github.com/opensearch-project/opensearch-api-specification/pull/561))
 - Fixed `geo_bounding_box` and `geo_shape` queries ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Fixed tasks namespace schemas ([#520](https://github.com/opensearch-project/opensearch-api-specification/pull/520))
+- Fixed `/_plugins/_transform/_preview` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
 
 ### Security
 

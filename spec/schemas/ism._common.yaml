@@ -1,0 +1,376 @@
+openapi: 3.1.0
+info:
+  title: Schemas of ism._common Category
+  description: Schemas of ism._common category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Metadata:
+      type: object
+      properties:
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _primary_term:
+          type: number
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
+    Policy:
+      type: object
+      description: |-
+        A policy defines how an index is managed throughout its lifetime.
+      properties:
+        policy_id:
+          type: string
+        description:
+          type: string
+        last_updated_time:
+          type: integer # TODO: field is strict_date_time||epoch_millis
+        schema_version:
+          type: number
+        error_notification:
+          oneOf:
+            - $ref: '#/components/schemas/ErrorNotification'
+            - type: 'null'
+        default_state:
+          type: string
+          description: The default state an index is in.
+        states:
+          type: array
+          description: List of states for the index to transition between.
+          items:
+            $ref: '#/components/schemas/States'
+        ism_template:
+          oneOf:
+            - $ref: '#/components/schemas/IsmTemplate'
+            - type: 'null'
+            - type: array
+              items:
+                $ref: '#/components/schemas/IsmTemplate'              
+    States:
+      type: object
+      description: |-
+        A list of actions to perform, and transitions to enter a new state. 
+        Once a managed index enters a state it will sequentially execute the actions 
+        in the same order listed in the policy. Once all actions have been successfully completed 
+        state transitions will be checked until a true condition is eventually met.
+        If you define multiple transitions in a state, the first one in the list that is true will be used.
+      properties:
+        name:
+          type: string
+        actions:
+          type: array
+          description: A list of actions to perform.
+          items:
+            $ref: '#/components/schemas/Action'
+        transitions:
+          type: array
+          description: A list of transitions to enter a new state.
+          items:
+            $ref: '#/components/schemas/Transition'
+    Action:
+      type: object
+      description: An action to perform.
+      properties:
+        timeout:
+          $ref: '#/components/schemas/ActionTimeout'
+        retry:
+          $ref: '#/components/schemas/ActionRetry'
+        alias:
+          $ref: '#/components/schemas/ActionAlias'
+        delete:
+          $ref: '#/components/schemas/ActionDelete'
+        force_merge:
+          $ref: '#/components/schemas/ActionForceMerge'
+        read_only:
+          $ref: '#/components/schemas/ActionReadOnly'
+        read_write:
+          $ref: '#/components/schemas/ActionReadWrite'
+        replica_count:
+          $ref: '#/components/schemas/ActionReplicaCount'
+        index_priority:
+          $ref: '#/components/schemas/ActionIndexPriority'
+        close:
+          $ref: '#/components/schemas/ActionClose'
+        open:
+          $ref: '#/components/schemas/ActionOpen'
+        snapshot:
+          $ref: '#/components/schemas/ActionSnapshot'
+        rollover:
+          $ref: '#/components/schemas/ActionRollover'
+        notification:
+          $ref: '#/components/schemas/ActionNotification'
+        allocation:
+          $ref: '#/components/schemas/ActionAllocation'
+        rollup:
+          $ref: '#/components/schemas/ActionRollup'
+        transform:
+          $ref: '#/components/schemas/ActionTransform'
+        shrink:
+          $ref: '#/components/schemas/ActionShrink'
+        custom:
+          $ref: '#/components/schemas/ActionCustom'
+    ActionTimeout:
+      type: object
+      properties:
+        timeout:
+          type: object
+    ActionRetry:
+      type: object
+      properties:
+        count:
+          type: integer
+        backoff:
+          type: string
+        delay:
+          type: string
+    ActionAlias:
+      type: object
+      properties:
+        actions:
+          type: object
+          additionalProperties: true
+    ActionDelete:
+      type: object
+    ActionForceMerge:
+      type: object
+      properties:
+        max_num_segments:
+          type: integer
+    ActionReadOnly:
+      type: object
+    ActionReadWrite:
+      type: object
+    ActionReplicaCount:
+      type: object
+      properties:
+        number_of_replicas:
+          type: number
+    ActionIndexPriority:
+      type: object
+      properties:
+        priority:
+          type: number
+    ActionClose:
+      type: object
+    ActionOpen:
+      type: object
+    ActionSnapshot:
+      type: object
+      properties:
+        repository:
+          type: string
+        snapshot:
+          type: string
+        include_global_state:
+          type: boolean
+    ActionRollover:
+      type: object
+      properties:
+        min_size:
+          type: number
+        min_index_age:
+          type: number
+        min_doc_count:
+          type: number
+        min_primary_shard_size:
+          type: number
+        copy_alias:
+          type: boolean
+    ActionNotification:
+      type: object
+      additionalProperties: true
+    ActionAllocation:
+      type: object
+      properties:
+        require:
+          type: object
+          additionalProperties: true
+        include:
+          type: object
+          additionalProperties: true
+        exclude:
+          type: object
+          additionalProperties: true
+        wait_for:
+          type: boolean
+    ActionRollup:
+      type: object
+      additionalProperties: true
+    ActionTransform:
+      type: object
+      additionalProperties: true
+    ActionShrink:
+      type: object
+      additionalProperties: true
+    ActionCustom:
+      type: object
+      additionalProperties: true
+    Transition:
+      type: object
+      description: A transition into a new state.
+      properties:
+        state_name:
+          type: string
+        conditions:
+          type: object
+          additionalProperties: true
+    GetPolicyResponse:
+      allOf:
+        - $ref: '#/components/schemas/Metadata'
+        - $ref: '#/components/schemas/PolicyEnvelope'
+    PutPolicyResponse:
+      allOf:
+        - $ref: '#/components/schemas/Metadata'
+        - type: object
+          properties:
+            policy:
+              $ref: '#/components/schemas/PolicyEnvelope'
+    DeletePolicyResponse:
+      $ref: '_common.yaml#/components/schemas/WriteResponseBase'
+    ChangePolicyResponse:
+      type: object
+      properties:
+        updated_indices:
+          type: number
+        failures:
+          type: boolean
+        failed_indices:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailedIndex'
+    FailedIndex:
+      type: object
+      properties:
+        index_name:
+          type: string
+        index_uuid:
+          type: string
+        reason:
+          type: string
+    RemovePolicyResponse:
+      $ref: '#/components/schemas/ChangePolicyResponse'
+    AddPolicyResponse:
+      $ref: '#/components/schemas/ChangePolicyResponse'
+    PolicyEnvelope:
+      type: object
+      properties:
+        policy:
+          $ref: '#/components/schemas/Policy'
+    PutPolicyRequest:
+      $ref: '#/components/schemas/PolicyEnvelope'
+    AddPolicyRequest:
+      type: object
+      properties:
+        policy_id:
+          type: string
+      required:
+        - policy_id
+    ChangePolicyRequest:
+      type: object
+      properties:
+        policy_id:
+          type: string
+        state:
+          type: string
+        include:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncludeState'
+      required:
+        - policy_id
+    IncludeState:
+      type: object
+      properties:
+        state:
+          type: string
+    ExplainIndexResponse:
+      type: object
+      properties:
+        total_managed_indices:
+          type: number
+      additionalProperties:
+        $ref: '#/components/schemas/ExplainPolicy'
+    ExplainPolicy:
+      type: object
+      properties:
+        index.plugins.index_state_management.policy_id:
+          type: ['null', string]
+        index.opendistro.index_state_management.policy_id:
+          type: ['null', string]
+        enabled:
+          type: [boolean, 'null']
+    ErrorNotification:
+      type: object
+      properties:
+        destination:
+          $ref: '#/components/schemas/ErrorNotificationDestination'
+        channel:
+          $ref: '#/components/schemas/Channel'
+        message_template:
+          type: object
+          additionalProperties: true
+    Channel:
+      type: object
+      properties:
+        id:
+          type: string
+    ErrorNotificationDestination:
+      type: object
+      properties:
+        name:
+          type: string
+        last_update_time:
+          type: integer
+      additionalProperties:
+        anyOf:
+          - $ref: '#/components/schemas/ErrorNotificationChime'
+          - $ref: '#/components/schemas/ErrorNotificationSlack'
+    ErrorNotificationChime:
+      type: object
+      properties:
+        url:
+          type: string
+    ErrorNotificationSlack:
+      type: object
+      properties:
+        url:
+          type: string
+        custom_webhook:
+          $ref: '#/components/schemas/SlackCustomWebhook'
+    SlackCustomWebhook:
+      type: object
+      properties:
+        url:
+          type: string
+        scheme:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+        path:
+          type: string
+        query_params:
+          type: object
+          additionalProperties: true
+        header_params:
+          type: object
+          additionalProperties: true
+        username:
+          type: string
+        password:
+          type: string
+    IsmTemplate:
+      type: object
+      properties:
+        index_patterns:
+          type: array
+          items:
+            type: string
+        priority:
+          type: number
+        last_updated_time:
+          type: integer
