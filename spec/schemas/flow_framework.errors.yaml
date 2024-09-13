@@ -11,7 +11,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: This API is disabled. To enable it, set [flow_framework.enabled] to true.
             status:
@@ -21,7 +21,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: Only the parameters [param1, param2] are permitted unless the provision parameter is set to true.
             status:
@@ -31,7 +31,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: You cannot use both the 'provision_workflow' and 'update_workflow_fields' parameters in the same request.
             status:
@@ -41,7 +41,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: You cannot use the 'reprovision_workflow' parameter to create a new template.
             status:
@@ -51,7 +51,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: You cannot use the 'reprovision_workflow' and 'use_case' parameters in the same request.
             status:
@@ -61,7 +61,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: Workflow ID can not be null
             status:
@@ -100,7 +100,7 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: Failed to save workflow state
               status:
@@ -110,27 +110,59 @@ components:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: Maximum workflows limit reached 50
             code:
               type: integer
+    TemplateNameRequiredError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message when the template name is missing.
     TemplateNotFoundError:
       content:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: Failed to retrieve template (12345) from global context.
             code:
               type: integer
+    InvalidTemplateVersionError:
+      content:
+        application/json:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error message when the template version is invalid or missing.
+              example: Unable to parse field [version] in a version object.
+    UnsupportedFieldUpdateError:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            description: Error message when trying to update an unsupported field in a template.
+            example: You can not update the field [fieldName] without updating the whole template.
+    WorkflowParsingError:
+      content:
+        application/json:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error message when workflow parsing fails.
+              example: Unable to parse field [workflow] in a template object.
     WorkflowStepsRetrieveError:
       content:
         application/json:
           type: object
           properties:
-            message:
+            error:
               type: string
               example: Failed to retrieve workflow step json.
             code:
