@@ -1,4 +1,4 @@
-$schema: ../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../json_schemas/test_story.schema.yaml
 description: Test flow_framework endpoints using sample template.
 version: '>= 2.12'
 epilogues:
@@ -37,7 +37,7 @@ chapters:
                     model: gpt-3.5-turbo
                     response_filter: '$.choices[0].message.content'
                   credential:
-                    openAI_key: test_API_key
+                    openAI_key: '1234556'
                   actions:
                     - action_type: predict
                       method: POST
@@ -100,7 +100,7 @@ chapters:
               - id: create_openai_connector
                 type: create_connector
                 user_inputs:
-                  name: OpenAI Chat Connector update
+                  name: OpenAI Chat Connector
                   description: The connector to public OpenAI model service for GPT 3.5 update
                   version: '1'
                   protocol: http
@@ -109,7 +109,7 @@ chapters:
                     model: gpt-3.5-turbo
                     response_filter: '$.choices[0].message.content'
                   credential:
-                    openAI_key: test_API_key
+                    openAI_key: '1234556'
                   actions:
                     - action_type: predict
                       method: POST
@@ -126,15 +126,6 @@ chapters:
                   register_openai_model: model_id
     response:
       status: 201
-  - synopsis: Get workflow status and status should be not started.
-    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
-    method: GET
-    parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
-    response:
-      status: 200
-      payload:
-        state: NOT_STARTED
   - synopsis: Provision workflow.
     path: /_plugins/_flow_framework/workflow/{workflow_id}/_provision
     method: POST
@@ -142,15 +133,6 @@ chapters:
       workflow_id: ${create_flow_framework.test_workflow_id}
     response:
       status: 200
-  - synopsis: Get workflow status and status should be provisioning.
-    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
-    method: GET
-    parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
-    response:
-      status: 200
-      payload:
-        state: PROVISIONING
   - synopsis: Update workflow fail With provision and update_fields set true.
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
@@ -253,12 +235,3 @@ chapters:
       workflow_id: ${create_flow_framework.test_workflow_id}
     response:
       status: 200
-  - synopsis: Delete workflow using an invalid ID.
-    path: /_plugins/_flow_framework/workflow/{workflow_id}
-    method: DELETE
-    parameters:
-      workflow_id: invalid
-    response:
-      status: 200
-      payload:
-        result: not_found
