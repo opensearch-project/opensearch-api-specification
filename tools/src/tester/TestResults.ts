@@ -47,11 +47,14 @@ export default class TestResults {
 
   operations(): Operation[] {
     if (this._operations !== undefined) return this._operations
-    this._operations = _.uniqWith(Object.entries(this._spec.paths()).flatMap(([path, path_item]) => {
-      return Object.values(path_item).map((method) => {
-        return { method: method.toUpperCase(), path }
+
+    this._operations = _.uniqWith(_.compact(Object.entries(this._spec.spec().paths).flatMap(([path, ops]) => {
+      return Object.entries(ops as Record<string, any>).map(([method, spec]) => {
+        if (spec['x-ignorable'] !== true) {
+          return { method: method.toUpperCase(), path }
+        }
       })
-    }), isEqual)
+    })), isEqual)
 
     return this._operations
   }
