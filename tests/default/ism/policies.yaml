@@ -1,10 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test index state management operations.
-epilogues:
-  - path: /_plugins/_ism/policies/rollover
-    method: DELETE
-    status: [200, 404]
 chapters:
   - synopsis: Create a rollover policy.
     id: policy
@@ -48,11 +44,21 @@ chapters:
     output:
       primary_term: payload._primary_term
       seq_no: payload._seq_no
+  - synopsis: Check whether a policy exists.
+    path: /_plugins/_ism/policies/{policy_id}
+    method: HEAD
+    parameters:
+      policy_id: rollover
+    response:
+      status: 200
   - synopsis: Get a policy.
     path: /_plugins/_ism/policies/{policy_id}
     method: GET
     parameters:
-      policy_id: rollover      
+      policy_id: rollover
+  - synopsis: Get all policies.
+    path: /_plugins/_ism/policies
+    method: GET
   - synopsis: Update a policy.
     path: /_plugins/_ism/policies/{policy_id}
     method: PUT
@@ -79,3 +85,7 @@ chapters:
       policy_id: rollover
     response:
       status: 200
+epilogues:
+  - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]

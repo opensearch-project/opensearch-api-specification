@@ -92,9 +92,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added request and response schemas for `/_cluster/decommission/awareness` ([#524](https://github.com/opensearch-project/opensearch-api-specification/pull/524))
 - Added `Bytes` component of type number ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 - Added `xy_shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
-- Added `/_plugins/_flow_framework/` ,`_search`,`state/_search`,`_provision`,`_deprovision`,`_steps`,`_status`([#508](https://github.com/opensearch-project/opensearch-api-specification/issues/508))
-- Added `/_plugins/_ism/policies`, `add`, `remove`, `change_policy`, `explain` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
-- Added more 4xx errors to `/_plugins/_flow_framework/` and added sample template test ([#833](https://github.com/opensearch-project/flow-framework/issues/833)
+- Added `/_plugins/_flow_framework/`, `_search`, `state/_search`, `_provision`, `_deprovision`, `_steps`, and `_status` ([#508](https://github.com/opensearch-project/opensearch-api-specification/issues/508)) ([#833](https://github.com/opensearch-project/flow-framework/issues/833))
+- Added `/_plugins/_ism/policies`, `add`, `remove`, `change_policy`, `explain`, and `retry` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568)) ([#578](https://github.com/opensearch-project/opensearch-api-specification/pull/578))
+- Added `/_plugins/refresh_search_analyzers` ([#578](https://github.com/opensearch-project/opensearch-api-specification/pull/578))
 
 ### Changed
 

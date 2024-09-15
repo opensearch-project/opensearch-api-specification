@@ -49,6 +49,11 @@ components:
             - type: array
               items:
                 $ref: '#/components/schemas/IsmTemplate'              
+    PolicyWithMetadata:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Metadata'
+        - $ref: '#/components/schemas/PolicyEnvelope'      
     States:
       type: object
       description: |-
@@ -217,10 +222,17 @@ components:
         conditions:
           type: object
           additionalProperties: true
+    GetPoliciesResponse:
+      type: object
+      properties:
+        total_policies:
+          type: number
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyWithMetadata'
     GetPolicyResponse:
-      allOf:
-        - $ref: '#/components/schemas/Metadata'
-        - $ref: '#/components/schemas/PolicyEnvelope'
+      $ref: '#/components/schemas/PolicyWithMetadata'
     PutPolicyResponse:
       allOf:
         - $ref: '#/components/schemas/Metadata'
@@ -230,7 +242,7 @@ components:
               $ref: '#/components/schemas/PolicyEnvelope'
     DeletePolicyResponse:
       $ref: '_common.yaml#/components/schemas/WriteResponseBase'
-    ChangePolicyResponse:
+    ChangeResponse:
       type: object
       properties:
         updated_indices:
@@ -241,6 +253,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FailedIndex'
+    ChangePolicyResponse:
+      $ref: '#/components/schemas/ChangeResponse'
     FailedIndex:
       type: object
       properties:
@@ -286,6 +300,11 @@ components:
       properties:
         state:
           type: string
+    ExplainResponse:
+      type: object
+      properties:
+        total_managed_indices:
+          type: number
     ExplainIndexResponse:
       type: object
       properties:
@@ -374,3 +393,30 @@ components:
           type: number
         last_updated_time:
           type: integer
+    RetryIndexRequest:
+      type: object
+      properties:
+        state:
+          type: string
+      required:
+        - state
+    RetryIndexResponse:
+      $ref: '#/components/schemas/ChangeResponse'
+    RefreshSearchAnalyzersResponse:
+      type: object
+      properties:
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+        successful_refresh_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefreshSearchAnalyzersResponseDetails'
+    RefreshSearchAnalyzersResponseDetails:
+      type: object
+      properties:
+        index:
+          type: string
+        refreshed_analyzers:
+          type: array
+          items:
+            type: string

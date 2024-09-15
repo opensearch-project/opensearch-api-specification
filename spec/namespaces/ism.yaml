@@ -4,6 +4,16 @@ info:
   description: Use the index state management operations to programmatically work with policies and managed indexes.
   version: 1.0.0
 paths:
+  /_plugins/_ism/policies:
+    get:
+      operationId: ism.get_policies.0
+      x-operation-group: ism.get_policies
+      description: Gets the policies.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#get-policy
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.get_policies@200'
   /_plugins/_ism/policies/{policy_id}:
     get:
       operationId: ism.get_policy.0
@@ -16,6 +26,19 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.get_policy@200'
+    head:
+      operationId: ism.head_policy.0
+      x-operation-group: ism.head_policy
+      description: Checks whether the policy exists.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#get-policy
+      parameters:
+        - $ref: '#/components/parameters/ism.head_policy::path.policy_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.head_policy@200'
+        '404':
+          $ref: '#/components/responses/ism.head_policy@404'
     put:
       operationId: ism.put_policy.0
       x-operation-group: ism.put_policy
@@ -84,9 +107,19 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.change_policy@200'
+  /_plugins/_ism/explain:
+    get:
+      operationId: ism.explain.0
+      x-operation-group: ism.explain
+      description: Gets the currently applied policy on all indices.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.explain@200'
   /_plugins/_ism/explain/{index}:
     get:
-      operationId: ism.explain_index.0
+      operationId: ism.explain_index.1
       x-operation-group: ism.explain_index
       description: Gets the currently applied policy on an index.
       externalDocs:
@@ -96,6 +129,32 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.explain_index@200'
+  /_plugins/_ism/retry/{index}:
+    post:
+      operationId: ism.retry_index.0
+      x-operation-group: ism.retry_index
+      description: Retry the failed action for an index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#retry-failed-index
+      parameters:
+        - $ref: '#/components/parameters/ism.retry_index::path.index'
+      requestBody:
+        $ref: '#/components/requestBodies/ism.retry_index'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.retry_index@200'
+  /_plugins/_refresh_search_analyzers/{index}:
+    post:
+      operationId: ism.refresh_search_analyzers.0
+      x-operation-group: ism.refresh_search_analyzers
+      description: Refresh search analyzers in real time.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/refresh-analyzer/
+      parameters:
+        - $ref: '#/components/parameters/ism.refresh_search_analyzers::path.index'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.refresh_search_analyzers@200'
 components:
   requestBodies:
     ism.put_policy:
@@ -113,7 +172,25 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/ChangePolicyRequest'
+    ism.retry_index:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexRequest'
   responses:
+    ism.head_policy@200:
+      content:
+        application/json:
+          schema: {}
+    ism.head_policy@404:
+      content:
+        application/json:
+          schema: {}
+    ism.get_policies@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/GetPoliciesResponse'
     ism.get_policy@200:
       content:
         application/json:
@@ -149,12 +226,33 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/ChangePolicyResponse'
+    ism.explain@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainResponse'
     ism.explain_index@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainIndexResponse'
+    ism.retry_index@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexResponse'
+    ism.refresh_search_analyzers@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/RefreshSearchAnalyzersResponse'
   parameters:
+    ism.head_policy::path.policy_id:
+      name: policy_id
+      in: path
+      required: true
+      schema:
+        type: string
     ism.get_policy::path.policy_id:
       name: policy_id
       in: path
@@ -218,6 +316,26 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
     ism.explain_index::path.index:
+      name: index
+      in: path
+      description: |-
+        Comma-separated list of data streams, indices, and aliases.
+        Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: simple
+    ism.retry_index::path.index:
+      name: index
+      in: path
+      description: |-
+        Comma-separated list of data streams, indices, and aliases.
+        Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: simple
+    ism.refresh_search_analyzers::path.index:
       name: index
       in: path
       description: |-
