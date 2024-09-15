@@ -33,7 +33,7 @@ paths:
     get:
       operationId: ism.get_policy.0
       x-operation-group: ism.get_policy
-      description: Creates or updates a policy.
+      description: Gets a policy.
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/ism/api/#put-policy
       parameters:
@@ -169,6 +169,8 @@ paths:
       description: Gets the currently applied policy on all indices.
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
+      requestBody:
+        $ref: '#/components/requestBodies/ism.explain'
       responses:
         '200':
           $ref: '#/components/responses/ism.explain@200'
@@ -178,6 +180,8 @@ paths:
       description: Gets the currently applied policy on all indices.
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
+      requestBody:
+        $ref: '#/components/requestBodies/ism.explain'
       responses:
         '200':
           $ref: '#/components/responses/ism.explain@200'
@@ -190,6 +194,21 @@ paths:
         url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
       parameters:
         - $ref: '#/components/parameters/ism.explain_policy::path.index'
+      requestBody:
+        $ref: '#/components/requestBodies/ism.explain_policy'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.explain_policy@200'
+    post:
+      operationId: ism.explain_policy.1
+      x-operation-group: ism.explain_policy
+      description: Gets the currently applied policy on an index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
+      parameters:
+        - $ref: '#/components/parameters/ism.explain_policy::path.index'
+      requestBody:
+        $ref: '#/components/requestBodies/ism.explain_policy'
       responses:
         '200':
           $ref: '#/components/responses/ism.explain_policy@200'
@@ -275,6 +294,14 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexRequest'
+    ism.explain:
+      content:
+        application/json:
+          schema: {}
+    ism.explain_policy:
+      content:
+        application/json:
+          schema: {}
   responses:
     ism.exists_policy@200:
       content:
@@ -348,7 +375,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainResponse'
+            $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainIndexResponse'
     ism.explain_policy@200:
       content:
         application/json:
