@@ -59,13 +59,36 @@ chapters:
   - synopsis: Get all policies.
     path: /_plugins/_ism/policies
     method: GET
-  - synopsis: Update a policy.
+  - synopsis: Update a policy specified in the query.
+    id: updated_policy
+    path: /_plugins/_ism/policies
+    method: PUT
+    parameters:
+      policyID: rollover
+      if_primary_term: ${policy.primary_term}
+      if_seq_no: ${policy.seq_no}
+    request:
+      payload:
+        policy:
+          description: Ingesting rollover.
+          default_state: ingest
+          states:
+            - name: ingest
+              actions:
+                - rollover:
+                    min_doc_count: 3
+    response:
+      status: 200
+    output:
+      primary_term: payload._primary_term
+      seq_no: payload._seq_no
+  - synopsis: Update a policy specified in the path.
     path: /_plugins/_ism/policies/{policy_id}
     method: PUT
     parameters:
       policy_id: rollover
-      if_primary_term: ${policy.primary_term}
-      if_seq_no: ${policy.seq_no}
+      if_primary_term: ${updated_policy.primary_term}
+      if_seq_no: ${updated_policy.seq_no}
     request:
       payload:
         policy:

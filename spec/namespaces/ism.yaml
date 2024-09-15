@@ -14,31 +14,46 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.get_policies@200'
+    put:
+      operationId: ism.put_policies.0
+      x-operation-group: ism.put_policies
+      description: Gets the policies.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#create-policy
+      requestBody:
+        $ref: '#/components/requestBodies/ism.put_policies'
+      parameters:
+        - $ref: '#/components/parameters/ism.put_policies::query.if_primary_term'
+        - $ref: '#/components/parameters/ism.put_policies::query.if_seq_no'
+        - $ref: '#/components/parameters/ism.put_policies::query.policyID'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.put_policies@200'
   /_plugins/_ism/policies/{policy_id}:
     get:
       operationId: ism.get_policy.0
       x-operation-group: ism.get_policy
-      description: Gets the policy.
+      description: Creates or updates a policy.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#get-policy
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#put-policy
       parameters:
         - $ref: '#/components/parameters/ism.get_policy::path.policy_id'
       responses:
         '200':
           $ref: '#/components/responses/ism.get_policy@200'
     head:
-      operationId: ism.head_policy.0
-      x-operation-group: ism.head_policy
+      operationId: ism.exists_policy.0
+      x-operation-group: ism.exists_policy
       description: Checks whether the policy exists.
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/ism/api/#get-policy
       parameters:
-        - $ref: '#/components/parameters/ism.head_policy::path.policy_id'
+        - $ref: '#/components/parameters/ism.exists_policy::path.policy_id'
       responses:
         '200':
-          $ref: '#/components/responses/ism.head_policy@200'
+          $ref: '#/components/responses/ism.exists_policy@200'
         '404':
-          $ref: '#/components/responses/ism.head_policy@404'
+          $ref: '#/components/responses/ism.exists_policy@404'
     put:
       operationId: ism.put_policy.0
       x-operation-group: ism.put_policy
@@ -67,6 +82,20 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.delete_policy@200'
+  /_plugins/_ism/add:
+    post:
+      operationId: ism.add.0
+      x-operation-group: ism.add
+      description: Adds a policy to an index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#add-policy
+      parameters:
+        - $ref: '#/components/parameters/ism.add::query.index'
+      requestBody:
+        $ref: '#/components/requestBodies/ism.add'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.add@200'
   /_plugins/_ism/add/{index}:
     post:
       operationId: ism.add_policy.0
@@ -81,6 +110,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.add_policy@200'
+  /_plugins/_ism/remove:
+    post:
+      operationId: ism.remove.0
+      x-operation-group: ism.remove
+      description: Removes a policy from an index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#remove-policy
+      parameters:
+        - $ref: '#/components/parameters/ism.remove::query.index'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.remove@200'
   /_plugins/_ism/remove/{index}:
     post:
       operationId: ism.remove_policy.0
@@ -93,6 +134,20 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.remove_policy@200'
+  /_plugins/_ism/change_policy:
+    post:
+      operationId: ism.change.0
+      x-operation-group: ism.change
+      description: Updates the managed index policy to a new policy.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#update-managed-index-policy
+      parameters:
+        - $ref: '#/components/parameters/ism.change::query.index'
+      requestBody:
+        $ref: '#/components/requestBodies/ism.change'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.change@200'
   /_plugins/_ism/change_policy/{index}:
     post:
       operationId: ism.change_policy.0
@@ -117,18 +172,41 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ism.explain@200'
+    post:
+      operationId: ism.explain.1
+      x-operation-group: ism.explain
+      description: Gets the currently applied policy on all indices.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.explain@200'
   /_plugins/_ism/explain/{index}:
     get:
-      operationId: ism.explain_index.1
-      x-operation-group: ism.explain_index
+      operationId: ism.explain_policy.0
+      x-operation-group: ism.explain_policy
       description: Gets the currently applied policy on an index.
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/ism/api/#explain-index
       parameters:
-        - $ref: '#/components/parameters/ism.explain_index::path.index'
+        - $ref: '#/components/parameters/ism.explain_policy::path.index'
       responses:
         '200':
-          $ref: '#/components/responses/ism.explain_index@200'
+          $ref: '#/components/responses/ism.explain_policy@200'
+  /_plugins/_ism/retry:
+    post:
+      operationId: ism.retry.0
+      x-operation-group: ism.retry
+      description: Retry the failed action for an index.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/im-plugin/ism/api/#retry-failed-index
+      parameters:
+        - $ref: '#/components/parameters/ism.retry::query.index'
+      requestBody:
+        $ref: '#/components/requestBodies/ism.retry'
+      responses:
+        '200':
+          $ref: '#/components/responses/ism.retry@200'
   /_plugins/_ism/retry/{index}:
     post:
       operationId: ism.retry_index.0
@@ -157,32 +235,52 @@ paths:
           $ref: '#/components/responses/ism.refresh_search_analyzers@200'
 components:
   requestBodies:
+    ism.put_policies:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/PutPolicyRequest'
     ism.put_policy:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/PutPolicyRequest'
+    ism.add:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/AddPolicyRequest'
     ism.add_policy:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/AddPolicyRequest'
+    ism.change:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/ChangePolicyRequest'
     ism.change_policy:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/ChangePolicyRequest'
+    ism.retry:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexRequest'
     ism.retry_index:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexRequest'
   responses:
-    ism.head_policy@200:
+    ism.exists_policy@200:
       content:
         application/json:
           schema: {}
-    ism.head_policy@404:
+    ism.exists_policy@404:
       content:
         application/json:
           schema: {}
@@ -201,6 +299,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/PutPolicyResponse'
+    ism.put_policies@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/PutPolicyResponse'
     ism.put_policy@200:
       content:
         application/json:
@@ -211,16 +314,31 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/DeletePolicyResponse'
+    ism.add@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/AddPolicyResponse'
     ism.add_policy@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/AddPolicyResponse'
+    ism.remove@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/RemovePolicyResponse'
     ism.remove_policy@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/RemovePolicyResponse'
+    ism.change@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/ChangePolicyResponse'
     ism.change_policy@200:
       content:
         application/json:
@@ -231,11 +349,16 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainResponse'
-    ism.explain_index@200:
+    ism.explain_policy@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainIndexResponse'
+    ism.retry@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexResponse'
     ism.retry_index@200:
       content:
         application/json:
@@ -247,7 +370,7 @@ components:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/RefreshSearchAnalyzersResponse'
   parameters:
-    ism.head_policy::path.policy_id:
+    ism.exists_policy::path.policy_id:
       name: policy_id
       in: path
       required: true
@@ -295,6 +418,24 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
+    ism.change::query.index:
+      name: index
+      in: query
+      description: |-
+        Comma-separated list of data streams, indices, and aliases.
+        Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+    ism.remove::query.index:
+      name: index
+      in: query
+      description: |-
+        Comma-separated list of data streams, indices, and aliases.
+        Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
     ism.remove_policy::path.index:
       name: index
       in: path
@@ -315,7 +456,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
-    ism.explain_index::path.index:
+    ism.explain_policy::path.index:
       name: index
       in: path
       description: |-
@@ -325,6 +466,15 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
+    ism.retry::query.index:
+      name: index
+      in: query
+      description: |-
+        Comma-separated list of data streams, indices, and aliases.
+        Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
     ism.retry_index::path.index:
       name: index
       in: path
@@ -345,3 +495,33 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
+    ism.put_policies::query.policyID:
+      name: policyID
+      in: query
+      required: true
+      schema:
+        type: string
+      style: form
+    ism.put_policies::query.if_primary_term:
+      name: if_primary_term
+      in: query
+      description: Only perform the operation if the document has this primary term.
+      schema:
+        type: number
+      style: form
+    ism.put_policies::query.if_seq_no:
+      name: if_seq_no
+      in: query
+      description: Only perform the operation if the document has this sequence number.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SequenceNumber'
+      style: form
+    ism.add::query.index:
+      name: index
+      in: query
+      description: |-
+        Comma-separated list of data streams, indices, and aliases.
+        Supports wildcards (`*`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
