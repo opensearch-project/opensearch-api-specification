@@ -22,6 +22,7 @@ describe('merged API spec', () => {
     test('paths', () => {
       expect(spec.paths()).toEqual({
         '/_nodes/{id}': ['get', 'post'],
+        '/_superseded/nodes/{id}': ['get'],
         '/cluster_manager': ['get', 'post'],
         '/index': ['get'],
         '/nodes': ['get']
