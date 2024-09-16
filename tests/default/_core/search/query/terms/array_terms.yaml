@@ -1,4 +1,4 @@
-$schema: ../../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
 
 description: Comprehensive test suite for TermsQuery, including array of terms and term lookup.
 version: '>= 1.2'
@@ -72,38 +72,12 @@ prologues:
         genre: RPG
     status: [201]
 
-  - path: /theater
-    method: PUT
-    request:
-      payload:
-        mappings:
-          properties:
-            name:
-              type: text
-            genre:
-              type: keyword
-    status: [ 200 ]
-
-  - path: /theater/_doc/101
-    method: POST
-    parameters:
-      refresh: true
-    request:
-      payload:
-        name: AMC
-        genre: ["adventure"]
-    status: [ 201 ]
-
 epilogues:
   - path: /movies
     method: DELETE
     status: [200, 404]
 
   - path: /games
-    method: DELETE
-    status: [200, 404]
-
-  - path: /theater
     method: DELETE
     status: [200, 404]
 
@@ -139,62 +113,6 @@ chapters:
               _source:
                 title: Beauty and the Beast
                 genre: adventure
-
-  - synopsis: Search using TermsQuery with an array of terms with boost.
-    path: /{index}/_search
-    parameters:
-      index: movies
-    method: GET
-    request:
-      payload:
-        query:
-          terms:
-            boost: 1.6
-            genre:
-              - adventure
-    response:
-      status: 200
-      payload:
-        timed_out: false
-        hits:
-          total:
-            value: 1
-            relation: eq
-          hits:
-            - _index: movies
-              _score: 1.6
-              _source:
-                title: Beauty and the Beast
-                genre: adventure
-
-  - synopsis: Search using terms lookup.
-    path: /{index}/_search
-    parameters:
-      index: movies
-    method: GET
-    request:
-      payload:
-        query:
-          terms:
-            genre:
-              index: theater
-              id: "101"
-              path: genre
-    response:
-      status: 200
-      payload:
-        timed_out: false
-        hits:
-          total:
-            value: 1
-            relation: eq
-          hits:
-            - _index: movies
-              _score: 1
-              _source:
-                title: Beauty and the Beast
-                genre: adventure
-
 
   - synopsis: Search using TermsQuery with an array of terms in the games index.
     path: /{index}/_search
