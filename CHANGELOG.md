@@ -156,6 +156,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `geo_bounding_box` and `geo_shape` queries ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Fixed tasks namespace schemas ([#520](https://github.com/opensearch-project/opensearch-api-specification/pull/520))
 - Fixed `/_plugins/_transform/_preview` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
+- Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
 
 ### Security
 
