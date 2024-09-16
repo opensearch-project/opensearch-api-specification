@@ -39078,15 +39078,8 @@ components:
           minProperties: 1
           maxProperties: 1
         terms:
-          type: object
-          additionalProperties:
-            anyOf:
-              - $ref: '#/components/schemas/_common.query_dsl:TermsQuery'
-              - type: array
-                items:
-                  type: string
-          minProperties: 1
-          maxProperties: 1
+          description: Returns documents that contain one or more exact terms in a provided field.
+          $ref: '#/components/schemas/_common.query_dsl:TermsQueryField'
         terms_set:
           description: |-
             Returns documents that contain a minimum number of exact terms in a provided field.
@@ -39594,19 +39587,33 @@ components:
               type: boolean
           required:
             - value
-    _common.query_dsl:TermsQuery:
-      anyOf:
-        - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
-        - type: object
-          properties:
-            index:
-              $ref: '#/components/schemas/_common:IndexName'
-            id:
-              $ref: '#/components/schemas/_common:Id'
-            path:
-              $ref: '#/components/schemas/_common:Field'
-            routing:
-              $ref: '#/components/schemas/_common:Routing'
+    _common.query_dsl:TermsLookupField:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/_common:IndexName'
+        id:
+          $ref: '#/components/schemas/_common:Id'
+        path:
+          $ref: '#/components/schemas/_common:Field'
+        routing:
+          $ref: '#/components/schemas/_common:Routing'
+    _common.query_dsl:TermsQueryField:
+      type: object
+      properties:
+        boost:
+          description: |-
+            A floating-point value that specifies the weight of this field toward the relevance score.
+            Values above 1.0 increase the field’s relevance. Values between 0.0 and 1.0 decrease the field’s relevance.
+            Default is 1.0.
+          type: number
+          format: float
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/_common.query_dsl:TermsLookupField'
+          - type: array
+            items:
+              type: string
     _common.query_dsl:TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl:QueryBase'
