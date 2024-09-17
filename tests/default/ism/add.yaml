@@ -1,13 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test adding a policy to an index.
-epilogues:
-  - path: /_plugins/_ism/policies/rollover
-    method: DELETE
-    status: [200, 404]
-  - path: /books
-    method: DELETE
-    status: [200, 404]
 prologues:
   - path: /books
     method: PUT
@@ -28,7 +21,7 @@ prologues:
     output:
       id: payload._id
 chapters:
-  - synopsis: Add a rollover policy to the books index.
+  - synopsis: Add a rollover policy to the books index with the index in path.
     path: /_plugins/_ism/add/{index}
     method: POST
     parameters:
@@ -36,4 +29,18 @@ chapters:
     request:
       payload:
         policy_id: ${policy.id}
-    
+  - synopsis: Add a rollover policy to the books index with the index in a query parameter.
+    path: /_plugins/_ism/add
+    method: POST
+    parameters:
+      index: books
+    request:
+      payload:
+        policy_id: ${policy.id}
+epilogues:
+  - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]

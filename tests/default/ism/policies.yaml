@@ -1,10 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test index state management operations.
-epilogues:
-  - path: /_plugins/_ism/policies/rollover
-    method: DELETE
-    status: [200, 404]
 chapters:
   - synopsis: Create a rollover policy.
     id: policy
@@ -48,18 +44,51 @@ chapters:
     output:
       primary_term: payload._primary_term
       seq_no: payload._seq_no
+  - synopsis: Check whether a policy exists.
+    path: /_plugins/_ism/policies/{policy_id}
+    method: HEAD
+    parameters:
+      policy_id: rollover
+    response:
+      status: 200
   - synopsis: Get a policy.
     path: /_plugins/_ism/policies/{policy_id}
     method: GET
     parameters:
-      policy_id: rollover      
-  - synopsis: Update a policy.
+      policy_id: rollover
+  - synopsis: Get all policies.
+    path: /_plugins/_ism/policies
+    method: GET
+  - synopsis: Update a policy specified in the query.
+    id: updated_policy
+    path: /_plugins/_ism/policies
+    method: PUT
+    parameters:
+      policyID: rollover
+      if_primary_term: ${policy.primary_term}
+      if_seq_no: ${policy.seq_no}
+    request:
+      payload:
+        policy:
+          description: Ingesting rollover.
+          default_state: ingest
+          states:
+            - name: ingest
+              actions:
+                - rollover:
+                    min_doc_count: 3
+    response:
+      status: 200
+    output:
+      primary_term: payload._primary_term
+      seq_no: payload._seq_no
+  - synopsis: Update a policy specified in the path.
     path: /_plugins/_ism/policies/{policy_id}
     method: PUT
     parameters:
       policy_id: rollover
-      if_primary_term: ${policy.primary_term}
-      if_seq_no: ${policy.seq_no}
+      if_primary_term: ${updated_policy.primary_term}
+      if_seq_no: ${updated_policy.seq_no}
     request:
       payload:
         policy:
@@ -79,3 +108,7 @@ chapters:
       policy_id: rollover
     response:
       status: 200
+epilogues:
+  - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]

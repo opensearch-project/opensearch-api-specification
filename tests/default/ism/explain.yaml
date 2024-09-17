@@ -1,13 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test getting the current state of the index. 
-epilogues:
-  - path: /_plugins/_ism/policies/rollover
-    method: DELETE
-    status: [200, 404]
-  - path: /books
-    method: DELETE
-    status: [200, 404]
 prologues:
   - path: /books
     method: PUT
@@ -33,8 +26,32 @@ prologues:
       payload:
         policy_id: ${policy.id}
 chapters:
-  - synopsis: Get the current policy for an index.
+  - synopsis: Get the total managed indices count (GET).
+    path: /_plugins/_ism/explain
+    method: GET
+  - synopsis: Get the total managed indices count (POST).
+    version: '>= 2.12'
+    path: /_plugins/_ism/explain
+    method: POST
+    request:
+      payload: {}
+  - synopsis: Get the current policy for an index (GET).
     path: /_plugins/_ism/explain/{index}
     method: GET
     parameters:
       index: books
+  - synopsis: Get the current policy for an index (POST).
+    version: '>= 2.12'
+    path: /_plugins/_ism/explain/{index}
+    method: POST
+    parameters:
+      index: books
+    request:
+      payload: {}
+epilogues:
+  - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
