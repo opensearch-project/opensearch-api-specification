@@ -102,6 +102,27 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.search_models@200'
+  /_plugins/_ml/connectors/_create:
+    post:
+      operationId: ml.create_connector.0
+      x-operation-group: ml.create_connector
+      description: Creates a standalone connector.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_connector'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_connector@200'
+  /_plugins/_ml/connectors/{connector_id}:
+    delete:
+      operationId: ml.delete_connector.0
+      x-operation-group: ml.delete_connector
+      description: Deletes a standalone connector.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_connector::path.connector_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_connector@200'
+
 components:
   requestBodies:
     ml.register_model_group:
@@ -110,7 +131,7 @@ components:
           schema:
             type: object
             properties:
-              name: 
+              name:
                 type: string
                 description: The model group name.
               description:
@@ -136,7 +157,7 @@ components:
           schema:
             type: object
             properties:
-              name: 
+              name:
                 type: string
                 description: The model name.
               version:
@@ -161,6 +182,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsQuery'
+    ml.create_connector:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/CreateConnectorRequest'
   responses:
     ml.register_model_group@200:
       content:
@@ -230,6 +256,19 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsResponse'
+    ml.create_connector@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector_id:
+                type: string
+    ml.delete_connector@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/MLConnectorDeleteResponse'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -263,6 +302,12 @@ components:
         type: string
     ml.delete_task::path.task_id:
       name: task_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_connector::path.connector_id:
+      name: connector_id
       in: path
       required: true
       schema:

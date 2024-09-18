@@ -156,3 +156,117 @@ components:
     UndeployModelNodeStats:
       type: object
       additionalProperties: true
+    CreateConnectorRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: integer
+        protocol:
+          type: string
+        credential:
+          $ref: '#/components/schemas/Credential'
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+        client_config:
+          $ref: '#/components/schemas/ClientConfig'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - actions
+        - credential
+        - description
+        - name
+        - parameters
+        - protocol
+        - version
+    Credential:
+      type: object
+      properties:
+        access_key:
+          type: string
+        secret_key:
+          type: string
+        session_token:
+          type: string
+      additionalProperties: true
+    Parameters:
+      type: object
+      properties:
+        region:
+          type: string
+        service_name:
+          type: string
+      additionalProperties: true
+    ClientConfig:
+      type: object
+      properties:
+        max_connection:
+          type: integer
+        connection_timeout:
+          type: integer
+        read_timeout:
+          type: integer
+        retry_backoff_policy:
+          type: string
+        max_retry_times:
+          type: integer
+        retry_backoff_millis:
+          type: integer
+        retry_timeout_seconds:
+          type: integer
+    Action:
+      type: object
+      properties:
+        action_type:
+          type: string
+        method:
+          type: string
+        headers:
+          type: object
+          properties:
+            content_type:
+              type: string
+          additionalProperties: true
+        url:
+          type: string
+        request_body:
+          type: string
+        pre_process_function:
+          type: string
+        post_process_function:
+          type: string
+    MLConnectorDeleteResponse:
+      type: object
+      properties:
+        _index:
+          type: string
+        _id:
+          type: string
+        _version:
+          type: integer
+        result:
+          type: string
+          enum: [deleted, not_found]
+        forced_refresh:
+          type: boolean
+        _shards:
+          $ref: '#/components/schemas/shards'
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+    shards:
+      type: object
+      properties:
+        total:
+          type: integer
+        successful:
+          type: integer
+        failed:
+          type: integer
