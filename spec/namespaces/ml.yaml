@@ -122,7 +122,26 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_connector@200'
-
+  /_plugins/_ml/agents/_register:
+    post:
+      operationId: ml.register_agents.0
+      x-operation-group: ml.register_agents
+      description: Register an agent.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_agents'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_agents@200'
+  /_plugins/_ml/agents/{agent_id}:
+    delete:
+      operationId: ml.delete_agent.0
+      x-operation-group: ml.delete_agent
+      description: Delete an agent.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_agent::path.agent_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_agent@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -187,6 +206,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/CreateConnectorRequest'
+    ml.register_agents:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/RegisterAgentsRequest'
   responses:
     ml.register_model_group@200:
       content:
@@ -268,7 +292,20 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/MLConnectorDeleteResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.register_agents@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              agent_id:
+                type: string
+    ml.delete_agent@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -308,6 +345,12 @@ components:
         type: string
     ml.delete_connector::path.connector_id:
       name: connector_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_agent::path.agent_id:
+      name: agent_id
       in: path
       required: true
       schema:

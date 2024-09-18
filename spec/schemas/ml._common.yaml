@@ -197,11 +197,6 @@ components:
       additionalProperties: true
     Parameters:
       type: object
-      properties:
-        region:
-          type: string
-        service_name:
-          type: string
       additionalProperties: true
     ClientConfig:
       type: object
@@ -228,11 +223,7 @@ components:
         method:
           type: string
         headers:
-          type: object
-          properties:
-            content_type:
-              type: string
-          additionalProperties: true
+          $ref: '#/components/schemas/Headers'
         url:
           type: string
         request_body:
@@ -241,32 +232,55 @@ components:
           type: string
         post_process_function:
           type: string
-    MLConnectorDeleteResponse:
+    RegisterAgentsRequest:
       type: object
       properties:
-        _index:
+        name:
           type: string
-        _id:
+        type:
           type: string
-        _version:
-          type: integer
-        result:
+        description:
           type: string
-          enum: [deleted, not_found]
-        forced_refresh:
-          type: boolean
-        _shards:
-          $ref: '#/components/schemas/shards'
-        _seq_no:
-          type: integer
-        _primary_term:
-          type: integer
-    shards:
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolItems'
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+        app_type:
+          type: string
+        memory:
+          $ref: '#/components/schemas/Memory'
+        llm:
+          $ref: '#/components/schemas/LLM'
+      required:
+        - name
+        - type
+    LLM:
       type: object
       properties:
-        total:
-          type: integer
-        successful:
-          type: integer
-        failed:
-          type: integer
+        model_id:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+    Memory:
+      type: object
+      properties:
+        type:
+          type: string
+    ToolItems:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+      additionalProperties: true
+    Headers:
+      type: object
+      properties:
+        content_type:
+          type: string
+      additionalProperties: true
