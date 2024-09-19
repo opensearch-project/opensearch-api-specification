@@ -7557,6 +7557,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -7579,6 +7580,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -7603,6 +7605,7 @@ paths:
         - $ref: '#/components/parameters/put_script::path.context'
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -7626,6 +7629,7 @@ paths:
         - $ref: '#/components/parameters/put_script::path.context'
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
         - $ref: '#/components/parameters/_global::query.pretty'
@@ -16581,7 +16585,11 @@ components:
       name: metric
       description: Limits the information returned to the specified metrics.
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        oneOf:
+          - $ref: '#/components/schemas/cluster.reroute:Metric'
+          - type: array
+            items:
+              $ref: '#/components/schemas/cluster.reroute:Metric'
       style: form
     cluster.reroute::query.retry_failed:
       in: query
@@ -16881,10 +16889,7 @@ components:
       description: Comma-separated list of specific routing values.
       style: form
       schema:
-        type: array
-        items:
-          type: string
-        description: Comma-separated list of specific routing values.
+        $ref: '#/components/schemas/_common:Routing'
       explode: true
     create::path.id:
       in: path
@@ -20247,10 +20252,10 @@ components:
       description: List of shard health statuses used to limit the request.
       schema:
         oneOf:
-          - $ref: '#/components/schemas/indices.shard_stores:ShardStoreStatus'
+          - $ref: '#/components/schemas/indices.shard_stores:Status'
           - type: array
             items:
-              $ref: '#/components/schemas/indices.shard_stores:ShardStoreStatus'
+              $ref: '#/components/schemas/indices.shard_stores:Status'
       style: form
     indices.shrink::path.index:
       in: path
@@ -20509,7 +20514,11 @@ components:
       description: Limit the information returned the specific metrics.
       required: true
       schema:
-        $ref: '#/components/schemas/_common:Metrics'
+        oneOf:
+          - $ref: '#/components/schemas/indices.stats:Metric'
+          - type: array
+            items:
+              $ref: '#/components/schemas/indices.stats:Metric'
       style: simple
     indices.stats::query.completion_fields:
       in: query
@@ -21253,10 +21262,7 @@ components:
       description: Comma-separated list of specific routing values.
       style: form
       schema:
-        type: array
-        items:
-          type: string
-        description: Comma-separated list of specific routing values.
+        $ref: '#/components/schemas/_common:Routing'
       explode: true
     knn.search_models::query.scroll:
       name: scroll
@@ -22386,6 +22392,14 @@ components:
       schema:
         $ref: '#/components/schemas/_common:Duration'
       x-version-added: '2.0'
+    put_script::query.context:
+      name: context
+      in: query
+      description: |-
+        Context in which the script or search template should run.
+        To prevent errors, the API immediately compiles the script or template in this context.
+      schema:
+        type: string
     put_script::query.master_timeout:
       in: query
       name: master_timeout
@@ -22457,7 +22471,7 @@ components:
       name: search_type
       description: Search operation type
       schema:
-        type: string
+        $ref: '#/components/schemas/_common:SearchType'
       style: form
     reindex_rethrottle::path.task_id:
       in: path
@@ -30329,12 +30343,6 @@ components:
     _common:Metadata:
       type: object
       additionalProperties: true
-    _common:Metrics:
-      oneOf:
-        - type: string
-        - type: array
-          items:
-            type: string
     _common:MinimumShouldMatch:
       description: The minimum number of terms that should match as integer, percentage or range.
       oneOf:
@@ -30936,7 +30944,11 @@ components:
         - bulk
         - search
     _common:Routing:
-      type: string
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
     _common:RrfRank:
       allOf:
         - $ref: '#/components/schemas/_common:RankBase'
@@ -45207,6 +45219,18 @@ components:
         - index
         - shard
         - to_node
+    cluster.reroute:Metric:
+      type: string
+      enum:
+        - _all
+        - blocks
+        - cluster_manager_node
+        - master_node
+        - metadata
+        - nodes
+        - routing_nodes
+        - routing_table
+        - version
     cluster.reroute:RerouteDecision:
       type: object
       properties:
@@ -48260,13 +48284,6 @@ components:
       required:
         - reason
         - type
-    indices.shard_stores:ShardStoreStatus:
-      type: string
-      enum:
-        - all
-        - green
-        - red
-        - yellow
     indices.shard_stores:ShardStoreWrapper:
       type: object
       properties:
@@ -48276,6 +48293,13 @@ components:
             $ref: '#/components/schemas/indices.shard_stores:ShardStore'
       required:
         - stores
+    indices.shard_stores:Status:
+      type: string
+      enum:
+        - all
+        - green
+        - red
+        - yellow
     indices.simulate_template:Overlapping:
       type: object
       properties:
@@ -48386,6 +48410,27 @@ components:
         - primaries
         - total
         - uuid
+    indices.stats:Metric:
+      type: string
+      enum:
+        - _all
+        - completion
+        - docs
+        - fielddata
+        - flush
+        - get
+        - indexing
+        - merge
+        - query_cache
+        - recovery
+        - refresh
+        - request_cache
+        - search
+        - segments
+        - store
+        - suggest
+        - translog
+        - warmer
     indices.stats:ShardCommit:
       type: object
       properties:
