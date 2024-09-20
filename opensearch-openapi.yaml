@@ -4361,6 +4361,68 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/knn.warmup@200'
+  /_plugins/_ml/agents/_register:
+    post:
+      operationId: ml.register_agents.0
+      x-operation-group: ml.register_agents
+      description: Register an agent.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_agents'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_agents@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_ml/agents/{agent_id}:
+    delete:
+      operationId: ml.delete_agent.0
+      x-operation-group: ml.delete_agent
+      description: Delete an agent.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_agent::path.agent_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_agent@200'
+  /_plugins/_ml/connectors/_create:
+    post:
+      operationId: ml.create_connector.0
+      x-operation-group: ml.create_connector
+      description: Creates a standalone connector.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_connector'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_connector@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_plugins/_ml/connectors/{connector_id}:
+    delete:
+      operationId: ml.delete_connector.0
+      x-operation-group: ml.delete_connector
+      description: Deletes a standalone connector.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_connector::path.connector_id'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_connector@200'
   /_plugins/_ml/model_groups/_register:
     post:
       operationId: ml.register_model_group.0
@@ -21545,6 +21607,18 @@ components:
       schema:
         $ref: '#/components/schemas/_common:Fields'
       style: form
+    ml.delete_agent::path.agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_connector::path.connector_id:
+      name: connector_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.delete_model_group::path.model_group_id:
       name: model_group_id
       in: path
@@ -25577,6 +25651,16 @@ components:
                 $ref: '#/components/schemas/_common:Ids'
             description: Document identifiers; can be either `docs` (containing full document information) or `ids` (when index is provided in the URL.
       required: true
+    ml.create_connector:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common:CreateConnectorRequest'
+    ml.register_agents:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common:RegisterAgentsRequest'
     ml.register_model:
       content:
         application/json:
@@ -27999,6 +28083,24 @@ components:
                   $ref: '#/components/schemas/_core.mget:ResponseItem'
             required:
               - docs
+    ml.create_connector@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector_id:
+                type: string
+    ml.delete_agent@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:WriteResponseBase'
+    ml.delete_connector@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:WriteResponseBase'
     ml.delete_model_group@200:
       content:
         application/json:
@@ -28039,6 +28141,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ml._common:Task'
+    ml.register_agents@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              agent_id:
+                type: string
     ml.register_model_group@200:
       content:
         application/json:
@@ -50018,6 +50128,85 @@ components:
         - always
         - missing
         - popular
+    ml._common:Action:
+      type: object
+      properties:
+        action_type:
+          type: string
+        method:
+          type: string
+        headers:
+          $ref: '#/components/schemas/ml._common:Headers'
+        url:
+          type: string
+        request_body:
+          type: string
+        pre_process_function:
+          type: string
+        post_process_function:
+          type: string
+    ml._common:ClientConfig:
+      type: object
+      properties:
+        max_connection:
+          type: integer
+        connection_timeout:
+          type: integer
+        read_timeout:
+          type: integer
+        retry_backoff_policy:
+          type: string
+        max_retry_times:
+          type: integer
+        retry_backoff_millis:
+          type: integer
+        retry_timeout_seconds:
+          type: integer
+    ml._common:CreateConnectorRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: integer
+        protocol:
+          type: string
+        credential:
+          $ref: '#/components/schemas/ml._common:Credential'
+        parameters:
+          $ref: '#/components/schemas/ml._common:Parameters'
+        client_config:
+          $ref: '#/components/schemas/ml._common:ClientConfig'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common:Action'
+      required:
+        - actions
+        - credential
+        - description
+        - name
+        - parameters
+        - protocol
+        - version
+    ml._common:Credential:
+      type: object
+      properties:
+        access_key:
+          type: string
+        secret_key:
+          type: string
+        session_token:
+          type: string
+      additionalProperties: true
+    ml._common:Headers:
+      type: object
+      properties:
+        content_type:
+          type: string
+      additionalProperties: true
     ml._common:HitsTotal:
       type: object
       properties:
@@ -50030,6 +50219,18 @@ components:
       required:
         - relation
         - value
+    ml._common:LLM:
+      type: object
+      properties:
+        model_id:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/ml._common:Parameters'
+    ml._common:Memory:
+      type: object
+      properties:
+        type:
+          type: string
     ml._common:ModelGroup:
       type: object
       properties:
@@ -50068,6 +50269,33 @@ components:
       required:
         - model_group_id
         - status
+    ml._common:Parameters:
+      type: object
+      additionalProperties: true
+    ml._common:RegisterAgentsRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common:ToolItems'
+        parameters:
+          $ref: '#/components/schemas/ml._common:Parameters'
+        app_type:
+          type: string
+        memory:
+          $ref: '#/components/schemas/ml._common:Memory'
+        llm:
+          $ref: '#/components/schemas/ml._common:LLM'
+      required:
+        - name
+        - type
     ml._common:SearchModelsHits:
       type: object
       properties:
@@ -50154,6 +50382,16 @@ components:
           type: string
       required:
         - state
+    ml._common:ToolItems:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/ml._common:Parameters'
+      additionalProperties: true
     ml._common:UndeployModelNode:
       type: object
       properties:
