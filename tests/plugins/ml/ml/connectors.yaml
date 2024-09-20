@@ -1,0 +1,50 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of connectors.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+version: '>= 2.11'
+epilogues:
+  - path: /_plugins/_ml/connectors/{connector_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      connector_id: ${create_connector.test_connector_id}
+chapters:
+  - synopsis: Create connector.
+    warnings:
+      multiple-paths-detected: false
+    id: create_connector
+    path: /_plugins/_ml/connectors/_create
+    method: POST
+    request:
+      payload:
+        name: OpenAI Chat Connector
+        description: The connector to public OpenAI model service for GPT 3.5
+        version: 1
+        protocol: http
+        parameters:
+          endpoint: api.openai.com
+          model: gpt-3.5-turbo
+        credential:
+          openAI_key: test_api_key
+        actions:
+          - action_type: predict
+            method: POST
+            url: 'https://${parameters.endpoint}/v1/chat/completions'
+            headers:
+              Authorization: 'Bearer ${credential.openAI_key}'
+            request_body: '{ "model": "${parameters.model}", "messages": ${parameters.messages} }'
+    response:
+      status: 200
+    output:
+      test_connector_id: payload.connector_id
+  - synopsis: Delete connector.
+    path: /_plugins/_ml/connectors/{connector_id}
+    method: DELETE
+    parameters:
+      connector_id: ${create_connector.test_connector_id}
+    response:
+      status: 200

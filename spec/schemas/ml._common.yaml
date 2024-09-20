@@ -156,3 +156,131 @@ components:
     UndeployModelNodeStats:
       type: object
       additionalProperties: true
+    CreateConnectorRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: integer
+        protocol:
+          type: string
+        credential:
+          $ref: '#/components/schemas/Credential'
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+        client_config:
+          $ref: '#/components/schemas/ClientConfig'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - actions
+        - credential
+        - description
+        - name
+        - parameters
+        - protocol
+        - version
+    Credential:
+      type: object
+      properties:
+        access_key:
+          type: string
+        secret_key:
+          type: string
+        session_token:
+          type: string
+      additionalProperties: true
+    Parameters:
+      type: object
+      additionalProperties: true
+    ClientConfig:
+      type: object
+      properties:
+        max_connection:
+          type: integer
+        connection_timeout:
+          type: integer
+        read_timeout:
+          type: integer
+        retry_backoff_policy:
+          type: string
+        max_retry_times:
+          type: integer
+        retry_backoff_millis:
+          type: integer
+        retry_timeout_seconds:
+          type: integer
+    Action:
+      type: object
+      properties:
+        action_type:
+          type: string
+        method:
+          type: string
+        headers:
+          $ref: '#/components/schemas/Headers'
+        url:
+          type: string
+        request_body:
+          type: string
+        pre_process_function:
+          type: string
+        post_process_function:
+          type: string
+    RegisterAgentsRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolItems'
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+        app_type:
+          type: string
+        memory:
+          $ref: '#/components/schemas/Memory'
+        llm:
+          $ref: '#/components/schemas/LLM'
+      required:
+        - name
+        - type
+    LLM:
+      type: object
+      properties:
+        model_id:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+    Memory:
+      type: object
+      properties:
+        type:
+          type: string
+    ToolItems:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+      additionalProperties: true
+    Headers:
+      type: object
+      properties:
+        content_type:
+          type: string
+      additionalProperties: true
