@@ -1,0 +1,74 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test training k-NN model with disk-based parameters.
+version: '>= 2.17'
+
+prologues:
+  - method: PUT
+    path: /my-vector-index
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            my_vector_field:
+              type: knn_vector
+              dimension: 8
+              space_type: innerproduct
+              data_type: float
+    status: [200]
+  - method: POST
+    path: /_bulk
+    request:
+      content_type: application/x-ndjson
+      payload:
+        -  { "index": { "_index": "my-vector-index", "_id": "1" } }
+        -  { "my_vector_field": [ 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5 ], "price": 12.2 }
+        -  { "index": { "_index": "my-vector-index", "_id": "2" } }
+        -  { "my_vector_field": [ 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5 ], "price": 7.1 }
+        -  { "index": { "_index": "my-vector-index", "_id": "3" } }
+        -  { "my_vector_field": [ 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5 ], "price": 12.9 }
+        -  { "index": { "_index": "my-vector-index", "_id": "4" } }
+        -  { "my_vector_field": [ 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5 ], "price": 1.2 }
+        -  { "index": { "_index": "my-vector-index", "_id": "5" } }
+        -  { "my_vector_field": [ 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5 ], "price": 3.7 }
+        -  { "index": { "_index": "my-vector-index", "_id": "6" } }
+        -  { "my_vector_field": [ 6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5 ], "price": 10.3 }
+        -  { "index": { "_index": "my-vector-index", "_id": "7" } }
+        -  { "my_vector_field": [ 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5 ], "price": 5.5 }
+        -  { "index": { "_index": "my-vector-index", "_id": "8" } }
+        -  { "my_vector_field": [ 8.5, 8.5, 8.5, 8.5, 8.5, 8.5, 8.5, 8.5 ], "price": 4.4 }
+        -  { "index": { "_index": "my-vector-index", "_id": "9" } }
+        -  { "my_vector_field": [ 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5 ], "price": 8.9 }
+    status: [200]
+epilogues:
+  - path: /my-vector-index
+    method: DELETE
+    status: [ 200, 404 ]
+  - path: /_plugins/_knn/models/{model_id}
+    parameters:
+      model_id: ${train_model.test_model_id}
+    method: DELETE
+    status: [ 200, 404 ]
+
+chapters:
+  - synopsis: Test training a model with disk-based parameters.
+    id: train_model
+    method: POST
+    path: /_plugins/_knn/models/_train
+    request:
+      payload:
+        training_index: my-vector-index
+        training_field: my_vector_field
+        dimension: 8
+        max_training_vector_count: 1200
+        search_size: 100
+        description: Test model
+        mode: on_disk
+        compression_level: 32x
+    response:
+      status: 200
+    output:
+      test_model_id: "payload.model_id"
