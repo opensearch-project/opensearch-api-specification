@@ -1,6 +1,6 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
-description: Test training k-NN model with disk-based parameters.
+description: Test search endpoint with knn query.
 version: '>= 2.17'
 
 prologues:
@@ -16,6 +16,10 @@ prologues:
             recommendation_vector:
               type: knn_vector
               dimension: 8
+              space_type: l2
+              data_type: float
+              mode: on_disk
+              compression_level: 16x
     status: [200]
   - method: POST
     path: /_bulk
@@ -45,28 +49,23 @@ epilogues:
   - path: /movies
     method: DELETE
     status: [200, 404]
-  - path: /_plugins/_knn/models/{model_id}
-    parameters:
-      model_id: ${train_model.test_model_id}
-    method: DELETE
-    status: [200, 404]
 
 chapters:
-  - synopsis: Test training a model with disk-based parameters.
-    id: train_model
+  - synopsis: Test k-NN disk-based search.
     method: POST
-    path: /_plugins/_knn/models/_train
+    path: /{index}/_search
+    parameters:
+      index: movies
     request:
       payload:
-        training_index: movies
-        training_field: recommendation_vector
-        dimension: 8
-        max_training_vector_count: 1200
-        search_size: 100
-        description: Test model
-        mode: on_disk
-        compression_level: 32x
+        query:
+          knn:
+            recommendation_vector:
+              vector: [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5]
+              k: 5
+              method_parameters:
+                ef_search: 512
+              rescore:
+                oversample_factor: 10
     response:
       status: 200
-    output:
-      test_model_id: payload.model_id

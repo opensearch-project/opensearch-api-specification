@@ -158,7 +158,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed tasks namespace schemas ([#520](https://github.com/opensearch-project/opensearch-api-specification/pull/520))
 - Fixed `/_plugins/_transform/_preview` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
 - Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
-- Update API specifications for k-NN 2.17 changes ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
+- Add mode and compression to k-NN index creation and search, and add rescore and oversample_factor to k-NN search ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
 
 ### Security
 
