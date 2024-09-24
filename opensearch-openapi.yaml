@@ -25628,11 +25628,16 @@ components:
                 format: int32
               description:
                 type: string
+              mode:
+                type: string
+              compression_level:
+                type: string
               method:
+                type: string
+              spaceType:
                 type: string
             required:
               - dimension
-              - method
               - training_field
               - training_index
       required: true
@@ -28069,7 +28074,16 @@ components:
     knn.get_model@200: {}
     knn.search_models@200: {}
     knn.stats@200: {}
-    knn.train_model@200: {}
+    knn.train_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_id:
+                type: string
+            required:
+              - model_id
     knn.warmup@200: {}
     mget@200:
       content:
@@ -30382,6 +30396,16 @@ components:
         boost:
           description: Boost value to apply to kNN scores
           type: number
+        method_parameters:
+          type: object
+          x-version-added: '2.16'
+          additionalProperties:
+            type: number
+        rescore:
+          type: object
+          x-version-added: '2.17'
+          additionalProperties:
+            type: number
       required:
         - vector
     _common:LatLonGeoLocation:
@@ -37838,6 +37862,14 @@ components:
       properties:
         dimension:
           type: number
+        space_type:
+          type: string
+        data_type:
+          type: string
+        mode:
+          type: string
+        compression_level:
+          type: string
         method:
           $ref: '#/components/schemas/_common.mapping:KnnVectorMethod'
       required:
