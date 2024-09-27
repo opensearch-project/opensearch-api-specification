@@ -96,6 +96,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_plugins/_ism/policies`, `add`, `remove`, `change_policy`, `explain`, and `retry` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568)) ([#578](https://github.com/opensearch-project/opensearch-api-specification/pull/578))
 - Added `/_plugins/refresh_search_analyzers` ([#578](https://github.com/opensearch-project/opensearch-api-specification/pull/578))
 - Added `/_bulk/stream` ([#584](https://github.com/opensearch-project/opensearch-api-specification/pull/584))
+- Added `/_plugins/_ml/agents/_register`, `/_plugins/_ml/connectors/_create`, `DELETE /_plugins/_ml/agents/{agent_id}`, `DELETE /_plugins/_ml/connectors/{connector_id}` ([#228](https://github.com/opensearch-project/opensearch-api-specification/issues/228))
+- Added the `context` query param to the `put_script` APIs ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 
 ### Changed
 
@@ -115,6 +117,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Rename `Bytes` component to `StorageType` ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 - Rename `ByteSize` to `StorageSize` ([#552](https://github.com/opensearch-project/opensearch-api-specification/pull/552))
 - Split `Percentage` into `PercentageNumber`, `PercentageString` ([#573](https://github.com/opensearch-project/opensearch-api-specification/pull/573))
+- Unified all `routing` query params to take a string or array of strings ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
+- Changed `rank_eval`'s `search_type` query param to use the `SearchType` enum rather than a plain string ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
+- Changed `cluster.reroute`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
+- Changed `indices.stats`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
+- Changed `CleanupRepositoryResults`' properties to be `int64`s ([#587](https://github.com/opensearch-project/opensearch-api-specification/pull/587))
 
 ### Deprecated
 
@@ -159,6 +166,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed tasks namespace schemas ([#520](https://github.com/opensearch-project/opensearch-api-specification/pull/520))
 - Fixed `/_plugins/_transform/_preview` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
 - Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
+- Add `mode` and `compression` to k-NN index creation and search, and add `rescore` and `oversample_factor` to k-NN search ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
 
 ### Security
 
