@@ -17,15 +17,15 @@
     * [Spec Linter](#spec-linter)
       * [Arguments](#arguments-1)
       * [Example](#example-1)
+    * [Spec Tester](#spec-tester)
     * [Dump Cluster Spec](#dump-cluster-spec)
       * [Arguments](#arguments-2)
       * [Example](#example-2)
     * [Coverage](#coverage)
       * [Arguments](#arguments-3)
       * [Example](#example-3)
-    * [Testing](#testing)
-      * [Tests](#tests)
-      * [Lints](#lints)
+    * [Tools Testing](#tools-testing)
+    * [Tools Linting](#tools-linting)
   * [Workflows](#workflows)
     * [Analyze PR Changes](#analyze-pr-changes)
     * [Build](#build)
@@ -211,6 +211,14 @@ We can take advantage of the default values and simply lint the specification vi
 npm run lint:spec
 ```
 
+### Spec Tester
+
+```bash
+npm run test:spec -- --help
+```
+
+The spec test framework validates the OpenSearch spec against a running OpenSearch cluster. As you modify the spec, you should add or update the spec test stories in the [./tests](tests) directory. For information on this topic, see [TESTING_GUIDE.md](TESTING_GUIDE.md).
+
 ### [Dump Cluster Spec](tools/src/dump-cluster-spec)
 
 ```bash
@@ -306,9 +314,7 @@ The output file `build/coverage.json` will now contain data of like below:
 }
 ```
 
-### Testing
-
-#### Tests
+### Tools Testing
 
 All tools should have tests added in [tools/tests](tools/tests), tests are implemented using [Jest](https://jestjs.io/). They can be run via:
 ```bash
@@ -322,7 +328,7 @@ npm run jest -- tools/tests/linter/lint.test.ts
 
 The test suite contains unit tests and integration tests. Integration tests, such as [these](tools/tests/tester/integ/), require a local instance of OpenSearch and are placed into a folder named `integ`. Unit tests are run in parallel and integration tests are run sequentially using `--runInBand`. You can run unit tests with `npm run test:unit` separately from integration tests with `npm run test:integ`.
 
-#### Lints
+### Tools Linting
 
 All TypeScript code and YAML files are linted using [ESLint](https://eslint.org/), [typescript-eslint](https://typescript-eslint.io/), and [eslint-plugin-yml](https://ota-meshi.github.io/eslint-plugin-yml/). Linting can be run via:
 ```bash

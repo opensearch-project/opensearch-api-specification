@@ -149,7 +149,15 @@ export interface Request {
  * via the `definition` "Output".
  */
 export interface Output {
-  [k: string]: string;
+  [k: string]: string | DetailedOutput;
+}
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "DetailedOutput".
+ */
+export interface DetailedOutput {
+  path: string;
+  default?: boolean | number | string;
 }
 /**
  * The list of distributions that support this API.

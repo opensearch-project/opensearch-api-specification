@@ -1,0 +1,50 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test removing a policy from an index.
+prologues:
+  - path: /books
+    method: PUT
+  - id: policy
+    path: /_plugins/_ism/policies/rollover
+    method: PUT
+    request:
+      payload:
+        policy:
+          description: A rollover policy.
+          default_state: ingest
+          states:
+            - name: ingest
+              actions:
+                - rollover: 
+                    min_doc_count: 5
+    status: [201]
+    output:
+      id: payload._id
+  - path: /_plugins/_ism/add/books
+    method: POST
+    request:
+      payload:
+        policy_id: ${policy.id}
+chapters:
+  - synopsis: Remove the current policy from an index specified in the query.
+    path: /_plugins/_ism/remove
+    method: POST
+    parameters:
+      index: books
+  - synopsis: Remove the current policy from an index specified in the path.
+    path: /_plugins/_ism/remove/{index}
+    method: POST
+    parameters:
+      index: books
+  - synopsis: Remove the current policy from an index that doesn't have one.
+    path: /_plugins/_ism/remove/{index}
+    method: POST
+    parameters:
+      index: books
+epilogues:
+  - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]

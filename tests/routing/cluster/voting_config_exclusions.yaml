@@ -1,0 +1,29 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test adding/removing cluster-manager-eligible nodes from the voting configuration exclusion list.
+prologues:
+  - path: /_cat/nodes
+    id: node
+    method: GET
+    parameters:
+      full_id: true
+      size: 1
+      format: json
+      h: id
+    output:
+      id: payload[0].id
+chapters:
+  - synopsis: Adds a node to the voting configuration exclusion list.
+    path: /_cluster/voting_config_exclusions
+    method: POST
+    parameters:
+      node_ids: ${node.id}
+    response:
+      status: 200
+  - synopsis: Deletes a voting configuration exclusion list.
+    path: /_cluster/voting_config_exclusions
+    method: DELETE
+    parameters:
+      wait_for_removal: false
+    response:
+      status: 200

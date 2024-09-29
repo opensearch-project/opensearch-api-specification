@@ -31,13 +31,18 @@ jobs:
           - version: 2.16.0
             tests: plugins/index_state_management
           - version: 2.16.0
+            tests: plugins/ml
+          - version: 2.16.0
+            tests: routing
+          - version: 2.16.0
             tests: snapshot
           - version: 2.17.0
+          - version: 2.18.0
             hub: opensearchstaging
-            ref: '@sha256:ed4274522a50228f41b50f1a7ea86e6b52fa6737072fc151b2624d22aff80d56'
+            ref: '@sha256:4445e195c53992038891519dc3be0d273cdaad1b047943d68921168ed243e7e9'
           - version: 3.0.0
             hub: opensearchstaging
-            ref: '@sha256:cab6f71b284485c44306f8f4849ad520283c2a32ece617109b38183ba29cc401'
+            ref: '@sha256:cf07c0ffa7d9e8a3e7fdb58041caae3bb81f1123260431b99d0ebf4a52c3d9a3'
 
     name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }}, tests=${{ matrix.entry.tests || 'default' }})
     runs-on: ubuntu-latest
@@ -65,11 +70,6 @@ jobs:
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
 
-      - name: Get Container ID
-        id: container
-        run: |
-          echo "CONTAINER_ID=$(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}")" >> $GITHUB_OUTPUT
-
       - name: Run Tests
         run: |
           npm run test:spec -- \
@@ -79,10 +79,12 @@ jobs:
             --tests=tests/${{ matrix.entry.tests || 'default' }}
 
       - name: Get Container Logs
-        if: failure() && steps.container.outputs.CONTAINER_ID
+        if: failure()
         run: |
-          echo Dumping logs from ${{ steps.container.outputs.CONTAINER_ID }} ...
-          docker logs ${{ steps.container.outputs.CONTAINER_ID }}
+          for container_id in $(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}"); do \
+            echo Dumping logs from $container_id ... && \
+            docker logs $container_id \
+          ; done
 
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
@@ -106,13 +108,14 @@ jobs:
         shell: bash -eo pipefail {0}
         run: |
           jq -sc '
-            map(to_entries) |
-            flatten |
-            group_by(.key) |
-            map({key: .[0].key, value: map(.value) | max}) |
-            from_entries |
-            .' $(find ./coverage -name "test-spec-coverage-*.json") > ./coverage/coverage.json
-
+            (map(.operations) | add | unique | length) as $total_operations_count |
+            (map(.evaluated_operations) | add | unique | length) as $evaluated_operations_count |
+            { 
+              total_operations_count: $total_operations_count,
+              evaluated_operations_count: $evaluated_operations_count,
+              evaluated_paths_pct: $evaluated_operations_count | (10000 * . / $total_operations_count | round / 100)
+            }
+          ' $(find ./coverage -name "test-spec-coverage-*.json") > ./coverage/coverage.json
           cat ./coverage/coverage.json
 
       - name: Construct Comment Data Payload

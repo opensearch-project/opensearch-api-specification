@@ -176,6 +176,29 @@ describe('ConsoleResultLogger', () => {
       ])
     })
 
+    test('with a very long error message', () => {
+      logger.log({
+        result: Result.PASSED,
+        display_path: 'path',
+        full_path: 'full_path',
+        description: 'description',
+        message: "x".repeat(257),
+        chapters: [{
+          title: 'title',
+          overall: {
+            result: Result.PASSED
+          }
+        }],
+        epilogues: [],
+        prologues: []
+      })
+
+      const truncated_error = `(${"x".repeat(256)}, ...)`
+      expect(log.mock.calls).toEqual([
+        [`${ansi.green('PASSED ')} ${ansi.cyan(ansi.b('path'))} ${ansi.gray(truncated_error)}`]
+      ])
+    })
+
     describe('with warnings', () => {
       const logger = new ConsoleResultLogger(tab_width, true)
 

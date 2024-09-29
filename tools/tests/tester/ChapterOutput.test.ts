@@ -36,7 +36,8 @@ describe('with an object response', () => {
         { d: 2 },
         { e: 3 }
       ]
-    }
+    },
+    zero: 0
   })
 
   test('returns nested values', () => {
@@ -66,6 +67,24 @@ describe('with an object response', () => {
         message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
       }
     })
+  })
+
+  test('uses a default numeric value', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: { path: 'payload.a.b.x[0]', default: -1 } })).toEqual(
+      passed_output({ x: -1 })
+    )
+  })
+
+  test('uses a default string value', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: { path: 'payload.a.b.x[0]', default: 'a_string' } })).toEqual(
+      passed_output({ x: 'a_string' })
+    )
+  })
+
+  test('does not use a default value on a numeric zero', () => {
+    expect(ChapterOutput.extract_output_values(response, { x: { path: 'payload.zero', default: '-1' } })).toEqual(
+      passed_output({ x: 0 })
+    )
   })
 
   test('errors on invalid source', () => {

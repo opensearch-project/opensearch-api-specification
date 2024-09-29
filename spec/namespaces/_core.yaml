@@ -560,6 +560,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
       requestBody:
@@ -577,6 +578,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
       requestBody:
@@ -611,6 +613,7 @@ paths:
         - $ref: '#/components/parameters/put_script::path.context'
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
       requestBody:
@@ -629,6 +632,7 @@ paths:
         - $ref: '#/components/parameters/put_script::path.context'
         - $ref: '#/components/parameters/put_script::path.id'
         - $ref: '#/components/parameters/put_script::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/put_script::query.context'
         - $ref: '#/components/parameters/put_script::query.master_timeout'
         - $ref: '#/components/parameters/put_script::query.timeout'
       requestBody:
@@ -2434,13 +2438,6 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
-              knn:
-                description: Defines the approximate kNN search to run.
-                oneOf:
-                  - $ref: '../schemas/_common.yaml#/components/schemas/KnnQuery'
-                  - type: array
-                    items:
-                      $ref: '../schemas/_common.yaml#/components/schemas/KnnQuery'
               rank:
                 $ref: '../schemas/_common.yaml#/components/schemas/RankContainer'
               min_score:
@@ -2673,6 +2670,8 @@ components:
           schema:
             type: object
             properties:
+              terminated_early:
+                type: boolean
               count:
                 type: number
               _shards:
@@ -2717,42 +2716,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              batches:
-                type: number
-              deleted:
-                type: number
-              failures:
-                type: array
-                items:
-                  $ref: '../schemas/_common.yaml#/components/schemas/BulkIndexByScrollFailure'
-              noops:
-                type: number
-              requests_per_second:
-                type: number
-              retries:
-                $ref: '../schemas/_common.yaml#/components/schemas/Retries'
-              slice_id:
-                type: number
-              task:
-                $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
-              throttled:
-                $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-              throttled_millis:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
-              throttled_until:
-                $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-              throttled_until_millis:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
-              timed_out:
-                type: boolean
-              took:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
-              total:
-                type: number
-              version_conflicts:
-                type: number
+            oneOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/BulkByScrollResponseBase'
+              - type: object
+                properties:
+                  task:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
     delete_by_query_rethrottle@200:
       content:
         application/json:
@@ -2980,42 +2949,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              batches:
-                type: number
-              created:
-                type: number
-              deleted:
-                type: number
-              failures:
-                type: array
-                items:
-                  $ref: '../schemas/_common.yaml#/components/schemas/BulkIndexByScrollFailure'
-              noops:
-                type: number
-              retries:
-                $ref: '../schemas/_common.yaml#/components/schemas/Retries'
-              requests_per_second:
-                type: number
-              slice_id:
-                type: number
-              task:
-                $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
-              throttled_millis:
-                $ref: '../schemas/_common.yaml#/components/schemas/EpochTimeUnitMillis'
-              throttled_until_millis:
-                $ref: '../schemas/_common.yaml#/components/schemas/EpochTimeUnitMillis'
-              timed_out:
-                type: boolean
-              took:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
-              total:
-                type: number
-              updated:
-                type: number
-              version_conflicts:
-                type: number
+            oneOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/BulkByScrollResponseBase'
+              - type: object
+                properties:
+                  task:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
     reindex_rethrottle@200:
       content:
         application/json:
@@ -3176,42 +3115,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              batches:
-                type: number
-              failures:
-                type: array
-                items:
-                  $ref: '../schemas/_common.yaml#/components/schemas/BulkIndexByScrollFailure'
-              noops:
-                type: number
-              deleted:
-                type: number
-              requests_per_second:
-                type: number
-              retries:
-                $ref: '../schemas/_common.yaml#/components/schemas/Retries'
-              task:
-                $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
-              timed_out:
-                type: boolean
-              took:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
-              total:
-                type: number
-              updated:
-                type: number
-              version_conflicts:
-                type: number
-              throttled:
-                $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-              throttled_millis:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
-              throttled_until:
-                $ref: '../schemas/_common.yaml#/components/schemas/Duration'
-              throttled_until_millis:
-                $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
+            oneOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/BulkByScrollResponseBase'
+              - type: object
+                properties:
+                  task:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
     update_by_query_rethrottle@200:
       content:
         application/json:
@@ -3573,10 +3482,7 @@ components:
       description: Comma-separated list of specific routing values.
       style: form
       schema:
-        type: array
-        items:
-          type: string
-        description: Comma-separated list of specific routing values.
+        $ref: '../schemas/_common.yaml#/components/schemas/Routing'
       explode: true
     delete::path.id:
       in: path
@@ -3990,7 +3896,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     delete_script::query.timeout:
       in: query
@@ -4452,7 +4358,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     get_source::path.id:
       in: path
@@ -4958,6 +4864,14 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       x-version-added: '2.0'
+    put_script::query.context:
+      name: context
+      in: query
+      description: |-
+        Context in which the script or search template should run.
+        To prevent errors, the API immediately compiles the script or template in this context.
+      schema:
+        type: string
     put_script::query.master_timeout:
       in: query
       name: master_timeout
@@ -4968,7 +4882,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
-      x-version-deprecated: 2.0.0
+      x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
     put_script::query.timeout:
       in: query
@@ -5015,7 +4929,7 @@ components:
       name: search_type
       description: Search operation type
       schema:
-        type: string
+        $ref: '../schemas/_common.yaml#/components/schemas/SearchType'
       style: form
     reindex::query.max_docs:
       name: max_docs

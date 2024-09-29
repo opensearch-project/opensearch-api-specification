@@ -8,8 +8,23 @@ prologues:
       index: books
     request:
       payload: {}
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unassigned
+      wait_for_active_shards: 0
+    request:
+      payload:
+        settings:
+          routing:
+            allocation:
+              require:
+                test: test
 epilogues:
   - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /unassigned
     method: DELETE
     status: [200, 404]
 chapters:
@@ -62,6 +77,26 @@ chapters:
     response:
       status: 200
       content_type: text/plain
+  - synopsis: List information related to indexes with bytes, time and all fields.
+    method: GET
+    path: /_cat/indices
+    parameters:
+      format: json
+      bytes: b
+      time: s
+      h:
+        - '*'
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List information related to indexes with all fields.
+    method: GET
+    path: /_cat/indices
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
   - synopsis: List information related to indexes in different formats (format=json).
     method: GET
     path: /_cat/indices

@@ -1,0 +1,72 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test changes to allocation of shards in a cluster.
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        settings:
+          index.number_of_shards: 1
+          index.number_of_replicas: 0
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: 'true'
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Moneyball, year: 2011}
+        - {create: {_index: movies}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+  # force the shard on node1 in case it was created on node2
+  - path: /_cluster/reroute
+    method: POST
+    request:
+      payload:
+        commands:
+          - move:
+              index: movies
+              shard: 0
+              from_node: opensearch-node2
+              to_node: opensearch-node1
+    status: [200, 400]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Shows the allocation of shards in a cluster.
+    path: /_cluster/reroute
+    method: POST
+    response:
+      status: 200
+  - synopsis: Shows the allocation of shards in a cluster with parameters.
+    path: /_cluster/reroute
+    method: POST
+    parameters:
+      dry_run: true
+      explain: true
+      metric: nodes
+      retry_failed: false
+    response:
+      status: 200
+  - synopsis: Reroute an index shard between nodes.
+    path: /_cluster/reroute
+    method: POST
+    request:
+      payload:
+        commands:
+          - move:
+              index: movies
+              shard: 0
+              from_node: opensearch-node1
+              to_node: opensearch-node2
+    retry:
+      count: 3
+      wait: 1000
+    response:
+      status: 200
+      payload:
+        acknowledged: true

@@ -1,0 +1,29 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test cluster health for an index.
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Returns a status of the health of the cluster for a given index.
+    path: /_cluster/health/{index}
+    method: GET
+    parameters:
+      index: books
+      expand_wildcards: all
+      level: cluster
+      local: false
+      timeout: 10s
+      wait_for_active_shards: 0
+      wait_for_nodes: <2
+      wait_for_events: normal
+      wait_for_no_relocating_shards: false
+      wait_for_no_initializing_shards: false
+    response:
+      status: 200

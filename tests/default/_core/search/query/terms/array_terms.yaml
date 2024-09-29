@@ -1,0 +1,146 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Comprehensive test suite for TermsQuery, including array of terms.
+version: '>= 1.2'
+
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: text
+            genre:
+              type: keyword
+            director_id:
+              type: keyword
+    status: [200]
+
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: The Lion King
+        genre: animation
+    status: [201]
+
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        genre: adventure
+    status: [201]
+
+  - path: /games
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: text
+            genre:
+              type: keyword
+            developer_id:
+              type: keyword
+    status: [200]
+
+  - path: /games/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Monopoly
+        genre: RPG
+    status: [201]
+
+  - path: /games/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Cyberpunk 2077
+        genre: RPG
+    status: [201]
+
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Search using TermsQuery with an array of terms.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: GET
+    request:
+      payload:
+        query:
+          terms:
+            genre: 
+              - adventure
+              - animation
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2
+            relation: eq
+          hits:
+            - _index: movies
+              _score: 1
+              _source:
+                title: The Lion King
+                genre: animation
+            - _index: movies
+              _score: 1
+              _source:
+                title: Beauty and the Beast
+                genre: adventure
+
+  - synopsis: Search using TermsQuery with an array of terms in the games index.
+    path: /{index}/_search
+    parameters:
+      index: games
+    method: GET
+    request:
+      payload:
+        query:
+          terms:
+            genre: 
+              - RPG
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2
+            relation: eq
+          hits:
+            - _index: games
+              _score: 1
+              _source:
+                title: Monopoly
+                genre: RPG
+            - _index: games
+              _score: 1
+              _source:
+                title: Cyberpunk 2077
+                genre: RPG

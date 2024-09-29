@@ -29,13 +29,17 @@ export class ChapterOutput {
   static extract_output_values(response: ActualResponse, output?: Output): EvaluationWithOutput {
     if (!output) return { evaluation: { result: Result.SKIPPED } }
     const chapter_output = new ChapterOutput({})
-    for (const [name, path] of Object.entries(output)) {
+    for (const [name, output_value] of Object.entries(output)) {
+      const [path, default_value] = (typeof output_value === 'string')
+        ? [output_value, undefined]
+        : [output_value.path, output_value.default]
       let value: any
       if (path == 'payload' || path.startsWith('payload.') || path.match(/^payload\[\d*\]/)) {
         if (response.payload === undefined) {
           return { evaluation: { result: Result.ERROR, message: 'No payload found in response, but expected output: ' + path } }
         }
         value = _.get(response, path)
+        if (value === undefined) value = default_value
         if (value === undefined) {
           return { evaluation: { result: Result.ERROR, message: `Expected to find non undefined value at \`${path}\`.` } }
         }

@@ -12,6 +12,7 @@ import { overall_result } from './helpers'
 import * as ansi from './Ansi'
 import TestResults from './TestResults'
 import _ from 'lodash'
+import * as path from 'path'
 
 export interface ResultLogger {
   log: (evaluation: StoryEvaluation) => void
@@ -71,7 +72,7 @@ export class ConsoleResultLogger implements ResultLogger {
   }
 
   #log_story ({ result, full_path, display_path, message, warnings }: StoryEvaluation): void {
-    this.#log_evaluation({ result, message: message ?? full_path }, ansi.cyan(ansi.b(display_path)))
+    this.#log_evaluation({ result, message: message ?? path.relative('.', full_path) }, ansi.cyan(ansi.b(display_path)))
     this.#log_warnings(warnings)
   }
 
@@ -152,8 +153,9 @@ export class ConsoleResultLogger implements ResultLogger {
   }
 
   #maybe_shorten_error_message(message: string | undefined): string | undefined {
-    if (message === undefined || message.length <= 128 || this._verbose) return message
-    const part = message.split(',')[0]
+    const cut_at = 256
+    if (message === undefined || message.length <= cut_at || this._verbose) return message
+    const part = message.substring(0, cut_at)
     return part + (part !== message ? ', ...' : '')
   }
 

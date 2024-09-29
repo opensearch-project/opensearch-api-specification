@@ -83,4 +83,17 @@ describe('JsonSchemaValidator', () => {
 
     expect(validator.validate_schema(invalid_schema)).toEqual('data/required must be array');
   });
+
+  test('constructing with invalid reference schema throws descriptive error', () => {
+    const invalid_options = {
+      reference_schemas: {
+        '#/components/schemas/Invalid': {
+          type: 'string',
+          required: true, // required must be an array
+        }
+      }
+    }
+    expect(() => new JsonSchemaValidator(schema, invalid_options))
+      .toThrow('Failed to add schema #/components/schemas/Invalid ({"type":"string","required":true}):\n\tschema is invalid: data/required must be array');
+  });
 });

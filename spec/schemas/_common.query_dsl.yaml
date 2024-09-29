@@ -65,6 +65,8 @@ components:
             $ref: '#/components/schemas/IntervalsQuery'
           minProperties: 1
           maxProperties: 1
+        knn:
+          $ref: '#/components/schemas/KnnQuery'
         match:
           description: |-
             Returns documents that match a provided text, number, date or boolean value.
@@ -151,8 +153,6 @@ components:
           $ref: '#/components/schemas/ScriptQuery'
         script_score:
           $ref: '#/components/schemas/ScriptScoreQuery'
-        shape:
-          $ref: '#/components/schemas/ShapeQuery'
         simple_query_string:
           $ref: '#/components/schemas/SimpleQueryStringQuery'
         span_containing:
@@ -190,7 +190,9 @@ components:
           minProperties: 1
           maxProperties: 1
         terms:
-          $ref: '#/components/schemas/TermsQuery'
+          description: |-
+            Returns documents that contain one or more exact terms in a provided field.
+          $ref: '#/components/schemas/TermsQueryField'
         terms_set:
           description: |-
             Returns documents that contain a minimum number of exact terms in a provided field.
@@ -207,6 +209,8 @@ components:
             $ref: '#/components/schemas/TextExpansionQuery'
           minProperties: 1
           maxProperties: 1
+        type:
+          $ref: '#/components/schemas/TypeQuery'
         weighted_tokens:
           description: Supports returning text_expansion query results by sending in precomputed tokens with the query.
           type: object
@@ -223,8 +227,8 @@ components:
           maxProperties: 1
         wrapper:
           $ref: '#/components/schemas/WrapperQuery'
-        type:
-          $ref: '#/components/schemas/TypeQuery'
+        xy_shape:
+          $ref: '#/components/schemas/XyShapeQuery'
       minProperties: 1
       maxProperties: 1
     BoolQuery:
@@ -610,6 +614,9 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          additionalProperties:
+            $ref: '_common.yaml#/components/schemas/GeoBounds'
+          minProperties: 1
     GeoExecution:
       type: string
       enum:
@@ -634,11 +641,11 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
-            field:
-              type: object
+          additionalProperties:
+            $ref: '_common.yaml#/components/schemas/GeoLocation'
+          minProperties: 2
           required:
             - distance
-            - field
     GeoPolygonQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -648,6 +655,22 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+    GeoShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    GeoShapeField:
+      type: object
+      properties:
+        shape:
+          $ref: '#/components/schemas/GeoShape'
+        relation: 
+          $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+      required:
+        - shape
     GeoShapeQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -655,6 +678,9 @@ components:
           properties:
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          additionalProperties:
+            $ref: '#/components/schemas/GeoShapeField'
+          minProperties: 1
     HasChildQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -896,6 +922,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
       required:
         - pattern
+    KnnQuery:
+      type: object
+      additionalProperties:
+        $ref: '_common.yaml#/components/schemas/KnnField'
+      minProperties: 1
+      maxProperties: 1
     MatchQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -946,9 +978,7 @@ components:
         - all
         - none
     MatchAllQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
+      $ref: '#/components/schemas/QueryBase'
     MatchBoolPrefixQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1601,13 +1631,6 @@ components:
           required:
             - query
             - script
-    ShapeQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            ignore_unmapped:
-              $ref: '#/components/schemas/IgnoreUnmapped'
     SimpleQueryStringQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1848,10 +1871,34 @@ components:
               type: boolean
           required:
             - value
-    TermsQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
+    TermsQueryField:
+      type: object
+      properties:
+        boost:
+          description:
+            |-
+              A floating-point value that specifies the weight of this field toward the relevance score.
+              Values above 1.0 increase the field’s relevance. Values between 0.0 and 1.0 decrease the field’s relevance.
+              Default is 1.0.
+          type: number
+          format: float
+      additionalProperties:
+        oneOf:
+          - $ref: '#/components/schemas/TermsLookupField'
+          - type: array
+            items:
+              type: string
+    TermsLookupField:
+      type: object
+      properties:
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        path:
+          $ref: '_common.yaml#/components/schemas/Field'
+        routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
     TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1862,7 +1909,6 @@ components:
             minimum_should_match_script:
               $ref: '_common.yaml#/components/schemas/Script'
             terms:
-              description: Array of terms you wish to find in the provided field.
               type: array
               items:
                 type: string
@@ -1896,6 +1942,15 @@ components:
         only_score_pruned_tokens:
           description: Whether to only score pruned tokens, vs only scoring kept tokens.
           type: boolean
+    TypeQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            value:
+              type: string
+          required:
+            - value      
     WeightedTokensQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1938,12 +1993,28 @@ components:
               type: string
           required:
             - query
-    TypeQuery:
+    XyShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    XyShapeField:
+      type: object
+      properties:
+        shape:
+          $ref: '#/components/schemas/XyShape'
+        relation: 
+          $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+      required:
+        - shape
+    XyShapeQuery:
+      x-version-added: '2.4'
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
-          properties:
-            value:
-              type: string
-          required:
-            - value
+          additionalProperties:
+            $ref: '#/components/schemas/XyShapeField'
+          minProperties: 1
+          maxProperties: 1

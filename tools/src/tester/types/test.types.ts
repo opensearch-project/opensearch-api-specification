@@ -7,8 +7,14 @@
 * compatible open source license.
 */
 
+import { Operation } from "./eval.types"
+
 export interface SpecTestCoverage {
-  total_operations_count: number
-  evaluated_operations_count: number,
-  evaluated_paths_pct: number
+  summary: {
+    total_operations_count: number
+    evaluated_operations_count: number
+    evaluated_paths_pct: number
+  },
+  operations: Operation[]
+  evaluated_operations: Operation[]
 }
