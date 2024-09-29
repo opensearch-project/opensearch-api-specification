@@ -166,6 +166,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_plugins/_transform/_preview` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
 - Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
 - Add `mode` and `compression` to k-NN index creation and search, and add `rescore` and `oversample_factor` to k-NN search ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
+- Fixed `/{index}/_search` with aggregations ([#576](https://github.com/opensearch-project/opensearch-api-specification/pull/576))
 
 ### Security
 
