@@ -171,4 +171,4 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Security
 
-[Unreleased]: https://github.com/opensearch-project/opensearch-api-specification/commits/main/
+[Unreleased]: https://github.com/opensearch-project/opensearch-api-specification/commits/main
