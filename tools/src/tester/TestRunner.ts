@@ -70,7 +70,7 @@ export default class TestRunner {
   #collect_story_files (folder: string, file: string, prefix: string): StoryFile[] {
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
-    if (file.startsWith('.') || file == 'docker-compose.yml') {
+    if (file.startsWith('.') || file == 'docker-compose.yml' || file == 'Dockerfile') {
       return []
     } else if (fs.statSync(path).isFile()) {
       const story: Story = read_yaml(path)

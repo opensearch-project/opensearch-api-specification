@@ -1,0 +1,60 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test bulk streaming index endpoint.
+epilogues:
+  - path: /books,movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index.
+    version: '2.17'
+    path: /{index}/_bulk/stream
+    method: POST
+    parameters:
+      index: movies
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {}}
+        - {director: Bennett Miller, title: Moneyball, year: 2011}
+  - synopsis: Delete document in an index.
+    version: '>= 2.17'
+    path: /{index}/_bulk/stream
+    method: PUT
+    parameters:
+      index: movies
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {delete: {_id: invalid}}
+    response:
+      status: 200
+      payload:
+        errors: false
+        items:
+          - delete:
+              _index: movies
+              _id: invalid
+              result: not_found
+              status: 404
+  - synopsis: Bulk index document CRUD.
+    version: '>= 2.17'
+    method: POST
+    path: /{index}/_bulk/stream
+    parameters:
+      index: books
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {update: {_id: book_1392214}}
+        - {doc: {pages: 376}}
+        - {update: {_id: book_1392214}}
+        - {doc: {pages: 376}, _source: true}
+        - {update: {_id: book_1392214}}
+        - {script: {source: ctx._source.pages = 376;}}
+        - {update: {_id: does_not_exist}}
+        - {script: {source: 'ctx.op = "none";'}, scripted_upsert: true, upsert: {pages: 375}}
+        - {delete: {_id: book_1392214}}
+
