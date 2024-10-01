@@ -219,6 +219,35 @@ describe('ChapterReader', () => {
         }]
       ])
     })
+
+    it('sets payload to entire response when payload.error is missing', async () => {
+      const mockPayload = { '_data': '1', 'result': 'updated' };
+      const mockError = {
+        response: {
+          status: 404,
+          headers: {
+            'content-type': 'application/json'
+          },
+          data: JSON.stringify(mockPayload),
+          statusText: 'Not Found'
+        }
+      };
+
+      mocked_axios.request.mockRejectedValue(mockError);
+
+      const result = await reader.read({
+        id: 'id',
+        path: 'path',
+        method: 'POST'
+      }, new StoryOutputs());
+
+      expect(result).toStrictEqual({
+        status: 404,
+        content_type: 'application/json',
+        payload: mockPayload,
+        message: 'Not Found'
+      });
+    });
   })
 
   describe('deserialize_payload', () => {
