@@ -15,6 +15,9 @@ import { to_json } from "../helpers";
 export const HTTP_METHODS: OpenAPIV3.HttpMethods[] = Object.values(OpenAPIV3.HttpMethods)
 export type SchemaObjectType = OpenAPIV3.ArraySchemaObjectType | OpenAPIV3.NonArraySchemaObjectType
 export const SCHEMA_OBJECT_TYPES: SchemaObjectType[] = ['array', 'boolean', 'object', 'number', 'string', 'integer']
+export const SCHEMA_NUMERIC_TYPES: SchemaObjectType[] = ['number', 'integer']
+export const SCHEMA_NUMBER_FORMATS: string[] = ['float', 'double']
+export const SCHEMA_INTEGER_FORMATS: string[] = ['int32', 'int64']
 
 export function is_ref<O extends object> (o: MaybeRef<O>): o is OpenAPIV3.ReferenceObject {
   return o != null && typeof o === 'object' && '$ref' in o
