@@ -22,18 +22,20 @@ components:
                 type: string
         soft_deletes:
           $ref: '#/components/schemas/SoftDeletes'
+        soft_deletes.retention_lease.period:
+          $ref: '_common.yaml#/components/schemas/Duration'
         sort:
           $ref: '#/components/schemas/IndexSegmentSort'
         number_of_shards:
           oneOf:
-            - type: number
+            - type: integer
             - type: string
         number_of_replicas:
           oneOf:
-            - type: number
+            - type: integer
             - type: string
         number_of_routing_shards:
-          type: number
+          type: integer
         check_on_startup:
           $ref: '#/components/schemas/IndexCheckOnStartup'
         codec:
@@ -43,43 +45,59 @@ components:
         load_fixed_bitset_filters_eagerly:
           type: boolean
         hidden:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
         auto_expand_replicas:
           type: string
         merge:
-          $ref: '#/components/schemas/Merge'
+          $ref: '#/components/schemas/IndexSettingsMerge'
+        merge.scheduler.max_thread_count:
+          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
         search:
-          $ref: '#/components/schemas/SettingsSearch'
+          $ref: '#/components/schemas/IndexSettingsSearch'
+        search.idle.after:
+          $ref: '_common.yaml#/components/schemas/Duration'
         refresh_interval:
           $ref: '_common.yaml#/components/schemas/Duration'
         max_result_window:
-          type: number
+          type: integer
         max_inner_result_window:
-          type: number
+          type: integer
         max_rescore_window:
-          type: number
+          type: integer
         max_docvalue_fields_search:
-          type: number
+          type: integer
         max_script_fields:
-          type: number
+          type: integer
         max_ngram_diff:
-          type: number
+          type: integer
         max_shingle_diff:
-          type: number
+          type: integer
         blocks:
           $ref: '#/components/schemas/IndexSettingBlocks'
+        blocks.read_only:
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+        blocks.read_only_allow_delete:
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+        blocks.read:
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+        blocks.write:
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+        blocks.metadata:
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
         max_refresh_listeners:
-          type: number
+          type: integer
         analyze:
-          $ref: '#/components/schemas/SettingsAnalyze'
+          $ref: '#/components/schemas/IndexSettingsAnalyze'
+        analyze.max_token_count:
+          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
         highlight:
-          $ref: '#/components/schemas/SettingsHighlight'
+          $ref: '#/components/schemas/IndexSettingsHighlight'
+        highlight.max_analyzed_offset:
+          type: integer
         max_terms_count:
-          type: number
+          type: integer
         max_regex_length:
-          type: number
+          type: integer
         routing:
           $ref: '#/components/schemas/IndexRouting'
         gc_deletes:
@@ -90,6 +108,8 @@ components:
           $ref: '_common.yaml#/components/schemas/PipelineName'
         lifecycle:
           $ref: '#/components/schemas/IndexSettingsLifecycle'
+        lifecycle.name:
+          $ref: '_common.yaml#/components/schemas/Name'
         provided_name:
           $ref: '_common.yaml#/components/schemas/Name'
         creation_date:
@@ -101,25 +121,29 @@ components:
         version:
           $ref: '#/components/schemas/IndexVersioning'
         verified_before_close:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
         format:
           oneOf:
             - type: string
             - type: number
         max_slices_per_scroll:
-          type: number
+          type: integer
         translog:
           $ref: '#/components/schemas/Translog'
+        translog.durability:
+          $ref: '#/components/schemas/TranslogDurability'
+        translog.flush_threshold_size:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         query_string:
-          $ref: '#/components/schemas/SettingsQueryString'
+          $ref: '#/components/schemas/IndexSettingsQueryString'
+        query_string.lenient:
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
         priority:
           oneOf:
             - type: number
             - type: string
         top_metrics_max_size:
-          type: number
+          type: integer
         analysis:
           $ref: '#/components/schemas/IndexSettingsAnalysis'
         settings:
@@ -127,18 +151,28 @@ components:
         time_series:
           $ref: '#/components/schemas/IndexSettingsTimeSeries'
         queries:
-          $ref: '#/components/schemas/Queries'
+          $ref: '#/components/schemas/IndexSettingsQueries'
         similarity:
-          $ref: '#/components/schemas/SettingsSimilarity'
+          $ref: '#/components/schemas/IndexSettingsSimilarity'
         mapping:
-          $ref: '#/components/schemas/MappingLimitSettings'
-        indexing.slowlog:
-          $ref: '#/components/schemas/IndexingSlowlogSettings'
+          $ref: '#/components/schemas/IndexSettingsMapping'
+        indexing:
+          $ref: '#/components/schemas/IndexSettingsIndexing'
         indexing_pressure:
           $ref: '#/components/schemas/IndexingPressure'
         store:
-          $ref: '#/components/schemas/Storage'
-      additionalProperties: {}
+          $ref: '#/components/schemas/IndexSettingsStore'
+        knn:
+          type: boolean
+        knn.algo_param.ef_search:
+          type: integer
+      additionalProperties:
+        title: custom_settings
+    IndexSettingsIndexing:
+      type: object
+      properties:
+        slowlog:
+          $ref: '#/components/schemas/IndexingSlowlog'
     SoftDeletes:
       type: object
       properties:
@@ -198,42 +232,40 @@ components:
         - checksum
         - 'false'
         - 'true'
-    Merge:
+    IndexSettingsMerge:
       type: object
       properties:
         scheduler:
-          $ref: '#/components/schemas/MergeScheduler'
-    MergeScheduler:
+          $ref: '#/components/schemas/IndexSettingsMergeScheduler'
+    IndexSettingsMergeScheduler:
       type: object
       properties:
         max_thread_count:
           $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
         max_merge_count:
           $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
-    SettingsSearch:
+    IndexSettingsSearch:
       type: object
       properties:
         idle:
           $ref: '#/components/schemas/SearchIdle'
         slowlog:
-          $ref: '#/components/schemas/SlowlogSettings'
+          $ref: '#/components/schemas/SearchSlowlog'
     SearchIdle:
       type: object
       properties:
         after:
           $ref: '_common.yaml#/components/schemas/Duration'
-    SlowlogSettings:
+    SearchSlowlog:
       type: object
       properties:
         level:
           type: string
-        source:
-          type: number
         reformat:
           type: boolean
         threshold:
-          $ref: '#/components/schemas/SlowlogThresholds'
-    SlowlogThresholds:
+          $ref: '#/components/schemas/SearchSlowlogThresholds'
+    SearchSlowlogThresholds:
       type: object
       properties:
         query:
@@ -264,16 +296,16 @@ components:
           $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
         metadata:
           $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
-    SettingsAnalyze:
+    IndexSettingsAnalyze:
       type: object
       properties:
         max_token_count:
           $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
-    SettingsHighlight:
+    IndexSettingsHighlight:
       type: object
       properties:
         max_analyzed_offset:
-          type: number
+          type: integer
     IndexRouting:
       type: object
       properties:
@@ -315,9 +347,7 @@ components:
       type: object
       properties:
         threshold_enabled:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
     IndexRoutingRebalance:
       type: object
       properties:
@@ -344,7 +374,7 @@ components:
             If specified, this is the timestamp used to calculate the index age for its phase transitions. Use this setting
             if you create a new index that contains old data and want to use the original creation date to calculate the index
             age. Specified as a Unix epoch value in milliseconds.
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         parse_origination_date:
           description: |-
             Set to true to parse the origination date from the index name. This origination date is used to calculate the index age
@@ -389,7 +419,9 @@ components:
       type: string
       enum:
         - async
+        - ASYNC
         - request
+        - REQUEST
     TranslogRetention:
       type: object
       properties:
@@ -397,13 +429,11 @@ components:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         age:
           $ref: '_common.yaml#/components/schemas/Duration'
-    SettingsQueryString:
+    IndexSettingsQueryString:
       type: object
       properties:
         lenient:
           $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
-      required:
-        - lenient
     IndexSettingsAnalysis:
       type: object
       properties:
@@ -434,44 +464,46 @@ components:
           $ref: '_common.yaml#/components/schemas/DateTime'
         start_time:
           $ref: '_common.yaml#/components/schemas/DateTime'
-    Queries:
+    IndexSettingsQueries:
       type: object
       properties:
         cache:
-          $ref: '#/components/schemas/CacheQueries'
-    CacheQueries:
+          $ref: '#/components/schemas/IndexSettingsQueriesCache'
+    IndexSettingsQueriesCache:
       type: object
       properties:
         enabled:
           type: boolean
       required:
         - enabled
-    SettingsSimilarity:
+    IndexSettingsSimilarity:
       type: object
       properties:
         bm25:
-          $ref: '#/components/schemas/SettingsSimilarityBm25'
+          $ref: '#/components/schemas/IndexSettingsSimilarityBm25'
         dfi:
-          $ref: '#/components/schemas/SettingsSimilarityDfi'
+          $ref: '#/components/schemas/IndexSettingsSimilarityDfi'
         dfr:
-          $ref: '#/components/schemas/SettingsSimilarityDfr'
+          $ref: '#/components/schemas/IndexSettingsSimilarityDfr'
         ib:
-          $ref: '#/components/schemas/SettingsSimilarityIb'
+          $ref: '#/components/schemas/IndexSettingsSimilarityIb'
         lmd:
-          $ref: '#/components/schemas/SettingsSimilarityLmd'
+          $ref: '#/components/schemas/IndexSettingsSimilarityLmd'
         lmj:
-          $ref: '#/components/schemas/SettingsSimilarityLmj'
+          $ref: '#/components/schemas/IndexSettingsSimilarityLmj'
         scripted_tfidf:
-          $ref: '#/components/schemas/SettingsSimilarityScriptedTfidf'
-    SettingsSimilarityBm25:
+          $ref: '#/components/schemas/IndexSettingsSimilarityScriptedTfidf'
+    IndexSettingsSimilarityBm25:
       type: object
       properties:
         b:
           type: number
+          format: float
         discount_overlaps:
           type: boolean
         k1:
           type: number
+          format: float
         type:
           type: string
           enum:
@@ -481,7 +513,7 @@ components:
         - discount_overlaps
         - k1
         - type
-    SettingsSimilarityDfi:
+    IndexSettingsSimilarityDfi:
       type: object
       properties:
         independence_measure:
@@ -493,7 +525,7 @@ components:
       required:
         - independence_measure
         - type
-    SettingsSimilarityDfr:
+    IndexSettingsSimilarityDfr:
       type: object
       properties:
         after_effect:
@@ -501,7 +533,7 @@ components:
         basic_model:
           $ref: '_common.yaml#/components/schemas/DFRBasicModel'
         normalization:
-          $ref: '_common.yaml#/components/schemas/Normalization'
+          $ref: '_common.yaml#/components/schemas/TermFrequencyNormalization'
         type:
           type: string
           enum:
@@ -511,7 +543,7 @@ components:
         - basic_model
         - normalization
         - type
-    SettingsSimilarityIb:
+    IndexSettingsSimilarityIb:
       type: object
       properties:
         distribution:
@@ -519,7 +551,7 @@ components:
         lambda:
           $ref: '_common.yaml#/components/schemas/IBLambda'
         normalization:
-          $ref: '_common.yaml#/components/schemas/Normalization'
+          $ref: '_common.yaml#/components/schemas/TermFrequencyNormalization'
         type:
           type: string
           enum:
@@ -529,11 +561,12 @@ components:
         - lambda
         - normalization
         - type
-    SettingsSimilarityLmd:
+    IndexSettingsSimilarityLmd:
       type: object
       properties:
         mu:
           type: number
+          format: float
         type:
           type: string
           enum:
@@ -541,11 +574,12 @@ components:
       required:
         - mu
         - type
-    SettingsSimilarityLmj:
+    IndexSettingsSimilarityLmj:
       type: object
       properties:
         lambda:
           type: number
+          format: float
         type:
           type: string
           enum:
@@ -553,7 +587,7 @@ components:
       required:
         - lambda
         - type
-    SettingsSimilarityScriptedTfidf:
+    IndexSettingsSimilarityScriptedTfidf:
       type: object
       properties:
         script:
@@ -565,26 +599,26 @@ components:
       required:
         - script
         - type
-    MappingLimitSettings:
+    IndexSettingsMapping:
       type: object
       properties:
         coerce:
           type: boolean
         total_fields:
-          $ref: '#/components/schemas/MappingLimitSettingsTotalFields'
+          $ref: '#/components/schemas/IndexSettingsMappingLimitTotalFields'
         depth:
-          $ref: '#/components/schemas/MappingLimitSettingsDepth'
+          $ref: '#/components/schemas/IndexSettingsMappingLimitDepth'
         nested_fields:
-          $ref: '#/components/schemas/MappingLimitSettingsNestedFields'
+          $ref: '#/components/schemas/IndexSettingsMappingLimitNestedFields'
         nested_objects:
-          $ref: '#/components/schemas/MappingLimitSettingsNestedObjects'
+          $ref: '#/components/schemas/IndexSettingsMappingLimitNestedObjects'
         field_name_length:
-          $ref: '#/components/schemas/MappingLimitSettingsFieldNameLength'
+          $ref: '#/components/schemas/IndexSettingsMappingLimitFieldNameLength'
         dimension_fields:
-          $ref: '#/components/schemas/MappingLimitSettingsDimensionFields'
+          $ref: '#/components/schemas/IndexSettingsMappingLimitDimensionFields'
         ignore_malformed:
           type: boolean
-    MappingLimitSettingsTotalFields:
+    IndexSettingsMappingLimitTotalFields:
       type: object
       properties:
         limit:
@@ -592,16 +626,18 @@ components:
             The maximum number of fields in an index. Field and object mappings, as well as field aliases count towards this limit.
             The limit is in place to prevent mappings and searches from becoming too large. Higher values can lead to performance
             degradations and memory issues, especially in clusters with a high load or few resources.
-          type: number
-    MappingLimitSettingsDepth:
+          type: integer
+          format: int64
+    IndexSettingsMappingLimitDepth:
       type: object
       properties:
         limit:
           description: |-
             The maximum depth for a field, which is measured as the number of inner objects. For instance, if all fields are defined
             at the root object level, then the depth is 1. If there is one object mapping, then the depth is 2, etc.
-          type: number
-    MappingLimitSettingsNestedFields:
+          type: integer
+          format: int64
+    IndexSettingsMappingLimitNestedFields:
       type: object
       properties:
         limit:
@@ -609,16 +645,18 @@ components:
             The maximum number of distinct nested mappings in an index. The nested type should only be used in special cases, when
             arrays of objects need to be queried independently of each other. To safeguard against poorly designed mappings, this
             setting limits the number of unique nested types per index.
-          type: number
-    MappingLimitSettingsNestedObjects:
+          type: integer
+          format: int64
+    IndexSettingsMappingLimitNestedObjects:
       type: object
       properties:
         limit:
           description: |-
             The maximum number of nested JSON objects that a single document can contain across all nested types. This limit helps
             to prevent out of memory errors when a document contains too many nested objects.
-          type: number
-    MappingLimitSettingsFieldNameLength:
+          type: integer
+          format: int64
+    IndexSettingsMappingLimitFieldNameLength:
       type: object
       properties:
         limit:
@@ -626,22 +664,24 @@ components:
             Setting for the maximum length of a field name. This setting isn't really something that addresses mappings explosion but
             might still be useful if you want to limit the field length. It usually shouldn't be necessary to set this setting. The
             default is okay unless a user starts to add a huge number of fields with really long names. Default is `Long.MAX_VALUE` (no limit).
-          type: number
-    MappingLimitSettingsDimensionFields:
+          type: integer
+          format: int64
+    IndexSettingsMappingLimitDimensionFields:
       type: object
       properties:
         limit:
           description: |-
             [preview] This functionality is in technical preview and may be changed or removed in a future release.
             OpenSearch will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.
-          type: number
-    IndexingSlowlogSettings:
+          type: integer
+          format: int64
+    IndexingSlowlog:
       type: object
       properties:
         level:
           type: string
         source:
-          type: number
+          type: integer
         reformat:
           type: boolean
         threshold:
@@ -666,8 +706,11 @@ components:
             Number of outstanding bytes that may be consumed by indexing requests. When this limit is reached or exceeded,
             the node will reject new coordinating and primary operations. When replica operations consume 1.5x this limit,
             the node will reject new replica operations. Defaults to 10% of the heap.
-          type: number
-    Storage:
+          oneOf:
+            - type: string
+            - type: integer
+              format: int64
+    IndexSettingsStore:
       type: object
       properties:
         type:
@@ -705,10 +748,12 @@ components:
       properties:
         max:
           type: number
+          format: double
         min:
           type: number
+          format: double
         min_segment_size:
-          type: number
+          type: integer
       required:
         - max
         - min

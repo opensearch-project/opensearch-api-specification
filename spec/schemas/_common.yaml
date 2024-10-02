@@ -51,21 +51,29 @@ components:
         - as 2 top_right / bottom_left points
         - as a WKT bounding box.
       oneOf:
-        - $ref: '#/components/schemas/CoordsGeoBounds'
-        - $ref: '#/components/schemas/TopLeftBottomRightGeoBounds'
-        - $ref: '#/components/schemas/TopRightBottomLeftGeoBounds'
-        - $ref: '#/components/schemas/WktGeoBounds'
+        - title: coords
+          $ref: '#/components/schemas/CoordsGeoBounds'
+        - title: tlbr
+          $ref: '#/components/schemas/TopLeftBottomRightGeoBounds'
+        - title: trbl
+          $ref: '#/components/schemas/TopRightBottomLeftGeoBounds'
+        - title: wkt
+          $ref: '#/components/schemas/WktGeoBounds'
     CoordsGeoBounds:
       type: object
       properties:
         top:
           type: number
+          format: double
         bottom:
           type: number
+          format: double
         left:
           type: number
+          format: double
         right:
           type: number
+          format: double
       required:
         - bottom
         - left
@@ -83,27 +91,34 @@ components:
         - top_left
     GeoLocation:
       description: |-
-        A latitude/longitude as a 2 dimensional point. It can be represented in various ways:
+        A latitude/longitude as a 2-dimensional point. It can be represented in various ways:
         - as a `{lat, long}` object
         - as a geo hash value
         - as a `[lon, lat]` array
         - as a string in `"<lat>, <lon>"` or WKT point formats.
       oneOf:
-        - $ref: '#/components/schemas/LatLonGeoLocation'
-        - $ref: '#/components/schemas/GeoHashLocation'
-        - type: array
+        - title: latlon
+          $ref: '#/components/schemas/LatLonGeoLocation'
+        - title: geohash
+          $ref: '#/components/schemas/GeoHashLocation'
+        - title: coords
+          type: array
           items:
             type: number
-        - type: string
+            format: double
+        - title: text
+          type: string
     LatLonGeoLocation:
       type: object
       properties:
         lat:
           description: Latitude
           type: number
+          format: double
         lon:
           description: Longitude
           type: number
+          format: double
       required:
         - lat
         - lon
@@ -141,11 +156,14 @@ components:
         - as a `[x, y]` array
         - as a string in `"x, y"` or WKT point formats.
       oneOf:
-        - $ref: '#/components/schemas/XyCartesianCoordinates'
-        - type: array
+        - title: cartesian
+          $ref: '#/components/schemas/XyCartesianCoordinates'
+        - title: coords
+          type: array
           items:
             type: number
-        - type: string
+        - title: text
+          type: string
     XyCartesianCoordinates:
       x-version-added: '2.4'
       type: object
@@ -419,8 +437,10 @@ components:
       type: string
     Script:
       oneOf:
-        - $ref: '#/components/schemas/InlineScript'
-        - $ref: '#/components/schemas/StoredScriptId'
+        - title: inline
+          $ref: '#/components/schemas/InlineScript'
+        - title: stored
+          $ref: '#/components/schemas/StoredScriptId'
     InlineScript:
       allOf:
         - $ref: '#/components/schemas/ScriptBase'
@@ -499,9 +519,12 @@ components:
             $ref: '#/components/schemas/SortCombinations'
     SortCombinations:
       oneOf:
-        - $ref: '#/components/schemas/Field'
-        - $ref: '#/components/schemas/FieldWithOrder'
-        - $ref: '#/components/schemas/SortOptions'
+        - title: field
+          $ref: '#/components/schemas/Field'
+        - title: field_with_order
+          $ref: '#/components/schemas/FieldWithOrder'
+        - title: options
+          $ref: '#/components/schemas/SortOptions'
     FieldWithOrder:
       type: object
       additionalProperties:
@@ -589,7 +612,7 @@ components:
         filter:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         max_children:
-          type: number
+          type: integer
         nested:
           $ref: '#/components/schemas/NestedSortValue'
         path:
@@ -783,7 +806,8 @@ components:
         - $ref: '#/components/schemas/UnitSeconds'
     UnitSeconds:
       description: Time unit for seconds.
-      type: number
+      type: integer
+      format: int64
     TimeOfDay:
       description: Time of day, expressed as HH:MM:SS.
       type: string
@@ -846,7 +870,7 @@ components:
         Depending on the target language, code generators can keep the union or remove it and leniently parse
         strings to the target type.
       oneOf:
-        - type: number
+        - type: integer
         - type: string
     Stringifiedboolean:
       description: |-
@@ -892,7 +916,7 @@ components:
         - in
         - ine
         - p
-    Normalization:
+    TermFrequencyNormalization:
       type: string
       enum:
         - h1

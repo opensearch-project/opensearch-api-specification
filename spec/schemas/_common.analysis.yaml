@@ -25,6 +25,8 @@ components:
         - $ref: '#/components/schemas/KuromojiAnalyzer'
         - $ref: '#/components/schemas/SnowballAnalyzer'
         - $ref: '#/components/schemas/DutchAnalyzer'
+        - $ref: '#/components/schemas/SmartcnAnalyzer'
+        - $ref: '#/components/schemas/CjkAnalyzer'
     CustomAnalyzer:
       type: object
       properties:
@@ -41,9 +43,9 @@ components:
           items:
             type: string
         position_increment_gap:
-          type: number
+          type: integer
         position_offset_gap:
-          type: number
+          type: integer
         tokenizer:
           type: string
       required:
@@ -59,7 +61,7 @@ components:
         version:
           $ref: '_common.yaml#/components/schemas/VersionString'
         max_output_size:
-          type: number
+          type: integer
         preserve_original:
           type: boolean
         separator:
@@ -218,7 +220,7 @@ components:
           enum:
             - standard
         max_token_length:
-          type: number
+          type: integer
         stopwords:
           $ref: '#/components/schemas/StopWords'
       required:
@@ -347,10 +349,30 @@ components:
           $ref: '#/components/schemas/StopWords'
       required:
         - type
+    SmartcnAnalyzer:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - smartcn
+    CjkAnalyzer:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - cjk
+        stopwords:
+          $ref: '#/components/schemas/StopWords'
+        stopwords_path:
+          type: string
     CharFilter:
       oneOf:
-        - type: string
-        - $ref: '#/components/schemas/CharFilterDefinition'
+        - title: name
+          type: string
+        - title: definition
+          $ref: '#/components/schemas/CharFilterDefinition'
     CharFilterDefinition:
       type: object
       discriminator:
@@ -446,8 +468,10 @@ components:
             - type
     TokenFilter:
       oneOf:
-        - type: string
-        - $ref: '#/components/schemas/TokenFilterDefinition'
+        - title: name
+          type: string
+        - title: definition
+          $ref: '#/components/schemas/TokenFilterDefinition'
     TokenFilterDefinition:
       type: object
       discriminator:
@@ -502,6 +526,7 @@ components:
         - $ref: '#/components/schemas/IcuTransformTokenFilter'
         - $ref: '#/components/schemas/PhoneticTokenFilter'
         - $ref: '#/components/schemas/DictionaryDecompounderTokenFilter'
+        - $ref: '#/components/schemas/SmartcnStopTokenFilter'
     AsciiFoldingTokenFilter:
       allOf:
         - $ref: '#/components/schemas/TokenFilterBase'
@@ -591,9 +616,9 @@ components:
               enum:
                 - edge_ngram
             max_gram:
-              type: number
+              type: integer
             min_gram:
-              type: number
+              type: integer
             side:
               $ref: '#/components/schemas/EdgeNGramSide'
             preserve_original:
@@ -634,7 +659,7 @@ components:
               enum:
                 - fingerprint
             max_output_size:
-              type: number
+              type: integer
             separator:
               type: string
           required:
@@ -678,11 +703,11 @@ components:
             hyphenation_patterns_path:
               type: string
             max_subword_size:
-              type: number
+              type: integer
             min_subword_size:
-              type: number
+              type: integer
             min_word_size:
-              type: number
+              type: integer
             only_longest_match:
               type: boolean
             word_list:
@@ -774,9 +799,9 @@ components:
               enum:
                 - length
             max:
-              type: number
+              type: integer
             min:
-              type: number
+              type: integer
           required:
             - type
     LimitTokenCountTokenFilter:
@@ -835,9 +860,9 @@ components:
               enum:
                 - ngram
             max_gram:
-              type: number
+              type: integer
             min_gram:
-              type: number
+              type: integer
             preserve_original:
               $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
           required:
@@ -1123,7 +1148,7 @@ components:
               enum:
                 - truncate
             length:
-              type: number
+              type: integer
           required:
             - type
     UniqueTokenFilter:
@@ -1246,7 +1271,7 @@ components:
               enum:
                 - kuromoji_stemmer
             minimum_length:
-              type: number
+              type: integer
           required:
             - minimum_length
             - type
@@ -1347,8 +1372,8 @@ components:
     IcuCollationDecomposition:
       type: string
       enum:
-        - identical
-        - no
+        - canonical
+        - 'no'
     IcuCollationStrength:
       type: string
       enum:
@@ -1422,7 +1447,7 @@ components:
               items:
                 $ref: '#/components/schemas/PhoneticLanguage'
             max_code_len:
-              type: number
+              type: integer
             name_type:
               $ref: '#/components/schemas/PhoneticNameType'
             replace:
@@ -1487,6 +1512,17 @@ components:
                 - dictionary_decompounder
           required:
             - type
+    SmartcnStopTokenFilter:
+      allOf:
+        - $ref: '#/components/schemas/TokenFilterBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - smartcn_stop
+          required:
+            - type
     Normalizer:
       type: object
       discriminator:
@@ -1522,8 +1558,10 @@ components:
         - type
     Tokenizer:
       oneOf:
-        - type: string
-        - $ref: '#/components/schemas/TokenizerDefinition'
+        - title: name
+          type: string
+        - title: definition
+          $ref: '#/components/schemas/TokenizerDefinition'
     TokenizerDefinition:
       type: object
       discriminator:
@@ -1543,6 +1581,7 @@ components:
         - $ref: '#/components/schemas/KuromojiTokenizer'
         - $ref: '#/components/schemas/PatternTokenizer'
         - $ref: '#/components/schemas/IcuTokenizer'
+        - $ref: '#/components/schemas/SmartcnTokenizer'
     CharGroupTokenizer:
       allOf:
         - $ref: '#/components/schemas/TokenizerBase'
@@ -1557,7 +1596,7 @@ components:
               items:
                 type: string
             max_token_length:
-              type: number
+              type: integer
           required:
             - tokenize_on_chars
             - type
@@ -1573,9 +1612,9 @@ components:
             custom_token_chars:
               type: string
             max_gram:
-              type: number
+              type: integer
             min_gram:
-              type: number
+              type: integer
             token_chars:
               type: array
               items:
@@ -1604,7 +1643,7 @@ components:
               enum:
                 - keyword
             buffer_size:
-              type: number
+              type: integer
           required:
             - buffer_size
             - type
@@ -1642,9 +1681,9 @@ components:
             custom_token_chars:
               type: string
             max_gram:
-              type: number
+              type: integer
             min_gram:
-              type: number
+              type: integer
             token_chars:
               type: array
               items:
@@ -1710,7 +1749,7 @@ components:
               enum:
                 - standard
             max_token_length:
-              type: number
+              type: integer
           required:
             - type
     UaxEmailUrlTokenizer:
@@ -1723,7 +1762,7 @@ components:
               enum:
                 - uax_url_email
             max_token_length:
-              type: number
+              type: integer
           required:
             - type
     WhitespaceTokenizer:
@@ -1736,7 +1775,7 @@ components:
               enum:
                 - whitespace
             max_token_length:
-              type: number
+              type: integer
           required:
             - type
     KuromojiTokenizer:
@@ -1753,7 +1792,7 @@ components:
             mode:
               $ref: '#/components/schemas/KuromojiTokenizationMode'
             nbest_cost:
-              type: number
+              type: integer
             nbest_examples:
               type: string
             user_dictionary:
@@ -1779,8 +1818,19 @@ components:
             flags:
               type: string
             group:
-              type: number
+              type: integer
             pattern:
               type: string
+          required:
+            - type
+    SmartcnTokenizer:
+      allOf:
+        - $ref: '#/components/schemas/TokenizerBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - smartcn_tokenizer
           required:
             - type
