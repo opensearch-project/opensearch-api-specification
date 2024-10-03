@@ -1369,7 +1369,7 @@ paths:
         '200':
           $ref: '#/components/responses/get@200'
         '404':
-          $ref: '#/components/responses/get@200'
+          $ref: '#/components/responses/get@404'
     head:
       operationId: exists.0
       x-operation-group: exists
@@ -1471,7 +1471,7 @@ paths:
         '200':
           $ref: '#/components/responses/delete@200'
         '404':
-          $ref: '#/components/responses/delete@200'
+          $ref: '#/components/responses/delete@404'
   /{index}/_explain/{id}:
     get:
       operationId: explain.0
@@ -2841,11 +2841,12 @@ components:
               creation_time:
                 type: integer
                 format: int64
-    delete@200:
+    delete@200: &WriteResponseBase
       content:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    delete@404: *WriteResponseBase
     delete_all_pits@200:
       content:
         application/json:
@@ -2929,11 +2930,12 @@ components:
             required:
               - fields
               - indices
-    get@200:
+    get@200: &getResult
       content:
         application/json:
           schema:
             $ref: '../schemas/_core.get.yaml#/components/schemas/GetResult'
+    get@404: *getResult
     get_all_pits@200:
       content:
         application/json:
