@@ -221,19 +221,19 @@ describe('ChapterReader', () => {
     })
 
     it('sets payload to entire response when payload.error is missing', async () => {
-      const mockPayload = { '_data': '1', 'result': 'updated' };
-      const mockError = {
+      const mock_payload = { '_data': '1', 'result': 'updated' };
+      const mock_error = {
         response: {
           status: 404,
           headers: {
             'content-type': 'application/json'
           },
-          data: JSON.stringify(mockPayload),
+          data: JSON.stringify(mock_payload),
           statusText: 'Not Found'
         }
       };
 
-      mocked_axios.request.mockRejectedValue(mockError);
+      mocked_axios.request.mockRejectedValue(mock_error);
 
       const result = await reader.read({
         id: 'id',
@@ -244,7 +244,7 @@ describe('ChapterReader', () => {
       expect(result).toStrictEqual({
         status: 404,
         content_type: 'application/json',
-        payload: mockPayload,
+        payload: mock_payload,
         message: 'Not Found'
       });
     });
