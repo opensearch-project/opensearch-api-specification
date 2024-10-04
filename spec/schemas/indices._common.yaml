@@ -784,65 +784,6 @@ components:
             If `true`, the alias is hidden.
             All indices for the alias must have the same `is_hidden` value.
           type: boolean
-    DataStreamLifecycleWithRollover:
-      type: object
-      properties:
-        data_retention:
-          $ref: '_common.yaml#/components/schemas/Duration'
-        downsampling:
-          $ref: '#/components/schemas/DataStreamLifecycleDownsampling'
-        rollover:
-          $ref: '#/components/schemas/DataStreamLifecycleRolloverConditions'
-    DataStreamLifecycleDownsampling:
-      type: object
-      properties:
-        rounds:
-          description: The list of downsampling rounds to execute as part of this downsampling configuration
-          type: array
-          items:
-            $ref: '#/components/schemas/DownsamplingRound'
-      required:
-        - rounds
-    DownsamplingRound:
-      type: object
-      properties:
-        after:
-          $ref: '_common.yaml#/components/schemas/Duration'
-        config:
-          $ref: '#/components/schemas/DownsampleConfig'
-      required:
-        - after
-        - config
-    DownsampleConfig:
-      type: object
-      properties:
-        fixed_interval:
-          $ref: '_common.yaml#/components/schemas/DurationLarge'
-      required:
-        - fixed_interval
-    DataStreamLifecycleRolloverConditions:
-      type: object
-      properties:
-        min_age:
-          $ref: '_common.yaml#/components/schemas/Duration'
-        max_age:
-          type: string
-        min_docs:
-          type: number
-        max_docs:
-          type: number
-        min_size:
-          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
-        max_size:
-          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
-        min_primary_shard_size:
-          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
-        max_primary_shard_size:
-          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
-        min_primary_shard_docs:
-          type: number
-        max_primary_shard_docs:
-          type: number
     IndexState:
       type: object
       properties:
@@ -858,8 +799,6 @@ components:
           $ref: '#/components/schemas/IndexSettings'
         data_stream:
           $ref: '_common.yaml#/components/schemas/DataStreamName'
-        lifecycle:
-          $ref: '#/components/schemas/DataStreamLifecycle'
     Alias:
       type: object
       properties:
@@ -879,13 +818,6 @@ components:
           $ref: '_common.yaml#/components/schemas/Routing'
         search_routing:
           $ref: '_common.yaml#/components/schemas/Routing'
-    DataStreamLifecycle:
-      type: object
-      properties:
-        data_retention:
-          $ref: '_common.yaml#/components/schemas/Duration'
-        downsampling:
-          $ref: '#/components/schemas/DataStreamLifecycleDownsampling'
     DataStream:
       type: object
       properties:
@@ -914,8 +846,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataStreamIndex'
-        lifecycle:
-          $ref: '#/components/schemas/DataStreamLifecycleWithRollover'
         name:
           $ref: '_common.yaml#/components/schemas/DataStreamName'
         replicated:
@@ -1015,8 +945,6 @@ components:
           $ref: '_common.mapping.yaml#/components/schemas/TypeMapping'
         settings:
           $ref: '#/components/schemas/IndexSettings'
-        lifecycle:
-          $ref: '#/components/schemas/DataStreamLifecycleWithRollover'
     IndexTemplateDataStreamConfiguration:
       type: object
       properties:
