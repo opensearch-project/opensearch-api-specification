@@ -589,10 +589,10 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
         size:
           description: The maximum number of hits to return per `inner_hits`.
-          type: number
+          type: integer
         from:
           description: Inner hit starting document offset.
-          type: number
+          type: integer
         collapse:
           $ref: '#/components/schemas/FieldCollapse'
         docvalue_fields:
@@ -637,9 +637,7 @@ components:
                 $ref: '#/components/schemas/InnerHits'
         max_concurrent_group_searches:
           description: The number of concurrent requests allowed to retrieve the inner_hits per group
-          type: number
-        collapse:
-          $ref: '#/components/schemas/FieldCollapse'
+          type: integer
       required:
         - field
     Highlight:
@@ -755,6 +753,12 @@ components:
         tags_schema:
           $ref: '#/components/schemas/HighlighterTagsSchema'
     HighlighterType:
+      oneOf:
+        - title: builtin
+          $ref: '#/components/schemas/BuiltinHighlighterType'
+        - title: custom
+          type: string
+    BuiltinHighlighterType:
       type: string
       enum:
         - fvh
@@ -782,11 +786,14 @@ components:
     SourceConfig:
       description: Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
       oneOf:
-        - type: boolean
-        - type: array
+        - title: fetch
+          type: boolean
+        - title: includes
+          type: array
           items:
             $ref: '_common.yaml#/components/schemas/Field' 
-        - $ref: '#/components/schemas/SourceFilter'
+        - title: filter
+          $ref: '#/components/schemas/SourceFilter'
     SourceFilter:
       type: object
       properties:

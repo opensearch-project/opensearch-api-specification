@@ -111,7 +111,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added better context for non-2XX responses when `--verbose` is used with the tester tool ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Locked testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
 - Replaced nullable with `null` type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
-- Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
+- Split test suite ([#472](https://github.com/opensearch-project/opensearch-api-specification/pull/472))
 - Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 - Adjusted indices, shards cat API to test against unassigned indices ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 - Corrected Sort schema for `/_search`'s request body ([#529](https://github.com/opensearch-project/opensearch-api-specification/issues/529))
@@ -130,6 +130,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358))
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
+- Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
  
 ### Fixed
 
@@ -169,7 +170,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
 - Add `mode` and `compression` to k-NN index creation and search, and add `rescore` and `oversample_factor` to k-NN search ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
 - Fixed `/{index}/_search` with aggregations ([#576](https://github.com/opensearch-project/opensearch-api-specification/pull/576))
-- Fixed inaccurate numeric type ([#597](https://github.com/opensearch-project/opensearch-api-specification/pull/597))([#598](https://github.com/opensearch-project/opensearch-api-specification/pull/598))
+- Fixed inaccurate numeric type ([#597](https://github.com/opensearch-project/opensearch-api-specification/pull/597))([#598](https://github.com/opensearch-project/opensearch-api-specification/pull/598))([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Fixed mapping and analysis types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 
 ### Security
 
