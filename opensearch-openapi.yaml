@@ -9248,6 +9248,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.delete@200'
+        '404':
+          $ref: '#/components/responses/indices.delete@404'
     get:
       operationId: indices.get.0
       x-operation-group: indices.get
@@ -10109,6 +10111,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/delete@200'
+        '404':
+          $ref: '#/components/responses/delete@404'
     get:
       operationId: get.0
       x-operation-group: get
@@ -10137,6 +10141,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/get@200'
+        '404':
+          $ref: '#/components/responses/get@404'
     head:
       operationId: exists.0
       x-operation-group: exists
@@ -27475,6 +27481,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_common:WriteResponseBase'
+    delete@404:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common:WriteResponseBase'
     exists_source@200:
       content:
         application/json: {}
@@ -27758,6 +27769,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_core.get:GetResult'
+    get@404:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_core.get:GetResult'
     index@200:
       content:
         application/json:
@@ -27913,6 +27929,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_common:IndicesResponseBase'
+    indices.delete@404:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/indices._common:IndexErrorCause'
     indices.exists_alias@200:
       content:
         application/json: {}
@@ -31380,6 +31401,10 @@ components:
           type: number
         total:
           type: number
+    _common:ResourceType:
+      type: string
+      enum:
+        - index_or_alias
     _common:Result:
       type: string
       enum:
@@ -47361,6 +47386,32 @@ components:
         - checksum
         - 'false'
         - 'true'
+    indices._common:IndexErrorCause:
+      type: object
+      properties:
+        type:
+          description: The type of error
+          type: string
+        reason:
+          description: A human-readable explanation of the error, in english
+          type: string
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/indices._common:IndexErrorCause'
+        index:
+          $ref: '#/components/schemas/_common:IndexName'
+        index_uuid:
+          $ref: '#/components/schemas/_common:Uuid'
+        resource.id:
+          $ref: '#/components/schemas/_common:IndexName'
+        resource.type:
+          $ref: '#/components/schemas/_common:ResourceType'
+      required:
+        - type
+      additionalProperties:
+        title: metadata
+        description: Additional details about the error.
     indices._common:IndexingPressure:
       type: object
       properties:
