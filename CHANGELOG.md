@@ -99,6 +99,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_plugins/_ml/agents/_register`, `/_plugins/_ml/connectors/_create`, `DELETE /_plugins/_ml/agents/{agent_id}`, `DELETE /_plugins/_ml/connectors/{connector_id}` ([#228](https://github.com/opensearch-project/opensearch-api-specification/issues/228))
 - Added the `context` query param to the `put_script` APIs ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Added `persian_stem` filter ([#592](https://github.com/opensearch-project/opensearch-api-specification/pull/592))
+- Added `404` response for `DELETE /{index}`, `GET /{index}/_doc/{id}`, `DELETE /{index}/_doc/{id}` ([#589](https://github.com/opensearch-project/opensearch-api-specification/pull/589))
 
 ### Changed
 
