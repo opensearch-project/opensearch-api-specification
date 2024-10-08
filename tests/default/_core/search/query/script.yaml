@@ -1,0 +1,78 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test ScriptQuery functionality.
+
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: keyword
+            year:
+              type: integer
+
+  - path: /movies/_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - index:
+            _id: 1
+        - title: The Lion King
+          year: 1994
+        - index:
+            _id: 2
+        - title: Beauty and the Beast
+          year: 1991
+        - index:
+            _id: 3
+        - title: Aladdin
+          year: 1992
+        - index:
+            _id: 4
+        - title: The Little Mermaid
+          year: 1989
+    status: [200]
+
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Search using ScriptQuery with filtering to movies with odd years.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        query:
+          bool:
+            filter:
+              script:
+                script: "doc['year'].value % 2 == 1"
+        sort:
+          - year:
+              order: desc
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2
+          hits:
+            - _id: '2'
+              _source:
+                title: Beauty and the Beast
+                year: 1991
+            - _id: '4'
+              _source:
+                title: The Little Mermaid
+                year: 1989
