@@ -101,6 +101,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `persian_stem` filter ([#592](https://github.com/opensearch-project/opensearch-api-specification/pull/592))
 - Added `404` response for `DELETE /{index}`, `GET /{index}/_doc/{id}`, `DELETE /{index}/_doc/{id}` ([#589](https://github.com/opensearch-project/opensearch-api-specification/pull/589))
 - Added ability to pass `InlineScript` as a simple string ([#605](https://github.com/opensearch-project/opensearch-api-specification/pull/605))
+- Added `config_id` and `config_id_list` to `/_plugins/_notifications/configs` query parameters ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
 
 ### Changed
 
@@ -174,6 +175,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/{index}/_search` with aggregations ([#576](https://github.com/opensearch-project/opensearch-api-specification/pull/576))
 - Fixed inaccurate numeric type ([#597](https://github.com/opensearch-project/opensearch-api-specification/pull/597))([#598](https://github.com/opensearch-project/opensearch-api-specification/pull/598))([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 - Fixed mapping and analysis types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Fixed `RestStatus` responses in `DELETE /_plugins/_notifications/configs/{config_id}` ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
 
 ### Security
 
