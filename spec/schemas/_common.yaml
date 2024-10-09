@@ -451,22 +451,31 @@ components:
         - title: stored
           $ref: '#/components/schemas/StoredScriptId'
     InlineScript:
-      allOf:
-        - $ref: '#/components/schemas/ScriptBase'
-        - type: object
-          properties:
-            lang:
-              $ref: '#/components/schemas/ScriptLanguage'
-            options:
-              type: object
-              additionalProperties:
-                type: string
-            source:
-              description: The script source.
-              type: string
-          required:
-            - source
+      oneOf:
+        - title: source
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/ScriptBase'
+            - type: object
+              properties:
+                lang:
+                  $ref: '#/components/schemas/ScriptLanguage'
+                options:
+                  type: object
+                  additionalProperties:
+                    type: string
+                source:
+                  description: The script source.
+                  type: string
+              required:
+                - source
     ScriptLanguage:
+      anyOf:
+        - title: builtin
+          $ref: '#/components/schemas/BuiltinScriptLanguage'
+        - title: custom
+          type: string
+    BuiltinScriptLanguage:
       type: string
       enum:
         - expression
