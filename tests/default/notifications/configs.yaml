@@ -1,0 +1,97 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test listing notification configs.
+version: '>= 2.0'
+chapters:
+  - synopsis: Create a channel configuration.
+    path: /_plugins/_notifications/configs
+    method: POST
+    request:
+      payload:
+        config_id: webhook-configuration
+        config:
+          name: Notifications Channel
+          description: Default notifications channel.
+          config_type: webhook
+          is_enabled: true
+          webhook:
+            url: http://webhook:8080/
+    response:
+      status: 200
+  - synopsis: Update a channel configuration.
+    path: /_plugins/_notifications/configs/{config_id}
+    method: PUT
+    parameters:
+      config_id: webhook-configuration
+    request:
+      payload:
+        config:
+          name: Notifications Channel
+          config_type: webhook
+          is_enabled: true
+          webhook:
+            url: http://webhook:8080/
+    response:
+      status: 200
+  - synopsis: Retrieve a list of all notification configurations.
+    path: /_plugins/_notifications/configs
+    method: GET
+    retry:
+      count: 2
+    response:
+      status: 200
+      payload:
+        config_list:
+          - config_id: webhook-configuration
+  - synopsis: Retrieve a list of all notification configurations filtered by config ID.
+    path: /_plugins/_notifications/configs
+    method: GET
+    parameters:
+      config_type: webhook
+    response:
+      status: 200
+      payload:
+        config_list:
+          - config_id: webhook-configuration
+  - synopsis: Retrieve a notification configuration by config ID (path).
+    path: /_plugins/_notifications/configs/{config_id}
+    method: GET
+    parameters:
+      config_id: webhook-configuration
+    response:
+      status: 200
+      payload:
+        config_list:
+          - config_id: webhook-configuration
+  - synopsis: Retrieve a notification configuration by config ID (query).
+    path: /_plugins/_notifications/configs
+    method: GET
+    parameters:
+      config_id: webhook-configuration
+    response:
+      status: 200
+      payload:
+        config_list:
+          - config_id: webhook-configuration
+  - synopsis: Retrieve a notification configuration by config ID list (query).
+    path: /_plugins/_notifications/configs
+    method: GET
+    parameters:
+      config_id_list:
+        - webhook-configuration
+    response:
+      status: 200
+      payload:
+        config_list:
+          - config_id: webhook-configuration
+  - synopsis: Delete a channel configuration.
+    path: /_plugins/_notifications/configs/{config_id}
+    method: DELETE
+    parameters:
+      config_id: webhook-configuration
+    response:
+      status: 200
+epilogues:
+  - path: /_plugins/_notifications/configs/webhook-configuration
+    method: DELETE
+    status: [200,404]
