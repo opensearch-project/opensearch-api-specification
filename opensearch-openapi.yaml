@@ -29959,6 +29959,13 @@ components:
     _common:BatchSize:
       type: integer
       format: int64
+    _common:BuiltinScriptLanguage:
+      type: string
+      enum:
+        - expression
+        - java
+        - mustache
+        - painless
     _common:BulkByScrollFailure:
       anyOf:
         - $ref: '#/components/schemas/_common:BulkItemResponseFailure'
@@ -30712,21 +30719,24 @@ components:
       required:
         - found
     _common:InlineScript:
-      allOf:
-        - $ref: '#/components/schemas/_common:ScriptBase'
-        - type: object
-          properties:
-            lang:
-              $ref: '#/components/schemas/_common:ScriptLanguage'
-            options:
-              type: object
-              additionalProperties:
-                type: string
-            source:
-              description: The script source.
-              type: string
-          required:
-            - source
+      oneOf:
+        - title: source
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common:ScriptBase'
+            - type: object
+              properties:
+                lang:
+                  $ref: '#/components/schemas/_common:ScriptLanguage'
+                options:
+                  type: object
+                  additionalProperties:
+                    type: string
+                source:
+                  description: The script source.
+                  type: string
+              required:
+                - source
     _common:Ip:
       type: string
     _common:KnnField:
@@ -31486,12 +31496,11 @@ components:
       required:
         - script
     _common:ScriptLanguage:
-      type: string
-      enum:
-        - expression
-        - java
-        - mustache
-        - painless
+      anyOf:
+        - title: builtin
+          $ref: '#/components/schemas/_common:BuiltinScriptLanguage'
+        - title: custom
+          type: string
     _common:ScriptSort:
       type: object
       properties:
