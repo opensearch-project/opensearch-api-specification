@@ -1,0 +1,79 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _snapshot/{repository}/snapshot endpoints.
+epilogues:
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+prologues:
+  - path: /_snapshot/{repository}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+chapters:
+  - synopsis: Get information about a repository.
+    path: /_snapshot/{repository}
+    method: GET
+    parameters:
+      repository: my-fs-repository
+    response:
+      status: 200
+      payload:
+        my-fs-repository:
+          type: fs
+          settings:
+            location: /tmp/opensearch/repo
+  - synopsis: Create a snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: "*"
+        ignore_unavailable: true
+        include_global_state: false
+        partial: true
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot       
+  - synopsis: Get information about a snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: GET
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-test-snapshot
+  - synopsis: Get information about a snapshot with human-readble parameter.
+    path: /_snapshot/{repository}/{snapshot}
+    method: GET
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      human: true
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-test-snapshot
