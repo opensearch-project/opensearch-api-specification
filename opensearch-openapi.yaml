@@ -29735,23 +29735,12 @@ components:
           schema:
             type: object
             properties:
-              responses:
-                type: array
-                items:
-                  $ref: '#/components/schemas/snapshot.get:SnapshotResponseItem'
               snapshots:
                 type: array
                 items:
                   $ref: '#/components/schemas/snapshot._common:SnapshotInfo'
-              total:
-                description: The total number of snapshots that match the request when ignoring size limit or after query parameter.
-                type: number
-              remaining:
-                description: The number of remaining snapshots that were not returned due to size limits and that can be fetched by additional requests using the next field value.
-                type: number
             required:
-              - remaining
-              - total
+              - snapshots
     snapshot.restore@200:
       content:
         application/json:
@@ -55092,31 +55081,6 @@ components:
       required:
         - file_count
         - size_in_bytes
-    snapshot._common:IndexDetails:
-      type: object
-      properties:
-        shard_count:
-          type: number
-        size:
-          $ref: '#/components/schemas/_common:HumanReadableByteCount'
-        size_in_bytes:
-          $ref: '#/components/schemas/_common:ByteCount'
-        max_segments_per_shard:
-          type: number
-      required:
-        - max_segments_per_shard
-        - shard_count
-        - size_in_bytes
-    snapshot._common:InfoFeatureState:
-      type: object
-      properties:
-        feature_name:
-          type: string
-        indices:
-          $ref: '#/components/schemas/_common:Indices'
-      required:
-        - feature_name
-        - indices
     snapshot._common:Repository:
       type: object
       properties:
@@ -55248,16 +55212,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/_common:IndexName'
-        index_details:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/snapshot._common:IndexDetails'
         metadata:
           $ref: '#/components/schemas/_common:Metadata'
+        pinned_timestamp:
+          $ref: '#/components/schemas/_common:EpochTimeUnitMillis'
         reason:
           type: string
-        repository:
-          $ref: '#/components/schemas/_common:Name'
+        remote_store_index_shallow_copy:
+          type: boolean
         snapshot:
           $ref: '#/components/schemas/_common:Name'
         shards:
@@ -55274,10 +55236,6 @@ components:
           $ref: '#/components/schemas/_common:VersionString'
         version_id:
           $ref: '#/components/schemas/_common:VersionNumber'
-        feature_states:
-          type: array
-          items:
-            $ref: '#/components/schemas/snapshot._common:InfoFeatureState'
       required:
         - data_streams
         - snapshot
@@ -55372,19 +55330,6 @@ components:
       required:
         - deleted_blobs
         - deleted_bytes
-    snapshot.get:SnapshotResponseItem:
-      type: object
-      properties:
-        repository:
-          $ref: '#/components/schemas/_common:Name'
-        snapshots:
-          type: array
-          items:
-            $ref: '#/components/schemas/snapshot._common:SnapshotInfo'
-        error:
-          $ref: '#/components/schemas/_common:ErrorCause'
-      required:
-        - repository
     snapshot.restore:SnapshotRestore:
       type: object
       properties:
