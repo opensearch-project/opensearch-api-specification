@@ -102,6 +102,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `404` response for `DELETE /{index}`, `GET /{index}/_doc/{id}`, `DELETE /{index}/_doc/{id}` ([#589](https://github.com/opensearch-project/opensearch-api-specification/pull/589))
 - Added ability to pass `InlineScript` as a simple string ([#605](https://github.com/opensearch-project/opensearch-api-specification/pull/605))
 - Added `config_id` and `config_id_list` to `/_plugins/_notifications/configs` query parameters ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
+- Added documentation & test for `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
 
 ### Changed
 
