@@ -1,0 +1,101 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _snapshot/{repository}/{snapshot}/_restore endpoints.
+epilogues:
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+  - path: /restore-index-wait-true
+    method: DELETE
+    status: [200, 404]
+  - path: /restore-index-wait-false
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_snapshot/{repository}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+  - path: /restore-index-wait-true
+    method: PUT
+  - path: /restore-index-wait-false
+    method: PUT
+  - path: /_snapshot/{repository}/{snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices:
+          - restore-index-wait-false
+          - restore-index-wait-true
+        ignore_unavailable: true
+        include_global_state: false
+        partial: true
+  - path: /restore-index-wait-true
+    method: DELETE
+    status: [200, 404]
+  - path: /restore-index-wait-false
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Restore snapshot with wait_for_completion true.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: restore-index-wait-true
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot
+  - synopsis: Restore snapshot with wait_for_completion false.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: false
+    request:
+      payload:
+        indices: restore-index-wait-false
+    response:
+      status: 200
+      payload:
+        accepted: true
+  - synopsis: Wait finish async restore.
+    path: /{index}/_recovery
+    warnings:
+      multiple-paths-detected: false
+    method: GET
+    parameters:
+      index: restore-index-wait-false
+    response:
+      status: 200
+      payload:
+        restore-index-wait-false:
+          shards:
+            - stage: DONE
+              type: SNAPSHOT
+    retry:
+      count: 3
