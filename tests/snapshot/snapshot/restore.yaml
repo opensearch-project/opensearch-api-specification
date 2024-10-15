@@ -13,10 +13,10 @@ epilogues:
     status: [200, 404]
     parameters:
       repository: my-fs-repository
-  - path: /restore-index-wait-true
+  - path: /movies
     method: DELETE
     status: [200, 404]
-  - path: /restore-index-wait-false
+  - path: /books
     method: DELETE
     status: [200, 404]
 prologues:
@@ -29,9 +29,9 @@ prologues:
         type: fs
         settings:
           location: /tmp/opensearch/repo
-  - path: /restore-index-wait-true
+  - path: /movies
     method: PUT
-  - path: /restore-index-wait-false
+  - path: /books
     method: PUT
   - path: /_snapshot/{repository}/{snapshot}
     method: PUT
@@ -42,15 +42,15 @@ prologues:
     request:
       payload:
         indices:
-          - restore-index-wait-false
-          - restore-index-wait-true
+          - books
+          - movies
         ignore_unavailable: true
         include_global_state: false
         partial: true
-  - path: /restore-index-wait-true
+  - path: /movies
     method: DELETE
     status: [200, 404]
-  - path: /restore-index-wait-false
+  - path: /books
     method: DELETE
     status: [200, 404]
 chapters:
@@ -63,7 +63,7 @@ chapters:
       wait_for_completion: true
     request:
       payload:
-        indices: restore-index-wait-true
+        indices: movies
     response:
       status: 200
       payload:
@@ -78,7 +78,7 @@ chapters:
       wait_for_completion: false
     request:
       payload:
-        indices: restore-index-wait-false
+        indices: books
     response:
       status: 200
       payload:
@@ -89,11 +89,11 @@ chapters:
       multiple-paths-detected: false
     method: GET
     parameters:
-      index: restore-index-wait-false
+      index: books
     response:
       status: 200
       payload:
-        restore-index-wait-false:
+        books:
           shards:
             - stage: DONE
               type: SNAPSHOT

@@ -177,7 +177,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed mapping and analysis types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 - Fixed `RestStatus` responses in `DELETE /_plugins/_notifications/configs/{config_id}` ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
 - Fixed `GET /_snapshot_/{repository}/{snapshot}` ([#608](https://github.com/opensearch-project/opensearch-api-specification/pull/608))
-- Fixed `POST /_snapshot/{repository}/{snapshot}/_restore` when wait_for_completion is false and `GET /{index}/_recovery` ([#611](https://github.com/opensearch-project/opensearch-api-specification/pull/611))
+- Fixed `POST /_snapshot/{repository}/{snapshot}/_restore` when `wait_for_completion` is `false` and `GET /{index}/_recovery` ([#611](https://github.com/opensearch-project/opensearch-api-specification/pull/611))
 
 ### Security
 
