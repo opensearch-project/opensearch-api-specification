@@ -118,6 +118,7 @@ export default [
     },
     rules: {
       'yml/no-empty-document': 'off',
+      'yml/no-empty-mapping-value': 'off',
       'yml/quotes': ['error', { prefer: 'single', avoidEscape: true }],
       'yml/plain-scalar': ['error', 'always'],
       'yml/no-trailing-zeros': 'error',
