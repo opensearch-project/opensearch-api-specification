@@ -25422,8 +25422,6 @@ components:
                 $ref: '#/components/schemas/_common:Fields'
               index_filter:
                 $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
-              runtime_mappings:
-                $ref: '#/components/schemas/_common.mapping:RuntimeFields'
             description: An index filter specified with the Query DSL
     flow_framework.create:
       content:
@@ -25652,8 +25650,6 @@ components:
                 $ref: '#/components/schemas/_common.mapping:RoutingField'
               _source:
                 $ref: '#/components/schemas/_common.mapping:SourceField'
-              runtime:
-                $ref: '#/components/schemas/_common.mapping:RuntimeFields'
             description: The mapping definition
       required: true
     indices.put_settings:
@@ -26397,8 +26393,6 @@ components:
                 $ref: '#/components/schemas/_common:Fields'
               pit:
                 $ref: '#/components/schemas/_core.search:PointInTimeReference'
-              runtime_mappings:
-                $ref: '#/components/schemas/_common.mapping:RuntimeFields'
               stats:
                 description: |-
                   Stats groups to associate with the search.
@@ -38569,53 +38563,6 @@ components:
           type: boolean
       required:
         - required
-    _common.mapping:RuntimeField:
-      type: object
-      properties:
-        fetch_fields:
-          description: For type `lookup`
-          type: array
-          items:
-            $ref: '#/components/schemas/_common.mapping:RuntimeFieldFetchFields'
-        format:
-          description: A custom format for `date` type runtime fields.
-          type: string
-        input_field:
-          $ref: '#/components/schemas/_common:Field'
-        target_field:
-          $ref: '#/components/schemas/_common:Field'
-        target_index:
-          $ref: '#/components/schemas/_common:IndexName'
-        script:
-          $ref: '#/components/schemas/_common:Script'
-        type:
-          $ref: '#/components/schemas/_common.mapping:RuntimeFieldType'
-      required:
-        - type
-    _common.mapping:RuntimeFieldFetchFields:
-      type: object
-      properties:
-        field:
-          $ref: '#/components/schemas/_common:Field'
-        format:
-          type: string
-      required:
-        - field
-    _common.mapping:RuntimeFields:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/_common.mapping:RuntimeField'
-    _common.mapping:RuntimeFieldType:
-      type: string
-      enum:
-        - boolean
-        - date
-        - double
-        - geo_point
-        - ip
-        - keyword
-        - long
-        - lookup
     _common.mapping:ScaledFloatNumberProperty:
       allOf:
         - $ref: '#/components/schemas/_common.mapping:NumberPropertyBase'
@@ -38860,10 +38807,6 @@ components:
           $ref: '#/components/schemas/_common.mapping:SizeField'
         _source:
           $ref: '#/components/schemas/_common.mapping:SourceField'
-        runtime:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/_common.mapping:RuntimeField'
         enabled:
           type: boolean
         _data_stream_timestamp:
@@ -41548,8 +41491,6 @@ components:
         version:
           description: When `true`, returns the document version as part of the hit.
           type: boolean
-        runtime_mappings:
-          $ref: '#/components/schemas/_common.mapping:RuntimeFields'
         seq_no_primary_term:
           description: |-
             When `true`, returns the sequence number and primary term of the last modification.
@@ -41989,8 +41930,6 @@ components:
           $ref: '#/components/schemas/_common:Sort'
         _source:
           $ref: '#/components/schemas/_common:Fields'
-        runtime_mappings:
-          $ref: '#/components/schemas/_common.mapping:RuntimeFields'
       required:
         - index
     _core.scripts_painless_execute:PainlessContextSetup:
@@ -43261,8 +43200,6 @@ components:
           $ref: '#/components/schemas/_common:Fields'
         pit:
           $ref: '#/components/schemas/_core.search:PointInTimeReference'
-        runtime_mappings:
-          $ref: '#/components/schemas/_common.mapping:RuntimeFields'
         stats:
           description: |-
             Stats groups to associate with the search.
@@ -46593,11 +46530,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/cluster.stats:FieldTypes'
-        runtime_field_types:
-          description: Contains statistics about runtime field data types used in selected nodes.
-          type: array
-          items:
-            $ref: '#/components/schemas/cluster.stats:RuntimeFieldTypes'
         total_field_count:
           description: Total number of fields in all non-system indices.
           type: number
@@ -46723,67 +46655,6 @@ components:
         - total_in_bytes
         - used_in_bytes
         - used_percent
-    cluster.stats:RuntimeFieldTypes:
-      type: object
-      properties:
-        chars_max:
-          description: Maximum number of characters for a single runtime field script.
-          type: number
-        chars_total:
-          description: Total number of characters for the scripts that define the current runtime field data type.
-          type: number
-        count:
-          description: Number of runtime fields mapped to the field data type in selected nodes.
-          type: number
-        doc_max:
-          description: Maximum number of accesses to doc_values for a single runtime field script
-          type: number
-        doc_total:
-          description: Total number of accesses to doc_values for the scripts that define the current runtime field data type.
-          type: number
-        index_count:
-          description: Number of indices containing a mapping of the runtime field data type in selected nodes.
-          type: number
-        lang:
-          description: Script languages used for the runtime fields scripts.
-          type: array
-          items:
-            type: string
-        lines_max:
-          description: Maximum number of lines for a single runtime field script.
-          type: number
-        lines_total:
-          description: Total number of lines for the scripts that define the current runtime field data type.
-          type: number
-        name:
-          $ref: '#/components/schemas/_common:Name'
-        scriptless_count:
-          description: Number of runtime fields that don't declare a script.
-          type: number
-        shadowed_count:
-          description: Number of runtime fields that shadow an indexed field.
-          type: number
-        source_max:
-          description: Maximum number of accesses to _source for a single runtime field script.
-          type: number
-        source_total:
-          description: Total number of accesses to _source for the scripts that define the current runtime field data type.
-          type: number
-      required:
-        - chars_max
-        - chars_total
-        - count
-        - doc_max
-        - doc_total
-        - index_count
-        - lang
-        - lines_max
-        - lines_total
-        - name
-        - scriptless_count
-        - shadowed_count
-        - source_max
-        - source_total
     cluster.stats:StatsResponseBase:
       allOf:
         - $ref: '#/components/schemas/nodes._common:NodesResponseBase'
