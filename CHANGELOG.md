@@ -134,6 +134,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358))
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
  
 ### Fixed
 
