@@ -2768,6 +2768,22 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ingest.processor_grok@200'
+  /_insights/top_queries:
+    get:
+      operationId: insights.top_queries.0
+      x-operation-group: insights.top_queries
+      x-version-added: '1.0'
+      description: Retrieves the top queries based on the given metric type (latency, CPU, or memory).
+      parameters:
+        - $ref: '#/components/parameters/insights.top_queries::query.type'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/insights.top_queries@200'
   /_mapping:
     get:
       operationId: indices.get_mapping.0
@@ -21197,6 +21213,17 @@ components:
         type: boolean
         default: false
       style: form
+    insights.top_queries::query.type:
+      name: type
+      in: query
+      required: true
+      description: Get top n queries by a specific metric.
+      schema:
+        type: string
+        enum:
+          - cpu
+          - latency
+          - memory
     ism.add_policy::path.index:
       name: index
       in: path
@@ -28341,6 +28368,11 @@ components:
                   $ref: '#/components/schemas/ingest.simulate:PipelineSimulation'
             required:
               - docs
+    insights.top_queries@200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/insights._common:TopQueriesResponse'
     ism.add_policy@200:
       content:
         application/json:
@@ -50234,6 +50266,225 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/_common:ActionStatusOptions'
+    insights._common:Measurement:
+      type: object
+      properties:
+        number:
+          type: integer
+        count:
+          type: integer
+        aggregationType:
+          type: string
+    insights._common:Measurements:
+      type: object
+      properties:
+        latency:
+          type: object
+          $ref: '#/components/schemas/insights._common:Measurement'
+        cpu:
+          type: object
+          $ref: '#/components/schemas/insights._common:Measurement'
+        memory:
+          type: object
+          $ref: '#/components/schemas/insights._common:Measurement'
+    insights._common:Source:
+      type: object
+      properties:
+        aggregations:
+          description: Defines the aggregations that are run as part of the search request.
+          type: object
+        collapse:
+          $ref: '#/components/schemas/_core.search:FieldCollapse'
+        explain:
+          description: If true, returns detailed information about score computation as part of a hit.
+          type: boolean
+        ext:
+          description: Configuration of search extensions defined by OpenSearch plugins.
+          type: object
+          additionalProperties:
+            type: object
+        from:
+          description: |-
+            Starting document offset.
+            Needs to be non-negative.
+            By default, you cannot page through more than 10,000 hits using the `from` and `size` parameters.
+            To page through more hits, use the `search_after` parameter.
+          type: number
+        highlight:
+          $ref: '#/components/schemas/_core.search:Highlight'
+        track_total_hits:
+          $ref: '#/components/schemas/_core.search:TrackHits'
+        indices_boost:
+          description: Boosts the _score of documents from specified indices.
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: number
+        docvalue_fields:
+          description: |-
+            Array of wildcard (`*`) patterns.
+            The request returns doc values for field names matching these patterns in the `hits.fields` property of the response.
+          type: array
+          items:
+            $ref: '#/components/schemas/_common.query_dsl:FieldAndFormat'
+        min_score:
+          description: |-
+            Minimum `_score` for matching documents.
+            Documents with a lower `_score` are not included in the search results.
+          type: number
+        post_filter:
+          $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
+        profile:
+          description: |-
+            Set to `true` to return detailed timing information about the execution of individual components in a search request.
+            NOTE: This is a debugging tool and adds significant overhead to search execution.
+          type: boolean
+        query:
+          $ref: '#/components/schemas/_common.query_dsl:QueryContainer'
+        script_fields:
+          description: Retrieve a script evaluation (based on different fields) for each hit.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/_common:ScriptField'
+        search_after:
+          $ref: '#/components/schemas/_common:SortResults'
+        size:
+          description: |-
+            The number of hits to return.
+            By default, you cannot page through more than 10,000 hits using the `from` and `size` parameters.
+            To page through more hits, use the `search_after` parameter.
+          type: number
+        slice:
+          $ref: '#/components/schemas/_common:SlicedScroll'
+        sort:
+          $ref: '#/components/schemas/_common:Sort'
+        _source:
+          $ref: '#/components/schemas/_core.search:SourceConfig'
+        fields:
+          description: |-
+            Array of wildcard (`*`) patterns.
+            The request returns values for field names matching these patterns in the `hits.fields` property of the response.
+          type: array
+          items:
+            $ref: '#/components/schemas/_common.query_dsl:FieldAndFormat'
+        suggest:
+          $ref: '#/components/schemas/_core.search:Suggester'
+        terminate_after:
+          description: |-
+            Maximum number of documents to collect for each shard.
+            If a query reaches this limit, OpenSearch terminates the query early.
+            OpenSearch collects documents before sorting.
+            Use with caution.
+            OpenSearch applies this parameter to each shard handling the request.
+            When possible, let OpenSearch perform early termination automatically.
+            Avoid specifying this parameter for requests that target data streams with backing indices across multiple data tiers.
+            If set to `0` (default), the query does not terminate early.
+          type: integer
+          format: int32
+        timeout:
+          description: |-
+            Specifies the period of time to wait for a response from each shard.
+            If no response is received before the timeout expires, the request fails and returns an error.
+            Defaults to no timeout.
+          type: string
+        track_scores:
+          description: If true, calculate and return document scores, even if the scores are not used for sorting.
+          type: boolean
+        version:
+          description: If true, returns document version as part of a hit.
+          type: boolean
+        seq_no_primary_term:
+          description: If `true`, returns sequence number and primary term of the last modification of each hit.
+          type: boolean
+        stored_fields:
+          $ref: '#/components/schemas/_common:Fields'
+        pit:
+          $ref: '#/components/schemas/_core.search:PointInTimeReference'
+        stats:
+          description: |-
+            Stats groups to associate with the search.
+            Each group maintains a statistics aggregation for its associated searches.
+            You can retrieve these stats using the indices stats API.
+          type: array
+          items:
+            type: string
+    insights._common:TaskResourceUsage:
+      type: object
+      properties:
+        cpu_time_in_nanos:
+          type: integer
+          description: The CPU time used in nanoseconds.
+        memory_in_bytes:
+          type: integer
+          description: The memory usage in bytes.
+    insights._common:TaskResourceUsages:
+      type: object
+      properties:
+        action:
+          type: string
+          description: The action type of the task.
+        taskId:
+          type: integer
+          description: The task ID.
+        parentTaskId:
+          type: integer
+          description: The parent task ID.
+        nodeId:
+          type: string
+          description: The node ID where the task was executed.
+        taskResourceUsage:
+          type: object
+          $ref: '#/components/schemas/insights._common:TaskResourceUsage'
+    insights._common:TopQueriesResponse:
+      type: object
+      properties:
+        top_queries:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/insights._common:TopQuery'
+      required:
+        - top_queries
+    insights._common:TopQuery:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          description: The timestamp of the query execution.
+        total_shards:
+          type: integer
+          description: The total number of shards involved in the query.
+        task_resource_usages:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/insights._common:TaskResourceUsages'
+        query_hashcode:
+          type: string
+          description: The hash code of the query.
+        labels:
+          type: object
+          description: Additional labels for the query.
+        search_type:
+          type: string
+          description: The search query type (e.g., query_then_fetch).
+        source:
+          type: object
+          $ref: '#/components/schemas/insights._common:Source'
+        node_id:
+          type: string
+          description: The node ID associated with the query.
+        indices:
+          type: array
+          items:
+            type: string
+          description: The indices involved in the query.
+        phase_latency_map:
+          type: object
+        measurements:
+          type: object
+          $ref: '#/components/schemas/insights._common:Measurements'
     ism._common:Action:
       type: object
       description: An action to perform.
