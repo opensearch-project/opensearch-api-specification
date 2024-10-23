@@ -100,6 +100,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added the `context` query param to the `put_script` APIs ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Added `persian_stem` filter ([#592](https://github.com/opensearch-project/opensearch-api-specification/pull/592))
 - Added `404` response for `DELETE /{index}`, `GET /{index}/_doc/{id}`, `DELETE /{index}/_doc/{id}` ([#589](https://github.com/opensearch-project/opensearch-api-specification/pull/589))
+- Added ability to pass `InlineScript` as a simple string ([#605](https://github.com/opensearch-project/opensearch-api-specification/pull/605))
+- Added `config_id` and `config_id_list` to `/_plugins/_notifications/configs` query parameters ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
+- Added a release workflow triggered on a tag ([#635](https://github.com/opensearch-project/opensearch-api-specification/pull/635))
+- Added API spec for query insights plugin ([#625](https://github.com/opensearch-project/opensearch-api-specification/pull/625))
 
 ### Changed
 
@@ -133,6 +137,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358))
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
  
 ### Fixed
 
@@ -172,8 +177,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
 - Add `mode` and `compression` to k-NN index creation and search, and add `rescore` and `oversample_factor` to k-NN search ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
 - Fixed `/{index}/_search` with aggregations ([#576](https://github.com/opensearch-project/opensearch-api-specification/pull/576))
-- Fixed inaccurate numeric type ([#597](https://github.com/opensearch-project/opensearch-api-specification/pull/597))([#598](https://github.com/opensearch-project/opensearch-api-specification/pull/598))([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Fixed inaccurate numeric type ([#597](https://github.com/opensearch-project/opensearch-api-specification/pull/597))([#598](https://github.com/opensearch-project/opensearch-api-specification/pull/598))([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))([#612](https://github.com/opensearch-project/opensearch-api-specification/pull/612))
 - Fixed mapping and analysis types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Fixed `RestStatus` responses in `DELETE /_plugins/_notifications/configs/{config_id}` ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
+- Fixed `GET /_snapshot_/{repository}/{snapshot}` ([#608](https://github.com/opensearch-project/opensearch-api-specification/pull/608))
+- Fixed `POST /_snapshot/{repository}/{snapshot}/_restore` when `wait_for_completion` is `false` and `GET /{index}/_recovery` ([#611](https://github.com/opensearch-project/opensearch-api-specification/pull/611))
 
 ### Security
 

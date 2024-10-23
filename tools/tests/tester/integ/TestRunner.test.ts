@@ -53,4 +53,10 @@ describe('story_files', () => {
       story_file => story_file.display_path
     )).not.toContain('nodes/plugins/docker-compose.yml')
   })
+
+  test('does not contain a python script', () => {
+    expect(test_runner.story_files('tests/plugins/notifications').map(
+      story_file => story_file.display_path
+    )).not.toContain('nodes/plugins/server.py')
+  })
 })

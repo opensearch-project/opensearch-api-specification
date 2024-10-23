@@ -383,7 +383,7 @@ components:
             type: object
             properties:
               accepted:
-                description: Equals `true` if the snapshot was accepted. Present when the request had `wait_for_completion` set to `false`
+                description: Returns `true` if the snapshot was accepted. Present when the request had `wait_for_completion` set to `false`.
                 type: boolean
               snapshot:
                 $ref: '../schemas/snapshot._common.yaml#/components/schemas/SnapshotInfo'
@@ -408,23 +408,12 @@ components:
           schema:
             type: object
             properties:
-              responses:
-                type: array
-                items:
-                  $ref: '../schemas/snapshot.get.yaml#/components/schemas/SnapshotResponseItem'
               snapshots:
                 type: array
                 items:
                   $ref: '../schemas/snapshot._common.yaml#/components/schemas/SnapshotInfo'
-              total:
-                description: The total number of snapshots that match the request when ignoring size limit or after query parameter.
-                type: number
-              remaining:
-                description: The number of remaining snapshots that were not returned due to size limits and that can be fetched by additional requests using the next field value.
-                type: number
             required:
-              - remaining
-              - total
+              - snapshots
     snapshot.get_repository@200:
       content:
         application/json:
@@ -438,10 +427,11 @@ components:
           schema:
             type: object
             properties:
+              accepted:
+                description: Returns `true` if the restore was accepted. Present when the request had `wait_for_completion` set to `false`.
+                type: boolean
               snapshot:
                 $ref: '../schemas/snapshot.restore.yaml#/components/schemas/SnapshotRestore'
-            required:
-              - snapshot
     snapshot.status@200:
       content:
         application/json:

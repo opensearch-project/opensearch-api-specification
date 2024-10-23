@@ -1,50 +1,94 @@
 openapi: 3.1.0
 info:
-  title: Schemas of asynchronous_search._common category
-  description: Schemas of asynchronous_search._common category
+  title: Schemas of query insights
+  description: Schemas of query insights
   version: 1.0.0
 paths: {}
 components:
   schemas:
-    ResponseBody:
+    TopQueriesResponse:
       type: object
       properties:
-        id:
-          type: string
-        state:
-          type: string
-        start_time_in_millis: 
-          type: number
-        expiration_time_in_millis:
-          type: number
-        took: 
-          type: number
-        response:
-          $ref: '_core.search.yaml#/components/schemas/ResponseBody'
-    StatsResponse:
+        top_queries:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/TopQuery'
+      required:
+        - top_queries
+    TopQuery:
       type: object
       properties:
-        _nodes:
-          $ref: '_common.yaml#/components/schemas/NodeStatistics'
-        cluster_name:
+        timestamp:
+          type: integer
+          description: The timestamp of the query execution.
+        total_shards:
+          type: integer
+          description: The total number of shards involved in the query.
+        task_resource_usages:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/TaskResourceUsages'
+        # eslint-disable-next-line @cspell/spellchecker
+        query_hashcode:
           type: string
-        nodes:
+          description: The hash code of the query.
+        labels:
           type: object
-          additionalProperties:
-            $ref: '#/components/schemas/NodesStats'
-    NodesStats:
+          description: Additional labels for the query.
+        search_type:
+          type: string
+          description: The search query type (e.g., query_then_fetch).
+        source:
+          type: object
+          $ref: '#/components/schemas/Source'
+        node_id:
+          type: string
+          description: The node ID associated with the query.
+        indices:
+          type: array
+          items:
+            type: string
+          description: The indices involved in the query.
+        phase_latency_map:
+          type: object
+        measurements:
+          type: object
+          $ref: '#/components/schemas/Measurements'
+    TaskResourceUsages:
       type: object
       properties:
-        asynchronous_search_stats:
-          $ref: '#/components/schemas/AsynchronousSearchStats'
-    Search:
+        action:
+          type: string
+          description: The action type of the task.
+        taskId:
+          type: integer
+          description: The task ID.
+        parentTaskId:
+          type: integer
+          description: The parent task ID.
+        nodeId:
+          type: string
+          description: The node ID where the task was executed.
+        taskResourceUsage:
+          type: object
+          $ref: '#/components/schemas/TaskResourceUsage'
+    TaskResourceUsage:
+      type: object
+      properties:
+        cpu_time_in_nanos:
+          type: integer
+          description: The CPU time used in nanoseconds.
+        memory_in_bytes:
+          type: integer
+          description: The memory usage in bytes.
+    Source:
       type: object
       properties:
         aggregations:
           description: Defines the aggregations that are run as part of the search request.
           type: object
-          additionalProperties:
-            $ref: '_common.aggregations.yaml#/components/schemas/AggregationContainer'
         collapse:
           $ref: '_core.search.yaml#/components/schemas/FieldCollapse'
         explain:
@@ -80,8 +124,6 @@ components:
           type: array
           items:
             $ref: '_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
-        rank:
-          $ref: '_common.yaml#/components/schemas/RankContainer'
         min_score:
           description: |-
             Minimum `_score` for matching documents.
@@ -163,25 +205,24 @@ components:
           type: array
           items:
             type: string
-      description: The search definition using the Query DSL.
-    AsynchronousSearchStats:
+    Measurement:
       type: object
       properties:
-        submitted:
+        number:
           type: integer
-        initialized:
+        count:
           type: integer
-        search_failed:
-          type: integer
-        search_completed:
-          type: integer
-        rejected:
-          type: integer
-        persist_failed:
-          type: integer
-        cancelled:
-          type: integer
-        running_current:
-          type: integer
-        persisted:
-          type: integer
+        aggregationType:
+          type: string
+    Measurements:
+      type: object
+      properties:
+        latency:
+          type: object
+          $ref: '#/components/schemas/Measurement'
+        cpu:
+          type: object
+          $ref: '#/components/schemas/Measurement'
+        memory:
+          type: object
+          $ref: '#/components/schemas/Measurement'
