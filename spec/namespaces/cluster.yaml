@@ -331,6 +331,39 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cluster.stats@200'
+  /_cluster/stats/{metric}/nodes/{node_id}:
+    get:
+      operationId: cluster.stats.2
+      x-operation-group: cluster.stats
+      x-version-added: '2.18'
+      description: Returns high-level overview of cluster statistics.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/
+      parameters:
+        - $ref: '#/components/parameters/cluster.stats::path.metric'
+        - $ref: '#/components/parameters/cluster.stats::path.node_id'
+        - $ref: '#/components/parameters/cluster.stats::query.flat_settings'
+        - $ref: '#/components/parameters/cluster.stats::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.stats@200'
+  /_cluster/stats/{metric}/{index_metric}/nodes/{node_id}:
+    get:
+      operationId: cluster.stats.3
+      x-operation-group: cluster.stats
+      x-version-added: '2.18'
+      description: Returns high-level overview of cluster statistics.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/
+      parameters:
+        - $ref: '#/components/parameters/cluster.stats::path.index_metric'
+        - $ref: '#/components/parameters/cluster.stats::path.metric'
+        - $ref: '#/components/parameters/cluster.stats::path.node_id'
+        - $ref: '#/components/parameters/cluster.stats::query.flat_settings'
+        - $ref: '#/components/parameters/cluster.stats::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.stats@200'
   /_cluster/voting_config_exclusions:
     post:
       operationId: cluster.post_voting_config_exclusions.0
@@ -1380,6 +1413,27 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
+    cluster.stats::path.index_metric:
+      in: path
+      name: index_metric
+      description: Limit the information returned for indexes metric to the specific index metrics. It can be used only if indexes (or all) metric is specified.
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: '../schemas/cluster.stats.yaml#/components/schemas/IndexMetric'
+      style: simple
+    cluster.stats::path.metric:
+      in: path
+      name: metric
+      description: Limit the information returned to the specified metrics
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: '../schemas/cluster.stats.yaml#/components/schemas/Metric'
+      style:
+        simple
     cluster.stats::path.node_id:
       in: path
       name: node_id
