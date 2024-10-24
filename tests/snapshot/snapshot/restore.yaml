@@ -19,6 +19,12 @@ epilogues:
   - path: /books
     method: DELETE
     status: [200, 404]
+  - path: /stories
+    method: DELETE
+    status: [200, 404]
+  - path: /stories_restored
+    method: DELETE
+    status: [200, 404]
 prologues:
   - path: /_snapshot/{repository}
     method: PUT
@@ -33,6 +39,16 @@ prologues:
     method: PUT
   - path: /books
     method: PUT
+  - path: /stories
+    method: PUT
+  - path: /_aliases
+    method: POST
+    request:
+      payload:
+        actions:
+          - add:
+              index: stories
+              alias: stories_alias
   - path: /_snapshot/{repository}/{snapshot}
     method: PUT
     parameters:
@@ -44,6 +60,7 @@ prologues:
         indices:
           - books
           - movies
+          - stories
         ignore_unavailable: true
         include_global_state: false
         partial: true
@@ -51,6 +68,9 @@ prologues:
     method: DELETE
     status: [200, 404]
   - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /stories
     method: DELETE
     status: [200, 404]
 chapters:
@@ -99,3 +119,39 @@ chapters:
               type: SNAPSHOT
     retry:
       count: 3
+  - synopsis: Restore snapshot with rename_pattern and rename_replacement.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: stories
+        rename_pattern: '^(.*)$'
+        rename_replacement: $1_restored
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot
+  - synopsis: Restore snapshot with rename_alias_pattern and rename_alias_replacement.
+    version: '>= 2.18'
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: stories
+        include_aliases: true
+        rename_alias_pattern: '^(.*)$'
+        rename_alias_replacement: $1_restored
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot
