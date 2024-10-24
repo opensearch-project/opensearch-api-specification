@@ -105,6 +105,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a release workflow triggered on a tag ([#635](https://github.com/opensearch-project/opensearch-api-specification/pull/635))
 - Added API spec for query insights plugin ([#625](https://github.com/opensearch-project/opensearch-api-specification/pull/625))
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
+- Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
 
 ### Changed
 
