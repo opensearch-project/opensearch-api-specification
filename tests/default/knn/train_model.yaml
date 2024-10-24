@@ -41,6 +41,9 @@ prologues:
         - {index: {_index: movies, _id: '9'}}
         - {recommendation_vector: [9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5], duration: 8.9}
     status: [200]
+  - method: POST
+    path: /_refresh
+    status: [200]
 epilogues:
   - path: /movies
     method: DELETE
@@ -71,3 +74,17 @@ chapters:
       status: 200
     output:
       test_model_id: payload.model_id
+  - synopsis: Wait for the model to get trained.
+    warnings:
+      multiple-paths-detected: false
+    method: GET
+    path: /_plugins/_knn/models/{model_id}
+    parameters:
+      model_id: ${train_model.test_model_id}
+    retry:
+      count: 3
+    response:
+      status: 200
+      payload:
+        model_id: ${train_model.test_model_id}
+        state: created
