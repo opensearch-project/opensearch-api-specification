@@ -26,7 +26,8 @@
     - [Comment on PR](#comment-on-pr)
     - [Test Tools (Unit)](#test-tools-unit)
     - [Test Tools (Integration)](#test-tools-integration)
-    - [Validate Spec](#validate-spec)
+    - [Validate Spec (Lint)](#validate-spec-lint)
+    - [Validate Spec (Python)](#validate-spec-python)
 <!-- TOC -->
 
 # Developer Guide
@@ -375,6 +376,10 @@ This workflow runs on PRs to invoke the [tools' unit tests](tools/tests), upload
 
 This workflow runs on PRs to invoke the [tools' integration tests](tools/tests) that require a running instance of OpenSearch to ensure there are no breakages in behavior.
 
-### [Validate Spec](.github/workflows/validate-spec.yml)
+### [Validate Spec (Lint)](.github/workflows/validate-spec-lint.yml)
 
 This workflow runs on PRs to invoke the [spec linter](#spec-linter) and ensure the multi-file spec is correct and follows the design guidelines.
+
+### [Validate Spec (Python)](.github/workflows/validate-spec-py.yml)
+
+This workflow runs on PRs to invoke the [Python openapi-spec-validator](https://pypi.org/project/openapi-spec-validator/) to ensure that the resulting spec can be loaded by Python tools.
