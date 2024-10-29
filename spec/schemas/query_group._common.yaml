@@ -15,7 +15,7 @@ components:
           type: string
         resiliency_mode:
           type: string
-          enum: [ "soft", "enforced", "monitor" ]
+          enum: [enforced, monitor,soft]
         updated_at:
           type: integer
           format: int64
@@ -45,8 +45,8 @@ components:
         - _id
         - name
         - resiliency_mode
-        - updated_at
         - resource_limits
+        - updated_at
     QueryGroupCreate:
       type: object
       properties:
@@ -54,7 +54,7 @@ components:
           type: string
         resiliency_mode:
           type: string
-          enum: [ "soft", "enforced", "monitor" ]
+          enum: [enforced, monitor,soft]
         resource_limits:
           anyOf:
             - type: object
@@ -86,13 +86,15 @@ components:
       properties:
         resiliency_mode:
           type: string
-          enum: [ "soft", "enforced", "monitor" ]
+          enum: [enforced, monitor,soft]
         resource_limits:
-          type: object
-          properties:
-            memory:
-              type: number
-              format: double
-            cpu:
-              type: number
-              format: double
+          $ref: '#/components/schemas/ResourceLimitsSchema'
+    ResourceLimitsSchema:
+      type: object
+      properties:
+        memory:
+          type: number
+          format: double
+        cpu:
+          type: number
+          format: double
