@@ -1,0 +1,67 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: This story tests all endpoints relevant to QueryGroups, from creation to deletion.
+
+prologues:
+  - path: /_wlm/query_group
+    version: '>= 2.17'
+    method: PUT
+    request:
+      payload:
+        name: analytics
+        resource_limits:
+          memory: 0.1
+        resiliency_mode: monitor
+    status: [200]
+  - path: /_wlm/query_group
+    version: '>= 2.17'
+    method: PUT
+    request:
+      payload:
+        name: analytics2
+        resource_limits:
+          memory: 0.15
+          cpu: 0.05
+        resiliency_mode: monitor
+    status: [200]
+
+chapters:
+  - synopsis: Update the QueryGroup named `analytics2`, with resiliency_mode to be enforced and memory to be 0.25 and cpu to be 0.25.
+    version: '>= 2.17'
+    path: /_wlm/query_group/{name}
+    method: PUT
+    parameters:
+      name: analytics2
+    request:
+      payload:
+        resource_limits:
+          memory: 0.25
+          cpu: 0.25
+        resiliency_mode: enforced
+    response:
+      status: 200
+  - synopsis: Get the QueryGroup named `analytics2`.
+    version: '>= 2.17'
+    path: /_wlm/query_group/{name}
+    method: GET
+    parameters:
+      name: analytics2
+    response:
+      status: 200
+      payload:
+        query_groups:
+        - name: analytics2
+          resource_limits:
+            memory: 0.25
+            cpu: 0.25
+          resiliency_mode: enforced
+
+epilogues:
+  - path: /_wlm/query_group/analytics
+    version: '>= 2.17'
+    method: DELETE
+    status: [200]
+  - path: /_wlm/query_group/analytics2
+    version: '>= 2.17'
+    method: DELETE
+    status: [200]

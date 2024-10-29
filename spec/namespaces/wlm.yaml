@@ -1,0 +1,127 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Workload Management API
+  description: OpenSearch Workload Management API
+  version: 1.0.0
+paths:
+  /_wlm/query_group:
+    get:
+      operationId: query_group.get.0
+      x-operation-group: query_group.get
+      x-version-added: '2.17'
+      description: Gets the specified QueryGroup or get all if no name is provided.
+      responses:
+        '200':
+          $ref: '#/components/responses/query_group.get@200'
+    put:
+      operationId: query_group.create.0
+      x-operation-group: query_group.create
+      x-version-added: '2.17'
+      description: Creates a specified query group.
+      requestBody:
+        $ref: '#/components/requestBodies/query_group.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/query_group.create@200'
+  /_wlm/query_group/{name}:
+    get:
+      operationId: query_group.get.1
+      x-operation-group: query_group.get
+      x-version-added: '2.17'
+      description: Gets the specified QueryGroup or get all if no name is provided.
+      parameters:
+        - $ref: '#/components/parameters/query_group.get::path.name'
+      responses:
+        '200':
+          $ref: '#/components/responses/query_group.get@200'
+    put:
+      operationId: query_group.update.0
+      x-operation-group: query_group.update
+      x-version-added: '2.17'
+      description: Updates a specified query group.
+      parameters:
+        - $ref: '#/components/parameters/query_group.update::path.name'
+      requestBody:
+        $ref: '#/components/requestBodies/query_group.update'
+      responses:
+        '200':
+          $ref: '#/components/responses/query_group.update@200'
+    delete:
+      operationId: query_group.delete.1
+      x-operation-group: query_group.delete
+      x-version-added: '2.17'
+      description: Deletes the specified QueryGroups or delete all if no name is provided.
+      parameters:
+        - $ref: '#/components/parameters/query_group.delete::path.name'
+      responses:
+        '200':
+          $ref: '#/components/responses/query_group.delete@200'
+components:
+  requestBodies:
+    query_group.create:
+      content:
+        application/json:
+          schema:
+              $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupCreate'
+      required: true
+    query_group.update:
+      content:
+        application/json:
+          schema:
+              $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupUpdate'
+      required: true
+  responses:
+    query_group.create@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupResponse'
+    query_group.update@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupResponse'
+    query_group.delete@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    query_group.get@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query_groups:
+                type: array
+                items:
+                  $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupResponse'
+  parameters:
+    query_group.update::path.name:
+      name: name
+      in: path
+      description: QueryGroup name.
+      schema:
+        type: string
+      required: true
+    query_group.delete::path.name:
+      name: name
+      in: path
+      description: QueryGroup name.
+      schema:
+        type: string
+      required: true
+    query_group.get::path.name:
+      name: name
+      in: path
+      description: QueryGroup name.
+      schema:
+        type: string
+      required: true
