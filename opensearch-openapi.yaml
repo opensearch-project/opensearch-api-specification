@@ -9187,6 +9187,85 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.validate_query@200'
+  /_wlm/query_group:
+    get:
+      operationId: wlm.get_query_group.0
+      x-operation-group: wlm.get_query_group
+      x-version-added: '2.17'
+      description: Gets the specified QueryGroup or get all if no name is provided.
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.get_query_group@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+    put:
+      operationId: wlm.create_query_group.0
+      x-operation-group: wlm.create_query_group
+      x-version-added: '2.17'
+      description: Creates the specified query group.
+      requestBody:
+        $ref: '#/components/requestBodies/wlm.create_query_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.create_query_group@200'
+      parameters:
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+  /_wlm/query_group/{name}:
+    delete:
+      operationId: wlm.delete_query_group.0
+      x-operation-group: wlm.delete_query_group
+      x-version-added: '2.17'
+      description: Deletes the specified QueryGroup.
+      parameters:
+        - $ref: '#/components/parameters/wlm.delete_query_group::path.name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.delete_query_group@200'
+    get:
+      operationId: wlm.get_query_group.1
+      x-operation-group: wlm.get_query_group
+      x-version-added: '2.17'
+      description: Gets the specified QueryGroup or get all if no name is provided.
+      parameters:
+        - $ref: '#/components/parameters/wlm.get_query_group::path.name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.get_query_group@200'
+    put:
+      operationId: wlm.update_query_group.0
+      x-operation-group: wlm.update_query_group
+      x-version-added: '2.17'
+      description: Updates the specified query group.
+      parameters:
+        - $ref: '#/components/parameters/wlm.update_query_group::path.name'
+        - $ref: '#/components/parameters/_global::query.pretty'
+        - $ref: '#/components/parameters/_global::query.human'
+        - $ref: '#/components/parameters/_global::query.error_trace'
+        - $ref: '#/components/parameters/_global::query.source'
+        - $ref: '#/components/parameters/_global::query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/wlm.update_query_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.update_query_group@200'
   /{alias}/_rollover:
     post:
       operationId: indices.rollover.0
@@ -25257,6 +25336,27 @@ components:
         $ref: '#/components/schemas/_common:WaitForActiveShards'
       style: form
       x-default: '1'
+    wlm.delete_query_group::path.name:
+      name: name
+      in: path
+      description: QueryGroup name.
+      schema:
+        type: string
+      required: true
+    wlm.get_query_group::path.name:
+      name: name
+      in: path
+      description: QueryGroup name.
+      schema:
+        type: string
+      required: true
+    wlm.update_query_group::path.name:
+      name: name
+      in: path
+      description: QueryGroup name.
+      schema:
+        type: string
+      required: true
   requestBodies:
     asynchronous_search.search:
       content:
@@ -26863,6 +26963,18 @@ components:
               conflicts:
                 $ref: '#/components/schemas/_common:Conflicts'
             description: The search definition using the Query DSL
+    wlm.create_query_group:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/wlm._common:QueryGroupCreate'
+      required: true
+    wlm.update_query_group:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/wlm._common:QueryGroupUpdate'
+      required: true
   responses:
     asynchronous_search.delete@200:
       content:
@@ -29957,6 +30069,38 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/_core.update:UpdateWriteResponseBase'
+    wlm.create_query_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/wlm._common:QueryGroupResponse'
+    wlm.delete_query_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    wlm.get_query_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query_groups:
+                type: array
+                items:
+                  $ref: '#/components/schemas/wlm._common:QueryGroupResponse'
+    wlm.update_query_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/wlm._common:QueryGroupResponse'
   schemas:
     _common:AcknowledgedResponseBase:
       type: object
@@ -56132,3 +56276,104 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/transforms._common:TransformEntity'
+    wlm._common:QueryGroupCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        resiliency_mode:
+          type: string
+          enum:
+            - enforced
+            - monitor
+            - soft
+        resource_limits:
+          anyOf:
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - memory
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - cpu
+      required:
+        - name
+        - resiliency_mode
+        - resource_limits
+    wlm._common:QueryGroupResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        resiliency_mode:
+          type: string
+          enum:
+            - enforced
+            - monitor
+            - soft
+        updated_at:
+          type: integer
+          format: int64
+        resource_limits:
+          anyOf:
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - memory
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - cpu
+      required:
+        - _id
+        - name
+        - resiliency_mode
+        - resource_limits
+        - updated_at
+    wlm._common:QueryGroupUpdate:
+      type: object
+      properties:
+        resiliency_mode:
+          type: string
+          enum:
+            - enforced
+            - monitor
+            - soft
+        resource_limits:
+          $ref: '#/components/schemas/wlm._common:ResourceLimitsSchema'
+    wlm._common:ResourceLimitsSchema:
+      type: object
+      properties:
+        memory:
+          type: number
+          format: double
+        cpu:
+          type: number
+          format: double
