@@ -8,7 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API specs for query groups lifecycle APIs ([#649](https://github.com/opensearch-project/opensearch-api-specification/pull/649))
 
 ### Removed
-- Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#]())
+- Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
 
 ## [0.1.0] - 2024-10-25
 
