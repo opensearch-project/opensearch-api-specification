@@ -4,6 +4,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+- Added API specs for query groups lifecycle APIs ([#649](https://github.com/opensearch-project/opensearch-api-specification/pull/649))
+
 ## [0.1.0] - 2024-10-25
 
 ### Added
@@ -106,7 +109,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `config_id` and `config_id_list` to `/_plugins/_notifications/configs` query parameters ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
 - Added a release workflow triggered on a tag ([#635](https://github.com/opensearch-project/opensearch-api-specification/pull/635))
 - Added API spec for query insights plugin ([#625](https://github.com/opensearch-project/opensearch-api-specification/pull/625))
-- Added API specs for query groups lifecycle APIs ([#649](https://github.com/opensearch-project/opensearch-api-specification/pull/649))
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
