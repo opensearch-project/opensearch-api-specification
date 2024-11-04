@@ -28,6 +28,7 @@
     - [Test Tools (Integration)](#test-tools-integration)
     - [Validate Spec (Lint)](#validate-spec-lint)
     - [Validate Spec (Python)](#validate-spec-python)
+    - [Validate Spec (Ruby)](#validate-spec-ruby)
 <!-- TOC -->
 
 # Developer Guide
@@ -383,3 +384,7 @@ This workflow runs on PRs to invoke the [spec linter](#spec-linter) and ensure t
 ### [Validate Spec (Python)](.github/workflows/validate-spec-py.yml)
 
 This workflow runs on PRs to invoke the [Python openapi-spec-validator](https://pypi.org/project/openapi-spec-validator/) to ensure that the resulting spec can be loaded by Python tools.
+
+### [Validate Spec (Ruby)](.github/workflows/validate-spec-ruby.yml)
+
+This workflow runs on PRs to invoke the Ruby [Json Schemer](https://github.com/davishmcclurg/json_schemer/) to ensure that the resulting spec can be loaded by Ruby tools.
