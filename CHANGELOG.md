@@ -6,9 +6,21 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added API specs for query groups lifecycle APIs ([#649](https://github.com/opensearch-project/opensearch-api-specification/pull/649))
+- Added Python and Ruby spec validators ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
+
+### Fixed
+- Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Global parameters no longer contain invalid `default` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Invalid values of `schema: null` are replaced with `schema: false` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Key names containing invalid `@` and `:` are renamed to `.` and `_` respectively on merge ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added missing `required` to `path` parameters ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added missing `schema` parent to response types ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Fixed incorrect `style` in `indices.get_mapping::query.index` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Removed invalid `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 
 ## [0.1.0] - 2024-10-25
 
@@ -115,7 +127,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added Python and Ruby spec validators ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 
 ### Changed
 
