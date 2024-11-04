@@ -40,27 +40,27 @@ describe('merged API spec', () => {
       const responses: any = spec.spec().components?.responses
 
       test('is added with required fields', () => {
-        const schema = responses['info@200'].content['application/json'].schema
+        const schema = responses['info.200'].content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual({ not: true, errorMessage: 'property is not defined in the spec' })
       })
 
       test('is added when no required fields', () => {
-        const schema = responses['info@500'].content['application/json'].schema
+        const schema = responses['info.500'].content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual({ not: true, errorMessage: 'property is not defined in the spec' })
       })
 
       test('is not added to empty object schema', () => {
-        const schema = responses['info@503'].content['application/json'].schema
+        const schema = responses['info.503'].content['application/json'].schema
         expect(schema.unevaluatedProperties).toBeUndefined()
       })
 
       test('is not added when true', () => {
-        const schema = responses['info@201'].content['application/json'].schema
+        const schema = responses['info.201'].content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual(true)
       })
 
       test('is not added when object', () => {
-        const schema = responses['info@404'].content['application/json'].schema
+        const schema = responses['info.404'].content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual({ type: 'object' })
       })
     })

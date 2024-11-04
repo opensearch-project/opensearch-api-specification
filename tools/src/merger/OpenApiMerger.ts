@@ -57,6 +57,7 @@ export default class OpenApiMerger {
       this.#fix_refs()
       this.#generate_global_params()
       this.#generate_superseded_ops()
+      this.#normalize_fields()
       this._merged = true
     }
 
@@ -147,6 +148,35 @@ export default class OpenApiMerger {
       var item = obj[key]
       if (_.isObject(item) || _.isArray(item)) {
         this.#fix_refs(item)
+      }
+    }
+  }
+
+  #normalize_key(key: string): string {
+    return key
+      .replaceAll('@', '.')
+      .replaceAll(':', '_')
+  }
+
+  #normalize_fields(obj: any = this._spec): void {
+    for (const key in obj) {
+      var item = obj[key]
+
+      if (item?.$ref !== undefined) {
+        var renamed_ref = this.#normalize_key(item.$ref as string)
+        if (renamed_ref != item.$ref) {
+          item.$ref = renamed_ref
+        }
+      }
+
+      var renamed_key = this.#normalize_key(key)
+      if (renamed_key != key) {
+        obj[renamed_key] = obj[key]
+        delete obj[key]
+      }
+
+      if (_.isObject(item) || _.isArray(item)) {
+        this.#normalize_fields(item)
       }
     }
   }
