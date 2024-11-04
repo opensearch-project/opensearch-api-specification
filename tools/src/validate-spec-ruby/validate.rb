@@ -11,10 +11,10 @@ schemer.validate
 
 total_errors = 0
 schemer.validate.each do |error|
-  puts "#{error['data_pointer']}: #{error['error']}" if total_errors < 10
+  puts "#{error['data']}: #{error['error']}" if total_errors < 10
   total_errors += 1
 end
 
-puts " .... #{total_errors} total" if total_errors > 0
+puts total_errors > 0 ? " .... #{total_errors} total." : "Done."
 
 exit total_errors == 0 ? 0 : 1
