@@ -1,15 +1,20 @@
-require 'openapi3_parser'
+require 'json_schemer'
+require 'yaml'
 
-raise "syntax: validate [spec]" unless ARGV.length >= 1
+raise 'syntax: validate [spec]' unless ARGV.length >= 1
 
 spec = ARGV[0]
 puts "Validating #{spec} ..."
 
-parsed_spec = Openapi3Parser.load_file(spec)
-exit 0 if parsed_spec.valid?
+schemer = JSONSchemer.openapi(YAML.load_file(spec))
+schemer.validate
 
-parsed_spec.errors.each do |error|
-  puts "#{error.context}: #{error}"
+total_errors = 0
+schemer.validate.each do |error|
+  puts "#{error['data_pointer']}: #{error['error']}" # if total_errors < 100
+  total_errors += 1
 end
 
-exit 1
+puts " .... #{total_errors} total" if total_errors > 0
+
+exit total_errors == 0 ? 0 : 1
