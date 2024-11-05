@@ -154,7 +154,8 @@ export default class OpenApiMerger {
 
   #normalize_key(key: string): string {
     return key
-      .replaceAll('@', '.')
+      .replaceAll('::', '___')
+      .replaceAll('@', '__')
       .replaceAll(':', '_')
   }
 
