@@ -385,6 +385,22 @@ This workflow runs on PRs to invoke the [spec linter](#spec-linter) and ensure t
 
 This workflow runs on PRs to invoke the [Python openapi-spec-validator](https://pypi.org/project/openapi-spec-validator/) to ensure that the resulting spec can be loaded by Python tools.
 
+You can run the validator locally as follows after installing [pipenv](https://pipenv.pypa.io/en/latest/installation.html).
+
+```
+cd tools/src/validate-spec-py
+pipenv install
+npm run merge ; pipenv run python validate.py ../../../build/opensearch-openapi.yaml
+```
+
 ### [Validate Spec (Ruby)](.github/workflows/validate-spec-ruby.yml)
 
 This workflow runs on PRs to invoke the Ruby [Json Schemer](https://github.com/davishmcclurg/json_schemer/) to ensure that the resulting spec can be loaded by Ruby tools.
+
+You can run the validator locally as follows.
+
+```
+cd tools/src/validate-spec-ruby
+bundle install
+npm run merge ; bundle exec ruby validate.rb ../../../build/opensearch-openapi.yaml
+```
