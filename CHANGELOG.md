@@ -14,9 +14,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
-- Global parameters no longer contain invalid `default` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
-- Invalid values of `schema: null` are replaced with `schema: false` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
-- Key names containing invalid `@` and `:` are renamed to `.` and `_` respectively on merge ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Key names containing invalid `::`, `@`, and `:` are renamed to `___`, `__`, and `_` respectively on merge ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added missing `required` to `path` parameters ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added missing `schema` parent to response types ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
