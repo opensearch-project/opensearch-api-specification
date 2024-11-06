@@ -50,8 +50,8 @@ export default class SchemasValidator {
       const message = this.json_validator.validate_schema(_schema)
       if (message == null) return
 
-      const file = `schemas/${key.split('_')[0]}.yaml`
-      const location = `#/components/schemas/${key.split('_')[1]}`
+      const file = `schemas/${key.split('___')[0]}.yaml`
+      const location = `#/components/schemas/${key.split('___')[1]}`
       return this.error(file, location, message)
     }).filter((error) => error != null) as ValidationError[]
   }
@@ -78,9 +78,9 @@ export default class SchemasValidator {
 
   validate_response_schemas (): ValidationError[] {
     return Object.entries(this.spec.responses as Record<string, any>).flatMap(([key, response]) => {
-      const namespace = this.group_to_namespace(key.split('__')[0])
+      const namespace = this.group_to_namespace(key.split('___')[0])
       const file = `namespaces/${namespace}.yaml`
-      const location = `#/components/responses/${key}`.replace('__', '@')
+      const location = `#/components/responses/${key}`.replace('___', '@')
       const content = response.content as Record<string, any>
       return this.validate_content_schemas(file, location, content)
     })

@@ -155,8 +155,8 @@ export default class OpenApiMerger {
   #normalize_key(key: string): string {
     return key
       .replaceAll('::', '___')
-      .replaceAll('@', '__')
-      .replaceAll(':', '_')
+      .replaceAll('@', '___')
+      .replaceAll(':', '___')
   }
 
   #normalize_fields(obj: any = this._spec): void {
