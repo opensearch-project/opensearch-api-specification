@@ -10,6 +10,8 @@
 
 - [OpenSearch API Specification](#opensearch-api-specification)
 - [Welcome!](#welcome)
+  - [OpenSearch API Source of Truth](#opensearch-api-source-of-truth)
+  - [Working in this Repo](#working-in-this-repo)
 - [Project Resources](#project-resources)
 - [Code of Conduct](#code-of-conduct)
 - [Security](#security)
@@ -18,10 +20,15 @@
 
 ## Welcome!
 
-The `opensearch-api-specification` is an open source, community-driven collection of API model specifications for [OpenSearch](https://github.com/opensearch-project/OpenSearch) APIs. The API models are written in OpenAPI format and are used to generate client libraries and documentation. You can find the latest version of the API specification [here](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml).
+The `opensearch-api-specification` is an open source, community-driven collection of API model specifications for [OpenSearch](https://github.com/opensearch-project/OpenSearch) APIs. The API models are written in OpenAPI format and are used to generate client libraries and documentation. You can find the latest release of the API specification [here](https://github.com/opensearch-project/opensearch-api-specification/releases).
 
-To contribute to this project or to track the developments head over to [Projects](https://github.com/opensearch-project/opensearch-api-specification/projects) board. Follow the [Developer guide](DEVELOPER_GUIDE.md) and [Contributing guidelines](CONTRIBUTING.md) for instructions
-on building and contributing to opensearch-api-specification.
+### OpenSearch API Source of Truth
+
+This repo aims to be the complete source of truth for OpenSearch and OpenSearch Dashboards REST APIs, including plugins. To be the source of truth, this repo [accurately represents APIs in YAML](spec/), and [publishes](https://github.com/opensearch-project/opensearch-api-specification/releases) a single-file OpenAPI 3.1.0 spec. The latter is used to [generate OpenSearch language clients](https://github.com/opensearch-project/opensearch-clients/issues/19), [generate mechanical parts of the OpenSearch documentation](https://github.com/opensearch-project/documentation-website/issues/7700), and will be used to [generate the OpenSearch server API itself](https://github.com/opensearch-project/OpenSearch/issues/3090).
+
+### Working in this Repo
+
+Because of our legacy, the specification is produced by reading the [OpenSearch documentation](https://opensearch.org/docs/latest/) and reverse-engineering code. Thus, a good place to start contributing to this repo is to [identify a missing API and to add it](https://github.com/opensearch-project/opensearch-api-specification/issues/168) by following the [developer guide](DEVELOPER_GUIDE.md). This repo also contains a set of [test tools](TESTING_GUIDE.md) that ensure the correctness of this API and infrastructure that evaluates the gap between the OpenSearch server and this API spec by comparing REST routes registered in a running OpenSearch to the list of the APIs in this repo. You can see the latest API and test coverage numbers in the comments automatically added to any [recently merged pull requests](https://github.com/opensearch-project/opensearch-api-specification/pulls?q=is%3Apr+is%3Aclosed).
 
 ## Project Resources
 
