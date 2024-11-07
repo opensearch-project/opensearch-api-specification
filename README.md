@@ -6,7 +6,7 @@
 [![Test Tools (Unit)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml)
 [![Test Tools (Integration)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml)
 [![Test Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-spec.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-spec.yml)
-[![Validate Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec.yml)
+[![Validate Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec-lint.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/validate-spec-lint.yml)
 
 - [OpenSearch API Specification](#opensearch-api-specification)
 - [Welcome!](#welcome)
