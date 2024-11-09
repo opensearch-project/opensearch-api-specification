@@ -61,41 +61,22 @@ chapters:
     request:
       payload:
         cluster_permissions:
-          - "cluster:admin/plugins/replication/index/setup/validate"
-          - "cluster:admin/plugins/replication/autofollow/update"
+          - 'cluster:all'
         index_permissions:
-          - index_patterns: ["books-*"]
+          - index_patterns: ["*"]
             allowed_actions:
-              - "indices:admin/plugins/replication/index/setup/validate"
-              - "indices:admin/plugins/replication/index/start"
-              - "indices:admin/plugins/replication/index/pause"
-              - "indices:admin/plugins/replication/index/resume"
-              - "indices:admin/plugins/replication/index/stop"
-              - "indices:admin/plugins/replication/index/update"
-              - "indices:admin/plugins/replication/index/status_check"
-              - "indices:data/write/plugins/replication/changes"
+              ["*"]
     response:
       status: 201
   - synopsis: Map leader role to user.
     path: /_plugins/_security/api/rolesmapping/{role}
     method: PUT
     parameters:
-      role: leader_role
+      role: all_access
     request:
       payload:
-        backend_roles: ["admin"]
-        users: ["admin"]
-    response:
-      status: 201
-  - synopsis: Map follower role to user.
-    path: /_plugins/_security/api/rolesmapping/{role}
-    method: PUT
-    parameters:
-      role: follower
-    request:
-      payload:
-        backend_roles: ["admin"]
-        users: ["admin"]
+        backend_roles: ["admin", "leader-role", "follower"]
+        users: ["admin", "leader-role", "follower"]
     response:
       status: 201
   - synopsis: Getting all role mappings.
