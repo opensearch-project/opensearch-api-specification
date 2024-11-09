@@ -1,18 +1,19 @@
 version: '3'
 
 services:
-  opensearch-node1:
+  opensearch-leader-node1:
     image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
     environment:
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
       - bootstrap.memory_lock=true
-      - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
-      - cluster.name=opensearch-cluster
-      - discovery.seed_hosts=opensearch-node1,opensearch-node2
-      - node.name=opensearch-node1
+      - cluster.initial_master_nodes=opensearch-leader-node1
+      - cluster.name=leader-cluster
+      - discovery.seed_hosts=opensearch-leader-node1
+      - node.name=opensearch-leader-node1
       - path.repo=/tmp/opensearch/repo
       - plugins.index_state_management.job_interval=1
+      - network.host=0.0.0.0
     ulimits:
       memlock:
         soft: -1
@@ -24,25 +25,31 @@ services:
       opensearch-net:
         ipv4_address: 172.22.0.3
 
-  opensearch-node2:
+  opensearch-follower-node1:
     image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
     environment:
-      - 'OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}'
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
       - bootstrap.memory_lock=true
-      - cluster.initial_master_nodes=opensearch-node1,opensearch-node2
-      - cluster.name=opensearch-cluster
-      - discovery.seed_hosts=opensearch-node1,opensearch-node2
-      - node.name=opensearch-node2
+      - cluster.initial_master_nodes=opensearch-follower-node1
+      - cluster.name=follower-cluster
+      - discovery.seed_hosts=opensearch-follower-node1
+      - node.name=opensearch-follower-node1
       - path.repo=/tmp/opensearch/repo
       - plugins.index_state_management.job_interval=1
+      - network.host=0.0.0.0
+      - cluster.remote.leader-cluster.seeds=172.22.0.3:9300
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    ports:
+      - '9201:9200'
+      - '9601:9600'
     networks:
       opensearch-net:
         ipv4_address: 172.22.0.4
+
 networks:
   opensearch-net:
     driver: bridge
