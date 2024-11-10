@@ -20,9 +20,7 @@ components:
       minProperties: 1
       maxProperties: 1
     IndexOperation:
-      allOf:
-        - $ref: '#/components/schemas/WriteOperation'
-        - type: object
+      $ref: '#/components/schemas/WriteOperation'
     WriteOperation:
       allOf:
         - $ref: '#/components/schemas/OperationBase'
@@ -31,7 +29,6 @@ components:
             dynamic_templates:
               description: |-
                 A map from the full name of fields to the name of dynamic templates.
-                Defaults to an empty map.
                 If a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template.
                 If a field is already defined in the mapping, then this parameter won't be used.
               type: object
@@ -39,12 +36,12 @@ components:
                 type: string
             pipeline:
               description: |-
-                ID of the pipeline to use to preprocess incoming documents.
-                If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request.
-                If a final pipeline is configured it will always run, regardless of the value of this parameter.
+                The pipeline ID for preprocessing documents.
+                When the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request.
+                When a final pipeline is configured, that pipeline will always run, regardless of the value of this parameter.
               type: string
             require_alias:
-              description: If `true`, the request's actions must target an index alias.
+              description: When `true`, require that all actions target an index alias rather than an index. Default is `false`.
               type: boolean
     OperationBase:
       type: object
@@ -56,7 +53,8 @@ components:
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
         if_primary_term:
-          type: number
+          type: integer
+          format: int64
         if_seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         version:
@@ -64,41 +62,38 @@ components:
         version_type:
           $ref: '_common.yaml#/components/schemas/VersionType'
     CreateOperation:
-      allOf:
-        - $ref: '#/components/schemas/WriteOperation'
-        - type: object
+      $ref: '#/components/schemas/WriteOperation'
     UpdateOperation:
       allOf:
         - $ref: '#/components/schemas/OperationBase'
         - type: object
           properties:
             require_alias:
-              description: If `true`, the request's actions must target an index alias.
+              description: When `true`, the request's actions must target an index alias.
               type: boolean
             retry_on_conflict:
-              type: number
+              type: integer
+              format: int32
     DeleteOperation:
-      allOf:
-        - $ref: '#/components/schemas/OperationBase'
-        - type: object
+      $ref: '#/components/schemas/OperationBase'
     UpdateAction:
       type: object
       properties:
         detect_noop:
           description: |-
-            Set to false to disable setting 'result' in the response
+            When `false` disables the setting 'result' in the response
             to 'noop' if no change to the document occurred.
           type: boolean
         doc:
           description: A partial update to an existing document.
           type: object
         doc_as_upsert:
-          description: Set to true to use the contents of 'doc' as the value of 'upsert'
+          description: When `true`, uses the contents of 'doc' as the value of 'upsert'.
           type: boolean
         script:
           $ref: '_common.yaml#/components/schemas/Script'
         scripted_upsert:
-          description: Set to true to execute the script whether or not the document exists.
+          description: When `true`, executes the script whether or not the document exists.
           type: boolean
         _source:
           $ref: '_core.search.yaml#/components/schemas/SourceConfig'
@@ -119,17 +114,19 @@ components:
           type: ['null', string]
         _index:
           description: |-
-            Name of the index associated with the operation.
-            If the operation targeted a data stream, this is the backing index into which the document was written.
+            The name of the index associated with the operation.
+            If the operation targets a data stream, this is the backing index into which the document was written.
           type: string
         status:
           description: HTTP status code returned for the operation.
-          type: number
+          type: integer
+          format: int32
         error:
           $ref: '_common.yaml#/components/schemas/ErrorCause'
         _primary_term:
           description: The primary term assigned to the document for the operation.
-          type: number
+          type: integer
+          format: int64
         result:
           description: |-
             Result of the operation.

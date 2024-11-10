@@ -1,0 +1,55 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test document multi-search.
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book1}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 60}
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Bennett Miller, title: The Cruise, year: 1998}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+chapters:
+  - synopsis: Run multiple search requests in single request.
+    path: /_msearch
+    method: GET
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: books}
+        - {query: {match_all: {}}}
+        - {index: movies}
+        - {query: {match_all: {}}}
+    response:
+      status: 200
+      payload:
+        responses:
+          - hits:
+              total:
+                value: 1
+                relation: eq
+              hits:
+                - _index: books
+                  _id: book1
+          - hits:
+              total:
+                value: 2
+                relation: eq
+              hits:
+                - _index: movies
+                  _id: movie1
+                - _index: movies
+                  _id: movie2

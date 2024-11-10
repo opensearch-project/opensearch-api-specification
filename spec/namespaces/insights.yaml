@@ -1,0 +1,34 @@
+openapi: 3.1.0
+info:
+  title: Query Insights API
+  description: API to retrieve top queries based on latency, CPU, or memory usage.
+  version: 1.0.0
+paths:
+  /_insights/top_queries:
+    get:
+      operationId: insights.top_queries.0
+      x-operation-group: insights.top_queries
+      x-version-added: '1.0'
+      description: Retrieves the top queries based on the given metric type (latency, CPU, or memory).
+      parameters:
+        - $ref: '#/components/parameters/insights.top_queries::query.type'
+      responses:
+        '200':
+          $ref: '#/components/responses/insights.top_queries@200'
+          
+components:
+  parameters:
+    insights.top_queries::query.type:
+      name: type
+      in: query
+      required: true
+      description: Get top n queries by a specific metric.
+      schema:
+        type: string
+        enum: [cpu, latency, memory]
+  responses:
+    insights.top_queries@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/insights._common.yaml#/components/schemas/TopQueriesResponse'

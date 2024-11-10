@@ -12,9 +12,9 @@ import { Operation } from "./eval.types"
 export interface SpecTestCoverage {
   summary: {
     total_operations_count: number
-    evaluated_operations_count: number,
+    evaluated_operations_count: number
     evaluated_paths_pct: number
   },
-  operations: Operation[],
+  operations: Operation[]
   evaluated_operations: Operation[]
 }

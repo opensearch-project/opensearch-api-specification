@@ -9,13 +9,13 @@
 
 import SchemasFolder from 'linter/components/SchemasFolder'
 import NamespacesFolder from 'linter/components/NamespacesFolder'
-import InlineObjectSchemaValidator from 'linter/InlineObjectSchemaValidator'
+import SchemaVisitingValidator from 'linter/SchemaVisitingValidator'
 
 test('validate()', () => {
   const root_folder = './tools/tests/linter/fixtures/inline_object_schema_validator'
   const namespaces_folder = new NamespacesFolder(`${root_folder}/namespaces`)
   const schemas_folder = new SchemasFolder(`${root_folder}/schemas`)
-  const validator = new InlineObjectSchemaValidator(namespaces_folder, schemas_folder)
+  const validator = new SchemaVisitingValidator(namespaces_folder, schemas_folder)
   expect(validator.validate()).toEqual([
     {
       file: 'namespaces/ops.yaml',

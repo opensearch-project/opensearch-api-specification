@@ -1,0 +1,56 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with fuzzy query.
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: text
+  - path: /movies/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Brave
+    status: [201]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search for documents using a fuzzy query.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: GET
+    request:
+      payload:
+        query:
+          fuzzy:
+            title: 
+              value: bake
+              fuzziness: 2
+              max_expansions: 40
+              prefix_length: 0
+              transpositions: true
+              rewrite: constant_score
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          max_score: 1
+          hits:
+            - _index: movies
+              _score: 1
+              _source:
+                title: Brave
+                

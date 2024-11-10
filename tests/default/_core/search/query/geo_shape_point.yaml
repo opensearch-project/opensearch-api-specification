@@ -1,0 +1,52 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with geo_shape query.
+prologues:
+  - path: /cinemas
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            location:
+              type: geo_point
+  - path: /cinemas/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        location: [0.5, 3]
+    status: [201]
+epilogues:
+  - path: /cinemas
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search cinemas for documents whose point objects are within the specified envelope.
+    path: /{index}/_search
+    parameters:
+      index: cinemas
+    method: GET
+    request:
+      payload:
+        query:
+          geo_shape:
+            location:
+              shape: 
+                type: envelope
+                coordinates: [[0, 6], [1, 2]]
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          max_score: 0
+          hits:
+            - _index: cinemas
+              _score: 0
+              _source:
+                location: [0.5, 3]

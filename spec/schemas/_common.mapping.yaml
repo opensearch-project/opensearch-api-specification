@@ -6,53 +6,6 @@ info:
 paths: {}
 components:
   schemas:
-    RuntimeFields:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/RuntimeField'
-    RuntimeField:
-      type: object
-      properties:
-        fetch_fields:
-          description: For type `lookup`
-          type: array
-          items:
-            $ref: '#/components/schemas/RuntimeFieldFetchFields'
-        format:
-          description: A custom format for `date` type runtime fields.
-          type: string
-        input_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        target_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        target_index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-        script:
-          $ref: '_common.yaml#/components/schemas/Script'
-        type:
-          $ref: '#/components/schemas/RuntimeFieldType'
-      required:
-        - type
-    RuntimeFieldFetchFields:
-      type: object
-      properties:
-        field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        format:
-          type: string
-      required:
-        - field
-    RuntimeFieldType:
-      type: string
-      enum:
-        - boolean
-        - date
-        - double
-        - geo_point
-        - ip
-        - keyword
-        - long
-        - lookup
     TypeMapping:
       type: object
       properties:
@@ -90,10 +43,6 @@ components:
           $ref: '#/components/schemas/SizeField'
         _source:
           $ref: '#/components/schemas/SourceField'
-        runtime:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/RuntimeField'
         enabled:
           type: boolean
         _data_stream_timestamp:
@@ -163,7 +112,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/BinaryProperty'
         - $ref: '#/components/schemas/BooleanProperty'
-        - $ref: '#/components/schemas/DynamicProperty'
         - $ref: '#/components/schemas/JoinProperty'
         - $ref: '#/components/schemas/KeywordProperty'
         - $ref: '#/components/schemas/MatchOnlyTextProperty'
@@ -191,8 +139,8 @@ components:
         - $ref: '#/components/schemas/TokenCountProperty'
         - $ref: '#/components/schemas/GeoPointProperty'
         - $ref: '#/components/schemas/GeoShapeProperty'
-        - $ref: '#/components/schemas/PointProperty'
-        - $ref: '#/components/schemas/ShapeProperty'
+        - $ref: '#/components/schemas/XyPointProperty'
+        - $ref: '#/components/schemas/XyShapeProperty'
         - $ref: '#/components/schemas/ByteNumberProperty'
         - $ref: '#/components/schemas/DoubleNumberProperty'
         - $ref: '#/components/schemas/FloatNumberProperty'
@@ -251,7 +199,7 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/Property'
         ignore_above:
-          type: number
+          type: integer
         dynamic:
           $ref: '#/components/schemas/DynamicMapping'
         fields:
@@ -265,6 +213,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             fielddata:
               $ref: 'indices._common.yaml#/components/schemas/NumericFielddata'
             index:
@@ -275,61 +224,6 @@ components:
               type: string
               enum:
                 - boolean
-          required:
-            - type
-    DynamicProperty:
-      allOf:
-        - $ref: '#/components/schemas/DocValuesPropertyBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - '{dynamic_property}'
-            enabled:
-              type: boolean
-            null_value:
-              $ref: '_common.yaml#/components/schemas/FieldValue'
-            boost:
-              type: number
-            coerce:
-              type: boolean
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            on_script_error:
-              $ref: '#/components/schemas/OnScriptError'
-            ignore_malformed:
-              type: boolean
-            time_series_metric:
-              $ref: '#/components/schemas/TimeSeriesMetricType'
-            analyzer:
-              type: string
-            eager_global_ordinals:
-              type: boolean
-            index:
-              type: boolean
-            index_options:
-              $ref: '#/components/schemas/IndexOptions'
-            index_phrases:
-              type: boolean
-            index_prefixes:
-              $ref: '#/components/schemas/TextIndexPrefixes'
-            norms:
-              type: boolean
-            position_increment_gap:
-              type: number
-            search_analyzer:
-              type: string
-            search_quote_analyzer:
-              type: string
-            term_vector:
-              $ref: '#/components/schemas/TermVectorOption'
-            format:
-              type: string
-            precision_step:
-              type: number
-            locale:
-              type: string
           required:
             - type
     OnScriptError:
@@ -356,9 +250,9 @@ components:
       type: object
       properties:
         max_chars:
-          type: number
+          type: integer
         min_chars:
-          type: number
+          type: integer
       required:
         - max_chars
         - min_chars
@@ -400,6 +294,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             eager_global_ordinals:
               type: boolean
             index:
@@ -493,7 +388,7 @@ components:
             index_options:
               $ref: '#/components/schemas/IndexOptions'
             max_shingle_size:
-              type: number
+              type: integer
             norms:
               type: boolean
             search_analyzer:
@@ -517,6 +412,7 @@ components:
               type: string
             boost:
               type: number
+              format: double
             eager_global_ordinals:
               type: boolean
             fielddata:
@@ -534,7 +430,7 @@ components:
             norms:
               type: boolean
             position_increment_gap:
-              type: number
+              type: integer
             search_analyzer:
               type: string
             search_quote_analyzer:
@@ -578,6 +474,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             format:
               type: string
             ignore_malformed:
@@ -587,7 +484,7 @@ components:
             null_value:
               $ref: '_common.yaml#/components/schemas/DateTime'
             precision_step:
-              type: number
+              type: integer
             type:
               type: string
               enum:
@@ -601,6 +498,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             fielddata:
               $ref: 'indices._common.yaml#/components/schemas/NumericFielddata'
             format:
@@ -612,7 +510,7 @@ components:
             null_value:
               $ref: '_common.yaml#/components/schemas/DateTime'
             precision_step:
-              type: number
+              type: integer
             locale:
               type: string
             type:
@@ -693,6 +591,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             depth_limit:
               type: number
             doc_values:
@@ -755,7 +654,7 @@ components:
               items:
                 $ref: '#/components/schemas/SuggestContext'
             max_input_length:
-              type: number
+              type: integer
             preserve_position_increments:
               type: boolean
             preserve_separators:
@@ -789,8 +688,7 @@ components:
         - $ref: '#/components/schemas/PropertyBase'
         - type: object
           properties:
-            value:
-              type: object
+            value: {}
             type:
               type: string
               enum:
@@ -830,6 +728,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             index:
               type: boolean
             ignore_malformed:
@@ -869,10 +768,12 @@ components:
               type: string
             boost:
               type: number
+              format: double
             index:
               type: boolean
             null_value:
               type: number
+              format: double
             enable_position_increments:
               type: boolean
             type:
@@ -913,6 +814,11 @@ components:
               $ref: '#/components/schemas/GeoOrientation'
             strategy:
               $ref: '#/components/schemas/GeoStrategy'
+              deprecated: true
+            distance_error_pct:
+              type: number
+              format: double
+              deprecated: true
             type:
               type: string
               enum:
@@ -920,16 +826,28 @@ components:
           required:
             - type
     GeoOrientation:
-      type: string
-      enum:
-        - left
-        - right
+      oneOf:
+        - title: left
+          type: string
+          enum:
+            - LEFT
+            - clockwise
+            - cw
+            - left
+        - title: right
+          type: string
+          enum:
+            - RIGHT
+            - ccw
+            - counterclockwise
+            - right
     GeoStrategy:
       type: string
       enum:
         - recursive
         - term
-    PointProperty:
+    XyPointProperty:
+      x-version-added: '2.4'
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
@@ -939,14 +857,15 @@ components:
             ignore_z_value:
               type: boolean
             null_value:
-              type: string
+              $ref: '_common.yaml#/components/schemas/XyLocation'
             type:
               type: string
               enum:
-                - point
+                - xy_point
           required:
             - type
-    ShapeProperty:
+    XyShapeProperty:
+      x-version-added: '2.4'
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
@@ -962,7 +881,7 @@ components:
             type:
               type: string
               enum:
-                - shape
+                - xy_shape
           required:
             - type
     ByteNumberProperty:
@@ -985,6 +904,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             coerce:
               type: boolean
             ignore_malformed:
@@ -1011,6 +931,7 @@ components:
                 - double
             null_value:
               type: number
+              format: double
           required:
             - type
     FloatNumberProperty:
@@ -1024,6 +945,7 @@ components:
                 - float
             null_value:
               type: number
+              format: float
           required:
             - type
     HalfFloatNumberProperty:
@@ -1037,6 +959,7 @@ components:
                 - half_float
             null_value:
               type: number
+              format: float
           required:
             - type
     IntegerNumberProperty:
@@ -1049,7 +972,7 @@ components:
               enum:
                 - integer
             null_value:
-              type: number
+              type: integer
           required:
             - type
     LongNumberProperty:
@@ -1062,7 +985,8 @@ components:
               enum:
                 - long
             null_value:
-              type: number
+              type: integer
+              format: int64
           required:
             - type
     ScaledFloatNumberProperty:
@@ -1076,8 +1000,10 @@ components:
                 - scaled_float
             null_value:
               type: number
+              format: double
             scaling_factor:
               type: number
+              format: double
           required:
             - type
     ShortNumberProperty:
@@ -1126,19 +1052,11 @@ components:
           properties:
             boost:
               type: number
+              format: double
             coerce:
               type: boolean
             index:
               type: boolean
-    KnnVectorPropertyBase:
-      type: object
-      properties:
-        dimension:
-          type: number
-        method:
-          $ref: '#/components/schemas/KnnVectorMethod'
-      required:
-        - dimension
     KnnVectorMethod:
       type: object
       properties:
@@ -1150,8 +1068,7 @@ components:
           type: string
         parameters:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: {}
       required:
         - name
     DoubleRangeProperty:
@@ -1211,14 +1128,29 @@ components:
             - type
     KnnVectorProperty:
       allOf:
-        - $ref: '#/components/schemas/KnnVectorPropertyBase'
+        - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
           properties:
             type:
               type: string
               enum:
                 - knn_vector
+            dimension:
+              type: integer
+            space_type:
+              type: string
+            data_type:
+              type: string
+            mode:
+              type: string
+            compression_level:
+              type: string
+            method:
+              $ref: '#/components/schemas/KnnVectorMethod'
+            model_id:
+              type: string
           required:
+            - dimension
             - type
     MatchType:
       type: string
@@ -1270,14 +1202,6 @@ components:
           type: array
           items:
             type: string
-        mode:
-          $ref: '#/components/schemas/SourceFieldMode'
-    SourceFieldMode:
-      type: string
-      enum:
-        - disabled
-        - stored
-        - synthetic
     DataStreamTimestamp:
       type: object
       properties:

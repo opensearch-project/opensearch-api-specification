@@ -61,9 +61,8 @@ export default class ChapterReader {
       } else {
         response.status = e.response.status
         response.content_type = e.response.headers['content-type']?.split(';')[0]
-        const payload = this.#deserialize_payload(e.response.data, response.content_type)
-        if (payload !== undefined) response.payload = payload.error
-        response.message = payload.error?.reason ?? e.response.statusText
+        response.payload = this.#deserialize_payload(e.response.data, response.content_type)
+        response.message = response.payload.error?.reason ?? e.response.statusText
         this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
       }
     })

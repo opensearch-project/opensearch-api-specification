@@ -1044,6 +1044,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.delete@200'
+        '404':
+          $ref: '#/components/responses/indices.delete@404'
   /{index}/_alias:
     get:
       operationId: indices.get_alias.2
@@ -2101,8 +2103,6 @@ components:
                 $ref: '../schemas/_common.mapping.yaml#/components/schemas/RoutingField'
               _source:
                 $ref: '../schemas/_common.mapping.yaml#/components/schemas/SourceField'
-              runtime:
-                $ref: '../schemas/_common.mapping.yaml#/components/schemas/RuntimeFields'
             description: The mapping definition
       required: true
     indices.put_settings:
@@ -2385,10 +2385,10 @@ components:
                 items:
                   $ref: '../schemas/indices.data_streams_stats.yaml#/components/schemas/DataStreamsStatsItem'
               total_store_sizes:
-                $ref: '../schemas/_common.yaml#/components/schemas/StorageSize'
+                $ref: '../schemas/_common.yaml#/components/schemas/HumanReadableByteCount'
               total_store_size_bytes:
                 description: Total size, in bytes, of all shards for the selected data streams.
-                $ref: '../schemas/_common.yaml#/components/schemas/Bytes'
+                $ref: '../schemas/_common.yaml#/components/schemas/ByteCount'
             required:
               - _shards
               - backing_indices
@@ -2400,6 +2400,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/IndicesResponseBase'
+    indices.delete@404:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/indices._common.yaml#/components/schemas/IndexError'
     indices.delete_alias@200:
       content:
         application/json:
@@ -3960,7 +3965,7 @@ components:
         To target all data streams and indices, omit this parameter or use `*` or `_all`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
-      style: simple
+      style: form
     indices.get_mapping::query.local:
       in: query
       name: local
@@ -4773,10 +4778,10 @@ components:
       description: List of shard health statuses used to limit the request.
       schema:
         oneOf:
-          - $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/ShardStoreStatus'
+          - $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/Status'
           - type: array
             items:
-              $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/ShardStoreStatus'
+              $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/Status'
       style: form
     indices.shrink::path.index:
       in: path
@@ -5035,7 +5040,11 @@ components:
       description: Limit the information returned the specific metrics.
       required: true
       schema:
-        $ref: '../schemas/_common.yaml#/components/schemas/Metrics'
+        oneOf:
+          - $ref: '../schemas/indices.stats.yaml#/components/schemas/Metric'
+          - type: array
+            items:
+              $ref: '../schemas/indices.stats.yaml#/components/schemas/Metric'
       style: simple
     indices.stats::query.completion_fields:
       in: query

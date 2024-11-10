@@ -1,0 +1,90 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test training k-NN model with disk-based parameters.
+version: '>= 2.17'
+
+prologues:
+  - method: PUT
+    path: /movies
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            recommendation_vector:
+              type: knn_vector
+              dimension: 8
+    status: [200]
+  - method: POST
+    path: /_bulk
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: movies, _id: '1'}}
+        - {recommendation_vector: [1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], duration: 12.2}
+        - {index: {_index: movies, _id: '2'}}
+        - {recommendation_vector: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5], duration: 7.1}
+        - {index: {_index: movies, _id: '3'}}
+        - {recommendation_vector: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5], duration: 12.9}
+        - {index: {_index: movies, _id: '4'}}
+        - {recommendation_vector: [4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5], duration: 1.2}
+        - {index: {_index: movies, _id: '5'}}
+        - {recommendation_vector: [5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5], duration: 3.7}
+        - {index: {_index: movies, _id: '6'}}
+        - {recommendation_vector: [6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5], duration: 10.3}
+        - {index: {_index: movies, _id: '7'}}
+        - {recommendation_vector: [7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5], duration: 5.5}
+        - {index: {_index: movies, _id: '8'}}
+        - {recommendation_vector: [8.5, 8.5, 8.5, 8.5, 8.5, 8.5, 8.5, 8.5], duration: 4.4}
+        - {index: {_index: movies, _id: '9'}}
+        - {recommendation_vector: [9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5], duration: 8.9}
+    status: [200]
+  - method: POST
+    path: /_refresh
+    status: [200]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_knn/models/{model_id}
+    parameters:
+      model_id: ${train_model.test_model_id}
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Test training a model with disk-based parameters.
+    id: train_model
+    method: POST
+    path: /_plugins/_knn/models/_train
+    request:
+      payload:
+        training_index: movies
+        training_field: recommendation_vector
+        dimension: 8
+        max_training_vector_count: 1200
+        search_size: 100
+        description: Test model
+        mode: on_disk
+        compression_level: 32x
+        spaceType: l2
+    response:
+      status: 200
+    output:
+      test_model_id: payload.model_id
+  - synopsis: Wait for the model to get trained.
+    warnings:
+      multiple-paths-detected: false
+    method: GET
+    path: /_plugins/_knn/models/{model_id}
+    parameters:
+      model_id: ${train_model.test_model_id}
+    retry:
+      count: 3
+    response:
+      status: 200
+      payload:
+        model_id: ${train_model.test_model_id}
+        state: created

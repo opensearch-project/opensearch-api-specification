@@ -22,6 +22,10 @@
   - [Collecting Test Coverage](#collecting-test-coverage)
     - [Coverage Summary](#coverage-summary)
     - [Coverage Report](#coverage-report)
+  - [Integration Testing](#integration-testing)
+    - [Stable Releases](#stable-releases)
+    - [Custom Setup](#custom-setup)
+    - [Future Releases](#future-releases)
 <!-- TOC -->
 
 # Spec Testing Guide
@@ -375,4 +379,85 @@ The test tool can display detailed and hierarchal test coverage with `--coverage
     GET /_alias/{name}
     POST /_alias/{name}
     HEAD /_alias/{name}
+```
+
+## Integration Testing
+
+This project runs integration tests against multiple versions of OpenSearch in the [test-spec.yml](.github/workflows/test-spec.yml) workflow.
+
+### Stable Releases
+
+The simplest entry in the test matrix executes tests in [tests/default](tests/default) against a released version of OpenSearch.
+For example, the following entries run tests gainst OpenSearch 1.3.17 and 2.17.0.
+
+```yaml
+entry:
+  - version: 1.3.17
+  - version: 2.17.0
+```
+
+### Custom Setup
+
+Some tests require a custom docker image. For example, testing the notifications plugin requires a custom webhook. This can be done by creating a custom `docker-compose.yml`, such as the one in [tests/plugins/notifications](tests/plugins/notifications/docker-compose.yml).
+
+```yaml
+webhook:
+  image: python:latest
+  volumes:
+    - ./server.py:/server.py
+  ports:
+    - '8080:8080'
+  entrypoint: python server.py
+```
+
+The following example in the test matrix will use the custom `docker-compose.yml` and execute all tests in [tests/plugins/notifications](tests/plugins/notifications).
+
+```yaml
+entry:
+  - version: 2.17.0
+    tests: plugins/notifications
+```
+
+### Future Releases
+
+Snapshot builds of OpenSearch are available on Docker Hub under [opensearchstaging/opensearch/tags](https://hub.docker.com/r/opensearchstaging/opensearch/tags).
+
+The following example in the test matrix will use [a snapshot build of OpenSearch 2.18](https://hub.docker.com/layers/opensearchstaging/opensearch/2.18.0/images/sha256-504a9c42bc1b13cb47b39a29db8a9d300d01b8851fb95dbb9db6770f478e45b5?context=explore) to execute the default test suite in [tests/default](tests/default/).
+
+```yaml
+- version: 2.18.0
+  hub: opensearchstaging
+  ref: '@sha256:4445e195c53992038891519dc3be0d273cdaad1b047943d68921168ed243e7e9'
+```
+
+It's important to note that snapshot builds may not contain all plugins, and may contain previous versions of a plugin if the current code failed to build. It's therefore possible that updating a SHA to test new functionality available in a more recent build causes failures with existing tests. As of today the only workaround is to try the next build that will hopefully have more/all the plugins. For a discussion about this problem see [opensearch-build#5130](https://github.com/opensearch-project/opensearch-build/issues/5130).
+
+Use the following command to retrieve the manifest of a given build to make it easier to identify a SHA that includes all the plugins. 
+
+```bash
+$ docker run -it --entrypoint bash opensearchstaging/opensearch:2.18.0@sha256:4445e195c53992038891519dc3be0d273cdaad1b047943d68921168ed243e7e9 -c "cat /usr/share/opensearch/manifest.yml"
+```
+
+```yaml
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch
+  version: 2.18.0
+  platform: linux
+  architecture: x64
+  distribution: tar
+  location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.18.0/10320/linux/x64/tar/dist/opensearch/opensearch-2.18.0-linux-x64.tar.gz
+  id: '10320'
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 2.x
+    commit_id: b67f76541b78e58844b54305eb21232e78167744
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.18.0/10320/linux/x64/tar/builds/opensearch/dist/opensearch-min-2.18.0-linux-x64.tar.gz
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: 2.x
+    commit_id: 63ee9746ce04a8eace0ba6320e93bf5833f6a4a6
+...
 ```
