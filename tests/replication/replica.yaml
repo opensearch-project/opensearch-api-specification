@@ -35,48 +35,6 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Create leader role.
-    path: /_plugins/_security/api/roles/{role}
-    parameters:
-      role: leader_role
-    method: PUT
-    request:
-      payload:
-        cluster_permissions:
-          - 'cluster:all'
-        index_permissions:
-          - index_patterns: ["*"]
-            allowed_actions:
-              ["*"]
-    response:
-      status: 201
-  - synopsis: Create follower role.
-    path: /_plugins/_security/api/roles/{role}
-    method: PUT
-    parameters:
-      role: follower
-    request:
-      payload:
-        cluster_permissions:
-          - 'cluster:all'
-        index_permissions:
-          - index_patterns: ["*"]
-            allowed_actions:
-              ["*"]
-    response:
-      status: 201
-  - synopsis: Map leader role to user.
-    path: /_plugins/_security/api/rolesmapping/{role}
-    method: PUT
-    parameters:
-      role: all_access
-    request:
-      payload:
-        backend_roles: ["admin", "leader-role", "follower"]
-        users: ["admin", "leader-role", "follower"]
-  - synopsis: Getting all role mappings.
-    path: /_plugins/_security/api/rolesmapping
-    method: GET
   - synopsis: Establish connection.
     path: /_cluster/settings
     method: PUT
@@ -149,7 +107,7 @@ chapters:
     method: POST
     request:
       payload:
-        leader_alias: my-connection-alias
+        leader_alias: leader-cluster
         name: books
         pattern: 'books-*'
         use_roles:
@@ -163,7 +121,7 @@ chapters:
     method: DELETE
     request:
       payload:
-        leader_alias: my-connection-alias
+        leader_alias: leader-cluster
         name: books
     response:
       status: 200
