@@ -1,0 +1,185 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch API
+  description: OpenSearch API
+  version: 1.0.0
+  x-api-version: 1.2.3
+paths:
+  /_nodes/{id}:
+    get:
+      operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '1.0'
+      description: Returns information about nodes in the cluster.
+      parameters:
+        - $ref: '#/components/parameters/nodes.info___path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info___200'
+    post:
+      operationId: nodes.info.1
+      x-operation-group: nodes.info
+      x-version-added: '2.0'
+      description: Returns information about nodes in the cluster.
+      parameters:
+        - $ref: '#/components/parameters/nodes.info___path.id'
+        - $ref: '#/components/parameters/nodes.info___query.flag'
+      requestBody:
+        $ref: '#/components/requestBodies/nodes.info'
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info___200'
+        '201':
+          $ref: '#/components/responses/nodes.info___201'
+  /cluster_manager:
+    get:
+      operationId: cluster_manager.0
+      x-version-added: '2.0'
+      parameters: []
+    post:
+      operationId: cluster_manager.0
+      x-version-added: '2.0'
+      parameters: []
+  /index:
+    get:
+      operationId: get.0
+      responses:
+        '200':
+          $ref: '#/components/responses/info___200'
+        '201':
+          $ref: '#/components/responses/info___201'
+        '404':
+          $ref: '#/components/responses/info___404'
+        '500':
+          $ref: '#/components/responses/info___500'
+        '503':
+          $ref: '#/components/responses/info___503'
+        added-2.0:
+          $ref: '#/components/responses/info___added-2.0'
+          x-version-added: '2.0'
+        removed-2.0-refs:
+          $ref: '#/components/responses/info___removed-2.0-refs'
+        distributed-excluded-amazon-serverless:
+          $ref: '#/components/responses/info___distributed-all'
+          x-distributions-excluded:
+            - amazon-serverless
+      parameters: []
+  /nodes:
+    get:
+      operationId: nodes.0
+      responses:
+        '200':
+          $ref: '#/components/responses/nodes.info___200'
+      parameters: []
+components:
+  parameters:
+    nodes.info___path.id:
+      in: path
+      name: id
+      description: Node ID.
+      required: true
+      schema:
+        type: string
+    nodes.info___query.flag:
+      in: query
+      name: flag
+      description: Flag.
+      required: false
+      schema:
+        type: boolean
+        default: false
+  requestBodies:
+    nodes.info:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _all:
+                type: boolean
+              ids:
+                $ref: '#/components/schemas/_common___Ids'
+                x-version-added: '2.0'
+            description: Nodes options.
+  responses:
+    info___200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+            required:
+              - tagline
+      description: ''
+    info___201:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+            required:
+              - tagline
+            unevaluatedProperties: true
+      description: ''
+    info___404:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+            required:
+              - tagline
+            unevaluatedProperties:
+              type: object
+      description: ''
+    info___500:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tagline:
+                type: string
+      description: ''
+    info___503:
+      content:
+        application/json:
+          schema:
+            type: object
+      description: ''
+    info___added-2.0:
+      description: Added in 2.0 via attribute next to ref.
+    info___distributed-all:
+      description: Distributed in opensearch.org, AOS and AOSS.
+    info___removed-2.0-refs:
+      description: One of the ref values removed in 2.0.
+      schema:
+        oneOf:
+          - $ref: '#/components/schemas/_common___OldId'
+    nodes.info___200:
+      description: All nodes.
+      content:
+        application/json:
+          schema:
+            type: object
+    nodes.info___201:
+      description: All nodes.
+      content:
+        application/json:
+          schema:
+            type: object
+  schemas:
+    _common___Ids:
+      oneOf:
+        - $ref: '#/components/schemas/_common___OldId'
+        - type: array
+          items:
+            $ref: '#/components/schemas/_common___Ids'
+    _common___OldId:
+      type: string

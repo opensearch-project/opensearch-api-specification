@@ -14,7 +14,7 @@ import fs from 'fs'
 import tmp from 'tmp'
 
 describe('extract() from a merged API spec', () => {
-  const merger = new OpenApiMerger('tools/tests/tester/fixtures/specs/complete')
+  const merger = new OpenApiMerger('tools/tests/merger/fixtures/specs/opensearch')
 
   describe('1.3', () => {
     const extractor = new OpenApiVersionExtractor(merger.spec(), '1.3', 'ignore')
@@ -35,7 +35,7 @@ describe('extract() from a merged API spec', () => {
 
       test('writes a spec', () => {
         extractor.write_to(filename)
-        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/expected_1.3.yaml', 'utf8'))
+        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/opensearch/expected_1.3.yaml', 'utf8'))
           .toEqual(fs.readFileSync(filename, 'utf8'))
       })
     })
@@ -43,7 +43,7 @@ describe('extract() from a merged API spec', () => {
     test('has matching responses', () => {
       const spec = extractor.extract()
       expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500', '503', 'removed-2.0', 'added-1.3-removed-2.0', 'distributed-excluded-amazon-serverless'
+        '200', '201', '404', '500', '503', 'removed-2.0', 'removed-2.0-refs', 'added-1.3-removed-2.0', 'distributed-excluded-amazon-serverless'
       ])
     })
   })
@@ -54,7 +54,7 @@ describe('extract() from a merged API spec', () => {
     test('has matching responses', () => {
       const spec = extractor.extract()
       expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500', '503', 'added-2.0', 'distributed-excluded-amazon-serverless'
+        '200', '201', '404', '500', '503', 'added-2.0', 'removed-2.0-refs', 'distributed-excluded-amazon-serverless'
       ])
     })
 
@@ -74,7 +74,7 @@ describe('extract() from a merged API spec', () => {
 
       test('writes a spec', () => {
         extractor.write_to(filename)
-        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/expected_2.0.yaml', 'utf8'))
+        expect(fs.readFileSync('./tools/tests/merger/fixtures/extractor/opensearch/expected_2.0.yaml', 'utf8'))
           .toEqual(fs.readFileSync(filename, 'utf8'))
       })
     })
@@ -86,7 +86,7 @@ describe('extract() from a merged API spec', () => {
     test('has matching responses', () => {
       const spec = extractor.extract()
       expect(_.keys(spec.paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1', 'distributed-excluded-amazon-serverless'
+        '200', '201', '404', '500', '503', 'added-2.0', 'removed-2.0-refs', 'added-2.1', 'distributed-excluded-amazon-serverless'
       ])
     })
   })

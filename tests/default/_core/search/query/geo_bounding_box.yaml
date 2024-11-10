@@ -1,0 +1,60 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with geo_bounding_box query.
+prologues:
+  - path: /cinemas
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            location:
+              type: geo_point
+  - path: /cinemas/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        location:
+          lat: 74
+          lon: 40
+    status: [201]
+epilogues:
+  - path: /cinemas
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search cinemas for documents whose point objects are within the specified bounding box.
+    path: /{index}/_search
+    parameters:
+      index: cinemas
+    method: GET
+    request:
+      payload:
+        query:
+          geo_bounding_box:
+            location:
+              top: 75
+              left: 28
+              bottom: 73
+              right: 41
+            validation_method: strict
+            type: memory
+            ignore_unmapped: false
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+            relation: eq
+          max_score: 1
+          hits:
+            - _index: cinemas
+              _score: 1
+              _source:
+                location:
+                  lat: 74
+                  lon: 40

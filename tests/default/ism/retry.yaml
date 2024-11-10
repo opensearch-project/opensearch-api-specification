@@ -1,0 +1,43 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test retrying a failed action for an index.
+prologues:
+  - path: /books
+    method: PUT
+chapters:
+  - synopsis: Retry a failed policy for an index specified in the query.
+    path: /_plugins/_ism/retry
+    method: POST
+    parameters:
+      index: books
+    request:
+      payload:
+        state: index
+    response:
+      status: 200
+      payload:
+        updated_indices: 0
+        failures: true
+        failed_indices:
+          - index_name: books
+            reason: This index is not being managed.
+  - synopsis: Retry a failed policy for an index specified in the path.
+    path: /_plugins/_ism/retry/{index}
+    method: POST
+    parameters:
+      index: books
+    request:
+      payload:
+        state: index
+    response:
+      status: 200
+      payload:
+        updated_indices: 0
+        failures: true
+        failed_indices:
+          - index_name: books
+            reason: This index is not being managed.
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]

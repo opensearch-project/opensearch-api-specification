@@ -13,7 +13,7 @@ import { type ValidationError } from 'types'
 import SchemaRefsValidator from './SchemaRefsValidator'
 import SupersededOperationsFile from './components/SupersededOperationsFile'
 import InfoFile from './components/InfoFile'
-import InlineObjectSchemaValidator from './InlineObjectSchemaValidator'
+import SchemaVisitingValidator from './SchemaVisitingValidator'
 import SchemasValidator from './SchemasValidator'
 import { type Logger } from '../Logger'
 
@@ -25,7 +25,7 @@ export default class SpecValidator {
   schemas_folder: SchemasFolder
   schemas_validator: SchemasValidator
   schema_refs_validator: SchemaRefsValidator
-  inline_object_schema_validator: InlineObjectSchemaValidator
+  inline_object_schema_validator: SchemaVisitingValidator
 
   constructor (root_folder: string, logger: Logger) {
     this.logger = logger
@@ -35,7 +35,7 @@ export default class SpecValidator {
     this.schemas_folder = new SchemasFolder(`${root_folder}/schemas`)
     this.schemas_validator = new SchemasValidator(root_folder, logger)
     this.schema_refs_validator = new SchemaRefsValidator(this.namespaces_folder, this.schemas_folder)
-    this.inline_object_schema_validator = new InlineObjectSchemaValidator(this.namespaces_folder, this.schemas_folder)
+    this.inline_object_schema_validator = new SchemaVisitingValidator(this.namespaces_folder, this.schemas_folder)
   }
 
   validate (): ValidationError[] {

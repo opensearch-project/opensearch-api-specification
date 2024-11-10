@@ -67,11 +67,15 @@ export function sort_array_by_keys (values: any[], priorities: string[] = []): s
 export function delete_matching_keys(obj: any, condition: (obj: any) => boolean): void {
   for (const key in obj) {
     var item = obj[key]
+
     if (_.isObject(item)) {
       if (condition(item)) {
         delete obj[key]
       } else {
         delete_matching_keys(item, condition)
+        if (_.isArray(item)) {
+          obj[key] = _.compact(item)
+        }
       }
     }
   }
@@ -120,13 +124,25 @@ export function read_yaml<T = Record<string, any>> (file_path: string, exclude_s
 }
 
 export function write_yaml (file_path: string, content: any): void {
-  write_text(file_path, YAML.stringify(
-    content,
-    {
-      lineWidth: 0,
-      singleQuote: true,
-      aliasDuplicateObjects: false
-    }))
+  const doc = new YAML.Document(content, null, { aliasDuplicateObjects: false })
+
+  YAML.visit(doc, {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    Scalar(_, node) {
+      if (typeof node.value === 'string') {
+        const value = node.value.toLowerCase();
+        // Ensure "human" boolean string values are quoted as old YAML parsers might coerce them to boolean true/false
+        if (value === 'no' || value === 'yes' || value === 'n' || value === 'y' || value === 'off' || value === 'on') {
+          node.type = 'QUOTE_SINGLE'
+        }
+      }
+    }
+  })
+
+  write_text(file_path, doc.toString({
+    lineWidth: 0,
+    singleQuote: true
+  }))
 }
 
 export function to_json(content: any, replacer?: (this: any, key: string, value: any) => any): string {

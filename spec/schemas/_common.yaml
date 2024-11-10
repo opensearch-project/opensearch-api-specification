@@ -21,19 +21,24 @@ components:
         - acknowledged
     DocStatus:
       description: |-
-        Item level REST category class codes during indexing.
+        The item level REST category class codes during indexing.
       type: object
       properties:
         1xx:
-          type: number
+          type: integer
+          format: int32
         2xx:
-          type: number
+          type: integer
+          format: int32
         3xx:
-          type: number
+          type: integer
+          format: int32
         4xx:
-          type: number
+          type: integer
+          format: int32
         5xx:
-          type: number
+          type: integer
+          format: int32
     Duration:
       description: |-
         A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
@@ -45,27 +50,35 @@ components:
       additionalProperties: true
     GeoBounds:
       description: |-
-        A geo bounding box. It can be represented in various ways:
-        - as 4 top/bottom/left/right coordinates
-        - as 2 top_left / bottom_right points
-        - as 2 top_right / bottom_left points
-        - as a WKT bounding box.
+        A geo-bounding box. It can be represented in the following ways:
+        - As 4 top/bottom/left/right coordinates.
+        - As 2 top_left/bottom_right points.
+        - As 2 top_right/bottom_left points.
+        - As a Well Known Text (WKT) bounding box.
       oneOf:
-        - $ref: '#/components/schemas/CoordsGeoBounds'
-        - $ref: '#/components/schemas/TopLeftBottomRightGeoBounds'
-        - $ref: '#/components/schemas/TopRightBottomLeftGeoBounds'
-        - $ref: '#/components/schemas/WktGeoBounds'
+        - title: coords
+          $ref: '#/components/schemas/CoordsGeoBounds'
+        - title: tlbr
+          $ref: '#/components/schemas/TopLeftBottomRightGeoBounds'
+        - title: trbl
+          $ref: '#/components/schemas/TopRightBottomLeftGeoBounds'
+        - title: wkt
+          $ref: '#/components/schemas/WktGeoBounds'
     CoordsGeoBounds:
       type: object
       properties:
         top:
           type: number
+          format: double
         bottom:
           type: number
+          format: double
         left:
           type: number
+          format: double
         right:
           type: number
+          format: double
       required:
         - bottom
         - left
@@ -83,27 +96,34 @@ components:
         - top_left
     GeoLocation:
       description: |-
-        A latitude/longitude as a 2 dimensional point. It can be represented in various ways:
-        - as a `{lat, long}` object
-        - as a geo hash value
-        - as a `[lon, lat]` array
-        - as a string in `"<lat>, <lon>"` or WKT point formats.
+        A latitude/longitude as a two-dimensional point. It can be represented in the following ways:
+        - As a `{lat, long}` object.
+        - As a geohash value.
+        - As a `[lon, lat]` array.
+        - As a string in `"<lat>, <lon>"` or WKT point format.
       oneOf:
-        - $ref: '#/components/schemas/LatLonGeoLocation'
-        - $ref: '#/components/schemas/GeoHashLocation'
-        - type: array
+        - title: latlon
+          $ref: '#/components/schemas/LatLonGeoLocation'
+        - title: geohash
+          $ref: '#/components/schemas/GeoHashLocation'
+        - title: coords
+          type: array
           items:
             type: number
-        - type: string
+            format: double
+        - title: text
+          type: string
     LatLonGeoLocation:
       type: object
       properties:
         lat:
           description: Latitude
           type: number
+          format: double
         lon:
           description: Longitude
           type: number
+          format: double
       required:
         - lat
         - lon
@@ -133,16 +153,48 @@ components:
           type: string
       required:
         - wkt
+    XyLocation:
+      x-version-added: '2.4'
+      description: |-
+        A two-dimensional Cartesian point specified by x and y coordinates. It can be represented in the following ways:
+         - As an `{x, y}` object.
+         - As an `[x, y]` array.
+         - As a string in `"x, y"` or WKT point format.
+      oneOf:
+        - title: cartesian
+          $ref: '#/components/schemas/XyCartesianCoordinates'
+        - title: coords
+          type: array
+          items:
+            type: number
+            format: double
+        - title: text
+          type: string
+    XyCartesianCoordinates:
+      x-version-added: '2.4'
+      type: object
+      properties:
+        x:
+          description: The x coordinate.
+          type: number
+          format: double
+        y:
+          description: The y coordinate.
+          type: number
+          format: double
+      required:
+        - x
+        - y
     EpochTimeUnitMillis:
       allOf:
         - $ref: '#/components/schemas/UnitMillis'
     UnitMillis:
-      description: Time unit for milliseconds.
-      type: number
+      description: The time unit for milliseconds.
+      type: integer
       format: int64
     DurationLarge:
       description: |-
-        A date histogram interval. Similar to `Duration` with additional units: `w` (week), `M` (month), `q` (quarter) and `y` (year).
+        A date histogram interval, similar to `Duration`, with support for additional units: `w` (week), `M` (month), `q` (quarter), and `y` (year).
       type: string
     FieldValue:
       description: A field value.
@@ -156,8 +208,8 @@ components:
       description: |-
         The absence of any type. This is commonly used in APIs that don't return a body.
 
-        Although "void" is generally used for the unit type that has only one value, this is to be interpreted as
-        the bottom type that has no value at all. Most languages have a unit type, but few have a bottom type.
+        Although "void" is generally used for a unit type that has only one value, this is interpreted as
+        the bottom type, which has no value. Most languages have a unit type, but few have a bottom type.
 
         See https://en.m.wikipedia.org/wiki/Unit_type and https://en.m.wikipedia.org/wiki/Bottom_type.
       type: object
@@ -170,13 +222,13 @@ components:
     IndexName:
       type: string
     Field:
-      description: Path to field or array of paths. Some API's support wildcards in the path to select multiple fields.
+      description: The path to a field or an array of paths. Some APIs support wildcards in the path, which allows you to select multiple fields.
       type: string
     SequenceNumber:
-      type: number
+      type: integer
       format: int64
     VersionNumber:
-      type: number
+      type: integer
       format: int64
     SortResults:
       type: array
@@ -189,12 +241,13 @@ components:
           description: Always `"LineString"`
           type: string
         coordinates:
-          description: Array of `[lon, lat]` coordinates
+          description: An array of `[lon, lat]` coordinates.
           type: array
           items:
             type: array
             items:
               type: number
+              format: double
       required:
         - coordinates
         - type
@@ -202,17 +255,23 @@ components:
       type: object
       properties:
         skipped:
-          type: number
+          type: integer
+          format: int32
         successful:
-          type: number
+          type: integer
+          format: int32
         total:
-          type: number
+          type: integer
+          format: int32
         running:
-          type: number
+          type: integer
+          format: int32
         partial:
-          type: number
+          type: integer
+          format: int32
         failed:
-          type: number
+          type: integer
+          format: int32
         details:
           type: object
           additionalProperties:
@@ -276,7 +335,7 @@ components:
         - successful
         - total
     uint:
-      type: number
+      type: integer
     ShardFailure:
       type: object
       properties:
@@ -287,7 +346,7 @@ components:
         reason:
           $ref: '#/components/schemas/ErrorCause'
         shard:
-          type: number
+          type: integer
         status:
           type: string
       required:
@@ -297,13 +356,13 @@ components:
       type: object
       properties:
         type:
-          description: The type of error
+          description: The type of error.
           type: string
         reason:
-          description: A human-readable explanation of the error, in english
+          description: A human-readable explanation of the error, in English.
           type: string
         stack_trace:
-          description: The server stack trace. Present only if the `error_trace=true` parameter was sent with the request.
+          description: The server stack trace, present only if the `error_trace=true` parameter was sent with the request.
           type: string
         caused_by:
           $ref: '#/components/schemas/ErrorCause'
@@ -319,21 +378,28 @@ components:
         - type
       additionalProperties:
         title: metadata
-        description: Additional details about the error.
+        description: Any additional information about the error.
     DurationValueUnitNanos:
       allOf:
         - $ref: '#/components/schemas/UnitNanos'
     UnitNanos:
       description: Time unit for nanoseconds.
-      type: number
+      type: integer
+      format: int64
     ScrollId:
       type: string
     Routing:
       type: string
+    RoutingInQueryString:
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
     DateTime:
       description: |-
-        A date and time, either as a string whose format can depend on the context (defaulting to ISO 8601), or a
-        number of milliseconds since the Epoch. OpenSearch accepts both as input, but will generally output a string
+        A date and time, either as a string whose format depends on the context (defaulting to ISO_8601) or the
+        number of milliseconds since the epoch. OpenSearch accepts both as an input but will generally output a string.
         representation.
       oneOf:
         - type: string
@@ -357,13 +423,22 @@ components:
           items:
             $ref: '#/components/schemas/ExpandWildcard'
     ExpandWildcard:
-      type: string
-      enum:
-        - all
-        - closed
-        - hidden
-        - none
-        - open
+      oneOf:
+        - type: string
+          const: all
+          description: Match any index, including hidden ones.
+        - type: string
+          const: closed
+          description: Match closed, non-hidden indices.
+        - type: string
+          const: hidden
+          description: Match hidden indices. Must be combined with open, closed, or both.
+        - type: string
+          const: none
+          description: Wildcard expressions are not accepted.
+        - type: string
+          const: open
+          description: Match open, non-hidden indices.
     VersionString:
       type: string
     SearchType:
@@ -378,9 +453,10 @@ components:
         - missing
         - popular
     MinimumShouldMatch:
-      description: The minimum number of terms that should match as integer, percentage or range.
+      description: The minimum number of terms that should match as an integer, percentage, or range.
       oneOf:
-        - type: number
+        - type: integer
+          format: int32
         - type: string
     Distance:
       type: string
@@ -388,25 +464,36 @@ components:
       type: string
     Script:
       oneOf:
-        - $ref: '#/components/schemas/InlineScript'
-        - $ref: '#/components/schemas/StoredScriptId'
+        - title: inline
+          $ref: '#/components/schemas/InlineScript'
+        - title: stored
+          $ref: '#/components/schemas/StoredScriptId'
     InlineScript:
-      allOf:
-        - $ref: '#/components/schemas/ScriptBase'
-        - type: object
-          properties:
-            lang:
-              $ref: '#/components/schemas/ScriptLanguage'
-            options:
-              type: object
-              additionalProperties:
-                type: string
-            source:
-              description: The script source.
-              type: string
-          required:
-            - source
+      oneOf:
+        - title: source
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/ScriptBase'
+            - type: object
+              properties:
+                lang:
+                  $ref: '#/components/schemas/ScriptLanguage'
+                options:
+                  type: object
+                  additionalProperties:
+                    type: string
+                source:
+                  description: The script source.
+                  type: string
+              required:
+                - source
     ScriptLanguage:
+      anyOf:
+        - title: builtin
+          $ref: '#/components/schemas/BuiltinScriptLanguage'
+        - title: custom
+          type: string
+    BuiltinScriptLanguage:
       type: string
       enum:
         - expression
@@ -418,8 +505,8 @@ components:
       properties:
         params:
           description: |-
-            Specifies any named parameters that are passed into the script as variables.
-            Use parameters instead of hard-coded values to decrease compile time.
+            Specifies any named parameters that are passed into the script as variables. 
+            Use parameters instead of hard-coded values to decrease compilation time. 
           type: object
           additionalProperties: true
     StoredScriptId:
@@ -433,10 +520,18 @@ components:
             - id
     MultiTermQueryRewrite:
       type: string
+      enum:
+        - constant_score
+        - constant_score_boolean
+        - scoring_boolean
+        - top_terms_N
+        - top_terms_blended_freqs_N
+        - top_terms_boost_N
     Fuzziness:
       oneOf:
         - type: string
-        - type: number
+        - type: integer
+          format: int32
     GeoDistanceType:
       type: string
       enum:
@@ -461,8 +556,22 @@ components:
             $ref: '#/components/schemas/SortCombinations'
     SortCombinations:
       oneOf:
-        - $ref: '#/components/schemas/Field'
-        - $ref: '#/components/schemas/SortOptions'
+        - title: field
+          $ref: '#/components/schemas/Field'
+        - title: field_with_direction
+          $ref: '#/components/schemas/FieldWithDirection'
+        - title: field_with_order
+          $ref: '#/components/schemas/FieldWithOrder'
+        - title: options
+          $ref: '#/components/schemas/SortOptions'
+    FieldWithDirection:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/SortOrder'
+    FieldWithOrder:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ScoreSort'
     SortOptions:
       type: object
       properties:
@@ -546,7 +655,8 @@ components:
         filter:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         max_children:
-          type: number
+          type: integer
+          format: int32
         nested:
           $ref: '#/components/schemas/NestedSortValue'
         path:
@@ -574,8 +684,8 @@ components:
       type: string
     PipeSeparatedFlagsSimpleQueryStringFlag:
       description: |-
-        A set of flags that can be represented as a single enum value or a set of values that are encoded
-        as a pipe-separated string
+        A set of flags represented as a single enum value or a set of values that are encoded
+        as a pipe-separated string.
 
         Depending on the target language, code generators can use this hint to generate language specific
         flags enum constructs and the corresponding (de-)serialization code.
@@ -583,9 +693,10 @@ components:
         - $ref: '_common.query_dsl.yaml#/components/schemas/SimpleQueryStringFlag'
         - type: string
     GeoHashPrecision:
-      description: A precision that can be expressed as a geohash length between 1 and 12, or a distance measure like "1km", "10m".
+      description: The level of geohash precision, which can be expressed as a geohash length between 1 and 12 or as a distance measure, such as "1km" or "10m".
       oneOf:
-        - type: number
+        - type: integer
+          format: int32
         - type: string
     GeoTilePrecision:
       type: number
@@ -597,32 +708,49 @@ components:
         vector:
           $ref: '#/components/schemas/QueryVector'
         k:
-          description: The final number of nearest neighbors to return as top hits.
-          type: number
+          description: The total number of nearest neighbors to return as top hits. 
+          type: integer
+          format: int32
         min_score:
-          description: The minimum similarity score for a neighbor to be considered a hit.
+          description: The minimum similarity score required in order for a neighbor to be considered a hit. 
           type: number
+          format: float
           x-version-added: '2.14'
         max_distance:
-          description: The maximum physical distance in vector space for a neighbor to be considered a hit.
+          description: The maximum physical vector space distance required in order for a neighbor to be considered a hit.
           type: number
+          format: float
           x-version-added: '2.14'
         filter:
-          description: Filters for the kNN search query.
+          description: The filters for the k-NN search query.
           oneOf:
             - $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
             - type: array
               items:
                 $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         boost:
-          description: Boost value to apply to kNN scores
+          description: The boost value applied to k-NN scores.
           type: number
+          format: float
+        method_parameters:
+          type: object
+          x-version-added: '2.16'
+          additionalProperties:
+            type: integer
+            format: int32
+        rescore:
+          type: object
+          x-version-added: '2.17'
+          additionalProperties:
+            type: number
+            format: float
       required:
         - vector
     QueryVector:
       type: array
       items:
         type: number
+        format: float
     SlicedScroll:
       type: object
       properties:
@@ -631,7 +759,8 @@ components:
         id:
           $ref: '#/components/schemas/Id'
         max:
-          type: number
+          type: integer
+          format: int32
       required:
         - id
         - max
@@ -645,8 +774,10 @@ components:
         - wait_for
     WaitForActiveShards:
       oneOf:
-        - type: number
-        - $ref: '#/components/schemas/WaitForActiveShardOptions'
+        - title: count
+          type: integer
+        - title: option
+          $ref: '#/components/schemas/WaitForActiveShardOptions'
     WaitForActiveShardOptions:
       type: string
       enum:
@@ -664,7 +795,8 @@ components:
         _seq_no:
           $ref: '#/components/schemas/SequenceNumber'
         _primary_term:
-          type: number
+          type: integer
+          format: int32
         _routing:
           $ref: '#/components/schemas/Routing'
         _source:
@@ -686,10 +818,10 @@ components:
             $ref: '#/components/schemas/NodeId'
     NodeId:
       type: string
-    StorageSize:
+    HumanReadableByteCount:
       type: string
       pattern: '\d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p)'
-    StorageType:
+    ByteUnit:
       type: string
       enum:
         - b
@@ -703,20 +835,23 @@ components:
         - pb
         - t
         - tb
-    Bytes:
+    ByteCount:
       type: integer
-    Percentage:
-      oneOf:
-        - type: string
-        - type: number
+      format: int64
+    PercentageNumber:
+      type: number
+      format: double
+    PercentageString:
+      type: string
+      pattern: '\d+(\.\d+)?'
     Host:
       type: string
     Ip:
       type: string
     StringifiedEpochTimeUnitSeconds:
       description: |-
-        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
-        is used to capture this behavior while keeping the semantics of the field type.
+        Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
+        this behavior while keeping the semantics of the field type.
 
         Depending on the target language, code generators can keep the union or remove it and leniently parse
         strings to the target type.
@@ -728,7 +863,8 @@ components:
         - $ref: '#/components/schemas/UnitSeconds'
     UnitSeconds:
       description: Time unit for seconds.
-      type: number
+      type: integer
+      format: int64
     TimeOfDay:
       description: Time of day, expressed as HH:MM:SS.
       type: string
@@ -785,18 +921,18 @@ components:
       type: string
     Stringifiedinteger:
       description: |-
-        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
-        is used to capture this behavior while keeping the semantics of the field type.
+        Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
+        this behavior while keeping the semantics of the field type.
 
         Depending on the target language, code generators can keep the union or remove it and leniently parse
         strings to the target type.
       oneOf:
-        - type: number
+        - type: integer
         - type: string
     Stringifiedboolean:
       description: |-
-        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
-        is used to capture this behavior while keeping the semantics of the field type.
+        Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
+        this behavior while keeping the semantics of the field type.
 
         Depending on the target language, code generators can keep the union or remove it and leniently parse
         strings to the target type.
@@ -807,8 +943,8 @@ components:
       type: string
     StringifiedEpochTimeUnitMillis:
       description: |-
-        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
-        is used to capture this behavior while keeping the semantics of the field type.
+        Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
+        this behavior while keeping the semantics of the field type.
 
         Depending on the target language, code generators can keep the union or remove it and leniently parse
         strings to the target type.
@@ -837,7 +973,7 @@ components:
         - in
         - ine
         - p
-    Normalization:
+    TermFrequencyNormalization:
       type: string
       enum:
         - h1
@@ -878,20 +1014,14 @@ components:
         - urgent
     DataStreamName:
       type: string
-    Metrics:
-      oneOf:
-        - type: string
-        - type: array
-          items:
-            type: string
     CompletionStats:
       type: object
       properties:
         size_in_bytes:
-          description: Total amount, in bytes, of memory used for completion across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for completion across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         fields:
           type: object
           additionalProperties:
@@ -902,9 +1032,9 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - size_in_bytes
     DocStats:
@@ -912,14 +1042,14 @@ components:
       properties:
         count:
           description: |-
-            Total number of non-deleted documents across all primary shards assigned to selected nodes.
+            The total number of non-deleted documents across all primary shards assigned to the selected nodes.
             This number is based on documents in Lucene segments and may include documents from nested fields.
           type: number
         deleted:
           description: |-
-            Total number of deleted documents across all primary shards assigned to selected nodes.
-            This number is based on documents in Lucene segments.
-            OpenSearch reclaims the disk space of deleted Lucene documents when a segment is merged.
+            The total number of deleted documents across all primary shards assigned to the selected nodes.
+            This number is based on the number of documents stored in Lucene segments.
+            OpenSearch reclaims the disk space previously occupied by the deleted Lucene documents when a segment is merged.
           type: number
       required:
         - count
@@ -929,9 +1059,9 @@ components:
         evictions:
           type: number
         memory_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         fields:
           type: object
           additionalProperties:
@@ -942,9 +1072,9 @@ components:
       type: object
       properties:
         memory_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - memory_size_in_bytes
     QueryCacheStats:
@@ -952,28 +1082,28 @@ components:
       properties:
         cache_count:
           description: |-
-            Total number of entries added to the query cache across all shards assigned to selected nodes.
-            This number includes current and evicted entries.
+            The total number of entries added to the query cache across all shards assigned to the selected nodes.
+            This number includes all current and evicted entries.
           type: number
         cache_size:
-          description: Total number of entries currently in the query cache across all shards assigned to selected nodes.
+          description: The total number of entries currently stored in the query cache across all shards assigned to the selected nodes.
           type: number
         evictions:
-          description: Total number of query cache evictions across all shards assigned to selected nodes.
+          description: The total number of query cache evictions across all shards assigned to the selected nodes.
           type: number
         hit_count:
-          description: Total count of query cache hits across all shards assigned to selected nodes.
+          description: The total number of query cache hits across all shards assigned to the selected nodes.
           type: number
         memory_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
-          description: Total amount, in bytes, of memory used for the query cache across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for the query cache across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         miss_count:
-          description: Total count of query cache misses across all shards assigned to selected nodes.
+          description: The total number of query cache misses across all shards assigned to the selected nodes.
           type: number
         total_count:
-          description: Total count of hits and misses in the query cache across all shards assigned to selected nodes.
+          description: The total number of hits and misses stored in the query cache across all shards assigned to the selected nodes.
           type: number
       required:
         - cache_count
@@ -985,7 +1115,7 @@ components:
         - total_count
     RemoteStoreStats:
       type: object
-      description: Statistics about remote segment store operations.
+      description: Statistics related to remote segment store operations.
       properties:
         upload:
           $ref: '#/components/schemas/RemoteStoreUploadStats'
@@ -1031,26 +1161,26 @@ components:
         - succeeded
     RemoteStoreTranslogUploadTotalUploadSizeStats:
       type: object
-      description: The total amount of data uploaded to the remote translog store.
+      description: The total amount of data uploaded to the remote translog store. 
       properties:
         failed:
           description: The number of bytes that failed to upload to the remote translog store.
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         failed_bytes:
           description: The number of bytes that failed to upload to the remote translog store.
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         started:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         started_bytes:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         succeeded:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         succeeded_bytes:
           description: The number of bytes successfully uploaded to the remote translog store.
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - failed_bytes
         - started_bytes
@@ -1070,7 +1200,7 @@ components:
         refresh_size_lag:
           $ref: '#/components/schemas/RemoteStoreUploadRefreshSizeLagStats'
         total_time_spent:
-          description: The total amount of time, spent on uploads to the remote segment store.
+          description: The total amount of time spent on uploads to the remote segment store.
           $ref: '#/components/schemas/Duration'
         total_time_spent_in_millis:
           description: The total amount of time, in milliseconds, spent on uploads to the remote segment store.
@@ -1088,33 +1218,33 @@ components:
       description: The amount of data, in bytes, uploaded or downloaded to/from the remote segment store.
       properties:
         failed:
-          description: The number of bytes that failed to upload/upload to/from the remote segment store.
-          $ref: '#/components/schemas/StorageSize'
+          description: The number of bytes that failed to upload to/from the remote segment store.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         failed_bytes:
-          description: The number of bytes that failed to upload/upload to/from the remote segment store.
-          $ref: '#/components/schemas/Bytes'
+          description: The number of bytes that failed to upload to/from the remote segment store.
+          $ref: '#/components/schemas/ByteCount'
         started:
           description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         started_bytes:
           description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         succeeded:
           description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         succeeded_bytes:
           description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - failed_bytes
         - started_bytes
         - succeeded_bytes
     RemoteStoreUploadPressureStats:
       type: object
-      description: Statistics related to segment store upload backpressure.
+      description: Statistics related to segment store upload backpressure. 
       properties:
         total_rejections:
-          description: The total number of requests rejected due to segment store upload backpressure.
+          description: The total number of requests rejected due to segment store upload backpressure. 
           type: number
       required:
         - total_rejections
@@ -1123,32 +1253,32 @@ components:
       description: The amount of lag during upload between the remote segment store and the local store.
       properties:
         max:
-          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/StorageSize'
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store. 
+          $ref: '#/components/schemas/HumanReadableByteCount'
         max_bytes:
-          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/Bytes'
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store. 
+          $ref: '#/components/schemas/ByteCount'
         total:
-          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store. 
+          $ref: '#/components/schemas/HumanReadableByteCount'
         total_bytes:
-          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
-          $ref: '#/components/schemas/Bytes'
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store. 
+          $ref: '#/components/schemas/ByteCount'
       required:
         - max_bytes
         - total_bytes
     RemoteStoreDownloadStats:
       type: object
-      description: Statistics related to downloads to the remote segment store.
+      description: Statistics related to downloads to the remote segment store. 
       properties:
         total_download_size:
-          description: The total amount of data download from the remote segment store.
+          description: The total amount of data downloaded from the remote segment store. 
           $ref: '#/components/schemas/RemoteStoreUploadDownloadStats'
         total_time_spent:
-          description: The total duration, spent on downloads from the remote segment store.
+          description: The total amount of time spent on downloads from the remote segment store.
           $ref: '#/components/schemas/Duration'
         total_time_spent_in_millis:
-          description: The total duration, in milliseconds, spent on downloads from the remote segment store.
+          description: The total duration, in milliseconds, spent on downloads from the remote segment store. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
       required:
         - total_download_size
@@ -1157,11 +1287,11 @@ components:
       type: object
       properties:
         max_bytes_behind:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         max_replication_lag:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         total_bytes_behind:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - max_bytes_behind
         - max_replication_lag
@@ -1170,13 +1300,13 @@ components:
       type: object
       properties:
         count:
-          description: Total number of segments across all shards assigned to selected nodes.
+          description: The total number of segments across all shards assigned to the selected nodes.
           type: number
         doc_values_memory:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         doc_values_memory_in_bytes:
-          description: Total amount, in bytes, of memory used for doc values across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for document values across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         file_sizes:
           description: |-
             This object is not populated by the cluster stats API.
@@ -1185,62 +1315,62 @@ components:
           additionalProperties:
             $ref: 'indices.stats.yaml#/components/schemas/ShardFileSizeInfo'
         fixed_bit_set:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         fixed_bit_set_memory_in_bytes:
-          description: Total amount of memory, in bytes, used by fixed bit sets across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount of memory, in bytes, used by fixed bit sets across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         index_writer_memory:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         index_writer_max_memory_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         index_writer_memory_in_bytes:
-          description: Total amount, in bytes, of memory used by all index writers across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used by all index writers across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         max_unsafe_auto_id_timestamp:
-          description: Unix timestamp, in milliseconds, of the most recently retried indexing request.
+          description: The Unix timestamp, in milliseconds, of the most recently retried indexing request.
           type: number
         memory:
-          description: Total amount, of memory used for segments across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used for segments across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         memory_in_bytes:
-          description: Total amount, in bytes, of memory used for segments across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for segments across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         norms_memory:
-          description: Total amount of memory used for normalization factors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used for normalization factors across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         norms_memory_in_bytes:
-          description: Total amount, in bytes, of memory used for normalization factors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for normalization factors across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         points_memory:
-          description: Total amount of memory used for points across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used for points across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         points_memory_in_bytes:
-          description: Total amount, in bytes, of memory used for points across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for points across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         stored_fields_memory:
-          description: Total amount of memory used for stored fields across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used for stored fields across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         stored_fields_memory_in_bytes:
-          description: Total amount, in bytes, of memory used for stored fields across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for stored fields across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         terms_memory:
-          description: Total amount of memory used for terms across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used for terms across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         terms_memory_in_bytes:
-          description: Total amount, in bytes, of memory used for terms across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for terms across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         term_vectors_memory:
-          description: Total amount of memory used for term vectors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used for term vectors across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         term_vectors_memory_in_bytes:
-          description: Total amount, in bytes, of memory used for term vectors across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used for term vectors across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         version_map_memory:
-          description: Total amount of memory used by all version maps across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/StorageSize'
+          description: The total amount of memory used by all version maps across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/HumanReadableByteCount'
         version_map_memory_in_bytes:
-          description: Total amount, in bytes, of memory used by all version maps across all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total amount, in bytes, of memory used by all version maps across all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         remote_store:
           $ref: '#/components/schemas/RemoteStoreStats'
         segment_replication:
@@ -1263,15 +1393,15 @@ components:
       type: object
       properties:
         size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         size_in_bytes:
-          description: Total size, in bytes, of all shards assigned to selected nodes.
-          $ref: '#/components/schemas/Bytes'
+          description: The total size, in bytes, of all shards assigned to the selected nodes.
+          $ref: '#/components/schemas/ByteCount'
         reserved:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         reserved_in_bytes:
           description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - reserved_in_bytes
         - size_in_bytes
@@ -1317,14 +1447,14 @@ components:
           items:
             $ref: '#/components/schemas/ErrorCause'
         total:
-          description: Total number of nodes selected by the request.
-          type: number
+          description: The total number of nodes selected by the request. 
+          type: integer
         successful:
-          description: Number of nodes that responded successfully to the request.
-          type: number
+          description: The number of nodes that responded successfully to the request. 
+          type: integer
         failed:
-          description: Number of nodes that rejected the request or failed to respond. If this value is not 0, a reason for the rejection or failure is included in the response.
-          type: number
+          description: The number of nodes that rejected the request or failed to respond. If this value is not 0, then a reason for the rejection or failure is included in the response. 
+          type: integer
       required:
         - failed
         - successful
@@ -1339,7 +1469,7 @@ components:
         _index:
           $ref: '#/components/schemas/IndexName'
         _primary_term:
-          type: number
+          type: integer
           format: int64
         result:
           $ref: '#/components/schemas/Result'
@@ -1373,7 +1503,7 @@ components:
         - abort
         - proceed
     Slices:
-      description: Slices configuration used to parallelize a process.
+      description: The slice configuration used to parallelize a process.
       oneOf:
         - type: number
         - $ref: '#/components/schemas/SlicesCalculation'
@@ -1381,32 +1511,15 @@ components:
       type: string
       enum:
         - auto
-    BulkIndexByScrollFailure:
-      type: object
-      properties:
-        cause:
-          $ref: '#/components/schemas/ErrorCause'
-        id:
-          $ref: '#/components/schemas/Id'
-        index:
-          $ref: '#/components/schemas/IndexName'
-        status:
-          type: number
-        type:
-          type: string
-      required:
-        - cause
-        - id
-        - index
-        - status
-        - type
     Retries:
       type: object
       properties:
         bulk:
-          type: number
+          type: integer
+          format: int64
         search:
-          type: number
+          type: integer
+          format: int64
       required:
         - bulk
         - search
@@ -1418,7 +1531,7 @@ components:
       type: object
       properties:
         task_id:
-          type: number
+          type: integer
         node_id:
           $ref: '#/components/schemas/NodeId'
         status:
@@ -1602,21 +1715,21 @@ components:
         current_docs:
           type: number
         current_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         current_size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         total:
           type: number
         total_auto_throttle:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         total_auto_throttle_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         total_docs:
           type: number
         total_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         total_size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         total_stopped_time:
           $ref: '#/components/schemas/Duration'
         total_stopped_time_in_millis:
@@ -1688,9 +1801,9 @@ components:
         hit_count:
           type: number
         memory_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         miss_count:
           type: number
       required:
@@ -1702,42 +1815,42 @@ components:
       type: object
       properties:
         open_contexts:
-          description: The number of open search contexts.
+          description: The number of open search contexts. 
           type: number
         query_current:
-          description: The number of shard query operations that are currently running.
+          description: The number of currently running shard query operations. 
           type: number
         query_time:
-          description: The total amount of time for all shard query operations.
+          description: The total amount of time taken to complete all shard query operations. 
           $ref: '#/components/schemas/Duration'
         query_time_in_millis:
-          description: The total amount of time for all shard query operations, in milliseconds.
+          description: The total amount of time taken to complete all shard query operations, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         query_total:
           description: The total number of shard query operations.
           type: number
         concurrent_query_total:
-          description: The total number of query operations that use concurrent segment search.
+          description: The total number of query operations using concurrent segment search. 
           type: number
         concurrent_query_time:
           $ref: '#/components/schemas/Duration'
         concurrent_query_time_in_millis:
-          description: The total amount of time taken by all query operations that use concurrent segment search, in milliseconds.
+          description: The total amount of time taken by all query operations using concurrent segment search, in milliseconds.
           $ref: '#/components/schemas/DurationValueUnitMillis'
         concurrent_query_current:
-          description: The number of currently running query operations that use concurrent segment search.
+          description: The number of currently running query operations using concurrent segment search.
           type: number
         concurrent_avg_slice_count:
           description: The average slice count of all search requests. This is computed as the total slice count divided by the total number of concurrent search requests.
           type: number
         fetch_current:
-          description: The number of shard fetch operations that are currently running.
+          description: The number of currently running shard fetch operations. 
           type: number
         fetch_time:
-          description: The total amount of time for all shard fetch operations.
+          description: The total amount of time taken to complete all shard fetch operations.
           $ref: '#/components/schemas/Duration'
         fetch_time_in_millis:
-          description: The total amount of time for all shard fetch operations, in milliseconds.
+          description: The total amount of time taken to complete all shard fetch operations, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         fetch_total:
           description: The total number of shard fetch operations.
@@ -1746,42 +1859,42 @@ components:
           description: The number of shard scroll operations that are currently running.
           type: number
         scroll_time:
-          description: The total amount of time for all shard scroll operations.
+          description: The total amount of time taken to complete all shard scroll operations.
           $ref: '#/components/schemas/Duration'
         scroll_time_in_millis:
-          description: The total amount of time for all shard scroll operations, in milliseconds.
+          description: The total amount of time taken to complete all shard scroll operations, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
           type: number
         point_in_time_total:
-          description: The total number of shard Point in Time (PIT) contexts that have been created (completed and active) since the node last restarted.
+          description: The total number of shard Point in Time (PIT) contexts created (completed and active) since the node last restarted. 
           type: number
         point_in_time_time:
           $ref: '#/components/schemas/Duration'
         point_in_time_time_in_millis:
-          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         point_in_time_current:
-          description: The number of shard PIT contexts currently open.
+          description: The number of currently open shard PIT contexts. 
           type: number
         suggest_current:
-          description: The number of shard suggest operations that are currently running.
+          description: The number of currently running shard suggest operations. 
           type: number
         suggest_time:
-          description: The total amount of time for all shard suggest operations.
+          description: The total amount of time take to complete all shard suggest operations.
           $ref: '#/components/schemas/Duration'
         suggest_time_in_millis:
-          description: The total amount of time for all shard suggest operations, in milliseconds.
+          description: The total amount of time taken to complete all shard suggest operations, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         suggest_total:
-          description: The total number of shard suggest operations.
+          description: The total number of shard suggest operations. 
           type: number
         search_idle_reactivate_count_total:
           type: number
         request:
           type: object
-          description: Statistics about coordinator search operations for the node.
+          description: Statistics related to coordinator search operations for the node. 
           additionalProperties:
             $ref: '#/components/schemas/RequestStats'
         groups:
@@ -1811,15 +1924,15 @@ components:
         remote_store:
           $ref: '#/components/schemas/RemoteStoreTranslogStats'
         size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
         uncommitted_operations:
           type: number
         uncommitted_size:
-          $ref: '#/components/schemas/StorageSize'
+          $ref: '#/components/schemas/HumanReadableByteCount'
         uncommitted_size_in_bytes:
-          $ref: '#/components/schemas/Bytes'
+          $ref: '#/components/schemas/ByteCount'
       required:
         - earliest_last_modified_age
         - operations
@@ -1861,8 +1974,8 @@ components:
         - within
     StringifiedVersionNumber:
       description: |-
-        Some APIs will return values such as numbers also as a string (notably epoch timestamps). This behavior
-        is used to capture this behavior while keeping the semantics of the field type.
+        Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
+        this behavior while keeping the semantics of the field type.
 
         Depending on the target language, code generators can keep the union or remove it and leniently parse
         strings to the target type.
@@ -1907,23 +2020,32 @@ components:
       items:
         $ref: '#/components/schemas/NodeRole'
     NodeRole:
-      type: string
-      enum:
-        - client
-        - cluster_manager
-        - coordinating_only
-        - data
-        - data_cold
-        - data_content
-        - data_frozen
-        - data_hot
-        - data_warm
-        - ingest
-        - master
-        - ml
-        - remote_cluster_client
-        - transform
-        - voting_only
+      oneOf:
+        - type: string
+          enum:
+            - client
+            - coordinating_only
+            - data
+            - data_cold
+            - data_content
+            - data_frozen
+            - data_hot
+            - data_warm
+            - ingest
+            - ml
+            - remote_cluster_client
+            - transform
+            - voting_only
+        - type: string
+          enum:
+            - master
+          deprecated: true
+          x-version-deprecated: '2.0'
+          x-deprecation-message: Use 'cluster_manager' instead.
+        - type: string
+          enum:
+            - cluster_manager
+          x-version-added: '2.0'
     HttpHeaders:
       type: object
       additionalProperties:
@@ -1954,11 +2076,7 @@ components:
         transport_address:
           $ref: '#/components/schemas/TransportAddress'
       required:
-        - attributes
-        - host
-        - ip
         - name
-        - transport_address
     RankContainer:
       type: object
       properties:
@@ -1972,10 +2090,10 @@ components:
         - type: object
           properties:
             rank_constant:
-              description: How much influence documents in individual result sets per query have over the final ranked result set
+              description: To what degree documents found in individual result sets per query influence the final ranked result set.
               type: number
             window_size:
-              description: Size of the individual result sets per query
+              description: The size of the individual result sets per query.
               type: number
     RankBase:
       type: object
@@ -2075,3 +2193,136 @@ components:
         - expand
         - fetch
         - query
+    BulkByScrollTaskStatus:
+      type: object
+      properties:
+        slice_id:
+          type: integer
+          format: int32
+        total:
+          description: The number of documents that were successfully processed. 
+          type: integer
+          format: int64
+        updated:
+          description: The number of documents that were successfully updated after the reindex operation.
+          type: integer
+          format: int64
+        created:
+          description: The number of documents that were successfully created. 
+          type: integer
+          format: int64
+        deleted:
+          description: The number of documents that were successfully deleted. 
+          type: integer
+          format: int64
+        batches:
+          description: The number of scroll responses pulled back by the reindex operation.
+          type: integer
+          format: int32
+        version_conflicts:
+          description: The number of version conflicts encountered by the reindex operation.
+          type: integer
+          format: int64
+        noops:
+          description: The number of documents that were ignored. 
+          type: integer
+          format: int64
+        retries:
+          $ref: '#/components/schemas/Retries'
+        throttled_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        throttled:
+          $ref: '#/components/schemas/Duration'
+        requests_per_second:
+          description: The number of requests per second effectively executed during the reindex operation.
+          type: number
+          format: float
+        canceled:
+          type: string
+        throttled_until_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        throttled_until:
+          $ref: '#/components/schemas/Duration'
+        slices:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkByScrollTaskStatusOrException'
+      required:
+        - batches
+        - deleted
+        - noops
+        - requests_per_second
+        - retries
+        - throttled_millis
+        - throttled_until_millis
+        - total
+        - version_conflicts
+    BulkByScrollTaskStatusOrException:
+      oneOf:
+        - title: status
+          $ref: '#/components/schemas/BulkByScrollTaskStatus'
+        - title: exception
+          $ref: '#/components/schemas/ErrorCause'
+    BulkByScrollResponseBase:
+      allOf:
+        - $ref: '#/components/schemas/BulkByScrollTaskStatus'
+        - type: object
+          properties:
+            took:
+              type: integer
+              format: int64
+            timed_out:
+              type: boolean
+            failures:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkByScrollFailure'
+          required:
+            - failures
+            - timed_out
+            - took
+    BulkByScrollFailure:
+      anyOf:
+        - $ref: '#/components/schemas/BulkItemResponseFailure'
+        - $ref: '#/components/schemas/ScrollableHitSourceSearchFailure'
+    BulkItemResponseFailure:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ErrorCause'
+        id:
+          $ref: '#/components/schemas/Id'
+        index:
+          $ref: '#/components/schemas/IndexName'
+        status:
+          type: integer
+          format: int32
+      required:
+        - cause
+        - index
+        - status
+    ScrollableHitSourceSearchFailure:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/IndexName'
+        shard:
+          type: integer
+          format: int32
+        node:
+          type: string
+        status:
+          type: integer
+          format: int32
+        reason:
+          $ref: '#/components/schemas/ErrorCause'
+      required:
+        - reason
+        - status
+    BatchSize:
+      type: integer
+      format: int64
+    ResourceType:
+      type: string
+      enum:
+        - index_or_alias

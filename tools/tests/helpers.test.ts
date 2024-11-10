@@ -122,6 +122,25 @@ describe('helpers', () => {
         expect(obj).toStrictEqual({ foo: [{}] })
       })
     })
+
+    describe('an object with an array where some items are removed', () => {
+      var obj: object
+
+      beforeEach(() => {
+        obj = {
+          foo: [
+            { value: 1 },
+            { value: 1 },
+            { value: 2 }
+          ]
+        }
+      })
+
+      test('removes matching values', () => {
+        delete_matching_keys(obj, (_item: any) => _item.value == 1)
+        expect(obj).toStrictEqual({ foo: [{ value: 2 }] })
+      })
+    })
   })
 
   describe('find_refs', () => {

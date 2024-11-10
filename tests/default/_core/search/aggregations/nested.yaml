@@ -1,0 +1,59 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test aggregation.
+prologues:
+  - path: books
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            details:
+              type: nested
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: books, _id: '0'}}
+        - {details: {title: title1}}
+        - {index: {_index: books, _id: '1'}}
+        - {details: {title: title2}}
+chapters:
+  - synopsis: Aggregation with nested.
+    path: /{index}/_search
+    parameters:
+      index: books
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          details_agg:
+            nested:
+              path: details
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 0
+          failed: 0
+        hits:
+          total:
+            value: 2
+            relation: eq
+          max_score: null
+          hits: []
+        aggregations:
+          details_agg:
+            doc_count: 2
+
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
