@@ -37,7 +37,7 @@ jobs:
           - version: 2.16.0
             tests: snapshot
           - version: 2.16.0
-            tests: replication
+            tests: plugins/replication
             url: http://localhost:9200
           - version: 2.17.0
             tests: plugins/streaming
@@ -80,12 +80,6 @@ jobs:
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
         
-      - name: Get Container ID
-        id: container
-        run: |
-          CONTAINER_ID=$(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}" | head -n 1)
-          echo "CONTAINER_ID=$CONTAINER_ID" >> $GITHUB_OUTPUT
-
       - name: Run Tests
         run: |
           npm run test:spec -- \
