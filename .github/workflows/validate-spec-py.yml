@@ -1,0 +1,34 @@
+name: Validate Spec (Python)
+
+on: [pull_request,push]
+
+jobs:
+  validate-spec-py:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Build
+        run: npm ci && npm run merge
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        working-directory: tools/src/validate-spec-py
+        run: |
+          pip install --user pipenv
+          pipenv install
+
+      - name: Validate Spec
+        working-directory: tools/src/validate-spec-py
+        run: |
+          pipenv run python validate.py ../../../build/opensearch-openapi.yaml

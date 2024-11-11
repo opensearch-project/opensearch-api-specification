@@ -248,6 +248,35 @@ describe('ChapterReader', () => {
         message: 'Not Found'
       });
     });
+
+    it('sets payload to entire response when payload.error is present', async () => {
+      const mock_payload = { '_data': '1', 'result': 'updated', 'error': 'error' };
+      const mock_error = {
+        response: {
+          status: 404,
+          headers: {
+            'content-type': 'application/json'
+          },
+          data: JSON.stringify(mock_payload),
+          statusText: 'Not Found'
+        }
+      };
+
+      mocked_axios.request.mockRejectedValue(mock_error);
+
+      const result = await reader.read({
+        id: 'id',
+        path: 'path',
+        method: 'POST'
+      }, new StoryOutputs());
+
+      expect(result).toStrictEqual({
+        status: 404,
+        content_type: 'application/json',
+        payload: mock_payload,
+        message: 'Not Found'
+      });
+    });
   })
 
   describe('deserialize_payload', () => {

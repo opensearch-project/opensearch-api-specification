@@ -6,9 +6,22 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added API specs for query groups lifecycle APIs ([#649](https://github.com/opensearch-project/opensearch-api-specification/pull/649))
+- Added Python and Ruby spec validators ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added verbose output of the story being evaluated ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added `_search` with `sort: direction` ([#658](https://github.com/opensearch-project/opensearch-api-specification/pull/658))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
+
+### Fixed
+- Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Disallowed characters (`::`, `@`, and `:`) in key names are replaced with `___` on merge ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added missing `required` to `path` parameters ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added missing `schema` parent to response types ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Fixed incorrect `style` in `indices.get_mapping::query.index` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Removed invalid `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 
 ## [0.1.0] - 2024-10-25
 
