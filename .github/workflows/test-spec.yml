@@ -77,12 +77,16 @@ jobs:
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
 
+      - name: Generate Test Files Hash
+        id: tests
+        run: echo "hash=${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}" >> $GITHUB_OUTPUT
+
       - name: Run Tests
         run: |
           npm run test:spec -- \
             --opensearch-insecure \
             --opensearch-version=${{ matrix.entry.version }} \
-            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json \
+            --coverage coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json \
             --tests=tests/${{ matrix.entry.tests || 'default' }}
 
       - name: Get Container Logs
@@ -96,8 +100,8 @@ jobs:
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}
-          path: coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json
+          name: coverage-${{ matrix.entry.version }}-${{ steps.tests.outputs.hash }}
+          path: coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json
 
   merge-coverage:
     runs-on: ubuntu-latest
