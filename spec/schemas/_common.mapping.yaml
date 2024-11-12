@@ -125,9 +125,6 @@ components:
         - $ref: '#/components/schemas/DateNanosProperty'
         - $ref: '#/components/schemas/DateProperty'
         - $ref: '#/components/schemas/AggregateMetricDoubleProperty'
-        - $ref: '#/components/schemas/DenseVectorProperty'
-        - $ref: '#/components/schemas/SparseVectorProperty'
-        - $ref: '#/components/schemas/FlattenedProperty'
         - $ref: '#/components/schemas/FlatObjectProperty'
         - $ref: '#/components/schemas/NestedProperty'
         - $ref: '#/components/schemas/ObjectProperty'
@@ -158,6 +155,7 @@ components:
         - $ref: '#/components/schemas/IpRangeProperty'
         - $ref: '#/components/schemas/LongRangeProperty'
         - $ref: '#/components/schemas/KnnVectorProperty'
+        - $ref: '#/components/schemas/IcuCollationKeywordProperty'
     BinaryProperty:
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
@@ -227,19 +225,6 @@ components:
                 - boolean
           required:
             - type
-    OnScriptError:
-      type: string
-      enum:
-        - continue
-        - fail
-    TimeSeriesMetricType:
-      type: string
-      enum:
-        - counter
-        - gauge
-        - histogram
-        - position
-        - summary
     IndexOptions:
       type: string
       enum:
@@ -309,9 +294,6 @@ components:
             null_value:
               type: string
             split_queries_on_whitespace:
-              type: boolean
-            time_series_dimension:
-              description: For internal use by OpenSearch only. Marks the field as a time series dimension. Defaults to false.
               type: boolean
             type:
               type: string
@@ -535,85 +517,9 @@ components:
               type: array
               items:
                 type: string
-            time_series_metric:
-              $ref: '#/components/schemas/TimeSeriesMetricType'
           required:
             - default_metric
             - metrics
-            - type
-    DenseVectorProperty:
-      allOf:
-        - $ref: '#/components/schemas/PropertyBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - dense_vector
-            dims:
-              type: number
-            similarity:
-              type: string
-            index:
-              type: boolean
-            index_options:
-              $ref: '#/components/schemas/DenseVectorIndexOptions'
-          required:
-            - dims
-            - type
-    DenseVectorIndexOptions:
-      type: object
-      properties:
-        type:
-          type: string
-        m:
-          type: number
-        ef_construction:
-          type: number
-      required:
-        - ef_construction
-        - m
-        - type
-    SparseVectorProperty:
-      allOf:
-        - $ref: '#/components/schemas/PropertyBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - sparse_vector
-          required:
-            - type
-    FlattenedProperty:
-      allOf:
-        - $ref: '#/components/schemas/PropertyBase'
-        - type: object
-          properties:
-            boost:
-              type: number
-              format: double
-            depth_limit:
-              type: number
-            doc_values:
-              type: boolean
-            eager_global_ordinals:
-              type: boolean
-            index:
-              type: boolean
-            index_options:
-              $ref: '#/components/schemas/IndexOptions'
-            null_value:
-              type: string
-            similarity:
-              type: string
-            split_queries_on_whitespace:
-              type: boolean
-            type:
-              type: string
-              enum:
-                - flattened
-          required:
             - type
     FlatObjectProperty:
       allOf:
@@ -751,13 +657,6 @@ components:
               type: boolean
             null_value:
               type: string
-            on_script_error:
-              $ref: '#/components/schemas/OnScriptError'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            time_series_dimension:
-              description: For internal use by OpenSearch only. Marks the field as a time series dimension. Defaults to false.
-              type: boolean
             type:
               type: string
               enum:
@@ -843,20 +742,22 @@ components:
             - type
     GeoOrientation:
       oneOf:
+        # eslint-disable yml/sort-sequence-values
         - title: left
           type: string
           enum:
+            - left
             - LEFT
             - clockwise
             - cw
-            - left
         - title: right
           type: string
           enum:
-            - RIGHT
-            - ccw
-            - counterclockwise
             - right
+            - RIGHT
+            - counterclockwise
+            - ccw
+        # eslint-enable yml/sort-sequence-values
     GeoStrategy:
       type: string
       enum:
@@ -926,15 +827,6 @@ components:
             ignore_malformed:
               type: boolean
             index:
-              type: boolean
-            on_script_error:
-              $ref: '#/components/schemas/OnScriptError'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            time_series_metric:
-              $ref: '#/components/schemas/TimeSeriesMetricType'
-            time_series_dimension:
-              description: For internal use by OpenSearch only. Marks the field as a time series dimension. Defaults to false.
               type: boolean
     DoubleNumberProperty:
       allOf:
@@ -1167,6 +1059,37 @@ components:
               type: string
           required:
             - dimension
+            - type
+    IcuCollationKeywordProperty:
+      allOf:
+        - $ref: '#/components/schemas/DocValuesPropertyBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - icu_collation_keyword
+            index:
+              type: boolean
+            null_value:
+              type: string
+            alternate:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationAlternate'
+            case_level:
+              type: boolean
+            case_first:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationCaseFirst'
+            decomposition:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationDecomposition'
+            hiragana_quaternary_mode:
+              type: boolean
+            numeric:
+              type: boolean
+            strength:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationStrength'
+            variable_top:
+              type: string
+          required:
             - type
     MatchType:
       type: string
