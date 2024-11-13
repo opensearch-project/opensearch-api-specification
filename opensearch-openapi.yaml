@@ -1837,6 +1837,49 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cluster.stats___200'
+  /_cluster/stats/{metric}/{index_metric}/nodes/{node_id}:
+    get:
+      operationId: cluster.stats.3
+      x-operation-group: cluster.stats
+      x-version-added: '2.18'
+      description: Returns high-level overview of cluster statistics.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/
+      parameters:
+        - $ref: '#/components/parameters/cluster.stats___path.index_metric'
+        - $ref: '#/components/parameters/cluster.stats___path.metric'
+        - $ref: '#/components/parameters/cluster.stats___path.node_id'
+        - $ref: '#/components/parameters/cluster.stats___query.flat_settings'
+        - $ref: '#/components/parameters/cluster.stats___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.stats___200'
+  /_cluster/stats/{metric}/nodes/{node_id}:
+    get:
+      operationId: cluster.stats.2
+      x-operation-group: cluster.stats
+      x-version-added: '2.18'
+      description: Returns high-level overview of cluster statistics.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/
+      parameters:
+        - $ref: '#/components/parameters/cluster.stats___path.metric'
+        - $ref: '#/components/parameters/cluster.stats___path.node_id'
+        - $ref: '#/components/parameters/cluster.stats___query.flat_settings'
+        - $ref: '#/components/parameters/cluster.stats___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.stats___200'
   /_cluster/stats/nodes/{node_id}:
     get:
       operationId: cluster.stats.1
@@ -17233,6 +17276,26 @@ components:
       schema:
         $ref: '#/components/schemas/_common___Duration'
       style: form
+    cluster.stats___path.index_metric:
+      in: path
+      name: index_metric
+      description: Limit the information returned for indexes metric to the specific index metrics. It can be used only if indexes (or all) metric is specified.
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/cluster.stats___IndexMetric'
+      style: simple
+    cluster.stats___path.metric:
+      in: path
+      name: metric
+      description: Limit the information returned to the specified metrics
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/cluster.stats___Metric'
+      style: simple
     cluster.stats___path.node_id:
       in: path
       name: node_id
@@ -47171,17 +47234,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/cluster.stats___IndicesVersions'
-      required:
-        - analysis
-        - completion
-        - count
-        - docs
-        - fielddata
-        - mappings
-        - query_cache
-        - segments
-        - shards
-        - store
     cluster.stats___ClusterIndicesShards:
       type: object
       properties:
@@ -47388,18 +47440,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/_common___VersionString'
-      required:
-        - count
-        - discovery_types
-        - fs
-        - ingest
-        - jvm
-        - network_types
-        - os
-        - packaging_types
-        - plugins
-        - process
-        - versions
     cluster.stats___ClusterOperatingSystem:
       type: object
       properties:
@@ -47634,6 +47674,19 @@ components:
         - coordinating_in_bytes
         - primary_in_bytes
         - replica_in_bytes
+    cluster.stats___IndexMetric:
+      type: string
+      enum:
+        - _all
+        - analysis
+        - completion
+        - docs
+        - fielddata
+        - mappings
+        - query_cache
+        - segments
+        - shards
+        - store
     cluster.stats___IndicesVersions:
       type: object
       properties:
@@ -47650,6 +47703,20 @@ components:
         - primary_shard_count
         - total_primary_bytes
         - version
+    cluster.stats___Metric:
+      type: string
+      enum:
+        - _all
+        - discovery_type
+        - fs
+        - indices
+        - ingest
+        - jvm
+        - network_types
+        - os
+        - packaging_types
+        - plugins
+        - process
     cluster.stats___NodePackagingType:
       type: object
       properties:
@@ -47713,8 +47780,6 @@ components:
           required:
             - cluster_name
             - cluster_uuid
-            - indices
-            - nodes
             - status
             - timestamp
     cluster.weighted_routing___Weights:
