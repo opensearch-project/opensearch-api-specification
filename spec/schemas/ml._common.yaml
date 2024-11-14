@@ -19,18 +19,6 @@ components:
       required:
         - query
         - size
-    BaseResponse:
-      type: object
-      properties:
-        _version:
-          type: integer
-          description: The version.
-        _seq_no:
-          type: integer
-          description: The sequence number.
-        _primary_term:
-          type: integer
-          description: The primary term.
     SearchModelsResponse:
       type: object
       properties:
@@ -41,26 +29,31 @@ components:
           type: boolean
           description: Whether the search timed out.
         _shards:
-          $ref: '#/components/schemas/SearchModelsShardsResponse'
+          # $ref: '#/components/schemas/SearchModelsShardsResponse'
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
         hits:
           $ref: '#/components/schemas/SearchModelsHits'
       required:
         - hits
-    SearchModelsShardsResponse:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: The total number of shards.
-        successful:
-          type: integer
-          description: The number of successful shards.
-        skipped:
-          type: integer
-          description: The number of skipped shards.
-        failed:
-          type: integer
-          description: The number of failed shards.
+    # SearchModelsShardsResponse:
+    #   type: object
+    #   properties:
+    #     total:
+    #       type: integer
+    #       format: int64
+    #       description: The total number of shards.
+    #     successful:
+    #       type: integer
+    #       format: int64
+    #       description: The number of successful shards.
+    #     skipped:
+    #       type: integer
+    #       format: int64
+    #       description: The number of skipped shards.
+    #     failed:
+    #       type: integer
+    #       format: int64
+    #       description: The number of failed shards.
     SearchModelsHits:
       type: object
       properties:
@@ -72,6 +65,7 @@ components:
             $ref: '#/components/schemas/SearchModelsHitsHit'
         max_score:
           type: number
+          format: float
           description: The maximum score.
       required:
         - hits
@@ -81,6 +75,7 @@ components:
       properties:
         value:
           type: integer
+          format: int64
           description: The total number of hits.
         relation:
           type: string
@@ -89,37 +84,42 @@ components:
         - relation
         - value
     SearchModelsHitsHit:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            _index:
-              type: string
-              description: The index.
-            _id:
-              type: string
-              description: The hit ID.
-            _score:
-              type: number
-              description: The score.
-            _source:
-              $ref: '#/components/schemas/Source'
-            model_id:
-              type: string
-              description: The model ID.
-          required:
-            - _score
+      type: object
+      properties:
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: integer
+          description: The primary term.
+        _index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _score:
+          type: number
+          format: float
+          description: The score.
+        _source:
+          $ref: '#/components/schemas/Source'
+        model_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+      required:
+        - _score
     Source:
       type: object
       properties:
         last_deployed_time:
-          type: number
+          type: integer
+          format: int64
           description: The last deployed time.
         model_version:
           type: string
           description: The model version.
         created_time:
-          type: number
+          type: integer
+          format: int64
           description: The created time.
         deploy_to_all_nodes:
           type: boolean
@@ -133,11 +133,20 @@ components:
         model_state:
           type: string
           description: The model state.
+          enum:
+            - DEPLOY_FAILED
+            - REGISTERING
         planning_worker_node_count:
           type: number
           description: The planning worker node count.
+        model_config:
+          $ref: '#/components/schemas/ModelConfig'
+        model_format:
+          type: string
+          description: The model format.
         last_updated_time:
-          type: number
+          type: integer
+          format: int64
           description: The last updated time.
         name:
           type: string
@@ -158,6 +167,22 @@ components:
         algorithm:
           type: string
           description: The algorithm.
+    ModelConfig:
+      type: object
+      properties:
+        all_config:
+          type: string
+          description: The all config.
+        model_type:
+          type: string
+          description: The model type.
+        embedding_dimension:
+          type: integer
+          format: int64
+          description: The embedding dimension.
+        framework_type:
+          type: string
+          description: The framework type.
     ModelGroupRegistration:
       type: object
       properties:
