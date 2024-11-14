@@ -1,0 +1,38 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test /{index}/_analyze for the phone and phone-search analyzers.
+prologues:
+  - path: /example-phone
+    method: PUT
+    request:
+      payload:
+        settings:
+          index:
+            analysis:
+              analyzer:
+                phone-ch:
+                  type: phone
+                  phone-region: CH
+                phone-search-ch:
+                  type: phone-search
+                  phone-region: CH
+epilogues:
+  - path: /example-phone
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Analyze phone number.
+    path: /{index}/_analyze
+    method: POST
+    parameters:
+      index: example-phone
+    request:
+      payload:
+        analyzer: phone-ch
+        text: '+41 60 555 12 34'
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: '+41 60 555 12 34'
+          - token: '6055512'

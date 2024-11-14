@@ -12,6 +12,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `_common.mapping:FlatObjectProperty` ([#661](https://github.com/opensearch-project/opensearch-api-specification/pull/661)) 
 - Added `HEAD /{index}/_doc/{id}` returning `404` ([#670](https://github.com/opensearch-project/opensearch-api-specification/pull/670))
 - Added `_common.mapping:IcuCollationKeywordProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
+- Added `PhoneAnalyzer` from `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
+- Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
+- Added `GET /_plugins/_ml/models/_search` and `DELETE /_plugins/_ml/tasks/{task_id}` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -135,8 +139,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
-- Added `GET /_plugins/_ml/models/_search` and `DELETE /_plugins/_ml/tasks/{task_id}` ([#672] (https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 
 ### Changed
 
@@ -161,7 +163,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `cluster.reroute`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `indices.stats`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `CleanupRepositoryResults`' properties to be `int64`s ([#587](https://github.com/opensearch-project/opensearch-api-specification/pull/587))
-- Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
 
 ### Deprecated
 
