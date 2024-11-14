@@ -1,0 +1,32 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of tasks.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+version: '>= 2.11'
+warnings:
+  multiple-paths-detected: false
+chapters:
+  - synopsis: Register model.
+    id: register_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id
+  - synopsis: Delete task.
+    id: delete_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: DELETE
+    parameters:
+      task_id: ${register_model.task_id}
+    response:
+      status: 200
