@@ -23,7 +23,7 @@ prologues:
         - {create: {_index: movies, _id: movie2}}
         - {director: Nicolas Winding Refn, title: Drive, year: 1960}
 chapters:
-  - synopsis: Run multiple search requests in single request.
+  - synopsis: Run multiple search requests in single request (GET).
     path: /_msearch
     method: GET
     request:
@@ -53,3 +53,33 @@ chapters:
                   _id: movie1
                 - _index: movies
                   _id: movie2
+  - synopsis: Run multiple search requests in single request (POST).
+    path: /_msearch
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: movies}
+        - {query: {match_all: {}}}
+        - {index: books}
+        - {query: {match_all: {}}}
+    response:
+      status: 200
+      payload:
+        responses:
+          - hits:
+              total:
+                value: 2
+                relation: eq
+              hits:
+                - _index: movies
+                  _id: movie1
+                - _index: movies
+                  _id: movie2
+          - hits:
+              total:
+                value: 1
+                relation: eq
+              hits:
+                - _index: books
+                  _id: book1
