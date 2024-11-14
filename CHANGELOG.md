@@ -15,6 +15,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
 - Added `PhoneAnalyzer` from `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
 - Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
+- Added `GET` and `HEAD /{index}/_source/{id}` returning `404` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
