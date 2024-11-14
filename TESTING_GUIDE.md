@@ -97,7 +97,7 @@ Remember to set the `OPENSEARCH_PASSWORD` or `AWS_ACCESS_KEY_ID` and `AWS_SECRET
 
 #### FORBIDDEN/10/cluster create-index blocked (api)
 
-The cluster is most likely hitting a disk watermark threshold. This example sets the disk watermark thresholds to 1500MB low, 100MB high, and 500MB flood stage, allowing the cluster to create indices even if the disk is almost full.
+The cluster is most likely hitting a disk watermark threshold. This example sets the disk watermark thresholds to 1500MB low, 100MB high, and 500MB flood stage, allowing the cluster to create indexes even if the disk is almost full.
 
 ```bash
 curl -k -X PUT --user "admin:${OPENSEARCH_PASSWORD}" https://localhost:9200/_cluster/settings -H 'Content-Type: application/json' -d'
