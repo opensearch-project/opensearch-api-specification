@@ -1,0 +1,1015 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "opensearch.protos";
+option java_outer_classname = "DocumentProto";
+option go_package = "opensearchpb";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
+import "common.proto";
+
+// The bulk operation lets you add, update, or delete multiple documents in a single request, index name needs to be specified in `BulkRequestBody`
+message BulkRequest {
+  // [optional] Set `true` or `false` to return the `_source` field or not, or a list of fields to return.
+  SourceConfigParam source = 1 [json_name = "_source"];
+  // [optional] A list of source fields to exclude from the response.
+  repeated string source_excludes = 2;
+  // [optional] A list of source fields to include in the response.
+  repeated string source_includes = 3 [json_name = "_source_includes",;
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 4;
+
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] The enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 5;
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 6;
+  // [optional] Custom value used to route operations to a specific shard.
+  repeated string routing = 7;
+  // [optional] Period each action waits for the following operations: automatic index creation, dynamic mapping updates, waiting for active shards.
+  // pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  // Defaults to 1m (one minute). This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  .google.protobuf.StringValue timeout = 8;
+  // [deprecated] The default document type for documents that don't specify a type. Default is _doc. We highly recommend ignoring this parameter and using a type of _doc for all indexes.
+  .google.protobuf.StringValue type = 9;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 10;
+  // [required] The request body contains create, delete, index, and update actions and their associated source data
+  repeated BulkRequestBody request_body = 11;
+}
+
+// The index bulk operation lets you add, update, or delete multiple documents in a single request.
+message IndexBulkRequest {
+  // [required] The data stream, index, or index alias to perform the action on
+  .google.protobuf.StringValue index = 1;
+  // [optional] Set `true` or `false` to return the `_source` field or not, or a list of fields to return.
+  SourceConfigParam source = 2 [json_name = "_source"];
+  // [optional] A list of source fields to exclude from the response.
+  repeated string source_excludes = 3;
+  // [optional] A list of source fields to include in the response.
+  repeated string source_includes = 4 [json_name = "_source_includes",;
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 5;
+
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] The enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 6;
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 7;
+  // [optional] Custom value used to route operations to a specific shard.
+  repeated string routing = 8;
+  // [optional] Period each action waits for the following operations: automatic index creation, dynamic mapping updates, waiting for active shards.
+  // pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  // Defaults to 1m (one minute). This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  .google.protobuf.StringValue timeout = 9;
+  // [deprecated] The default document type for documents that don't specify a type. Default is _doc. We highly recommend ignoring this parameter and using a type of _doc for all indexes.
+  .google.protobuf.StringValue type = 10;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 11;
+  // [required] The request body contains create, delete, index, and update actions and their associated source data
+  repeated BulkRequestBody request_body = 12;
+}
+
+message BulkRequestBody {
+
+  // [required] operation to perform (index, create, update, or delete)
+  oneof operation_container {
+    // Indexes the specified document. If the document exists, replaces the document and increments the version. It must followed with source data to be indexed in `doc` field.
+    IndexOperation index = 1;
+    // Indexes the specified document if it does not already exist. It must followed with the source data to be indexed in `object` field.
+    CreateOperation create = 2;
+    // Performs a partial document update. It must followed with the partial document and update options in in `doc` field.
+    UpdateOperation update = 3;
+    // Removes the specified document from the index.
+    DeleteOperation delete = 4;
+  }
+
+  // [optional] Set to false to disable setting 'result' in the response to 'noop' if no change to the document occurred.
+  .google.protobuf.BoolValue detect_noop = 5;
+
+  // [optional] The partial document to index. Required for update, index operations
+  ObjectMap doc = 6;
+
+  // [optional] When `true`, uses the contents of 'doc' as the value of 'upsert'. If a document exists, it is updated; if it does not exist, a new document is indexed with the parameters specified in the `doc` field. it's only supported for the `update` operation.
+  .google.protobuf.BoolValue doc_as_upsert = 7;
+  // [optional] Script for more complex document updates by defining the script with the `source` or `id` from a document
+  Script script = 8;
+
+  // [optional] When `true`, executes the script whether or not the document exists.
+  .google.protobuf.BoolValue scripted_upsert = 9;
+
+  // [optional] Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
+  SourceConfig source = 10 [json_name = "_source"];
+
+  // [optional] If the document does not already exist, the contents of 'upsert' are inserted as a new document. If the document exists, the 'script' is executed. it's only supported for the `update` operation.
+  ObjectMap upsert = 13;
+  // [optional] The document to index. Required for create operation
+  ObjectMap object = 14;
+}
+
+message IndexOperation {
+  // [optional] The document ID. If no ID is specified, a document ID is automatically generated.
+  .google.protobuf.StringValue id = 1 [json_name = "_id"];
+  // [optional] Name of the the data stream, index, or index alias to perform the action on. This parameter is required in `BulkRequest`.
+  .google.protobuf.StringValue index = 2 [json_name = "_index"];
+
+  // [optional] Custom value used to route operations to a specific shard.
+  string routing = 3;
+
+  // [optional] Only perform the operation if the document has this primary term.
+  .google.protobuf.Int64Value if_primary_term = 4;
+  // [optional] Only perform the operation if the document has this sequence number
+  .google.protobuf.Int64Value if_seq_no = 5;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 6;
+
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 7;
+
+  // [optional] A map from the full name of fields to the name of dynamic templates. Defaults to an empty map. If a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template. If a field is already defined in the mapping, then this parameter won't be used.
+  map<string, .google.protobuf.StringValue> dynamic_templates = 8;
+
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 9;
+
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 10;
+
+}
+
+message CreateOperation {
+  // [optional] The document ID. If no ID is specified, a document ID is automatically generated.
+  .google.protobuf.StringValue id = 1 [json_name = "_id"];
+  // [optional] Name of the the data stream, index, or index alias to perform the action on. This parameter is required in `BulkRequest`.
+  .google.protobuf.StringValue index = 2 [json_name = "_index"];
+
+  // [optional] Custom value used to route operations to a specific shard.
+  string routing = 3;
+  // [optional] Only perform the operation if the document has this primary term
+  .google.protobuf.Int64Value if_primary_term = 4;
+  // [optional] Only perform the operation if the document has this sequence number
+  .google.protobuf.Int64Value if_seq_no = 5;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 6;
+
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 7;
+
+  // [optional] A map from the full name of fields to the name of dynamic templates. Defaults to an empty map. If a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template. If a field is already defined in the mapping, then this parameter won't be used.
+  map<string, .google.protobuf.StringValue> dynamic_templates = 8;
+
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 9;
+
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 10;
+
+}
+
+message UpdateOperation {
+  // [required] The document ID.
+  .google.protobuf.StringValue id = 1 [json_name = "_id"];
+  // [optional] Name of the the data stream, index, or index alias to perform the action on. This parameter is required in `BulkRequest`.
+  .google.protobuf.StringValue index = 2 [json_name = "_index"];
+  // [optional] Custom value used to route operations to a specific shard.
+  string routing = 3;
+
+  // [optional] Only perform the operation if the document has this primary term
+  .google.protobuf.Int64Value if_primary_term = 4;
+  // [optional] Only perform the operation if the document has this sequence number
+  .google.protobuf.Int64Value if_seq_no = 5;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 6;
+
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 7;
+
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 8;
+  // [optional] Specify how many times an update should be retried in the case of a version conflict.
+  .google.protobuf.Int32Value retry_on_conflict = 9;
+
+}
+
+message DeleteOperation {
+  // [required] The document ID.
+  .google.protobuf.StringValue id = 1 [json_name = "_id"];
+  // [optional] Name of the the data stream, index, or index alias to perform the action on. This parameter is required in `BulkRequest`.
+  .google.protobuf.StringValue index = 2 [json_name = "_index"];
+  // [optional] Custom value used to route operations to a specific shard.
+  string routing = 3;
+
+  // [optional] Only perform the operation if the document has this primary term
+  .google.protobuf.Int64Value if_primary_term = 4;
+  // [optional] Only perform the operation if the document has this sequence number
+  .google.protobuf.Int64Value if_seq_no = 5;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 6;
+
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 7;
+
+}
+
+// Bulk response contains the individual results of each operation in the request, returned in the order submitted. The success or failure of an individual operation does not affect other operations in the request.
+message BulkResponse {
+  oneof response {
+    // The bulk success response
+    BulkResponseBody bulk_response_body = 1;
+    // The bulk error response
+    BulkErrorResponse bulk_error_response = 2;
+  }
+}
+
+// Index Bulk Response contains the individual results of each operation in the request, returned in the order submitted. The success or failure of an individual operation does not affect other operations in the request.
+message IndexBulkResponse {
+  oneof response {
+    // The index bulk success response
+    BulkResponseBody bulk_response_body = 1;
+    // The index bulk error response
+    BulkErrorResponse bulk_error_response = 2;
+  }
+}
+
+message BulkErrorResponse {
+  // [optional] The bulk error
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+message BulkResponseBody {
+
+  // [optional] If true, one or more of the operations in the bulk request did not complete successfully.
+  .google.protobuf.BoolValue errors = 1;
+  // [optional] Contains the result of each operation in the bulk request, in the order they were submitted.
+  repeated Item items = 2;
+  // [optional] How long, in milliseconds, it took to process the bulk request.
+  .google.protobuf.Int64Value took = 3;
+  // [optional] How long, in milliseconds, it took to process documents through an ingest pipeline
+  .google.protobuf.Int64Value ingest_took = 4;
+
+}
+
+message Item {
+  oneof item {
+    ResponseItem create = 1;
+    ResponseItem delete = 2;
+    ResponseItem index = 3;
+    ResponseItem update = 4;
+  }
+}
+
+message ResponseItem {
+
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+
+  message Id {
+    oneof id {
+      NullValue null_value = 1;
+      .google.protobuf.StringValue string_value = 2;
+    }
+  }
+  // [optional] The document ID associated with the operation.
+  Id id = 2 [json_name = "_id"];
+
+  // [optional] Name of the index associated with the operation. If the operation targeted a data stream, this is the backing index into which the document was written.
+  .google.protobuf.StringValue index = 3 [json_name = "_index"];
+
+  // [optional] HTTP status code returned for the operation.
+  .google.protobuf.Int32Value status = 4;
+  // [optional] Contains additional information about the failed operation.
+  ErrorCause error = 5;
+
+  // [optional] The primary term assigned to the document for the operation.
+  .google.protobuf.Int64Value primary_term = 6 [json_name = "_primary_term"];
+
+  // [optional] Result of the operation. Successful values are `created`, `deleted`, and `updated`.
+  .google.protobuf.StringValue result = 7;
+  // [optional] The sequence number assigned to the document for the operation. Sequence numbers are used to ensure an older version of a document doesn't overwrite a newer version
+  .google.protobuf.Int64Value seq_no = 8 [json_name = "_seq_no"];
+  // [optional] Contains shard information for the operation. This parameter is only returned for successful operations.
+  ShardStatistics shards = 9 [json_name = "_shards"];
+  // [optional] The document version associated with the operation. The document version is incremented each time the document is updated. This parameter is only returned for successful actions.
+  .google.protobuf.Int64Value version = 10 [json_name = "_version"];
+  // [optional] if `true`, it requires immediate visibility of the document
+  .google.protobuf.BoolValue forced_refresh = 11;
+  // [optional]
+  InlineGetDictUserDefined get = 12;
+
+}
+
+
+message InlineGetDictUserDefined {
+  // [optional]
+  ObjectMap fields = 1;
+  // [optional] Whether the document exists.
+  .google.protobuf.BoolValue found = 2;
+  // [optional] The sequence number assigned to the document for the operation. Sequence numbers are used to ensure an older version of a document doesn't overwrite a newer version
+  .google.protobuf.Int64Value seq_no = 3 [json_name = "_seq_no"];
+  // [optional] The primary term assigned to the document for the operation.
+  .google.protobuf.Int32Value primary_term = 4 [json_name = "_primary_term"];
+  // [optional] Custom value used to route operations to a specific shard.
+  repeated string routing = 5 [json_name = "_routing"];
+  // [optional] Contains the document's data
+  ObjectMap source = 6 [json_name = "_source"];
+
+}
+
+// Index document operation to add a single document to your index
+message IndexDocumentRequest {
+  // [required] Name of the the data stream, index, or index alias to perform the action on.
+  .google.protobuf.StringValue index = 1;
+  // [optional] Only perform the operation if the document has this primary term.
+  .google.protobuf.Int64Value if_primary_term = 2;
+  // [optional] Only perform the operation if the document has this sequence number.
+  .google.protobuf.Int64Value if_seq_no = 3;
+
+  enum OpType{
+    
+    OP_TYPE_INVALID = 0;
+    OP_TYPE_CREATE = 1;
+    OP_TYPE_INDEX = 2;
+  }
+  // [optional] Set to create to only index the document if it does not already exist (put if absent). If a document with the specified `_id` already exists, the indexing operation will fail. Same as using the `<index>/_create` endpoint. Valid values: `index`, `create`. If document id is specified, it defaults to `index`. Otherwise, it defaults to `create`.
+  OpType op_type = 4;
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 5;
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 6;
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 7;
+  // [optional] Custom value used to route operations to a specific shard.
+  repeated string routing = 8;
+  // [optional] Period each action waits for the following operations: automatic index creation, dynamic mapping updates, waiting for active shards.
+  // pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  // Defaults to 1m (one minute). This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  .google.protobuf.StringValue timeout = 9;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 10;
+  // Specific version type: `external`, `external_gte`.
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 11;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 12;
+  // [required] contain the information you want to index.
+  ObjectMap request_body = 13;
+}
+
+// index document with specified document ID
+message IndexDocumentIdRequest {
+  //[required] Unique identifier for the document.
+  .google.protobuf.StringValue id = 1;
+  // [required] Name of the data stream or index to target.
+  .google.protobuf.StringValue index = 2;
+  // [optional] Only perform the operation if the document has this primary term.
+  .google.protobuf.Int64Value if_primary_term = 3;
+  // [optional] Only perform the operation if the document has this sequence number.
+  .google.protobuf.Int64Value if_seq_no = 4;
+
+  enum OpType {
+    
+    OP_TYPE_INVALID = 0;
+    // Index a document only if it doesn't exist
+    OP_TYPE_CREATE = 1;
+    // A document ID is included in the request
+    OP_TYPE_INDEX = 2;
+  }
+  // [optional] Set to create to only index the document if it does not already exist (put if absent). If a document with the specified `_id` already exists, the indexing operation will fail. Same as using the `<index>/_create` endpoint. Valid values: `index`, `create`. If document id is specified, it defaults to `index`. Otherwise, it defaults to `create`.
+  OpType op_type = 5;
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 6;
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 7;
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 8;
+  // [optional] Custom value used to route operations to a specific shard.
+  repeated string routing = 9;
+  // [optional] Period each action waits for the following operations: automatic index creation, dynamic mapping updates, waiting for active shards.
+  // Pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  // Defaults to 1m (one minute). This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  .google.protobuf.StringValue timeout = 10;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 11;
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 12;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 13;
+  // [required] contain the information you want to index.
+  ObjectMap request_body = 14 ;
+}
+
+// The response from index document request
+message IndexDocumentResponse {
+  oneof response {
+    // Index document success response
+    IndexDocumentResponseBody index_document_response_body = 1;
+    // Index document failure response
+    IndexDocumentErrorResponse index_document_error_response = 2;
+  }
+}
+// The error response from index document request
+message IndexDocumentErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+message IndexDocumentResponseBody {
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+  // [optional] The document's ID.
+  .google.protobuf.StringValue id = 2 [json_name = "_id"];
+  // [optional] The name of the index.
+  .google.protobuf.StringValue index = 3 [json_name = "_index"];
+  // [optional] The primary term assigned when the document was indexed.
+  .google.protobuf.Int64Value primary_term = 4 [json_name = "_primary_term"];
+
+  enum Result {
+    
+    RESULT_INVALID = 0;
+    RESULT_CREATED = 1;
+    RESULT_DELETED = 2;
+    RESULT_NOOP = 3;
+    RESULT_NOT_FOUND = 4;
+    RESULT_UPDATED = 5;
+  }
+  // [optional] The result of the index operation.
+  Result result = 5;
+  // [optional] The sequence number assigned when the document was indexed.
+  .google.protobuf.Int64Value seq_no = 6 [json_name = "_seq_no"];
+  // [optional] Detailed information about the cluster's shards.
+  ShardStatistics shards = 7 [json_name = "_shards"];
+  // [optional] The document's version.
+  .google.protobuf.Int64Value version = 8 [json_name = "_version"];
+  // [optional] if `true`, it requires immediate visibility of the document
+  .google.protobuf.BoolValue forced_refresh = 9;
+}
+
+
+message IndexDocumentIdResponseBody {
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+  // [optional] The document's ID.
+  .google.protobuf.StringValue id = 2 [json_name = "_id"];
+  // [optional] The name of the index.
+  .google.protobuf.StringValue index = 3 [json_name = "_index"];
+  // [optional] The primary term assigned when the document was indexed.
+  .google.protobuf.Int64Value primary_term = 4 [json_name = "_primary_term"];
+
+
+  enum Result {
+    
+    RESULT_INVALID = 0;
+    RESULT_CREATED = 1;
+    RESULT_DELETED = 2;
+    RESULT_NOOP = 3;
+    RESULT_NOT_FOUND = 4;
+    RESULT_UPDATED = 5;
+  }
+  // [optional] The result of the index operation.
+  Result result = 5;
+  // [optional] The sequence number assigned when the document was indexed.
+  .google.protobuf.Int64Value seq_no = 6 [json_name = "_seq_no"];
+  // [optional] Detailed information about the cluster's shards.
+  ShardStatistics shards = 7 [json_name = "_shards"];
+  // [optional] The document's version.
+  .google.protobuf.Int64Value version = 8 [json_name = "_version"];
+  // [optional] if `true`, it requires immediate visibility of the document
+  .google.protobuf.BoolValue forced_refresh = 9;
+
+}
+
+// The response from index document Id request
+message IndexDocumentIdResponse {
+  oneof response {
+    IndexDocumentIdResponseBody index_document_id_response_body = 1;
+    IndexDocumentIdErrorResponse index_document_id_error_response = 2;
+  }
+}
+
+// The error response from index document Id request
+message IndexDocumentIdErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+// create document with Id to target index request
+message IndexDocumentCreateIdRequest {
+  // [required] Unique identifier for the document.
+  .google.protobuf.StringValue id = 1;
+  // [required] Name of the data stream or index to target. If the target doesn't exist and matches the name or wildcard (`*`) pattern of an index template with a `data_stream` definition, this request creates the data stream. If the target doesn't exist and doesn't match a data stream template, this request creates the index.
+  .google.protobuf.StringValue index = 2;
+  // [optional] ID of the pipeline to use to preprocess incoming documents. If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request. If a final pipeline is configured it will always run, regardless of the value of this parameter.
+  .google.protobuf.StringValue pipeline = 3;
+
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 4;
+  // Custom value used to route operations to a specific shard.
+  repeated string routing = 5;
+  // [optional] Period each action waits for the following operations: automatic index creation, dynamic mapping updates, waiting for active shards.
+  // Pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  // Defaults to 1m (one minute). This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  .google.protobuf.StringValue timeout = 6;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 7;
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 8;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 9;
+  // [required] contain the information you want to index.
+  ObjectMap request_body = 10;
+}
+
+message IndexDocumentCreateIdResponseBody {
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+  // [optional] The document's ID.
+  .google.protobuf.StringValue id = 2 [json_name = "_id"];
+  // [optional] The name of the index.
+  .google.protobuf.StringValue index = 3 [json_name = "_index"];
+  // [optional] The primary term assigned when the document was indexed.
+  .google.protobuf.Int64Value primary_term = 4 [json_name = "_primary_term"];
+
+
+  enum Result {
+    
+    RESULT_INVALID = 0;
+    RESULT_CREATED = 1;
+    RESULT_DELETED = 2;
+    RESULT_NOOP = 3;
+    RESULT_NOT_FOUND = 4;
+    RESULT_UPDATED = 5;
+  }
+  // [optional] The result of the index operation.
+  Result result = 5;
+  // [optional] The sequence number assigned when the document was indexed.
+  .google.protobuf.Int64Value seq_no = 6 [json_name = "_seq_no"];
+  // [optional] Detailed information about the cluster's shards.
+  ShardStatistics shards = 7 [json_name = "_shards"];
+  // [optional] The document's version.
+  .google.protobuf.Int64Value version = 8 [json_name = "_version"];
+  // [optional] if `true`, it requires immediate visibility of the document
+  .google.protobuf.BoolValue forced_refresh = 9;
+
+}
+
+// The response from document creation with Id to target index request
+message IndexDocumentCreateIdResponse {
+  oneof response {
+    IndexDocumentCreateIdResponseBody index_document_create_id_response_body = 1;
+    IndexDocumentCreateIdErrorResponse index_document_create_id_error_response = 2;
+  }
+}
+// The error response from document creation with Id to target index request
+message IndexDocumentCreateIdErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+// Delete index document with Id request
+message DeleteDocumentRequest {
+  // [required] Unique identifier for the document.
+  .google.protobuf.StringValue id = 1;
+  // [required] Name of the target index.
+  .google.protobuf.StringValue index = 2;
+  // [optional] Only perform the operation if the document has this primary term.
+  .google.protobuf.Int64Value if_primary_term = 3;
+  // [optional] Only perform the operation if the document has this sequence number.
+  .google.protobuf.Int64Value if_seq_no = 4;
+
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 5;
+  // Custom value used to route operations to a specific shard.
+  repeated string routing = 6;
+  // [optional] Period each action waits for the following operations: automatic index creation, dynamic mapping updates, waiting for active shards.
+  // Pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  // Defaults to 1m (one minute). This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  .google.protobuf.StringValue timeout = 7;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 8;
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 9;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 10;
+}
+
+message DeleteDocumentResponseBody {
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+  // [optional] The document's ID.
+  .google.protobuf.StringValue id = 2 [json_name = "_id"];
+  // [optional] The name of the index.
+  .google.protobuf.StringValue index = 3 [json_name = "_index"];
+  // [optional] The primary term assigned when the document was indexed.
+  .google.protobuf.Int64Value primary_term = 4 [json_name = "_primary_term"];
+
+
+  enum Result {
+    
+    RESULT_INVALID = 0;
+    RESULT_CREATED = 1;
+    RESULT_DELETED = 2;
+    RESULT_NOOP = 3;
+    RESULT_NOT_FOUND = 4;
+    RESULT_UPDATED = 5;
+  }
+  // [optional] The result of the index operation.
+  Result result = 5;
+  // [optional] The sequence number assigned when the document was indexed.
+  .google.protobuf.Int64Value seq_no = 6 [json_name = "_seq_no"];
+  // [optional] Detailed information about the cluster's shards.
+  ShardStatistics shards = 7 [json_name = "_shards"];
+  // [optional] The document's version.
+  .google.protobuf.Int64Value version = 8 [json_name = "_version"];
+  // [optional] if `true`, it requires immediate visibility of the document
+  .google.protobuf.BoolValue forced_refresh = 9;
+
+}
+
+// The response from delete index document with Id request
+message DeleteDocumentResponse {
+  oneof response {
+    DeleteDocumentResponseBody delete_document_response_body = 1;
+    DeleteDocumentErrorResponse delete_document_error_response = 2;
+  }
+}
+// The error response from delete index document with Id request
+message DeleteDocumentErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+// Update index document with Id request
+message UpdateDocumentRequest {
+  // [optional] Unique identifier for the document.
+  .google.protobuf.StringValue id = 1;
+  // [optional] Name of the data stream or index to target. If the target doesn't exist and matches the name or wildcard (`*`) pattern of an index template with a `data_stream` definition, this request creates the data stream. If the target doesn't exist and doesn't match a data stream template, this request creates the index.
+  .google.protobuf.StringValue index = 2;
+  // [optional] Set to false to disable source retrieval. You can also specify a comma-separated list of the fields you want to retrieve.
+  SourceConfigParam source = 3 [json_name = "_source"];
+  // [optional] A comma-separated list of source fields to exclude from the response.
+  repeated string source_excludes = 4;
+  // [optional] A comma-separated list of source fields to include in the response.
+  repeated string source_includes = 5 [json_name = "_source_includes",;
+  // [optional] Only perform the operation if the document has this primary term.
+  .google.protobuf.Int64Value if_primary_term = 6;
+  // [optional] Only perform the operation if the document has this sequence number.
+  .google.protobuf.Int64Value if_seq_no = 7;
+  // [optional] The script language.
+  .google.protobuf.StringValue lang = 8;
+  enum Refresh {
+    
+    REFRESH_INVALID = 0;
+    // `REFRESH_FALSE` do nothing with refreshes.
+    REFRESH_FALSE = 1;
+    // `REFRESH_TRUE` makes the changes show up in search results immediately, but hurts cluster performance.
+    REFRESH_TRUE = 2;
+    // `REFRESH_WAIT_FOR` waits for a refresh. Requests take longer to return, but cluster performance doesn't suffer.
+    REFRESH_WAIT_FOR = 3;
+  }
+  // [optional] enum of whether to refresh the affected shards after performing the indexing operations. Default is false
+  Refresh refresh = 9;
+  // [optional] If `true`, the request's actions must target an index alias. Defaults to false.
+  .google.protobuf.BoolValue require_alias = 10;
+  // Specify how many times should the operation be retried when a conflict occurs.
+  .google.protobuf.Int32Value retry_on_conflict = 11;
+  // Custom value used to route operations to a specific shard.
+  repeated string routing = 12;
+  // Period to wait for dynamic mapping updates and active shards. This guarantees OpenSearch waits for at least the timeout before failing. The actual wait time could be longer, particularly when multiple waits occur.
+  // Pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+  google.protobuf.StringValue timeout = 13;
+  // [optional] The number of active shards that must be available before OpenSearch processes the request. Default is 1 (only the primary shard). Set to all or a positive integer. Values greater than 1 require replicas. For example, if you specify a value of 3, the index must have two replicas distributed across two additional nodes for the operation to succeed.
+  WaitForActiveShards wait_for_active_shards = 14;
+  // [required] The update document request body
+  UpdateDocumentRequestBody request_body = 15;
+}
+
+message UpdateDocumentRequestBody {
+  // [optional] Controls whether an operation is ignored if there is no change. Default is true.
+  .google.protobuf.BoolValue detect_noop = 1;
+
+  // [optional] A partial update to an existing document.
+  ObjectMap doc = 2;
+
+  // [optional] Set to true to use the contents of 'doc' as the value of 'upsert'
+  .google.protobuf.BoolValue doc_as_upsert = 3;
+  // [optional] Script for more complex document updates by defining the script with the `source` or `id` from a document
+  Script script = 4;
+
+  //[optional] Set to true to execute the script whether or not the document exists.
+  .google.protobuf.BoolValue scripted_upsert = 5;
+  // [optional] Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
+  SourceConfig source = 6 [json_name = "_source"];
+
+  // [optional] If the document does not already exist, the contents of 'upsert' are inserted as a new document. If the document exists, the 'script' is executed.
+  ObjectMap upsert = 7;
+}
+
+// The response from update index document with Id request
+message UpdateDocumentResponse {
+  oneof response {
+    UpdateDocumentResponseBody update_document_response_body = 1;
+    UpdateDocumentErrorResponse update_document_error_response = 2;
+  }
+}
+// The error response from update index document with Id request
+message UpdateDocumentErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional]  HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+message UpdateDocumentResponseBody {
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+  // [optional] The document's ID.
+  .google.protobuf.StringValue id = 2 [json_name = "_id"];
+  // [optional] The name of the index.
+  .google.protobuf.StringValue index = 3 [json_name = "_index"];
+  // [optional] The primary term assigned when the document was indexed.
+  .google.protobuf.Int64Value primary_term = 4 [json_name = "_primary_term"];
+
+  enum Result {
+    
+    RESULT_INVALID = 0;
+    RESULT_CREATED = 1;
+    RESULT_DELETED = 2;
+    RESULT_NOOP = 3;
+    RESULT_NOT_FOUND = 4;
+    RESULT_UPDATED = 5;
+  }
+  // [optional] The result of the index operation.
+  Result result = 5;
+  // [optional] The sequence number assigned when the document was indexed.
+  .google.protobuf.Int64Value seq_no = 6 [json_name = "_seq_no"];
+  // [optional] Detailed information about the cluster's shards.
+  ShardStatistics shards = 7 [json_name = "_shards"];
+  // [optional] The document's version.
+  .google.protobuf.Int64Value version = 8 [json_name = "_version"];
+  // [optional] if `true`, it requires immediate visibility of the document
+  .google.protobuf.BoolValue forced_refresh = 9;
+  // [optional]
+  InlineGet get = 10;
+}
+
+// Get document request with document ID specified
+message GetDocumentRequest {
+  // [required] Unique identifier for the document.
+  .google.protobuf.StringValue id = 1;
+  // [required] Name of the data stream or index to target. If the target doesn't exist and matches the name or wildcard (`*`) pattern of an index template with a `data_stream` definition, this request creates the data stream. If the target doesn't exist and doesn't match a data stream template, this request creates the index.
+  .google.protobuf.StringValue index = 2;
+  // [optional] Set to false to disable source retrieval. You can also specify a comma-separated list of the fields you want to retrieve. Default is true.
+  SourceConfigParam source = 3 [json_name = "_source"];
+  // [optional] A comma-separated list of source fields to exclude from the response.
+  repeated string source_excludes = 4;
+  // [optional] A comma-separated list of source fields to include in the response.
+  repeated string source_includes = 5 [json_name = "_source_includes",;
+  // [optional] Specifies a preference of which shard to retrieve results from. Available options are _local, which tells the operation to retrieve results from a locally allocated shard replica, and a custom string value assigned to a specific shard replica. By default, OpenSearch executes get document operations on random shards.
+  .google.protobuf.StringValue preference = 6;
+  // [optional] Specifies whether the operation should run in realtime. If false, the operation waits for the index to refresh to analyze the source to retrieve data, which makes the operation near-realtime. Default is true.
+  .google.protobuf.BoolValue realtime = 7;
+  // [optional] If true, OpenSearch refreshes shards to make the get operation available to search results. Valid options are true, false, and wait_for, which tells OpenSearch to wait for a refresh before executing the operation. Default is false.
+  .google.protobuf.BoolValue refresh = 8;
+  // [optional] A value used to route the operation to a specific shard.
+  repeated string routing = 9;
+  // [optional] List of stored fields to return as part of a hit. If no fields are specified, no stored fields are included in the response. If this field is specified, the `_source` parameter defaults to false.
+  repeated string stored_fields = 10;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 11;
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 12;
+
+}
+
+message GetDocumentResponseBody {
+  // [optional] The document type.
+  .google.protobuf.StringValue type = 1 [json_name = "_type"];
+  // [optional] The name of the index.
+  .google.protobuf.StringValue index = 2 [json_name = "_index"];
+  // [optional] Contains the document's data that's stored in the index. Only returned if both stored_fields and found are true.
+  .google.protobuf.Struct fields = 3;
+  // [optional] Whether the document exists.
+  .google.protobuf.BoolValue found = 4;
+  // [optional] The document's ID.
+  .google.protobuf.StringValue id = 5 [json_name = "_id"];
+  // [optional] The primary term assigned when the document is indexed.
+  .google.protobuf.Int64Value primary_term = 6 [json_name = "_primary_term"];
+  // [optional] The shard that the document is routed to. If the document is not routed to a particular shard, this field is omitted.
+  .google.protobuf.StringValue routing = 7 [json_name = "_routing"];
+  // [optional] The sequence number assigned when the document was indexed.
+  .google.protobuf.Int64Value seq_no = 8 [json_name = "_seq_no"];
+  // [optional] Contains the document's data if found is true. If _source is set to false or stored_fields is set to true in the URL parameters, this field is omitted.
+  .google.protobuf.Struct source = 9 [json_name = "_source"];
+  // [optional] The document's version number. Updated whenever the document changes.
+  .google.protobuf.Int64Value version = 10 [json_name = "_version"];
+}
+
+// The response from get document request with document ID specified request
+message GetDocumentResponse {
+  oneof response {
+    GetDocumentResponseBody get_document_response_body = 1;
+    GetDocumentErrorResponse get_document_error_response = 2;
+  }
+}
+// The error response from get document request with document ID specified request
+message GetDocumentErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
+
+// Get document source with document ID specified request
+message GetDocumentSourceRequest {
+  // [required] Unique identifier for the document.
+  .google.protobuf.StringValue id = 1;
+  // [required] Name of the data stream or index to target. If the target doesn't exist and matches the name or wildcard (`*`) pattern of an index template with a `data_stream` definition, this request creates the data stream. If the target doesn't exist and doesn't match a data stream template, this request creates the index.
+  .google.protobuf.StringValue index = 2;
+  // [optional] Set to false to disable source retrieval. You can also specify a comma-separated list of the fields you want to retrieve.
+  SourceConfigParam source = 3 [json_name = "_source"];
+  // [optional] A comma-separated list of source fields to exclude from the response.
+  repeated string source_excludes = 4;
+  // [optional] A comma-separated list of source fields to include in the response.
+  repeated string source_includes = 5 [json_name = "_source_includes",;
+  // [optional] Specifies the node or shard the operation should be performed on. Random by default.
+  .google.protobuf.StringValue preference = 6;
+  // [optional] Specifies whether the operation should run in realtime. If false, the operation waits for the index to refresh to analyze the source to retrieve data, which makes the operation near-realtime. Default is true.
+  .google.protobuf.BoolValue realtime = 7;
+  // [optional] If true, OpenSearch refreshes shards to make the get operation available to search results. Valid options are true, false, and wait_for, which tells OpenSearch to wait for a refresh before executing the operation. Default is false.
+  .google.protobuf.BoolValue refresh = 8;
+  // [optional] Custom value used to route operations to a specific shard.
+  repeated string routing = 9;
+  // [optional] Explicit version number for concurrency control. The specified version must match the current version of the document for the request to succeed.
+  .google.protobuf.Int64Value version = 10;
+  enum VersionType {
+    
+    VERSION_TYPE_INVALID = 0;
+    // Retrieve the document if the specified version number is greater than the document's current version
+    VERSION_TYPE_EXTERNAL = 1;
+    // Retrieve the document if the specified version number is greater than or equal to the document's current version
+    VERSION_TYPE_EXTERNAL_GTE = 2;
+  }
+  // [optional] Assigns a specific type to the document.
+  VersionType version_type = 11;
+}
+
+message GetDocumentSourceResponseBody {
+  // [optional]
+  .google.protobuf.Struct object = 1;
+}
+
+// The response from get document source with document ID specified request
+message GetDocumentSourceResponse {
+  oneof response {
+    GetDocumentSourceResponseBody get_document_source_response_body = 1;
+    GetDocumentSourceErrorResponse get_document_source_error_response = 2;
+  }
+}
+
+message GetDocumentSourceErrorResponse {
+  // [optional]
+  OpenSearchException error = 1;
+  // [optional] HTTP response status code
+  .google.protobuf.Int32Value status = 2;
+}
