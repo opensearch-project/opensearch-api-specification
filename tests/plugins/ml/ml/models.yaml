@@ -22,26 +22,6 @@ chapters:
       status: 200
     output:
       task_id: payload.task_id
-  - synopsis: Refresh the index.
-    path: /_refresh
-    method: POST
-  - synopsis: Search model.
-    id: search_model
-    path: /_plugins/_ml/models/_search
-    method: GET
-    request:
-      payload:
-        query:
-          match_all: {}
-        size: 1000
-    response:
-      status: 200
-      payload:
-        hits:
-          hits:
-            - _score: 1
-    output:
-      search_id: payload.hits.hits[0]._id
   - synopsis: Wait to get completed task.
     id: get_completed_task
     path: /_plugins/_ml/tasks/{task_id}
@@ -57,6 +37,20 @@ chapters:
     retry:
       count: 5
       wait: 30000
+  - synopsis: Search model.
+    path: /_plugins/_ml/models/_search
+    method: GET
+    request:
+      payload:
+        query:
+          match_all: {}
+        size: 1000
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _score: 1
   - synopsis: Delete model.
     path: /_plugins/_ml/models/{model_id}
     parameters:

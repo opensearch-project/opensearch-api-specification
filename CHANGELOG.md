@@ -15,7 +15,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
 - Added `PhoneAnalyzer` from `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
 - Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
-- Added `GET /_plugins/_ml/models/_search` and `DELETE /_plugins/_ml/tasks/{task_id}` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -33,6 +32,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed invalid `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Fixed `/{index}/_create/{id}` returning `201` ([#669](https://github.com/opensearch-project/opensearch-api-specification/pull/669))
+- Fixed `ml._common.yaml#SearchModelsResponse` and `SearchModelsHitsHit` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 
 ## [0.1.0] - 2024-10-25
 
