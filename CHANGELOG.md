@@ -32,6 +32,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed invalid `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Fixed `/{index}/_create/{id}` returning `201` ([#669](https://github.com/opensearch-project/opensearch-api-specification/pull/669))
+- Fixed `ml._common.yaml#SearchModelsResponse` and `SearchModelsHitsHit` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 
 ## [0.1.0] - 2024-10-25
 
