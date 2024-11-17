@@ -21,6 +21,15 @@ prologues:
     method: POST
     parameters:
       index: books
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          cluster:
+            remote:
+              leader-cluster:
+                seeds: ['172.22.0.3:9300']
 epilogues:
   - path: /_plugins/_replication/{index}/_stop
     method: POST
@@ -35,18 +44,6 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Establish connection.
-    path: /_cluster/settings
-    method: PUT
-    request:
-      payload:
-        persistent:
-          cluster:
-            remote:
-              leader-cluster:
-                seeds: ['172.22.0.3:9300']
-    response:
-      status: 200
   - synopsis: Start replication.
     path: /_plugins/_replication/{index}/_start
     version: '>= 1.1'
