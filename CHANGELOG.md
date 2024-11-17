@@ -9,9 +9,18 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added Python and Ruby spec validators ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added verbose output of the story being evaluated ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added `_search` with `sort: direction` ([#658](https://github.com/opensearch-project/opensearch-api-specification/pull/658))
+- Added `_common.mapping:FlatObjectProperty` ([#661](https://github.com/opensearch-project/opensearch-api-specification/pull/661)) 
+- Added `HEAD /{index}/_doc/{id}` returning `404` ([#670](https://github.com/opensearch-project/opensearch-api-specification/pull/670))
+- Added `_common.mapping:IcuCollationKeywordProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
+- Added `PhoneAnalyzer` from `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
+- Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
+- Removed unsupported `_common.mapping:DenseVectorProperty`, `_common.mapping:SparseVectorProperty`, and `_common.mapping:FlattenedProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Removed unsupported time series dimension properties and types ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Removed unsupported runtime field properties (`script`/`on_script_error`) on `NumberPropertyBase` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666)) 
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -22,6 +31,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed incorrect `style` in `indices.get_mapping::query.index` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed invalid `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Fixed `/{index}/_create/{id}` returning `201` ([#669](https://github.com/opensearch-project/opensearch-api-specification/pull/669))
+- Fixed `ml._common.yaml#SearchModelsResponse` and `SearchModelsHitsHit` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 
 ## [0.1.0] - 2024-10-25
 

@@ -22,6 +22,14 @@ components:
     SearchModelsResponse:
       type: object
       properties:
+        took:
+          type: integer
+          description: The time taken to execute the search.
+        timed_out:
+          type: boolean
+          description: Whether the search timed out.
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
         hits:
           $ref: '#/components/schemas/SearchModelsHits'
       required:
@@ -35,6 +43,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SearchModelsHitsHit'
+        max_score:
+          type: number
+          format: float
+          description: The maximum score.
       required:
         - hits
         - total
@@ -43,6 +55,7 @@ components:
       properties:
         value:
           type: integer
+          format: int64
           description: The total number of hits.
         relation:
           type: string
@@ -53,18 +66,140 @@ components:
     SearchModelsHitsHit:
       type: object
       properties:
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: integer
+          description: The primary term.
         _index:
-          type: string
-          description: The index.
+          $ref: '_common.yaml#/components/schemas/IndexName'
         _id:
-          type: string
-          description: The hit ID.
+          $ref: '_common.yaml#/components/schemas/Id'
+        _score:
+          type: number
+          format: float
+          description: The score.
+        _source:
+          $ref: '#/components/schemas/Source'
         model_id:
-          type: string
-          description: The model ID.
+          $ref: '_common.yaml#/components/schemas/Name'
       required:
-        - _id
-        - model_id
+        - _score
+    Source:
+      type: object
+      properties:
+        last_deployed_time:
+          type: integer
+          format: int64
+          description: The last deployed time.
+        model_version:
+          type: string
+          description: The model version.
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        chunk_number:
+          type: integer
+          format: int64
+          description: The chunk number.
+        deploy_to_all_nodes:
+          type: boolean
+          description: Whether to deploy to all nodes.
+        is_hidden:
+          type: boolean
+          description: Whether the model is hidden.
+        model_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        description:
+          type: string
+          description: The model description.
+        model_state:
+          type: string
+          description: The model state.
+          enum:
+            - DEPLOYED
+            - DEPLOYING
+            - DEPLOY_FAILED
+            - PARTIALLY_DEPLOYED
+            - REGISTERED
+            - REGISTERING
+        model_content_size_in_bytes:
+          type: integer
+          format: int64
+          description: The model content size in bytes.
+        model_content_hash_value:
+          type: string
+          description: The model content hash value.
+        planning_worker_node_count:
+          type: number
+          description: The planning worker node count.
+        model_config:
+          $ref: '#/components/schemas/ModelConfig'
+        model_format:
+          type: string
+          description: The model format.
+        model_task_type:
+          type: string
+          description: The model task type.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
+        last_registered_time:
+          type: integer
+          format: int64
+          description: The last registered time.
+        auto_redeploy_retry_times:
+          type: integer
+          format: int64
+          description: The auto redeploy retry times.
+        name:
+          type: string
+          description: The model name.
+        connector_id:
+          type: string
+          description: The connector ID.
+        current_worker_node_count:
+          type: number
+          description: The current worker node count.
+        model_group_id:
+          type: string
+          description: The model group ID.
+        planning_worker_nodes:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/NodeIds'
+        total_chunks:
+          type: integer
+          format: int64
+          description: The total chunks.
+        algorithm:
+          type: string
+          description: The algorithm.
+        url:
+          type: string
+          description: The model URL.
+    ModelConfig:
+      type: object
+      properties:
+        all_config:
+          type: string
+          description: The all config.
+        model_type:
+          type: string
+          description: The model type.
+        embedding_dimension:
+          type: integer
+          format: int64
+          description: The embedding dimension.
+        framework_type:
+          type: string
+          description: The framework type.
     ModelGroupRegistration:
       type: object
       properties:

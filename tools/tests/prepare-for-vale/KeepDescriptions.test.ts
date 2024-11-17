@@ -15,7 +15,7 @@ import tmp from 'tmp'
 describe('KeepDescriptions', () => {
   var temp: tmp.DirResult
   var fixture_path: string = './tools/tests/prepare-for-vale/fixtures'
-  var fixtures = fg.globSync(`${fixture_path}/**/*.yaml`)
+  var fixtures = fg.globSync(`${fixture_path}/**/*.{yaml,yml}`)
 
   describe('defaults', () => {
     beforeAll(() => {

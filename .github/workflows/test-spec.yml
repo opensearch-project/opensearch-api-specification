@@ -27,29 +27,32 @@ jobs:
             admin_password: admin
           - version: 2.0.0
             admin_password: admin
-          - version: 2.16.0
-          - version: 2.16.0
+          - version: 2.18.0
+          - version: 2.18.0
             tests: plugins/index_state_management
-          - version: 2.16.0
+          - version: 2.18.0
             tests: plugins/ml
-          - version: 2.16.0
+          - version: 2.18.0
             tests: routing
-          - version: 2.16.0
+          - version: 2.18.0
             tests: snapshot
           - version: 2.16.0
             tests: plugins/replication
             url: http://localhost:9200
           - version: 2.17.0
+          - version: 2.18.0
             tests: plugins/streaming
-          - version: 2.17.0
+          - version: 2.18.0
             tests: plugins/notifications
-          - version: 2.17.0
+          - version: 2.18.0
             tests: plugins/query_insights
-          - version: 2.17.0
+          - version: 2.18.0
             tests: plugins/workload-management
           - version: 2.18.0
+            tests: plugins/analysis
+          - version: 2.19.0
             hub: opensearchstaging
-            ref: '@sha256:57a1cd1142d68c203e2e4aa0666d9a691e1e409a5d14aa4a8f5044036f05cf06'
+            ref: '@sha256:4da23e0137b2b67206d23b36fcf0914cc39b3bf19310c782f536e4934b86f6cc'
           - version: 3.0.0
             hub: opensearchstaging
             ref: '@sha256:727643acdfebed77bfdb26362dbcff536b7ea02a0cc4ae2da2521729171333de'
@@ -80,12 +83,16 @@ jobs:
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
 
+      - name: Generate Test Files Hash
+        id: tests
+        run: echo "hash=${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}" >> $GITHUB_OUTPUT
+
       - name: Run Tests
         run: |
           npm run test:spec -- \
             --opensearch-insecure \
             --opensearch-version=${{ matrix.entry.version }} \
-            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json \
+            --coverage coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json \
             --opensearch-url=${{ matrix.entry.url || 'https://localhost:9200'}} \
             --tests=tests/${{ matrix.entry.tests || 'default' }}
 
@@ -100,12 +107,11 @@ jobs:
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}
-          path: coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json
+          name: coverage-${{ matrix.entry.version }}-${{ steps.tests.outputs.hash }}
+          path: coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json
 
   merge-coverage:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     needs: test-opensearch-spec
     steps:
       - uses: actions/checkout@v4
@@ -114,6 +120,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: coverage
+
+      - name: Display Missing Test Paths
+        run: |
+          jq -sc '
+            (map(.operations) | add | unique) as $all |
+            (map(.evaluated_operations) | add | unique) as $evaluated |
+            $all-$evaluated |
+            sort_by(.path) |
+            .[] |
+            "\(.method) \(.path)"
+          ' $(find ./ -name "test-spec-coverage-*.json")
 
       - name: Combine Test Coverage Data
         shell: bash -eo pipefail {0}
@@ -130,6 +147,7 @@ jobs:
           cat ./coverage/coverage.json
 
       - name: Construct Comment Data Payload
+        if: github.event_name == 'pull_request'
         shell: bash -eo pipefail {0}
         run: |
           jq \
@@ -150,6 +168,7 @@ jobs:
 
       - name: Upload PR Comment Payload
         uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
         with:
           name: pr-comment
           path: pr-comment.json
