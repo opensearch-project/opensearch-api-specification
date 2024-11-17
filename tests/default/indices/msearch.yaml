@@ -1,0 +1,124 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test endpoints relevant to the lifecycle of an index, including multi-get and multi-search operations.
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index named `books` with mappings and settings.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload:
+        mappings:
+          properties:
+            name:
+              type: keyword
+            age:
+              type: integer
+        settings:
+          number_of_shards: 5
+          number_of_replicas: 2
+    response:
+      status: 200
+
+  - synopsis: Create an index named `games` with default settings.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: games
+
+  - synopsis: Add documents to the `books` index.
+    path: /{index}/_doc/{id}
+    method: POST
+    parameters:
+      index: books
+      id: '1'
+    request:
+      payload:
+        name: "Book 1"
+        age: 10
+    response:
+      status: 201
+
+  - synopsis: Add more documents to the `books` index.
+    path: /{index}/_doc/{id}
+    method: POST
+    parameters:
+      index: books
+      id: '2'
+    request:
+      payload:
+        name: "Book 2"
+        age: 20
+    response:
+      status: 201
+
+  - synopsis: Add another document to the `books` index.
+    path: /{index}/_doc/{id}
+    method: POST
+    parameters:
+      index: books
+      id: '3'
+    request:
+      payload:
+        name: "Book 3"
+        age: 30
+    response:
+      status: 201
+
+  - synopsis: Perform a `_mget` request to retrieve documents by IDs.
+    path: /{index}/_mget
+    method: POST
+    parameters:
+      index: books
+    request:
+      payload:
+        ids: ['1', '2', '3']
+    response:
+      status: 200
+      payload:
+        docs:
+          - _index: "books"
+            _id: "1"
+            _source:
+              name: "Book 1"
+              age: 10
+          - _index: "books"
+            _id: "2"
+            _source:
+              name: "Book 2"
+              age: 20
+          - _index: "books"
+            _id: "3"
+            _source:
+              name: "Book 3"
+              age: 30
+
+  - synopsis: Perform a `_msearch` request to execute multiple search queries in a single call.
+    path: /{index}/_msearch
+    method: POST
+    parameters:
+      index: books
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - { index: "books" }
+        - { "query": { "match": { "name": "Book 1" } } }
+        - { index: "books" }
+        - { "query": { "match": { "name": "Book 2" } } }
+    response:
+      status: 200
+  - synopsis: Delete the `books` and `games` indices.
+    path: /{index}
+    method: DELETE
+    parameters:
+      index: books,games
+    response:
+      status: 200

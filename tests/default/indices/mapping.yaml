@@ -146,3 +146,40 @@ chapters:
       status: 200
       payload:
         acknowledged: true
+  - synopsis: Add new fields to index mapping.
+    path: /{index}/_mapping
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        properties:
+          genre:
+            type: text
+          rating:
+            type: float
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get specific field mappings for an index.
+    path: /{index}/_mapping/field/{fields}
+    method: GET
+    parameters:
+      index: movies
+      fields: director,year
+    response:
+      status: 200
+      payload:
+        movies:
+          mappings:
+            year:
+              full_name: "year"
+              mapping:
+                year:
+                  type: integer
+            director:
+              full_name: "director"
+              mapping:
+                director:
+                  type: text

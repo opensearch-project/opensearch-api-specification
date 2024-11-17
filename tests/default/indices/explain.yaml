@@ -1,0 +1,59 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _explain.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - id: doc
+    path: /movies/_doc
+    method: POST
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 1991
+    status: [201]
+    output:
+      id: payload._id
+  - path: /_refresh
+    method: POST
+chapters:
+  - synopsis: Post explanation for a document with query.
+    path: /{index}/_explain/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: ${doc.id}
+    request:
+      payload:
+        query:
+          match:
+            title: "Beauty and the Beast"
+    response:
+      status: 200
+      payload:
+        matched: true
+        explanation:
+          value: 1.1507283
+          description: "sum of:"
+          details: []
+  - synopsis: Get explanation for a document.
+    path: /{index}/_explain/{id}
+    method: GET
+    parameters:
+      index: movies
+      id: ${doc.id}
+    request:
+      payload:
+        query:
+          match:
+            title: "Beauty and the Beast"
+    response:
+      status: 200
+      payload:
+        matched: true
+        explanation:
+          value: 1.1507283
+          description: "sum of:"
+          details: []
