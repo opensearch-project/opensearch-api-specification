@@ -38,6 +38,7 @@ export default class KeepDescriptions {
 
     var inside_description = false
     contents.split(/\r?\n/).forEach((line) => {
+      // TODO: keep x-deprecation-message
       if (line.match(/^[\s]+(description: \|)/)) {
         inside_description = true
       } else if (line.match(/^[\s]+(description:)[\s]+/)) {
