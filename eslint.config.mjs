@@ -113,8 +113,7 @@ export default [
       parser: parserYml
     },
     plugins: {
-      'yml': pluginYml,
-      '@cspell': pluginCspell
+      'yml': pluginYml
     },
     rules: {
       'yml/no-empty-document': 'off',
@@ -122,7 +121,6 @@ export default [
       'yml/plain-scalar': ['error', 'always'],
       'yml/no-trailing-zeros': 'error',
       'yml/no-multiple-empty-lines': 'error',
-      '@cspell/spellchecker': ['error', { customWordListFile: '.cspell', autoFix: true }],
       'yml/sort-sequence-values': ['error', { pathPattern: '.*', order: { type: 'asc' } }]
     }
   }
