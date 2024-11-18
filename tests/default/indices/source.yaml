@@ -1,0 +1,52 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test retrieving a document source.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /movies/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 1991
+chapters:
+  - synopsis: Retrieve the document source.
+    path: /{index}/_source/{id}
+    method: GET
+    parameters:
+      index: movies
+      id: '1'
+    response:
+      status: 200
+      payload:
+        title: Beauty and the Beast
+        year: 1991
+  - synopsis: Retrieve a non-existent document source.
+    path: /{index}/_source/{id}
+    method: GET
+    parameters:
+      index: movies
+      id: '2'
+    response:
+      status: 404
+  - synopsis: Check whether the document exists.
+    path: /{index}/_source/{id}
+    method: HEAD
+    parameters:
+      index: movies
+      id: '1'
+    response:
+      status: 200
+  - synopsis: Check whether the document exists.
+    path: /{index}/_source/{id}
+    method: HEAD
+    parameters:
+      index: movies
+      id: '2'
+    response:
+      status: 404
