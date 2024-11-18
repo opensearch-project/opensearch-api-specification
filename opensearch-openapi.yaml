@@ -11857,6 +11857,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/get_source___200'
+        '404':
+          $ref: '#/components/responses/get_source___404'
     head:
       operationId: exists_source.0
       x-operation-group: exists_source
@@ -11884,6 +11886,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/exists_source___200'
+        '404':
+          $ref: '#/components/responses/exists_source___404'
   /{index}/_split/{target}:
     post:
       operationId: indices.split.0
@@ -18033,7 +18037,7 @@ components:
       name: refresh
       description: If `true`, OpenSearch refreshes all shards involved in the delete by query after the request completes.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     delete_by_query___query.request_cache:
       in: query
@@ -18353,7 +18357,7 @@ components:
       name: refresh
       description: If `true`, OpenSearch refreshes all shards involved in the delete by query after the request completes.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     exists_source___query.routing:
       in: query
@@ -18439,7 +18443,7 @@ components:
       name: refresh
       description: If `true`, OpenSearch refreshes all shards involved in the delete by query after the request completes.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     exists___query.routing:
       in: query
@@ -18826,7 +18830,7 @@ components:
       name: refresh
       description: If true, OpenSearch refreshes the affected shards to make this operation visible to search. If false, do nothing with refreshes.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     get_source___query.routing:
       in: query
@@ -18906,7 +18910,7 @@ components:
       name: refresh
       description: If true, OpenSearch refreshes the affected shards to make this operation visible to search. If false, do nothing with refreshes.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     get___query.routing:
       in: query
@@ -22622,7 +22626,7 @@ components:
       name: refresh
       description: If `true`, the request refreshes relevant shards before retrieving documents.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     mget___query.routing:
       in: query
@@ -23625,7 +23629,7 @@ components:
       name: refresh
       description: If `true`, the request refreshes affected shards to make this operation visible to search.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     reindex___query.requests_per_second:
       in: query
@@ -25812,7 +25816,7 @@ components:
       name: refresh
       description: If `true`, OpenSearch refreshes affected shards to make the operation visible to search.
       schema:
-        type: boolean
+        $ref: '#/components/schemas/_common___Refresh'
       style: form
     update_by_query___query.request_cache:
       in: query
@@ -28494,6 +28498,10 @@ components:
       content:
         application/json: {}
       description: ''
+    exists_source___404:
+      content:
+        application/json: {}
+      description: ''
     exists___200:
       content:
         application/json: {}
@@ -28835,6 +28843,12 @@ components:
         application/json:
           schema:
             type: object
+      description: ''
+    get_source___404:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/query._common___ErrorResponse'
       description: ''
     get___200:
       content:
@@ -32837,11 +32851,13 @@ components:
         - current_as_target
         - throttle_time_in_millis
     _common___Refresh:
-      type: string
-      enum:
-        - 'false'
-        - 'true'
-        - wait_for
+      oneOf:
+        - type: boolean
+        - type: string
+          enum:
+            - 'false'
+            - 'true'
+            - wait_for
     _common___RefreshStats:
       type: object
       properties:
