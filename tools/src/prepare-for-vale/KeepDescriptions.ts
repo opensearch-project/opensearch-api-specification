@@ -38,18 +38,25 @@ export default class KeepDescriptions {
 
     var inside_description = false
     contents.split(/\r?\n/).forEach((line) => {
+      // TODO: keep x-deprecation-message
       if (line.match(/^[\s]+(description: \|)/)) {
         inside_description = true
       } else if (line.match(/^[\s]+(description:)[\s]+/)) {
-        fs.writeSync(writer, line.replace("description:", "            "))
+        fs.writeSync(writer, this.prune(line).replace("description:", "            "))
       } else if (inside_description && line.match(/^[\s]*[\w]*:/)) {
         inside_description = false
       } else if (inside_description) {
-        fs.writeSync(writer, line)
+        fs.writeSync(writer, this.prune(line))
       }
       if (line.length > 0) {
         fs.writeSync(writer, "\n")
       }
+    })
+  }
+
+  prune(line: string): string {
+    return line.replace(/([`])(?:(?=(\\?))\2.)*?\1/g, (match) => {
+      return Array(match.length + 1).join('*')
     })
   }
 }
