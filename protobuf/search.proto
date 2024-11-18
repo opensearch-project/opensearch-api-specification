@@ -1,378 +1,230 @@
+/**
+This is the generated from spec. DON NOT manually modified.
+ */
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "opensearch.protos";
-option java_outer_classname = "SearchProto";
-option go_package = "opensearchpb";
 
-import "google/protobuf/wrappers.proto";
-import "google/protobuf/descriptor.proto";
-import "google/protobuf/struct.proto";
 import "common.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
 
-// Information about the document hits returned that match the query.
-message Hits {
-  message Total {
-    // The total number of hits that match the query. The accuracy of the value depends on "relation" below.
-    int64 value = 1;
-
-    // How the total.value should be interpreted.
-    // "eq": The total hit count is equal to TotalHits.value.
-    // "gte" The total hit count is greater than or equal to TotalHits.value.
-    string relation = 2;
+// The Search API operation to perform a search across all indices in the cluster.
+message SearchRequest {
+  // [optional] Whether to include the _source field in the response.
+  optional SourceConfigParam source = 1;
+  // [optional] A list of source fields to exclude from the response. You can also use this parameter to exclude fields from the subset specified in `source_includes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
+  repeated string source_excludes = 2;
+  // [optional] A list of source fields to include in the response. If this parameter is specified, only these source fields are returned. You can exclude fields from this subset using the `source_excludes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
+  repeated string source_includes = 3 ;
+  // [optional] Whether to ignore wildcards that don't match any indexes. Default is true.
+  optional bool allow_no_indices = 4;
+  // [optional] Whether to return partial results if the request runs into an error or times out. Default is true.
+  optional bool allow_partial_search_results = 5;
+  // [optional] Whether the update operation should include wildcard and prefix queries in the analysis. Default is false.
+  optional bool analyze_wildcard = 6;
+  // [optional] Analyzer to use for the query string. This parameter can only be used when the q query optional string parameter is specified.
+  optional string analyzer = 7;
+  // [optional] How many shard results to reduce on a node. Default is 512.
+  optional int32 batched_reduce_size = 8;
+  // [optional] The time after which the search request will be canceled. Request-level parameter takes precedence over cancel_after_time_interval cluster setting. Default is -1.
+  optional string cancel_after_time_interval = 9;
+  // [optional] Whether to minimize round-trips between a node and remote clusters. Default is true.
+  optional bool ccs_minimize_roundtrips = 10;
+  // [optional] Indicates whether the default operator for a string query should be AND or OR. Default is OR.
+  optional Operator default_operator = 11;
+  enum Operator {
+    OPERATOR_UNSPECIFIED = 0;
+    // All terms need to match. The string `to be` is interpreted as `to AND be`
+    OPERATOR_AND = 1;
+    // Only one term needs to match. The string `to be` is interpreted as `to OR be`
+    OPERATOR_OR = 2;
   }
+  // [optional] The default field in case a field prefix is not provided in the query string.
+  optional string df = 12;
+  // [optional] The fields that OpenSearch should return using their docvalue forms.
+  repeated string docvalue_fields = 13;
+  // [optional] Specifies the type of index that wildcard expressions can match. Supports list of values. Default is open.
+  repeated ExpandWildcard expand_wildcards = 14;
 
-  // The total number of hits that match the query.
-  Total total = 1;
-  // The maximum score of all hits.
-  float max_score = 2;
-  // The document hits
-  repeated SearchHit hits = 3;
-}
-
-// A hit in the search results representing a document which matches the query.
-message SearchHit {
-  // The index name/id from where the hit in the search results was returned from.
-  // For single-tenancy deployments, it will just be the one index that is hosted.
-  // But for some technologies like OpenSearch which supports hosting and querying
-  // multiple indices in one request, it can be different per document.
-  string index = 1;
-  // The ID of the document, usually a UUID.
-  string id = 2;
-  // The score of the hit.
-  float score = 3;
-  // Contains field values for the documents. These fields must be specified in the request using one or more of the following request parameters:
-  //
-  // - fields (Not supported yet)
-  // - docvalue_fields (Not supported yet)
-  // - script_fields (Not supported yet)
-  // - stored_fields
-  map<string, Payload> fields = 4;
-
-  // tag of named queries that the hit matches with
-  repeated string matched_queries = 5;
-}
-
-message Field {
-  // [required] Field to return. Supports wildcards (*).
-  string name = 1;
-  enum Format {
-    FORMAT_INVALID = 0;
-    FORMAT_DATE = 1;
-    FORMAT_DATE_NANOS = 2;
-    FORMAT_GEO_POINT = 3;
-    FORMAT_GEO_SHAPE = 4;
+  enum ExpandWildcard {
+    EXPAND_WILDCARD_UNSPECIFIED = 0;
+    // Match any index
+    EXPAND_WILDCARD_ALL = 1;
+    // Match closed, non-hidden indexes
+    EXPAND_WILDCARD_CLOSED = 2;
+    // Match hidden indexes
+    EXPAND_WILDCARD_HIDDEN = 3;
+    // Deny wildcard expressions
+    EXPAND_WILDCARD_NONE = 4;
+    // Match open, non-hidden indexes
+    EXPAND_WILDCARD_OPEN = 5;
   }
-  // [optional] Format for date and geospatial fields. Other field data types do not support this parameter.
-  Format format = 2;
+  // [optional] Whether to return details about how OpenSearch computed the document's score. Default is false.
+  optional bool explain = 15;
+  // [optional] The starting index to search from. Default is 0.
+  optional int32 from = 16;
+  // [optional] Whether to ignore concrete, expanded, or indexes with aliases if indexes are frozen. Default is true.
+  optional bool ignore_throttled = 17;
+  // [optional] Specifies whether to include missing or closed indexes in the response and ignores unavailable shards during the search request. Default is false.
+  optional bool ignore_unavailable = 18;
+  // [optional] Whether to return scores with named queries. Default is false.
+  optional bool include_named_queries_score = 19;
+  // [optional] Specifies whether OpenSearch should accept requests if queries have format errors (for example, querying a text field for an integer). Default is false.
+  optional bool lenient = 20;
+  // [optional] Numbers of concurrent shard requests this request should execute on each node. Default is 5.
+  optional int32 max_concurrent_shard_requests = 21;
+  // [optional] Whether to return phase-level took time values in the response. Default is false.
+  optional bool phase_took = 22;
+  // [optional] A prefilter size threshold that triggers a prefilter operation if the request exceeds the threshold. Default is 128 shards.
+  optional int32 pre_filter_shard_size = 23;
+  // [optional] Specifies the shards or nodes on which OpenSearch should perform the search.
+  optional string preference = 24;
+  // [optional] Query in the Lucene query string syntax using query parameter search.
+  optional string q = 25;
+  // [optional] Specifies whether OpenSearch should use the request cache. Default is whether it's enabled in the index's settings.
+  optional bool request_cache = 26;
+  // [optional] Indicates whether to return hits.total as an integer. Returns an object otherwise. Default is false.
+  optional bool rest_total_hits_as_int = 27;
+  // [optional] Value used to route the update by query operation to a specific shard.
+  repeated string routing = 28;
+  // [optional] Period to keep the search context open.
+  optional string scroll = 29;
+  // [optional] Customizable sequence of processing stages applied to search queries.
+  optional string search_pipeline = 30;
+  // [optional] Whether OpenSearch should use global term and document frequencies when calculating relevance scores. Default is SEARCH_TYPE_QUERY_THEN_FETCH.
+  optional SearchType search_type = 31;
+
+  enum SearchType {
+    SEARCH_TYPE_UNSPECIFIED = 0;
+    // Scores documents using global term and document frequencies across all shards. It's usually slower but more accurate.
+    SEARCH_TYPE_DFS_QUERY_THEN_FETCH = 1;
+    // Scores documents using local term and document frequencies for the shard. It's usually faster but less accurate.
+    SEARCH_TYPE_QUERY_THEN_FETCH = 2;
+  }
+  // [optional] Whether to return sequence number and primary term of the last operation of each document hit.
+  optional bool seq_no_primary_term = 32;
+  // [optional] Number of results to include in the response.
+  optional int32 size = 33;
+  // [optional] A list of <field> : <direction> pairs to sort by.
+  repeated string sort = 34;
+  // [optional] Value to associate with the request for additional logging.
+  repeated string stats = 35;
+  // [optional] Whether the get operation should retrieve fields stored in the index. Default is false.
+  repeated string stored_fields = 36;
+  // [optional] Fields OpenSearch can use to look for similar terms.
+  optional string suggest_field = 37;
+  // [optional] The mode to use when searching. This parameter can only be used when the `suggest_field` and `suggest_text` query optional string parameters are specified.
+  optional SuggestMode suggest_mode = 38;
+
+  enum SuggestMode {
+    SUGGEST_MODE_UNSPECIFIED = 0;
+    // Use suggestions based on the provided terms
+    SUGGEST_MODE_ALWAYS = 1;
+    // Use suggestions for terms not in the index
+    SUGGEST_MODE_MISSING = 2;
+    // Use suggestions that have more occurrences
+    SUGGEST_MODE_POPULAR = 3;
+  }
+  // [optional] Number of suggestions to return.
+  optional int32 suggest_size = 39;
+  // [optional] The source that suggestions should be based off of.
+  optional string suggest_text = 40;
+  // [optional] The maximum number of documents OpenSearch should process before terminating the request. Default is 0.
+  optional int32 terminate_after = 41;
+  // [optional] Period of time to wait for a response from active shards. Default is 1m.
+  optional string timeout = 42;
+  // [optional] Whether to return document scores. Default is false.
+  optional bool track_scores = 43;
+  // [optional] Whether to return how many documents matched the query.
+  optional TrackHits track_total_hits = 44;
+  // [optional] Whether returned aggregations and suggested terms should include their types in the response. Default is true.
+  optional bool typed_keys = 45;
+  // [optional] Whether to include the document version as a match. Default is false
+  optional bool version = 46;
+  // [optional] Search Request body
+  optional SearchRequestBody request_body = 47;
+
 }
 
-// Payload is a generic message that can be used to represent a field value in a search hit.
-message Payload {
-  repeated string strings = 1;
-  repeated string value = 2 [deprecated = true];
-  repeated bytes bytes = 3;
-  repeated double doubles = 4;
-  repeated int32 ints = 5;
-  repeated int64 longs = 6;
-  repeated float floats = 7;
-  repeated bool booleans = 8;
+message SearchRequestBody {
+  // [optional] The DSL query to use in the request.
+  optional QueryContainer query = 1;
 }
 
-// Sort by the specific field
-message FieldSort {
-  string field_name = 1;
-  //[optional] if sort order is not set it defaults to desc
-  SortOrder sort = 2;
-}
-
-// SortOrder allows to specify the order for sorting search results
-message SortOrder {
-  Order order = 1;
-  enum Order {
-    ORDER_INVALID = 0;
-    ORDER_ASC = 1;
-    ORDER_DESC = 2;
+message TrackHits {
+  oneof track_hits{
+    bool bool_value = 1;
+    int32 int32_value = 2;
   }
 }
 
-
-message AggregationBreakdown {
-
-  // [required] Contains the time spent running the aggregation’s buildAggregations() method, which builds the results of this aggregation. For concurrent segment search, the build_aggregation method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value build_aggregation = 1;
-
-  // [required] Contains the number of invocations of a build_aggregation.
-  .google.protobuf.Int64Value build_aggregation_count = 2;
-
-  // [required] Contains the time spent running the aggregation’s getLeafCollector() method, which creates a new collector to collect the given context. For concurrent segment search, the build_leaf_collector method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value build_leaf_collector = 3;
-
-  // [required] Contains the number of invocations of a build_leaf_collector.
-  .google.protobuf.Int64Value build_leaf_collector_count = 4;
-
-  // [required] Contains the time spent collecting the documents into buckets. For concurrent segment search, the collect method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value collect = 5;
-
-  // [required] Contains the number of invocations of a collect.
-  .google.protobuf.Int64Value collect_count = 6;
-
-  // [required] Contains the amount of time taken to execute the preCollection() callback method during AggregationCollectorManager creation. For concurrent segment search, the initialize method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value initialize = 7;
-
-  // [required] Contains the number of invocations of a initialize.
-  .google.protobuf.Int64Value initialize_count = 8;
-
-  // [optional] Contains the time spent running the aggregation’s postCollection() callback method. For concurrent segment search, the post_collection method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value post_collection = 9;
-
-  // [optional] Contains the number of invocations of a post_collection.
-  .google.protobuf.Int64Value post_collection_count = 10;
-
-  // [required] Contains the time spent in the reduce phase. For concurrent segment search, the reduce method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value reduce = 11;
-
-  // [required] Contains the number of invocations of a reduce.
-  .google.protobuf.Int64Value reduce_count = 12;
-
-}
-
-message AggregationProfileDebug {
-
-  .google.protobuf.Int32Value segments_with_multi_valued_ords = 1;
-
-  .google.protobuf.StringValue collection_strategy = 2;
-
-  .google.protobuf.Int32Value segments_with_single_valued_ords = 3;
-
-  .google.protobuf.Int32Value total_buckets = 4;
-
-  .google.protobuf.Int32Value built_buckets = 5;
-
-  .google.protobuf.StringValue result_strategy = 6;
-
-  .google.protobuf.BoolValue has_filter = 7;
-
-  .google.protobuf.StringValue delegate = 8;
-
-  AggregationProfileDebug delegate_debug = 9;
-
-  .google.protobuf.Int32Value chars_fetched = 10;
-
-  .google.protobuf.Int32Value extract_count = 11;
-
-  .google.protobuf.Int32Value extract_ns = 12;
-
-  .google.protobuf.Int32Value values_fetched = 13;
-
-  .google.protobuf.Int32Value collect_analyzed_ns = 14;
-
-  .google.protobuf.Int32Value collect_analyzed_count = 15;
-
-  .google.protobuf.Int32Value surviving_buckets = 16;
-
-  .google.protobuf.Int32Value ordinals_collectors_used = 17;
-
-  .google.protobuf.Int32Value ordinals_collectors_overhead_too_high = 18;
-
-  .google.protobuf.Int32Value string_hashing_collectors_used = 19;
-
-  .google.protobuf.Int32Value numeric_collectors_used = 20;
-
-  .google.protobuf.Int32Value empty_collectors_used = 21;
-
-  repeated string deferred_aggregators = 22;
-
-  .google.protobuf.Int32Value segments_with_doc_count_field = 23;
-
-  .google.protobuf.Int32Value segments_with_deleted_docs = 24;
-
-  repeated AggregationProfileDelegateDebugFilter filters = 25;
-
-  .google.protobuf.Int32Value segments_counted = 26;
-
-  .google.protobuf.Int32Value segments_collected = 27;
-
-  .google.protobuf.StringValue map_reducer = 28;
-
-}
-
-message AggregationProfileDelegateDebugFilter {
-
-  .google.protobuf.Int32Value results_from_metadata = 1;
-
-  .google.protobuf.StringValue query = 2;
-
-  .google.protobuf.StringValue specialized_for = 3;
-
-  .google.protobuf.Int32Value segments_counted_in_constant_time = 4;
-
-}
-
-message AggregationProfile {
-
-  AggregationBreakdown breakdown = 1;
-
-  .google.protobuf.StringValue description = 2;
-
-  // Time unit for nanoseconds
-  .google.protobuf.Int64Value time_in_nanos = 3;
-
-  .google.protobuf.StringValue type = 4;
-
-  AggregationProfileDebug debug = 5;
-
-  repeated AggregationProfile children = 6;
-
-}
-
-message Collector {
-
-  // [required] The collector name.
-  .google.protobuf.StringValue name = 1;
-
-  // [required] Contains a description of the collector.
-  .google.protobuf.StringValue reason = 2;
-
-  // [required] The total elapsed time for this collector, in nanoseconds. For concurrent segment search, time_in_nanos is the total amount of time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value time_in_nanos = 3;
-
-  // [optional] If a collector has subcollectors (children), this field contains information about the subcollectors.
-  repeated Collector children = 4;
-
-}
-
-message FetchProfileBreakdown {
-
-  .google.protobuf.Int32Value load_stored_fields = 1;
-
-  .google.protobuf.Int32Value load_stored_fields_count = 2;
-
-  .google.protobuf.Int32Value next_reader = 3;
-
-  .google.protobuf.Int32Value next_reader_count = 4;
-
-  .google.protobuf.Int32Value process_count = 5;
-
-  .google.protobuf.Int32Value process = 6;
-
-}
-
-message FetchProfileDebug {
-
-  repeated string stored_fields = 1;
-
-  .google.protobuf.Int32Value fast_path = 2;
-
-}
-
-message FetchProfile {
-
-  .google.protobuf.StringValue type = 1;
-
-  .google.protobuf.StringValue description = 2;
-
-  // Time unit for nanoseconds
-  .google.protobuf.Int64Value time_in_nanos = 3;
-
-  FetchProfileBreakdown breakdown = 4;
-
-  FetchProfileDebug debug = 5;
-
-  repeated FetchProfile children = 6;
-
-}
-
-message ExplanationDetail {
-
-  // [required] Explains what type of calculation is performed
-  .google.protobuf.StringValue description = 1;
-
-  // [required] Shows any subcalculations performed.
-  repeated ExplanationDetail details = 2;
-
-  // [required] Shows the result of the calculation,
-  .google.protobuf.DoubleValue value = 3;
-
-}
-
-message Explanation {
-
-  // [required] Explains what type of calculation is performed
-  .google.protobuf.StringValue description = 1;
-  // [optional] Shows any subcalculations performed.
-  repeated ExplanationDetail details = 2;
-  // [required] Shows the result of the calculation,
-  .google.protobuf.DoubleValue value = 3;
-
-}
-
-message Hit {
-
-  .google.protobuf.StringValue type = 1 [json_name = "_type"];
-
-  // [required] Name of the index containing the returned document.
-  .google.protobuf.StringValue index = 2 [json_name = "_index"];
-  // [required] Unique identifier for the returned document. This ID is only unique within the returned index.
-  .google.protobuf.StringValue id = 3 [json_name = "_id"];
-
-  message Score {
-    oneof score{
-      .google.protobuf.DoubleValue double_value = 1;
-      .google.protobuf.StringValue string_value = 2;
-      NullValue null_value = 3;
-    }
+// The response from search request.
+message SearchResponse {
+  oneof response {
+    // The search success response
+    ResponseBody response_body = 1;
   }
+}
 
-  // [optional] Relevance of the returned document.
-  Score score = 4 [json_name = "_score"];
+// The response body from a search/index-search request.
+message ResponseBody {
 
-  // [optional] Explanation of how the relevance score (_score) is calculated for every result.
-  Explanation explanation = 5 [json_name = "_explanation"];
+  // [required] Milliseconds it took Elasticsearch to execute the request.
+  optional int64 took = 1;
 
-  // [optional] Contains field values for the documents.
-  .google.protobuf.Struct fields = 6;
+  // [required]  If true, the request timed out before completion; returned results may be partial or empty.
+  optional bool timed_out = 2;
 
-  // [optional] An additional highlight element for each search hit that includes the highlighted fields and the highlighted fragments.
-  map<string, StringArray> highlight = 7;
+  // [required] Contains a count of shards used for the request.
+  ShardStatistics shards = 3;
 
-  // [optional] An additional nested hits that caused a search hit to match in a different scope.
-  map<string, InnerHitsResult> inner_hits = 8;
+  // [optional] Phase-level took time values in the response.
+  optional PhaseTook phase_took = 4;
 
-  // [optional] List of matched query names used in the search request.
-  repeated string matched_queries = 9;
+  // [required] Contains returned documents and metadata.
+  HitsMetadata hits = 5;
 
-  // [optional] Defines from what inner nested object this inner hit came from
-  NestedIdentity nested = 10 [json_name = "_nested"];
+  // [optional] When you search one or more remote clusters, a `_clusters` section is included to provide information about the search on each cluster.
+  optional ClusterStatistics clusters = 6;
 
-  // [optional] List of fields ignored.
-  repeated string ignored = 11 [json_name = "_ignored"];;
+  // [optional] Retrieved specific fields in the search response
+  optional .google.protobuf.Struct fields = 7;
 
-  // [optional] These values are retrieved from the document’s original JSON source and are raw so will not be formatted or treated in any way, unlike the successfully indexed fields which are returned in the fields section.
-  map<string, StringArray> ignored_field_values = 12;
+  // [optional] Highest returned document _score.
+  optional float max_score = 8;
 
-  // [optional] Shard from which this document was retrieved.
-  .google.protobuf.StringValue shard = 13 [json_name = "_shard"];
+  // [optional] The number of times that the coordinating node aggregates results from batches of shard responses
+  optional int32 num_reduce_phases = 9;
 
-  // [optional] Node from which this document was retrieved.
-  .google.protobuf.StringValue node = 14 [json_name = "_node"];
+  // [optional] Contains profiling information.
+  Profile profile = 10;
 
-  .google.protobuf.StringValue routing = 15 [json_name = "_routing"];
+  // [optional] The PIT ID.
+  optional string pit_id = 11;
 
-  // [optional] Source document.
-  .google.protobuf.Struct source = 16 [json_name = "_source"];
+  // [optional] Identifier for the search and its search context.
+  optional string scroll_id = 12;
 
-  // [optional] Counts the number of operations that happened on the index
-  .google.protobuf.Int64Value seq_no = 17 [json_name = "_seq_no"];
+  // [optional] If the query was terminated early, the terminated_early flag will be set to true in the response
+  optional bool terminated_early = 13;
 
-  // [optional] Counts the number of shard has changed.
-  .google.protobuf.Int64Value primary_term = 18 [json_name = "_primary_term"];
+}
 
-  // [optional] Version number of the document.
-  .google.protobuf.Int64Value version = 19 [json_name = "_version"];
+message PhaseTook {
 
-  // [optional] Sorted values
-  repeated FieldValueResponse sort = 20;
+  // [required] Time taken in dfs_pre_query phase.
+  int64 dfs_pre_query = 1;
+  // [required] Time taken in query phase.
+  int64 query = 2;
+  // [required] Time taken in fetch phase.
+  int64 fetch = 3;
+  // [required] Time taken in dfs_query phase.
+  int64 dfs_query = 4;
+  // [required] Time taken in expand phase.
+  int64 expand = 5;
+  // [required] Time taken in can_match phase.
+  int64 can_match = 6;
 
 }
 
@@ -380,7 +232,7 @@ message HitsMetadata {
   message Total {
     oneof total{
       TotalHits total_hits = 1;
-      .google.protobuf.DoubleValue double_value = 2;
+      double double_value = 2;
     }
   }
   // [optional] Metadata about the number of matching documents.
@@ -391,8 +243,8 @@ message HitsMetadata {
 
   message MaxScore{
     oneof max_score{
-      .google.protobuf.DoubleValue double_value = 1;
-      .google.protobuf.StringValue string_value = 2;
+      double double_value = 1;
+      string string_value = 2;
       NullValue null_value = 3;
     }
   }
@@ -407,7 +259,6 @@ message TotalHits {
   // [required] Indicates whether the number of matching documents in the value parameter is accurate or a lower bound.
   TotalHitsRelation relation = 1;
   enum TotalHitsRelation {
-
     TOTAL_HITS_RELATION_INVALID = 0;
     // Accurate
     TOTAL_HITS_RELATION_EQ = 1;
@@ -415,7 +266,7 @@ message TotalHits {
     TOTAL_HITS_RELATION_GTE = 2;
   }
   // [required] Total number of matching documents.
-  .google.protobuf.Int64Value value = 2;
+  int64 value = 2;
 
 }
 
@@ -426,177 +277,104 @@ message InnerHitsResult {
 
 }
 
+message Hit {
 
-message NestedIdentity {
+  optional string type = 1;
 
-  // [required] The name of the nested field.
-  .google.protobuf.StringValue field = 1;
+  // [required] Name of the index containing the returned document.
+  string index = 2;
+  // [required] Unique identifier for the returned document. This ID is only unique within the returned index.
+  string id = 3;
 
-  // [required] Indicates the position or index of the nested document.
-  .google.protobuf.Int32Value offset = 2;
-
-  // [optional] Inner nested object.
-  NestedIdentity nested = 3 [json_name = "_nested"];
-
-}
-
-message Profile {
-
-  // [required] A search request can be executed against one or more shards in the index, and a search may involve one or more indexes. Thus, the profile.shards array contains profiling information for each shard that was involved in the search.
-  repeated ShardProfile shards = 1;
-
-}
-
-message QueryBreakdown {
-
-  // [required] The advance method is a lower-level version of the next_doc method in Lucene. It also finds the next matching document but necessitates that the calling query perform additional tasks, such as identifying skips. Some queries, such as conjunctions (must clauses in Boolean queries), cannot use next_doc. For those queries, advance is timed.
-  .google.protobuf.Int64Value advance = 1;
-  // [required] Contains the number of invocations of the advance method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value advance_count = 2;
-  // [required] A Scorer iterates over matching documents and generates a score for each document. The build_scorer field contains the amount of time spent generating the Scorer object. This does not include the time spent scoring the documents. The Scorer initialization time depends on the optimization and complexity of a particular query. The build_scorer parameter also includes the amount of time associated with caching, if caching is applicable and enabled for the query.
-  .google.protobuf.Int64Value build_scorer = 3;
-  // [required] Build_scorer_count contains the number of invocations of the build_scorer method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value build_scorer_count = 4;
-  // [required] A Query object in Lucene is immutable. Yet, Lucene should be able to reuse Query objects in multiple IndexSearcher objects. Thus, Query objects need to keep temporary state and statistics associated with the index in which the query is executed. To achieve reuse, every Query object generates a Weight object, which keeps the temporary context (state) associated with the <IndexSearcher, Query> tuple. The create_weight field contains the amount of time spent creating the Weight object.
-  .google.protobuf.Int64Value create_weight = 5;
-  // [required] Create_weight_count contains the number of invocations of the create_weight method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value create_weight_count = 6;
-  // [required] For some queries, document matching is performed in two steps. First, the document is matched approximately. Second, those documents that are approximately matched are examined through a more comprehensive process. For example, a phrase query first checks whether a document contains all terms in the phrase. Next, it verifies that the terms are in order (which is a more expensive process). The match field is non-zero only for those queries that use the two-step verification process.
-  .google.protobuf.Int64Value match = 7;
-  // [required] Match_count contains the number of invocations of the match method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value match_count = 8;
-  // [required] Contains the amount of time required to execute the advanceShallow Lucene method.
-  .google.protobuf.Int64Value shallow_advance = 9;
-  // [required] Shallow_advance_count contains the number of invocations of the shallow_advance method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value shallow_advance_count = 10;
-  // [required] The next_doc Lucene method returns the document ID of the next document that matches the query. This method is a special type of the advance method and is equivalent to advance(docId() + 1). The next_doc method is more convenient for many Lucene queries. The next_doc field contains the amount of time required to determine the next matching document, which varies depending on the query type.
-  .google.protobuf.Int64Value next_doc = 11;
-  // [required] Next_doc_count contains the number of invocations of the next_doc method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value next_doc_count = 12;
-  // [required] Contains the time taken for a Scorer to score a particular document.
-  .google.protobuf.Int64Value score = 13;
-  // [required] Score_count contains the number of invocations of the score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value score_count = 14;
-  // [required] Contains the amount of time required to execute the getMaxScore Lucene method.
-  .google.protobuf.Int64Value compute_max_score = 15;
-  // [required] Compute_max_score_count contains the number of invocations of the compute_max_score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value compute_max_score_count = 16;
-  // [required] Contains the amount of time required to execute the setMinCompetitiveScore Lucene method.
-  .google.protobuf.Int64Value set_min_competitive_score = 17;
-  // [required] Set_min_competitive_score_count contains the number of invocations of the set_min_competitive_score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
-  .google.protobuf.Int64Value set_min_competitive_score_count = 18;
-
-}
-
-
-
-message SearchRequestBody {
-  // [optional] In the optional aggs parameter, you can define any number of aggregations. Each aggregation is defined by its name and one of the types of aggregations that OpenSearch supports.
-  //map<string, AggregationContainer> aggregations = 1;
-
-  // [optional] The collapse parameter groups search results by a particular field value. This returns only the top document within each group, which helps reduce redundancy by eliminating duplicates.
-  FieldCollapse collapse = 2;
-
-  // [optional] Whether to return details about how OpenSearch computed the document's score. Default is false.
-  .google.protobuf.BoolValue explain = 3;
-
-  // [optional] ext object is to contain plugin-specific response fields. For example, in conversational search, the result of Retrieval Augmented Generation (RAG) is a single “hit” (answer). Plugin authors can include this answer in the search response as part of the ext object so that it is separate from the search hits.
-  ObjectMap ext = 4;
-
-  // [optional] The starting index to search from. Default is 0.
-  .google.protobuf.Int32Value from = 5;
-
-  // [optional] Highlighting emphasizes the search term(s) in the results so you can emphasize the query matches.
-  Highlight highlight = 6;
-
-  // [optional] Whether to return how many documents matched the query.
-  TrackHits track_total_hits = 7;
-
-  // [optional] Values used to boost the score of specified indexes. Specify in the format of <index> : <boost-multiplier>
-  repeated NumberMap indices_boost = 8;
-
-  // [optional] The fields that OpenSearch should return using their docvalue forms. Specify a format to return results in a certain format, such as date and time.
-  repeated FieldAndFormat docvalue_fields = 9;
-
-  RankContainer rank = 10;
-
-  // [optional] Specify a score threshold to return only documents above the threshold.
-  .google.protobuf.FloatValue min_score = 11;
-
-  // [optional] Use post_filter to refine search hits based on user selections while preserving all aggregation options.
-  QueryContainer post_filter = 12;
-
-  // [optional] Profile provides timing information about the execution of individual components of a search request. Using the Profile API, you can debug slow requests and understand how to improve their performance.
-  .google.protobuf.BoolValue profile = 13;
-
-  // [optional] The DSL query to use in the request.
-  QueryContainer query = 14;
-
-  // [optional] Can be used to improve precision by reordering just the top (for example 100 - 500) documents returned by the `query` and `post_filter` phases.
-  repeated Rescore rescore = 15;
-
-  // [optional] The script_fields parameter allows you to include custom fields whose values are computed using scripts in your search results. This can be useful for calculating values dynamically based on the document data. You can also retrieve derived fields by using a similar approach.
-  map<string, ScriptField> script_fields = 16;
-
-  // [optional] The search_after parameter provides a live cursor that uses the previous page's results to obtain the next page's results. It is similar to the scroll operation in that it is meant to scroll many queries in parallel. You can use search_after only when sorting is applied.
-  repeated FieldValue search_after = 17;
-
-  // [optional] The number of results to return. Default is 10.
-  .google.protobuf.Int32Value size = 18;
-
-  // [optional] You can use the scroll operation to retrieve a large number of results. For example, for machine learning jobs, you can request an unlimited number of results in batches.
-  SlicedScroll slice = 19;
-
-  // [optional] Sorting allows your users to sort results in a way that's most meaningful to them. By default, full-text queries sort results by the relevance score. You can choose to sort the results by any field value in either ascending or descending order by setting the order parameter to asc or desc.
-  repeated SortCombinations sort = 20;
-
-  // [optional] Whether to include the _source field in the response.
-  SourceConfig source = 21 [json_name = "_source"];
-
-  // [optional] The fields to search for in the request. Specify a format to return results in a certain format, such as date and time.
-  repeated FieldAndFormat fields = 22;
-
-  // TODO: need to support suggest.
-  // [optional] The suggest feature suggests similar looking terms based on a provided text by using a suggester. The suggest request part is defined alongside the query part in a _search request. If the query part is left out, only suggestions are returned.
-  Suggester suggest = 23;
-
-  // [optional] The maximum number of documents OpenSearch should process before terminating the request. If a query reaches this limit, OpenSearch terminates the query early. OpenSearch collects documents before sorting. Use with caution. OpenSearch applies this parameter to each shard handling the request. When possible, let OpenSearch perform early termination automatically. Avoid specifying this parameter for requests that target data streams with backing indices across multiple data tiers. If set to `0` (default), the query does not terminate early. Default is 0.
-  .google.protobuf.Int32Value terminate_after = 24;
-
-  // [optional] The period of time to wait for a response. Default is no timeout. If no response is received before the timeout expires, the request fails and returns an error. Defaults to no timeout.
-  .google.protobuf.StringValue timeout = 25;
-
-  // [optional] Whether to return document scores. Default is false.
-  .google.protobuf.BoolValue track_scores = 26;
-
-  // [optional] Whether to include the document version in the response.
-  .google.protobuf.BoolValue version = 27;
-
-  // [optional] Whether to return sequence number and primary term of the last operation of each document hit.
-  .google.protobuf.BoolValue seq_no_primary_term = 28;
-
-  // [optional] A list of stored fields to return as part of a hit. If no fields are specified, no stored fields are included in the response. If this option is specified, the _source parameter defaults to false. You can pass _source: true to return both source fields and stored fields in the search response.
-  repeated string stored_fields = 29;
-
-  // [optional] Point in Time (PIT) lets you run different queries against a dataset that is fixed in time.
-  PointInTimeReference pit = 30;
-
-  // [optional] Value to associate with the request for additional logging.
-  repeated string stats = 31;
-
-}
-
-message TrackHits {
-  oneof track_hits{
-    .google.protobuf.BoolValue bool_value = 1;
-    .google.protobuf.Int32Value int32_value = 2;
+  message Score {
+    oneof score{
+      double double_value = 1;
+      string string_value = 2;
+      NullValue null_value = 3;
+    }
   }
+
+  // [optional] Relevance of the returned document.
+  optional Score score = 4;
+
+  // [optional] Explanation of how the relevance score (_score) is calculated for every result.
+  optional Explanation explanation = 5;
+
+  // [optional] Contains field values for the documents.
+  optional .google.protobuf.Struct fields = 6;
+
+  // [optional] An additional highlight element for each search hit that includes the highlighted fields and the highlighted fragments.
+  map<string, StringArray> highlight = 7;
+
+  // [optional] An additional nested hits that caused a search hit to match in a different scope.
+  map<string, InnerHitsResult> inner_hits = 8;
+
+  // [optional] List of matched query names used in the search request.
+  repeated string matched_queries = 9;
+
+  // [optional] Defines from what inner nested object this inner hit came from
+  optional NestedIdentity nested = 10;
+
+  // [optional] List of fields ignored.
+  repeated string ignored = 11;
+
+  // [optional] These values are retrieved from the document’s original JSON source and are raw so will not be formatted or treated in any way, unlike the successfully indexed fields which are returned in the fields section.
+  map<string, StringArray> ignored_field_values = 12;
+
+  // [optional] Shard from which this document was retrieved.
+  optional string shard = 13;
+
+  // [optional] Node from which this document was retrieved.
+  optional string node = 14;
+
+  optional string routing = 15;
+
+  // [optional] Source document.
+  optional .google.protobuf.Struct source = 16;
+
+  // [optional] Counts the number of operations that happened on the index
+  optional int64 seq_no = 17;
+
+  // [optional] Counts the number of shard has changed.
+  optional int64 primary_term = 18;
+
+  // [optional] Version number of the document.
+  optional int64 version = 19;
+
+  // [optional] Sorted values
+  repeated FieldValueResponse sort = 20;
+
+}
+
+
+message ClusterStatistics {
+
+  // [required] Number of shards that skipped the request because a lightweight check helped realize that no documents could possibly match on this shard. This typically happens when a search request includes a range filter and the shard only has values that fall outside of that range.
+  int32 skipped = 1;
+
+  // [required] Number of shards that executed the request successfully.
+  int32 successful = 2;
+
+  // [required] Total number of shards that require querying, including unallocated shards.
+  int32 total = 3;
+
+  // [required] Number of shards currently executing the search operation
+  int32 running = 4;
+
+  // [required] The number of shards that returned partial results.
+  int32 partial = 5;
+
+  // [required] Number of shards that failed to execute the request. Note that shards that are not allocated will be considered neither successful nor failed. Having failed+successful less than total is thus an indication that some of the shards were not allocated.
+  int32 failed = 6;
+
+  // [optional] Shows metadata about the search on each cluster.
+  map<string, ClusterDetails> details = 7;
+
 }
 
 message ClusterDetails {
 
   enum ClusterSearchStatus {
-
     CLUSTER_SEARCH_STATUS_INVALID = 0;
     // The search failed on a cluster marked with skip_unavailable=false
     CLUSTER_SEARCH_STATUS_FAILED = 1;
@@ -613,172 +391,99 @@ message ClusterDetails {
   ClusterSearchStatus status = 1;
 
   // [required] The index expression supplied by the user. If you provide a wildcard such as logs-*, this section will show the value with the wildcard, not the concrete indices being searched.
-  .google.protobuf.StringValue indices = 2;
+  string indices = 2;
 
   // [optional] How long (in milliseconds) the sub-search took on that cluster.
-  .google.protobuf.Int64Value took = 3;
+  optional int64 took = 3;
 
   // [required] If true, the request timed out before completion; returned results may be partial or empty.
-  .google.protobuf.BoolValue timed_out = 4;
+  bool timed_out = 4;
 
   // [optional] The shard details for the sub-search on that cluster.
-  ShardStatistics shards = 5 [json_name = "_shards"];
+  optional ShardStatistics shards = 5;
 
   // [optional] An array of any shard-specific failures that occurred during the search operation
   repeated ShardFailure failures = 6;
 
 }
 
-message ClusterStatistics {
+message Profile {
 
-  // [required] Number of shards that skipped the request because a lightweight check helped realize that no documents could possibly match on this shard. This typically happens when a search request includes a range filter and the shard only has values that fall outside of that range.
-  .google.protobuf.Int32Value skipped = 1;
-
-  // [required] Number of shards that executed the request successfully.
-  .google.protobuf.Int32Value successful = 2;
-
-  // [required] Total number of shards that require querying, including unallocated shards.
-  .google.protobuf.Int32Value total = 3;
-
-  // [required] Number of shards currently executing the search operation
-  .google.protobuf.Int32Value running = 4;
-
-  // [required] The number of shards that returned partial results.
-  .google.protobuf.Int32Value partial = 5;
-
-  // [required] Number of shards that failed to execute the request. Note that shards that are not allocated will be considered neither successful nor failed. Having failed+successful less than total is thus an indication that some of the shards were not allocated.
-  .google.protobuf.Int32Value failed = 6;
-
-  // [optional] Shows metadata about the search on each cluster.
-  map<string, ClusterDetails> details = 7;
+  // [required] A search request can be executed against one or more shards in the index, and a search may involve one or more indexes. Thus, the profile.shards array contains profiling information for each shard that was involved in the search.
+  repeated ShardProfile shards = 1;
 
 }
 
-message PhaseTook {
+message ShardProfile {
 
-  // [required] Time taken in dfs_pre_query phase.
-  .google.protobuf.Int64Value dfs_pre_query = 1;
-  // [required] Time taken in query phase.
-  .google.protobuf.Int64Value query = 2;
-  // [required] Time taken in fetch phase.
-  .google.protobuf.Int64Value fetch = 3;
-  // [required] Time taken in dfs_query phase.
-  .google.protobuf.Int64Value dfs_query = 4;
-  // [required] Time taken in expand phase.
-  .google.protobuf.Int64Value expand = 5;
-  // [required] Time taken in can_match phase.
-  .google.protobuf.Int64Value can_match = 6;
+  // [required] Profiling information about the aggregation execution.
+  repeated AggregationProfile aggregations = 1;
 
-}
+  // [required] The shard ID of the shard in the [node-ID][index-name][shard-ID] format.
+  string id = 2;
 
-// The response from search request.
-message SearchResponse {
-  oneof response {
-    // The search success response
-    ResponseBody response_body = 1;
-    // The search 4xx error response
-    Error4xxResponseBody error_4xx_response = 2;
-    // The search 5xx error response
-    Error5xxResponse error_5xx_response = 3;
-  }
-}
+  // [required] Search represents a query executed against the underlying Lucene index. Most search requests execute a single search against a Lucene index, but some search requests can execute more than one search. For example, including a global aggregation results in a secondary match_all query for the global context. The profile.shards array contains profiling information about each search execution.
+  repeated SearchProfile searches = 3;
 
-// The response from index search request.
-message IndexSearchResponse {
-  oneof response {
-    // [optional] The index search success response.
-    ResponseBody response_body = 1;
-    // [optional] The index search 4xx error response.
-    Error4xxResponseBody error_4xx_response = 2;
-    // [optional] The index search 5xx error response.
-    Error5xxResponse error_5xx_response = 3;
-  }
-}
-
-// The 4xx error response from search/index-search request.
-message Error4xxResponseBody {
-  // [optional] The search 4xx error response body.
-  OpenSearchException error = 1;
-  // [optional] The search 4xx error response status code.
-  .google.protobuf.Int32Value status = 2;
-}
-
-// The 5xx error response from search/index-search request.
-message Error5xxResponse {
-  // [optional] The search 5xx error response status code.
-  .google.protobuf.Int32Value status_code = 1;
-  // [optional] The search 5xx error content.
-  .google.protobuf.StringValue error = 2;
-  // [optional] The search 5xx error message.
-  .google.protobuf.StringValue message = 3;
-  // [optional] The search 5xx error additional_details.
-  .google.protobuf.Struct additional_details = 4;
-}
-
-// The response body from a search/index-search request.
-message ResponseBody {
-
-  // [required] Milliseconds it took Elasticsearch to execute the request.
-  .google.protobuf.Int64Value took = 1;
-
-  // [required]  If true, the request timed out before completion; returned results may be partial or empty.
-  .google.protobuf.BoolValue timed_out = 2;
-
-  // [required] Contains a count of shards used for the request.
-  ShardStatistics shards = 3 [json_name = "_shards"];
-
-  // [optional] Phase-level took time values in the response.
-  PhaseTook phase_took = 4;
-
-  // [required] Contains returned documents and metadata.
-  HitsMetadata hits = 5;
-
-  // [optional] When you search one or more remote clusters, a `_clusters` section is included to provide information about the search on each cluster.
-  ClusterStatistics clusters = 6 [json_name = "_clusters"];
-
-  // [optional] Retrieved specific fields in the search response
-  .google.protobuf.Struct fields = 7;
-
-  // [optional] Highest returned document _score.
-  .google.protobuf.FloatValue max_score = 8;
-
-  // [optional] The number of times that the coordinating node aggregates results from batches of shard responses
-  .google.protobuf.Int32Value num_reduce_phases = 9;
-
-  // [optional] Contains profiling information.
-  Profile profile = 10;
-
-  // [optional] The PIT ID.
-  .google.protobuf.StringValue pit_id = 11;
-
-  // [optional] Identifier for the search and its search context.
-  .google.protobuf.StringValue scroll_id = 12 [json_name = "_scroll_id"];
-
-  // TODO: Need support suggest response.
-  // [optional] Provides search suggestions generated based on user input.
-  map<string, SuggestArray> suggest = 13;
-
-  // [optional] If the query was terminated early, the terminated_early flag will be set to true in the response
-  .google.protobuf.BoolValue terminated_early = 14;
+  // [optional] Fetch timing and debug information.
+  optional FetchProfile fetch = 4;
 
 }
 
-message QueryProfile {
+message AggregationProfile {
 
-  // [required] Contains timing statistics about low-level Lucene execution.
-  QueryBreakdown breakdown = 1;
+  optional AggregationBreakdown breakdown = 1;
 
-  // [required] Contains a Lucene explanation of the query. Helps differentiate queries with the same type.
-  .google.protobuf.StringValue description = 2;
+  optional string description = 2;
 
-  // [required] The total elapsed time for this query, in nanoseconds. For concurrent segment search, time_in_nanos is the total time spent across all the slices (the difference between the last completed slice execution end time and the first slice execution start time).
-  .google.protobuf.Int64Value time_in_nanos = 3;
+  // Time unit for nanoseconds
+  optional int64 time_in_nanos = 3;
 
-  // [required] The Lucene query type into which the search query was rewritten. Corresponds to the Lucene class name (which often has the same name in OpenSearch).
-  .google.protobuf.StringValue type = 4;
+  optional string type = 4;
 
-  // [optional] If a query has subqueries (children), this field contains information about the subqueries.
-  repeated QueryProfile children = 5;
+  optional AggregationProfileDebug debug = 5;
+
+  repeated AggregationProfile children = 6;
+
+}
+
+message AggregationBreakdown {
+
+  // [required] Contains the time spent running the aggregation’s buildAggregations() method, which builds the results of this aggregation. For concurrent segment search, the build_aggregation method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 build_aggregation = 1;
+
+  // [required] Contains the number of invocations of a build_aggregation.
+  int64 build_aggregation_count = 2;
+
+  // [required] Contains the time spent running the aggregation’s getLeafCollector() method, which creates a new collector to collect the given context. For concurrent segment search, the build_leaf_collector method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 build_leaf_collector = 3;
+
+  // [required] Contains the number of invocations of a build_leaf_collector.
+  int64 build_leaf_collector_count = 4;
+
+  // [required] Contains the time spent collecting the documents into buckets. For concurrent segment search, the collect method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 collect = 5;
+
+  // [required] Contains the number of invocations of a collect.
+  int64 collect_count = 6;
+
+  // [required] Contains the amount of time taken to execute the preCollection() callback method during AggregationCollectorManager creation. For concurrent segment search, the initialize method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 initialize = 7;
+
+  // [required] Contains the number of invocations of a initialize.
+  int64 initialize_count = 8;
+
+  // [optional] Contains the time spent running the aggregation’s postCollection() callback method. For concurrent segment search, the post_collection method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  optional int64 post_collection = 9;
+
+  // [optional] Contains the number of invocations of a post_collection.
+  optional int64 post_collection_count = 10;
+
+  // [required] Contains the time spent in the reduce phase. For concurrent segment search, the reduce method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 reduce = 11;
+
+  // [required] Contains the number of invocations of a reduce.
+  int64 reduce_count = 12;
 
 }
 
@@ -791,675 +496,233 @@ message SearchProfile {
   repeated QueryProfile query = 2;
 
   // [required] All Lucene queries are rewritten. A query and its children may be rewritten more than once, until the query stops changing. The rewriting process involves performing optimizations, such as removing redundant clauses or replacing a query path with a more efficient one. After the rewriting process, the original query may change significantly. The rewrite_time field contains the cumulative total rewrite time for the query and all its children, in nanoseconds.
-  .google.protobuf.Int64Value rewrite_time = 3;
+  int64 rewrite_time = 3;
 
 }
 
-message NumberMap {
-  map<string, .google.protobuf.FloatValue> number_map = 1;
-}
+message Collector {
 
-message PointInTimeReference {
-  // [required] ID for the PIT to search. If you provide a pit object, this parameter is required.
-  .google.protobuf.StringValue id = 1;
+  // [required] The collector name.
+  string name = 1;
 
-  // [optional] Period of time used to extend the life of the PIT. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and `d` (days). Also accepts \"0\" without a unit and \"-1\" to indicate an unspecified value.
-  .google.protobuf.StringValue keep_alive = 2;
+  // [required] Contains a description of the collector.
+  string reason = 2;
 
-}
+  // [required] The total elapsed time for this collector, in nanoseconds. For concurrent segment search, time_in_nanos is the total amount of time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 time_in_nanos = 3;
 
-// The Search API operation to perform a search across all indices in the cluster.
-message SearchRequest {
-  // [optional] Whether to include the _source field in the response.
-  SourceConfigParam source = 1 [json_name = "_source"];
-  // [optional] A list of source fields to exclude from the response. You can also use this parameter to exclude fields from the subset specified in `source_includes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
-  repeated string source_excludes = 2;
-  // [optional] A list of source fields to include in the response. If this parameter is specified, only these source fields are returned. You can exclude fields from this subset using the `source_excludes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
-  repeated string source_includes = 3 ;
-  // [optional] Whether to ignore wildcards that don't match any indexes. Default is true.
-  .google.protobuf.BoolValue allow_no_indices = 4;
-  // [optional] Whether to return partial results if the request runs into an error or times out. Default is true.
-  .google.protobuf.BoolValue allow_partial_search_results = 5;
-  // [optional] Whether the update operation should include wildcard and prefix queries in the analysis. Default is false.
-  .google.protobuf.BoolValue analyze_wildcard = 6;
-  // [optional] Analyzer to use for the query string. This parameter can only be used when the q query .google.protobuf.StringValue parameter is specified.
-  .google.protobuf.StringValue analyzer = 7;
-  // [optional] How many shard results to reduce on a node. Default is 512.
-  .google.protobuf.Int32Value batched_reduce_size = 8;
-  // [optional] The time after which the search request will be canceled. Request-level parameter takes precedence over cancel_after_time_interval cluster setting. Default is -1.
-  .google.protobuf.StringValue cancel_after_time_interval = 9;
-  // [optional] Whether to minimize round-trips between a node and remote clusters. Default is true.
-  .google.protobuf.BoolValue ccs_minimize_roundtrips = 10;
-  // [optional] Indicates whether the default operator for a string query should be AND or OR. Default is OR.
-  Operator default_operator = 11;
-  enum Operator {
-
-    OPERATOR_INVALID = 0;
-    // All terms need to match. The string `to be` is interpreted as `to AND be`
-    OPERATOR_AND = 1;
-    // Only one term needs to match. The string `to be` is interpreted as `to OR be`
-    OPERATOR_OR = 2;
-  }
-  // [optional] The default field in case a field prefix is not provided in the query string.
-  .google.protobuf.StringValue df = 12;
-  // [optional] The fields that OpenSearch should return using their docvalue forms.
-  repeated string docvalue_fields = 13;
-  // [optional] Specifies the type of index that wildcard expressions can match. Supports list of values. Default is open.
-  repeated ExpandWildcard expand_wildcards = 14;
-  enum ExpandWildcard {
-
-    EXPAND_WILDCARD_INVALID = 0;
-    // Match any index
-    EXPAND_WILDCARD_ALL = 1;
-    // Match closed, non-hidden indexes
-    EXPAND_WILDCARD_CLOSED = 2;
-    // Match hidden indexes
-    EXPAND_WILDCARD_HIDDEN = 3;
-    // Deny wildcard expressions
-    EXPAND_WILDCARD_NONE = 4;
-    // Match open, non-hidden indexes
-    EXPAND_WILDCARD_OPEN = 5;
-  }
-  // [optional] Whether to return details about how OpenSearch computed the document's score. Default is false.
-  .google.protobuf.BoolValue explain = 15;
-  // [optional] The starting index to search from. Default is 0.
-  .google.protobuf.Int32Value from = 16;
-  // [optional] Whether to ignore concrete, expanded, or indexes with aliases if indexes are frozen. Default is true.
-  .google.protobuf.BoolValue ignore_throttled = 17;
-  // [optional] Specifies whether to include missing or closed indexes in the response and ignores unavailable shards during the search request. Default is false.
-  .google.protobuf.BoolValue ignore_unavailable = 18;
-  // [optional] Whether to return scores with named queries. Default is false.
-  .google.protobuf.BoolValue include_named_queries_score = 19;
-  // [optional] Specifies whether OpenSearch should accept requests if queries have format errors (for example, querying a text field for an integer). Default is false.
-  .google.protobuf.BoolValue lenient = 20;
-  // [optional] Numbers of concurrent shard requests this request should execute on each node. Default is 5.
-  .google.protobuf.Int32Value max_concurrent_shard_requests = 21;
-  // [optional] Whether to return phase-level took time values in the response. Default is false.
-  .google.protobuf.BoolValue phase_took = 22;
-  // [optional] A prefilter size threshold that triggers a prefilter operation if the request exceeds the threshold. Default is 128 shards.
-  .google.protobuf.Int32Value pre_filter_shard_size = 23;
-  // [optional] Specifies the shards or nodes on which OpenSearch should perform the search.
-  .google.protobuf.StringValue preference = 24;
-  // [optional] Query in the Lucene query string syntax using query parameter search.
-  .google.protobuf.StringValue q = 25;
-  // [optional] Specifies whether OpenSearch should use the request cache. Default is whether it's enabled in the index's settings.
-  .google.protobuf.BoolValue request_cache = 26;
-  // [optional] Indicates whether to return hits.total as an integer. Returns an object otherwise. Default is false.
-  .google.protobuf.BoolValue rest_total_hits_as_int = 27;
-  // [optional] Value used to route the update by query operation to a specific shard.
-  repeated string routing = 28;
-  // [optional] Period to keep the search context open.
-  .google.protobuf.StringValue scroll = 29;
-  // [optional] Customizable sequence of processing stages applied to search queries.
-  .google.protobuf.StringValue search_pipeline = 30;
-  // [optional] Whether OpenSearch should use global term and document frequencies when calculating relevance scores. Default is SEARCH_TYPE_QUERY_THEN_FETCH.
-  SearchType search_type = 31;
-  enum SearchType {
-
-    SEARCH_TYPE_INVALID = 0;
-    // Scores documents using global term and document frequencies across all shards. It's usually slower but more accurate.
-    SEARCH_TYPE_DFS_QUERY_THEN_FETCH = 1;
-    // Scores documents using local term and document frequencies for the shard. It's usually faster but less accurate.
-    SEARCH_TYPE_QUERY_THEN_FETCH = 2;
-  }
-  // [optional] Whether to return sequence number and primary term of the last operation of each document hit.
-  .google.protobuf.BoolValue seq_no_primary_term = 32;
-  // [optional] Number of results to include in the response.
-  .google.protobuf.Int32Value size = 33;
-  // [optional] A list of <field> : <direction> pairs to sort by.
-  repeated string sort = 34;
-  // [optional] Value to associate with the request for additional logging.
-  repeated string stats = 35;
-  // [optional] Whether the get operation should retrieve fields stored in the index. Default is false.
-  repeated string stored_fields = 36;
-  // [optional] Fields OpenSearch can use to look for similar terms.
-  .google.protobuf.StringValue suggest_field = 37;
-  // [optional] The mode to use when searching. This parameter can only be used when the `suggest_field` and `suggest_text` query .google.protobuf.StringValue parameters are specified.
-  SuggestMode suggest_mode = 38;
-  enum SuggestMode {
-
-    SUGGEST_MODE_INVALID = 0;
-    // Use suggestions based on the provided terms
-    SUGGEST_MODE_ALWAYS = 1;
-    // Use suggestions for terms not in the index
-    SUGGEST_MODE_MISSING = 2;
-    // Use suggestions that have more occurrences
-    SUGGEST_MODE_POPULAR = 3;
-  }
-  // [optional] Number of suggestions to return.
-  .google.protobuf.Int32Value suggest_size = 39;
-  // [optional] The source that suggestions should be based off of.
-  .google.protobuf.StringValue suggest_text = 40;
-  // [optional] The maximum number of documents OpenSearch should process before terminating the request. Default is 0.
-  .google.protobuf.Int32Value terminate_after = 41;
-  // [optional] Period of time to wait for a response from active shards. Default is 1m.
-  .google.protobuf.StringValue timeout = 42;
-  // [optional] Whether to return document scores. Default is false.
-  .google.protobuf.BoolValue track_scores = 43;
-  // [optional] Whether to return how many documents matched the query.
-  TrackHits track_total_hits = 44;
-  // [optional] Whether returned aggregations and suggested terms should include their types in the response. Default is true.
-  .google.protobuf.BoolValue typed_keys = 45;
-  // [optional] Whether to include the document version as a match. Default is false
-  .google.protobuf.BoolValue version = 46;
-  // [optional] Search Request body
-  SearchRequestBody request_body = 47;
+  // [optional] If a collector has subcollectors (children), this field contains information about the subcollectors.
+  repeated Collector children = 4;
 
 }
 
-// The Search API operation to perform a search within a specific index (or indices).
-message IndexSearchRequest {
-  // [required] A list of indices to search for documents. Allowing targeted searches within one or more specified indices.
-  repeated string index = 1;
-  // [optional] Whether to include the _source field in the response.
-  SourceConfigParam source = 2 [json_name = "_source"];
-  // [optional] A list of source fields to exclude from the response. You can also use this parameter to exclude fields from the subset specified in `source_includes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
-  repeated string source_excludes = 3;
-  // [optional] A list of source fields to include in the response. If this parameter is specified, only these source fields are returned. You can exclude fields from this subset using the `source_excludes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
-  repeated string source_includes = 4 ;
-  // [optional] Whether to ignore wildcards that don't match any indexes. Default is true.
-  .google.protobuf.BoolValue allow_no_indices = 5;
-  // [optional] Whether to return partial results if the request runs into an error or times out. Default is true.
-  .google.protobuf.BoolValue allow_partial_search_results = 6;
-  // [optional] Whether the update operation should include wildcard and prefix queries in the analysis. Default is false.
-  .google.protobuf.BoolValue analyze_wildcard = 7;
-  // [optional] Analyzer to use for the query string. This parameter can only be used when the q query .google.protobuf.StringValue parameter is specified.
-  .google.protobuf.StringValue analyzer = 8;
-  // [optional] How many shard results to reduce on a node. Default is 512.
-  .google.protobuf.Int32Value batched_reduce_size = 9;
-  // [optional] The time after which the search request will be canceled. Request-level parameter takes precedence over cancel_after_time_interval cluster setting. Default is -1.
-  .google.protobuf.StringValue cancel_after_time_interval = 10;
-  // [optional] Whether to minimize round-trips between a node and remote clusters. Default is true.
-  .google.protobuf.BoolValue ccs_minimize_roundtrips = 11;
-  // [optional] Indicates whether the default operator for a string query should be AND or OR. Default is OR.
-  Operator default_operator = 12;
-  enum Operator {
+message QueryProfile {
 
-    OPERATOR_INVALID = 0;
-    // All terms need to match. The string `to be` is interpreted as `to AND be`
-    OPERATOR_AND = 1;
-    // Only one term needs to match. The string `to be` is interpreted as `to OR be`
-    OPERATOR_OR = 2;
-  }
-  // [optional] The default field in case a field prefix is not provided in the query string.
-  .google.protobuf.StringValue df = 13;
-  // [optional] The fields that OpenSearch should return using their docvalue forms.
-  repeated string docvalue_fields = 14;
-  // [optional] Specifies the type of index that wildcard expressions can match. Supports list of values. Default is open.
-  repeated ExpandWildcard expand_wildcards = 15;
-  enum ExpandWildcard {
+  // [required] Contains timing statistics about low-level Lucene execution.
+  QueryBreakdown breakdown = 1;
 
-    EXPAND_WILDCARD_INVALID = 0;
-    // Match any index
-    EXPAND_WILDCARD_ALL = 1;
-    // Match closed, non-hidden indexes
-    EXPAND_WILDCARD_CLOSED = 2;
-    // Match hidden indexes
-    EXPAND_WILDCARD_HIDDEN = 3;
-    // Deny wildcard expressions
-    EXPAND_WILDCARD_NONE = 4;
-    // Match open, non-hidden indexes
-    EXPAND_WILDCARD_OPEN = 5;
-  }
-  // [optional] Whether to return details about how OpenSearch computed the document's score. Default is false.
-  .google.protobuf.BoolValue explain = 16;
-  // [optional] The starting index to search from. Default is 0.
-  .google.protobuf.Int32Value from = 17;
-  // [optional] Whether to ignore concrete, expanded, or indexes with aliases if indexes are frozen. Default is true.
-  .google.protobuf.BoolValue ignore_throttled = 18;
-  // [optional] Specifies whether to include missing or closed indexes in the response and ignores unavailable shards during the search request. Default is false.
-  .google.protobuf.BoolValue ignore_unavailable = 19;
-  // [optional] Whether to return scores with named queries. Default is false.
-  .google.protobuf.BoolValue include_named_queries_score = 20;
-  // [optional] Specifies whether OpenSearch should accept requests if queries have format errors (for example, querying a text field for an integer). Default is false.
-  .google.protobuf.BoolValue lenient = 21;
-  // [optional] Numbers of concurrent shard requests this request should execute on each node. Default is 5.
-  .google.protobuf.Int32Value max_concurrent_shard_requests = 22;
-  // [optional] Whether to return phase-level took time values in the response. Default is false.
-  .google.protobuf.BoolValue phase_took = 23;
-  // [optional] A prefilter size threshold that triggers a prefilter operation if the request exceeds the threshold. Default is 128 shards.
-  .google.protobuf.Int32Value pre_filter_shard_size = 24;
-  // [optional] Specifies the shards or nodes on which OpenSearch should perform the search. For valid values see "https://opensearch.org/docs/latest/api-reference/search/#the-preference-query-parameter"
-  .google.protobuf.StringValue preference = 25;
-  // [optional] Query in the Lucene query string syntax using query parameter search.
-  .google.protobuf.StringValue q = 26;
-  // [optional] Specifies whether OpenSearch should use the request cache. Default is whether it's enabled in the index's settings.
-  .google.protobuf.BoolValue request_cache = 27;
-  // [optional] Indicates whether to return hits.total as an integer. Returns an object otherwise. Default is false.
-  .google.protobuf.BoolValue rest_total_hits_as_int = 28;
-  // [optional] Value used to route the update by query operation to a specific shard.
-  repeated string routing = 29;
-  // [optional] Period to keep the search context open.
-  .google.protobuf.StringValue scroll = 30;
-  // [optional] Customizable sequence of processing stages applied to search queries.
-  .google.protobuf.StringValue search_pipeline = 31;
-  // [optional] Whether OpenSearch should use global term and document frequencies when calculating relevance scores. Default is SEARCH_TYPE_QUERY_THEN_FETCH.
-  SearchType search_type = 32;
-  enum SearchType {
+  // [required] Contains a Lucene explanation of the query. Helps differentiate queries with the same type.
+  string description = 2;
 
-    SEARCH_TYPE_INVALID = 0;
-    // Scores documents using global term and document frequencies across all shards. It's usually slower but more accurate.
-    SEARCH_TYPE_DFS_QUERY_THEN_FETCH = 1;
-    // Scores documents using local term and document frequencies for the shard. It's usually faster but less accurate.
-    SEARCH_TYPE_QUERY_THEN_FETCH = 2;
-  }
-  // [optional] Whether to return sequence number and primary term of the last operation of each document hit.
-  .google.protobuf.BoolValue seq_no_primary_term = 33;
-  // [optional] Number of results to include in the response.
-  .google.protobuf.Int32Value size = 34;
-  // [optional] A list of <field> : <direction> pairs to sort by.
-  repeated string sort = 35;
-  // [optional] Value to associate with the request for additional logging.
-  repeated string stats = 36;
-  // [optional] Whether the get operation should retrieve fields stored in the index. Default is false.
-  repeated string stored_fields = 37;
-  // [optional] Fields OpenSearch can use to look for similar terms.
-  .google.protobuf.StringValue suggest_field = 38;
-  // [optional] The mode to use when searching. This parameter can only be used when the `suggest_field` and `suggest_text` query .google.protobuf.StringValue parameters are specified.
-  SuggestMode suggest_mode = 39;
-  enum SuggestMode {
+  // [required] The total elapsed time for this query, in nanoseconds. For concurrent segment search, time_in_nanos is the total time spent across all the slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 time_in_nanos = 3;
 
-    SUGGEST_MODE_INVALID = 0;
-    // Use suggestions based on the provided terms
-    SUGGEST_MODE_ALWAYS = 1;
-    // Use suggestions for terms not in the index
-    SUGGEST_MODE_MISSING = 2;
-    // Use suggestions that have more occurrences
-    SUGGEST_MODE_POPULAR = 3;
-  }
-  // [optional] Number of suggestions to return.
-  .google.protobuf.Int32Value suggest_size = 40;
-  // [optional] The source that suggestions should be based off of.
-  .google.protobuf.StringValue suggest_text = 41;
-  // [optional] The maximum number of documents OpenSearch should process before terminating the request. Default is 0.
-  .google.protobuf.Int32Value terminate_after = 42;
-  // [optional] Period of time to wait for a response from active shards. Default is 1m.
-  .google.protobuf.StringValue timeout = 43;
-  // [optional] Whether to return document scores. Default is false.
-  .google.protobuf.BoolValue track_scores = 44;
-  // [optional] Whether to return how many documents matched the query.
-  TrackHits track_total_hits = 45;
-  // [optional] Whether returned aggregations and suggested terms should include their types in the response. Default is true.
-  .google.protobuf.BoolValue typed_keys = 46;
-  // [optional] Whether to include the document version as a match. Default is false
-  .google.protobuf.BoolValue version = 47;
-  // [optional] Search Request body
-  IndexSearchRequestBody request_body = 48;
+  // [required] The Lucene query type into which the search query was rewritten. Corresponds to the Lucene class name (which often has the same name in OpenSearch).
+  string type = 4;
+
+  // [optional] If a query has subqueries (children), this field contains information about the subqueries.
+  repeated QueryProfile children = 5;
 
 }
 
-message IndexSearchRequestBody {
-  // [optional] In the optional aggs parameter, you can define any number of aggregations. Each aggregation is defined by its name and one of the types of aggregations that OpenSearch supports.
-  //map<string, AggregationContainer> aggregations = 1;
+message QueryBreakdown {
 
-  // [optional] The collapse parameter groups search results by a particular field value. This returns only the top document within each group, which helps reduce redundancy by eliminating duplicates.
-  FieldCollapse collapse = 2;
-
-  // [optional] Whether to return details about how OpenSearch computed the document's score. Default is false.
-  .google.protobuf.BoolValue explain = 3;
-
-  // [optional] ext object is to contain plugin-specific response fields. For example, in conversational search, the result of Retrieval Augmented Generation (RAG) is a single “hit” (answer). Plugin authors can include this answer in the search response as part of the ext object so that it is separate from the search hits.
-  ObjectMap ext = 4;
-
-  // [optional] The starting index to search from. Default is 0.
-  .google.protobuf.Int32Value from = 5;
-
-  // [optional] Highlighting emphasizes the search term(s) in the results so you can emphasize the query matches.
-  Highlight highlight = 6;
-
-  // [optional] Whether to return how many documents matched the query.
-  TrackHits track_total_hits = 7;
-
-  // [optional] Values used to boost the score of specified indexes. Specify in the format of <index> : <boost-multiplier>
-  repeated NumberMap indices_boost = 8;
-
-  // [optional] The fields that OpenSearch should return using their docvalue forms. Specify a format to return results in a certain format, such as date and time.
-  repeated FieldAndFormat docvalue_fields = 9;
-
-  RankContainer rank = 10;
-
-  // [optional] Specify a score threshold to return only documents above the threshold.
-  .google.protobuf.FloatValue min_score = 11;
-
-  // [optional] Use post_filter to refine search hits based on user selections while preserving all aggregation options.
-  QueryContainer post_filter = 12;
-
-  // [optional] Profile provides timing information about the execution of individual components of a search request. Using the Profile API, you can debug slow requests and understand how to improve their performance.
-  .google.protobuf.BoolValue profile = 13;
-
-  // [optional] The DSL query to use in the request.
-  QueryContainer query = 14;
-
-  // [optional] Can be used to improve precision by reordering just the top (for example 100 - 500) documents returned by the `query` and `post_filter` phases.
-  repeated Rescore rescore = 15;
-
-  // [optional] The script_fields parameter allows you to include custom fields whose values are computed using scripts in your search results. This can be useful for calculating values dynamically based on the document data. You can also retrieve derived fields by using a similar approach.
-  map<string, ScriptField> script_fields = 16;
-
-  // [optional] The search_after parameter provides a live cursor that uses the previous page's results to obtain the next page's results. It is similar to the scroll operation in that it is meant to scroll many queries in parallel. You can use search_after only when sorting is applied.
-  repeated FieldValue search_after = 17;
-
-  // [optional] The number of results to return. Default is 10.
-  .google.protobuf.Int32Value size = 18;
-
-  // [optional] You can use the scroll operation to retrieve a large number of results. For example, for machine learning jobs, you can request an unlimited number of results in batches.
-  SlicedScroll slice = 19;
-
-  // [optional] Sorting allows your users to sort results in a way that's most meaningful to them. By default, full-text queries sort results by the relevance score. You can choose to sort the results by any field value in either ascending or descending order by setting the order parameter to asc or desc.
-  repeated SortCombinations sort = 20;
-
-  // [optional] Whether to include the _source field in the response.
-  SourceConfig source = 21 [json_name = "_source"];
-
-  // [optional] The fields to search for in the request. Specify a format to return results in a certain format, such as date and time.
-  repeated FieldAndFormat fields = 22;
-
-  // [optional] The suggest feature suggests similar looking terms based on a provided text by using a suggester. The suggest request part is defined alongside the query part in a _search request. If the query part is left out, only suggestions are returned.
-  Suggester suggest = 23;
-
-  // [optional] The maximum number of documents OpenSearch should process before terminating the request. If a query reaches this limit, OpenSearch terminates the query early. OpenSearch collects documents before sorting. Use with caution. OpenSearch applies this parameter to each shard handling the request. When possible, let OpenSearch perform early termination automatically. Avoid specifying this parameter for requests that target data streams with backing indices across multiple data tiers. If set to `0` (default), the query does not terminate early. Default is 0.
-  .google.protobuf.Int32Value terminate_after = 24;
-
-  // [optional] The period of time to wait for a response. Default is no timeout. If no response is received before the timeout expires, the request fails and returns an error. Defaults to no timeout.
-  .google.protobuf.StringValue timeout = 25;
-
-  // [optional] Whether to return document scores. Default is false.
-  .google.protobuf.BoolValue track_scores = 26;
-
-  // [optional] Whether to include the document version in the response.
-  .google.protobuf.BoolValue version = 27;
-
-  // [optional] Whether to return sequence number and primary term of the last operation of each document hit.
-  .google.protobuf.BoolValue seq_no_primary_term = 28;
-
-  // [optional] A list of stored fields to return as part of a hit. If no fields are specified, no stored fields are included in the response. If this option is specified, the _source parameter defaults to false. You can pass _source: true to return both source fields and stored fields in the search response.
-  repeated string stored_fields = 29;
-
-  // [optional] Point in Time (PIT) lets you run different queries against a dataset that is fixed in time.
-  PointInTimeReference pit = 30;
-
-  // [optional] Value to associate with the request for additional logging.
-  repeated string stats = 31;
+  // [required] The advance method is a lower-level version of the next_doc method in Lucene. It also finds the next matching document but necessitates that the calling query perform additional tasks, such as identifying skips. Some queries, such as conjunctions (must clauses in Boolean queries), cannot use next_doc. For those queries, advance is timed.
+  int64 advance = 1;
+  // [required] Contains the number of invocations of the advance method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 advance_count = 2;
+  // [required] A Scorer iterates over matching documents and generates a score for each document. The build_scorer field contains the amount of time spent generating the Scorer object. This does not include the time spent scoring the documents. The Scorer initialization time depends on the optimization and complexity of a particular query. The build_scorer parameter also includes the amount of time associated with caching, if caching is applicable and enabled for the query.
+  int64 build_scorer = 3;
+  // [required] Build_scorer_count contains the number of invocations of the build_scorer method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 build_scorer_count = 4;
+  // [required] A Query object in Lucene is immutable. Yet, Lucene should be able to reuse Query objects in multiple IndexSearcher objects. Thus, Query objects need to keep temporary state and statistics associated with the index in which the query is executed. To achieve reuse, every Query object generates a Weight object, which keeps the temporary context (state) associated with the <IndexSearcher, Query> tuple. The create_weight field contains the amount of time spent creating the Weight object.
+  int64 create_weight = 5;
+  // [required] Create_weight_count contains the number of invocations of the create_weight method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 create_weight_count = 6;
+  // [required] For some queries, document matching is performed in two steps. First, the document is matched approximately. Second, those documents that are approximately matched are examined through a more comprehensive process. For example, a phrase query first checks whether a document contains all terms in the phrase. Next, it verifies that the terms are in order (which is a more expensive process). The match field is non-zero only for those queries that use the two-step verification process.
+  int64 match = 7;
+  // [required] Match_count contains the number of invocations of the match method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 match_count = 8;
+  // [required] Contains the amount of time required to execute the advanceShallow Lucene method.
+  int64 shallow_advance = 9;
+  // [required] Shallow_advance_count contains the number of invocations of the shallow_advance method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 shallow_advance_count = 10;
+  // [required] The next_doc Lucene method returns the document ID of the next document that matches the query. This method is a special type of the advance method and is equivalent to advance(docId() + 1). The next_doc method is more convenient for many Lucene queries. The next_doc field contains the amount of time required to determine the next matching document, which varies depending on the query type.
+  int64 next_doc = 11;
+  // [required] Next_doc_count contains the number of invocations of the next_doc method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 next_doc_count = 12;
+  // [required] Contains the time taken for a Scorer to score a particular document.
+  int64 score = 13;
+  // [required] Score_count contains the number of invocations of the score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 score_count = 14;
+  // [required] Contains the amount of time required to execute the getMaxScore Lucene method.
+  int64 compute_max_score = 15;
+  // [required] Compute_max_score_count contains the number of invocations of the compute_max_score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 compute_max_score_count = 16;
+  // [required] Contains the amount of time required to execute the setMinCompetitiveScore Lucene method.
+  int64 set_min_competitive_score = 17;
+  // [required] Set_min_competitive_score_count contains the number of invocations of the set_min_competitive_score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 set_min_competitive_score_count = 18;
 
 }
 
-message RankContainer {
+message FetchProfileDebug {
 
-  oneof rank_container {
-    RrfRank rrf = 1;
-  }
+  repeated string stored_fields = 1;
 
-}
-
-message RrfRank {
-
-  ObjectMap object = 1;
-
-  // How much influence documents in individual result sets per query have over the final ranked result set
-  .google.protobuf.FloatValue rank_constant = 2;
-
-  // Size of the individual result sets per query
-  .google.protobuf.FloatValue window_size = 3;
+  optional int32 fast_path = 2;
 
 }
 
-message RescoreQuery {
+message FetchProfile {
 
-  // [required] A second query only on the Top-K results returned by the query and post_filter phases.
-  QueryContainer rescore_query = 1;
+  optional string type = 1;
 
-  // [optional] The relative importance of the original query as compared to the rescore query.
-  .google.protobuf.FloatValue query_weight = 2;
+  optional string description = 2;
 
-  // [optional] The relative importance of the rescore query as compared to the original query.
-  .google.protobuf.FloatValue rescore_query_weight = 3;
+  // Time unit for nanoseconds
+  optional int64 time_in_nanos = 3;
 
-  enum ScoreMode {
+  optional FetchProfileBreakdown breakdown = 4;
 
-    SCORE_MODE_INVALID = 0;
-    // Average the original score and the rescore query score.
-    SCORE_MODE_AVG = 1;
-    // Take the max of original score and the rescore query score.
-    SCORE_MODE_MAX = 2;
-    // Take the min of the original score and the rescore query score.
-    SCORE_MODE_MIN = 3;
-    // Multiply the original score by the rescore query score. Useful for function query rescores.
-    SCORE_MODE_MULTIPLY = 4;
-    // Add the original score and the rescore query score. The default.
-    SCORE_MODE_TOTAL = 5;
-  }
+  optional FetchProfileDebug debug = 5;
 
-  // [optional] Control the way the scores are combined.
-  ScoreMode score_mode = 4;
-
-}
-
-message Rescore {
-
-  // [required] Contains the rescore_query, which is the secondary query used to adjust the scores of the initial results
-  RescoreQuery query = 1;
-
-  // [optional] The number of docs which will be examined on each shard can be controlled.
-  .google.protobuf.Int32Value window_size = 2;
-
-}
-
-message SlicedScroll {
-
-  // [optional] Specific document field by which slicing is performed.
-  .google.protobuf.StringValue field = 1;
-
-  // [required] The id of the slice
-  .google.protobuf.StringValue id = 2;
-
-  // [required] The maximum number of slices
-  .google.protobuf.Int32Value max = 3;
-
-}
-
-message Suggester {
-
-  // [optional] Global suggest text, to avoid repetition when the same text is used in several suggesters
-  .google.protobuf.StringValue text = 1;
-
-}
-
-message ShardProfile {
-
-  // [required] Profiling information about the aggregation execution.
-  repeated AggregationProfile aggregations = 1;
-
-  // [required] The shard ID of the shard in the [node-ID][index-name][shard-ID] format.
-  .google.protobuf.StringValue id = 2;
-
-  // [required] Search represents a query executed against the underlying Lucene index. Most search requests execute a single search against a Lucene index, but some search requests can execute more than one search. For example, including a global aggregation results in a secondary match_all query for the global context. The profile.shards array contains profiling information about each search execution.
-  repeated SearchProfile searches = 3;
-
-  // [optional] Fetch timing and debug information.
-  FetchProfile fetch = 4;
-
-}
-
-message SuggestArray {
-
-  repeated Suggest suggest_array = 1;
-
-}
-
-message Suggest {
-  oneof suggest {
-    CompletionSuggest completion_suggest = 1;
-    PhraseSuggest phrase_suggest = 2;
-    TermSuggest term_suggest = 3;
-  }
-
-}
-
-message CompletionSuggest {
-
-  .google.protobuf.Int32Value length = 1;
-
-  .google.protobuf.Int32Value offset = 2;
-
-  .google.protobuf.StringValue text = 3;
-
-  repeated CompletionSuggestOption options = 4;
-
-}
-
-message CompletionSuggestOption {
-
-  .google.protobuf.BoolValue collate_match = 1;
-
-  map<string, ContextArray> contexts = 2;
-
-  .google.protobuf.Struct fields = 3;
-
-  .google.protobuf.StringValue id = 4 [json_name = "_id"];
-
-  .google.protobuf.StringValue index = 5 [json_name = "_index"];
-
-  repeated string routing = 6 [json_name = "_routing"];
-
-  .google.protobuf.FloatValue underscore_score = 7 [json_name = "_score"];
-
-  .google.protobuf.Struct source = 8 [json_name = "_source"];
-
-  .google.protobuf.StringValue text = 9;
-
-  .google.protobuf.FloatValue score = 10;
-
-}
-
-message ContextArray {
-  repeated Context context_array = 1;
-}
-
-message Context {
-  oneof context {
-    .google.protobuf.StringValue string_value = 1;
-    GeoLocation geo_location = 2;
-  }
+  repeated FetchProfile children = 6;
 
 }
 
 
-message PhraseSuggest {
+message FetchProfileBreakdown {
 
-  .google.protobuf.Int32Value length = 1;
+  optional int32 load_stored_fields = 1;
 
-  .google.protobuf.Int32Value offset = 2;
+  optional int32 load_stored_fields_count = 2;
 
-  .google.protobuf.StringValue text = 3;
+  optional int32 next_reader = 3;
 
-  repeated PhraseSuggestOption options = 4;
+  optional int32 next_reader_count = 4;
 
-}
+  optional int32 process_count = 5;
 
-message PhraseSuggestOption {
-
-  .google.protobuf.StringValue text = 1;
-
-  .google.protobuf.FloatValue score = 2;
-
-  .google.protobuf.StringValue highlighted = 3;
-
-  .google.protobuf.BoolValue collate_match = 4;
+  optional int32 process = 6;
 
 }
 
-message TermSuggestOption {
+message AggregationProfileDebug {
 
-  .google.protobuf.StringValue text = 1;
+  optional int32 segments_with_multi_valued_ords = 1;
 
-  .google.protobuf.FloatValue score = 2;
+  optional string collection_strategy = 2;
 
-  .google.protobuf.DoubleValue freq = 3;
+  optional int32 segments_with_single_valued_ords = 3;
 
-  .google.protobuf.StringValue highlighted = 4;
+  optional int32 total_buckets = 4;
 
-  .google.protobuf.BoolValue collate_match = 5;
+  optional int32 built_buckets = 5;
+
+  optional string result_strategy = 6;
+
+  optional bool has_filter = 7;
+
+  optional string delegate = 8;
+
+  optional AggregationProfileDebug delegate_debug = 9;
+
+  optional int32 chars_fetched = 10;
+
+  optional int32 extract_count = 11;
+
+  optional int32 extract_ns = 12;
+
+  optional int32 values_fetched = 13;
+
+  optional int32 collect_analyzed_ns = 14;
+
+  optional int32 collect_analyzed_count = 15;
+
+  optional int32 surviving_buckets = 16;
+
+  optional int32 ordinals_collectors_used = 17;
+
+  optional int32 ordinals_collectors_overhead_too_high = 18;
+
+  optional int32 string_hashing_collectors_used = 19;
+
+  optional int32 numeric_collectors_used = 20;
+
+  optional int32 empty_collectors_used = 21;
+
+  repeated string deferred_aggregators = 22;
+
+  optional int32 segments_with_doc_count_field = 23;
+
+  optional int32 segments_with_deleted_docs = 24;
+
+  repeated AggregationProfileDelegateDebugFilter filters = 25;
+
+  optional int32 segments_counted = 26;
+
+  optional int32 segments_collected = 27;
+
+  optional string map_reducer = 28;
 
 }
 
-message TermSuggest {
+message AggregationProfileDelegateDebugFilter {
 
-  .google.protobuf.Int32Value length = 1;
+  optional int32 results_from_metadata = 1;
 
-  .google.protobuf.Int32Value offset = 2;
+  optional string query = 2;
 
-  .google.protobuf.StringValue text = 3;
+  optional string specialized_for = 3;
 
-  repeated TermSuggestOption options = 4;
+  optional int32 segments_counted_in_constant_time = 4;
 
 }
 
-// GET {index}/_explain/{id}
-// POST {index}/_explain/{id}
-message ExplainRequest {
-  // Defines the document ID.
-  .google.protobuf.StringValue id = 1;
-  // Index names used to limit the request. Only a single index name can be provided to this parameter.
-  .google.protobuf.StringValue index = 2;
-  // True or false to return the `_source` field or not, or a list of fields to return.
-  SourceConfigParam source = 3 [json_name = "_source"];
-  // A comma-separated list of source fields to exclude from the response.
-  repeated string source_excludes = 4;
-  // A comma-separated list of source fields to include in the response.
-  repeated string source_includes = 5 ;
-  // If `true`, wildcard and prefix queries are analyzed.
-  .google.protobuf.BoolValue analyze_wildcard = 6;
-  // Analyzer to use for the query string. This parameter can only be used when the `q` query string parameter is specified.
-  .google.protobuf.StringValue analyzer = 7;
-  // The default operator for query string query: `AND` or `OR`.
-  Operator default_operator = 8;
-  enum Operator {
+message Explanation {
 
-    OPERATOR_INVALID = 0;
-    OPERATOR_AND = 1;
-    OPERATOR_OR = 2;
-  }
-  // Field to use as default where no field prefix is given in the query string.
-  .google.protobuf.StringValue df = 9;
-  // If `true`, format-based query failures (such as providing text to a numeric field) in the query string will be ignored.
-  .google.protobuf.BoolValue lenient = 10;
-  // Specifies the node or shard the operation should be performed on. Random by default. For valid values see "https://opensearch.org/docs/latest/api-reference/search/#the-preference-query-parameter"
-  .google.protobuf.StringValue preference = 11;
-  // Query in the Lucene query string syntax.
-  .google.protobuf.StringValue q = 12;
-  // Custom value used to route operations to a specific shard.
-  repeated string routing = 13;
-  // A comma-separated list of stored fields to return in the response.
-  repeated string stored_fields = 14;
-  ExplainRequestBody request_body = 15;
+  // [required] Explains what type of calculation is performed
+  string description = 1;
+  // [optional] Shows any subcalculations performed.
+  repeated ExplanationDetail details = 2;
+  // [required] Shows the result of the calculation,
+  double value = 3;
+
 }
 
-message ExplainRequestBody {
-  QueryContainer query = 1;
+message ExplanationDetail {
+
+  // [required] Explains what type of calculation is performed
+  string description = 1;
+
+  // [required] Shows any subcalculations performed.
+  repeated ExplanationDetail details = 2;
+
+  // [required] Shows the result of the calculation,
+  double value = 3;
+
 }
 
-// GET {index}/_explain/{id} response
-// POST {index}/_explain/{id} response
-message ExplainResponse {
-  oneof response {
-    ExplainResponseBody explain_response_body = 1;
-    ExplainErrorResponse explain_error_response = 2;
-  }
-}
+message NestedIdentity {
 
-message ExplainErrorResponse {
-  OpenSearchException error = 1;
-  .google.protobuf.Int32Value status = 2;
-}
+  // [required] The name of the nested field.
+  string field = 1;
 
-message ExplainResponseBody {
-  .google.protobuf.StringValue index = 1 [json_name = "_index"];
+  // [required] Indicates the position or index of the nested document.
+  int32 offset = 2;
 
-  .google.protobuf.StringValue id = 2 [json_name = "_id"];
+  // [optional] Inner nested object.
+  optional NestedIdentity nested = 3;
 
-  .google.protobuf.BoolValue matched = 3;
-
-  ExplanationDetail explanation = 4;
-
-  InlineGet get = 5;
 }
