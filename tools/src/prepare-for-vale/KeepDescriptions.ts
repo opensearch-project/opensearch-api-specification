@@ -36,17 +36,16 @@ export default class KeepDescriptions {
     const contents = fs.readFileSync(filename, 'utf-8')
     var writer = fs.openSync(filename, 'w+')
 
-    var inside_description = false
+    var inside_text = false
     contents.split(/\r?\n/).forEach((line) => {
-      // TODO: keep x-deprecation-message
-      if (line.match(/^[\s]+(description: \|)/)) {
-        inside_description = true
-      } else if (line.match(/^[\s]+(description:)[\s]+/)) {
-        fs.writeSync(writer, this.prune(line).replace("description:", "            "))
-      } else if (inside_description && line.match(/^[\s]*[\w]*:/)) {
-        inside_description = false
-      } else if (inside_description) {
-        fs.writeSync(writer, this.prune(line))
+      if (line.match(/^[\s]+((description|x-deprecation-message): \|)/)) {
+        inside_text = true
+      } else if (line.match(/^[\s]+((description|x-deprecation-message):)[\s]+/)) {
+        fs.writeSync(writer, this.prune_vars(this.prune(line, /(description|x-deprecation-message):/, ' ')))
+      } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
+        inside_text = false
+      } else if (inside_text) {
+        fs.writeSync(writer, this.prune_vars(line))
       }
       if (line.length > 0) {
         fs.writeSync(writer, "\n")
@@ -54,9 +53,13 @@ export default class KeepDescriptions {
     })
   }
 
-  prune(line: string): string {
-    return line.replace(/([`])(?:(?=(\\?))\2.)*?\1/g, (match) => {
-      return Array(match.length + 1).join('*')
+  prune_vars(line: string): string {
+    return this.prune(line, /([`])(?:(?=(\\?))\2.)*?\1/g, '*')
+  }
+
+  prune(line: string, regex: RegExp, char: string): string {
+    return line.replace(regex, (match) => {
+      return Array(match.length + 1).join(char)
     })
   }
 }
