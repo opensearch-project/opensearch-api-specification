@@ -43,7 +43,7 @@ export default class KeepDescriptions {
         inside_description = true
       } else if (line.match(/^[\s]+(description:)[\s]+/)) {
         fs.writeSync(writer, this.prune(line).replace("description:", "            "))
-      } else if (inside_description && line.match(/^[\s]*[\w]*:/)) {
+      } else if (inside_description && line.match(/^[\s]*[\w\\$]*:/)) {
         inside_description = false
       } else if (inside_description) {
         fs.writeSync(writer, this.prune(line))
