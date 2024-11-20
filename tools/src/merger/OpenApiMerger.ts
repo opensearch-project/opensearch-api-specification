@@ -54,7 +54,6 @@ export default class OpenApiMerger {
       this.#merge_namespaces()
       this.#sort_spec_keys()
       this.#add_defaults()
-      this.#fix_refs()
       this.#generate_global_params()
       this.#generate_superseded_ops()
       this.#normalize_fields()
@@ -135,21 +134,6 @@ export default class OpenApiMerger {
     Object.entries(this._spec.paths as Document).forEach(([path, path_item]) => {
       this._spec.paths[path] = _.fromPairs(Object.entries(path_item as Document).sort((a, b) => a[0].localeCompare(b[0])))
     })
-  }
-
-  #fix_refs(obj: any = this._spec.components): void {
-    if (obj?.$ref !== undefined) {
-      if (obj?.description !== undefined) {
-        delete obj?.description
-      }
-    }
-
-    for (const key in obj) {
-      var item = obj[key]
-      if (_.isObject(item) || _.isArray(item)) {
-        this.#fix_refs(item)
-      }
-    }
   }
 
   #normalize_key(key: string): string {
