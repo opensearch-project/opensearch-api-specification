@@ -1,0 +1,28 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test dangling indexes.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+chapters:
+  - synopsis: Get dangling indexes.
+    path: /_dangling
+    method: GET
+    response:
+      status: 200
+      payload:
+        dangling_indices:
+          - index_name: .opensearch-observability
+          - index_name: movies
+  - synopsis: Import a dangling index.
+    path: /_dangling/{index_uuid}
+    method: POST  
+    parameters:
+      index_uuid: p6tliBznQO-FzTdslShrwA
+      accept_data_loss: true
+    response:
+      status: 200
+      payload:
+        dangling_indices:
+          - index_name: movies

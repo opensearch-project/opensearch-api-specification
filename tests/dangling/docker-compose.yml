@@ -1,0 +1,42 @@
+version: '3'
+services:
+  opensearch-node1:
+    image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
+    environment:
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - cluster.name=opensearch-cluster
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - node.name=opensearch-node1
+    volumes:
+      - ./.data/opensearch-data1:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+  opensearch-node2:
+    image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
+    environment:
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - cluster.name=opensearch-cluster
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - node.name=opensearch-node2
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+    networks:
+      - opensearch-net
+
+volumes:
+  opensearch-data1:
+  opensearch-data2:
+
+networks:
+  opensearch-net:
