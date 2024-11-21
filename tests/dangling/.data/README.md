@@ -2,9 +2,7 @@ This container contains data from a detached cluster with a `movies` index. It w
 
 Data will be stored in [.data/opensearch-data1](.data/opensearch-data1).
 
-```
-rm -rf .data
-```
+From this `.data` directory.
 
 Create a single-node cluster (without security) and open a shell in it.
 
@@ -17,7 +15,7 @@ docker run --name opensearch-single-node-cluster\
   --ulimit nofile=65536:65536 \
   -e DISABLE_INSTALL_DEMO_CONFIG=true \
   -e DISABLE_SECURITY_PLUGIN=true \
-  -v $(pwd)/.data/opensearch-data1:/usr/share/opensearch/data \
+  -v $(pwd)/opensearch-data1:/usr/share/opensearch/data \
   opensearchproject/opensearch:latest
 ```
 
@@ -54,8 +52,12 @@ Confirm [y/N] y
 Node was successfully detached from the cluster
 ```
 
-The cluster in [docker-compose](docker-compose.yml) uses this data. After the service starts the `movies` index is dangling.
+The cluster in [docker-compose](docker-compose.yml) uses this data. Start it.
 
 ```
 docker compose up
 ```
+
+After the service starts the `movies` index is dangling.
+
+For tests, run the [single-node docker-compose](../docker-compose.yml) in the folder above.
