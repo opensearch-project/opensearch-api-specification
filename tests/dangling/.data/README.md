@@ -60,4 +60,24 @@ docker compose up
 
 After the service starts the `movies` index is dangling.
 
-For tests, run the [single-node docker-compose](../docker-compose.yml) in the folder above.
+To make it usable in tests we need to turn it to a single node cluster.
+
+Remove replicas.
+
+```
+curl -X PUT  http://localhost:9200/_settings --json '{"index.number_of_replicas":0}'
+
+{"acknowledged":true}
+```
+
+Remove node2 from voting.
+
+```
+curl -X POST http://localhost:9200/_cluster/voting_config_exclusions?node_names=opensearch-node2
+
+{"acknowledged":true}
+```
+
+Stop the cluster.
+
+Now you can run the [single-node docker-compose](../docker-compose.yml) in the folder above.
