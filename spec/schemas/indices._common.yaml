@@ -268,11 +268,34 @@ components:
         max_merge_count:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsMergePolicy:
+      oneOf:
+        - title: name
+          $ref: '#/components/schemas/IndexSettingsMergePolicyName'
+        - title: tiered_policy_config
+          $ref: '#/components/schemas/IndexSettingsMergeTieredPolicy'
+    IndexSettingsMergePolicyName:
       type: string
       enum:
         - default
         - log_byte_size
         - tiered
+    IndexSettingsMergeTieredPolicy:
+      type: object
+      properties:
+        deletes_pct_allowed:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        expunge_deletes_allowed:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        floor_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        max_merge_at_once:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_merged_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        reclaim_deletes_weight:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        segments_per_tier:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
     IndexSettingsMergeLogByteSizePolicy:
       type: object
       properties:
