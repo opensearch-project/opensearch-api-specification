@@ -28,7 +28,7 @@ Start the service.
 From another shell, add data.
 
 ```
-curl -X POST -u admin:$OPENSEARCH_PASSWORD http://localhost:9200/movies/_doc --json '{"director":"Bennett Miller","title":"The Cruise","year":1998}'
+curl -X POST http://localhost:9200/movies/_doc --json '{"director":"Bennett Miller","title":"The Cruise","year":1998}'
 
 {"_index":"movies","_id":"XBDMTpMBjBlaZgUqAkGm","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":0,"_primary_term":1}
 ```
