@@ -18702,6 +18702,7 @@ components:
       name: workflow_step
       required: false
       schema:
+        description: The name of the step to retrieve.
         $ref: '#/components/schemas/flow_framework.common___WorkflowStepName'
     flow_framework.get___path.workflow_id:
       name: workflow_id
@@ -28995,6 +28996,7 @@ components:
               total_store_sizes:
                 $ref: '#/components/schemas/_common___HumanReadableByteCount'
               total_store_size_bytes:
+                description: Total size, in bytes, of all shards for the selected data streams.
                 $ref: '#/components/schemas/_common___ByteCount'
             required:
               - _shards
@@ -31800,6 +31802,7 @@ components:
       type: object
       properties:
         size_in_bytes:
+          description: The total amount, in bytes, of memory used for completion across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         size:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
@@ -31929,7 +31932,7 @@ components:
       description: |-
         A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
         `d` (days). Also accepts "0" without a unit and "-1" to indicate an unspecified value.
-      pattern: ^([0-9\.]+)(?:d|h|m|s|ms|micros|nanos)$
+      pattern: ^(?:(-1)|([0-9\.]+)(?:d|h|m|s|ms|micros|nanos))$
       type: string
     _common___DurationLarge:
       description: 'A date histogram interval, similar to `Duration`, with support for additional units: `w` (week), `M` (month), `q` (quarter), and `y` (year).'
@@ -32255,7 +32258,7 @@ components:
               type: string
     _common___HumanReadableByteCount:
       type: string
-      pattern: \d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p)
+      pattern: (?:(-1)|(0)|\d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p))
     _common___IBDistribution:
       type: string
       enum:
@@ -32808,6 +32811,7 @@ components:
         memory_size:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         memory_size_in_bytes:
+          description: The total amount, in bytes, of memory used for the query cache across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         miss_count:
           description: The total number of query cache misses across all shards assigned to the selected nodes.
@@ -32897,10 +32901,13 @@ components:
       description: Statistics related to downloads to the remote segment store.
       properties:
         total_download_size:
+          description: The total amount of data downloaded from the remote segment store.
           $ref: '#/components/schemas/_common___RemoteStoreUploadDownloadStats'
         total_time_spent:
+          description: The total amount of time spent on downloads from the remote segment store.
           $ref: '#/components/schemas/_common___Duration'
         total_time_spent_in_millis:
+          description: The total duration, in milliseconds, spent on downloads from the remote segment store.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
       required:
         - total_download_size
@@ -32939,16 +32946,22 @@ components:
       description: The total amount of data uploaded to the remote translog store.
       properties:
         failed:
+          description: The number of bytes that failed to upload to the remote translog store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         failed_bytes:
+          description: The number of bytes that failed to upload to the remote translog store.
           $ref: '#/components/schemas/_common___ByteCount'
         started:
+          description: The number of bytes successfully uploaded to the remote translog store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         started_bytes:
+          description: The number of bytes successfully uploaded to the remote translog store.
           $ref: '#/components/schemas/_common___ByteCount'
         succeeded:
+          description: The number of bytes successfully uploaded to the remote translog store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         succeeded_bytes:
+          description: The number of bytes successfully uploaded to the remote translog store.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - failed_bytes
@@ -32976,16 +32989,22 @@ components:
       description: The amount of data, in bytes, uploaded or downloaded to/from the remote segment store.
       properties:
         failed:
+          description: The number of bytes that failed to upload to/from the remote segment store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         failed_bytes:
+          description: The number of bytes that failed to upload to/from the remote segment store.
           $ref: '#/components/schemas/_common___ByteCount'
         started:
+          description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         started_bytes:
+          description: The number of bytes to upload/download to/from the remote segment store after the upload/download has started.
           $ref: '#/components/schemas/_common___ByteCount'
         succeeded:
+          description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         succeeded_bytes:
+          description: The number of bytes successfully uploaded/downloaded to/from the remote segment store.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - failed_bytes
@@ -33005,12 +33024,16 @@ components:
       description: The amount of lag during upload between the remote segment store and the local store.
       properties:
         max:
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         max_bytes:
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/_common___ByteCount'
         total:
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_bytes:
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - max_bytes
@@ -33020,16 +33043,20 @@ components:
       description: Statistics related to uploads to the remote segment store.
       properties:
         max_refresh_time_lag:
+          description: The maximum duration that the remote refresh is behind the local refresh.
           $ref: '#/components/schemas/_common___Duration'
         max_refresh_time_lag_in_millis:
+          description: The maximum duration, in milliseconds, that the remote refresh is behind the local refresh.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         pressure:
           $ref: '#/components/schemas/_common___RemoteStoreUploadPressureStats'
         refresh_size_lag:
           $ref: '#/components/schemas/_common___RemoteStoreUploadRefreshSizeLagStats'
         total_time_spent:
+          description: The total amount of time spent on uploads to the remote segment store.
           $ref: '#/components/schemas/_common___Duration'
         total_time_spent_in_millis:
+          description: The total amount of time, in milliseconds, spent on uploads to the remote segment store.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         total_upload_size:
           $ref: '#/components/schemas/_common___RemoteStoreUploadDownloadStats'
@@ -33208,8 +33235,10 @@ components:
           description: The number of currently running shard query operations.
           type: number
         query_time:
+          description: The total amount of time taken to complete all shard query operations.
           $ref: '#/components/schemas/_common___Duration'
         query_time_in_millis:
+          description: The total amount of time taken to complete all shard query operations, in milliseconds.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         query_total:
           description: The total number of shard query operations.
@@ -33220,6 +33249,7 @@ components:
         concurrent_query_time:
           $ref: '#/components/schemas/_common___Duration'
         concurrent_query_time_in_millis:
+          description: The total amount of time taken by all query operations using concurrent segment search, in milliseconds.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         concurrent_query_current:
           description: The number of currently running query operations using concurrent segment search.
@@ -33231,8 +33261,10 @@ components:
           description: The number of currently running shard fetch operations.
           type: number
         fetch_time:
+          description: The total amount of time taken to complete all shard fetch operations.
           $ref: '#/components/schemas/_common___Duration'
         fetch_time_in_millis:
+          description: The total amount of time taken to complete all shard fetch operations, in milliseconds.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         fetch_total:
           description: The total number of shard fetch operations.
@@ -33241,8 +33273,10 @@ components:
           description: The number of shard scroll operations that are currently running.
           type: number
         scroll_time:
+          description: The total amount of time taken to complete all shard scroll operations.
           $ref: '#/components/schemas/_common___Duration'
         scroll_time_in_millis:
+          description: The total amount of time taken to complete all shard scroll operations, in milliseconds.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
@@ -33253,6 +33287,7 @@ components:
         point_in_time_time:
           $ref: '#/components/schemas/_common___Duration'
         point_in_time_time_in_millis:
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         point_in_time_current:
           description: The number of currently open shard PIT contexts.
@@ -33261,8 +33296,10 @@ components:
           description: The number of currently running shard suggest operations.
           type: number
         suggest_time:
+          description: The total amount of time take to complete all shard suggest operations.
           $ref: '#/components/schemas/_common___Duration'
         suggest_time_in_millis:
+          description: The total amount of time taken to complete all shard suggest operations, in milliseconds.
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
         suggest_total:
           description: The total number of shard suggest operations.
@@ -33318,6 +33355,7 @@ components:
         doc_values_memory:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         doc_values_memory_in_bytes:
+          description: The total amount, in bytes, of memory used for document values across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         file_sizes:
           description: |-
@@ -33329,43 +33367,59 @@ components:
         fixed_bit_set:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         fixed_bit_set_memory_in_bytes:
+          description: The total amount of memory, in bytes, used by fixed bit sets across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         index_writer_memory:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         index_writer_max_memory_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
         index_writer_memory_in_bytes:
+          description: The total amount, in bytes, of memory used by all index writers across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         max_unsafe_auto_id_timestamp:
           description: The Unix timestamp, in milliseconds, of the most recently retried indexing request.
           type: number
         memory:
+          description: The total amount of memory used for segments across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         memory_in_bytes:
+          description: The total amount, in bytes, of memory used for segments across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         norms_memory:
+          description: The total amount of memory used for normalization factors across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         norms_memory_in_bytes:
+          description: The total amount, in bytes, of memory used for normalization factors across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         points_memory:
+          description: The total amount of memory used for points across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         points_memory_in_bytes:
+          description: The total amount, in bytes, of memory used for points across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         stored_fields_memory:
+          description: The total amount of memory used for stored fields across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         stored_fields_memory_in_bytes:
+          description: The total amount, in bytes, of memory used for stored fields across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         terms_memory:
+          description: The total amount of memory used for terms across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         terms_memory_in_bytes:
+          description: The total amount, in bytes, of memory used for terms across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         term_vectors_memory:
+          description: The total amount of memory used for term vectors across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         term_vectors_memory_in_bytes:
+          description: The total amount, in bytes, of memory used for term vectors across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         version_map_memory:
+          description: The total amount of memory used by all version maps across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         version_map_memory_in_bytes:
+          description: The total amount, in bytes, of memory used by all version maps across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         remote_store:
           $ref: '#/components/schemas/_common___RemoteStoreStats'
@@ -33530,15 +33584,17 @@ components:
         size:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         size_in_bytes:
+          description: The total size, in bytes, of all shards assigned to the selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         reserved:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         reserved_in_bytes:
+          description: A prediction, in bytes, of how much larger the shard stores will eventually grow due to ongoing peer recoveries, restoring snapshots, and similar activities.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - reserved_in_bytes
         - size_in_bytes
-    _common___Stringifiedboolean:
+    _common___StringifiedBoolean:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
         this behavior while keeping the semantics of the field type.
@@ -33547,6 +33603,11 @@ components:
         strings to the target type.
       oneOf:
         - type: boolean
+        - type: string
+    _common___StringifiedDouble:
+      oneOf:
+        - type: number
+          format: double
         - type: string
     _common___StringifiedEpochTimeUnitMillis:
       description: |-
@@ -33568,7 +33629,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/_common___EpochTimeUnitSeconds'
         - type: string
-    _common___Stringifiedinteger:
+    _common___StringifiedInteger:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
         this behavior while keeping the semantics of the field type.
@@ -33577,6 +33638,11 @@ components:
         strings to the target type.
       oneOf:
         - type: integer
+        - type: string
+    _common___StringifiedLong:
+      oneOf:
+        - type: integer
+          format: int64
         - type: string
     _common___StringifiedVersionNumber:
       description: |-
@@ -37461,7 +37527,7 @@ components:
               enum:
                 - asciifolding
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
           required:
             - type
     _common.analysis___CharFilter:
@@ -37680,7 +37746,7 @@ components:
             side:
               $ref: '#/components/schemas/_common.analysis___EdgeNGramSide'
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
           required:
             - type
     _common.analysis___EdgeNGramTokenizer:
@@ -37723,7 +37789,7 @@ components:
             articles_path:
               type: string
             articles_case:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
           required:
             - type
     _common.analysis___FingerprintAnalyzer:
@@ -38274,7 +38340,7 @@ components:
             consume_all_tokens:
               type: boolean
             max_token_count:
-              $ref: '#/components/schemas/_common___Stringifiedinteger'
+              $ref: '#/components/schemas/_common___StringifiedInteger'
           required:
             - type
     _common.analysis___LowercaseNormalizer:
@@ -38341,7 +38407,7 @@ components:
               items:
                 type: string
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
           required:
             - filters
             - type
@@ -38359,7 +38425,7 @@ components:
             min_gram:
               type: integer
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
           required:
             - type
     _common.analysis___NGramTokenizer:
@@ -38464,15 +38530,15 @@ components:
               enum:
                 - path_hierarchy
             buffer_size:
-              $ref: '#/components/schemas/_common___Stringifiedinteger'
+              $ref: '#/components/schemas/_common___StringifiedInteger'
             delimiter:
               type: string
             replacement:
               type: string
             reverse:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
             skip:
-              $ref: '#/components/schemas/_common___Stringifiedinteger'
+              $ref: '#/components/schemas/_common___StringifiedInteger'
           required:
             - buffer_size
             - delimiter
@@ -38513,7 +38579,7 @@ components:
               items:
                 type: string
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
           required:
             - patterns
             - type
@@ -39207,7 +39273,7 @@ components:
             ignore_keywords:
               type: boolean
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
             protected_words:
               type: array
               items:
@@ -39248,7 +39314,7 @@ components:
             generate_word_parts:
               type: boolean
             preserve_original:
-              $ref: '#/components/schemas/_common___Stringifiedboolean'
+              $ref: '#/components/schemas/_common___StringifiedBoolean'
             protected_words:
               type: array
               items:
@@ -40904,6 +40970,7 @@ components:
           properties:
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl___IgnoreUnmapped'
+              description: Indicates whether to ignore an unmapped `type` and not return any documents instead of an error.
             inner_hits:
               $ref: '#/components/schemas/_core.search___InnerHits'
             max_children:
@@ -40934,6 +41001,9 @@ components:
           properties:
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl___IgnoreUnmapped'
+              description: |-
+                Indicates whether to ignore an unmapped `parent_type` and not return any documents instead of an error.
+                You can use this parameter to query multiple indexes that may not contain the `parent_type`.
             inner_hits:
               $ref: '#/components/schemas/_core.search___InnerHits'
             parent_type:
@@ -41454,6 +41524,7 @@ components:
           properties:
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl___IgnoreUnmapped'
+              description: Indicates whether to ignore an unmapped path and not return any documents instead of an error.
             inner_hits:
               $ref: '#/components/schemas/_core.search___InnerHits'
             path:
@@ -41536,6 +41607,7 @@ components:
               $ref: '#/components/schemas/_common___Id'
             ignore_unmapped:
               $ref: '#/components/schemas/_common.query_dsl___IgnoreUnmapped'
+              description: Indicates whether to ignore an unmapped `type` and not return any documents instead of an error.
             type:
               $ref: '#/components/schemas/_common___RelationName'
     _common.query_dsl___PercolateQuery:
@@ -41816,6 +41888,7 @@ components:
           minProperties: 1
           maxProperties: 1
         terms:
+          description: Returns documents that contain one or more exact terms in a provided field.
           $ref: '#/components/schemas/_common.query_dsl___TermsQueryField'
         terms_set:
           description: |-
@@ -44993,6 +45066,7 @@ components:
           description: wait time of longest task pending
           type: string
         active_shards_percent:
+          description: active number of shards in percent
           $ref: '#/components/schemas/_common___PercentageString'
         discovered_cluster_manager:
           description: cluster manager is discovered or not
@@ -47580,21 +47654,35 @@ components:
       type: object
       properties:
         available:
+          description: |-
+            Total number of bytes available to JVM in file stores across all selected nodes.
+            Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
+            This is the actual amount of free disk space the selected OpenSearch nodes can use.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         available_in_bytes:
+          description: |-
+            Total number of bytes available to JVM in file stores across all selected nodes.
+            Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
+            This is the actual amount of free disk space the selected OpenSearch nodes can use.
           $ref: '#/components/schemas/_common___ByteCount'
         free:
+          description: Total number of unallocated bytes in file stores across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         free_in_bytes:
+          description: Total number of unallocated bytes in file stores across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         total:
+          description: Total size, of all file stores across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_in_bytes:
+          description: Total size, in bytes, of all file stores across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         cache_reserved:
+          description: Total size, of all cache reserved across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
           x-version-added: '2.7'
         cache_reserved_in_bytes:
+          description: Total size, in bytes, of all cache reserved across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
           x-version-added: '2.7'
       required:
@@ -47695,12 +47783,16 @@ components:
       type: object
       properties:
         heap_max:
+          description: Maximum amount of memory available for use by the heap across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         heap_max_in_bytes:
+          description: Maximum amount of memory, in bytes, available for use by the heap across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         heap_used:
+          description: Memory currently in use by the heap across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         heap_used_in_bytes:
+          description: Memory, in bytes, currently in use by the heap across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - heap_max_in_bytes
@@ -47919,6 +48011,9 @@ components:
       type: object
       properties:
         percent:
+          description: |-
+            Percentage of CPU used across all selected nodes.
+            Returns `-1` if not supported.
           $ref: '#/components/schemas/_common___PercentageNumber'
       required:
         - percent
@@ -48022,6 +48117,7 @@ components:
         total_deduplicated_mapping_size:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_deduplicated_mapping_size_in_bytes:
+          description: Total size of all mappings, in bytes, after deduplication and compression.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - field_types
@@ -48132,22 +48228,31 @@ components:
       type: object
       properties:
         adjusted_total_in_bytes:
+          description: Total amount, in bytes, of memory across all selected nodes, but using the value specified using the `es.total_memory_bytes` system property instead of measured total memory for those nodes where that system property was set.
           $ref: '#/components/schemas/_common___ByteCount'
         free:
+          description: Amount, in bytes, of free physical memory across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         free_in_bytes:
+          description: Amount, in bytes, of free physical memory across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         free_percent:
+          description: Percentage of free physical memory across all selected nodes.
           $ref: '#/components/schemas/_common___PercentageNumber'
         total:
+          description: Total amount of physical memory across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_in_bytes:
+          description: Total amount, in bytes, of physical memory across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         used:
+          description: Amount of physical memory in use across all selected nodes.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         used_in_bytes:
+          description: Amount, in bytes, of physical memory in use across all selected nodes.
           $ref: '#/components/schemas/_common___ByteCount'
         used_percent:
+          description: Percentage of physical memory in use across all selected nodes.
           $ref: '#/components/schemas/_common___PercentageNumber'
       required:
         - free_in_bytes
@@ -48957,9 +49062,9 @@ components:
         level:
           type: string
         source:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         reformat:
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         threshold:
           $ref: '#/components/schemas/indices._common___IndexingSlowlogThresholds'
     indices._common___IndexingSlowlogThresholds:
@@ -48985,11 +49090,13 @@ components:
           $ref: '#/components/schemas/indices._common___IndexRoutingAllocationInitialRecovery'
         disk:
           $ref: '#/components/schemas/indices._common___IndexRoutingAllocationDisk'
+        total_shards_per_node:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
     indices._common___IndexRoutingAllocationDisk:
       type: object
       properties:
         threshold_enabled:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
     indices._common___IndexRoutingAllocationInclude:
       type: object
       properties:
@@ -49050,15 +49157,15 @@ components:
       type: object
       properties:
         read_only:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         read_only_allow_delete:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         read:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         write:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         metadata:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
     indices._common___IndexSettings:
       type: object
       description: The index settings to be updated.
@@ -49080,31 +49187,27 @@ components:
         sort:
           $ref: '#/components/schemas/indices._common___IndexSegmentSort'
         number_of_shards:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         number_of_replicas:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         number_of_routing_shards:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         check_on_startup:
           $ref: '#/components/schemas/indices._common___IndexCheckOnStartup'
         codec:
           type: string
         routing_partition_size:
-          $ref: '#/components/schemas/_common___Stringifiedinteger'
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         load_fixed_bitset_filters_eagerly:
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         hidden:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         auto_expand_replicas:
           type: string
         merge:
           $ref: '#/components/schemas/indices._common___IndexSettingsMerge'
         merge.scheduler.max_thread_count:
-          $ref: '#/components/schemas/_common___Stringifiedinteger'
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         search:
           $ref: '#/components/schemas/indices._common___IndexSettingsSearch'
         search.idle.after:
@@ -49112,45 +49215,45 @@ components:
         refresh_interval:
           $ref: '#/components/schemas/_common___Duration'
         max_result_window:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_inner_result_window:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_rescore_window:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_docvalue_fields_search:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_script_fields:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_ngram_diff:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_shingle_diff:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         blocks:
           $ref: '#/components/schemas/indices._common___IndexSettingBlocks'
         blocks.read_only:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         blocks.read_only_allow_delete:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         blocks.read:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         blocks.write:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         blocks.metadata:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         max_refresh_listeners:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         analyze:
           $ref: '#/components/schemas/indices._common___IndexSettingsAnalyze'
         analyze.max_token_count:
-          $ref: '#/components/schemas/_common___Stringifiedinteger'
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         highlight:
           $ref: '#/components/schemas/indices._common___IndexSettingsHighlight'
         highlight.max_analyzed_offset:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_terms_count:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_regex_length:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         routing:
           $ref: '#/components/schemas/indices._common___IndexRouting'
         gc_deletes:
@@ -49174,13 +49277,13 @@ components:
         version:
           $ref: '#/components/schemas/indices._common___IndexVersioning'
         verified_before_close:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         format:
           oneOf:
             - type: string
             - type: number
         max_slices_per_scroll:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         translog:
           $ref: '#/components/schemas/indices._common___Translog'
         translog.durability:
@@ -49190,13 +49293,13 @@ components:
         query_string:
           $ref: '#/components/schemas/indices._common___IndexSettingsQueryString'
         query_string.lenient:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         priority:
           oneOf:
             - type: number
             - type: string
         top_metrics_max_size:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         analysis:
           $ref: '#/components/schemas/indices._common___IndexSettingsAnalysis'
         settings:
@@ -49214,9 +49317,11 @@ components:
         store:
           $ref: '#/components/schemas/indices._common___IndexSettingsStore'
         knn:
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         knn.algo_param.ef_search:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        composite_index.star_tree:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStarTree'
       additionalProperties:
         title: custom_settings
     indices._common___IndexSettingsAnalysis:
@@ -49246,12 +49351,12 @@ components:
       type: object
       properties:
         max_token_count:
-          $ref: '#/components/schemas/_common___Stringifiedinteger'
+          $ref: '#/components/schemas/_common___StringifiedInteger'
     indices._common___IndexSettingsHighlight:
       type: object
       properties:
         max_analyzed_offset:
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
     indices._common___IndexSettingsIndexing:
       type: object
       properties:
@@ -49263,8 +49368,12 @@ components:
         name:
           $ref: '#/components/schemas/_common___Name'
         indexing_complete:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         origination_date:
+          description: |-
+            If specified, this is the timestamp used to calculate the index age for its phase transitions. Use this setting
+            if you create a new index that contains old data and want to use the original creation date to calculate the index
+            age. Specified as a Unix epoch value in milliseconds.
           $ref: '#/components/schemas/_common___StringifiedEpochTimeUnitMillis'
         parse_origination_date:
           description: |-
@@ -49292,7 +49401,7 @@ components:
       type: object
       properties:
         coerce:
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         total_fields:
           $ref: '#/components/schemas/indices._common___IndexSettingsMappingLimitTotalFields'
         depth:
@@ -49306,7 +49415,7 @@ components:
         dimension_fields:
           $ref: '#/components/schemas/indices._common___IndexSettingsMappingLimitDimensionFields'
         ignore_malformed:
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
     indices._common___IndexSettingsMappingLimitDepth:
       type: object
       properties:
@@ -49314,8 +49423,7 @@ components:
           description: |-
             The maximum depth for a field, which is measured as the number of inner objects. For instance, if all fields are defined
             at the root object level, then the depth is `1`. If there is one object mapping, then the depth is `2`.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___IndexSettingsMappingLimitDimensionFields:
       type: object
       properties:
@@ -49323,8 +49431,7 @@ components:
           description: |-
             [preview] This functionality is in technical preview and may be changed or removed in a future release.
             OpenSearch will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___IndexSettingsMappingLimitFieldNameLength:
       type: object
       properties:
@@ -49333,8 +49440,7 @@ components:
             Setting for the maximum length of a field name. This setting isn't really something that addresses mappings explosion but
             might still be useful if you want to limit the field length. It usually shouldn't be necessary to set this setting. The
             default is okay unless a user starts to add a huge number of fields with really long names. Default is `Long.MAX_VALUE` (no limit).
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___IndexSettingsMappingLimitNestedFields:
       type: object
       properties:
@@ -49343,8 +49449,7 @@ components:
             The maximum number of distinct nested mappings in an index. The nested type should only be used in special cases, when
             arrays of objects need to be queried independently of each other. To safeguard against poorly designed mappings, this
             setting limits the number of unique nested types per index.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___IndexSettingsMappingLimitNestedObjects:
       type: object
       properties:
@@ -49352,8 +49457,7 @@ components:
           description: |-
             The maximum number of nested JSON objects that a single document can contain across all nested types. This limit helps
             to prevent out of memory errors when a document contains too many nested objects.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___IndexSettingsMappingLimitTotalFields:
       type: object
       properties:
@@ -49362,20 +49466,86 @@ components:
             The maximum number of fields in an index. Field and object mappings, as well as field aliases count towards this limit.
             The limit is in place to prevent mappings and searches from becoming too large. Higher values can lead to performance
             degradations and memory issues, especially in clusters with a high load or few resources.
-          type: integer
-          format: int64
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___IndexSettingsMerge:
       type: object
       properties:
+        log_byte_size_policy:
+          $ref: '#/components/schemas/indices._common___IndexSettingsMergeLogByteSizePolicy'
+        policy:
+          $ref: '#/components/schemas/indices._common___IndexSettingsMergePolicy'
+        policy.deletes_pct_allowed:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+        policy.expunge_deletes_allowed:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+        policy.floor_segment:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        policy.max_merge_at_once:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        policy.max_merged_segment:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        policy.reclaim_deletes_weight:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+        policy.segments_per_tier:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
         scheduler:
           $ref: '#/components/schemas/indices._common___IndexSettingsMergeScheduler'
+    indices._common___IndexSettingsMergeLogByteSizePolicy:
+      type: object
+      properties:
+        max_merge_segment:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        max_merge_segment_forced_merge:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        max_merged_docs:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        merge_factor:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        min_merge:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        no_cfs_ratio:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+    indices._common___IndexSettingsMergePolicy:
+      oneOf:
+        - title: name
+          $ref: '#/components/schemas/indices._common___IndexSettingsMergePolicyName'
+        - title: tiered_policy_config
+          $ref: '#/components/schemas/indices._common___IndexSettingsMergeTieredPolicy'
+    indices._common___IndexSettingsMergePolicyName:
+      type: string
+      enum:
+        - default
+        - log_byte_size
+        - tiered
     indices._common___IndexSettingsMergeScheduler:
       type: object
       properties:
+        auto_throttle:
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         max_thread_count:
-          $ref: '#/components/schemas/_common___Stringifiedinteger'
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         max_merge_count:
-          $ref: '#/components/schemas/_common___Stringifiedinteger'
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+    indices._common___IndexSettingsMergeTieredPolicy:
+      type: object
+      properties:
+        deletes_pct_allowed:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+        expunge_deletes_allowed:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+        floor_segment:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        max_merge_at_once:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        max_merge_at_once_explicit:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+          x-version-removed: '2.0'
+        max_merged_segment:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        reclaim_deletes_weight:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
+        segments_per_tier:
+          $ref: '#/components/schemas/_common___StringifiedDouble'
     indices._common___IndexSettingsQueries:
       type: object
       properties:
@@ -49385,21 +49555,41 @@ components:
       type: object
       properties:
         enabled:
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
       required:
         - enabled
     indices._common___IndexSettingsQueryString:
       type: object
       properties:
         lenient:
-          $ref: '#/components/schemas/_common___Stringifiedboolean'
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
     indices._common___IndexSettingsSearch:
       type: object
       properties:
+        concurrent:
+          $ref: '#/components/schemas/indices._common___IndexSettingsSearchConcurrent'
+        concurrent_segment_search:
+          $ref: '#/components/schemas/indices._common___IndexSettingsSearchConcurrentSegmentSearch'
+        default_pipeline:
+          type: string
         idle:
           $ref: '#/components/schemas/indices._common___SearchIdle'
         slowlog:
           $ref: '#/components/schemas/indices._common___SearchSlowlog'
+        throttled:
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
+    indices._common___IndexSettingsSearchConcurrent:
+      type: object
+      properties:
+        max_slice_count:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+    indices._common___IndexSettingsSearchConcurrentSegmentSearch:
+      type: object
+      properties:
+        mode:
+          type: string
+        enabled:
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
     indices._common___IndexSettingsSimilarity:
       type: object
       properties:
@@ -49523,6 +49713,42 @@ components:
       required:
         - script
         - type
+    indices._common___IndexSettingsStarTree:
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStarTreeDefault'
+        field:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStarTreeField'
+        max_fields:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+    indices._common___IndexSettingsStarTreeDefault:
+      type: object
+      properties:
+        max_leaf_docs:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+    indices._common___IndexSettingsStarTreeField:
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStarTreeFieldDefault'
+        max_base_metrics:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        max_date_intervals:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+        max_dimensions:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+    indices._common___IndexSettingsStarTreeFieldDefault:
+      type: object
+      properties:
+        date_intervals:
+          type: array
+          items:
+            type: string
+        metrics:
+          type: array
+          items:
+            type: string
     indices._common___IndexSettingsStore:
       type: object
       properties:
@@ -49534,9 +49760,50 @@ components:
             This is a Boolean setting indicating whether or not memory-mapping is allowed. The default is to allow it. This
             setting is useful, for example, if you are in an environment where you can not control the ability to create a lot
             of memory maps so you need disable the ability to use memory-mapping.
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
+        fs:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStoreFs'
+        hybrid:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStoreHybrid'
+        preload:
+          type: array
+          items:
+            type: string
+        stats_refresh_interval:
+          $ref: '#/components/schemas/_common___Duration'
       required:
         - type
+    indices._common___IndexSettingsStoreFs:
+      type: object
+      properties:
+        fs_lock:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStoreFsLock'
+    indices._common___IndexSettingsStoreFsLock:
+      type: string
+      enum:
+        - native
+        - simple
+    indices._common___IndexSettingsStoreHybrid:
+      type: object
+      properties:
+        mmap:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStoreHybridMmap'
+        nio:
+          $ref: '#/components/schemas/indices._common___IndexSettingsStoreHybridNio'
+    indices._common___IndexSettingsStoreHybridMmap:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
+    indices._common___IndexSettingsStoreHybridNio:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
     indices._common___IndexState:
       type: object
       properties:
@@ -49696,16 +49963,25 @@ components:
       properties:
         enabled:
           description: Indicates whether soft deletes are enabled on the index.
-          type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
+        retention:
+          $ref: '#/components/schemas/indices._common___SoftDeletesRetention'
         retention_lease:
           $ref: '#/components/schemas/indices._common___RetentionLease'
+    indices._common___SoftDeletesRetention:
+      type: object
+      properties:
+        operations:
+          $ref: '#/components/schemas/_common___StringifiedLong'
     indices._common___StorageType:
-      type: string
-      enum:
-        - fs
-        - hybridfs
-        - mmapfs
-        - niofs
+      anyOf:
+        - type: string
+          enum:
+            - fs
+            - hybridfs
+            - mmapfs
+            - niofs
+        - type: string
     indices._common___TemplateMapping:
       type: object
       properties:
@@ -49741,6 +50017,8 @@ components:
         durability:
           $ref: '#/components/schemas/indices._common___TranslogDurability'
         flush_threshold_size:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        generation_threshold_size:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         retention:
           $ref: '#/components/schemas/indices._common___TranslogRetention'
@@ -49920,6 +50198,7 @@ components:
         store_size:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         store_size_bytes:
+          description: Total size, in bytes, of all shards for the data stream's backing indexes.
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - backing_indices
@@ -52793,12 +53072,16 @@ components:
       type: object
       properties:
         estimated_size:
+          description: Estimated memory used for the operation.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         estimated_size_in_bytes:
+          description: Estimated memory used, in bytes, for the operation.
           $ref: '#/components/schemas/_common___ByteCount'
         limit_size:
+          description: Memory limit for the circuit breaker.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         limit_size_in_bytes:
+          description: Memory limit, in bytes, for the circuit breaker.
           $ref: '#/components/schemas/_common___ByteCount'
         overhead:
           description: A constant that all estimates for the circuit breaker are multiplied with to calculate a final estimate.
@@ -52890,6 +53173,7 @@ components:
           description: Number of requests from this client.
           type: number
         request_size_bytes:
+          description: Cumulative size in bytes of all requests from this client.
           $ref: '#/components/schemas/_common___ByteCount'
         x_opaque_id:
           description: |-
@@ -53009,14 +53293,18 @@ components:
       type: object
       properties:
         available:
+          description: Total amount of disk space available to this Java virtual machine on this file store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         available_in_bytes:
+          description: Total number of bytes available to this Java virtual machine on this file store.
           $ref: '#/components/schemas/_common___ByteCount'
         cache_reserved:
           x-version-added: '2.7'
+          description: Total number of cache bytes reserved available to this Java virtual machine on this file store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         cache_reserved_in_bytes:
           x-version-added: '2.7'
+          description: Total number of cache bytes reserved available to this Java virtual machine on this file store.
           $ref: '#/components/schemas/_common___ByteCount'
         disk_queue:
           type: string
@@ -53033,8 +53321,10 @@ components:
         disk_write_size_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
         free:
+          description: Total amount of unallocated disk space in the file store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         free_in_bytes:
+          description: Total number of unallocated bytes in the file store.
           $ref: '#/components/schemas/_common___ByteCount'
         mount:
           description: 'Mount point of the file store (for example: `/dev/sda2`).'
@@ -53043,8 +53333,10 @@ components:
           description: Path to the file store.
           type: string
         total:
+          description: Total size of the file store.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_in_bytes:
+          description: Total size of the file store in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         type:
           description: 'Type of the file store (ex: ext4).'
@@ -53077,8 +53369,10 @@ components:
         - type: object
           properties:
             free_percent:
+              description: Percentage of free memory.
               $ref: '#/components/schemas/_common___PercentageNumber'
             used_percent:
+              description: Percentage of used memory.
               $ref: '#/components/schemas/_common___PercentageNumber'
     nodes._common___FileSystem:
       type: object
@@ -53101,22 +53395,36 @@ components:
       type: object
       properties:
         available:
+          description: |-
+            Total disk space available to this Java virtual machine on all file stores.
+            Depending on OS or process level restrictions, this might appear less than `free`.
+            This is the actual amount of free disk space the OpenSearch node can utilize.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         available_in_bytes:
+          description: |-
+            Total number of bytes available to this Java virtual machine on all file stores.
+            Depending on OS or process level restrictions, this might appear less than `free_in_bytes`.
+            This is the actual amount of free disk space the OpenSearch node can utilize.
           $ref: '#/components/schemas/_common___ByteCount'
         free:
+          description: Total unallocated disk space in all file stores.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         free_in_bytes:
+          description: Total number of unallocated bytes in all file stores.
           $ref: '#/components/schemas/_common___ByteCount'
         total:
+          description: Total size of all file stores.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_in_bytes:
+          description: Total size of all file stores in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         cache_reserved:
           x-version-added: '2.7'
+          description: Total size of cache bytes reserved in all file stores.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         cache_reserved_in_bytes:
           x-version-added: '2.7'
+          description: Total size of cache bytes reserved in all file stores.
           $ref: '#/components/schemas/_common___ByteCount'
     nodes._common___GarbageCollector:
       type: object
@@ -53165,6 +53473,9 @@ components:
         limit:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         limit_in_bytes:
+          description: |-
+            Configured memory limit, in bytes, for the indexing requests.
+            Replica requests have an automatic limit that is 1.5x this value.
           $ref: '#/components/schemas/_common___ByteCount'
         current:
           $ref: '#/components/schemas/nodes._common___PressureMemory'
@@ -53287,26 +53598,37 @@ components:
       type: object
       properties:
         heap_used:
+          description: Memory currently in use by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         heap_used_in_bytes:
+          description: Memory, in bytes, currently in use by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         heap_used_percent:
+          description: Percentage of memory currently in use by the heap.
           $ref: '#/components/schemas/_common___PercentageNumber'
         heap_committed:
+          description: Amount of memory available for use by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         heap_committed_in_bytes:
+          description: Amount of memory, in bytes, available for use by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         heap_max:
+          description: Maximum amount of memory available for use by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         heap_max_in_bytes:
+          description: Maximum amount of memory, in bytes, available for use by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         non_heap_used:
+          description: Non-heap memory used.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         non_heap_used_in_bytes:
+          description: Non-heap memory used, in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         non_heap_committed:
+          description: Amount of non-heap memory available.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         non_heap_committed_in_bytes:
+          description: Amount of non-heap memory available, in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         pools:
           description: Contains statistics about heap memory usage for the node.
@@ -53346,6 +53668,9 @@ components:
       type: object
       properties:
         adjusted_total_in_bytes:
+          description: |-
+            If the amount of physical memory has been overridden using the `es`.`total_memory_bytes` system property then this reports the overridden value in bytes.
+            Otherwise it reports the same value as `total_in_bytes`.
           $ref: '#/components/schemas/_common___ByteCount'
         resident:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
@@ -53360,16 +53685,22 @@ components:
         total_virtual_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
         total:
+          description: Total amount of physical memory.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_in_bytes:
+          description: Total amount of physical memory in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         free:
+          description: Amount of free physical memory.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         free_in_bytes:
+          description: Amount of free physical memory in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         used:
+          description: Amount of used physical memory.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         used_in_bytes:
+          description: Amount of used physical memory in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
     nodes._common___NodeBufferPool:
       type: object
@@ -53378,12 +53709,16 @@ components:
           description: Number of buffer pools.
           type: number
         total_capacity:
+          description: Total capacity of buffer pools.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         total_capacity_in_bytes:
+          description: Total capacity of buffer pools in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
         used:
+          description: Size of buffer pools.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         used_in_bytes:
+          description: Size of buffer pools in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
     nodes._common___NodeReloadError:
       type: object
@@ -53420,22 +53755,31 @@ components:
       type: object
       properties:
         used:
+          description: Memory used by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         used_in_bytes:
+          description: Memory, in bytes, used by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         max:
+          description: Maximum amount of memory available for use by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         max_in_bytes:
+          description: Maximum amount of memory, in bytes, available for use by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         peak_used:
+          description: Largest amount of memory historically used by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         peak_used_in_bytes:
+          description: Largest amount of memory, in bytes, historically used by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         peak_max:
+          description: Largest amount of memory historically used by the heap.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         peak_max_in_bytes:
+          description: Largest amount of memory, in bytes, historically used by the heap.
           $ref: '#/components/schemas/_common___ByteCount'
         last_gc_stats:
+          description: Most recent GC cycle stats for a particular memory pool.
           $ref: '#/components/schemas/nodes._common___LastGcStats'
     nodes._common___PressureMemory:
       type: object
@@ -53443,22 +53787,29 @@ components:
         all:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         all_in_bytes:
+          description: Memory consumed, in bytes, by indexing requests in the coordinating, primary, or replica stage.
           $ref: '#/components/schemas/_common___ByteCount'
         combined_coordinating_and_primary:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         combined_coordinating_and_primary_in_bytes:
+          description: |-
+            Memory consumed, in bytes, by indexing requests in the coordinating or primary stage.
+            This value is not the sum of coordinating and primary as a node can reuse the coordinating memory if the primary stage is executed locally.
           $ref: '#/components/schemas/_common___ByteCount'
         coordinating:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         coordinating_in_bytes:
+          description: Memory consumed, in bytes, by indexing requests in the coordinating stage.
           $ref: '#/components/schemas/_common___ByteCount'
         primary:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         primary_in_bytes:
+          description: Memory consumed, in bytes, by indexing requests in the primary stage.
           $ref: '#/components/schemas/_common___ByteCount'
         replica:
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         replica_in_bytes:
+          description: Memory consumed, in bytes, by indexing requests in the replica stage.
           $ref: '#/components/schemas/_common___ByteCount'
         coordinating_rejections:
           description: Number of indexing requests rejected in the coordinating stage.
@@ -53530,6 +53881,7 @@ components:
       type: object
       properties:
         last_successful_fetch_of_pinned_timestamps:
+          description: Timestamp for the last successful fetch of pinned timestamps.
           $ref: '#/components/schemas/_common___StringifiedEpochTimeUnitSeconds'
     nodes._common___SampleType:
       type: string
@@ -53921,6 +54273,9 @@ components:
           description: Number of threads in the thread pool.
           type: number
         total_wait_time:
+          description: |
+            The total amount of time that tasks spend waiting in the thread pool queue.
+            Currently, only `search`, `search_throttled`, and `index_searcher` thread pools support this metric.
           $ref: '#/components/schemas/_common___Duration'
         total_wait_time_in_nanos:
           description: |
@@ -53953,8 +54308,10 @@ components:
           description: Total number of RX (receive) packets received by the node during internal cluster communication.
           type: number
         rx_size:
+          description: Size of RX packets received by the node during internal cluster communication.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         rx_size_in_bytes:
+          description: Size, in bytes, of RX packets received by the node during internal cluster communication.
           $ref: '#/components/schemas/_common___ByteCount'
         server_open:
           description: Current number of inbound TCP connections used for internal communication between nodes.
@@ -53963,8 +54320,10 @@ components:
           description: Total number of TX (transmit) packets sent by the node during internal cluster communication.
           type: number
         tx_size:
+          description: Size of TX packets sent by the node during internal cluster communication.
           $ref: '#/components/schemas/_common___HumanReadableByteCount'
         tx_size_in_bytes:
+          description: Size, in bytes, of TX packets sent by the node during internal cluster communication.
           $ref: '#/components/schemas/_common___ByteCount'
         total_outbound_connections:
           description: |-
