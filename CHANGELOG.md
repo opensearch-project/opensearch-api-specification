@@ -36,6 +36,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `ml._common.yaml#SearchModelsResponse` and `SearchModelsHitsHit` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
 - Fixed `refresh` options to allow `boolean` and `string` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
 - Fixed `value` type in `ExplanationDetail` and added `_type` to `explain@200` ([#685](https://github.com/opensearch-project/opensearch-api-specification/pull/685))
+- Fixed index settings types ([#684](https://github.com/opensearch-project/opensearch-api-specification/pull/684))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))

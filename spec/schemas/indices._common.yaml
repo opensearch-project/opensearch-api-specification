@@ -27,31 +27,27 @@ components:
         sort:
           $ref: '#/components/schemas/IndexSegmentSort'
         number_of_shards:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         number_of_replicas:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         number_of_routing_shards:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         check_on_startup:
           $ref: '#/components/schemas/IndexCheckOnStartup'
         codec:
           type: string
         routing_partition_size:
-          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         load_fixed_bitset_filters_eagerly:
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         hidden:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         auto_expand_replicas:
           type: string
         merge:
           $ref: '#/components/schemas/IndexSettingsMerge'
         merge.scheduler.max_thread_count:
-          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         search:
           $ref: '#/components/schemas/IndexSettingsSearch'
         search.idle.after:
@@ -59,45 +55,45 @@ components:
         refresh_interval:
           $ref: '_common.yaml#/components/schemas/Duration'
         max_result_window:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_inner_result_window:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_rescore_window:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_docvalue_fields_search:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_script_fields:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_ngram_diff:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_shingle_diff:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         blocks:
           $ref: '#/components/schemas/IndexSettingBlocks'
         blocks.read_only:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         blocks.read_only_allow_delete:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         blocks.read:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         blocks.write:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         blocks.metadata:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         max_refresh_listeners:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         analyze:
           $ref: '#/components/schemas/IndexSettingsAnalyze'
         analyze.max_token_count:
-          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         highlight:
           $ref: '#/components/schemas/IndexSettingsHighlight'
         highlight.max_analyzed_offset:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_terms_count:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_regex_length:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         routing:
           $ref: '#/components/schemas/IndexRouting'
         gc_deletes:
@@ -121,13 +117,13 @@ components:
         version:
           $ref: '#/components/schemas/IndexVersioning'
         verified_before_close:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         format:
           oneOf:
             - type: string
             - type: number
         max_slices_per_scroll:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         translog:
           $ref: '#/components/schemas/Translog'
         translog.durability:
@@ -137,13 +133,13 @@ components:
         query_string:
           $ref: '#/components/schemas/IndexSettingsQueryString'
         query_string.lenient:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         priority:
           oneOf:
             - type: number
             - type: string
         top_metrics_max_size:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         analysis:
           $ref: '#/components/schemas/IndexSettingsAnalysis'
         settings:
@@ -161,9 +157,11 @@ components:
         store:
           $ref: '#/components/schemas/IndexSettingsStore'
         knn:
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         knn.algo_param.ef_search:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        composite_index.star_tree:
+          $ref: '#/components/schemas/IndexSettingsStarTree'
       additionalProperties:
         title: custom_settings
     IndexSettingsIndexing:
@@ -176,9 +174,16 @@ components:
       properties:
         enabled:
           description: Indicates whether soft deletes are enabled on the index.
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        retention:
+          $ref: '#/components/schemas/SoftDeletesRetention'
         retention_lease:
           $ref: '#/components/schemas/RetentionLease'
+    SoftDeletesRetention:
+      type: object
+      properties:
+        operations:
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     RetentionLease:
       type: object
       properties:
@@ -233,22 +238,109 @@ components:
     IndexSettingsMerge:
       type: object
       properties:
+        log_byte_size_policy:
+          $ref: '#/components/schemas/IndexSettingsMergeLogByteSizePolicy'
+        policy:
+          $ref: '#/components/schemas/IndexSettingsMergePolicy'
+        policy.deletes_pct_allowed:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        policy.expunge_deletes_allowed:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        policy.floor_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        policy.max_merge_at_once:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        policy.max_merged_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        policy.reclaim_deletes_weight:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        policy.segments_per_tier:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
         scheduler:
           $ref: '#/components/schemas/IndexSettingsMergeScheduler'
     IndexSettingsMergeScheduler:
       type: object
       properties:
+        auto_throttle:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         max_thread_count:
-          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_merge_count:
-          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+    IndexSettingsMergePolicy:
+      oneOf:
+        - title: name
+          $ref: '#/components/schemas/IndexSettingsMergePolicyName'
+        - title: tiered_policy_config
+          $ref: '#/components/schemas/IndexSettingsMergeTieredPolicy'
+    IndexSettingsMergePolicyName:
+      type: string
+      enum:
+        - default
+        - log_byte_size
+        - tiered
+    IndexSettingsMergeTieredPolicy:
+      type: object
+      properties:
+        deletes_pct_allowed:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        expunge_deletes_allowed:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        floor_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        max_merge_at_once:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_merge_at_once_explicit:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+          x-version-removed: '2.0'
+        max_merged_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        reclaim_deletes_weight:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+        segments_per_tier:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
+    IndexSettingsMergeLogByteSizePolicy:
+      type: object
+      properties:
+        max_merge_segment:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        max_merge_segment_forced_merge:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        max_merged_docs:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        merge_factor:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        min_merge:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        no_cfs_ratio:
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
     IndexSettingsSearch:
       type: object
       properties:
+        concurrent:
+          $ref: '#/components/schemas/IndexSettingsSearchConcurrent'
+        concurrent_segment_search:
+          $ref: '#/components/schemas/IndexSettingsSearchConcurrentSegmentSearch'
+        default_pipeline:
+          type: string
         idle:
           $ref: '#/components/schemas/SearchIdle'
         slowlog:
           $ref: '#/components/schemas/SearchSlowlog'
+        throttled:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+    IndexSettingsSearchConcurrent:
+      type: object
+      properties:
+        max_slice_count:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+    IndexSettingsSearchConcurrentSegmentSearch:
+      type: object
+      properties:
+        mode:
+          type: string
+        enabled:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     SearchIdle:
       type: object
       properties:
@@ -285,25 +377,25 @@ components:
       type: object
       properties:
         read_only:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         read_only_allow_delete:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         read:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         write:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         metadata:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexSettingsAnalyze:
       type: object
       properties:
         max_token_count:
-          $ref: '_common.yaml#/components/schemas/Stringifiedinteger'
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsHighlight:
       type: object
       properties:
         max_analyzed_offset:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexRouting:
       type: object
       properties:
@@ -322,6 +414,8 @@ components:
           $ref: '#/components/schemas/IndexRoutingAllocationInitialRecovery'
         disk:
           $ref: '#/components/schemas/IndexRoutingAllocationDisk'
+        total_shards_per_node:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexRoutingAllocationOptions:
       type: string
       enum:
@@ -345,7 +439,7 @@ components:
       type: object
       properties:
         threshold_enabled:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexRoutingRebalance:
       type: object
       properties:
@@ -366,7 +460,7 @@ components:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         indexing_complete:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         origination_date:
           description: |-
             If specified, this is the timestamp used to calculate the index age for its phase transitions. Use this setting
@@ -411,6 +505,8 @@ components:
           $ref: '#/components/schemas/TranslogDurability'
         flush_threshold_size:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        generation_threshold_size:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         retention:
           $ref: '#/components/schemas/TranslogRetention'
     TranslogDurability:
@@ -431,7 +527,7 @@ components:
       type: object
       properties:
         lenient:
-          $ref: '_common.yaml#/components/schemas/Stringifiedboolean'
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexSettingsAnalysis:
       type: object
       properties:
@@ -464,7 +560,7 @@ components:
       type: object
       properties:
         enabled:
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
       required:
         - enabled
     IndexSettingsSimilarity:
@@ -594,7 +690,7 @@ components:
       type: object
       properties:
         coerce:
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         total_fields:
           $ref: '#/components/schemas/IndexSettingsMappingLimitTotalFields'
         depth:
@@ -608,7 +704,7 @@ components:
         dimension_fields:
           $ref: '#/components/schemas/IndexSettingsMappingLimitDimensionFields'
         ignore_malformed:
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexSettingsMappingLimitTotalFields:
       type: object
       properties:
@@ -617,8 +713,7 @@ components:
             The maximum number of fields in an index. Field and object mappings, as well as field aliases count towards this limit.
             The limit is in place to prevent mappings and searches from becoming too large. Higher values can lead to performance
             degradations and memory issues, especially in clusters with a high load or few resources.
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexSettingsMappingLimitDepth:
       type: object
       properties:
@@ -626,8 +721,7 @@ components:
           description: |-
             The maximum depth for a field, which is measured as the number of inner objects. For instance, if all fields are defined
             at the root object level, then the depth is `1`. If there is one object mapping, then the depth is `2`.
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexSettingsMappingLimitNestedFields:
       type: object
       properties:
@@ -636,8 +730,7 @@ components:
             The maximum number of distinct nested mappings in an index. The nested type should only be used in special cases, when
             arrays of objects need to be queried independently of each other. To safeguard against poorly designed mappings, this
             setting limits the number of unique nested types per index.
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexSettingsMappingLimitNestedObjects:
       type: object
       properties:
@@ -645,8 +738,7 @@ components:
           description: |-
             The maximum number of nested JSON objects that a single document can contain across all nested types. This limit helps
             to prevent out of memory errors when a document contains too many nested objects.
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexSettingsMappingLimitFieldNameLength:
       type: object
       properties:
@@ -655,8 +747,7 @@ components:
             Setting for the maximum length of a field name. This setting isn't really something that addresses mappings explosion but
             might still be useful if you want to limit the field length. It usually shouldn't be necessary to set this setting. The
             default is okay unless a user starts to add a huge number of fields with really long names. Default is `Long.MAX_VALUE` (no limit).
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexSettingsMappingLimitDimensionFields:
       type: object
       properties:
@@ -664,17 +755,16 @@ components:
           description: |-
             [preview] This functionality is in technical preview and may be changed or removed in a future release.
             OpenSearch will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexingSlowlog:
       type: object
       properties:
         level:
           type: string
         source:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         reformat:
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         threshold:
           $ref: '#/components/schemas/IndexingSlowlogThresholds'
     IndexingSlowlogThresholds:
@@ -712,16 +802,95 @@ components:
             This is a Boolean setting indicating whether or not memory-mapping is allowed. The default is to allow it. This
             setting is useful, for example, if you are in an environment where you can not control the ability to create a lot
             of memory maps so you need disable the ability to use memory-mapping.
-          type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        fs:
+          $ref: '#/components/schemas/IndexSettingsStoreFs'
+        hybrid:
+          $ref: '#/components/schemas/IndexSettingsStoreHybrid'
+        preload:
+          type: array
+          items:
+            type: string
+        stats_refresh_interval:
+          $ref: '_common.yaml#/components/schemas/Duration'
       required:
         - type
-    StorageType:
+    IndexSettingsStoreFs:
+      type: object
+      properties:
+        fs_lock:
+          $ref: '#/components/schemas/IndexSettingsStoreFsLock'
+    IndexSettingsStoreFsLock:
       type: string
       enum:
-        - fs
-        - hybridfs
-        - mmapfs
-        - niofs
+        - native
+        - simple
+    IndexSettingsStoreHybrid:
+      type: object
+      properties:
+        mmap:
+          $ref: '#/components/schemas/IndexSettingsStoreHybridMmap'
+        nio:
+          $ref: '#/components/schemas/IndexSettingsStoreHybridNio'
+    IndexSettingsStoreHybridMmap:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
+    IndexSettingsStoreHybridNio:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
+    StorageType:
+      anyOf:
+        - type: string
+          enum:
+            - fs
+            - hybridfs
+            - mmapfs
+            - niofs
+        - type: string
+    IndexSettingsStarTree:
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/IndexSettingsStarTreeDefault'
+        field:
+          $ref: '#/components/schemas/IndexSettingsStarTreeField'
+        max_fields:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+    IndexSettingsStarTreeDefault:
+      type: object
+      properties:
+        max_leaf_docs:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+    IndexSettingsStarTreeField:
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/IndexSettingsStarTreeFieldDefault'
+        max_base_metrics:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_date_intervals:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_dimensions:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+    IndexSettingsStarTreeFieldDefault:
+      type: object
+      properties:
+        date_intervals:
+          type: array
+          items:
+            type: string
+        metrics:
+          type: array
+          items:
+            type: string
     NumericFielddata:
       type: object
       properties:
