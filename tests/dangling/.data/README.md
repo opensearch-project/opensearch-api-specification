@@ -1,6 +1,6 @@
 This container contains data from a detached cluster with a `movies` index. It was created as follows.
 
-Data will be stored in [.data/opensearch-data1](.data/opensearch-data1).
+Data will be stored in [opensearch-data1](./opensearch-data1).
 
 From this `.data` directory.
 
