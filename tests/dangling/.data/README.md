@@ -80,4 +80,10 @@ curl -X POST http://localhost:9200/_cluster/voting_config_exclusions?node_names=
 
 Stop the cluster.
 
+Remove lock files, those will cause an "Underlying file changed by an external force" error when copied to the docker container.
+
+```
+find . -name *.lock | xargs rm 
+```
+
 Now you can run the [single-node docker-compose](../docker-compose.yml) in the folder above.
