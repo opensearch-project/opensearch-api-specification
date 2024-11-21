@@ -25,7 +25,7 @@ export default class KeepDescriptions {
 
   process(): void {
     this.root_folder
-    const files = fg.globSync([`${this.root_folder}/**/*.{yaml,yml}`])
+    const files = fg.globSync([`${this.root_folder}/**/*.{yaml,yml}`], { dot: true })
     files.forEach((path) => {
       this.logger.log(path)
       this.process_file(path)

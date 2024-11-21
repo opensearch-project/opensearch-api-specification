@@ -11,11 +11,12 @@ import KeepDescriptions from 'prepare-for-vale/KeepDescriptions'
 import fs from 'fs'
 import fg from 'fast-glob'
 import tmp from 'tmp'
+import path from 'path'
 
 describe('KeepDescriptions', () => {
   var temp: tmp.DirResult
   var fixture_path: string = './tools/tests/prepare-for-vale/fixtures'
-  var fixtures = fg.globSync(`${fixture_path}/**/*.{yaml,yml}`)
+  var fixtures = fg.globSync(`${fixture_path}/**/*.{yaml,yml}`, { dot: true })
 
   describe('defaults', () => {
     beforeAll(() => {
@@ -32,7 +33,8 @@ describe('KeepDescriptions', () => {
       fixtures.forEach((filename) => {
         test(filename, () => {
           const processed_yaml = filename.replace(fixture_path, temp.name)
-          const filename_txt = processed_yaml.replace(".yaml", ".txt")
+          const basename = path.basename(processed_yaml, path.extname(processed_yaml))
+          const filename_txt = path.join(path.dirname(processed_yaml), basename + '.txt')
           expect(fs.readFileSync(processed_yaml, 'utf8')).toEqual(fs.readFileSync(filename_txt, 'utf8'))
           fs.rmSync(processed_yaml)
           fs.rmSync(filename_txt)
