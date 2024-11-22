@@ -294,7 +294,7 @@ components:
             type: object
             properties:
               ignore_unavailable:
-                description: If `true`, the request ignores data streams and indexes in `indices` that are missing or closed. If `false`, the request returns an error for any data stream or index that is missing or closed.
+                description: If `true`, the request ignores data streams and indexes in `indexes` that are missing or closed. If `false`, the request returns an error for any data stream or index that is missing or closed.
                 type: boolean
               include_global_state:
                 description: If `true`, the current cluster state is included in the snapshot. The cluster state includes persistent cluster settings, composable index templates, legacy index templates, ingest pipelines, and ILM policies. It also includes data stored in system indexes, such as Watches and task records (configurable with `feature_states`).
@@ -342,32 +342,34 @@ components:
                   type: string
               ignore_unavailable:
                 type: boolean
-                description: How to handle data streams or indices that are missing or closed. If `false`, the request returns an error for any data stream or index that is missing or closed. If `true`, the request ignores data streams and indices in indices that are missing or closed. Defaults to `false`.
+                description: How to handle data streams or indexes that are missing or closed. If `false`, the request returns an error for any data stream or index that is missing or closed. If `true`, the request ignores data streams and indexes in indexes that are missing or closed. Defaults to `false`.
               include_aliases:
                 type: boolean
-                description: How to handle index aliases from the original snapshot. If `true`, index aliases from the original snapshot are restored. If `false`, aliases along with associated indices are not restored. Defaults to `true`.
+                description: How to handle index aliases from the original snapshot. If `true`, index aliases from the original snapshot are restored. If `false`, aliases along with associated indexes are not restored. Defaults to `true`.
               include_global_state:
                 type: boolean
                 description: Whether to restore the current cluster state. If `false`, the cluster state is not restored. If true, the current cluster state is restored. Defaults to `false`.
               index_settings:
-                description: A comma-delimited list of settings to add or change in all restored indices. Use this parameter to override index settings during snapshot restoration. For data streams, these index settings are applied to the restored backing indices.
+                description: A comma-delimited list of settings to add or change in all restored indexes. Use this parameter to override index settings during snapshot restoration. For data streams, these index settings are applied to the restored backing indexes.
                 $ref: '../schemas/indices._common.yaml#/components/schemas/IndexSettings'
               indices:
-                description: A comma-delimited list of data streams and indices to restore from the snapshot. Multi-index syntax is supported. By default, a restore operation includes all data streams and indices in the snapshot. If this argument is provided, the restore operation only includes the data streams and indices that you specify.
+                description: A comma-delimited list of data streams and indexes to restore from the snapshot. Multi-index syntax is supported. By default, a restore operation includes all data streams and indexes in the snapshot. If this argument is provided, the restore operation only includes the data streams and indexes that you specify.
                 $ref: '../schemas/_common.yaml#/components/schemas/Indices'
               partial:
                 type: boolean
                 description: |-
-                  How the restore operation will behave if indices in the snapshot do not have all primary shards available. If `false`, the entire restore operation fails if any indices in the snapshot do not have all primary shards available.
-                  If `true`, allows the restoration of a partial snapshot of indices with unavailable shards. Only shards that were successfully included in the snapshot are restored. All missing shards are recreated as empty. By default, the entire restore operation fails if one or more indices included in the snapshot do not have all primary shards available. To change this behavior, set `partial` to `true`. Defaults to `false`.
+                  How the restore operation will behave if indexes in the snapshot do not have all primary shards available.
+                  If `false`, the entire restore operation fails if any indexes in the snapshot do not have all primary shards available.
+                  If `true`, allows the restoration of a partial snapshot of indexes with unavailable shards. Only shards that were successfully included in the snapshot are restored. All missing shards are recreated as empty. By default, the entire restore operation fails if one or more indexes included in the snapshot do not have all primary shards available. To change this behavior, set `partial` to `true`.
+                  Defaults to `false`.
               rename_pattern:
                 type: string
                 description: |-
-                  The pattern to apply to the restored data streams and indices. Data streams and indices matching the rename pattern will be renamed according to the `rename_replacement` setting.
+                  The pattern to apply to the restored data streams and indexes. Data streams and indexes matching the rename pattern will be renamed according to the `rename_replacement` setting.
                   The rename pattern is applied as defined by the regular expression that supports referencing the original text.
-                  The request fails if two or more data streams or indices are renamed into the same name.
-                  If you rename a restored data stream, its backing indices are also renamed. For example, if you rename the logs data stream to `recovered-logs`, the backing index `.ds-logs-1` is renamed to `.ds-recovered-logs-1`.
-                  If you rename a restored stream, ensure an index template matches the new stream name. If there are no matching index template names, the stream cannot roll over and new backing indices are not created.
+                  The request fails if two or more data streams or indexes are renamed into the same name.
+                  If you rename a restored data stream, its backing indexes are also renamed. For example, if you rename the logs data stream to `recovered-logs`, the backing index `.ds-logs-1` is renamed to `.ds-recovered-logs-1`.
+                  If you rename a restored stream, ensure an index template matches the new stream name. If there are no matching index template names, the stream cannot roll over and new backing indexes are not created.
               rename_replacement:
                 type: string
                 description: The rename replacement string.
