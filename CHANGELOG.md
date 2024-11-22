@@ -16,6 +16,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `PhoneAnalyzer` from `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
 - Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
 - Added `GET` and `HEAD /{index}/_source/{id}` returning `404` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
+- Added `rename_alias_pattern` and `rename_alias_replacment` to `/_snapshot/{repository}/{snapshot}/_restore` body parameters ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -148,7 +149,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added `rename_alias_pattern` and `rename_alias_replacment` to `/_snapshot/{repository}/{snapshot}/_restore` body parameters ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
 
 ### Changed
 
