@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  opensearch-cluster:
+    build:
+      context: .
+      args:
+        - OPENSEARCH_DOCKER_HUB_PROJECT=${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}
+        - OPENSEARCH_DOCKER_REF=${OPENSEARCH_DOCKER_REF}
+        - OPENSEARCH_VERSION=2.17.0
+    ports:
+      - 9200:9200
+      - 9600:9600
+    environment:
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - discovery.type=single-node

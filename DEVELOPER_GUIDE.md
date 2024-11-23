@@ -1,39 +1,34 @@
 <!-- TOC -->
-* [Developer Guide](#developer-guide)
-  * [Getting Started](#getting-started)
-  * [Specification](#specification)
-    * [File Structure](#file-structure)
-    * [Grouping Operations](#grouping-operations)
-    * [Grouping Schemas](#grouping-schemas)
-    * [Superseded Operations](#superseded-operations)
-    * [Global Parameters](#global-parameters)
-    * [OpenAPI Extensions](#openapi-extensions)
-  * [Writing Spec Tests](#writing-spec-tests)
-  * [Tools](#tools)
-    * [Setup](#setup)
-    * [Spec Merger](#spec-merger)
-      * [Arguments](#arguments)
-      * [Example](#example)
-    * [Spec Linter](#spec-linter)
-      * [Arguments](#arguments-1)
-      * [Example](#example-1)
-    * [Spec Tester](#spec-tester)
-    * [Dump Cluster Spec](#dump-cluster-spec)
-      * [Arguments](#arguments-2)
-      * [Example](#example-2)
-    * [Coverage](#coverage)
-      * [Arguments](#arguments-3)
-      * [Example](#example-3)
-    * [Tools Testing](#tools-testing)
-    * [Tools Linting](#tools-linting)
-  * [Workflows](#workflows)
-    * [Analyze PR Changes](#analyze-pr-changes)
-    * [Build](#build)
-    * [Deploy GitHub Pages](#deploy-github-pages)
-    * [Comment on PR](#comment-on-pr)
-    * [Test Tools (Unit)](#test-tools--unit-)
-    * [Test Tools (Integration)](#test-tools--integration-)
-    * [Validate Spec](#validate-spec)
+- [Developer Guide](#developer-guide)
+  - [Getting Started](#getting-started)
+  - [Specification](#specification)
+    - [File Structure](#file-structure)
+    - [Grouping Operations](#grouping-operations)
+    - [Grouping Schemas](#grouping-schemas)
+    - [Superseded Operations](#superseded-operations)
+    - [Global Parameters](#global-parameters)
+    - [OpenAPI Extensions](#openapi-extensions)
+  - [Writing Spec Tests](#writing-spec-tests)
+  - [Tools](#tools)
+    - [Setup](#setup)
+    - [Spec Merger](#spec-merger)
+    - [Spec Linter](#spec-linter)
+    - [Spec Tester](#spec-tester)
+    - [Spec Style](#spec-style)
+    - [Dump Cluster Spec](#dump-cluster-spec)
+    - [Coverage](#coverage)
+    - [Tools Testing](#tools-testing)
+    - [Tools Linting](#tools-linting)
+  - [Workflows](#workflows)
+    - [Analyze PR Changes](#analyze-pr-changes)
+    - [Build](#build)
+    - [Deploy GitHub Pages](#deploy-github-pages)
+    - [Comment on PR](#comment-on-pr)
+    - [Test Tools (Unit)](#test-tools-unit)
+    - [Test Tools (Integration)](#test-tools-integration)
+    - [Validate Spec (Lint)](#validate-spec-lint)
+    - [Validate Spec (Python)](#validate-spec-python)
+    - [Validate Spec (Ruby)](#validate-spec-ruby)
 <!-- TOC -->
 
 # Developer Guide
@@ -173,13 +168,13 @@ npm run merge -- --help
 
 The merger tool merges the multi-file OpenSearch spec into a single file for programmatic use.
 
-#### Arguments
+**Arguments**
 
 - `--source <path>`: The path to the root folder of the multi-file spec, defaults to `<repository-root>/spec`.
 - `--output <path>`: The path to write the final merged spec to, defaults to `<repository-root>/build/opensearch-openapi.yaml`.
 - `--opensearch-version`: An optional target version of OpenSearch, checking values of `x-version-added` and `x-version-removed`.
 
-#### Example
+**Example**
 
 We can take advantage of the default values and simply merge the specification via:
 ```bash
@@ -200,11 +195,11 @@ npm run lint:spec -- --help
 
 The linter tool validates the OpenSearch multi-file spec, and will print out all the errors and warnings in it.
 
-#### Arguments
+**Arguments**
 
 - `--source <path>`: The path to the root folder of the multi-file spec, defaults to `<repository-root>/spec`.
 
-#### Example
+**Example**
 
 We can take advantage of the default values and simply lint the specification via:
 ```bash
@@ -219,6 +214,20 @@ npm run test:spec -- --help
 
 The spec test framework validates the OpenSearch spec against a running OpenSearch cluster. As you modify the spec, you should add or update the spec test stories in the [./tests](tests) directory. For information on this topic, see [TESTING_GUIDE.md](TESTING_GUIDE.md).
 
+### Spec Style
+
+This repo runs [Vale](https://github.com/errata-ai/vale) on the text contents of the spec, such as descriptions.
+
+The [Style prepare tool](tools/src/prepare-for-vale/) clears YAML files from all markup and leaves text in-place in the [style workflow](.github/workflows/style.yml), allowing for comments to appear in pull requests on GitHub.
+
+```bash
+npm run style:prepare -- --help
+```
+
+**Arguments**
+
+- `--source <path>`: The path to the root folder of the multi-file spec, defaults to `<repository-root>/spec`.
+
 ### [Dump Cluster Spec](tools/src/dump-cluster-spec)
 
 ```bash
@@ -227,7 +236,7 @@ npm run dump-cluster-spec -- --help
 
 The dump-cluster-spec tool connects to an OpenSearch cluster which has the [opensearch-api plugin](https://github.com/dblock/opensearch-api) installed and dumps the skeleton OpenAPI specification it provides to a file.
 
-#### Arguments
+**Arguments**
 
 - `--opensearch-url <url>`: The URL at which the cluster is accessible, defaults to `https://localhost:9200`.
 - `--opensearch-insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
@@ -235,7 +244,7 @@ The dump-cluster-spec tool connects to an OpenSearch cluster which has the [open
 - `--opensearch-password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
 - `--output <path>`: The path to write the dumped spec to, defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
 
-#### Example
+**Example**
 
 You can use this repo's [docker image which includes the opensearch-api plugin](coverage/Dockerfile) to spin up a local development cluster with a self-signed certificate (e.g. `https://localhost:9200`) and security enabled, to then dump the skeleton specification:
 ```bash
@@ -264,13 +273,13 @@ npm run coverage:spec -- --help
 
 The coverage tool determines which APIs from the OpenSearch cluster's reference skeleton specification (dumped by the [dump-cluster-spec tool](#dump-cluster-spec)) are covered by this specification (as built by the [merger tool](#merger)).
 
-#### Arguments
+**Arguments**
 
 - `--cluster <path>`: The path to the cluster's reference skeleton specification, as dumped by [dump-cluster-spec](#dump-cluster-spec), defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
 - `--specification <path>`: The path to the merged specification, as built by [merger](#merger), defaults to `<repository-root>/build/opensearch-openapi.yaml`.
 - `--output <path>`: The path to write the coverage data to, defaults to `<repository-root>/build/coverage.json`.
 
-#### Example
+**Example**
 
 Assuming you've already followed the previous examples to build the merged specification with the [merger](#example) and dump the cluster's specification with [dump-cluster-spec](#example-2), you can then calculate the API coverage:
 ```bash
@@ -368,6 +377,30 @@ This workflow runs on PRs to invoke the [tools' unit tests](tools/tests), upload
 
 This workflow runs on PRs to invoke the [tools' integration tests](tools/tests) that require a running instance of OpenSearch to ensure there are no breakages in behavior.
 
-### [Validate Spec](.github/workflows/validate-spec.yml)
+### [Validate Spec (Lint)](.github/workflows/validate-spec-lint.yml)
 
 This workflow runs on PRs to invoke the [spec linter](#spec-linter) and ensure the multi-file spec is correct and follows the design guidelines.
+
+### [Validate Spec (Python)](.github/workflows/validate-spec-py.yml)
+
+This workflow runs on PRs to invoke the [Python openapi-spec-validator](https://pypi.org/project/openapi-spec-validator/) to ensure that the resulting spec can be loaded by Python tools.
+
+You can run the validator locally as follows after installing [pipenv](https://pipenv.pypa.io/en/latest/installation.html).
+
+```
+cd tools/src/validate-spec-py
+pipenv install
+npm run merge ; pipenv run python validate.py ../../../build/opensearch-openapi.yaml
+```
+
+### [Validate Spec (Ruby)](.github/workflows/validate-spec-ruby.yml)
+
+This workflow runs on PRs to invoke the Ruby [Json Schemer](https://github.com/davishmcclurg/json_schemer/) to ensure that the resulting spec can be loaded by Ruby tools.
+
+You can run the validator locally as follows.
+
+```
+cd tools/src/validate-spec-ruby
+bundle install
+npm run merge ; bundle exec ruby validate.rb ../../../build/opensearch-openapi.yaml
+```

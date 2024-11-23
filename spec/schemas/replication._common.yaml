@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Schemas of replication._common category.
-  description: Schemas of replication._common category.
+  title: Schemas of `replication._common` Category.
+  description: Schemas of `replication._common` category..
   version: 1.0.0
 paths: {}
 components:
@@ -10,9 +10,9 @@ components:
       type: object
       properties:
         leader_alias:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
         leader_index:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexName'
         use_roles:
           $ref: '#/components/schemas/UseRoles'
     UseRoles:
@@ -27,14 +27,20 @@ components:
       properties:
         status:
           type: string
+          enum:
+            - BOOTSTRAPPING
+            - PAUSED
+            - REPLICATION NOT IN PROGRESS
+            - RUNNING
+            - SYNCING
         reason:
           type: string
         leader_alias:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
         leader_index:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexName'
         follower_index:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexName'
         syncing_details:
           $ref: '#/components/schemas/SyncingDetails'
     SyncingDetails:
@@ -45,7 +51,7 @@ components:
         follower_checkpoint:
           type: integer
         seq_no:
-          type: integer
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
     LeaderStatus:
       type: object
       properties:
@@ -54,17 +60,17 @@ components:
         operations_read:
           type: number
         translog_size_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         operations_read_lucene:
           type: number
         operations_read_translog:
           type: number
         total_read_time_lucene_millis:
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         total_read_time_translog_millis:
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         bytes_read:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         index_stats:
           type: object
           additionalProperties:
@@ -75,17 +81,17 @@ components:
         operations_read:
           type: number
         translog_size_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         operations_read_lucene:
           type: number
         operations_read_translog:
           type: number
         total_read_time_lucene_millis:
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         total_read_time_translog_millis:
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         bytes_read:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
     FollowerStatus:
       type: object
       properties:
@@ -118,7 +124,7 @@ components:
         leader_checkpoint:
           type: number
         total_write_time_millis:
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         index_stats:
           type: object
           additionalProperties:
@@ -143,7 +149,7 @@ components:
         leader_checkpoint:
           type: number
         total_write_time_millis:
-          type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
     AutoFollowStatus:
       type: object
       properties:
@@ -178,6 +184,8 @@ components:
           type: array
           items:
             type: string
+        last_execution_time:
+          type: number
     SettingsBody:
       type: object
       properties:
@@ -187,7 +195,7 @@ components:
       type: object
       properties:
         settings:
-          anyOf:
+          allOf:
             - type: object
               properties:
                 index.number_of_shards:
@@ -206,7 +214,7 @@ components:
       type: object
       properties:
         leader_alias:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
         name:
           type: string
         pattern:
@@ -217,6 +225,6 @@ components:
       type: object
       properties:
         leader_alias:
-          type: string
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
         name:
           type: string

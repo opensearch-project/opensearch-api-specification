@@ -1,59 +1,53 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test _explain.
+description: Test getting an explanation of how the relevance score is calculated for every result.
+
 epilogues:
   - path: /movies
     method: DELETE
     status: [200, 404]
 prologues:
-  - id: doc
-    path: /movies/_doc
-    method: POST
-    request:
-      payload:
-        title: Beauty and the Beast
-        year: 1991
-    status: [201]
-    output:
-      id: payload._id
-  - path: /_refresh
-    method: POST
-chapters:
-  - synopsis: Post explanation for a document with query.
-    path: /{index}/_explain/{id}
+  - path: /_bulk
     method: POST
     parameters:
-      index: movies
-      id: ${doc.id}
+      refresh: true
     request:
+      content_type: application/x-ndjson
       payload:
-        query:
-          match:
-            title: "Beauty and the Beast"
-    response:
-      status: 200
-      payload:
-        matched: true
-        explanation:
-          value: 1.1507283
-          description: "sum of:"
-          details: []
-  - synopsis: Get explanation for a document.
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Bennett Miller, title: The Cruise, year: 1998}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+chapters:
+  - synopsis: Explain the score for a match query (GET).
     path: /{index}/_explain/{id}
     method: GET
     parameters:
       index: movies
-      id: ${doc.id}
+      id: movie1
     request:
       payload:
         query:
           match:
-            title: "Beauty and the Beast"
+            year: 1998
     response:
       status: 200
+  - synopsis: Explain the score for a match query (POST).
+    path: /{index}/_explain/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: movie2
+      preference: _local
+      routing: primary
+      _source: true
+      _source_excludes: title
+      _source_includes: director
+    request:
       payload:
-        matched: true
-        explanation:
-          value: 1.1507283
-          description: "sum of:"
-          details: []
+        query:
+          match:
+            title: Drive
+    response:
+      status: 200
+

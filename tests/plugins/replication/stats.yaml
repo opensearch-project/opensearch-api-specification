@@ -1,0 +1,84 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test replication APIs specs.
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload: {}
+  - path: /_bulk
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book_1392215}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+  - path: /{index}/_refresh
+    method: POST
+    parameters:
+      index: books
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          cluster:
+            remote:
+              leader-cluster:
+                seeds: ['172.22.0.3:9300']
+  - path: /_plugins/_replication/{index}/_start
+    version: '>= 1.1'
+    method: PUT
+    parameters:
+      index: books-names
+    request:
+      payload:
+        leader_alias: leader-cluster
+        leader_index: books
+        use_roles: 
+          leader_cluster_role: all_access
+          follower_cluster_role: all_access
+epilogues:
+  - path: /_plugins/_replication/{index}/_stop
+    method: POST
+    parameters: 
+      index: books-names
+    request:
+      payload: {}
+  - path: /books-names
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get replication stats.
+    path: /_plugins/_replication/{index}/_status
+    version: '>= 1.1'
+    method: GET
+    parameters:
+      index: books-names
+    response:
+      status: 200
+  - synopsis: Get leader stats.
+    path: /_plugins/_replication/leader_stats
+    version: '>= 1.1'
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get follower stats.
+    path: /_plugins/_replication/follower_stats
+    version: '>= 1.1'
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get auto-follow stats.
+    path: /_plugins/_replication/autofollow_stats
+    version: '>= 1.1'
+    method: GET
+    response:
+      status: 200

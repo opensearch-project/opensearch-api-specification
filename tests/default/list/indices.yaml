@@ -1,0 +1,141 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _list/indices endpoints.
+# TODO: Re-enable in 3.0, see https://github.com/opensearch-project/opensearch-api-specification/pull/613
+version: '>= 2.18 < 3'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload: {}
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unassigned
+      wait_for_active_shards: 0
+    request:
+      payload:
+        settings:
+          routing:
+            allocation:
+              require:
+                test: test
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /unassigned
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: List information related to indexes (text/plain).
+    method: GET
+    path: /_list/indices
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List information related to one index (text/plain).
+    method: GET
+    path: /_list/indices/{index}
+    parameters:
+      index: books
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List information related to indexes with verbose output (v=true).
+    method: GET
+    path: /_list/indices
+    parameters:
+      v: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List information related to indexes with headers (h=header1,header2).
+    method: GET
+    path: /_list/indices
+    parameters:
+      h:
+        - health
+        - status
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List information related to indexes displaying all available headers (help=true).
+    method: GET
+    path: /_list/indices
+    parameters:
+      help: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List information related to indexes with sorted results.
+    method: GET
+    path: /_list/indices
+    parameters:
+      s:
+        - status
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List information related to indexes with bytes, time and all fields.
+    method: GET
+    path: /_list/indices
+    parameters:
+      format: json
+      bytes: b
+      time: s
+      h:
+        - '*'
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List information related to indexes with all fields.
+    method: GET
+    path: /_list/indices
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List information related to indexes in different formats (format=json).
+    method: GET
+    path: /_list/indices
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List information related to indexes in different formats (format=yaml).
+    method: GET
+    path: /_list/indices
+    parameters:
+      format: yaml
+    response:
+      status: 200
+      content_type: application/yaml
+  - synopsis: List information related to indexes in different formats (format=cbor).
+    distributions:
+      excluded:
+        - amazon-managed
+        - amazon-serverless
+    method: GET
+    path: /_list/indices
+    parameters:
+      format: cbor
+    response:
+      status: 200
+      content_type: application/cbor
+  - synopsis: List information related to indexes in different formats (format=smile).
+    distributions:
+      excluded:
+        - amazon-managed
+        - amazon-serverless
+    method: GET
+    path: /_list/indices
+    parameters:
+      format: smile
+    response:
+      status: 200
+      content_type: application/smile
