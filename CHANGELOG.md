@@ -17,6 +17,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
 - Added `GET` and `HEAD /{index}/_source/{id}` returning `404` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
 - Added `rename_alias_pattern` and `rename_alias_replacment` to `/_snapshot/{repository}/{snapshot}/_restore` body parameters ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
+- Added `s` to `/_ingest/processor/grok` ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -39,6 +40,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `value` type in `ExplanationDetail` and added `_type` to `explain@200` ([#685](https://github.com/opensearch-project/opensearch-api-specification/pull/685))
 - Fixed index settings types ([#684](https://github.com/opensearch-project/opensearch-api-specification/pull/684))
 - Fixed `POST` and `DELETE /_dangling/{index_uuid}` returning `202` ([#686](https://github.com/opensearch-project/opensearch-api-specification/pull/686))
+- Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
