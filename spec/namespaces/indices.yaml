@@ -844,6 +844,7 @@ paths:
       operationId: indices.get_upgrade.0
       x-operation-group: indices.get_upgrade
       x-version-added: '1.0'
+      x-version-deprecated: '2.0' # i dont know the actual version
       description: The _upgrade API is no longer useful and will be removed.
       externalDocs:
         url: https://opensearch.org/docs/latest
@@ -858,6 +859,7 @@ paths:
       operationId: indices.upgrade.0
       x-operation-group: indices.upgrade
       x-version-added: '1.0'
+      x-version-deprecated: '2.0' # i dont know the actual version
       description: The _upgrade API is no longer useful and will be removed.
       externalDocs:
         url: https://opensearch.org/docs/latest
@@ -1850,6 +1852,8 @@ paths:
         - $ref: '#/components/parameters/indices.upgrade::query.ignore_unavailable'
         - $ref: '#/components/parameters/indices.upgrade::query.only_ancient_segments'
         - $ref: '#/components/parameters/indices.upgrade::query.wait_for_completion'
+      requestBody:
+        $ref: '#/components/requestBodies/indices.upgrade'
       responses:
         '200':
           $ref: '#/components/responses/indices.upgrade@200'
@@ -2265,6 +2269,11 @@ components:
                   $ref: '../schemas/indices.update_aliases.yaml#/components/schemas/Action'
             description: The definition of `actions` to perform
       required: true
+    indices.upgrade:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/indices._common.yaml#/components/schemas/UpgradeRequest'
     indices.validate_query:
       content:
         application/json:
@@ -2525,7 +2534,11 @@ components:
             type: object
             additionalProperties:
               $ref: '../schemas/indices._common.yaml#/components/schemas/TemplateMapping'
-    indices.get_upgrade@200: {}
+    indices.get_upgrade@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/indices._common.yaml#/components/schemas/IndexUpgradeStatus'
     indices.open@200:
       content:
         application/json:
@@ -2735,7 +2748,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
-    indices.upgrade@200: {}
+    indices.upgrade@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/indices._common.yaml#/components/schemas/IndexPostUpgradeStatus'
     indices.validate_query@200:
       content:
         application/json:
