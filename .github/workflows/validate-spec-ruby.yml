@@ -1,0 +1,30 @@
+name: Validate Spec (Ruby)
+
+on: [pull_request, push]
+
+jobs:
+  validate-spec-ruby:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/tools/src/validate-spec-ruby/Gemfile
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Build
+        run: npm ci && npm run merge
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Validate Spec
+        working-directory: tools/src/validate-spec-ruby
+        run: |
+          bundle exec ruby validate.rb ../../../build/opensearch-openapi.yaml

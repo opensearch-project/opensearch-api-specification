@@ -19,6 +19,7 @@ import type StoryValidator from "./StoryValidator";
 import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import * as ansi from './Ansi'
 import _ from 'lodash'
+import { Logger } from 'Logger'
 
 export default class TestRunner {
   private readonly _http_client: OpenSearchHttpClient
@@ -26,12 +27,14 @@ export default class TestRunner {
   private readonly _story_evaluator: StoryEvaluator
   private readonly _result_logger: ResultLogger
   private readonly _story_files: Record<string, StoryFile[]> = {}
+  private readonly _logger: Logger
 
-  constructor (http_client: OpenSearchHttpClient, story_validator: StoryValidator, story_evaluator: StoryEvaluator, result_logger: ResultLogger) {
+  constructor (http_client: OpenSearchHttpClient, story_validator: StoryValidator, story_evaluator: StoryEvaluator, result_logger: ResultLogger, logger: Logger) {
     this._http_client = http_client
     this._story_validator = story_validator
     this._story_evaluator = story_evaluator
     this._result_logger = result_logger
+    this._logger = logger
   }
 
   async run (story_path: string, version?: string, distribution?: string, dry_run: boolean = false): Promise<{ results: StoryEvaluations, failed: boolean }> {
@@ -52,6 +55,7 @@ export default class TestRunner {
     }
 
     for (const story_file of story_files) {
+      this._logger.info(`Evaluating ${story_file.display_path} ...`)
       const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, version, distribution, dry_run)
       results.evaluations.push(evaluation)
       this._result_logger.log(evaluation)
@@ -70,7 +74,7 @@ export default class TestRunner {
   #collect_story_files (folder: string, file: string, prefix: string): StoryFile[] {
     const path = file === '' ? folder : `${folder}/${file}`
     const next_prefix = prefix === '' ? file : `${prefix}/${file}`
-    if (file.startsWith('.') || file == 'docker-compose.yml') {
+    if (file.startsWith('.') || file == 'docker-compose.yml' || file == 'Dockerfile' || file.endsWith('.py')) {
       return []
     } else if (fs.statSync(path).isFile()) {
       const story: Story = read_yaml(path)

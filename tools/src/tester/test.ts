@@ -75,7 +75,7 @@ const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_
 const story_validator = new StoryValidator()
 const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
 const result_logger = new ConsoleResultLogger(opts.tabWidth, opts.verbose)
-const runner = new TestRunner(http_client, story_validator, story_evaluator, result_logger)
+const runner = new TestRunner(http_client, story_validator, story_evaluator, result_logger, logger)
 
 runner.run(opts.testsPath, spec.api_version(), opts.opensearchDistribution, opts.dryRun)
   .then(

@@ -21,28 +21,44 @@ on:
 jobs:
   test-opensearch-spec:
     strategy:
+      fail-fast: false
       matrix:
         entry:
           - version: 1.3.17
             admin_password: admin
           - version: 2.0.0
             admin_password: admin
-          - version: 2.16.0
-          - version: 2.16.0
-            tests: plugins/index_state_management
-          - version: 2.16.0
-            tests: plugins/ml
-          - version: 2.16.0
-            tests: routing
-          - version: 2.16.0
-            tests: snapshot
-          - version: 2.17.0
           - version: 2.18.0
+          - version: 2.18.0
+            tests: plugins/index_state_management
+          - version: 2.18.0
+            tests: plugins/ml
+          - version: 2.18.0
+            tests: routing
+          - version: 2.18.0
+            tests: snapshot
+          - version: 2.18.0
+            tests: dangling
+            url: http://localhost:9200
+          - version: 2.18.0
+            tests: plugins/replication
+            url: http://localhost:9200
+          - version: 2.18.0
+            tests: plugins/streaming
+          - version: 2.18.0
+            tests: plugins/notifications
+          - version: 2.18.0
+            tests: plugins/query_insights
+          - version: 2.18.0
+            tests: plugins/workload-management
+          - version: 2.18.0
+            tests: plugins/analysis
+          - version: 2.19.0
             hub: opensearchstaging
-            ref: '@sha256:4445e195c53992038891519dc3be0d273cdaad1b047943d68921168ed243e7e9'
+            ref: '@sha256:4da23e0137b2b67206d23b36fcf0914cc39b3bf19310c782f536e4934b86f6cc'
           - version: 3.0.0
             hub: opensearchstaging
-            ref: '@sha256:cf07c0ffa7d9e8a3e7fdb58041caae3bb81f1123260431b99d0ebf4a52c3d9a3'
+            ref: '@sha256:727643acdfebed77bfdb26362dbcff536b7ea02a0cc4ae2da2521729171333de'
 
     name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }}, tests=${{ matrix.entry.tests || 'default' }})
     runs-on: ubuntu-latest
@@ -70,12 +86,17 @@ jobs:
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
         run: docker compose up -d
 
+      - name: Generate Test Files Hash
+        id: tests
+        run: echo "hash=${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}" >> $GITHUB_OUTPUT
+
       - name: Run Tests
         run: |
           npm run test:spec -- \
             --opensearch-insecure --verbose\
             --opensearch-version=${{ matrix.entry.version }} \
-            --coverage coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json \
+            --coverage coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json \
+            --opensearch-url=${{ matrix.entry.url || 'https://localhost:9200'}} \
             --tests=tests/${{ matrix.entry.tests || 'default' }}
 
       - name: Get Container Logs
@@ -89,12 +110,11 @@ jobs:
       - name: Upload Test Coverage Results
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.entry.version }}-${{ hashFiles(format('tests/{0}', matrix.entry.tests || 'default')) }}
-          path: coverage/test-spec-coverage-${{ matrix.entry.version }}-${{ matrix.entry.tests || 'default' }}.json
+          name: coverage-${{ matrix.entry.version }}-${{ steps.tests.outputs.hash }}
+          path: coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json
 
   merge-coverage:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     needs: test-opensearch-spec
     steps:
       - uses: actions/checkout@v4
@@ -103,6 +123,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: coverage
+
+      - name: Display Missing Test Paths
+        run: |
+          jq -sc '
+            (map(.operations) | add | unique) as $all |
+            (map(.evaluated_operations) | add | unique) as $evaluated |
+            $all-$evaluated |
+            sort_by(.path) |
+            .[] |
+            "\(.method) \(.path)"
+          ' $(find ./ -name "test-spec-coverage-*.json")
 
       - name: Combine Test Coverage Data
         shell: bash -eo pipefail {0}
@@ -119,6 +150,7 @@ jobs:
           cat ./coverage/coverage.json
 
       - name: Construct Comment Data Payload
+        if: github.event_name == 'pull_request'
         shell: bash -eo pipefail {0}
         run: |
           jq \
@@ -139,6 +171,7 @@ jobs:
 
       - name: Upload PR Comment Payload
         uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
         with:
           name: pr-comment
           path: pr-comment.json

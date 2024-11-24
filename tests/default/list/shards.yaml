@@ -1,0 +1,51 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test list/shards endpoints.
+# TODO: Re-enable in 3.0, see https://github.com/opensearch-project/opensearch-api-specification/pull/613
+version: '>= 2.18 < 3'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: games
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unassigned
+      wait_for_active_shards: 0
+    request:
+      payload:
+        settings:
+          routing:
+            allocation:
+              require:
+                test: test
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+  - path: /unassigned
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: List the state of all primary and replica shards and how they are distributed.
+    path: /_list/shards
+    method: GET
+    parameters:
+      format: json
+      h:
+        - '*'
+  - synopsis: List the state of all primary and replica shards and how they are distributed for an index.
+    path: /_list/shards/{index}
+    method: GET
+    parameters:
+      format: json
+      index:
+        - games
+      bytes: kb
+      local: true
+      time: s
+      h:
+        - '*'
+    response:
+      status: 200

@@ -1,0 +1,157 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _snapshot/{repository}/{snapshot}/_restore endpoints.
+epilogues:
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /stories
+    method: DELETE
+    status: [200, 404]
+  - path: /stories_restored
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_snapshot/{repository}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+  - path: /movies
+    method: PUT
+  - path: /books
+    method: PUT
+  - path: /stories
+    method: PUT
+  - path: /_aliases
+    method: POST
+    request:
+      payload:
+        actions:
+          - add:
+              index: stories
+              alias: stories_alias
+  - path: /_snapshot/{repository}/{snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices:
+          - books
+          - movies
+          - stories
+        ignore_unavailable: true
+        include_global_state: false
+        partial: true
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /stories
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Restore snapshot with `wait_for_completion` true.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: movies
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot
+  - synopsis: Restore snapshot with `wait_for_completion` false.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: false
+    request:
+      payload:
+        indices: books
+    response:
+      status: 200
+      payload:
+        accepted: true
+  - synopsis: Wait finish async restore.
+    path: /{index}/_recovery
+    warnings:
+      multiple-paths-detected: false
+    method: GET
+    parameters:
+      index: books
+    response:
+      status: 200
+      payload:
+        books:
+          shards:
+            - stage: DONE
+              type: SNAPSHOT
+    retry:
+      count: 3
+  - synopsis: Restore snapshot with rename_pattern and rename_replacement.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: stories
+        rename_pattern: '^(.*)$'
+        rename_replacement: $1_restored
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot
+  - synopsis: Restore snapshot with rename_alias_pattern and rename_alias_replacement.
+    version: '>= 2.18'
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: stories
+        include_aliases: true
+        rename_alias_pattern: '^(.*)$'
+        rename_alias_replacement: $1_restored
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot

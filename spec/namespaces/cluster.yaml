@@ -331,6 +331,39 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cluster.stats@200'
+  /_cluster/stats/{metric}/nodes/{node_id}:
+    get:
+      operationId: cluster.stats.2
+      x-operation-group: cluster.stats
+      x-version-added: '2.18'
+      description: Returns high-level overview of cluster statistics.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/
+      parameters:
+        - $ref: '#/components/parameters/cluster.stats::path.metric'
+        - $ref: '#/components/parameters/cluster.stats::path.node_id'
+        - $ref: '#/components/parameters/cluster.stats::query.flat_settings'
+        - $ref: '#/components/parameters/cluster.stats::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.stats@200'
+  /_cluster/stats/{metric}/{index_metric}/nodes/{node_id}:
+    get:
+      operationId: cluster.stats.3
+      x-operation-group: cluster.stats
+      x-version-added: '2.18'
+      description: Returns high-level overview of cluster statistics.
+      externalDocs:
+        url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/
+      parameters:
+        - $ref: '#/components/parameters/cluster.stats::path.index_metric'
+        - $ref: '#/components/parameters/cluster.stats::path.metric'
+        - $ref: '#/components/parameters/cluster.stats::path.node_id'
+        - $ref: '#/components/parameters/cluster.stats::query.flat_settings'
+        - $ref: '#/components/parameters/cluster.stats::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.stats@200'
   /_cluster/voting_config_exclusions:
     post:
       operationId: cluster.post_voting_config_exclusions.0
@@ -491,7 +524,7 @@ components:
               index:
                 $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
               primary:
-                description: If true, returns explanation for the primary shard for the given shard ID.
+                description: If `true`, returns explanation for the primary shard for the given shard ID.
                 type: boolean
               shard:
                 description: Specifies the ID of the shard that you would like an explanation for.
@@ -506,8 +539,8 @@ components:
               allow_auto_create:
                 description: |-
                   This setting overrides the value of the `action.auto_create_index` cluster setting.
-                  If set to `true` in a template, then indices can be automatically created using that
-                  template even if auto-creation of indices is disabled via `actions.auto_create_index`.
+                  If set to `true` in a template, then indexes can be automatically created using that
+                  template even if auto-creation of indexes is disabled using `actions.auto_create_index`.
                   If set to `false` then data streams matching the template must always be explicitly created.
                 type: boolean
               template:
@@ -769,7 +802,7 @@ components:
     cluster.allocation_explain::query.include_disk_info:
       in: query
       name: include_disk_info
-      description: If true, returns information about disk usage and shard sizes.
+      description: If `true`, returns information about disk usage and shard sizes.
       schema:
         type: boolean
         default: false
@@ -777,7 +810,7 @@ components:
     cluster.allocation_explain::query.include_yes_decisions:
       in: query
       name: include_yes_decisions
-      description: If true, returns YES decisions in explanation.
+      description: If `true`, returns YES decisions in explanation.
       schema:
         type: boolean
         default: false
@@ -803,14 +836,14 @@ components:
       in: query
       name: master_timeout
       description: |-
-        Period to wait for a connection to the master node.
+        Period to wait for a connection to the cluster-manager node.
         If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.delete_component_template::query.timeout:
       in: query
       name: timeout
@@ -827,7 +860,7 @@ components:
         Specifies whether to wait for all excluded nodes to be removed from the
         cluster before clearing the voting configuration exclusions list.
         Defaults to true, meaning that all excluded nodes must be removed from
-        the cluster before this API takes any action. If set to false then the
+        the cluster before this API takes any action. If set to `false` then the
         voting configuration exclusions list is cleared even if some excluded
         nodes are still in the cluster.
       schema:
@@ -855,8 +888,8 @@ components:
       in: query
       name: local
       description: |-
-        If true, the request retrieves information from the local node only.
-        Defaults to false, which means information is retrieved from the master node.
+        If `true`, the request retrieves information from the local node only.
+        Defaults to false, which means information is retrieved from the cluster-manager node.
       schema:
         type: boolean
         default: false
@@ -865,7 +898,7 @@ components:
       in: query
       name: master_timeout
       description: |-
-        Period to wait for a connection to the master node. If no response is
+        Period to wait for a connection to the cluster-manager node. If no response is
         received before the timeout expires, the request fails and returns an
         error.
       deprecated: true
@@ -873,7 +906,7 @@ components:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.get_component_template::path.name:
       in: path
       name: name
@@ -896,7 +929,7 @@ components:
       name: local
       description: |-
         If `true`, the request retrieves information from the local node only.
-        If `false`, information is retrieved from the master node.
+        If `false`, information is retrieved from the cluster-manager node.
       schema:
         type: boolean
         default: false
@@ -905,14 +938,14 @@ components:
       in: query
       name: master_timeout
       description: |-
-        Period to wait for a connection to the master node.
+        Period to wait for a connection to the cluster-manager node.
         If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.get_decommission_awareness::path.awareness_attribute_name:
       name: awareness_attribute_name
       in: path
@@ -948,14 +981,14 @@ components:
       in: query
       name: master_timeout
       description: |-
-        Period to wait for a connection to the master node.
+        Period to wait for a connection to the cluster-manager node.
         If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.get_settings::query.timeout:
       in: query
       name: timeout
@@ -976,7 +1009,7 @@ components:
     cluster.health::path.index:
       in: path
       name: index
-      description: Comma-separated list of data streams, indices, and index aliases used to limit the request. Wildcard expressions (*) are supported. To target all data streams and indices in a cluster, omit this parameter or use `_all` or `*`.
+      description: Comma-separated list of data streams, indexes, and index aliases used to limit the request. Wildcard expressions (*) are supported. To target all data streams and indexes in a cluster, omit this parameter or use `_all` or `*`.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
@@ -998,21 +1031,21 @@ components:
     cluster.health::query.expand_wildcards:
       in: query
       name: expand_wildcards
-      description: Whether to expand wildcard expression to concrete indices that are open, closed or both.
+      description: Whether to expand wildcard expression to concrete indexes that are open, closed or both.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
       style: form
     cluster.health::query.level:
       in: query
       name: level
-      description: Can be one of cluster, indices or shards. Controls the details level of the health information returned.
+      description: Can be one of cluster, indexes or shards. Controls the details level of the health information returned.
       schema:
         $ref: '../schemas/cluster.health.yaml#/components/schemas/Level'
       style: form
     cluster.health::query.local:
       in: query
       name: local
-      description: If true, the request retrieves information from the local node only. Defaults to false, which means information is retrieved from the master node.
+      description: If `true`, the request retrieves information from the local node only. Defaults to false, which means information is retrieved from the cluster-manager node.
       schema:
         type: boolean
         default: false
@@ -1020,13 +1053,13 @@ components:
     cluster.health::query.master_timeout:
       in: query
       name: master_timeout
-      description: Period to wait for a connection to the master node. If no response is received before the timeout expires, the request fails and returns an error.
+      description: Period to wait for a connection to the cluster-manager node. If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.health::query.timeout:
       in: query
       name: timeout
@@ -1051,14 +1084,14 @@ components:
     cluster.health::query.wait_for_no_initializing_shards:
       in: query
       name: wait_for_no_initializing_shards
-      description: A boolean value which controls whether to wait (until the timeout provided) for the cluster to have no shard initializations. Defaults to false, which means it will not wait for initializing shards.
+      description: A Boolean value which controls whether to wait (until the timeout provided) for the cluster to have no shard initializations. Defaults to false, which means it will not wait for initializing shards.
       schema:
         type: boolean
       style: form
     cluster.health::query.wait_for_no_relocating_shards:
       in: query
       name: wait_for_no_relocating_shards
-      description: A boolean value which controls whether to wait (until the timeout provided) for the cluster to have no shard relocations. Defaults to false, which means it will not wait for relocating shards.
+      description: A Boolean value which controls whether to wait (until the timeout provided) for the cluster to have no shard relocations. Defaults to false, which means it will not wait for relocating shards.
       schema:
         type: boolean
       style: form
@@ -1090,7 +1123,7 @@ components:
       name: local
       description: |-
         If `true`, the request retrieves information from the local node only.
-        If `false`, information is retrieved from the master node.
+        If `false`, information is retrieved from the cluster-manager node.
       schema:
         type: boolean
         default: false
@@ -1099,20 +1132,20 @@ components:
       in: query
       name: master_timeout
       description: |-
-        Period to wait for a connection to the master node.
+        Period to wait for a connection to the cluster-manager node.
         If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.post_voting_config_exclusions::query.node_ids:
       in: query
       name: node_ids
       description: |-
         A comma-separated list of the persistent ids of the nodes to exclude
-        from the voting configuration. If specified, you may not also specify node_names.
+        from the voting configuration. If specified, you may not also specify `node_names`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Ids'
       style: form
@@ -1121,7 +1154,7 @@ components:
       name: node_names
       description: |-
         A comma-separated list of the names of the nodes to exclude from the
-        voting configuration. If specified, you may not also specify node_ids.
+        voting configuration. If specified, you may not also specify `node_ids`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Names'
       style: form
@@ -1142,7 +1175,7 @@ components:
       description: |-
         Name of the component template to create.
         OpenSearch includes the following built-in component templates: `logs-mappings`; 'logs-settings`; `metrics-mappings`; `metrics-settings`;`synthetics-mapping`; `synthetics-settings`.
-        OpenSearch Agent uses these templates to configure backing indices for its data streams.
+        OpenSearch Agent uses these templates to configure backing indexes for its data streams.
         If you use OpenSearch Agent and want to overwrite one of these templates, set the `version` for your replacement template higher than the current version.
         If you don't use OpenSearch Agent and want to disable all built-in component and index templates, set `stack.templates.enabled` to `false` using the cluster update settings API.
       required: true
@@ -1168,14 +1201,14 @@ components:
       in: query
       name: master_timeout
       description: |-
-        Period to wait for a connection to the master node.
+        Period to wait for a connection to the cluster-manager node.
         If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.put_component_template::query.timeout:
       name: timeout
       in: query
@@ -1216,13 +1249,13 @@ components:
     cluster.put_settings::query.master_timeout:
       in: query
       name: master_timeout
-      description: Explicit operation timeout for connection to master node
+      description: Explicit operation timeout for connection to cluster-manager node
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.put_settings::query.timeout:
       in: query
       name: timeout
@@ -1248,27 +1281,27 @@ components:
     cluster.reroute::query.dry_run:
       in: query
       name: dry_run
-      description: If true, then the request simulates the operation only and returns the resulting state.
+      description: If `true`, then the request simulates the operation only and returns the resulting state.
       schema:
         type: boolean
       style: form
     cluster.reroute::query.explain:
       in: query
       name: explain
-      description: If true, then the response contains an explanation of why the commands can or cannot be executed.
+      description: If `true`, then the response contains an explanation of why the commands can or cannot be executed.
       schema:
         type: boolean
       style: form
     cluster.reroute::query.master_timeout:
       in: query
       name: master_timeout
-      description: Period to wait for a connection to the master node. If no response is received before the timeout expires, the request fails and returns an error.
+      description: Period to wait for a connection to the cluster-manager node. If no response is received before the timeout expires, the request fails and returns an error.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.reroute::query.metric:
       in: query
       name: metric
@@ -1283,7 +1316,7 @@ components:
     cluster.reroute::query.retry_failed:
       in: query
       name: retry_failed
-      description: If true, then retries allocation of shards that are blocked due to too many subsequent allocation failures.
+      description: If `true`, then retries allocation of shards that are blocked due to too many subsequent allocation failures.
       schema:
         type: boolean
       style: form
@@ -1297,7 +1330,7 @@ components:
     cluster.state::path.index:
       in: path
       name: index
-      description: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+      description: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indexes
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
@@ -1315,7 +1348,7 @@ components:
     cluster.state::query.allow_no_indices:
       in: query
       name: allow_no_indices
-      description: Whether to ignore if a wildcard indices expression resolves into no concrete indices. (This includes `_all` string or when no indices have been specified)
+      description: Whether to ignore if a wildcard indexes expression resolves into no concrete indexes. (This includes `_all` string or when no indexes have been specified)
       schema:
         type: boolean
       style: form
@@ -1329,7 +1362,7 @@ components:
     cluster.state::query.expand_wildcards:
       in: query
       name: expand_wildcards
-      description: Whether to expand wildcard expression to concrete indices that are open, closed or both.
+      description: Whether to expand wildcard expression to concrete indexes that are open, closed or both.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
       style: form
@@ -1344,7 +1377,7 @@ components:
     cluster.state::query.ignore_unavailable:
       in: query
       name: ignore_unavailable
-      description: Whether specified concrete indices should be ignored when unavailable (missing or closed)
+      description: Whether specified concrete indexes should be ignored when unavailable (missing or closed)
       schema:
         type: boolean
       style: form
@@ -1359,27 +1392,48 @@ components:
     cluster.state::query.master_timeout:
       in: query
       name: master_timeout
-      description: Specify timeout for connection to master
+      description: Specify timeout for connection to cluster manager.
       deprecated: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
       x-version-deprecated: '2.0'
-      x-deprecation-message: To promote inclusive language, use 'cluster_manager_timeout' instead.
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
     cluster.state::query.wait_for_metadata_version:
       in: query
       name: wait_for_metadata_version
-      description: Wait for the metadata version to be equal or greater than the specified metadata version
+      description: Wait for the metadata version to be equal or greater than the specified metadata version.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
       style: form
     cluster.state::query.wait_for_timeout:
       in: query
       name: wait_for_timeout
-      description: The maximum time to wait for wait_for_metadata_version before timing out
+      description: The maximum time to wait for `wait_for_metadata_version` before timing out.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
+    cluster.stats::path.index_metric:
+      in: path
+      name: index_metric
+      description: Limit the information returned for indexes metric to the specific index metrics. It can be used only if indexes (or all) metric is specified.
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: '../schemas/cluster.stats.yaml#/components/schemas/IndexMetric'
+      style: simple
+    cluster.stats::path.metric:
+      in: path
+      name: metric
+      description: Limit the information returned to the specified metrics.
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: '../schemas/cluster.stats.yaml#/components/schemas/Metric'
+      style:
+        simple
     cluster.stats::path.node_id:
       in: path
       name: node_id

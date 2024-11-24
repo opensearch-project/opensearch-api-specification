@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Schemas of flow_framework.common category
-  description: Schemas of flow_framework.common category
+  title: Schemas of `flow_framework.common` Category
+  description: Schemas of `flow_framework.common` category.
   version: 1.0.0
 paths: { }
 components:
@@ -11,6 +11,12 @@ components:
       type: string
     WorkflowID:
       type: string
+    WorkflowIDResponse:
+      type: object
+      properties:
+        workflow_id:
+          type: string
+          description: The ID of the workflow
     WorkflowStepName:
       type: string
     Provision:
@@ -50,7 +56,7 @@ components:
           $ref: '#/components/schemas/version'
         workflows:
           type: object
-          description: A map of workflows. Presently, only the provision key is supported. The value for the workflow key is a key-value map that includes fields for user_params and lists of nodes and edges.
+          description: A map of workflows. Presently, only the provision key is supported. The value for the workflow key is a key-value map that includes fields for `user_params` and lists of nodes and edges.
       required:
         - name
     FlowFrameworkUpdate:
@@ -99,6 +105,8 @@ components:
       properties:
         name:
           type: string
+        version:
+          $ref: '#/components/schemas/version'
         description:
           type: string
         use_case:
@@ -111,6 +119,8 @@ components:
           type: integer
         last_updated_time:
           type: integer
+        last_provisioned_time:
+          type: number
     version:
       type: object
       description: A key-value map with two fields, template, which identifies the template version, and compatibility, which identifies a list of minimum required OpenSearch versions.
@@ -135,6 +145,9 @@ components:
         failed:
           type: integer
           description: The number of shards where the deletion failed.
+        skipped:
+          type: integer
+          description: The number of shards where the deletion was skipped.
     query:
       type: object
       description: The search query to match workflows. Use `match_all` to retrieve all workflows, or `match` to search by specific fields like `use_case`.
@@ -237,9 +250,11 @@ components:
         total:
           $ref: '#/components/schemas/total'
         max_score:
-          type: number
-          format: float
-          description: The maximum score of the search hits.
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: float
+              description: The maximum score of the search hits.
         hits:
           type: array
           items:
@@ -250,13 +265,19 @@ components:
         total:
           $ref: '#/components/schemas/total'
         max_score:
-          type: number
-          format: float
-          description: The maximum score of the search hits.
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: float
+              description: The maximum score of the search hits.
         hits:
           type: array
           items:
             $ref: '#/components/schemas/StateItems'
+    WorkflowSteps:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/WorkflowStep'
     WorkflowStep:
       type: object
       properties:
@@ -275,6 +296,8 @@ components:
           items:
             type: string
           description: The list of plugins required for the workflow step
+        timeout:
+          $ref: '_common.yaml#/components/schemas/Duration'
     WorkFlowStatusDefaultResponse:
       type: object
       properties:

@@ -1,0 +1,99 @@
+name: Draft a Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  draft-a-release:
+    name: Draft a Release
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Get Current Version
+        id: current
+        run: |
+          echo version=$(yq .version spec/_info.yaml) >> "$GITHUB_OUTPUT"
+
+      - name: Check Version
+        run: |
+          echo current=v${{ steps.current.outputs.version }}
+          echo tag=${{ github.ref_name }}
+          if "v${{ steps.current.outputs.version }}" != "${{ github.ref_name }}"; then
+            echo "::error::Failing, reason: version ${{ steps.current.outputs.version }} does not match tag ${{ github.ref_name }}."
+            exit 1
+          else
+            echo "::notice::Found version ${{ steps.current.outputs.version }}, all good."
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Build
+        run: npm ci && npm run merge
+
+      - name: Upload Artifacts
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: |
+            build/*
+
+      - name: Extract Changelog
+        id: changelog
+        uses: sean0x42/markdown-extract@v2
+        with:
+          file: CHANGELOG.md
+          pattern: Unreleased
+          no-print-matched-heading: true
+
+      - name: Draft a release
+        uses: softprops/action-gh-release@v2
+        id: release
+        with:
+          draft: true
+          generate_release_notes: false
+          tag_name: ${{ github.ref_name }}
+          body: |
+            ${{ steps.changelog.outputs.markdown }}
+
+            ### Links
+            - [Build Artifact](${{ steps.upload.outputs.artifact-url }})
+          files: |
+            LICENSE.txt
+            build/*
+
+      - name: Increment Version
+        uses: nguyenvukhang/semver-increment@v1
+        id: version
+        with:
+          increment: patch
+          version-file: spec/_info.yaml
+          version-regex: '^version: (.*)'
+
+      - name: Update CHANGELOG to the Next Developer Iteration
+        uses: thomaseizinger/keep-a-changelog-new-release@v3
+        with:
+          tag: ${{ github.ref_name }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Preparing for next developer iteration ${{ steps.version.outputs.version }}.'
+          signoff: true
+          branch: prepare-v-next
+          base: main
+          delete-branch: true
+          title: 'Preparing for next developer iteration, ${{ steps.version.outputs.version }}.'
+          body: |
+            I've drafted a release, [${{ github.ref_name }}](${{ steps.release.outputs.url }}), please verify and release it.
+            Preparing for the next developer iteration, ${{ steps.version.outputs.version }}.

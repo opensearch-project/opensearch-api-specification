@@ -54,7 +54,7 @@ export function construct_tester_components (spec_path: string): {
   const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
-  const test_runner = new TestRunner(opensearch_http_client, story_validator, story_evaluator, result_logger)
+  const test_runner = new TestRunner(opensearch_http_client, story_validator, story_evaluator, result_logger, logger)
   return {
     specification,
     operation_locator,
@@ -142,5 +142,5 @@ export async function load_actual_evaluation (evaluator: StoryEvaluator, name: s
     full_path,
     display_path: `${name}.yaml`,
     story: read_yaml(full_path)
-  }, process.env.OPENSEARCH_VERSION ?? '2.16.0', process.env.OPENSEARCH_DISTRIBUTION ?? 'opensearch.org'))
+  }, process.env.OPENSEARCH_VERSION ?? '2.17.0', process.env.OPENSEARCH_DISTRIBUTION ?? 'opensearch.org'))
 }

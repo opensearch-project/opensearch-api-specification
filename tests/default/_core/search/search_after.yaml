@@ -1,0 +1,39 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with search_after.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {title: The Cruise, year: 1998}
+        - {create: {_index: movies}}
+        - {title: Drive, year: 1960}
+chapters:
+  - synopsis: Search with search_after.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    request:
+      payload:
+        sort:
+          - year: asc
+        search_after:
+          - 1960
+    method: POST
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                title: The Cruise
+                year: 1998

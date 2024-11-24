@@ -1,0 +1,26 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search by image.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+version: '>= 2.11'
+chapters:
+  - synopsis: Search by Image - Invalid Model.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        _source:
+          excludes: [passage_embedding]
+        query:
+          neural:
+            passage_embedding:
+              query_image: iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=
+              model_id: invalid # This makes the test fail with a 404 but will still validate the query_image.
+              k: 100
+    response:
+      status: 404

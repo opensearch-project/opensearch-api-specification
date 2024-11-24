@@ -1,0 +1,38 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test avg aggregation.
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Moneyball, duration: 126}
+        - {create: {_index: movies}}
+        - {director: Nicolas Winding Refn, title: Drive, duration: 100}
+chapters:
+  - synopsis: Aggregate with avg.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          duration_avg:
+            avg:
+              field: duration
+    response:
+      status: 200
+      payload:
+        aggregations:
+          duration_avg:
+            value: 113
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]

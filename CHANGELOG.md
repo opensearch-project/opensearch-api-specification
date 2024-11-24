@@ -5,6 +5,47 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Added
+- Added API specs for query groups lifecycle APIs ([#649](https://github.com/opensearch-project/opensearch-api-specification/pull/649))
+- Added Python and Ruby spec validators ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added verbose output of the story being evaluated ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added `_search` with `sort: direction` ([#658](https://github.com/opensearch-project/opensearch-api-specification/pull/658))
+- Added `_common.mapping:FlatObjectProperty` ([#661](https://github.com/opensearch-project/opensearch-api-specification/pull/661)) 
+- Added `HEAD /{index}/_doc/{id}` returning `404` ([#670](https://github.com/opensearch-project/opensearch-api-specification/pull/670))
+- Added `_common.mapping:IcuCollationKeywordProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
+- Added `PhoneAnalyzer` from `analysis-phonenumber` plugin ([#609](https://github.com/opensearch-project/opensearch-api-specification/pull/609))
+- Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
+- Added `GET` and `HEAD /{index}/_source/{id}` returning `404` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
+- Added `rename_alias_pattern` and `rename_alias_replacment` to `/_snapshot/{repository}/{snapshot}/_restore` body parameters ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
+
+### Removed
+- Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
+- Removed unsupported `_common.mapping:DenseVectorProperty`, `_common.mapping:SparseVectorProperty`, and `_common.mapping:FlattenedProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Removed unsupported time series dimension properties and types ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
+- Removed unsupported runtime field properties (`script`/`on_script_error`) on `NumberPropertyBase` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666)) 
+
+### Fixed
+- Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Disallowed characters (`::`, `@`, and `:`) in key names are replaced with `___` on merge ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added missing `required` to `path` parameters ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added missing `schema` parent to response types ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Fixed incorrect `style` in `indices.get_mapping::query.index` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Removed invalid `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
+- Fixed `/{index}/_create/{id}` returning `201` ([#669](https://github.com/opensearch-project/opensearch-api-specification/pull/669))
+- Fixed `ml._common.yaml#SearchModelsResponse` and `SearchModelsHitsHit` ([#672](https://github.com/opensearch-project/opensearch-api-specification/pull/672))
+- Fixed `refresh` options to allow `boolean` and `string` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
+- Fixed `value` type in `ExplanationDetail` and added `_type` to `explain@200` ([#685](https://github.com/opensearch-project/opensearch-api-specification/pull/685))
+- Fixed index settings types ([#684](https://github.com/opensearch-project/opensearch-api-specification/pull/684))
+- Fixed `POST` and `DELETE /_dangling/{index_uuid}` returning `202` ([#686](https://github.com/opensearch-project/opensearch-api-specification/pull/686))
+
+### Changed
+- Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
+
+## [0.1.0] - 2024-10-25
+
+### Added
 
 - Added CHANGELOG ([#309](https://github.com/opensearch-project/opensearch-api-specification/pull/309))
 - Added a spec test framework ([#299](https://github.com/opensearch-project/opensearch-api-specification/pull/299))
@@ -64,6 +105,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added support for request headers in tests [#461](https://github.com/opensearch-project/opensearch-api-specification/pull/461)
 - Added metadata additionalProperties to `ErrorCause` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
 - Added `creation_date` field to `DanglingIndex` ([#462](https://github.com/opensearch-project/opensearch-api-specification/pull/462))
+- Added `replication` namespace API specifications ([#464](https://github.com/opensearch-project/opensearch-api-specification/pull/464))
 - Added doc on `cluster create-index blocked` workaround ([#465](https://github.com/opensearch-project/opensearch-api-specification/pull/465))
 - Added `observability` namespace API specifications ([#474](https://github.com/opensearch-project/opensearch-api-specification/pull/474))
 - Added support for reusing output variables as keys in payload expectations ([#471](https://github.com/opensearch-project/opensearch-api-specification/pull/471))
@@ -95,8 +137,18 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_plugins/_flow_framework/`, `_search`, `state/_search`, `_provision`, `_deprovision`, `_steps`, and `_status` ([#508](https://github.com/opensearch-project/opensearch-api-specification/issues/508)) ([#833](https://github.com/opensearch-project/flow-framework/issues/833))
 - Added `/_plugins/_ism/policies`, `add`, `remove`, `change_policy`, `explain`, and `retry` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568)) ([#578](https://github.com/opensearch-project/opensearch-api-specification/pull/578))
 - Added `/_plugins/refresh_search_analyzers` ([#578](https://github.com/opensearch-project/opensearch-api-specification/pull/578))
+- Added `/_bulk/stream` ([#584](https://github.com/opensearch-project/opensearch-api-specification/pull/584))
 - Added `/_plugins/_ml/agents/_register`, `/_plugins/_ml/connectors/_create`, `DELETE /_plugins/_ml/agents/{agent_id}`, `DELETE /_plugins/_ml/connectors/{connector_id}` ([#228](https://github.com/opensearch-project/opensearch-api-specification/issues/228))
 - Added the `context` query param to the `put_script` APIs ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
+- Added `persian_stem` filter ([#592](https://github.com/opensearch-project/opensearch-api-specification/pull/592))
+- Added `404` response for `DELETE /{index}`, `GET /{index}/_doc/{id}`, `DELETE /{index}/_doc/{id}` ([#589](https://github.com/opensearch-project/opensearch-api-specification/pull/589))
+- Added ability to pass `InlineScript` as a simple string ([#605](https://github.com/opensearch-project/opensearch-api-specification/pull/605))
+- Added `config_id` and `config_id_list` to `/_plugins/_notifications/configs` query parameters ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
+- Added a release workflow triggered on a tag ([#635](https://github.com/opensearch-project/opensearch-api-specification/pull/635))
+- Added API spec for query insights plugin ([#625](https://github.com/opensearch-project/opensearch-api-specification/pull/625))
+- Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
+- Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
+- Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
 
 ### Changed
 
@@ -109,7 +161,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added better context for non-2XX responses when `--verbose` is used with the tester tool ([#359](https://github.com/opensearch-project/opensearch-api-specification/pull/359))
 - Locked testing for next release of OpenSearch to a specific SHA ([#431](https://github.com/opensearch-project/opensearch-api-specification/pull/431))
 - Replaced nullable with `null` type ([#436](https://github.com/opensearch-project/opensearch-api-specification/pull/436))
-- Split test suite ([#472])(https://github.com/opensearch-project/opensearch-api-specification/pull/472)
+- Split test suite ([#472](https://github.com/opensearch-project/opensearch-api-specification/pull/472))
 - Changed `WriteResponseBase`'s `_primary_term`, `_seq_no` & `_version` to have `int64` format ([#530](https://github.com/opensearch-project/opensearch-api-specification/pull/530))
 - Adjusted indices, shards cat API to test against unassigned indices ([#551](https://github.com/opensearch-project/opensearch-api-specification/pull/551))
 - Corrected Sort schema for `/_search`'s request body ([#529](https://github.com/opensearch-project/opensearch-api-specification/issues/529))
@@ -128,7 +180,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Removed the ability to skip an individual spec test ([#358](https://github.com/opensearch-project/opensearch-api-specification/pull/358))
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
- 
+- Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
+
 ### Fixed
 
 - Fixed GitHub pages ([#215](https://github.com/opensearch-project/opensearch-api-specification/pull/215))
@@ -166,7 +220,14 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_plugins/_transform/_preview` ([#568](https://github.com/opensearch-project/opensearch-api-specification/pull/568))
 - Fixed create/delete/index operation in `_bulk` ([#582](https://github.com/opensearch-project/opensearch-api-specification/pull/582))
 - Add `mode` and `compression` to k-NN index creation and search, and add `rescore` and `oversample_factor` to k-NN search ([#588](https://github.com/opensearch-project/opensearch-api-specification/pull/588))
+- Fixed `/{index}/_search` with aggregations ([#576](https://github.com/opensearch-project/opensearch-api-specification/pull/576))
+- Fixed inaccurate numeric type ([#597](https://github.com/opensearch-project/opensearch-api-specification/pull/597))([#598](https://github.com/opensearch-project/opensearch-api-specification/pull/598))([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))([#612](https://github.com/opensearch-project/opensearch-api-specification/pull/612))
+- Fixed mapping and analysis types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
+- Fixed `RestStatus` responses in `DELETE /_plugins/_notifications/configs/{config_id}` ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
+- Fixed `GET /_snapshot_/{repository}/{snapshot}` ([#608](https://github.com/opensearch-project/opensearch-api-specification/pull/608))
+- Fixed `POST /_snapshot/{repository}/{snapshot}/_restore` when `wait_for_completion` is `false` and `GET /{index}/_recovery` ([#611](https://github.com/opensearch-project/opensearch-api-specification/pull/611))
 
 ### Security
 
-[Unreleased]: https://github.com/opensearch-project/opensearch-api-specification/commits/main/
+[unreleased]: https://github.com/opensearch-project/opensearch-api-specification/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/opensearch-project/opensearch-api-specification/compare/1db184063a463c5180a2cc824b1efc1aeebfd5eb...v0.1.0
