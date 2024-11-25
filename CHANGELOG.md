@@ -17,6 +17,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `/_list/indices` & `/_list/shards` api specs ([#613](https://github.com/opensearch-project/opensearch-api-specification/pull/613))
 - Added `GET` and `HEAD /{index}/_source/{id}` returning `404` ([#673](https://github.com/opensearch-project/opensearch-api-specification/pull/673))
 - Added `rename_alias_pattern` and `rename_alias_replacment` to `/_snapshot/{repository}/{snapshot}/_restore` body parameters ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
+- Added `resource_stats` to `TaskInfoBase` ([#692](https://github.com/opensearch-project/opensearch-api-specification/pull/692))
 - Added `s` to `/_ingest/processor/grok` ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 
 ### Removed
