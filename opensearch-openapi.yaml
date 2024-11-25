@@ -33140,6 +33140,35 @@ components:
           type: number
         total:
           type: number
+    _common___ResourceStat:
+      type: object
+      properties:
+        cpu_time_in_nanos:
+          $ref: '#/components/schemas/_common___DurationValueUnitNanos'
+        memory_in_bytes:
+          $ref: '#/components/schemas/_common___ByteCount'
+      required:
+        - cpu_time_in_nanos
+        - memory_in_bytes
+    _common___ResourceStats:
+      type: object
+      properties:
+        average:
+          $ref: '#/components/schemas/_common___ResourceStat'
+        total:
+          $ref: '#/components/schemas/_common___ResourceStat'
+        min:
+          $ref: '#/components/schemas/_common___ResourceStat'
+        max:
+          $ref: '#/components/schemas/_common___ResourceStat'
+        thread_info:
+          $ref: '#/components/schemas/_common___ThreadInfo'
+      required:
+        - average
+        - max
+        - min
+        - thread_info
+        - total
     _common___ResourceType:
       type: string
       enum:
@@ -33733,6 +33762,16 @@ components:
         - h3
         - 'no'
         - z
+    _common___ThreadInfo:
+      type: object
+      properties:
+        thread_executions:
+          type: number
+        active_threads:
+          type: number
+      required:
+        - active_threads
+        - thread_executions
     _common___TimeOfDay:
       description: Time of day, expressed as HH:MM:SS.
       type: string
@@ -58022,6 +58061,8 @@ components:
           type: string
         parent_task_id:
           $ref: '#/components/schemas/_common___TaskId'
+        resource_stats:
+          $ref: '#/components/schemas/_common___ResourceStats'
       required:
         - action
         - cancellable
