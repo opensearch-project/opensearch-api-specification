@@ -22,7 +22,7 @@ jobs:
           BEFORE_COVERAGE=/tmp/coverage-api-${BEFORE_SHA}.json
           AFTER_COVERAGE=/tmp/coverage-api-${AFTER_SHA}.json
           COVERAGE_DIFF=/tmp/coverage-api-${BEFORE_SHA}-${AFTER_SHA}-DIFF.json
-          
+
           vars=(
             BEFORE_SHA
             AFTER_SHA
@@ -33,7 +33,7 @@ jobs:
             AFTER_COVERAGE
             COVERAGE_DIFF
           )
-          
+
           { 
             for var in "${vars[@]}"
             do
@@ -48,7 +48,7 @@ jobs:
         shell: bash -eo pipefail {0}
         run: |
           docker build coverage --tag opensearch-with-api-plugin
-          
+
           docker run \
             --name opensearch \
             --rm -d \
@@ -56,11 +56,11 @@ jobs:
             -e "discovery.type=single-node" \
             -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
             opensearch-with-api-plugin
-          
+
           npm ci
-          
+
           npm run dump-cluster-spec -- --opensearch-insecure --output $CLUSTER_SPEC
-          
+
           docker stop opensearch
         env:
           OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
@@ -92,14 +92,14 @@ jobs:
               --cluster $CLUSTER_SPEC \
               --specification $BEFORE_SPEC \
               --output $BEFORE_COVERAGE
-          
+
           npm run coverage:spec -- \
               --cluster $CLUSTER_SPEC \
               --specification $AFTER_SPEC \
               --output $AFTER_COVERAGE
-          
+
           jq . $AFTER_COVERAGE
-          
+
           jq --slurp '
             [ .[].counts ]
             | {
@@ -115,6 +115,18 @@ jobs:
             $BEFORE_COVERAGE \
             $AFTER_COVERAGE \
             | tee $COVERAGE_DIFF
+
+      - name: Display Coverage Checklist
+        shell: bash -eo pipefail {0}
+        run: |
+          jq -sc '
+            (map(.endpoints .uncovered | to_entries | sort_by(.value) | map((.value[] | ascii_upcase) + " " + .key)) | .[] | to_entries | map({path: .value, covered: false})) as $uncovered |
+            (map(.endpoints .covered | to_entries | sort_by(.value) | map((.value[] | ascii_upcase) + " " + .key)) | .[] | to_entries | map({path: .value, covered: true})) as $covered |
+            $covered+$uncovered |
+            sort_by(.path) |
+            map(if .covered then "- [x] \(.path)" else "- [ ] \(.path)" end) |
+            .[]
+          ' $AFTER_COVERAGE | jq -r
 
       - name: Upload Coverage Data
         id: upload-coverage
@@ -150,7 +162,7 @@ jobs:
               exit 1
             fi
           fi
-          
+
           gawk '
             BEGIN {
               RS = "(\r|\n|\r\n)"
@@ -176,7 +188,7 @@ jobs:
               HAD_CHANGES = 1
               print
             }
-          
+
             END {
               if (!HAD_CHANGES) {
                 print "**NO CHANGES**\n"

@@ -422,7 +422,7 @@ entry:
 
 Snapshot builds of OpenSearch are available on Docker Hub under [opensearchstaging/opensearch/tags](https://hub.docker.com/r/opensearchstaging/opensearch/tags).
 
-The following example in the test matrix will use [a snapshot build of OpenSearch 2.18](https://hub.docker.com/layers/opensearchstaging/opensearch/2.18.0/images/sha256-504a9c42bc1b13cb47b39a29db8a9d300d01b8851fb95dbb9db6770f478e45b5?context=explore) to execute the default test suite in [tests/default](tests/default/).
+The following example in the test matrix will use [a snapshot build of OpenSearch 2.18](https://hub.docker.com/r/opensearchstaging/opensearch/tags?name=2.18) to execute the default test suite in [tests/default](tests/default/).
 
 ```yaml
 - version: 2.18.0
