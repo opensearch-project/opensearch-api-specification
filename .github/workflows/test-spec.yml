@@ -126,14 +126,16 @@ jobs:
 
       - name: Display Missing Test Paths
         run: |
-          jq -sc '
-            (map(.operations) | add | unique) as $all |
-            (map(.evaluated_operations) | add | unique) as $evaluated |
-            $all-$evaluated |
-            sort_by(.path) |
-            .[] |
-            "\(.method) \(.path)"
-          ' $(find ./ -name "test-spec-coverage-*.json")
+          jq -r -sc '
+              (map(.operations) | add | unique) as $all |
+              (map(.evaluated_operations) | add | unique) as $evaluated |
+              ($all-$evaluated | map({path: .path, method: .method, evaluated: false})) as $unevaluated |
+              ($evaluated | map({path: .path, method: .method, evaluated: true})) as $evaluated |
+              $evaluated+$unevaluated |
+              sort_by(.path) |
+              map(if .evaluated then "- [x] \(.method) \(.path)" else "- [ ] \(.method) \(.path)" end) |
+              .[]
+            ' $(find ./ -name "test-spec-coverage-*.json")
 
       - name: Combine Test Coverage Data
         shell: bash -eo pipefail {0}
