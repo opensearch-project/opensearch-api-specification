@@ -5,7 +5,7 @@ prologues:
   - path: /{index}
     method: PUT
     parameters:
-      index: books
+      index: movies
     request:
       payload: {}
   - path: /_bulk
@@ -13,14 +13,14 @@ prologues:
     request:
       content_type: application/x-ndjson
       payload:
-        - {create: {_index: books, _id: book_1392214}}
-        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
-        - {create: {_index: books, _id: book_1392215}}
-        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+        - {create: {_index: movies, _id: movie_1392214}}
+        - {director: Bennett Miller, title: Moneyball, year: 2011}
+        - {create: {_index: movies, _id: movie_1392215}}
+        - {director: Badge Dale, title: The Secret Soldiers, year: 2016}
   - path: /{index}/_refresh
     method: POST
     parameters:
-      index: books
+      index: movies
   - path: /_cluster/settings
     method: PUT
     request:
@@ -34,11 +34,11 @@ prologues:
     version: '>= 1.1'
     method: PUT
     parameters:
-      index: books-names
+      index: movies-names
     request:
       payload:
         leader_alias: leader-cluster
-        leader_index: books
+        leader_index: movies
         use_roles: 
           leader_cluster_role: all_access
           follower_cluster_role: all_access
@@ -46,13 +46,13 @@ epilogues:
   - path: /_plugins/_replication/{index}/_stop
     method: POST
     parameters: 
-      index: books-names
+      index: movies-names
     request:
       payload: {}
-  - path: /books-names
+  - path: /movies-names
     method: DELETE
     status: [200, 404]
-  - path: /books
+  - path: /movies
     method: DELETE
     status: [200, 404]
 chapters:
@@ -63,8 +63,8 @@ chapters:
     request:
       payload:
         leader_alias: leader-cluster
-        name: books
-        pattern: 'books-*'
+        name: movies
+        pattern: 'movies-*'
         use_roles:
           leader_cluster_role: leader_role
           follower_cluster_role: admin
@@ -83,6 +83,6 @@ chapters:
     request:
       payload:
         leader_alias: leader-cluster
-        name: books
+        name: movies
     response:
       status: 200
