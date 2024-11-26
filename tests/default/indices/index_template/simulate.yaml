@@ -1,0 +1,44 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test index configuration that would be applied by a particular index template.
+epilogues:
+  - path: /_index_template/daily_logs
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_index_template/daily_logs
+    method: POST
+    request:
+      payload:
+        index_patterns:
+          - 'logs*'
+        priority: 0
+        template:
+          mappings:
+            properties:
+              text:
+                type: text
+          settings:
+            number_of_shards: 2
+            number_of_replicas: 2
+chapters:
+  - synopsis: Simulate a template configuration.
+    path: /_index_template/_simulate
+    method: POST
+    parameters:
+      cause: Testing.
+      create: false
+    request:
+      payload:
+        index_patterns:
+          - 'logs*'
+        priority: 1
+        template:
+          settings:
+            number_of_shards: 2
+            number_of_replicas: 2       
+  - synopsis: Get the index configuration that would be applied by the `daily_logs` index template.
+    path: /_index_template/_simulate/{name}
+    method: POST
+    parameters:
+      name: daily_logs
