@@ -1,0 +1,36 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+description: Test flow_framework workflow search endpoints.
+version: '>= 2.12'
+epilogues:
+  - path: /_plugins/_flow_framework/workflow/{workflow_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      workflow_id: ${workflow.workflow_id}
+prologues:
+  - id: workflow
+    path: /_plugins/_flow_framework/workflow
+    method: POST
+    request:
+      payload:
+        name: Test Workflow
+    status: [201]
+    output:
+      workflow_id: payload.workflow_id
+chapters:
+  - synopsis: Search for a workflow.
+    path: /_plugins/_flow_framework/workflow/_search
+    method: GET
+    request:
+      payload:
+        query:
+          match_all: {}
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _index: .plugins-flow-framework-templates
+              _source:
+                name: Test Workflow
+            
