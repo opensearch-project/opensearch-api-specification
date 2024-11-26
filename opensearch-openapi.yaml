@@ -53804,17 +53804,22 @@ components:
           description: Size of buffer pools in bytes.
           $ref: '#/components/schemas/_common___ByteCount'
     nodes._common___NodeReloadError:
+      allOf:
+        - $ref: '#/components/schemas/nodes._common___NodeReloadResponse'
+        - type: object
+          properties:
+            reload_exception:
+              $ref: '#/components/schemas/_common___ErrorCause'
+    nodes._common___NodeReloadResponse:
       type: object
       properties:
         name:
           $ref: '#/components/schemas/_common___Name'
-        reload_exception:
-          $ref: '#/components/schemas/_common___ErrorCause'
       required:
         - name
     nodes._common___NodeReloadResult:
-      oneOf:
-        - $ref: '#/components/schemas/nodes._common___Stats'
+      anyOf:
+        - $ref: '#/components/schemas/nodes._common___NodeReloadResponse'
         - $ref: '#/components/schemas/nodes._common___NodeReloadError'
     nodes._common___NodesResponseBase:
       type: object
@@ -55213,6 +55218,7 @@ components:
       type: string
       enum:
         - _all
+        - aggregations
         - rest_actions
     nodes.usage___NodeUsage:
       type: object
@@ -55230,8 +55236,6 @@ components:
           additionalProperties:
             type: object
       required:
-        - aggregations
-        - rest_actions
         - since
         - timestamp
     nodes.usage___ResponseBase:
