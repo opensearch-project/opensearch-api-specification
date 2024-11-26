@@ -1,23 +1,23 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
-description: Test flow_framework endpoints using sample template.
+description: Test flow_framework endpoints using a sample template.
 version: '>= 2.12'
 epilogues:
   - path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: DELETE
     status: [200, 404]
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
 warnings:
   multiple-paths-detected: false
 chapters:
   - synopsis: Create workflow with openAI model.
-    id: create_flow_framework
+    id: workflow
     path: /_plugins/_flow_framework/workflow
     method: POST
     request:
       payload:
         name: Deploy OpenAI Model
-        description: Deploy a model using a connector to OpenAI
+        description: Deploy a model using a connector to OpenAI.
         use_case: PROVISION
         version:
           template: 1.0.0
@@ -31,7 +31,7 @@ chapters:
                 type: create_connector
                 user_inputs:
                   name: OpenAI Chat Connector
-                  description: The connector to public OpenAI model service for GPT 3.5
+                  description: The connector to public OpenAI model service for GPT 3.5.
                   version: '1'
                   protocol: http
                   parameters:
@@ -57,12 +57,12 @@ chapters:
     response:
       status: 201
     output:
-      test_workflow_id: payload.workflow_id
+      workflow_id: payload.workflow_id
   - synopsis: Update workflow.
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
       update_fields: true
     request:
       payload:
@@ -73,7 +73,7 @@ chapters:
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
       update_fields: true
     request:
       payload:
@@ -85,11 +85,11 @@ chapters:
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
     request:
       payload:
         name: Deploy OpenAI Model
-        description: Deploy a model using a connector to OpenAI
+        description: Deploy a model using a connector to OpenAI.
         use_case: PROVISION
         version:
           template: 1.0.0
@@ -103,7 +103,7 @@ chapters:
                 type: create_connector
                 user_inputs:
                   name: OpenAI Chat Connector
-                  description: The connector to public OpenAI model service for GPT 3.5 update
+                  description: The connector to public OpenAI model service for GPT 3.5 update.
                   version: '1'
                   protocol: http
                   parameters:
@@ -132,14 +132,14 @@ chapters:
     path: /_plugins/_flow_framework/workflow/{workflow_id}/_provision
     method: POST
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
     response:
       status: 200
-  - synopsis: Update workflow fail With provision and update_fields set true.
+  - synopsis: Update workflow fail with `provision` and `update_fields` set to `true`.
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
       provision: true
       update_fields: true
     request:
@@ -147,12 +147,12 @@ chapters:
         name: test_create_work_flow
     response:
       status: 400
-  - synopsis: Update workflow fail With Reprovision and updateFields set true.
+  - synopsis: Update workflow fail with `reprovision` and `update_fields` set to `true`.
     version: '>= 2.17'
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
       reprovision: true
       update_fields: true
     request:
@@ -160,7 +160,7 @@ chapters:
         name: test_create_work_flow
     response:
       status: 400
-  - synopsis: Create workflow fail With Reprovision set true.
+  - synopsis: Create workflow fail with `reprovision` set to `true`.
     version: '>= 2.17'
     path: /_plugins/_flow_framework/workflow
     method: POST
@@ -171,7 +171,7 @@ chapters:
         name: test_create_work_flow
     response:
       status: 400
-  - synopsis: Create workflow fail With Reprovision set true and UseCase Not null.
+  - synopsis: Create workflow fail with `reprovision` set to `true` and `use_case` not `null`.
     version: '>= 2.17'
     path: /_plugins/_flow_framework/workflow
     method: POST
@@ -183,12 +183,12 @@ chapters:
         name: test_create_work_flow
     response:
       status: 400
-  - synopsis: Update workflow fail With Reprovision set true and UseCase Not null.
+  - synopsis: Update workflow fail with `reprovision` set to `true` and `use_case` not `null`.
     version: '>= 2.17'
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: PUT
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
       reprovision: true
       use_case: test_use_case
     request:
@@ -200,7 +200,7 @@ chapters:
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: GET
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
     response:
       status: 200
   - synopsis: Get workflow fail.
@@ -234,6 +234,6 @@ chapters:
     path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: DELETE
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
     response:
       status: 200

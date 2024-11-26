@@ -3,7 +3,7 @@ description: Test flow_framework provision endpoints.
 version: '>= 2.12'
 prologues:
   - path: /_plugins/_flow_framework/workflow
-    id: create_flow_framework
+    id: workflow
     method: POST
     parameters:
       use_case: semantic_search_with_cohere_embedding_query_enricher
@@ -11,13 +11,13 @@ prologues:
       payload:
         create_connector.credential.key: test_api_key
     output:
-      test_workflow_id: payload.workflow_id
+      workflow_id: payload.workflow_id
 epilogues:
   - path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: DELETE
     status: [200, 404]
     parameters:
-      workflow_id: ${create_flow_framework.test_workflow_id}
+      workflow_id: ${workflow.workflow_id}
 chapters:
   - synopsis: Search workflow match the name.
     path: /_plugins/_flow_framework/workflow/_search

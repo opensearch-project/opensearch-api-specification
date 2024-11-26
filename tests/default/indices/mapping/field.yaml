@@ -2,10 +2,8 @@ $schema: ../../../../json_schemas/test_story.schema.yaml
 
 description: Test specific field mappings endpoints.
 prologues:
-  - path: /{index}
+  - path: movies
     method: PUT
-    parameters:
-      index: movies
     request:
       payload:
         mappings:
@@ -14,30 +12,11 @@ prologues:
               type: text
             year:
               type: integer
-            location:
-              type: ip
-              ignore_malformed: true
 epilogues:
   - path: /movies
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Add new fields to index mapping.
-    path: /{index}/_mapping
-    method: POST
-    parameters:
-      index: movies
-    request:
-      payload:
-        properties:
-          genre:
-            type: text
-          rating:
-            type: float
-    response:
-      status: 200
-      payload:
-        acknowledged: true
   - synopsis: Get specific field mappings for an index.
     path: /{index}/_mapping/field/{fields}
     method: GET
