@@ -187,8 +187,8 @@ components:
         _nodes:
           $ref: '_common.yaml#/components/schemas/NodeStatistics'
     NodeReloadResult:
-      oneOf:
-        - $ref: '#/components/schemas/Stats'
+      anyOf:
+        - $ref: '#/components/schemas/NodeReloadResponse'
         - $ref: '#/components/schemas/NodeReloadError'
     Stats:
       type: object
@@ -1299,15 +1299,20 @@ components:
         replica_rejections:
           description: Number of indexing requests rejected in the replica stage.
           type: number
-    NodeReloadError:
+    NodeReloadResponse:
       type: object
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
-        reload_exception:
-          $ref: '_common.yaml#/components/schemas/ErrorCause'
       required:
         - name
+    NodeReloadError:
+      allOf:
+        - $ref: '#/components/schemas/NodeReloadResponse'
+        - type: object
+          properties:
+            reload_exception:
+              $ref: '_common.yaml#/components/schemas/ErrorCause'
     SampleType:
       type: string
       description: The type to sample.
