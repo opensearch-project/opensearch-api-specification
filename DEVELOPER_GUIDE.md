@@ -21,6 +21,7 @@
     - [Tools Linting](#tools-linting)
   - [Workflows](#workflows)
     - [Analyze PR Changes](#analyze-pr-changes)
+    - [Analyze Spec Coverage](#analyze-spec-coverage)
     - [Build](#build)
     - [Deploy GitHub Pages](#deploy-github-pages)
     - [Comment on PR](#comment-on-pr)
@@ -355,7 +356,11 @@ npm run lint--fix
 
 ### [Analyze PR Changes](.github/workflows/analyze-pr-changes.yml)
 
-This workflow runs on all pull requests to analyze any potential changes to the specification. It uses the [coverage](#coverage) tool and [openapi-changes](https://pb33f.io/openapi-changes/) to calculate coverage metrics and provide a report on the changes when comparing with the commit at which the PR was branched off. In addition, the "Display Coverage Checklist" step will output a list of OpenSearch APIs with a checkbox indicating whether the API exists in the spec that can be directly copy-pasted into the [Add Missing API Specs issue](https://github.com/opensearch-project/opensearch-api-specification/issues/168).
+This workflow runs on all pull requests to analyze any potential changes to the specification. It uses the [coverage](#coverage) tool and [openapi-changes](https://pb33f.io/openapi-changes/) to calculate coverage metrics and provide a report on the changes when comparing with the commit at which the PR was branched off.
+
+### [Analyze Spec Coverage](.github/workflows/coverage.yml)
+
+This workflow uses the [coverage](#coverage) tool and [openapi-changes](https://pb33f.io/openapi-changes/) to calculate coverage metrics showing the APIs described by the spec vs. registered in OpenSearch. The "Display Coverage Checklist" step will output a list of OpenSearch APIs with a checkbox indicating whether the API exists in the spec that can be directly copy-pasted into the [Add Missing API Specs issue](https://github.com/opensearch-project/opensearch-api-specification/issues/168).
 
 ### [Build](.github/workflows/build.yml)
 

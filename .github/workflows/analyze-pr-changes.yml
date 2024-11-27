@@ -116,18 +116,6 @@ jobs:
             $AFTER_COVERAGE \
             | tee $COVERAGE_DIFF
 
-      - name: Display Coverage Checklist
-        shell: bash -eo pipefail {0}
-        run: |
-          jq -sc '
-            (map(.endpoints .uncovered | to_entries | sort_by(.value) | map((.value[] | ascii_upcase) + " " + .key)) | .[] | to_entries | map({path: .value, covered: false})) as $uncovered |
-            (map(.endpoints .covered | to_entries | sort_by(.value) | map((.value[] | ascii_upcase) + " " + .key)) | .[] | to_entries | map({path: .value, covered: true})) as $covered |
-            $covered+$uncovered |
-            sort_by(.path) |
-            map(if .covered then "- [x] \(.path)" else "- [ ] \(.path)" end) |
-            .[]
-          ' $AFTER_COVERAGE | jq -r
-
       - name: Upload Coverage Data
         id: upload-coverage
         uses: actions/upload-artifact@v4
