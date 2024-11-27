@@ -46,6 +46,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `POST` and `DELETE /_dangling/{index_uuid}` returning `202` ([#686](https://github.com/opensearch-project/opensearch-api-specification/pull/686))
 - Fixed response schema for `/_nodes/reload_secure_settings` and `/_nodes/{node_id}/reload_secure_settings` ([#694](https://github.com/opensearch-project/opensearch-api-specification/pull/694))
 - Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
+- Fixed `/_scripts/painless/_execute` request and response schema ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
+- Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))

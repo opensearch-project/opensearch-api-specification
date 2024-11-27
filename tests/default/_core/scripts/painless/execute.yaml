@@ -1,0 +1,69 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the _scripts execute endpoint.
+
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            year:
+              type: integer
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Execute a painless script returning a string.
+    path: /_scripts/painless/_execute
+    method: GET
+    request:
+      payload:
+        script:
+          source: |-
+            (params.x + params.y)/2
+          params:
+            x: 80
+            y: 100
+    response:
+      status: 200
+      payload:
+        result: '90'
+  - synopsis: Execute a painless script returning `false`.
+    path: /_scripts/painless/_execute
+    method: POST
+    request:
+      payload:
+        context: filter
+        context_setup:
+          index: movies
+          document:
+            year: 1976
+        script:
+          source: |-
+            doc['year'].value > params.year
+          params:
+            year: 2000
+    response:
+      status: 200
+      payload:
+        result: false
+  - synopsis: Execute a painless script returning a number.
+    path: /_scripts/painless/_execute
+    method: POST
+    request:
+      payload:
+        context: score
+        context_setup:
+          index: movies
+          document:
+            year: 1976
+        script:
+          source: |-
+            doc['year'].value
+    response:
+      status: 200
+      payload:
+        result: 1976

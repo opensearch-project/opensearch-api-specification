@@ -1,0 +1,41 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the _scripts contexts endpoint.
+
+prologues:
+  - path: /_scripts/add_ratings
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a painless script that sums the ratings.
+    path: /_scripts/{id}/{context}
+    method: POST
+    parameters:
+      id: add_ratings
+      context: field
+    request:
+      payload:
+        script:
+          lang: painless
+          source: |-
+            int total = 0;
+            for (int i = 0; i < doc['ratings'].length; ++i) {
+              total += doc['ratings'][i];
+            }
+            return total;
+    response:
+      status: 200
+  - synopsis: Update a painless script that sums the ratings.
+    path: /_scripts/{id}/{context}
+    method: PUT
+    parameters:
+      id: add_ratings
+      context: field
+    request:
+      payload:
+        script:
+          lang: painless
+          source: |-
+            return 0;
+    response:
+      status: 200
