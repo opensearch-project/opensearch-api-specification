@@ -1,0 +1,131 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test various operations of the OpenSearch Snapshot Management API.
+
+prologues:
+  - path: /_plugins/_sm/policies/{policy_name}
+    method: DELETE
+    parameters:
+      policy_name: test_policy
+    status: [200, 404]
+
+chapters:
+  - synopsis: Create a new snapshot management policy.
+    path: /_plugins/_sm/policies
+    method: POST
+    request:
+      payload:
+        name: test_policy
+        description: Test policy description
+        creation:
+          schedule: "0 0 * * *"
+          time_limit: "2h"
+        snapshot_config:
+          indices: "test-index-*"
+          repository: "test-repo"
+          ignore_unavailable: false
+          include_global_state: true
+          date_format: "yyyy-MM-dd"
+          timezone: "UTC"
+      status: [200]
+    response:
+      status: 200
+      payload:
+        policy_name: test_policy
+
+  - synopsis: Retrieve the created snapshot management policy.
+    path: /_plugins/_sm/policies/{policy_name}
+    method: GET
+    parameters:
+      policy_name: test_policy
+    response:
+      status: 200
+      payload:
+        name: test_policy
+        description: Test policy description
+        creation:
+          schedule: "0 0 * * *"
+          time_limit: "2h"
+        snapshot_config:
+          indices: "test-index-*"
+          repository: "test-repo"
+          ignore_unavailable: false
+          include_global_state: true
+          date_format: "yyyy-MM-dd"
+          timezone: "UTC"
+
+  - synopsis: Update the snapshot management policy.
+    path: /_plugins/_sm/policies/{policy_name}
+    method: PUT
+    parameters:
+      policy_name: test_policy
+    request:
+      payload:
+        name: test_policy
+        description: Updated test policy description
+        creation:
+          schedule: "0 12 * * *"
+          time_limit: "1h"
+        snapshot_config:
+          indices: "updated-index-*"
+          repository: "updated-repo"
+          ignore_unavailable: true
+          include_global_state: false
+          date_format: "MM-dd-yyyy"
+          timezone: "UTC"
+    response:
+      status: 200
+      payload:
+        policy_name: test_policy
+
+  - synopsis: Explain the snapshot management policy.
+    path: /_plugins/_sm/policies/{policy_name}/_explain
+    method: GET
+    parameters:
+      policy_name: test_policy
+    response:
+      status: 200
+      payload:
+        policies:
+          - name: test_policy
+            creation:
+              current_state: "active"
+              trigger:
+                time: 1698777600
+
+  - synopsis: Start the snapshot management policy.
+    path: /_plugins/_sm/policies/{policy_name}/_start
+    method: POST
+    parameters:
+      policy_name: test_policy
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  - synopsis: Stop the snapshot management policy.
+    path: /_plugins/_sm/policies/{policy_name}/_stop
+    method: POST
+    parameters:
+      policy_name: test_policy
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  - synopsis: Delete the snapshot management policy.
+    path: /_plugins/_sm/policies/{policy_name}
+    method: DELETE
+    parameters:
+      policy_name: test_policy
+    response:
+      status: 200
+      payload:
+        result: "deleted"
+
+epilogues:
+  - path: /_plugins/_sm/policies/{policy_name}
+    method: DELETE
+    parameters:
+      policy_name: test_policy
+    status: [200, 404]
