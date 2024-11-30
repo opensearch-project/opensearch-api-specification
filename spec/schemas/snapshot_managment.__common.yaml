@@ -1,0 +1,397 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Snapshot Management API
+  description: Schemas for OpenSearch Snapshot Management API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    SnapshotManagementPolicyList:
+      type: object
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetPolicyResponse'
+        total_policies:
+          type: integer
+      required:
+        - policies
+        - total_policies
+
+    SnapshotManagementPolicy:
+      type: object
+      properties:
+        description:
+          type: string
+        enabled:
+          type: boolean
+        snapshot_config:
+          $ref: '#/components/schemas/SnapshotConfig'
+        creation:
+          $ref: '#/components/schemas/CreationConfig'
+        deletion:
+          $ref: '#/components/schemas/DeletionConfig'
+        notification:
+          $ref: '#/components/schemas/NotificationConfig'
+      required:
+        - creation
+        - snapshot_config
+
+    SnapshotConfig:
+      type: object
+      properties:
+        date_format:
+          type: string
+          default: "yyyy-MM-dd'T'HH:mm:ss"
+        timezone:
+          type: string
+          default: UTC
+        indices:
+          type: string
+          default: '*'
+        repository:
+          type: string
+        ignore_unavailable:
+          type: boolean
+          default: false
+        include_global_state:
+          type: boolean
+          default: true
+        partial:
+          type: boolean
+          default: false
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - repository
+
+    CreationConfig:
+      type: object
+      properties:
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        time_limit:
+          type: string
+      required:
+        - schedule
+
+    DeletionConfig:
+      type: object
+      properties:
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        time_limit:
+          type: string
+        condition:
+          $ref: '#/components/schemas/DeleteCondition'
+      required:
+        - condition
+
+    Schedule:
+      type: object
+      properties:
+        cron:
+          $ref: '#/components/schemas/CronSchedule'
+        interval:
+          $ref: '#/components/schemas/IntervalSchedule'
+
+    CronSchedule:
+      type: object
+      properties:
+        expression:
+          type: string
+        timezone:
+          type: string
+      required:
+        - expression
+
+    IntervalSchedule:
+      type: object
+      properties:
+        start_time:
+          type: integer
+        period:
+          type: integer
+        unit:
+          type: string
+          enum:
+            - Days
+            - Hours
+            - Minutes
+      required:
+        - period
+        - start_time
+        - unit
+
+    DeleteCondition:
+      type: object
+      properties:
+        max_count:
+          type: integer
+        min_count:
+          type: integer
+          default: 1
+        max_age:
+          type: string
+
+    NotificationConfig:
+      type: object
+      properties:
+        channel:
+          $ref: '#/components/schemas/NotificationChannel'
+        conditions:
+          $ref: '#/components/schemas/NotificationConditions'
+
+    NotificationChannel:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+
+    NotificationConditions:
+      type: object
+      properties:
+        creation:
+          type: boolean
+          default: true
+        deletion:
+          type: boolean
+          default: false
+        failure:
+          type: boolean
+          default: false
+        time_limit_exceeded:
+          type: boolean
+          default: false
+
+    GetPolicyResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+        _version:
+          type: integer
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+        sm_policy:
+          $ref: '#/components/schemas/SnapshotManagementPolicy'
+      required:
+        - _id
+        - _primary_term
+        - _seq_no
+        - _version
+        - sm_policy
+
+    CreatePolicyResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+        _version:
+          type: integer
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+      required:
+        - _id
+        - _primary_term
+        - _seq_no
+        - _version
+
+    UpdatePolicyResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+        _version:
+          type: integer
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+      required:
+        - _id
+        - _primary_term
+        - _seq_no
+        - _version
+
+    DeletePolicyResponse:
+      type: object
+      properties:
+        _index:
+          type: string
+        _id:
+          type: string
+        _version:
+          type: integer
+        result:
+          type: string
+          enum:
+            - deleted
+        forced_refresh:
+          type: boolean
+        _shards:
+          $ref: '#/components/schemas/ShardsInfo'
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+      required:
+        - _id
+        - _index
+        - _primary_term
+        - _seq_no
+        - _shards
+        - _version
+        - forced_refresh
+        - result
+
+    ShardsInfo:
+      type: object
+      properties:
+        total:
+          type: integer
+        successful:
+          type: integer
+        failed:
+          type: integer
+      required:
+        - failed
+        - successful
+        - total
+
+    ExplainPolicyResponse:
+      type: object
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyExplain'
+      required:
+        - policies
+
+    PolicyExplain:
+      type: object
+      properties:
+        name:
+          type: string
+        creation:
+          $ref: '#/components/schemas/PolicyMetadata'
+        deletion:
+          $ref: '#/components/schemas/PolicyMetadata'
+        policy_seq_no:
+          type: integer
+        policy_primary_term:
+          type: integer
+        enabled:
+          type: boolean
+      required:
+        - enabled
+        - name
+        - policy_primary_term
+        - policy_seq_no
+
+    PolicyMetadata:
+      type: object
+      properties:
+        current_state:
+          type: string
+        trigger:
+          $ref: '#/components/schemas/Trigger'
+        latest_execution:
+          $ref: '#/components/schemas/LatestExecution'
+        retry:
+          $ref: '#/components/schemas/RetryInfo'
+
+    Trigger:
+      type: object
+      properties:
+        time:
+          type: integer
+
+    LatestExecution:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - FAILED
+            - IN_PROGRESS
+            - RETRYING
+            - SUCCESS
+            - TIME_LIMIT_EXCEEDED
+        start_time:
+          type: integer
+        end_time:
+          type: integer
+        info:
+          $ref: '#/components/schemas/ExecutionInfo'
+
+    ExecutionInfo:
+      type: object
+      properties:
+        message:
+          type: string
+        cause:
+          type: string
+
+    RetryInfo:
+      type: object
+      properties:
+        count:
+          type: integer
+
+    StartStopPolicyResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+      required:
+        - acknowledged
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorResponse'
+        status:
+          type: integer
+          example: 404
+      required:
+        - error
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootCause'
+        type:
+          type: string
+        reason:
+          type: string
+      required:
+        - reason
+        - root_cause
+        - type
+
+    RootCause:
+      type: object
+      properties:
+        type:
+          type: string
+        reason:
+          type: string
+      required:
+        - reason
+        - type
