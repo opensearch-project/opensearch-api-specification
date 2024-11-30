@@ -1,0 +1,234 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Snapshot Management API
+  description: API for automating snapshot management tasks.
+  version: 1.0.0
+paths:
+  /_plugins/_sm/policies:
+    get:
+      operationId: snapshot_management.get_policies.0
+      x-operation-group: snapshot_management.get_policies
+      x-version-added: '2.1'
+      description: Retrieves all snapshot management policies.
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.get_policies@200'
+    post:
+      operationId: snapshot_management.create_policy.0
+      x-operation-group: snapshot_management.create_policy
+      x-version-added: '2.1'
+      description: Creates a new snapshot management policy.
+      requestBody:
+        $ref: '#/components/requestBodies/snapshot_management.create_policy'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.create_policy@200'
+  /_plugins/_sm/policies/{policy_name}:
+    get:
+      operationId: snapshot_management.get_policy.0
+      x-operation-group: snapshot_management.get_policy
+      x-version-added: '2.1'
+      description: Retrieves a specific snapshot management policy by name.
+      parameters:
+        - $ref: '#/components/parameters/snapshot_management.get_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.get_policy@200'
+        '404':
+          $ref: '#/components/responses/snapshot_management.get_policy@404'
+    put:
+      operationId: snapshot_management.update_policy.0
+      x-operation-group: snapshot_management.update_policy
+      x-version-added: '2.1'
+      description: Updates an existing snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/snapshot_management.update_policy::path.policy_name'
+      requestBody:
+        $ref: '#/components/requestBodies/snapshot_management.update_policy'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.update_policy@200'
+        '404':
+          $ref: '#/components/responses/snapshot_management.update_policy@404'
+    delete:
+      operationId: snapshot_management.delete_policy.0
+      x-operation-group: snapshot_management.delete_policy
+      x-version-added: '2.1'
+      description: Deletes a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/snapshot_management.delete_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.delete_policy@200'
+        '404':
+          $ref: '#/components/responses/snapshot_management.delete_policy@404'
+  /_plugins/_sm/policies/{policy_name}/_explain:
+    get:
+      operationId: snapshot_management.explain_policy.0
+      x-operation-group: snapshot_management.explain_policy
+      x-version-added: '2.1'
+      description: Explains the state of the snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/snapshot_management.explain_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.explain_policy@200'
+  /_plugins/_sm/policies/{policy_name}/_start:
+    post:
+      operationId: snapshot_management.start_policy.0
+      x-operation-group: snapshot_management.start_policy
+      x-version-added: '2.1'
+      description: Starts a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/snapshot_management.start_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.start_policy@200'
+  /_plugins/_sm/policies/{policy_name}/_stop:
+    post:
+      operationId: snapshot_management.stop_policy.0
+      x-operation-group: snapshot_management.stop_policy
+      x-version-added: '2.1'
+      description: Stops a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/snapshot_management.stop_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot_management.stop_policy@200'
+components:
+  requestBodies:
+    snapshot_management.create_policy:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/SnapshotPolicy'
+    snapshot_management.update_policy:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/SnapshotPolicy'
+  responses:
+    snapshot_management.get_policies@200:
+      description: Successfully retrieved the list of snapshot management policies.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/PolicyList'
+    snapshot_management.create_policy@200:
+      description: Successfully created the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              policy_name:
+                type: string
+    snapshot_management.get_policy@200:
+      description: Successfully retrieved the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/SnapshotPolicy'
+    snapshot_management.get_policy@404:
+      description: Snapshot management policy not found.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/NotFoundResponse'
+    snapshot_management.update_policy@200:
+      description: Successfully updated the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              policy_name:
+                type: string
+    snapshot_management.update_policy@404:
+      description: Snapshot management policy not found.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/NotFoundResponse'
+    snapshot_management.delete_policy@200:
+      description: Successfully deleted the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              result:
+                type: string
+    snapshot_management.delete_policy@404:
+      description: Snapshot management policy not found.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/NotFoundResponse'
+    snapshot_management.explain_policy@200:
+      description: Successfully explained the state of the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/snapshot_management._common.yaml#/components/schemas/PolicyExplanation'
+    snapshot_management.start_policy@200:
+      description: Successfully started the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    snapshot_management.stop_policy@200:
+      description: Successfully stopped the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+  parameters:
+    snapshot_management.get_policy::path.policy_name:
+      in: path
+      name: policy_name
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+    snapshot_management.update_policy::path.policy_name:
+      in: path
+      name: policy_name
+      description: The name of the snapshot management policy to update.
+      required: true
+      schema:
+        type: string
+    snapshot_management.delete_policy::path.policy_name:
+      in: path
+      name: policy_name
+      description: The name of the snapshot management policy to delete.
+      required: true
+      schema:
+        type: string
+    snapshot_management.explain_policy::path.policy_name:
+      in: path
+      name: policy_name
+      description: The name of the snapshot management policy to explain.
+      required: true
+      schema:
+        type: string
+    snapshot_management.start_policy::path.policy_name:
+      in: path
+      name: policy_name
+      description: The name of the snapshot management policy to start.
+      required: true
+      schema:
+        type: string
+    snapshot_management.stop_policy::path.policy_name:
+      in: path
+      name: policy_name
+      description: The name of the snapshot management policy to stop.
+      required: true
+      schema:
+        type: string

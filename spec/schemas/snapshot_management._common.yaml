@@ -1,0 +1,147 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Snapshot Management API
+  description: Common schemas for Snapshot Management API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    PolicyList:
+      type: object
+      properties:
+        totalPolicies:
+          type: integer
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/SnapshotPolicy'
+
+    SnapshotPolicy:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        creation:
+          $ref: '#/components/schemas/CreationConfig'
+        deletion:
+          $ref: '#/components/schemas/DeletionConfig'
+        snapshot_config:
+          $ref: '#/components/schemas/SnapshotConfig'
+        notification:
+          $ref: '#/components/schemas/NotificationConfig'
+      required:
+        - creation
+        - name
+        - snapshot_config
+
+    CreationConfig:
+      type: object
+      properties:
+        schedule:
+          type: string
+        time_limit:
+          type: string
+
+    DeletionConfig:
+      type: object
+      properties:
+        schedule:
+          type: string
+        condition:
+          $ref: '#/components/schemas/DeletionCondition'
+        time_limit:
+          type: string
+
+    DeletionCondition:
+      type: object
+      properties:
+        max_age:
+          type: string
+        max_count:
+          type: integer
+        min_count:
+          type: integer
+
+    SnapshotConfig:
+      type: object
+      properties:
+        indices:
+          type: string
+        repository:
+          type: string
+        ignore_unavailable:
+          type: boolean
+        include_global_state:
+          type: boolean
+        date_format:
+          type: string
+        timezone:
+          type: string
+
+    NotificationConfig:
+      type: object
+      properties:
+        channel:
+          $ref: '#/components/schemas/NotificationChannel'
+        conditions:
+          $ref: '#/components/schemas/NotificationConditions'
+
+    NotificationChannel:
+      type: object
+      properties:
+        id:
+          type: string
+
+    NotificationConditions:
+      type: object
+      properties:
+        creation:
+          type: boolean
+        deletion:
+          type: boolean
+        failure:
+          type: boolean
+        time_limit_exceeded:
+          type: boolean
+
+    PolicyExplanation:
+      type: object
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyState'
+
+    PolicyState:
+      type: object
+      properties:
+        name:
+          type: string
+        creation:
+          $ref: '#/components/schemas/StateMetadata'
+        deletion:
+          $ref: '#/components/schemas/StateMetadata'
+
+    StateMetadata:
+      type: object
+      properties:
+        current_state:
+          type: string
+        trigger:
+          $ref: '#/components/schemas/TriggerMetadata'
+
+    TriggerMetadata:
+      type: object
+      properties:
+        time:
+          type: integer
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        status:
+          type: integer
