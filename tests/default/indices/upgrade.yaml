@@ -1,0 +1,57 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test upgrading index using both GET and POST methods.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Bennett Miller, title: The Cruise, year: 1998}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+chapters:
+  - synopsis: Trigger index upgrade (POST).
+    path: /{index}/_upgrade
+    method: POST
+    parameters:
+      index: [movies]
+    request:
+      payload:
+        allow_no_indices: true
+        expand_wildcards: open
+        ignore_unavailable: true
+    response:
+      status: 200
+
+  - synopsis: Check index upgrade status (GET).
+    path: /{index}/_upgrade
+    method: GET
+    parameters:
+      index: [movies]
+    response:
+      status: 200
+
+  - synopsis: Trigger upgrade (POST).
+    path: /_upgrade
+    method: POST
+    request:
+      payload:
+        allow_no_indices: false
+        expand_wildcards: closed
+        ignore_unavailable: false
+    response:
+      status: 200
+
+  - synopsis: Check upgrade status (GET).
+    path: /_upgrade
+    method: GET
+    response:
+      status: 200
