@@ -124,7 +124,22 @@ jobs:
         with:
           path: coverage
 
-      - name: Display Missing Test Paths
+      - name: Collect Test File Names
+        run: |
+          find tests/. -name "*.yaml" | xargs realpath | jq -Rn '{ files: [inputs | "\(.)"] }' > test-files.json
+
+      - name: Display Unused Test Files
+        run: |
+          jq -r -sc '
+              (map(.stories) | add | unique) as $stories |
+              (map(.files) | add | unique) as $all |
+              $all-$stories |
+              .[]
+            ' $(find ./ -name "test-spec-coverage-*.json") test-files.json > ./coverage/files.txt
+          cat ./coverage/files.txt | sed -e 's/^/::error::/'
+          test ! -s ./coverage/files.txt || { echo "::error::Unused test files detected."; exit 1; }
+
+      - name: Collect and Display Missing Test Paths
         run: |
           jq -r -sc '
               (map(.operations) | add | unique) as $all |
