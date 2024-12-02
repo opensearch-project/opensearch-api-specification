@@ -21,6 +21,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `s` to `/_ingest/processor/grok` ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added `aggregations` to `/nodes/_usage/{metric}` requests and responses ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
+- Added missing `status` to `/_search/template` response([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
