@@ -2,6 +2,9 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test cat/snapshots endpoints.
 epilogues:
+  - path: /_snapshot/my-fs-repository/my-test-snapshot
+    method: DELETE
+    status: [200, 404]
   - path: /_snapshot/my-fs-repository
     method: DELETE
     status: [200, 404]
@@ -13,8 +16,29 @@ prologues:
         type: fs
         settings:
           location: /tmp/opensearch/repo
+  - path: /_snapshot/my-fs-repository/my-test-snapshot
+    method: PUT
+    parameters:
+      wait_for_completion: true
+    request:
+      payload:
+        indices: '*'
+        ignore_unavailable: true
+        include_global_state: false
+        partial: true
 chapters:
-  - synopsis: List all snapshots for a repository.
+  - synopsis: List all snapshots for a repository (query).
+    path: /_cat/snapshots
+    method: GET
+    parameters:
+      format: json
+      repository: my-fs-repository
+    response:
+      status: 200
+      payload:
+        - id: my-test-snapshot
+          status: SUCCESS
+  - synopsis: List all snapshots for a repository (path).
     path: /_cat/snapshots/{repository}
     method: GET
     parameters:
@@ -22,3 +46,6 @@ chapters:
       repository: my-fs-repository
     response:
       status: 200
+      payload:
+        - id: my-test-snapshot
+          status: SUCCESS
