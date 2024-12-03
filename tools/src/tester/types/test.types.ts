@@ -17,4 +17,5 @@ export interface SpecTestCoverage {
   },
   operations: Operation[]
   evaluated_operations: Operation[]
+  stories: string[]
 }
