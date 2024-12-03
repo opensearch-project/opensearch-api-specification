@@ -1,0 +1,63 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test search with templates using both index-specific and global endpoints via GET and POST methods.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Quentin Tarantino, title: Pulp Fiction, year: 1994}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Christopher Nolan, title: Inception, year: 2010}
+  - path: /_scripts/movie_template
+    method: POST
+    request:
+      content_type: application/json
+      payload:
+        script:
+          lang: mustache
+          source: >
+            {
+              "query": {
+                "match": {
+                  "{{field}}": "{{value}}"
+                }
+              }
+            }
+
+chapters:
+  - synopsis: Perform a global search using a template with GET.
+    path: /_search/template
+    method: GET
+    request:
+      payload:
+        id: movie_template
+        params:
+          field: 
+            value: year
+          value: 
+            value: 1994
+    response:
+      status: 200
+
+  - synopsis: Perform a global search using a template with POST.
+    path: /_search/template
+    method: POST
+    request:
+      payload:
+        id: movie_template
+        params:
+          field: 
+            value: year
+          value: 
+            value: 2010
+    response:
+      status: 200

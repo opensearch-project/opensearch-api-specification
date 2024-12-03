@@ -85,6 +85,9 @@ describe('TestResults', () => {
         { method: 'POST', path: '/cluster_manager' },
         { method: 'GET', path: '/index' },
         { method: 'GET', path: '/nodes' }
+      ],
+      stories: [
+        'full_path'
       ]
     })
     fs.unlinkSync(filename)

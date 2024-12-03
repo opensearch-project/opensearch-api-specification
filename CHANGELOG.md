@@ -21,6 +21,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `s` to `/_ingest/processor/grok` ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added `aggregations` to `/nodes/_usage/{metric}` requests and responses ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
+- Added missing `status` to `/_search/template` response ([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 - Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
 ### Removed
@@ -48,7 +49,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed response schema for `/_nodes/reload_secure_settings` and `/_nodes/{node_id}/reload_secure_settings` ([#694](https://github.com/opensearch-project/opensearch-api-specification/pull/694))
 - Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Fixed `/_scripts/painless/_execute` request and response schema ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
-- Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
+- Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/
+- Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 - Fixed `hits` in `rank_eval` allowing numbers ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
 ### Changed

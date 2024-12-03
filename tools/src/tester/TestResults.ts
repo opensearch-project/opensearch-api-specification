@@ -19,6 +19,7 @@ export default class TestResults {
   protected _evaluated_operations?: Operation[]
   protected _unevaluated_operations?: Operation[]
   protected _operations?: Operation[]
+  protected _stories?: string[]
 
   constructor(spec: MergedOpenApiSpec, evaluations: StoryEvaluations) {
     this._spec = spec
@@ -59,6 +60,14 @@ export default class TestResults {
     return this._operations
   }
 
+  stories(): string[] {
+    if (this._stories !== undefined) return this._stories
+    this._stories = _.uniqWith(_.compact(_.flatMap(this._evaluations.evaluations, (evaluation) =>
+      evaluation.full_path
+    )), isEqual)
+    return this._stories
+  }
+
   test_coverage(): SpecTestCoverage {
     return {
       summary: {
@@ -69,7 +78,8 @@ export default class TestResults {
         ) / 100 : 0
       },
       operations: this.operations(),
-      evaluated_operations: this.evaluated_operations()
+      evaluated_operations: this.evaluated_operations(),
+      stories: this.stories()
     }
   }
 
