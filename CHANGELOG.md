@@ -21,6 +21,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `s` to `/_ingest/processor/grok` ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Added schema for security API error responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added `aggregations` to `/nodes/_usage/{metric}` requests and responses ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
+- Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -48,6 +49,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Fixed `/_scripts/painless/_execute` request and response schema ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
 - Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
+- Fixed `hits` in `rank_eval` allowing numbers ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
