@@ -49,7 +49,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed response schema for `/_nodes/reload_secure_settings` and `/_nodes/{node_id}/reload_secure_settings` ([#694](https://github.com/opensearch-project/opensearch-api-specification/pull/694))
 - Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Fixed `/_scripts/painless/_execute` request and response schema ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
-- Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/
+- Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
 - Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 - Fixed `hits` in `rank_eval` allowing numbers ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
