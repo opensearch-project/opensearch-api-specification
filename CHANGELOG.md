@@ -24,6 +24,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing `status` to `/_search/template` response ([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 - Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Added request body to `_search_shards` API specs ([#709](https://github.com/opensearch-project/opensearch-api-specification/pull/709))
+- Added `sm` namespace API specifications ([#701](https://github.com/opensearch-project/opensearch-api-specification/pull/701))
+- Added schema for `/_plugins/_knn/stats`, `/_plugins/_knn/models/{model_id}`, `_train` and `_search` ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -164,7 +166,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added `sm` namespace API specifications ([#701](https://github.com/opensearch-project/opensearch-api-specification/pull/701))
 
 ### Changed
 
