@@ -23,6 +23,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `aggregations` to `/nodes/_usage/{metric}` requests and responses ([#615](https://github.com/opensearch-project/opensearch-api-specification/pull/615))
 - Added missing `status` to `/_search/template` response ([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 - Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
+- Added schema for `/_plugins/_knn/stats`, `/_plugins/_knn/models/{model_id}`, `_train` and `_search` ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
