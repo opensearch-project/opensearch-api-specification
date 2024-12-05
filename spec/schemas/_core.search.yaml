@@ -690,7 +690,7 @@ components:
           $ref: '_common.yaml#/components/schemas/Sort'
         _source:
           $ref: '#/components/schemas/SourceConfig'
-        stored_field:
+        stored_fields:
           $ref: '_common.yaml#/components/schemas/Fields'
         track_scores:
           type: boolean
@@ -736,9 +736,6 @@ components:
         - $ref: '#/components/schemas/HighlightBase'
         - type: object
           properties:
-            fragment_offset:
-              type: integer
-              format: int32
             matched_fields:
               $ref: '_common.yaml#/components/schemas/Fields'
             analyzer:
@@ -767,6 +764,9 @@ components:
           type: boolean
         fragmenter:
           $ref: '#/components/schemas/HighlighterFragmenter'
+        fragment_offset:
+          type: integer
+          format: int32
         fragment_size:
           description: The size of the highlighted fragment in characters.
           type: integer
@@ -778,11 +778,11 @@ components:
         max_fragment_length:
           type: integer
           format: int32
-        max_analyzed_offset:
+        max_analyzer_offset:
           description: |-
             If set to a non-negative value, highlighting stops at this defined maximum limit.
             The rest of the text is not processed or highlighted, and no error is returned.
-            The `max_analyzed_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which takes precedence when it is set to a lower value than the query setting.
+            The `max_analyzer_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which takes precedence when it is set to a lower value than the query setting.
           type: integer
           format: int32
         no_match_size:
@@ -840,11 +840,14 @@ components:
         - title: custom
           type: string
     BuiltinHighlighterType:
-      type: string
-      enum:
-        - fvh
-        - plain
-        - unified
+      oneOf:
+        - type: string
+          const: plain
+        - title: fast_vector
+          type: string
+          const: fvh
+        - type: string
+          const: unified
     BoundaryScanner:
       type: string
       enum:
@@ -869,19 +872,18 @@ components:
       oneOf:
         - title: fetch
           type: boolean
-        - title: includes
-          type: array
-          items:
-            $ref: '_common.yaml#/components/schemas/Field'
         - title: filter
           $ref: '#/components/schemas/SourceFilter'
     SourceFilter:
-      type: object
-      properties:
-        excludes:
+      oneOf:
+        - title: includes
           $ref: '_common.yaml#/components/schemas/Fields'
-        includes:
-          $ref: '_common.yaml#/components/schemas/Fields'
+        - type: object
+          properties:
+            excludes:
+              $ref: '_common.yaml#/components/schemas/Fields'
+            includes:
+              $ref: '_common.yaml#/components/schemas/Fields'
     Rescore:
       type: object
       properties:

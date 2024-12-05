@@ -52,6 +52,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
 - Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 - Fixed `hits` in `rank_eval` allowing numbers ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
+- Fixed query DSL schemas ([#706](https://github.com/opensearch-project/opensearch-api-specification/pull/706))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))

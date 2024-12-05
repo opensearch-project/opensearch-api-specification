@@ -202,7 +202,6 @@ components:
         - boolean
         - 'null'
         - number
-        - object
         - string
     Void:
       description: |-
@@ -519,14 +518,14 @@ components:
           required:
             - id
     MultiTermQueryRewrite:
-      type: string
-      enum:
-        - constant_score
-        - constant_score_boolean
-        - scoring_boolean
-        - top_terms_N
-        - top_terms_blended_freqs_N
-        - top_terms_boost_N
+      oneOf:
+        - type: string
+          enum:
+            - constant_score
+            - constant_score_boolean
+            - scoring_boolean
+        - type: string
+          pattern: top_terms(_blended_freqs|_boost)?_\d+
     Fuzziness:
       oneOf:
         - type: string
@@ -550,41 +549,76 @@ components:
         - script
     Sort:
       oneOf:
-        - $ref: '#/components/schemas/SortCombinations'
+        - $ref: '#/components/schemas/SortOptions'
         - type: array
           items:
-            $ref: '#/components/schemas/SortCombinations'
-    SortCombinations:
-      oneOf:
-        - title: field
-          $ref: '#/components/schemas/Field'
-        - title: field_with_direction
-          $ref: '#/components/schemas/FieldWithDirection'
-        - title: field_with_order
-          $ref: '#/components/schemas/FieldWithOrder'
-        - title: options
-          $ref: '#/components/schemas/SortOptions'
-    FieldWithDirection:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/SortOrder'
-    FieldWithOrder:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/ScoreSort'
+            $ref: '#/components/schemas/SortOptions'
     SortOptions:
-      type: object
-      properties:
-        _score:
-          $ref: '#/components/schemas/ScoreSort'
-        _doc:
-          $ref: '#/components/schemas/ScoreSort'
-        _geo_distance:
-          $ref: '#/components/schemas/GeoDistanceSort'
-        _script:
-          $ref: '#/components/schemas/ScriptSort'
-      minProperties: 1
-      maxProperties: 1
+      oneOf:
+        - type: string
+          const: _score
+        - type: string
+          const: _doc
+        - type: string
+          not:
+            type: string
+            enum:
+              - _doc
+              - _score
+        - type: object
+          properties:
+            _score:
+              $ref: '#/components/schemas/ScoreSort'
+            _doc:
+              $ref: '#/components/schemas/ScoreSort'
+            _geo_distance:
+              $ref: '#/components/schemas/GeoDistanceSort'
+            _script:
+              $ref: '#/components/schemas/ScriptSort'
+          minProperties: 1
+          maxProperties: 1
+        - type: object
+          propertyNames:
+            allOf:
+              - $ref: '#/components/schemas/Field'
+              - not:
+                  type: string
+                  enum:
+                    - _doc
+                    - _geo_distance
+                    - _score
+                    - _script
+          additionalProperties:
+            $ref: '#/components/schemas/FieldSort'
+          minProperties: 1
+          maxProperties: 1
+    FieldSort:
+      oneOf:
+        - title: order
+          $ref: '#/components/schemas/SortOrder'
+        - type: object
+          properties:
+            missing:
+              $ref: '#/components/schemas/FieldValue'
+            mode:
+              $ref: '#/components/schemas/SortMode'
+            nested:
+              $ref: '#/components/schemas/NestedSortValue'
+            order:
+              $ref: '#/components/schemas/SortOrder'
+            unmapped_type:
+              $ref: '_common.mapping.yaml#/components/schemas/FieldType'
+            numeric_type:
+              $ref: '#/components/schemas/FieldSortNumericType'
+            format:
+              type: string
+    FieldSortNumericType:
+      type: string
+      enum:
+        - date
+        - date_nanos
+        - double
+        - long
     ScoreSort:
       type: object
       properties:
@@ -617,17 +651,34 @@ components:
         - min
         - sum
     DistanceUnit:
-      type: string
-      enum:
-        - cm
-        - ft
-        - in
-        - km
-        - m
-        - mi
-        - mm
-        - nmi
-        - yd
+      oneOf:
+        - title: centimeters
+          type: string
+          const: cm
+        - title: feet
+          type: string
+          const: ft
+        - title: inches
+          type: string
+          const: in
+        - title: kilometers
+          type: string
+          const: km
+        - title: meters
+          type: string
+          const: m
+        - title: miles
+          type: string
+          const: mi
+        - title: millimeters
+          type: string
+          const: mm
+        - title: nautical miles
+          type: string
+          const: nmi
+        - title: yards
+          type: string
+          const: yd
     ScriptSort:
       type: object
       properties:
@@ -682,16 +733,6 @@ components:
       type: string
     DateFormat:
       type: string
-    PipeSeparatedFlagsSimpleQueryStringFlag:
-      description: |-
-        A set of flags represented as a single enum value or a set of values that are encoded
-        as a pipe-separated string.
-
-        Depending on the target language, code generators can use this hint to generate language specific
-        flags enum constructs and the corresponding (de-)serialization code.
-      oneOf:
-        - $ref: '_common.query_dsl.yaml#/components/schemas/SimpleQueryStringFlag'
-        - type: string
     GeoHashPrecision:
       description: The level of geohash precision, which can be expressed as a geohash length between 1 and 12 or as a distance measure, such as "1km" or "10m".
       oneOf:
@@ -702,55 +743,6 @@ components:
       type: number
     EmptyObject:
       type: object
-    KnnField:
-      type: object
-      properties:
-        vector:
-          $ref: '#/components/schemas/QueryVector'
-        k:
-          description: The total number of nearest neighbors to return as top hits. 
-          type: integer
-          format: int32
-        min_score:
-          description: The minimum similarity score required in order for a neighbor to be considered a hit. 
-          type: number
-          format: float
-          x-version-added: '2.14'
-        max_distance:
-          description: The maximum physical vector space distance required in order for a neighbor to be considered a hit.
-          type: number
-          format: float
-          x-version-added: '2.14'
-        filter:
-          description: The filters for the k-NN search query.
-          oneOf:
-            - $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-            - type: array
-              items:
-                $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-        boost:
-          description: The boost value applied to k-NN scores.
-          type: number
-          format: float
-        method_parameters:
-          type: object
-          x-version-added: '2.16'
-          additionalProperties:
-            type: integer
-            format: int32
-        rescore:
-          type: object
-          x-version-added: '2.17'
-          additionalProperties:
-            type: number
-            format: float
-      required:
-        - vector
-    QueryVector:
-      type: array
-      items:
-        type: number
-        format: float
     SlicedScroll:
       type: object
       properties:
