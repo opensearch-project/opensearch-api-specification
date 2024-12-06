@@ -1,0 +1,61 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Delete a k-NN model.
+version: '>= 2.17'
+prologues:
+  - method: PUT
+    path: /movies
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            recommendation_vector:
+              type: knn_vector
+              dimension: 8
+    status: [200]
+  - method: POST
+    path: /_bulk
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: movies, _id: '1'}}
+        - {recommendation_vector: [1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], duration: 12.2}
+        - {index: {_index: movies, _id: '2'}}
+        - {recommendation_vector: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5], duration: 7.1}
+    status: [200]
+  - method: POST
+    path: /_plugins/_knn/models/model-1/_train
+    request:
+      payload:
+        training_index: movies
+        training_field: recommendation_vector
+        dimension: 8
+        max_training_vector_count: 1200
+        search_size: 100
+        description: Test model
+        mode: on_disk
+        compression_level: 32x
+        spaceType: l2
+    status: [200]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_knn/models/model-1
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Delete a trained model.
+    method: DELETE  
+    path: /_plugins/_knn/models/{model_id}
+    parameters:
+      model_id: model-1
+    retry:
+      count: 3
+    response:
+      status: 200
