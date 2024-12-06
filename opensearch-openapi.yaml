@@ -26555,12 +26555,12 @@ components:
 
                   Templates with lower 'order' values are merged first. Templates with higher
                   'order' values are merged later, overriding templates with lower values.
-                type: number
+                type: integer
+                format: int32
               settings:
                 description: Configuration options for the index.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               version:
                 $ref: '#/components/schemas/_common___VersionNumber'
             description: The template definition
@@ -31943,17 +31943,34 @@ components:
     _common___Distance:
       type: string
     _common___DistanceUnit:
-      type: string
-      enum:
-        - cm
-        - ft
-        - in
-        - km
-        - m
-        - mi
-        - mm
-        - nmi
-        - yd
+      oneOf:
+        - title: centimeters
+          type: string
+          const: cm
+        - title: feet
+          type: string
+          const: ft
+        - title: inches
+          type: string
+          const: in
+        - title: kilometers
+          type: string
+          const: km
+        - title: meters
+          type: string
+          const: m
+        - title: miles
+          type: string
+          const: mi
+        - title: millimeters
+          type: string
+          const: mm
+        - title: nautical miles
+          type: string
+          const: nmi
+        - title: yards
+          type: string
+          const: yd
     _common___DocStats:
       type: object
       properties:
@@ -32114,22 +32131,40 @@ components:
           $ref: '#/components/schemas/_common___ByteCount'
       required:
         - size_in_bytes
+    _common___FieldSort:
+      oneOf:
+        - title: order
+          $ref: '#/components/schemas/_common___SortOrder'
+        - type: object
+          properties:
+            missing:
+              $ref: '#/components/schemas/_common___FieldValue'
+            mode:
+              $ref: '#/components/schemas/_common___SortMode'
+            nested:
+              $ref: '#/components/schemas/_common___NestedSortValue'
+            order:
+              $ref: '#/components/schemas/_common___SortOrder'
+            unmapped_type:
+              $ref: '#/components/schemas/_common.mapping___FieldType'
+            numeric_type:
+              $ref: '#/components/schemas/_common___FieldSortNumericType'
+            format:
+              type: string
+    _common___FieldSortNumericType:
+      type: string
+      enum:
+        - date
+        - date_nanos
+        - double
+        - long
     _common___FieldValue:
       description: A field value.
       type:
         - boolean
         - 'null'
         - number
-        - object
         - string
-    _common___FieldWithDirection:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/_common___SortOrder'
-    _common___FieldWithOrder:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/_common___ScoreSort'
     _common___FlushStats:
       type: object
       properties:
@@ -32463,50 +32498,6 @@ components:
                 - source
     _common___Ip:
       type: string
-    _common___KnnField:
-      type: object
-      properties:
-        vector:
-          $ref: '#/components/schemas/_common___QueryVector'
-        k:
-          description: The total number of nearest neighbors to return as top hits.
-          type: integer
-          format: int32
-        min_score:
-          description: The minimum similarity score required in order for a neighbor to be considered a hit.
-          type: number
-          format: float
-          x-version-added: '2.14'
-        max_distance:
-          description: The maximum physical vector space distance required in order for a neighbor to be considered a hit.
-          type: number
-          format: float
-          x-version-added: '2.14'
-        filter:
-          description: The filters for the k-NN search query.
-          oneOf:
-            - $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
-            - type: array
-              items:
-                $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
-        boost:
-          description: The boost value applied to k-NN scores.
-          type: number
-          format: float
-        method_parameters:
-          type: object
-          x-version-added: '2.16'
-          additionalProperties:
-            type: integer
-            format: int32
-        rescore:
-          type: object
-          x-version-added: '2.17'
-          additionalProperties:
-            type: number
-            format: float
-      required:
-        - vector
     _common___LatLonGeoLocation:
       type: object
       properties:
@@ -32585,14 +32576,14 @@ components:
           format: int32
         - type: string
     _common___MultiTermQueryRewrite:
-      type: string
-      enum:
-        - constant_score
-        - constant_score_boolean
-        - scoring_boolean
-        - top_terms_N
-        - top_terms_blended_freqs_N
-        - top_terms_boost_N
+      oneOf:
+        - type: string
+          enum:
+            - constant_score
+            - constant_score_boolean
+            - scoring_boolean
+        - type: string
+          pattern: top_terms(_blended_freqs|_boost)?_\d+
     _common___Name:
       type: string
     _common___Names:
@@ -32806,16 +32797,6 @@ components:
         - query
     _common___PipelineName:
       type: string
-    _common___PipeSeparatedFlagsSimpleQueryStringFlag:
-      description: |-
-        A set of flags represented as a single enum value or a set of values that are encoded
-        as a pipe-separated string.
-
-        Depending on the target language, code generators can use this hint to generate language specific
-        flags enum constructs and the corresponding (de-)serialization code.
-      oneOf:
-        - $ref: '#/components/schemas/_common.query_dsl___SimpleQueryStringFlag'
-        - type: string
     _common___PluginStats:
       type: object
       properties:
@@ -32888,11 +32869,6 @@ components:
         - memory_size_in_bytes
         - miss_count
         - total_count
-    _common___QueryVector:
-      type: array
-      items:
-        type: number
-        format: float
     _common___RankBase:
       type: object
     _common___RankContainer:
@@ -33600,20 +33576,10 @@ components:
         - auto
     _common___Sort:
       oneOf:
-        - $ref: '#/components/schemas/_common___SortCombinations'
+        - $ref: '#/components/schemas/_common___SortOptions'
         - type: array
           items:
-            $ref: '#/components/schemas/_common___SortCombinations'
-    _common___SortCombinations:
-      oneOf:
-        - title: field
-          $ref: '#/components/schemas/_common___Field'
-        - title: field_with_direction
-          $ref: '#/components/schemas/_common___FieldWithDirection'
-        - title: field_with_order
-          $ref: '#/components/schemas/_common___FieldWithOrder'
-        - title: options
-          $ref: '#/components/schemas/_common___SortOptions'
+            $ref: '#/components/schemas/_common___SortOptions'
     _common___SortMode:
       type: string
       enum:
@@ -33623,18 +33589,44 @@ components:
         - min
         - sum
     _common___SortOptions:
-      type: object
-      properties:
-        _score:
-          $ref: '#/components/schemas/_common___ScoreSort'
-        _doc:
-          $ref: '#/components/schemas/_common___ScoreSort'
-        _geo_distance:
-          $ref: '#/components/schemas/_common___GeoDistanceSort'
-        _script:
-          $ref: '#/components/schemas/_common___ScriptSort'
-      minProperties: 1
-      maxProperties: 1
+      oneOf:
+        - type: string
+          const: _score
+        - type: string
+          const: _doc
+        - type: string
+          not:
+            type: string
+            enum:
+              - _doc
+              - _score
+        - type: object
+          properties:
+            _score:
+              $ref: '#/components/schemas/_common___ScoreSort'
+            _doc:
+              $ref: '#/components/schemas/_common___ScoreSort'
+            _geo_distance:
+              $ref: '#/components/schemas/_common___GeoDistanceSort'
+            _script:
+              $ref: '#/components/schemas/_common___ScriptSort'
+          minProperties: 1
+          maxProperties: 1
+        - type: object
+          propertyNames:
+            allOf:
+              - $ref: '#/components/schemas/_common___Field'
+              - not:
+                  type: string
+                  enum:
+                    - _doc
+                    - _geo_distance
+                    - _score
+                    - _script
+          additionalProperties:
+            $ref: '#/components/schemas/_common___FieldSort'
+          minProperties: 1
+          maxProperties: 1
     _common___SortOrder:
       type: string
       enum:
@@ -39742,6 +39734,55 @@ components:
           type: boolean
       required:
         - enabled
+    _common.mapping___FieldType:
+      type: string
+      enum:
+        - aggregate_metric_double
+        - alias
+        - binary
+        - boolean
+        - byte
+        - completion
+        - constant_keyword
+        - date
+        - date_nanos
+        - date_range
+        - double
+        - double_range
+        - flat_object
+        - float
+        - float_range
+        - geo_point
+        - geo_shape
+        - half_float
+        - histogram
+        - icu_collation_keyword
+        - integer
+        - integer_range
+        - ip
+        - ip_range
+        - join
+        - keyword
+        - knn_vector
+        - long
+        - long_range
+        - match_only_text
+        - murmur3
+        - nested
+        - object
+        - percolator
+        - rank_feature
+        - rank_features
+        - scaled_float
+        - search_as_you_type
+        - short
+        - text
+        - token_count
+        - unsigned_long
+        - version
+        - wildcard
+        - xy_point
+        - xy_shape
     _common.mapping___FlatObjectProperty:
       allOf:
         - $ref: '#/components/schemas/_common.mapping___PropertyBase'
@@ -40705,25 +40746,28 @@ components:
         - all
         - none
     _common.query_dsl___CommonTermsQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              type: string
-            cutoff_frequency:
-              type: number
-              format: float
-            high_freq_operator:
-              $ref: '#/components/schemas/_common.query_dsl___Operator'
-            low_freq_operator:
-              $ref: '#/components/schemas/_common.query_dsl___Operator'
-            minimum_should_match:
-              $ref: '#/components/schemas/_common___MinimumShouldMatch'
-            query:
-              type: string
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  type: string
+                cutoff_frequency:
+                  type: number
+                  format: float
+                high_freq_operator:
+                  $ref: '#/components/schemas/_common.query_dsl___Operator'
+                low_freq_operator:
+                  $ref: '#/components/schemas/_common.query_dsl___Operator'
+                minimum_should_match:
+                  $ref: '#/components/schemas/_common___MinimumShouldMatch'
+                query:
+                  type: string
+              required:
+                - query
     _common.query_dsl___ConstantScoreQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -40839,17 +40883,20 @@ components:
           required:
             - field
     _common.query_dsl___FieldAndFormat:
-      type: object
-      properties:
-        field:
+      oneOf:
+        - title: field
           $ref: '#/components/schemas/_common___Field'
-        format:
-          description: Format in which the values are returned.
-          type: string
-        include_unmapped:
-          type: boolean
-      required:
-        - field
+        - type: object
+          properties:
+            field:
+              $ref: '#/components/schemas/_common___Field'
+            format:
+              description: Format in which the values are returned.
+              type: string
+            include_unmapped:
+              type: boolean
+          required:
+            - field
     _common.query_dsl___FieldValueFactorModifier:
       type: string
       enum:
@@ -40950,33 +40997,33 @@ components:
             score_mode:
               $ref: '#/components/schemas/_common.query_dsl___FunctionScoreMode'
     _common.query_dsl___FuzzyQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            max_expansions:
-              description: Maximum number of variations created.
-              type: integer
-              format: int32
-            prefix_length:
-              description: Number of beginning characters left unchanged when creating expansions.
-              type: integer
-              format: int32
-            rewrite:
-              $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
-            transpositions:
-              description: Indicates whether edits include transpositions of two adjacent characters (for example, `ab` to `ba`).
-              type: boolean
-            fuzziness:
-              $ref: '#/components/schemas/_common___Fuzziness'
-            value:
-              description: Term you wish to find in the provided field.
-              oneOf:
-                - type: string
-                - type: number
-                - type: boolean
-          required:
-            - value
+      oneOf:
+        - title: value
+          $ref: '#/components/schemas/_common___FieldValue'
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                max_expansions:
+                  description: Maximum number of variations created.
+                  type: integer
+                  format: int32
+                prefix_length:
+                  description: Number of beginning characters left unchanged when creating expansions.
+                  type: integer
+                  format: int32
+                rewrite:
+                  $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
+                transpositions:
+                  description: Indicates whether edits include transpositions of two adjacent characters (for example, `ab` to `ba`).
+                  type: boolean
+                fuzziness:
+                  $ref: '#/components/schemas/_common___Fuzziness'
+                value:
+                  description: Term you wish to find in the provided field.
+                  $ref: '#/components/schemas/_common___FieldValue'
+              required:
+                - value
     _common.query_dsl___GeoBoundingBoxQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -41116,6 +41163,15 @@ components:
           required:
             - parent_type
             - query
+    _common.query_dsl___HybridQuery:
+      allOf:
+        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+        - type: object
+          properties:
+            queries:
+              type: array
+              items:
+                $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
     _common.query_dsl___IdsQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -41296,22 +41352,59 @@ components:
       required:
         - pattern
     _common.query_dsl___KnnQuery:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/_common___KnnField'
-      minProperties: 1
-      maxProperties: 1
+      allOf:
+        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+        - type: object
+          properties:
+            vector:
+              $ref: '#/components/schemas/_common.query_dsl___QueryVector'
+            k:
+              description: The total number of nearest neighbors to return as top hits.
+              type: integer
+              format: int32
+            min_score:
+              description: The minimum similarity score required in order for a neighbor to be considered a hit.
+              type: number
+              format: float
+              x-version-added: '2.14'
+            max_distance:
+              description: The maximum physical vector space distance required in order for a neighbor to be considered a hit.
+              type: number
+              format: float
+              x-version-added: '2.14'
+            filter:
+              description: The filters for the k-NN search query.
+              oneOf:
+                - $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
+            method_parameters:
+              type: object
+              x-version-added: '2.16'
+              additionalProperties:
+                type: integer
+                format: int32
+            rescore:
+              type: object
+              x-version-added: '2.17'
+              additionalProperties:
+                type: number
+                format: float
+          required:
+            - vector
     _common.query_dsl___Like:
       description: Text that we want similar documents for or a lookup to a document's field for the text.
       oneOf:
-        - type: string
-        - $ref: '#/components/schemas/_common.query_dsl___LikeDocument'
+        - title: text
+          type: string
+        - title: document
+          $ref: '#/components/schemas/_common.query_dsl___LikeDocument'
     _common.query_dsl___LikeDocument:
       type: object
       properties:
         doc:
           description: A document not present in the index.
-          type: object
         fields:
           type: array
           items:
@@ -41320,6 +41413,8 @@ components:
           $ref: '#/components/schemas/_common___Id'
         _index:
           $ref: '#/components/schemas/_common___IndexName'
+        _type:
+          $ref: '#/components/schemas/_common___Type'
         per_field_analyzer:
           type: object
           additionalProperties:
@@ -41331,140 +41426,152 @@ components:
         version_type:
           $ref: '#/components/schemas/_common___VersionType'
     _common.query_dsl___MatchAllQuery:
-      $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-    _common.query_dsl___MatchBoolPrefixQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
         - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert the text in the query value into tokens.
-              type: string
-            fuzziness:
-              $ref: '#/components/schemas/_common___Fuzziness'
-            fuzzy_rewrite:
-              $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
-            fuzzy_transpositions:
-              description: |-
-                If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
-                Can be applied to the term subqueries constructed for all terms but the final term.
-              type: boolean
-            max_expansions:
-              description: |-
-                Maximum number of terms to which the query will expand.
-                Can be applied to the term subqueries constructed for all terms but the final term.
-              type: integer
-              format: int32
-            minimum_should_match:
-              $ref: '#/components/schemas/_common___MinimumShouldMatch'
-            operator:
-              $ref: '#/components/schemas/_common.query_dsl___Operator'
-            prefix_length:
-              description: |-
-                Number of beginning characters left unchanged for fuzzy matching.
-                Can be applied to the term subqueries constructed for all terms but the final term.
-              type: integer
-              format: int32
-            query:
-              description: |-
-                Terms you wish to find in the provided field.
-                The last term is used in a prefix query.
-              type: string
-          required:
-            - query
+          properties: {}
+    _common.query_dsl___MatchBoolPrefixQuery:
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert the text in the query value into tokens.
+                  type: string
+                fuzziness:
+                  $ref: '#/components/schemas/_common___Fuzziness'
+                fuzzy_rewrite:
+                  $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
+                fuzzy_transpositions:
+                  description: |-
+                    If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
+                    Can be applied to the term subqueries constructed for all terms but the final term.
+                  type: boolean
+                max_expansions:
+                  description: |-
+                    Maximum number of terms to which the query will expand.
+                    Can be applied to the term subqueries constructed for all terms but the final term.
+                  type: integer
+                  format: int32
+                minimum_should_match:
+                  $ref: '#/components/schemas/_common___MinimumShouldMatch'
+                operator:
+                  $ref: '#/components/schemas/_common.query_dsl___Operator'
+                prefix_length:
+                  description: |-
+                    Number of beginning characters left unchanged for fuzzy matching.
+                    Can be applied to the term subqueries constructed for all terms but the final term.
+                  type: integer
+                  format: int32
+                query:
+                  description: |-
+                    Terms you wish to find in the provided field.
+                    The last term is used in a prefix query.
+                  type: string
+              required:
+                - query
     _common.query_dsl___MatchNoneQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
         - type: object
     _common.query_dsl___MatchPhrasePrefixQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert text in the query value into tokens.
-              type: string
-            max_expansions:
-              description: Maximum number of terms to which the last provided term of the query value will expand.
-              type: integer
-              format: int32
-            query:
-              description: Text you wish to find in the provided field.
-              type: string
-            slop:
-              description: Maximum number of positions allowed between matching tokens.
-              type: integer
-              format: int32
-            zero_terms_query:
-              $ref: '#/components/schemas/_common.query_dsl___ZeroTermsQuery'
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert text in the query value into tokens.
+                  type: string
+                max_expansions:
+                  description: Maximum number of terms to which the last provided term of the query value will expand.
+                  type: integer
+                  format: int32
+                query:
+                  description: Text you wish to find in the provided field.
+                  type: string
+                slop:
+                  description: Maximum number of positions allowed between matching tokens.
+                  type: integer
+                  format: int32
+                zero_terms_query:
+                  $ref: '#/components/schemas/_common.query_dsl___ZeroTermsQuery'
+              required:
+                - query
     _common.query_dsl___MatchPhraseQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert the text in the query value into tokens.
-              type: string
-            query:
-              description: Query terms that are analyzed and turned into a phrase query.
-              type: string
-            slop:
-              description: Maximum number of positions allowed between matching tokens.
-              type: integer
-              format: int32
-            zero_terms_query:
-              $ref: '#/components/schemas/_common.query_dsl___ZeroTermsQuery'
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert the text in the query value into tokens.
+                  type: string
+                query:
+                  description: Query terms that are analyzed and turned into a phrase query.
+                  type: string
+                slop:
+                  description: Maximum number of positions allowed between matching tokens.
+                  type: integer
+                  format: int32
+                zero_terms_query:
+                  $ref: '#/components/schemas/_common.query_dsl___ZeroTermsQuery'
+              required:
+                - query
     _common.query_dsl___MatchQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert the text in the query value into tokens.
-              type: string
-            auto_generate_synonyms_phrase_query:
-              description: If `true`, match phrase queries are automatically created for multi-term synonyms.
-              type: boolean
-            cutoff_frequency:
-              deprecated: true
-              type: number
-              format: float
-            fuzziness:
-              $ref: '#/components/schemas/_common___Fuzziness'
-            fuzzy_rewrite:
-              $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
-            fuzzy_transpositions:
-              description: If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
-              type: boolean
-            lenient:
-              description: If `true`, format-based errors, such as providing a text query value for a numeric field, are ignored.
-              type: boolean
-            max_expansions:
-              description: Maximum number of terms to which the query will expand.
-              type: integer
-              format: int32
-            minimum_should_match:
-              $ref: '#/components/schemas/_common___MinimumShouldMatch'
-            operator:
-              $ref: '#/components/schemas/_common.query_dsl___Operator'
-            prefix_length:
-              description: Number of beginning characters left unchanged for fuzzy matching.
-              type: integer
-              format: int32
-            query:
-              description: Text, number, Boolean value or date you wish to find in the provided field.
-              oneOf:
-                - type: string
-                - type: number
-                - type: boolean
-            zero_terms_query:
-              $ref: '#/components/schemas/_common.query_dsl___ZeroTermsQuery'
-          required:
-            - query
+      oneOf:
+        - title: query
+          $ref: '#/components/schemas/_common___FieldValue'
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert the text in the query value into tokens.
+                  type: string
+                auto_generate_synonyms_phrase_query:
+                  description: If `true`, match phrase queries are automatically created for multi-term synonyms.
+                  type: boolean
+                cutoff_frequency:
+                  deprecated: true
+                  type: number
+                  format: float
+                fuzziness:
+                  $ref: '#/components/schemas/_common___Fuzziness'
+                fuzzy_rewrite:
+                  $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
+                fuzzy_transpositions:
+                  description: If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
+                  type: boolean
+                lenient:
+                  description: If `true`, format-based errors, such as providing a text query value for a numeric field, are ignored.
+                  type: boolean
+                max_expansions:
+                  description: Maximum number of terms to which the query will expand.
+                  type: integer
+                  format: int32
+                minimum_should_match:
+                  $ref: '#/components/schemas/_common___MinimumShouldMatch'
+                operator:
+                  $ref: '#/components/schemas/_common.query_dsl___Operator'
+                prefix_length:
+                  description: Number of beginning characters left unchanged for fuzzy matching.
+                  type: integer
+                  format: int32
+                query:
+                  description: Text, number, Boolean value or date you wish to find in the provided field.
+                  $ref: '#/components/schemas/_common___FieldValue'
+                zero_terms_query:
+                  $ref: '#/components/schemas/_common.query_dsl___ZeroTermsQuery'
+              required:
+                - query
     _common.query_dsl___MoreLikeThisQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -41640,28 +41747,24 @@ components:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
         - type: object
-          additionalProperties:
-            $ref: '#/components/schemas/_common.query_dsl___NeuralQueryVectorField'
-    _common.query_dsl___NeuralQueryVectorField:
-      type: object
-      properties:
-        query_text:
-          type: string
-        query_image:
-          type: string
-          contentEncoding: base64
-        model_id:
-          type: string
-        k:
-          type: integer
-        min_score:
-          type: number
-          format: float
-        max_distance:
-          type: number
-          format: float
-        filter:
-          $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
+          properties:
+            query_text:
+              type: string
+            query_image:
+              type: string
+              contentEncoding: base64
+            model_id:
+              type: string
+            k:
+              type: integer
+            min_score:
+              type: number
+              format: float
+            max_distance:
+              type: number
+              format: float
+            filter:
+              $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
     _common.query_dsl___NumberRangeQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___RangeQueryBase'
@@ -41697,7 +41800,9 @@ components:
       type: string
       enum:
         - and
+        - AND
         - or
+        - OR
     _common.query_dsl___ParentIdQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -41717,12 +41822,10 @@ components:
           properties:
             document:
               description: The source of the document being percolated.
-              type: object
             documents:
               description: An array of sources of the documents being percolated.
               type: array
-              items:
-                type: object
+              items: {}
             field:
               $ref: '#/components/schemas/_common___Field'
             id:
@@ -41780,22 +41883,25 @@ components:
               minProperties: 1
               maxProperties: 1
     _common.query_dsl___PrefixQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            rewrite:
-              $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
-            value:
-              description: Beginning characters of terms you wish to find in the provided field.
-              type: string
-            case_insensitive:
-              description: |-
-                Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
-                Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-          required:
-            - value
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                rewrite:
+                  $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
+                value:
+                  description: Beginning characters of terms you wish to find in the provided field.
+                  type: string
+                case_insensitive:
+                  description: |-
+                    Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
+                    Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+              required:
+                - value
     _common.query_dsl___QueryBase:
       type: object
       properties:
@@ -41819,6 +41925,8 @@ components:
         common:
           deprecated: true
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___CommonTermsQuery'
           minProperties: 1
@@ -41838,6 +41946,8 @@ components:
         fuzzy:
           description: Returns documents that contain terms similar to the search term, as measured by a Levenshtein edit distance.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___FuzzyQuery'
           minProperties: 1
@@ -41854,26 +41964,36 @@ components:
           $ref: '#/components/schemas/_common.query_dsl___HasChildQuery'
         has_parent:
           $ref: '#/components/schemas/_common.query_dsl___HasParentQuery'
+        hybrid:
+          $ref: '#/components/schemas/_common.query_dsl___HybridQuery'
         ids:
           $ref: '#/components/schemas/_common.query_dsl___IdsQuery'
         intervals:
           description: Returns documents based on the order and proximity of matching terms.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___IntervalsQuery'
           minProperties: 1
           maxProperties: 1
         knn:
-          $ref: '#/components/schemas/_common.query_dsl___KnnQuery'
+          type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
+          additionalProperties:
+            $ref: '#/components/schemas/_common.query_dsl___KnnQuery'
+          minProperties: 1
+          maxProperties: 1
         match:
           description: |-
             Returns documents that match a provided text, number, date or Boolean value.
             The provided text is analyzed before matching.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
-            anyOf:
-              - $ref: '#/components/schemas/_common.query_dsl___MatchQuery'
-              - {}
+            $ref: '#/components/schemas/_common.query_dsl___MatchQuery'
           minProperties: 1
           maxProperties: 1
         match_all:
@@ -41884,6 +42004,8 @@ components:
             Each term except the last is used in a `term` query.
             The last term is used in a prefix query.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___MatchBoolPrefixQuery'
           minProperties: 1
@@ -41893,6 +42015,8 @@ components:
         match_phrase:
           description: Analyzes the text and creates a phrase query out of the analyzed text.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___MatchPhraseQuery'
           minProperties: 1
@@ -41902,6 +42026,8 @@ components:
             Returns documents that contain the words of a provided text, in the same order as provided.
             The last term of the provided text is treated as a prefix, matching any words that begin with that term.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___MatchPhrasePrefixQuery'
           minProperties: 1
@@ -41913,7 +42039,13 @@ components:
         nested:
           $ref: '#/components/schemas/_common.query_dsl___NestedQuery'
         neural:
-          $ref: '#/components/schemas/_common.query_dsl___NeuralQuery'
+          type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
+          additionalProperties:
+            $ref: '#/components/schemas/_common.query_dsl___NeuralQuery'
+          minProperties: 1
+          maxProperties: 1
         parent_id:
           $ref: '#/components/schemas/_common.query_dsl___ParentIdQuery'
         percolate:
@@ -41923,6 +42055,8 @@ components:
         prefix:
           description: Returns documents that contain a specific prefix in a provided field.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___PrefixQuery'
           minProperties: 1
@@ -41932,6 +42066,8 @@ components:
         range:
           description: Returns documents that contain terms within a provided range.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___RangeQuery'
           minProperties: 1
@@ -41941,12 +42077,12 @@ components:
         regexp:
           description: Returns documents that contain terms matching a regular expression.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___RegexpQuery'
           minProperties: 1
           maxProperties: 1
-        rule_query:
-          $ref: '#/components/schemas/_common.query_dsl___RuleQuery'
         script:
           $ref: '#/components/schemas/_common.query_dsl___ScriptQuery'
         script_score:
@@ -41970,6 +42106,8 @@ components:
         span_term:
           description: Matches spans containing a term.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___SpanTermQuery'
           minProperties: 1
@@ -41981,43 +42119,33 @@ components:
             Returns documents that contain an exact term in a provided field.
             To return a document, the query term must exactly match the queried field's value, including white space and capitalization.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
-            anyOf:
-              - $ref: '#/components/schemas/_common.query_dsl___TermQuery'
-              - $ref: '#/components/schemas/_common___FieldValue'
+            $ref: '#/components/schemas/_common.query_dsl___TermQuery'
           minProperties: 1
           maxProperties: 1
         terms:
           description: Returns documents that contain one or more exact terms in a provided field.
-          $ref: '#/components/schemas/_common.query_dsl___TermsQueryField'
+          $ref: '#/components/schemas/_common.query_dsl___TermsQuery'
         terms_set:
           description: |-
             Returns documents that contain a minimum number of exact terms in a provided field.
             To return a document, a required number of terms must exactly match the field values, including white space and capitalization.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___TermsSetQuery'
           minProperties: 1
           maxProperties: 1
-        text_expansion:
-          description: Uses a natural language processing model to convert the query text into a list of token-weight pairs which are then used in a query against a sparse vector or rank features field.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/_common.query_dsl___TextExpansionQuery'
-          minProperties: 1
-          maxProperties: 1
         type:
           $ref: '#/components/schemas/_common.query_dsl___TypeQuery'
-        weighted_tokens:
-          description: Supports returning `text_expansion` query results by sending in precomputed tokens with the query.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/_common.query_dsl___WeightedTokensQuery'
-          minProperties: 1
-          maxProperties: 1
         wildcard:
           description: Returns documents that contain terms matching a wildcard pattern.
           type: object
+          propertyNames:
+            $ref: '#/components/schemas/_common___Field'
           additionalProperties:
             $ref: '#/components/schemas/_common.query_dsl___WildcardQuery'
           minProperties: 1
@@ -42112,6 +42240,11 @@ components:
               $ref: '#/components/schemas/_common.query_dsl___TextQueryType'
           required:
             - query
+    _common.query_dsl___QueryVector:
+      type: array
+      items:
+        type: number
+        format: float
     _common.query_dsl___RandomScoreFunction:
       type: object
       properties:
@@ -42199,44 +42332,32 @@ components:
           required:
             - field
     _common.query_dsl___RegexpQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            case_insensitive:
-              description: |-
-                Allows case insensitive matching of the regular expression value with the indexed field values when set to `true`.
-                When `false`, case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-            flags:
-              description: Enables optional operators for the regular expression.
-              type: string
-            max_determinized_states:
-              description: Maximum number of automaton states required for the query.
-              type: integer
-              format: int32
-            rewrite:
-              $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
-            value:
-              description: Regular expression for terms you wish to find in the provided field.
-              type: string
-          required:
-            - value
-    _common.query_dsl___RuleQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            organic:
-              $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
-            ruleset_id:
-              $ref: '#/components/schemas/_common___Id'
-            match_criteria:
-              type: object
-          required:
-            - match_criteria
-            - organic
-            - ruleset_id
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                case_insensitive:
+                  description: |-
+                    Allows case insensitive matching of the regular expression value with the indexed field values when set to `true`.
+                    When `false`, case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+                flags:
+                  description: Enables optional operators for the regular expression.
+                  type: string
+                max_determinized_states:
+                  description: Maximum number of automaton states required for the query.
+                  type: integer
+                  format: int32
+                rewrite:
+                  $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
+                value:
+                  description: Regular expression for terms you wish to find in the provided field.
+                  type: string
+              required:
+                - value
     _common.query_dsl___ScriptQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -42287,8 +42408,11 @@ components:
         - WHITESPACE
     _common.query_dsl___SimpleQueryStringFlags:
       description: Query flags can be either a single flag or a combination of flags (e.g. `OR|AND|PREFIX`).
-      allOf:
-        - $ref: '#/components/schemas/_common___PipeSeparatedFlagsSimpleQueryStringFlag'
+      oneOf:
+        - title: single
+          $ref: '#/components/schemas/_common.query_dsl___SimpleQueryStringFlag'
+        - title: multiple
+          type: string
     _common.query_dsl___SimpleQueryStringQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -42483,14 +42607,17 @@ components:
       minProperties: 1
       maxProperties: 1
     _common.query_dsl___SpanTermQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            value:
-              type: string
-          required:
-            - value
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                value:
+                  type: string
+              required:
+                - value
     _common.query_dsl___SpanWithinQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -42504,20 +42631,23 @@ components:
             - big
             - little
     _common.query_dsl___TermQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            value:
-              $ref: '#/components/schemas/_common___FieldValue'
-            case_insensitive:
-              description: |-
-                Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
-                When `false`, the case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-          required:
-            - value
-    _common.query_dsl___TermsLookupField:
+      oneOf:
+        - title: value
+          $ref: '#/components/schemas/_common___FieldValue'
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                value:
+                  $ref: '#/components/schemas/_common___FieldValue'
+                case_insensitive:
+                  description: |-
+                    Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
+                    When `false`, the case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+              required:
+                - value
+    _common.query_dsl___TermsLookup:
       type: object
       properties:
         index:
@@ -42528,22 +42658,24 @@ components:
           $ref: '#/components/schemas/_common___Field'
         routing:
           $ref: '#/components/schemas/_common___Routing'
+    _common.query_dsl___TermsQuery:
+      allOf:
+        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+        - type: object
+          properties:
+            _name: {}
+            boost: {}
+          additionalProperties:
+            $ref: '#/components/schemas/_common.query_dsl___TermsQueryField'
+          minProperties: 1
     _common.query_dsl___TermsQueryField:
-      type: object
-      properties:
-        boost:
-          description: |-
-            A floating-point value that specifies the weight of this field toward the relevance score.
-            Values above 1.0 increase the field’s relevance. Values between 0.0 and 1.0 decrease the field’s relevance.
-            Default is 1.0.
-          type: number
-          format: float
-      additionalProperties:
-        oneOf:
-          - $ref: '#/components/schemas/_common.query_dsl___TermsLookupField'
-          - type: array
-            items:
-              type: string
+      oneOf:
+        - title: value
+          type: array
+          items:
+            $ref: '#/components/schemas/_common___FieldValue'
+        - title: lookup
+          $ref: '#/components/schemas/_common.query_dsl___TermsLookup'
     _common.query_dsl___TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -42559,22 +42691,6 @@ components:
                 type: string
           required:
             - terms
-    _common.query_dsl___TextExpansionQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            model_id:
-              description: The text expansion NLP model to use
-              type: string
-            model_text:
-              description: The query text
-              type: string
-            pruning_config:
-              $ref: '#/components/schemas/_common.query_dsl___TokenPruningConfig'
-          required:
-            - model_id
-            - model_text
     _common.query_dsl___TextQueryType:
       type: string
       enum:
@@ -42584,18 +42700,6 @@ components:
         - most_fields
         - phrase
         - phrase_prefix
-    _common.query_dsl___TokenPruningConfig:
-      type: object
-      properties:
-        tokens_freq_ratio_threshold:
-          description: Tokens whose frequency is more than this threshold times the average frequency of all tokens in the specified field are considered outliers and pruned.
-          type: number
-        tokens_weight_threshold:
-          description: Tokens whose weight is less than this threshold are considered nonsignificant and pruned.
-          type: number
-        only_score_pruned_tokens:
-          description: Whether to only score pruned tokens, vs only scoring kept tokens.
-          type: boolean
     _common.query_dsl___TypeQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -42605,36 +42709,25 @@ components:
               type: string
           required:
             - value
-    _common.query_dsl___WeightedTokensQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            tokens:
-              description: The tokens representing this query
-              type: object
-              additionalProperties:
-                type: number
-            pruning_config:
-              $ref: '#/components/schemas/_common.query_dsl___TokenPruningConfig'
-          required:
-            - tokens
     _common.query_dsl___WildcardQuery:
-      allOf:
-        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - type: object
-          properties:
-            case_insensitive:
-              description: Allows case insensitive matching of the pattern with the indexed field values when set to `true`. Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-            rewrite:
-              $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
-            value:
-              description: Wildcard pattern for terms you wish to find in the provided field. Required, when wildcard is not set.
-              type: string
-            wildcard:
-              description: Wildcard pattern for terms you wish to find in the provided field. Required, when value is not set.
-              type: string
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+            - type: object
+              properties:
+                case_insensitive:
+                  description: Allows case insensitive matching of the pattern with the indexed field values when set to `true`. Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+                rewrite:
+                  $ref: '#/components/schemas/_common___MultiTermQueryRewrite'
+                value:
+                  description: Wildcard pattern for terms you wish to find in the provided field. Required, when wildcard is not set.
+                  type: string
+                wildcard:
+                  description: Wildcard pattern for terms you wish to find in the provided field. Required, when value is not set.
+                  type: string
     _common.query_dsl___WrapperQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -43829,11 +43922,14 @@ components:
         - sentence
         - word
     _core.search___BuiltinHighlighterType:
-      type: string
-      enum:
-        - fvh
-        - plain
-        - unified
+      oneOf:
+        - type: string
+          const: plain
+        - title: fast_vector
+          type: string
+          const: fvh
+        - type: string
+          const: unified
     _core.search___Collector:
       type: object
       properties:
@@ -44013,6 +44109,9 @@ components:
           type: boolean
         fragmenter:
           $ref: '#/components/schemas/_core.search___HighlighterFragmenter'
+        fragment_offset:
+          type: integer
+          format: int32
         fragment_size:
           description: The size of the highlighted fragment in characters.
           type: integer
@@ -44024,11 +44123,11 @@ components:
         max_fragment_length:
           type: integer
           format: int32
-        max_analyzed_offset:
+        max_analyzer_offset:
           description: |-
             If set to a non-negative value, highlighting stops at this defined maximum limit.
             The rest of the text is not processed or highlighted, and no error is returned.
-            The `max_analyzed_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which takes precedence when it is set to a lower value than the query setting.
+            The `max_analyzer_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which takes precedence when it is set to a lower value than the query setting.
           type: integer
           format: int32
         no_match_size:
@@ -44108,9 +44207,6 @@ components:
         - $ref: '#/components/schemas/_core.search___HighlightBase'
         - type: object
           properties:
-            fragment_offset:
-              type: integer
-              format: int32
             matched_fields:
               $ref: '#/components/schemas/_common___Fields'
             analyzer:
@@ -44237,7 +44333,7 @@ components:
           $ref: '#/components/schemas/_common___Sort'
         _source:
           $ref: '#/components/schemas/_core.search___SourceConfig'
-        stored_field:
+        stored_fields:
           $ref: '#/components/schemas/_common___Fields'
         track_scores:
           type: boolean
@@ -44532,10 +44628,6 @@ components:
       oneOf:
         - title: fetch
           type: boolean
-        - title: includes
-          type: array
-          items:
-            $ref: '#/components/schemas/_common___Field'
         - title: filter
           $ref: '#/components/schemas/_core.search___SourceFilter'
     _core.search___SourceConfigParam:
@@ -44546,12 +44638,15 @@ components:
         - type: boolean
         - $ref: '#/components/schemas/_common___Fields'
     _core.search___SourceFilter:
-      type: object
-      properties:
-        excludes:
+      oneOf:
+        - title: includes
           $ref: '#/components/schemas/_common___Fields'
-        includes:
-          $ref: '#/components/schemas/_common___Fields'
+        - type: object
+          properties:
+            excludes:
+              $ref: '#/components/schemas/_common___Fields'
+            includes:
+              $ref: '#/components/schemas/_common___Fields'
     _core.search___Suggest:
       oneOf:
         - $ref: '#/components/schemas/_core.search___CompletionSuggest'
@@ -50118,11 +50213,11 @@ components:
         mappings:
           $ref: '#/components/schemas/_common.mapping___TypeMapping'
         order:
-          type: number
+          type: integer
+          format: int32
         settings:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         version:
           $ref: '#/components/schemas/_common___VersionNumber'
       required:
@@ -55049,8 +55144,7 @@ components:
         - name
     nodes.info___NodeInfoSettingsPlugins:
       type: object
-      additionalProperties:
-        $ref: '#/components/schemas/_common___FieldValue'
+      additionalProperties: true
     nodes.info___NodeInfoSettingsTransport:
       type: object
       properties:
