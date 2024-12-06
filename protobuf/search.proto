@@ -1,0 +1,728 @@
+/**
+This is the generated from spec. DON NOT manually modified.
+ */
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+import "common.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
+
+// The Search API operation to perform a search across all indices in the cluster.
+message SearchRequest {
+  // [optional] Whether to include the _source field in the response.
+  optional SourceConfigParam source = 1;
+  // [optional] A list of source fields to exclude from the response. You can also use this parameter to exclude fields from the subset specified in `source_includes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
+  repeated string source_excludes = 2;
+  // [optional] A list of source fields to include in the response. If this parameter is specified, only these source fields are returned. You can exclude fields from this subset using the `source_excludes` query parameter. If the `source` parameter is `false`, this parameter is ignored.
+  repeated string source_includes = 3 ;
+  // [optional] Whether to ignore wildcards that don't match any indexes. Default is true.
+  optional bool allow_no_indices = 4;
+  // [optional] Whether to return partial results if the request runs into an error or times out. Default is true.
+  optional bool allow_partial_search_results = 5;
+  // [optional] Whether the update operation should include wildcard and prefix queries in the analysis. Default is false.
+  optional bool analyze_wildcard = 6;
+  // [optional] Analyzer to use for the query string. This parameter can only be used when the q query optional string parameter is specified.
+  optional string analyzer = 7;
+  // [optional] How many shard results to reduce on a node. Default is 512.
+  optional int32 batched_reduce_size = 8;
+  // [optional] The time after which the search request will be canceled. Request-level parameter takes precedence over cancel_after_time_interval cluster setting. Default is -1.
+  optional string cancel_after_time_interval = 9;
+  // [optional] Whether to minimize round-trips between a node and remote clusters. Default is true.
+  optional bool ccs_minimize_roundtrips = 10;
+  // [optional] Indicates whether the default operator for a string query should be AND or OR. Default is OR.
+  optional Operator default_operator = 11;
+  enum Operator {
+    OPERATOR_UNSPECIFIED = 0;
+    // All terms need to match. The string `to be` is interpreted as `to AND be`
+    OPERATOR_AND = 1;
+    // Only one term needs to match. The string `to be` is interpreted as `to OR be`
+    OPERATOR_OR = 2;
+  }
+  // [optional] The default field in case a field prefix is not provided in the query string.
+  optional string df = 12;
+  // [optional] The fields that OpenSearch should return using their docvalue forms.
+  repeated string docvalue_fields = 13;
+  // [optional] Specifies the type of index that wildcard expressions can match. Supports list of values. Default is open.
+  repeated ExpandWildcard expand_wildcards = 14;
+
+  enum ExpandWildcard {
+    EXPAND_WILDCARD_UNSPECIFIED = 0;
+    // Match any index
+    EXPAND_WILDCARD_ALL = 1;
+    // Match closed, non-hidden indexes
+    EXPAND_WILDCARD_CLOSED = 2;
+    // Match hidden indexes
+    EXPAND_WILDCARD_HIDDEN = 3;
+    // Deny wildcard expressions
+    EXPAND_WILDCARD_NONE = 4;
+    // Match open, non-hidden indexes
+    EXPAND_WILDCARD_OPEN = 5;
+  }
+  // [optional] Whether to return details about how OpenSearch computed the document's score. Default is false.
+  optional bool explain = 15;
+  // [optional] The starting index to search from. Default is 0.
+  optional int32 from = 16;
+  // [optional] Whether to ignore concrete, expanded, or indexes with aliases if indexes are frozen. Default is true.
+  optional bool ignore_throttled = 17;
+  // [optional] Specifies whether to include missing or closed indexes in the response and ignores unavailable shards during the search request. Default is false.
+  optional bool ignore_unavailable = 18;
+  // [optional] Whether to return scores with named queries. Default is false.
+  optional bool include_named_queries_score = 19;
+  // [optional] Specifies whether OpenSearch should accept requests if queries have format errors (for example, querying a text field for an integer). Default is false.
+  optional bool lenient = 20;
+  // [optional] Numbers of concurrent shard requests this request should execute on each node. Default is 5.
+  optional int32 max_concurrent_shard_requests = 21;
+  // [optional] Whether to return phase-level took time values in the response. Default is false.
+  optional bool phase_took = 22;
+  // [optional] A prefilter size threshold that triggers a prefilter operation if the request exceeds the threshold. Default is 128 shards.
+  optional int32 pre_filter_shard_size = 23;
+  // [optional] Specifies the shards or nodes on which OpenSearch should perform the search.
+  optional string preference = 24;
+  // [optional] Query in the Lucene query string syntax using query parameter search.
+  optional string q = 25;
+  // [optional] Specifies whether OpenSearch should use the request cache. Default is whether it's enabled in the index's settings.
+  optional bool request_cache = 26;
+  // [optional] Indicates whether to return hits.total as an integer. Returns an object otherwise. Default is false.
+  optional bool rest_total_hits_as_int = 27;
+  // [optional] Value used to route the update by query operation to a specific shard.
+  repeated string routing = 28;
+  // [optional] Period to keep the search context open.
+  optional string scroll = 29;
+  // [optional] Customizable sequence of processing stages applied to search queries.
+  optional string search_pipeline = 30;
+  // [optional] Whether OpenSearch should use global term and document frequencies when calculating relevance scores. Default is SEARCH_TYPE_QUERY_THEN_FETCH.
+  optional SearchType search_type = 31;
+
+  enum SearchType {
+    SEARCH_TYPE_UNSPECIFIED = 0;
+    // Scores documents using global term and document frequencies across all shards. It's usually slower but more accurate.
+    SEARCH_TYPE_DFS_QUERY_THEN_FETCH = 1;
+    // Scores documents using local term and document frequencies for the shard. It's usually faster but less accurate.
+    SEARCH_TYPE_QUERY_THEN_FETCH = 2;
+  }
+  // [optional] Whether to return sequence number and primary term of the last operation of each document hit.
+  optional bool seq_no_primary_term = 32;
+  // [optional] Number of results to include in the response.
+  optional int32 size = 33;
+  // [optional] A list of <field> : <direction> pairs to sort by.
+  repeated string sort = 34;
+  // [optional] Value to associate with the request for additional logging.
+  repeated string stats = 35;
+  // [optional] Whether the get operation should retrieve fields stored in the index. Default is false.
+  repeated string stored_fields = 36;
+  // [optional] Fields OpenSearch can use to look for similar terms.
+  optional string suggest_field = 37;
+  // [optional] The mode to use when searching. This parameter can only be used when the `suggest_field` and `suggest_text` query optional string parameters are specified.
+  optional SuggestMode suggest_mode = 38;
+
+  enum SuggestMode {
+    SUGGEST_MODE_UNSPECIFIED = 0;
+    // Use suggestions based on the provided terms
+    SUGGEST_MODE_ALWAYS = 1;
+    // Use suggestions for terms not in the index
+    SUGGEST_MODE_MISSING = 2;
+    // Use suggestions that have more occurrences
+    SUGGEST_MODE_POPULAR = 3;
+  }
+  // [optional] Number of suggestions to return.
+  optional int32 suggest_size = 39;
+  // [optional] The source that suggestions should be based off of.
+  optional string suggest_text = 40;
+  // [optional] The maximum number of documents OpenSearch should process before terminating the request. Default is 0.
+  optional int32 terminate_after = 41;
+  // [optional] Period of time to wait for a response from active shards. Default is 1m.
+  optional string timeout = 42;
+  // [optional] Whether to return document scores. Default is false.
+  optional bool track_scores = 43;
+  // [optional] Whether to return how many documents matched the query.
+  optional TrackHits track_total_hits = 44;
+  // [optional] Whether returned aggregations and suggested terms should include their types in the response. Default is true.
+  optional bool typed_keys = 45;
+  // [optional] Whether to include the document version as a match. Default is false
+  optional bool version = 46;
+  // [optional] Search Request body
+  optional SearchRequestBody request_body = 47;
+
+}
+
+message SearchRequestBody {
+  // [optional] The DSL query to use in the request.
+  optional QueryContainer query = 1;
+}
+
+message TrackHits {
+  oneof track_hits{
+    bool bool_value = 1;
+    int32 int32_value = 2;
+  }
+}
+
+// The response from search request.
+message SearchResponse {
+  oneof response {
+    // The search success response
+    ResponseBody response_body = 1;
+  }
+}
+
+// The response body from a search/index-search request.
+message ResponseBody {
+
+  // [required] Milliseconds it took Elasticsearch to execute the request.
+  optional int64 took = 1;
+
+  // [required]  If true, the request timed out before completion; returned results may be partial or empty.
+  optional bool timed_out = 2;
+
+  // [required] Contains a count of shards used for the request.
+  ShardStatistics shards = 3;
+
+  // [optional] Phase-level took time values in the response.
+  optional PhaseTook phase_took = 4;
+
+  // [required] Contains returned documents and metadata.
+  HitsMetadata hits = 5;
+
+  // [optional] When you search one or more remote clusters, a `_clusters` section is included to provide information about the search on each cluster.
+  optional ClusterStatistics clusters = 6;
+
+  // [optional] Retrieved specific fields in the search response
+  optional .google.protobuf.Struct fields = 7;
+
+  // [optional] Highest returned document _score.
+  optional float max_score = 8;
+
+  // [optional] The number of times that the coordinating node aggregates results from batches of shard responses
+  optional int32 num_reduce_phases = 9;
+
+  // [optional] Contains profiling information.
+  Profile profile = 10;
+
+  // [optional] The PIT ID.
+  optional string pit_id = 11;
+
+  // [optional] Identifier for the search and its search context.
+  optional string scroll_id = 12;
+
+  // [optional] If the query was terminated early, the terminated_early flag will be set to true in the response
+  optional bool terminated_early = 13;
+
+}
+
+message PhaseTook {
+
+  // [required] Time taken in dfs_pre_query phase.
+  int64 dfs_pre_query = 1;
+  // [required] Time taken in query phase.
+  int64 query = 2;
+  // [required] Time taken in fetch phase.
+  int64 fetch = 3;
+  // [required] Time taken in dfs_query phase.
+  int64 dfs_query = 4;
+  // [required] Time taken in expand phase.
+  int64 expand = 5;
+  // [required] Time taken in can_match phase.
+  int64 can_match = 6;
+
+}
+
+message HitsMetadata {
+  message Total {
+    oneof total{
+      TotalHits total_hits = 1;
+      double double_value = 2;
+    }
+  }
+  // [optional] Metadata about the number of matching documents.
+  Total total = 1;
+
+  // [required] Array of returned document objects.
+  repeated Hit hits = 2;
+
+  message MaxScore{
+    oneof max_score{
+      double double_value = 1;
+      string string_value = 2;
+      NullValue null_value = 3;
+    }
+  }
+
+  // [optional] Highest returned document _score.
+  MaxScore max_score = 3;
+
+}
+
+message TotalHits {
+
+  // [required] Indicates whether the number of matching documents in the value parameter is accurate or a lower bound.
+  TotalHitsRelation relation = 1;
+  enum TotalHitsRelation {
+    TOTAL_HITS_RELATION_INVALID = 0;
+    // Accurate
+    TOTAL_HITS_RELATION_EQ = 1;
+    // Lower bound
+    TOTAL_HITS_RELATION_GTE = 2;
+  }
+  // [required] Total number of matching documents.
+  int64 value = 2;
+
+}
+
+message InnerHitsResult {
+
+  // [required] An additional nested hits value.
+  HitsMetadata hits = 1;
+
+}
+
+message Hit {
+
+  optional string type = 1;
+
+  // [required] Name of the index containing the returned document.
+  string index = 2;
+  // [required] Unique identifier for the returned document. This ID is only unique within the returned index.
+  string id = 3;
+
+  message Score {
+    oneof score{
+      double double_value = 1;
+      string string_value = 2;
+      NullValue null_value = 3;
+    }
+  }
+
+  // [optional] Relevance of the returned document.
+  optional Score score = 4;
+
+  // [optional] Explanation of how the relevance score (_score) is calculated for every result.
+  optional Explanation explanation = 5;
+
+  // [optional] Contains field values for the documents.
+  optional .google.protobuf.Struct fields = 6;
+
+  // [optional] An additional highlight element for each search hit that includes the highlighted fields and the highlighted fragments.
+  map<string, StringArray> highlight = 7;
+
+  // [optional] An additional nested hits that caused a search hit to match in a different scope.
+  map<string, InnerHitsResult> inner_hits = 8;
+
+  // [optional] List of matched query names used in the search request.
+  repeated string matched_queries = 9;
+
+  // [optional] Defines from what inner nested object this inner hit came from
+  optional NestedIdentity nested = 10;
+
+  // [optional] List of fields ignored.
+  repeated string ignored = 11;
+
+  // [optional] These values are retrieved from the document’s original JSON source and are raw so will not be formatted or treated in any way, unlike the successfully indexed fields which are returned in the fields section.
+  map<string, StringArray> ignored_field_values = 12;
+
+  // [optional] Shard from which this document was retrieved.
+  optional string shard = 13;
+
+  // [optional] Node from which this document was retrieved.
+  optional string node = 14;
+
+  optional string routing = 15;
+
+  // [optional] Source document.
+  optional .google.protobuf.Struct source = 16;
+
+  // [optional] Counts the number of operations that happened on the index
+  optional int64 seq_no = 17;
+
+  // [optional] Counts the number of shard has changed.
+  optional int64 primary_term = 18;
+
+  // [optional] Version number of the document.
+  optional int64 version = 19;
+
+  // [optional] Sorted values
+  repeated FieldValueResponse sort = 20;
+
+}
+
+
+message ClusterStatistics {
+
+  // [required] Number of shards that skipped the request because a lightweight check helped realize that no documents could possibly match on this shard. This typically happens when a search request includes a range filter and the shard only has values that fall outside of that range.
+  int32 skipped = 1;
+
+  // [required] Number of shards that executed the request successfully.
+  int32 successful = 2;
+
+  // [required] Total number of shards that require querying, including unallocated shards.
+  int32 total = 3;
+
+  // [required] Number of shards currently executing the search operation
+  int32 running = 4;
+
+  // [required] The number of shards that returned partial results.
+  int32 partial = 5;
+
+  // [required] Number of shards that failed to execute the request. Note that shards that are not allocated will be considered neither successful nor failed. Having failed+successful less than total is thus an indication that some of the shards were not allocated.
+  int32 failed = 6;
+
+  // [optional] Shows metadata about the search on each cluster.
+  map<string, ClusterDetails> details = 7;
+
+}
+
+message ClusterDetails {
+
+  enum ClusterSearchStatus {
+    CLUSTER_SEARCH_STATUS_INVALID = 0;
+    // The search failed on a cluster marked with skip_unavailable=false
+    CLUSTER_SEARCH_STATUS_FAILED = 1;
+    // Searches on at least one shard of the cluster was successful and at least one failed
+    CLUSTER_SEARCH_STATUS_PARTIAL = 2;
+    // Searches on all shards were successful
+    CLUSTER_SEARCH_STATUS_RUNNING = 3;
+    // The search failed on a cluster marked with skip_unavailable=true
+    CLUSTER_SEARCH_STATUS_SKIPPED = 4;
+    // Searches on all shards were successful
+    CLUSTER_SEARCH_STATUS_SUCCESSFUL = 5;
+  }
+  // [required] All possible cluster search states.
+  ClusterSearchStatus status = 1;
+
+  // [required] The index expression supplied by the user. If you provide a wildcard such as logs-*, this section will show the value with the wildcard, not the concrete indices being searched.
+  string indices = 2;
+
+  // [optional] How long (in milliseconds) the sub-search took on that cluster.
+  optional int64 took = 3;
+
+  // [required] If true, the request timed out before completion; returned results may be partial or empty.
+  bool timed_out = 4;
+
+  // [optional] The shard details for the sub-search on that cluster.
+  optional ShardStatistics shards = 5;
+
+  // [optional] An array of any shard-specific failures that occurred during the search operation
+  repeated ShardFailure failures = 6;
+
+}
+
+message Profile {
+
+  // [required] A search request can be executed against one or more shards in the index, and a search may involve one or more indexes. Thus, the profile.shards array contains profiling information for each shard that was involved in the search.
+  repeated ShardProfile shards = 1;
+
+}
+
+message ShardProfile {
+
+  // [required] Profiling information about the aggregation execution.
+  repeated AggregationProfile aggregations = 1;
+
+  // [required] The shard ID of the shard in the [node-ID][index-name][shard-ID] format.
+  string id = 2;
+
+  // [required] Search represents a query executed against the underlying Lucene index. Most search requests execute a single search against a Lucene index, but some search requests can execute more than one search. For example, including a global aggregation results in a secondary match_all query for the global context. The profile.shards array contains profiling information about each search execution.
+  repeated SearchProfile searches = 3;
+
+  // [optional] Fetch timing and debug information.
+  optional FetchProfile fetch = 4;
+
+}
+
+message AggregationProfile {
+
+  optional AggregationBreakdown breakdown = 1;
+
+  optional string description = 2;
+
+  // Time unit for nanoseconds
+  optional int64 time_in_nanos = 3;
+
+  optional string type = 4;
+
+  optional AggregationProfileDebug debug = 5;
+
+  repeated AggregationProfile children = 6;
+
+}
+
+message AggregationBreakdown {
+
+  // [required] Contains the time spent running the aggregation’s buildAggregations() method, which builds the results of this aggregation. For concurrent segment search, the build_aggregation method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 build_aggregation = 1;
+
+  // [required] Contains the number of invocations of a build_aggregation.
+  int64 build_aggregation_count = 2;
+
+  // [required] Contains the time spent running the aggregation’s getLeafCollector() method, which creates a new collector to collect the given context. For concurrent segment search, the build_leaf_collector method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 build_leaf_collector = 3;
+
+  // [required] Contains the number of invocations of a build_leaf_collector.
+  int64 build_leaf_collector_count = 4;
+
+  // [required] Contains the time spent collecting the documents into buckets. For concurrent segment search, the collect method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 collect = 5;
+
+  // [required] Contains the number of invocations of a collect.
+  int64 collect_count = 6;
+
+  // [required] Contains the amount of time taken to execute the preCollection() callback method during AggregationCollectorManager creation. For concurrent segment search, the initialize method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 initialize = 7;
+
+  // [required] Contains the number of invocations of a initialize.
+  int64 initialize_count = 8;
+
+  // [optional] Contains the time spent running the aggregation’s postCollection() callback method. For concurrent segment search, the post_collection method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  optional int64 post_collection = 9;
+
+  // [optional] Contains the number of invocations of a post_collection.
+  optional int64 post_collection_count = 10;
+
+  // [required] Contains the time spent in the reduce phase. For concurrent segment search, the reduce method contains the total elapsed time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 reduce = 11;
+
+  // [required] Contains the number of invocations of a reduce.
+  int64 reduce_count = 12;
+
+}
+
+message SearchProfile {
+
+  // [required] Profiling information about the Lucene collectors that ran the search.
+  repeated Collector collector = 1;
+
+  // [required] Profiling information about the query execution.
+  repeated QueryProfile query = 2;
+
+  // [required] All Lucene queries are rewritten. A query and its children may be rewritten more than once, until the query stops changing. The rewriting process involves performing optimizations, such as removing redundant clauses or replacing a query path with a more efficient one. After the rewriting process, the original query may change significantly. The rewrite_time field contains the cumulative total rewrite time for the query and all its children, in nanoseconds.
+  int64 rewrite_time = 3;
+
+}
+
+message Collector {
+
+  // [required] The collector name.
+  string name = 1;
+
+  // [required] Contains a description of the collector.
+  string reason = 2;
+
+  // [required] The total elapsed time for this collector, in nanoseconds. For concurrent segment search, time_in_nanos is the total amount of time across all slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 time_in_nanos = 3;
+
+  // [optional] If a collector has subcollectors (children), this field contains information about the subcollectors.
+  repeated Collector children = 4;
+
+}
+
+message QueryProfile {
+
+  // [required] Contains timing statistics about low-level Lucene execution.
+  QueryBreakdown breakdown = 1;
+
+  // [required] Contains a Lucene explanation of the query. Helps differentiate queries with the same type.
+  string description = 2;
+
+  // [required] The total elapsed time for this query, in nanoseconds. For concurrent segment search, time_in_nanos is the total time spent across all the slices (the difference between the last completed slice execution end time and the first slice execution start time).
+  int64 time_in_nanos = 3;
+
+  // [required] The Lucene query type into which the search query was rewritten. Corresponds to the Lucene class name (which often has the same name in OpenSearch).
+  string type = 4;
+
+  // [optional] If a query has subqueries (children), this field contains information about the subqueries.
+  repeated QueryProfile children = 5;
+
+}
+
+message QueryBreakdown {
+
+  // [required] The advance method is a lower-level version of the next_doc method in Lucene. It also finds the next matching document but necessitates that the calling query perform additional tasks, such as identifying skips. Some queries, such as conjunctions (must clauses in Boolean queries), cannot use next_doc. For those queries, advance is timed.
+  int64 advance = 1;
+  // [required] Contains the number of invocations of the advance method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 advance_count = 2;
+  // [required] A Scorer iterates over matching documents and generates a score for each document. The build_scorer field contains the amount of time spent generating the Scorer object. This does not include the time spent scoring the documents. The Scorer initialization time depends on the optimization and complexity of a particular query. The build_scorer parameter also includes the amount of time associated with caching, if caching is applicable and enabled for the query.
+  int64 build_scorer = 3;
+  // [required] Build_scorer_count contains the number of invocations of the build_scorer method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 build_scorer_count = 4;
+  // [required] A Query object in Lucene is immutable. Yet, Lucene should be able to reuse Query objects in multiple IndexSearcher objects. Thus, Query objects need to keep temporary state and statistics associated with the index in which the query is executed. To achieve reuse, every Query object generates a Weight object, which keeps the temporary context (state) associated with the <IndexSearcher, Query> tuple. The create_weight field contains the amount of time spent creating the Weight object.
+  int64 create_weight = 5;
+  // [required] Create_weight_count contains the number of invocations of the create_weight method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 create_weight_count = 6;
+  // [required] For some queries, document matching is performed in two steps. First, the document is matched approximately. Second, those documents that are approximately matched are examined through a more comprehensive process. For example, a phrase query first checks whether a document contains all terms in the phrase. Next, it verifies that the terms are in order (which is a more expensive process). The match field is non-zero only for those queries that use the two-step verification process.
+  int64 match = 7;
+  // [required] Match_count contains the number of invocations of the match method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 match_count = 8;
+  // [required] Contains the amount of time required to execute the advanceShallow Lucene method.
+  int64 shallow_advance = 9;
+  // [required] Shallow_advance_count contains the number of invocations of the shallow_advance method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 shallow_advance_count = 10;
+  // [required] The next_doc Lucene method returns the document ID of the next document that matches the query. This method is a special type of the advance method and is equivalent to advance(docId() + 1). The next_doc method is more convenient for many Lucene queries. The next_doc field contains the amount of time required to determine the next matching document, which varies depending on the query type.
+  int64 next_doc = 11;
+  // [required] Next_doc_count contains the number of invocations of the next_doc method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 next_doc_count = 12;
+  // [required] Contains the time taken for a Scorer to score a particular document.
+  int64 score = 13;
+  // [required] Score_count contains the number of invocations of the score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 score_count = 14;
+  // [required] Contains the amount of time required to execute the getMaxScore Lucene method.
+  int64 compute_max_score = 15;
+  // [required] Compute_max_score_count contains the number of invocations of the compute_max_score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 compute_max_score_count = 16;
+  // [required] Contains the amount of time required to execute the setMinCompetitiveScore Lucene method.
+  int64 set_min_competitive_score = 17;
+  // [required] Set_min_competitive_score_count contains the number of invocations of the set_min_competitive_score method. Different invocations of the same method occur because the method is called on different documents. You can determine the selectivity of a query by comparing counts in different query components.
+  int64 set_min_competitive_score_count = 18;
+
+}
+
+message FetchProfileDebug {
+
+  repeated string stored_fields = 1;
+
+  optional int32 fast_path = 2;
+
+}
+
+message FetchProfile {
+
+  optional string type = 1;
+
+  optional string description = 2;
+
+  // Time unit for nanoseconds
+  optional int64 time_in_nanos = 3;
+
+  optional FetchProfileBreakdown breakdown = 4;
+
+  optional FetchProfileDebug debug = 5;
+
+  repeated FetchProfile children = 6;
+
+}
+
+
+message FetchProfileBreakdown {
+
+  optional int32 load_stored_fields = 1;
+
+  optional int32 load_stored_fields_count = 2;
+
+  optional int32 next_reader = 3;
+
+  optional int32 next_reader_count = 4;
+
+  optional int32 process_count = 5;
+
+  optional int32 process = 6;
+
+}
+
+message AggregationProfileDebug {
+
+  optional int32 segments_with_multi_valued_ords = 1;
+
+  optional string collection_strategy = 2;
+
+  optional int32 segments_with_single_valued_ords = 3;
+
+  optional int32 total_buckets = 4;
+
+  optional int32 built_buckets = 5;
+
+  optional string result_strategy = 6;
+
+  optional bool has_filter = 7;
+
+  optional string delegate = 8;
+
+  optional AggregationProfileDebug delegate_debug = 9;
+
+  optional int32 chars_fetched = 10;
+
+  optional int32 extract_count = 11;
+
+  optional int32 extract_ns = 12;
+
+  optional int32 values_fetched = 13;
+
+  optional int32 collect_analyzed_ns = 14;
+
+  optional int32 collect_analyzed_count = 15;
+
+  optional int32 surviving_buckets = 16;
+
+  optional int32 ordinals_collectors_used = 17;
+
+  optional int32 ordinals_collectors_overhead_too_high = 18;
+
+  optional int32 string_hashing_collectors_used = 19;
+
+  optional int32 numeric_collectors_used = 20;
+
+  optional int32 empty_collectors_used = 21;
+
+  repeated string deferred_aggregators = 22;
+
+  optional int32 segments_with_doc_count_field = 23;
+
+  optional int32 segments_with_deleted_docs = 24;
+
+  repeated AggregationProfileDelegateDebugFilter filters = 25;
+
+  optional int32 segments_counted = 26;
+
+  optional int32 segments_collected = 27;
+
+  optional string map_reducer = 28;
+
+}
+
+message AggregationProfileDelegateDebugFilter {
+
+  optional int32 results_from_metadata = 1;
+
+  optional string query = 2;
+
+  optional string specialized_for = 3;
+
+  optional int32 segments_counted_in_constant_time = 4;
+
+}
+
+message Explanation {
+
+  // [required] Explains what type of calculation is performed
+  string description = 1;
+  // [optional] Shows any subcalculations performed.
+  repeated ExplanationDetail details = 2;
+  // [required] Shows the result of the calculation,
+  double value = 3;
+
+}
+
+message ExplanationDetail {
+
+  // [required] Explains what type of calculation is performed
+  string description = 1;
+
+  // [required] Shows any subcalculations performed.
+  repeated ExplanationDetail details = 2;
+
+  // [required] Shows the result of the calculation,
+  double value = 3;
+
+}
+
+message NestedIdentity {
+
+  // [required] The name of the nested field.
+  string field = 1;
+
+  // [required] Indicates the position or index of the nested document.
+  int32 offset = 2;
+
+  // [optional] Inner nested object.
+  optional NestedIdentity nested = 3;
+
+}
