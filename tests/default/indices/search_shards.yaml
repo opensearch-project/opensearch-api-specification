@@ -1,0 +1,41 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _search_shards APIs.
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Quentin Tarantino, title: Pulp Fiction, year: 1994}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Christopher Nolan, title: Inception, year: 2010}
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Verify the distribution of shards for the index.
+    path: /{index}/_search_shards
+    parameters:
+      index: movies
+    method: GET
+    response:
+      status: 200
+  
+  - synopsis: Check routing behavior based on search criteria.
+    path: /{index}/_search_shards
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        query:
+          match:
+            title: "To Kill a Mockingbird"
+    response:
+      status: 200

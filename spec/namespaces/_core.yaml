@@ -1041,6 +1041,8 @@ paths:
         - $ref: '#/components/parameters/search_shards::query.local'
         - $ref: '#/components/parameters/search_shards::query.preference'
         - $ref: '#/components/parameters/search_shards::query.routing'
+      requestBody:
+        $ref: '#/components/requestBodies/search_shards'
       responses:
         '200':
           $ref: '#/components/responses/search_shards@200'
@@ -2021,6 +2023,8 @@ paths:
         - $ref: '#/components/parameters/search_shards::query.local'
         - $ref: '#/components/parameters/search_shards::query.preference'
         - $ref: '#/components/parameters/search_shards::query.routing'
+      requestBody:
+        $ref: '#/components/requestBodies/search_shards'
       responses:
         '200':
           $ref: '#/components/responses/search_shards@200'
@@ -2690,6 +2694,46 @@ components:
                 type: string
             description: The search definition template and its parameters.
       required: true
+    search_shards:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                description: Defines the search query to filter shards. Supports any query that is valid for the `_search` endpoint.
+                type: object
+                additionalProperties:
+                  type: object
+              indices_boost:
+                description: Allows increasing the relevance of specific indices in the search.
+                type: object
+                additionalProperties:
+                  type: number
+              allow_partial_search_results:
+                description: Indicates whether partial search results are allowed if some shards are unavailable.
+                type: boolean
+              _source:
+                description: Specifies which fields to include in the `_source` response or excludes specific fields.
+                oneOf:
+                  - type: boolean
+                  - type: array
+                    items:
+                      type: string
+              from:
+                description: The starting offset (default 0) for paginated results.
+                type: integer
+              size:
+                description: The maximum number of results to return (default 10).
+                type: integer
+              sort:
+                description: A list of fields and directions for sorting the results.
+                type: array
+                items:
+                  type: object
+                  additionalProperties:
+                    type: string
+            description: Defines the parameters that can be used in the `search_shards` endpoint request. See documentation for supported query syntax.
     termvectors:
       content:
         application/json:
