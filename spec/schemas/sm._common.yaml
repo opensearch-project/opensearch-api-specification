@@ -1,0 +1,391 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Snapshot Management API
+  description: Common schemas for Snapshot Management API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    # The request body for creating/updating a policy
+    CreateUpdatePolicyRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        creation:
+          $ref: '#/components/schemas/CreationConfig'
+        deletion:
+          $ref: '#/components/schemas/DeletionConfig'
+        snapshot_config:
+          $ref: '#/components/schemas/SnapshotConfig'
+        notification:
+          $ref: '#/components/schemas/NotificationConfig'
+        enabled:
+          type: boolean
+          description: 'Whether the policy should be enabled at creation. Default: true'
+      required:
+        - creation
+        - snapshot_config
+
+    # The main returned policy response object after GET, POST, PUT
+    PolicyResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+        _version:
+          type: integer
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+        sm_policy:
+          $ref: '#/components/schemas/SMPolicy'
+      required:
+        - _id
+        - _primary_term
+        - _seq_no
+        - _version
+        - sm_policy
+
+    # The internal structure of sm_policy
+    SMPolicy:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        schema_version:
+          type: integer
+        creation:
+          $ref: '#/components/schemas/CreationConfig'
+        deletion:
+          $ref: '#/components/schemas/DeletionConfig'
+          description: Configuration for snapshot deletion, optional.
+        snapshot_config:
+          $ref: '#/components/schemas/SnapshotConfig'
+        notification:
+          $ref: '#/components/schemas/NotificationConfig'
+        schedule:
+          $ref: '#/components/schemas/IntervalSchedule'
+          description: System-generated schedule metadata returned by the API.
+        enabled:
+          type: boolean
+        last_updated_time:
+          type: integer
+        enabled_time:
+          type: integer
+      required:
+        - creation
+        - description
+        - name
+        - snapshot_config
+
+    GetPoliciesResponse:
+      type: object
+      properties:
+        total_policies:
+          type: integer
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListedPolicy'
+      required:
+        - policies
+        - total_policies
+
+    ListedPolicy:
+      type: object
+      properties:
+        _id:
+          type: string
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+        sm_policy:
+          $ref: '#/components/schemas/SMPolicy'
+      required:
+        - _id
+        - sm_policy
+
+    # Creation and Deletion Configurations
+    CreationConfig:
+      type: object
+      properties:
+        schedule:
+          $ref: '#/components/schemas/CronSchedule'
+        time_limit:
+          type: string
+          description: Maximum time for snapshot creation.
+      required:
+        - schedule
+
+    DeletionConfig:
+      type: object
+      properties:
+        schedule:
+          $ref: '#/components/schemas/CronSchedule'
+        condition:
+          $ref: '#/components/schemas/DeletionCondition'
+        time_limit:
+          type: string
+      # deletion is optional as per docs, so no required block here.
+
+    DeletionCondition:
+      type: object
+      properties:
+        max_age:
+          type: string
+        max_count:
+          type: integer
+        min_count:
+          type: integer
+      # Not all are mandatory according to the doc, min_count default 1
+      # To align strictly with doc, remove required:
+      # required:
+      #   - min_count
+
+    SnapshotConfig:
+      type: object
+      properties:
+        date_format:
+          type: string
+          description: Default "yyyy-MM-dd'T'HH:mm:ss"
+        timezone:
+          type: string
+          description: Default UTC
+        indices:
+          type: string
+          description: Default "*"
+        repository:
+          type: string
+        ignore_unavailable:
+          type: boolean
+          description: Default false
+        include_global_state:
+          type: boolean
+          description: Default true
+        partial:
+          type: boolean
+          description: Default false
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - repository
+
+    NotificationConfig:
+      type: object
+      properties:
+        channel:
+          $ref: '#/components/schemas/NotificationChannel'
+        conditions:
+          $ref: '#/components/schemas/NotificationConditions'
+
+    CronExpression:
+      type: object
+      properties:
+        expression:
+          type: string
+        timezone:
+          type: string
+      required:
+        - expression
+        - timezone
+
+    CronSchedule:
+      type: object
+      properties:
+        cron:
+          $ref: '#/components/schemas/CronExpression'
+
+    IntervalConfig:
+      type: object
+      properties:
+        start_time:
+          type: integer
+        period:
+          type: integer
+        unit:
+          type: string
+          enum: [Days, Hours, Minutes]
+      required:
+        - period
+        - start_time
+        - unit
+
+    IntervalSchedule:
+      type: object
+      properties:
+        interval:
+          $ref: '#/components/schemas/IntervalConfig'
+
+    NotificationChannel:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+
+    NotificationConditions:
+      type: object
+      properties:
+        creation:
+          type: boolean
+          default: true
+        deletion:
+          type: boolean
+          default: false
+        failure:
+          type: boolean
+          default: false
+        time_limit_exceeded:
+          type: boolean
+          default: false
+
+    PolicyExplanation:
+      type: object
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExplainedPolicy'
+
+    ExplainedPolicy:
+      type: object
+      properties:
+        name:
+          type: string
+        creation:
+          $ref: '#/components/schemas/StateMetadata'
+        deletion:
+          $ref: '#/components/schemas/StateMetadata'
+        policy_seq_no:
+          type: integer
+        policy_primary_term:
+          type: integer
+        enabled:
+          type: boolean
+
+    StateMetadata:
+      type: object
+      properties:
+        current_state:
+          type: string
+        trigger:
+          $ref: '#/components/schemas/TriggerMetadata'
+        latest_execution:
+          $ref: '#/components/schemas/ExecutionMetadata'
+        retry:
+          $ref: '#/components/schemas/RetryMetadata'
+
+    TriggerMetadata:
+      type: object
+      properties:
+        time:
+          type: integer
+
+    ExecutionInfo:
+      type: object
+      properties:
+        message:
+          type: string
+        cause:
+          type: string
+
+    ExecutionMetadata:
+      type: object
+      properties:
+        info:
+          $ref: '#/components/schemas/ExecutionInfo'
+
+    RetryMetadata:
+      type: object
+      properties:
+        count:
+          type: integer
+
+    ShardsInfo:
+      type: object
+      properties:
+        total:
+          type: integer
+        successful:
+          type: integer
+        failed:
+          type: integer
+
+    DeletePolicyResponse:
+      type: object
+      properties:
+        _index:
+          type: string
+        _id:
+          type: string
+        _version:
+          type: integer
+        result:
+          type: string
+        forced_refresh:
+          type: boolean
+        _shards:
+          $ref: '#/components/schemas/ShardsInfo'
+        _seq_no:
+          type: integer
+        _primary_term:
+          type: integer
+      required:
+        - _id
+        - _index
+        - _primary_term
+        - _seq_no
+        - _shards
+        - _version
+        - forced_refresh
+        - result
+
+    RootCause:
+      type: object
+      properties:
+        type:
+          type: string
+        reason:
+          type: string
+
+    NotFoundError:
+      type: object
+      properties:
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootCause'
+        type:
+          type: string
+        reason:
+          type: string
+      required:
+        - reason
+        - type
+
+    NotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/NotFoundError'
+        status:
+          type: integer
+      required:
+        - error
+        - status
+
+    BadRequestResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        status:
+          type: integer
