@@ -10,11 +10,14 @@ components:
       type: object
       properties:
         _id:
-          type: string
-        _seqNo:
-          type: number
-        _primaryTerm:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Id'
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: integer
+          format: int64
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
         rollup:
           $ref: '#/components/schemas/Rollup'
     Rollup:
@@ -39,7 +42,7 @@ components:
         target_index:
           type: string
         metadata_id:
-          type: string
+          type: ['null', string]
         page_size:
           type: number
         delay:
@@ -59,18 +62,15 @@ components:
           description: 'Set up a Mustache message template for error notifications. For example, if an index rollup job fails, the system sends a message to a Slack channel.'
     ExplainEntities:
       type: object
-      properties:
-        item:
-          $ref: '#/components/schemas/Explain'
+      additionalProperties:
+        $ref: '#/components/schemas/Explain'
     Explain:
       type: object
       properties:
-        rollup_id:
-          type: string
-        last_updated_time:
-          type: number
-        continuous:
-          $ref: '#/components/schemas/Continuous'
+        metadata_id:
+          type: ['null', string]
+        rollup_metadata:
+          type: ['null', object]
     DimensionsConfigItem:
       type: object
       properties:
@@ -95,6 +95,8 @@ components:
           type: string
         target_field:
           type: string
+        format:
+          type: ['null', string]
     HistogramDimension:
       type: object
       properties:
@@ -166,30 +168,3 @@ components:
             - $ref: '#/components/schemas/Cron'
         schedule_delay:
           type: number
-    Continuous:
-      type: object
-      properties:
-        next_window_start_time:
-          type: number
-        next_window_end_time:
-          type: number
-        status:
-          type: string
-        failure_reason:
-          type: string
-        stats:
-          $ref: '#/components/schemas/Stats'
-    Stats:
-      type: object
-      properties:
-        pages_processed:
-          type: number
-        documents_processed:
-          type: number
-        rollups_indexed:
-          type: number
-        index_time_in_ms:
-          type: number
-        search_time_in_ms:
-          type: number
-
