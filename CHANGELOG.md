@@ -24,6 +24,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing `status` to `/_search/template` response ([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 - Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Added request body to `_search_shards` API specs ([#709](https://github.com/opensearch-project/opensearch-api-specification/pull/709))
+- Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -51,9 +52,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Fixed `/_scripts/painless/_execute` request and response schema ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
 - Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
-- Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 - Fixed `hits` in `rank_eval` allowing numbers ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Fixed query DSL schemas ([#706](https://github.com/opensearch-project/opensearch-api-specification/pull/706))
+- Fixed content-type of `GET /_plugins/_observability/_local/stats` ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
+- Fixed `tenant` in `ObservabilityObject` request body to not be required ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
