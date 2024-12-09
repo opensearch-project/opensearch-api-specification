@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test replication stats.
+description: Test pausing a replication.
 version: '>= 1.1'
 warnings:
   multiple-paths-detected: false
@@ -36,6 +36,12 @@ prologues:
         use_roles: 
           leader_cluster_role: all_access
           follower_cluster_role: all_access
+  - path: /_plugins/_replication/music-names/_pause
+    method: POST
+    retry:
+      count: 3
+    request:
+      payload: {}
 epilogues:
   - path: /_plugins/_replication/{index}/_stop
     method: POST
@@ -50,18 +56,14 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Get leader stats.
-    path: /_plugins/_replication/leader_stats
-    method: GET
-    response:
-      status: 200
-  - synopsis: Get follower stats.
-    path: /_plugins/_replication/follower_stats
-    method: GET
-    response:
-      status: 200
-  - synopsis: Get auto-follow stats.
-    path: /_plugins/_replication/autofollow_stats
-    method: GET
+  - synopsis: Resume replication.
+    path: /_plugins/_replication/{index}/_resume
+    method: POST
+    retry:
+      count: 3
+    parameters:
+      index: music-names
+    request:
+      payload: {}
     response:
       status: 200

@@ -140,8 +140,8 @@ export default class StoryEvaluator {
       if (dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else {
-        const { evaluation, evaluation_error } = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
-        has_errors = has_errors || evaluation_error
+        const evaluation = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
+        has_errors = has_errors || (evaluation.overall.result !== Result.PASSED && evaluation.overall.result !== Result.SKIPPED)
         if (evaluation.output !== undefined && chapter.id !== undefined) {
           story_outputs.set_chapter_output(chapter.id, evaluation.output)
         }
