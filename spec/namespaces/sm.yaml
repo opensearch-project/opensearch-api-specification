@@ -1,0 +1,325 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Snapshot Management API
+  description: API for automating snapshot management tasks.
+  version: 1.0.0
+
+paths:
+  /_plugins/_sm/policies:
+    get:
+      operationId: sm.get_policies.0
+      x-operation-group: sm.get_policies
+      x-version-added: '2.1'
+      description: Retrieves all snapshot management policies with optional pagination and filtering.
+      parameters:
+        - $ref: '#/components/parameters/sm.get_policies::query.from'
+        - $ref: '#/components/parameters/sm.get_policies::query.queryString'
+        - $ref: '#/components/parameters/sm.get_policies::query.size'
+        - $ref: '#/components/parameters/sm.get_policies::query.sortField'
+        - $ref: '#/components/parameters/sm.get_policies::query.sortOrder'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.get_policies@200'
+
+  /_plugins/_sm/policies/{policy_name}:
+    get:
+      operationId: sm.get_policy.0
+      x-operation-group: sm.get_policy
+      x-version-added: '2.1'
+      description: Retrieves a specific snapshot management policy by name.
+      parameters:
+        - $ref: '#/components/parameters/sm.get_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.get_policy@200'
+        '404':
+          $ref: '#/components/responses/sm.get_policy@404'
+    post:
+      operationId: sm.create_policy.0
+      x-operation-group: sm.create_policy
+      x-version-added: '2.1'
+      description: Creates a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/sm.create_policy::path.policy_name'
+      requestBody:
+        $ref: '#/components/requestBodies/sm.create_policy'
+      responses:
+        '201':
+          $ref: '#/components/responses/sm.create_policy@201'
+        '400':
+          $ref: '#/components/responses/sm.create_policy@400'
+    put:
+      operationId: sm.update_policy.0
+      x-operation-group: sm.update_policy
+      x-version-added: '2.1'
+      description: Updates an existing snapshot management policy. Requires `if_seq_no` and `if_primary_term`.
+      parameters:
+        - $ref: '#/components/parameters/sm.update_policy::path.policy_name'
+        - $ref: '#/components/parameters/sm.update_policy::query.if_primary_term'
+        - $ref: '#/components/parameters/sm.update_policy::query.if_seq_no'
+      requestBody:
+        $ref: '#/components/requestBodies/sm.update_policy'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.update_policy@200'
+        '404':
+          $ref: '#/components/responses/sm.update_policy@404'
+    delete:
+      operationId: sm.delete_policy.0
+      x-operation-group: sm.delete_policy
+      x-version-added: '2.1'
+      description: Deletes a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/sm.delete_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.delete_policy@200'
+        '404':
+          $ref: '#/components/responses/sm.delete_policy@404'
+
+  /_plugins/_sm/policies/{policy_name}/_explain:
+    get:
+      operationId: sm.explain_policy.0
+      x-operation-group: sm.explain_policy
+      x-version-added: '2.1'
+      description: Explains the state of the snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/sm.explain_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.explain_policy@200'
+
+  /_plugins/_sm/policies/{policy_name}/_start:
+    post:
+      operationId: sm.start_policy.0
+      x-operation-group: sm.start_policy
+      x-version-added: '2.1'
+      description: Starts a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/sm.start_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.start_policy@200'
+
+  /_plugins/_sm/policies/{policy_name}/_stop:
+    post:
+      operationId: sm.stop_policy.0
+      x-operation-group: sm.stop_policy
+      x-version-added: '2.1'
+      description: Stops a snapshot management policy.
+      parameters:
+        - $ref: '#/components/parameters/sm.stop_policy::path.policy_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/sm.stop_policy@200'
+
+components:
+  requestBodies:
+    sm.create_policy:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/CreateUpdatePolicyRequest'
+    sm.update_policy:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/CreateUpdatePolicyRequest'
+
+  responses:
+    sm.get_policies@200:
+      description: Successfully retrieved the list of snapshot management policies.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/GetPoliciesResponse'
+
+    sm.create_policy@201:
+      description: Successfully created the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyResponse'
+    sm.create_policy@400:
+      description: Bad request when creating the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/BadRequestResponse'
+
+    sm.get_policy@200:
+      description: Successfully retrieved the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyResponse'
+    sm.get_policy@404:
+      description: Snapshot management policy not found.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/NotFoundResponse'
+
+    sm.update_policy@200:
+      description: Successfully updated the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyResponse'
+    sm.update_policy@404:
+      description: Snapshot management policy not found.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/NotFoundResponse'
+
+    sm.delete_policy@200:
+      description: Successfully deleted the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/DeletePolicyResponse'
+    sm.delete_policy@404:
+      description: Snapshot management policy not found.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/NotFoundResponse'
+
+    sm.explain_policy@200:
+      description: Successfully explained the state of the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyExplanation'
+
+    sm.start_policy@200:
+      description: Successfully started the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+
+    sm.stop_policy@200:
+      description: Successfully stopped the snapshot management policy.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+
+  parameters:
+    sm.create_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.get_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.get_policies::query.from:
+      name: from
+      in: query
+      description: 'The starting index (default: 0)'
+      schema:
+        type: integer
+
+    sm.update_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.update_policy::query.if_seq_no:
+      name: if_seq_no
+      in: query
+      description: The sequence number of the policy to update.
+      required: true
+      schema:
+        type: integer
+
+    sm.update_policy::query.if_primary_term:
+      name: if_primary_term
+      in: query
+      description: The primary term of the policy to update.
+      required: true
+      schema:
+        type: integer
+
+    sm.delete_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.explain_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.start_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.stop_policy::path.policy_name:
+      name: policy_name
+      in: path
+      description: The name of the snapshot management policy.
+      required: true
+      schema:
+        type: string
+
+    sm.get_policies::query.size:
+      name: size
+      in: query
+      description:
+        The number of policies to return.
+      schema:
+        type: integer
+
+    sm.get_policies::query.queryString:
+      name: queryString
+      in: query
+      description: A query string to filter policies.
+      schema:
+        type: string
+
+    sm.get_policies::query.sortField:
+      name: sortField
+      in: query
+      description: The field to sort on.
+      schema:
+        type: string
+
+    sm.get_policies::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The order of sorting.
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: asc
