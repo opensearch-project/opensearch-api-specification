@@ -31,6 +31,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `retry` support in `prologues` and `epilogues` ([#713](https://github.com/opensearch-project/opensearch-api-specification/pull/713))
 - Added response schema for `DELETE /_plugins/_rollup/jobs/{id}`, `POST /_plugins/_rollup/jobs/{id}/_start` and `_stop` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
 - Added response schema for `PUT` and `DELETE /_plugins/_transform/{id}` ([#722](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
+- Added response schema for `GET /_plugins/_knn/warmup/{index}` ([#717](https://github.com/opensearch-project/opensearch-api-specification/pull/717))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
