@@ -24,6 +24,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing `status` to `/_search/template` response ([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 - Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Added request body to `_search_shards` API specs ([#709](https://github.com/opensearch-project/opensearch-api-specification/pull/709))
+- Added NodeAttributes as additional property in `shard_stores` API specs ([#715](https://github.com/opensearch-project/opensearch-api-specification/pull/715))
 - Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 
 ### Removed
