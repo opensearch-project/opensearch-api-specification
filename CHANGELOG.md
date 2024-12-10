@@ -29,6 +29,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `sm` namespace API specifications ([#701](https://github.com/opensearch-project/opensearch-api-specification/pull/701))
 - Added schema for `/_plugins/_knn/stats`, `/_plugins/_knn/models/{model_id}`, `_train` and `_search` ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Added `retry` support in `prologues` and `epilogues` ([#713](https://github.com/opensearch-project/opensearch-api-specification/pull/713))
+- Added response schema for `DELETE /_plugins/_rollup/jobs/{id}`, `POST /_plugins/_rollup/jobs/{id}/_start` and `_stop` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -60,6 +61,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed query DSL schemas ([#706](https://github.com/opensearch-project/opensearch-api-specification/pull/706))
 - Fixed content-type of `GET /_plugins/_observability/_local/stats` ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
 - Fixed `tenant` in `ObservabilityObject` request body to not be required ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
+- Fixed response code in `PUT /_plugins/_rollup/jobs/{id}` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
