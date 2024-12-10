@@ -23,7 +23,7 @@ export default class OperationLocator {
 
   locate_operation (chapter: Chapter): ParsedOperation | undefined {
     const path = chapter.path
-    const method = chapter.method.toLowerCase() as OpenAPIV3.HttpMethods
+    const method = chapter.method.toString().toLowerCase() as OpenAPIV3.HttpMethods
     const cache_key = path + method
     if (this.cached_operations[cache_key] != null) return this.cached_operations[cache_key]
     const operation = this.spec.paths[path]?.[method]
