@@ -7815,6 +7815,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/transforms.put___200'
+        '201':
+          $ref: '#/components/responses/transforms.put___201'
   /_plugins/_transform/{id}/_explain:
     get:
       operationId: transforms.explain.0
@@ -27998,17 +28000,12 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              transform:
-                $ref: '#/components/schemas/transforms._common___Transform'
-            required:
-              - transform
+            $ref: '#/components/schemas/transforms._common___TransformRequest'
     transforms.put:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/transforms._common___Transform'
+            $ref: '#/components/schemas/transforms._common___TransformRequest'
     update:
       content:
         application/json:
@@ -31903,6 +31900,10 @@ components:
               - took
       description: ''
     transforms.delete___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/transforms._common___DeleteTransformsResponse'
       description: ''
     transforms.explain___200:
       content:
@@ -31914,7 +31915,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/transforms._common___TransformEntity'
+            $ref: '#/components/schemas/transforms._common___TransformResponse'
       description: ''
     transforms.preview___200:
       content:
@@ -31926,7 +31927,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/transforms._common___TransformEntity'
+            $ref: '#/components/schemas/transforms._common___TransformResponse'
+      description: ''
+    transforms.put___201:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/transforms._common___TransformResponse'
       description: ''
     transforms.search___200:
       content:
@@ -59169,13 +59176,68 @@ components:
           type: string
         target_field:
           type: string
+    transforms._common___DeletedTransformResponse:
+      type: object
+      properties:
+        _type:
+          $ref: '#/components/schemas/_common___Type'
+        _index:
+          type: string
+        _id:
+          $ref: '#/components/schemas/_common___Id'
+        _version:
+          $ref: '#/components/schemas/_common___VersionNumber'
+        result:
+          type: string
+        forced_refresh:
+          type: boolean
+        _shards:
+          $ref: '#/components/schemas/_common___ShardStatistics'
+        _primary_term:
+          type: integer
+          format: int64
+        _seq_no:
+          $ref: '#/components/schemas/_common___SequenceNumber'
+        status:
+          type: number
+      required:
+        - _id
+        - _index
+        - _primary_term
+        - _seq_no
+        - _shards
+        - _version
+        - forced_refresh
+        - result
+        - status
+    transforms._common___DeleteTransformResponseItem:
+      type: object
+      properties:
+        delete:
+          $ref: '#/components/schemas/transforms._common___DeletedTransformResponse'
+    transforms._common___DeleteTransformsResponse:
+      type: object
+      properties:
+        took:
+          type: integer
+          format: int64
+        errors:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/transforms._common___DeleteTransformResponseItem'
     transforms._common___Explain:
       type: object
       properties:
         metadata_id:
-          type: string
+          type:
+            - 'null'
+            - string
         transform_metadata:
-          $ref: '#/components/schemas/transforms._common___TransformMetadata'
+          oneOf:
+            - $ref: '#/components/schemas/transforms._common___TransformMetadata'
+            - type: 'null'
     transforms._common___ExplainResponse:
       type: object
       additionalProperties:
@@ -59213,32 +59275,6 @@ components:
           type: string
         interval:
           type: string
-    transforms._common___MetricsConfigItem:
-      type: object
-      properties:
-        source_field:
-          type: string
-        target_field:
-          type: string
-        metrics:
-          type: array
-          items:
-            $ref: '#/components/schemas/transforms._common___MetricsConfigMetrics'
-    transforms._common___MetricsConfigMetrics:
-      type: object
-      properties:
-        avg:
-          type: object
-        sum:
-          type: object
-        max:
-          type: object
-        min:
-          type: object
-        value_count:
-          type: object
-      minProperties: 1
-      maxProperties: 1
     transforms._common___Preview:
       type: object
       properties:
@@ -59281,13 +59317,17 @@ components:
         schedule:
           $ref: '#/components/schemas/transforms._common___Schedule'
         metadata_id:
-          type: string
+          type:
+            - 'null'
+            - string
         updated_at:
-          type: string
+          type: number
         enabled:
           type: boolean
         enabled_at:
-          type: number
+          type:
+            - 'null'
+            - number
         description:
           type: string
         source_index:
@@ -59307,20 +59347,9 @@ components:
           items:
             $ref: '#/components/schemas/transforms._common___GroupsConfigItem'
         aggregations:
-          type: array
-          items:
-            $ref: '#/components/schemas/transforms._common___MetricsConfigItem'
-    transforms._common___TransformEntity:
-      type: object
-      properties:
-        _id:
-          type: string
-        _seqNo:
-          type: number
-        _primaryTerm:
-          type: number
-        transform:
-          $ref: '#/components/schemas/transforms._common___Transform'
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/transforms._common___GroupsConfigItem'
     transforms._common___TransformMetadata:
       type: object
       properties:
@@ -59336,6 +59365,27 @@ components:
           type: string
         stats:
           $ref: '#/components/schemas/transforms._common___ExplainStats'
+    transforms._common___TransformRequest:
+      type: object
+      properties:
+        transform:
+          $ref: '#/components/schemas/transforms._common___Transform'
+      required:
+        - transform
+    transforms._common___TransformResponse:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/_common___Id'
+        _primary_term:
+          type: integer
+          format: int64
+        _seq_no:
+          $ref: '#/components/schemas/_common___SequenceNumber'
+        _version:
+          $ref: '#/components/schemas/_common___VersionNumber'
+        transform:
+          $ref: '#/components/schemas/transforms._common___Transform'
     transforms._common___TransformsResponse:
       type: object
       properties:
@@ -59344,7 +59394,7 @@ components:
         transforms:
           type: array
           items:
-            $ref: '#/components/schemas/transforms._common___TransformEntity'
+            $ref: '#/components/schemas/transforms._common___TransformResponse'
     wlm._common___QueryGroupCreate:
       type: object
       properties:
