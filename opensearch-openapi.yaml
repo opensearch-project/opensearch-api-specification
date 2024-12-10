@@ -5630,8 +5630,8 @@ paths:
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#create-or-update-an-index-rollup-job
       responses:
-        '200':
-          $ref: '#/components/responses/rollups.put___200'
+        '201':
+          $ref: '#/components/responses/rollups.put___201'
       parameters:
         - $ref: '#/components/parameters/rollups.put___path.id'
         - $ref: '#/components/parameters/rollups.put___query.if_primary_term'
@@ -13128,8 +13128,8 @@ paths:
       externalDocs:
         url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#create-or-update-an-index-rollup-job
       responses:
-        '200':
-          $ref: '#/components/responses/rollups.put___200'
+        '201':
+          $ref: '#/components/responses/rollups.put___201'
       parameters:
         - $ref: '#/components/parameters/rollups.put___path.id'
         - $ref: '#/components/parameters/rollups.put___query.if_primary_term'
@@ -30629,6 +30629,10 @@ components:
             $ref: '#/components/schemas/_common___AcknowledgedResponseBase'
       description: ''
     rollups.delete___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common___WriteResponseBase'
       description: ''
     rollups.explain___200:
       content:
@@ -30642,15 +30646,23 @@ components:
           schema:
             $ref: '#/components/schemas/rollups._common___RollupEntity'
       description: ''
-    rollups.put___200:
+    rollups.put___201:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/rollups._common___RollupEntity'
       description: ''
     rollups.start___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common___AcknowledgedResponseBase'
       description: ''
     rollups.stop___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common___AcknowledgedResponseBase'
       description: ''
     scripts_painless_execute___200:
       content:
@@ -56824,19 +56836,6 @@ components:
           type: string
         follower_cluster_role:
           type: string
-    rollups._common___Continuous:
-      type: object
-      properties:
-        next_window_start_time:
-          type: number
-        next_window_end_time:
-          type: number
-        status:
-          type: string
-        failure_reason:
-          type: string
-        stats:
-          $ref: '#/components/schemas/rollups._common___Stats'
     rollups._common___Cron:
       type: object
       properties:
@@ -56857,6 +56856,10 @@ components:
           type: string
         target_field:
           type: string
+        format:
+          type:
+            - 'null'
+            - string
     rollups._common___DimensionsConfigItem:
       type: object
       properties:
@@ -56871,17 +56874,18 @@ components:
     rollups._common___Explain:
       type: object
       properties:
-        rollup_id:
-          type: string
-        last_updated_time:
-          type: number
-        continuous:
-          $ref: '#/components/schemas/rollups._common___Continuous'
+        metadata_id:
+          type:
+            - 'null'
+            - string
+        rollup_metadata:
+          type:
+            - 'null'
+            - object
     rollups._common___ExplainEntities:
       type: object
-      properties:
-        item:
-          $ref: '#/components/schemas/rollups._common___Explain'
+      additionalProperties:
+        $ref: '#/components/schemas/rollups._common___Explain'
     rollups._common___HistogramDimension:
       type: object
       properties:
@@ -56956,7 +56960,9 @@ components:
         target_index:
           type: string
         metadata_id:
-          type: string
+          type:
+            - 'null'
+            - string
         page_size:
           type: number
         delay:
@@ -56978,11 +56984,14 @@ components:
       type: object
       properties:
         _id:
-          type: string
-        _seqNo:
-          type: number
-        _primaryTerm:
-          type: number
+          $ref: '#/components/schemas/_common___Id'
+        _seq_no:
+          $ref: '#/components/schemas/_common___SequenceNumber'
+        _primary_term:
+          type: integer
+          format: int64
+        _version:
+          $ref: '#/components/schemas/_common___VersionNumber'
         rollup:
           $ref: '#/components/schemas/rollups._common___Rollup'
     rollups._common___Schedule:
@@ -56990,19 +56999,6 @@ components:
       properties:
         interval:
           $ref: '#/components/schemas/rollups._common___Interval'
-    rollups._common___Stats:
-      type: object
-      properties:
-        pages_processed:
-          type: number
-        documents_processed:
-          type: number
-        rollups_indexed:
-          type: number
-        index_time_in_ms:
-          type: number
-        search_time_in_ms:
-          type: number
     rollups._common___TermsDimension:
       type: object
       properties:
