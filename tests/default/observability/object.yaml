@@ -2,13 +2,9 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test various operations of the OpenSearch Observability Object API.
 
-prologues:
-  - path: /_plugins/_observability/object/{object_id}
-    method: DELETE
-    parameters:
-      object_id: test_object
-    status: [200, 404]
-  - path: /_plugins/_observability/object
+chapters:
+  - synopsis: Create an observability object.
+    path: /_plugins/_observability/object
     method: POST
     request:
       payload:
@@ -56,12 +52,12 @@ prologues:
             tokens:
               - name: field1
                 type: text
-    status: [200]
-  - path: /_refresh
+  - synopsis: Refresh index.
+    path: /_refresh
     method: POST
-    status: [200]
-chapters:
-  - synopsis: Retrieve specific Observability object after creation.
+    warnings:
+      multiple-paths-detected: false
+  - synopsis: Retrieve an observability object.
     path: /_plugins/_observability/object/{object_id}
     id: observatory_object
     method: GET
@@ -74,7 +70,7 @@ chapters:
         totalHits: 1
         totalHitRelation: eq
         observabilityObjectList: []
-  - synopsis: Update specific Observability object.
+  - synopsis: Update an observability object.
     path: /_plugins/_observability/object/{object_id}
     method: PUT
     parameters:
@@ -82,7 +78,6 @@ chapters:
     request:
       payload:
         objectId: test_object
-        tenant: ''
         operationalPanel:
           name: updated_test_panel
           visualizations: []
@@ -128,19 +123,7 @@ chapters:
       status: 200
       payload:
         objectId: test_object
-  - synopsis: Retrieve specific Observability object after update.
-    path: /_plugins/_observability/object/{object_id}
-    method: GET
-    parameters:
-      object_id: test_object
-    response:
-      status: 200
-      payload:
-        startIndex: 0
-        totalHits: 1
-        totalHitRelation: eq
-        observabilityObjectList: []
-  - synopsis: Retrieve list of Observability objects.
+  - synopsis: Retrieve all observability objects.
     path: /_plugins/_observability/object
     method: GET
     response:
@@ -150,6 +133,11 @@ chapters:
         totalHits: 1
         totalHitRelation: eq
         observabilityObjectList: []
+  - synopsis: Delete an observability object.
+    path: /_plugins/_observability/object/{object_id}
+    method: DELETE
+    parameters:
+      object_id: test_object
 epilogues:
   - path: /_plugins/_observability/object/{object_id}
     method: DELETE

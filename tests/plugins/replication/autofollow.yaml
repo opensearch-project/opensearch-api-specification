@@ -1,6 +1,7 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test replication APIs specs.
+description: Test replication APIs.
+version: '>= 1.1'
 prologues:
   - path: /{index}
     method: PUT
@@ -10,6 +11,8 @@ prologues:
       payload: {}
   - path: /_bulk
     method: POST
+    parameters:
+      refresh: true
     request:
       content_type: application/x-ndjson
       payload:
@@ -17,10 +20,6 @@ prologues:
         - {director: Bennett Miller, title: Moneyball, year: 2011}
         - {create: {_index: movies, _id: movie_1392215}}
         - {director: Badge Dale, title: The Secret Soldiers, year: 2016}
-  - path: /{index}/_refresh
-    method: POST
-    parameters:
-      index: movies
   - path: /_cluster/settings
     method: PUT
     request:
@@ -31,7 +30,6 @@ prologues:
               leader-cluster:
                 seeds: ['172.22.0.3:9300']
   - path: /_plugins/_replication/{index}/_start
-    version: '>= 1.1'
     method: PUT
     parameters:
       index: movies-names
@@ -58,7 +56,6 @@ epilogues:
 chapters:
   - synopsis: Create replication rule.
     path: /_plugins/_replication/_autofollow
-    version: '>= 1.1'
     method: POST
     request:
       payload:
@@ -70,15 +67,8 @@ chapters:
           follower_cluster_role: admin
     response:
       status: 200
-  - synopsis: Get auto-follow stats.
-    path: /_plugins/_replication/autofollow_stats
-    version: '>= 1.1'
-    method: GET
-    response:
-      status: 200
   - synopsis: Delete replication rule.
     path: /_plugins/_replication/_autofollow
-    version: '>= 1.1'
     method: DELETE
     request:
       payload:
