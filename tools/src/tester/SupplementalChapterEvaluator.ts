@@ -26,14 +26,14 @@ export default class SupplementalChapterEvaluator {
     this.logger = logger
   }
 
-  async evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
-    const title = `${chapter.method} ${chapter.path}`
+  async evaluate(chapter: SupplementalChapter, method: string, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
+    const title = `${method} ${chapter.path}`
 
     let tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     let chapter_evaluation: EvaluationWithOutput
 
     do {
-      chapter_evaluation = await this.#evaluate(chapter, story_outputs)
+      chapter_evaluation = await this.#evaluate(chapter, method, story_outputs)
       if (chapter_evaluation.evaluation.result === Result.PASSED) break
       if (--tries == 0) break
       this.logger.info(`Failed, retrying, ${tries == 1 ? '1 retry left' : `${tries} retries left`} ...`)
@@ -45,8 +45,8 @@ export default class SupplementalChapterEvaluator {
     return result
   }
 
-  async #evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<EvaluationWithOutput> {
-    const response = await this._chapter_reader.read(chapter, story_outputs)
+  async #evaluate(chapter: SupplementalChapter, method: string, story_outputs: StoryOutputs): Promise<EvaluationWithOutput> {
+    const response = await this._chapter_reader.read(chapter, method, story_outputs)
     const output_values_evaluation = ChapterOutput.extract_output_values(response, chapter.output)
     if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
 

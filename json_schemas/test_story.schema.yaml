@@ -67,6 +67,11 @@ definitions:
             items:
               type: integer
 
+  HttpMethod:
+    type: string
+    # eslint-disable-next-line yml/sort-sequence-values
+    enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
+
   ChapterRequest:
     type: object
     properties:
@@ -76,9 +81,11 @@ definitions:
       path:
         type: string
       method:
-        type: string
-        # eslint-disable-next-line yml/sort-sequence-values
-        enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
+        oneOf:
+          - type: array
+            items:
+              $ref: '#/definitions/HttpMethod'
+          - $ref: '#/definitions/HttpMethod'
       parameters:
         type: object
         additionalProperties:

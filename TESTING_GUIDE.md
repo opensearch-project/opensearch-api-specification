@@ -12,6 +12,7 @@
       - [FAILED  Cat with a json response (from security-analytics).](#failed--cat-with-a-json-response-from-security-analytics)
   - [Writing Spec Tests](#writing-spec-tests)
     - [Simple Test Story](#simple-test-story)
+    - [Testing Multiple Verbs](#testing-multiple-verbs)
     - [Using Output from Previous Chapters](#using-output-from-previous-chapters)
     - [Managing Versions](#managing-versions)
     - [Managing Distributions](#managing-distributions)
@@ -180,6 +181,18 @@ chapters:
     method: DELETE
     parameters:
       index: books
+```
+
+### Testing Multiple Verbs
+
+Some APIs allow multiple verbs for the same effect. Specify multiple verbs as follows and the test tool will execute both.
+
+```yaml
+- synopsis: Use POST and PUT interchangeably.
+  path: /{index}
+  method:
+    - POST
+    - PUT
 ```
 
 ### Using Output from Previous Chapters

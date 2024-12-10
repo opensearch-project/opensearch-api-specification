@@ -35,11 +35,11 @@ export default class ChapterEvaluator {
     this.logger = logger
   }
 
-  async evaluate(chapter: Chapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
+  async evaluate(chapter: Chapter, method: string, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
 
-    const operation = this._operation_locator.locate_operation(chapter)
-    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
+    const operation = this._operation_locator.locate_operation(chapter, method)
+    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
 
     var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     var retry = 0
@@ -47,7 +47,7 @@ export default class ChapterEvaluator {
     var result: ChapterEvaluation
 
     do {
-      result = await this.#evaluate(chapter, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined)
+      result = await this.#evaluate(chapter, method, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined)
 
       if (result.overall.result === Result.PASSED || result.overall.result === Result.SKIPPED) {
         return result
@@ -61,8 +61,8 @@ export default class ChapterEvaluator {
     return result
   }
 
-  async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
-    const response = await this._chapter_reader.read(chapter, story_outputs)
+  async #evaluate(chapter: Chapter, method: string, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
+    const response = await this._chapter_reader.read(chapter, method, story_outputs)
     const params = this.#evaluate_parameters(chapter, operation, story_outputs)
     const request = this.#evaluate_request(chapter, operation, story_outputs)
     const status = this.#evaluate_status(chapter, response)
@@ -85,10 +85,10 @@ export default class ChapterEvaluator {
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
       operation: {
-        method: chapter.method,
+        method,
         path: chapter.path
       },
-      path: `${chapter.method} ${chapter.path}`,
+      path: `${method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request },
       response: {

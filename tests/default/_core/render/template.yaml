@@ -1,0 +1,62 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test rendering a search template as a search query.
+
+prologues:
+  - path: /_scripts/movie_template
+    method: POST
+    request:
+      content_type: application/json
+      payload:
+        script:
+          lang: mustache
+          source: >
+            {
+              "query": {
+                "match": {
+                  "{{field}}": "{{value}}"
+                }
+              }
+            }
+epilogues:
+  - path: /_scripts/movie_template
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Render the movie template (request payload).
+    path: /_render/template
+    method:
+      - GET
+      - POST
+    request:
+      payload:
+        id: movie_template
+        params:
+          field: director
+          value: Quentin Tarantino
+    response:
+      status: 200
+      payload:
+        template_output:
+          query:
+            match:
+              director: Quentin Tarantino
+  - synopsis: Render the movie template (path).
+    path: /_render/template/{id}
+    method:
+      - GET
+      - POST
+    parameters:
+      id: movie_template
+    request:
+      payload:
+        params:
+          field: director
+          value: Christopher Nolan
+    response:
+      status: 200
+      payload:
+        template_output:
+          query:
+            match:
+              director: Christopher Nolan

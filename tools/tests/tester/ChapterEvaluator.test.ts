@@ -34,7 +34,7 @@ describe('ChapterEvaluator', () => {
           synopsis: 'Perform a GET on an invalid path.',
           path: '/invalid',
           method: 'GET'
-        }, false, story_outputs)).toEqual(
+        }, 'GET', false, story_outputs)).toEqual(
         {
           title: 'Perform a GET on an invalid path.',
           overall: {
@@ -59,7 +59,7 @@ describe('ChapterEvaluator', () => {
           request: {
             payload: {}
           }
-        }, false, story_outputs)).toEqual(
+        }, 'PUT', false, story_outputs)).toEqual(
         {
           title: 'Perform a PUT /{index}.',
           path: 'PUT /{index}',
@@ -95,7 +95,7 @@ describe('ChapterEvaluator', () => {
         request: {
           payload: {}
         }
-      }, false, story_outputs)
+      }, 'PUT', false, story_outputs)
 
       expect(result.overall.result).toEqual(Result.ERROR)
       expect(count).toEqual(5)

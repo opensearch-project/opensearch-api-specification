@@ -33,7 +33,7 @@ describe('SupplementalChapterEvaluator', () => {
         await supplemental_chapter_evaluator.evaluate({
           path: '/invalid',
           method: 'GET'
-        }, story_outputs)).toEqual(
+        }, 'GET', story_outputs)).toEqual(
         {
           title: 'GET /invalid',
           overall: {
@@ -53,7 +53,7 @@ describe('SupplementalChapterEvaluator', () => {
           request: {
             payload: {}
           }
-        }, story_outputs)).toEqual(
+        }, 'PUT', story_outputs)).toEqual(
         {
           title: 'PUT /test',
           overall: {
@@ -81,7 +81,7 @@ describe('SupplementalChapterEvaluator', () => {
         request: {
           payload: {}
         }
-      }, story_outputs)
+      }, 'PUT', story_outputs)
 
       expect(result.overall.result).toEqual(Result.ERROR)
       expect(count).toEqual(5)

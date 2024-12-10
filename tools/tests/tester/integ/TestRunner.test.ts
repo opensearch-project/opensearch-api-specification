@@ -34,6 +34,7 @@ test('stories folder', async () => {
     'error/prologue_error',
     'failed/invalid_data',
     'failed/not_found',
+    'passed/multiple_methods',
     'passed/passed',
     'passed/value_type',
     'skipped/semver',
