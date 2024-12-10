@@ -39,7 +39,7 @@ export default class ChapterEvaluator {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
 
     const operation = this._operation_locator.locate_operation(chapter)
-    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
+    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toString().toUpperCase()} ${chapter.path}" not found in the spec.` } }
 
     var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     var retry = 0
@@ -85,10 +85,10 @@ export default class ChapterEvaluator {
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
       operation: {
-        method: chapter.method,
+        method: chapter.method.toString(),
         path: chapter.path
       },
-      path: `${chapter.method} ${chapter.path}`,
+      path: `${chapter.method.toString()} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request },
       response: {

@@ -27,7 +27,7 @@ export default class SupplementalChapterEvaluator {
   }
 
   async evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
-    const title = `${chapter.method} ${chapter.path}`
+    const title = `${chapter.method.toString()} ${chapter.path}`
 
     let tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     let chapter_evaluation: EvaluationWithOutput

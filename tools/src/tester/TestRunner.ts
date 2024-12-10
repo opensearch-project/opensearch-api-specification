@@ -20,6 +20,7 @@ import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import * as ansi from './Ansi'
 import _ from 'lodash'
 import { Logger } from 'Logger'
+import StoryReader from './StoryReader'
 
 export default class TestRunner {
   private readonly _http_client: OpenSearchHttpClient
@@ -55,8 +56,9 @@ export default class TestRunner {
     }
 
     for (const story_file of story_files) {
-      this._logger.info(`Evaluating ${story_file.display_path} ...`)
-      const evaluation = this._story_validator.validate(story_file) ?? await this._story_evaluator.evaluate(story_file, version, distribution, dry_run)
+      var story_reader = new StoryReader(story_file)
+      this._logger.info(`Evaluating ${story_reader.display_path} ...`)
+      const evaluation = this._story_validator.validate(story_reader.story_file) ?? await this._story_evaluator.evaluate(story_reader.story_file, version, distribution, dry_run)
       results.evaluations.push(evaluation)
       this._result_logger.log(evaluation)
       if ([Result.ERROR, Result.FAILED].includes(evaluation.result)) failed = true
