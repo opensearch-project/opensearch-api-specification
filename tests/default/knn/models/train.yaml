@@ -1,8 +1,7 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test training k-NN model with disk-based parameters.
+description: Train a k-NN model with disk-based parameters.
 version: '>= 2.17'
-
 prologues:
   - method: PUT
     path: /movies
@@ -19,6 +18,8 @@ prologues:
     status: [200]
   - method: POST
     path: /_bulk
+    parameters:
+      refresh: true
     request:
       content_type: application/x-ndjson
       payload:
@@ -41,9 +42,6 @@ prologues:
         - {index: {_index: movies, _id: '9'}}
         - {recommendation_vector: [9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5, 9.5], duration: 8.9}
     status: [200]
-  - method: POST
-    path: /_refresh
-    status: [200]
 epilogues:
   - path: /movies
     method: DELETE
@@ -53,9 +51,11 @@ epilogues:
       model_id: ${train_model.test_model_id}
     method: DELETE
     status: [200, 404]
-
+  - path: /_plugins/_knn/models/model-1
+    method: DELETE
+    status: [200, 404]
 chapters:
-  - synopsis: Test training a model with disk-based parameters.
+  - synopsis: Train a new model with disk-based parameters.
     id: train_model
     method: POST
     path: /_plugins/_knn/models/_train
@@ -88,3 +88,21 @@ chapters:
       payload:
         model_id: ${train_model.test_model_id}
         state: created
+  - synopsis: Train a model with a given ID.
+    method: POST
+    path: /_plugins/_knn/models/{model_id}/_train
+    parameters:
+      model_id: model-1
+    request:
+      payload:
+        training_index: movies
+        training_field: recommendation_vector
+        dimension: 8
+        max_training_vector_count: 2400
+        search_size: 100
+        description: Test model
+        mode: on_disk
+        compression_level: 32x
+        spaceType: l2
+    response:
+      status: 200
