@@ -5,15 +5,25 @@ info:
   version: 1.0.0
 components:
   schemas:
-    TransformEntity:
+    TransformRequest:
+      type: object
+      properties:
+        transform:
+          $ref: '#/components/schemas/Transform'
+      required:
+        - transform
+    TransformResponse:
       type: object
       properties:
         _id:
-          type: string
-        _seqNo:
-          type: number
-        _primaryTerm:
-          type: number
+          $ref: '_common.yaml#/components/schemas/Id'
+        _primary_term:
+          type: integer
+          format: int64
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
         transform:
           $ref: '#/components/schemas/Transform'
     TransformsResponse:
@@ -24,7 +34,58 @@ components:
         transforms:
           type: array
           items:
-            $ref: '#/components/schemas/TransformEntity'
+            $ref: '#/components/schemas/TransformResponse'
+    DeleteTransformsResponse:
+      type: object
+      properties:
+        took:
+          type: integer
+          format: int64
+        errors:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeleteTransformResponseItem'
+    DeleteTransformResponseItem:
+      type: object
+      properties:
+        delete:
+          $ref: '#/components/schemas/DeletedTransformResponse'      
+    DeletedTransformResponse:
+      type: object
+      properties:
+        _type:
+          $ref: '_common.yaml#/components/schemas/Type'
+        _index:
+          type: string
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
+        result:
+          type: string
+        forced_refresh:
+          type: boolean
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+        _primary_term:
+          type: integer
+          format: int64
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        status:
+          type: number
+      required:
+        - _id
+        - _index
+        - _primary_term
+        - _seq_no
+        - _shards
+        - _version
+        - forced_refresh
+        - result
+        - status
     Transform:
       type: object
       properties:
@@ -37,13 +98,13 @@ components:
         schedule:
           $ref: '#/components/schemas/Schedule'
         metadata_id:
-          type: string
+          type: ['null', string]
         updated_at:
-          type: string
+          type: number
         enabled:
           type: boolean
         enabled_at:
-          type: number
+          type: ['null', number]
         description:
           type: string
         source_index:
@@ -63,9 +124,9 @@ components:
           items:
             $ref: '#/components/schemas/GroupsConfigItem'
         aggregations: 
-          type: array
-          items:
-            $ref: '#/components/schemas/MetricsConfigItem'
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GroupsConfigItem'
     ExplainResponse:
       type: object
       additionalProperties:
@@ -74,9 +135,11 @@ components:
       type: object
       properties:
         metadata_id:
-          type: string
+          type: ['null', string]
         transform_metadata:
-          $ref: '#/components/schemas/TransformMetadata'
+          oneOf:
+            - $ref: '#/components/schemas/TransformMetadata'
+            - type: 'null'
     Preview:
       type: object
       properties:
@@ -140,32 +203,6 @@ components:
           type: string
         target_field:
           type: string
-    MetricsConfigItem:
-      type: object
-      properties:
-        source_field:
-          type: string
-        target_field:
-          type: string
-        metrics:
-          type: array
-          items:
-            $ref: '#/components/schemas/MetricsConfigMetrics'
-    MetricsConfigMetrics:
-      type: object
-      properties:
-        avg:
-          type: object
-        sum:
-          type: object
-        max:
-          type: object
-        min:
-          type: object
-        value_count:
-          type: object
-      minProperties: 1
-      maxProperties: 1
     ContinuousStats:
       type: object
       properties:

@@ -1,0 +1,93 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test transform jobs.
+prologues:
+  - path: /{index}/_doc
+    method: POST
+    parameters:
+      index: movies
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 91
+    status: [201]
+epilogues:
+  - path: /_plugins/_transform/movies-to-films
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a transform job.
+    id: transform
+    path: /_plugins/_transform/{id}
+    method: PUT
+    parameters:
+      id: movies-to-films
+    request:
+      payload:
+        transform:
+          enabled: false
+          description: A transform.
+          source_index: movies
+          target_index: films
+          data_selection_query:
+            match_all: {}
+          page_size: 10
+          groups:
+            - terms:
+                source_field: year
+                target_field: produced
+          schedule:
+            interval:
+              period: 1
+              unit: Minutes
+              start_time: 1602100553
+    response:
+      status: 201
+    output:
+      primary_term: payload._primary_term
+      seq_no: payload._seq_no
+  - synopsis: Update a transform job.
+    path: /_plugins/_transform/{id}
+    method: PUT
+    parameters:
+      id: movies-to-films
+      if_primary_term: ${transform.primary_term}
+      if_seq_no: ${transform.seq_no}
+    request:
+      payload:
+        transform:
+          enabled: false
+          description: A transform.
+          source_index: movies
+          target_index: films
+          data_selection_query:
+            match_all: {}
+          page_size: 10
+          groups:
+            - terms:
+                source_field: year
+                target_field: produced
+          schedule:
+            interval:
+              period: 1
+              unit: Minutes
+              start_time: 1602100553
+    response:
+      status: 200
+  - synopsis: Get transform jobs.
+    path: /_plugins/_transform
+    method: GET
+  - synopsis: Get a transform job.
+    path: /_plugins/_transform/{id}
+    method: GET
+    parameters:
+      id: movies-to-films
+  - synopsis: Delete a transform job.
+    path: /_plugins/_transform/{id}
+    method: DELETE
+    parameters:
+      id: movies-to-films
