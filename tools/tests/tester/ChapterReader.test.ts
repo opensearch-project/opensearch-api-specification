@@ -46,13 +46,36 @@ describe('ChapterReader', () => {
         parameters: undefined,
         request: undefined,
         output: undefined
-      }, new StoryOutputs())
+      }, 'GET', new StoryOutputs())
 
       expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
         [{
           url: 'path',
           method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          params: {},
+          paramsSerializer: expect.any(Function),
+          data: undefined
+        }]
+      ])
+    })
+
+    it('sends a POST request with multiple methods tested', async () => {
+      const result = await reader.read({
+        id: 'id',
+        path: 'path',
+        method: ['GET', 'POST'],
+        parameters: undefined,
+        request: undefined,
+        output: undefined
+      }, 'POST', new StoryOutputs())
+
+      expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
+      expect(mocked_axios.request.mock.calls).toEqual([
+        [{
+          url: 'path',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           params: {},
           paramsSerializer: expect.any(Function),
@@ -69,7 +92,7 @@ describe('ChapterReader', () => {
         parameters: { index: 'books' },
         request: undefined,
         output: undefined
-      }, new StoryOutputs())
+      }, 'GET', new StoryOutputs())
 
       expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
@@ -92,7 +115,7 @@ describe('ChapterReader', () => {
         parameters: { indexes: ['book1', 'book2'] },
         request: undefined,
         output: undefined
-      }, new StoryOutputs())
+      }, 'GET', new StoryOutputs())
 
       expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
@@ -118,7 +141,7 @@ describe('ChapterReader', () => {
         parameters: { 'x': 1 },
         request: { payload: { "body": "present" } },
         output: undefined
-      }, new StoryOutputs())
+      }, 'POST', new StoryOutputs())
 
       expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
@@ -144,7 +167,7 @@ describe('ChapterReader', () => {
           payload: [{ "body": "present" }]
         },
         output: undefined
-      }, new StoryOutputs())
+      }, 'POST', new StoryOutputs())
 
       expect(result).toEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toEqual([
@@ -172,7 +195,7 @@ describe('ChapterReader', () => {
           },
         },
         output: undefined
-      }, new StoryOutputs())
+      }, 'GET', new StoryOutputs())
 
       expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toStrictEqual([
@@ -203,7 +226,7 @@ describe('ChapterReader', () => {
           },
         },
         output: undefined
-      }, new StoryOutputs())
+      }, 'GET', new StoryOutputs())
 
       expect(result).toStrictEqual({ status: 200, content_type: 'application/json' })
       expect(mocked_axios.request.mock.calls).toStrictEqual([
@@ -239,7 +262,7 @@ describe('ChapterReader', () => {
         id: 'id',
         path: 'path',
         method: 'POST'
-      }, new StoryOutputs());
+      }, 'POST', new StoryOutputs());
 
       expect(result).toStrictEqual({
         status: 404,
@@ -268,7 +291,7 @@ describe('ChapterReader', () => {
         id: 'id',
         path: 'path',
         method: 'POST'
-      }, new StoryOutputs());
+      }, 'POST', new StoryOutputs());
 
       expect(result).toStrictEqual({
         status: 404,
@@ -291,7 +314,7 @@ describe('ChapterReader', () => {
         id: 'id',
         path: 'path',
         method: 'GET'
-      }, new StoryOutputs())
+      }, 'GET', new StoryOutputs())
 
       expect(result.content_type).toBeUndefined()
       expect(result.payload).toBeUndefined()
@@ -306,7 +329,7 @@ describe('ChapterReader', () => {
         data: '{"x":1}'
       });
 
-      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, new StoryOutputs())
+      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, 'POST', new StoryOutputs())
       expect(result.content_type).toEqual("text/plain")
       expect(result.payload).toEqual('{"x":1}')
     })
@@ -320,7 +343,7 @@ describe('ChapterReader', () => {
         data: '{"x":1}'
       });
 
-      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, new StoryOutputs())
+      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, 'POST', new StoryOutputs())
       expect(result.content_type).toEqual("application/json")
       expect(result.payload).toEqual({ "x": 1 })
     })
@@ -334,7 +357,7 @@ describe('ChapterReader', () => {
         data: "---\nx: 1"
       });
 
-      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, new StoryOutputs())
+      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, 'POST', new StoryOutputs())
       expect(result.content_type).toEqual("application/yaml")
       expect(result.payload).toEqual({ "x": 1 })
     })
@@ -348,7 +371,7 @@ describe('ChapterReader', () => {
         data: new Uint8Array([130, 97, 120, 161, 97, 121, 1]).buffer
       });
 
-      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, new StoryOutputs())
+      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, 'POST', new StoryOutputs())
       expect(result.content_type).toEqual("application/cbor")
       expect(result.payload).toEqual(["x", { "y": 1 }])
     })
@@ -366,7 +389,7 @@ describe('ChapterReader', () => {
         ]).buffer
       });
 
-      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, new StoryOutputs())
+      const result = await reader.read({ id: 'id', path: 'path', method: 'POST' }, 'POST', new StoryOutputs())
       expect(result.content_type).toEqual("application/smile")
       expect(result.payload).toEqual({ age: 25, name: "Bob", score: 96.8 })
     })

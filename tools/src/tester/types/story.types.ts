@@ -115,7 +115,9 @@ export interface ChapterRequest {
    */
   id?: string;
   path: string;
-  method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+  method:
+    | ('GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS')[]
+    | ('GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS');
   parameters?: {
     [k: string]: Parameter;
   };

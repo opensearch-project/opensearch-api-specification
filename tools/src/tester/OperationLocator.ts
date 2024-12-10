@@ -21,12 +21,12 @@ export default class OperationLocator {
     this.spec = spec
   }
 
-  locate_operation (chapter: Chapter): ParsedOperation | undefined {
+  locate_operation (chapter: Chapter, method: string): ParsedOperation | undefined {
     const path = chapter.path
-    const method = chapter.method.toLowerCase() as OpenAPIV3.HttpMethods
+    const request_method = method.toLowerCase() as OpenAPIV3.HttpMethods
     const cache_key = path + method
     if (this.cached_operations[cache_key] != null) return this.cached_operations[cache_key]
-    const operation = this.spec.paths[path]?.[method]
+    const operation = this.spec.paths[path]?.[request_method]
     if (operation == null) return undefined
     this.#deref(operation)
     const parameters = _.keyBy(operation.parameters ?? [], 'name')

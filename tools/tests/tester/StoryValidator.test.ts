@@ -32,7 +32,7 @@ describe('StoryValidator', () => {
     expect(evaluation?.message).toBe("Invalid Story: " +
       "data/epilogues/0 contains unsupported properties: response --- " +
       "data/chapters/0 MUST contain the missing properties: method --- " +
-      "data/chapters/1/method MUST be equal to one of the allowed values: GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS")
+      "data/chapters/1/method MUST be equal to one of the allowed values: GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS --- data/chapters/1/method must be array --- data/chapters/1/method must match exactly one schema in oneOf")
   })
 
   test('invalid description', () => {
@@ -45,6 +45,11 @@ describe('StoryValidator', () => {
 
   test('valid story', () => {
     const evaluation = validate('tools/tests/tester/fixtures/valid_story.yaml')
+    expect(evaluation).toBeUndefined()
+  })
+
+  test('multiple methods in a chapter', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/multiple_methods.yaml')
     expect(evaluation).toBeUndefined()
   })
 })

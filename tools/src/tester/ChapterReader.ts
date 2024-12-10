@@ -28,7 +28,7 @@ export default class ChapterReader {
     this.logger = logger
   }
 
-  async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
+  async read (chapter: ChapterRequest, method: string, story_outputs: StoryOutputs): Promise<ActualResponse> {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
@@ -37,10 +37,10 @@ export default class ChapterReader {
       story_outputs.resolve_value(chapter.request.payload),
       content_type
     ) : undefined
-    this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] ${_.compact([to_json(headers), to_json(request_data)]).join(' | ')}`)
+    this.logger.info(`=> ${method} ${url_path} (${to_json(params)}) [${content_type}] ${_.compact([to_json(headers), to_json(request_data)]).join(' | ')}`)
     await this._client.request({
       url: url_path,
-      method: chapter.method,
+      method,
       headers: { 'Content-Type' : content_type, ...headers },
       params,
       data: request_data,

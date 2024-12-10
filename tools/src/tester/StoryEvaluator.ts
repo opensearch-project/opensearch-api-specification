@@ -108,25 +108,27 @@ export default class StoryEvaluator {
   async #evaluate_chapters(chapters: Chapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      if (dry_run) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
-      } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.included.length > 1 ? 'one of ' : ''}${chapter.distributions.included.join(', ')}.` } })
-      } else if (distribution != undefined && chapter.distributions?.excluded !== undefined && chapter.distributions?.excluded.length > 0 && chapter.distributions.excluded.includes(distribution)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is ${chapter.distributions.excluded.length > 1 ? 'one of ' : ''}${chapter.distributions.excluded.join(', ')}.` } })
-      } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.` } })
-      } else {
-        const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
-        has_errors = has_errors || evaluation.overall.result === Result.ERROR
-        if (evaluation.output !== undefined && chapter.id !== undefined) {
-          story_outputs.set_chapter_output(chapter.id, evaluation.output)
+      for (const method of StoryEvaluator.#chapter_methods(chapter.method)) {
+        if (dry_run) {
+          const title = chapter.synopsis || `${method} ${chapter.path}`
+          evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
+        } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
+          const title = chapter.synopsis || `${method} ${chapter.path}`
+          evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.included.length > 1 ? 'one of ' : ''}${chapter.distributions.included.join(', ')}.` } })
+        } else if (distribution != undefined && chapter.distributions?.excluded !== undefined && chapter.distributions?.excluded.length > 0 && chapter.distributions.excluded.includes(distribution)) {
+          const title = chapter.synopsis || `${method} ${chapter.path}`
+          evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is ${chapter.distributions.excluded.length > 1 ? 'one of ' : ''}${chapter.distributions.excluded.join(', ')}.` } })
+        } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
+          const title = chapter.synopsis || `${method} ${chapter.path}`
+          evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.` } })
+        } else {
+          const evaluation = await this._chapter_evaluator.evaluate(chapter, method, has_errors, story_outputs)
+          has_errors = has_errors || evaluation.overall.result === Result.ERROR
+          if (evaluation.output !== undefined && chapter.id !== undefined) {
+            story_outputs.set_chapter_output(chapter.id, evaluation.output)
+          }
+          evaluations.push(evaluation)
         }
-        evaluations.push(evaluation)
       }
     }
     return evaluations
@@ -136,16 +138,18 @@ export default class StoryEvaluator {
     let has_errors = false
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      const title = `${chapter.method} ${chapter.path}`
-      if (dry_run) {
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
-      } else {
-        const evaluation = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
-        has_errors = has_errors || (evaluation.overall.result !== Result.PASSED && evaluation.overall.result !== Result.SKIPPED)
-        if (evaluation.output !== undefined && chapter.id !== undefined) {
-          story_outputs.set_chapter_output(chapter.id, evaluation.output)
+      for (const method of StoryEvaluator.#chapter_methods(chapter.method)) {
+        const title = `${method} ${chapter.path}`
+        if (dry_run) {
+          evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
+        } else {
+          const evaluation = await this._supplemental_chapter_evaluator.evaluate(chapter, method, story_outputs)
+          has_errors = has_errors || (evaluation.overall.result !== Result.PASSED && evaluation.overall.result !== Result.SKIPPED)
+          if (evaluation.output !== undefined && chapter.id !== undefined) {
+            story_outputs.set_chapter_output(chapter.id, evaluation.output)
+          }
+          evaluations.push(evaluation)
         }
-        evaluations.push(evaluation)
       }
     }
     return { evaluations, has_errors }
@@ -179,7 +183,8 @@ export default class StoryEvaluator {
   }
 
   static #check_chapter_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
-    const title = `${chapter.method} ${chapter.path}`
+    const methods = StoryEvaluator.#chapter_methods(chapter.method)
+    const title = `${methods.join(', ')} ${chapter.path}`
     const error = StoryEvaluator.#check_used_variables(chapter, story_outputs)
     if (error !== undefined) {
       return error
@@ -202,8 +207,9 @@ export default class StoryEvaluator {
    * @returns
    */
   static #check_used_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation | undefined {
+    const methods = StoryEvaluator.#chapter_methods(chapter.method)
     const variables = new Set<OutputReference>()
-    const title = `${chapter.method} ${chapter.path}`
+    const title = `${methods.join(', ')} ${chapter.path}`
     StoryEvaluator.#extract_params_variables(chapter.parameters ?? {}, variables)
     StoryEvaluator.#extract_request_variables(chapter.request?.payload ?? {}, variables)
     for (const { chapter_id, output_name } of variables) {
@@ -257,5 +263,9 @@ export default class StoryEvaluator {
 
   static #failed_evaluation(title: string, message: string): ChapterEvaluation {
     return { title, overall: { result: Result.FAILED, message } }
+  }
+
+  static #chapter_methods(methods: string[] | string): string[] {
+    return [...(Array.isArray(methods) ? methods : [methods])]
   }
 }
