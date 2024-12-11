@@ -873,17 +873,29 @@ components:
         - nanos
         - s
     HealthStatus:
-      type: string
-      enum:
-        - green
-        - red
-        - yellow
-    HealthStatusCapitalized:
-      type: string
-      enum:
-        - GREEN
-        - RED
-        - YELLOW
+      # eslint-disable yml/sort-sequence-values
+      oneOf:
+        - description: All shards are assigned.
+          type: string
+          enum:
+            - green
+            - GREEN
+        - description: |
+            All primary shards are assigned, but one or more replica shards are
+            unassigned. If a node in the cluster fails, some data could be unavailable
+            until that node is repaired.
+          type: string
+          enum:
+            - yellow
+            - YELLOW
+        - description: |
+            One or more primary shards are unassigned, so some data is unavailable. This
+            can occur briefly during cluster startup as primary shards are assigned.
+          type: string
+          enum:
+            - red
+            - RED
+        # eslint-enable yml/sort-sequence-values
     ScheduleTimeOfDay:
       description: A time of day, expressed either as `hh:mm`, `noon`, `midnight`, or an hour/minutes structure.
       oneOf:
