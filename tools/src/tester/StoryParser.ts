@@ -8,7 +8,7 @@
 */
 
 import _ from "lodash";
-import { ChapterRequest, Story } from "./types/story.types";
+import { Chapter, Story } from "./types/story.types";
 import { ParsedChapter, ParsedStory } from "./types/parsed_story.types";
 
 export default class StoryParser {
@@ -23,12 +23,16 @@ export default class StoryParser {
     return [...(Array.isArray(methods) ? methods : [methods])]
   }
 
-  static #expand_chapters(chapters?: ChapterRequest[]): ParsedChapter[] {
+  static #expand_chapters(chapters?: Chapter[]): ParsedChapter[] {
     if (chapters === undefined) return []
     return  _.flatMap(_.map(chapters, (chapter) => {
       return _.map(this.#chapter_methods(chapter.method), (method) => {
+        let synopsis = chapter.synopsis && Array.isArray(chapter.method) ?
+          `${chapter.synopsis} [${method}]` :
+          chapter.synopsis
         return {
           ...chapter,
+          synopsis,
           method
         }
       })

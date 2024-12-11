@@ -42,7 +42,7 @@ describe('StoryValidator', () => {
     expect(evaluation?.result).toBe('ERROR')
     expect(evaluation?.message).toBe("Invalid Story: " +
       "data/description must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\" --- " +
-      "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\"")
+      "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$|^\\p{Lu}[\\s\\S]*\\. \\[(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS)\\]$\"")
   })
 
   test('valid story', () => {

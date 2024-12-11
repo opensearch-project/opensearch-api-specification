@@ -109,17 +109,14 @@ export default class StoryEvaluator {
   async #evaluate_chapters(chapters: ParsedChapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
+      const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
       if (dry_run) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.included.length > 1 ? 'one of ' : ''}${chapter.distributions.included.join(', ')}.` } })
       } else if (distribution != undefined && chapter.distributions?.excluded !== undefined && chapter.distributions?.excluded.length > 0 && chapter.distributions.excluded.includes(distribution)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is ${chapter.distributions.excluded.length > 1 ? 'one of ' : ''}${chapter.distributions.excluded.join(', ')}.` } })
       } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.` } })
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
