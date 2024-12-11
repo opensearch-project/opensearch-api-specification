@@ -42,7 +42,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed unsupported `cause` and `create` from `/_index_template/_simulate_index/{name}` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `mappings` from `required` in `indices.simulate_template#Template` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
-- Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#]())
+- Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -65,10 +65,12 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed content-type of `GET /_plugins/_observability/_local/stats` ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
 - Fixed `tenant` in `ObservabilityObject` request body to not be required ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
 - Fixed response code in `PUT /_plugins/_rollup/jobs/{id}` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
+- Fixed data stream schema numeric property types ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
-- Changed `SearchModelsQuery`, `CreateConnectorRequest` & `RegisterAgentsRequest` to be defined inline of request bodies ([#]())
+- Changed `SearchModelsQuery`, `CreateConnectorRequest` & `RegisterAgentsRequest` to be defined inline of request bodies ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
+- Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725)) 
 
 ## [0.1.0] - 2024-10-25
 
