@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { ChapterRequest, Parameter, type Chapter, type Story, type SupplementalChapter } from './types/story.types'
+import { Parameter } from './types/story.types'
 import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation, OutputReference } from './types/eval.types'
 import type ChapterEvaluator from './ChapterEvaluator'
 import { overall_result } from './helpers'
@@ -16,6 +16,7 @@ import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import { ChapterOutput } from './ChapterOutput'
 import * as semver from '../_utils/semver'
 import _ from 'lodash'
+import { ParsedChapter, ParsedChapterRequest, ParsedStory, ParsedSupplementalChapter } from './types/parsed_story.types'
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator
@@ -85,14 +86,14 @@ export default class StoryEvaluator {
     return result
   }
 
-  #chapter_warnings(story: Story): string[] | undefined {
+  #chapter_warnings(story: ParsedStory): string[] | undefined {
     const result = _.compact([
       this.#warning_if_mismatched_chapter_paths(story)
     ])
     return result.length > 0 ? result : undefined
   }
 
-  #warning_if_mismatched_chapter_paths(story: Story): string | undefined {
+  #warning_if_mismatched_chapter_paths(story: ParsedStory): string | undefined {
     if (story.warnings?.['multiple-paths-detected'] === false) return
     const paths = _.compact(_.map(story.chapters, (chapter) => {
       if (chapter.warnings?.['multiple-paths-detected'] === false) return
@@ -105,20 +106,20 @@ export default class StoryEvaluator {
     }
   }
 
-  async #evaluate_chapters(chapters: Chapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
+  async #evaluate_chapters(chapters: ParsedChapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       if (dry_run) {
-        const title = chapter.synopsis || `${chapter.method.toString()} ${chapter.path}`
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
-        const title = chapter.synopsis || `${chapter.method.toString()} ${chapter.path}`
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.included.length > 1 ? 'one of ' : ''}${chapter.distributions.included.join(', ')}.` } })
       } else if (distribution != undefined && chapter.distributions?.excluded !== undefined && chapter.distributions?.excluded.length > 0 && chapter.distributions.excluded.includes(distribution)) {
-        const title = chapter.synopsis || `${chapter.method.toString()} ${chapter.path}`
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is ${chapter.distributions.excluded.length > 1 ? 'one of ' : ''}${chapter.distributions.excluded.join(', ')}.` } })
       } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
-        const title = chapter.synopsis || `${chapter.method.toString()} ${chapter.path}`
+        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.` } })
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
@@ -132,11 +133,11 @@ export default class StoryEvaluator {
     return evaluations
   }
 
-  async #evaluate_supplemental_chapters(chapters: SupplementalChapter[], dry_run: boolean, story_outputs: StoryOutputs): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
+  async #evaluate_supplemental_chapters(chapters: ParsedSupplementalChapter[], dry_run: boolean, story_outputs: StoryOutputs): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
     let has_errors = false
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
-      const title = `${chapter.method.toString()} ${chapter.path}`
+      const title = `${chapter.method} ${chapter.path}`
       if (dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else {
@@ -152,7 +153,7 @@ export default class StoryEvaluator {
   }
 
   // TODO: Refactor and move this logic into StoryValidator
-  static check_story_variables(story: Story, display_path: string, full_path: string): StoryEvaluation | undefined {
+  static check_story_variables(story: ParsedStory, display_path: string, full_path: string): StoryEvaluation | undefined {
     const story_outputs = new StoryOutputs()
     const prologues = (story.prologues ?? []).map((prologue) => {
       return StoryEvaluator.#check_chapter_variables(prologue, story_outputs)
@@ -178,8 +179,8 @@ export default class StoryEvaluator {
     }
   }
 
-  static #check_chapter_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
-    const title = `${chapter.method.toString()} ${chapter.path}`
+  static #check_chapter_variables(chapter: ParsedChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
+    const title = `${chapter.method} ${chapter.path}`
     const error = StoryEvaluator.#check_used_variables(chapter, story_outputs)
     if (error !== undefined) {
       return error
@@ -201,9 +202,9 @@ export default class StoryEvaluator {
    * @param story_outputs
    * @returns
    */
-  static #check_used_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation | undefined {
+  static #check_used_variables(chapter: ParsedChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation | undefined {
     const variables = new Set<OutputReference>()
-    const title = `${chapter.method.toString()} ${chapter.path}`
+    const title = `${chapter.method} ${chapter.path}`
     StoryEvaluator.#extract_params_variables(chapter.parameters ?? {}, variables)
     StoryEvaluator.#extract_request_variables(chapter.request?.payload ?? {}, variables)
     for (const { chapter_id, output_name } of variables) {

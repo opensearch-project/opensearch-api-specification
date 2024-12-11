@@ -10,12 +10,13 @@
 import StoryValidator from "../../src/tester/StoryValidator";
 import { StoryEvaluation } from "../../src/tester/types/eval.types";
 import { read_yaml } from "../../src/helpers";
-import { Story } from "../../src/tester/types/story.types";
+import { ParsedStory } from "tester/types/parsed_story.types";
+import StoryParser from "../../src/tester/StoryParser";
 
 const validator = new StoryValidator()
 
 function validate(path: string): StoryEvaluation | undefined {
-  const story: Story = read_yaml(path)
+  const story: ParsedStory = StoryParser.parse(read_yaml(path))
   return validator.validate({ story, display_path: path, full_path: path })
 }
 

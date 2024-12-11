@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type Chapter, type ActualResponse, type Payload } from './types/story.types'
+import { type ActualResponse, type Payload } from './types/story.types'
 import { type ChapterEvaluation, type Evaluation, Result, EvaluationWithOutput } from './types/eval.types'
 import { type ParsedOperation } from './types/spec.types'
 import { overall_result } from './helpers'
@@ -21,6 +21,7 @@ import _ from 'lodash'
 import { Logger } from 'Logger'
 import { sleep, to_json } from '../helpers'
 import { APPLICATION_JSON } from "./MimeTypes";
+import { ParsedChapter } from './types/parsed_story.types'
 
 export default class ChapterEvaluator {
   private readonly logger: Logger
@@ -35,11 +36,11 @@ export default class ChapterEvaluator {
     this.logger = logger
   }
 
-  async evaluate(chapter: Chapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
+  async evaluate(chapter: ParsedChapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
 
     const operation = this._operation_locator.locate_operation(chapter)
-    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toString().toUpperCase()} ${chapter.path}" not found in the spec.` } }
+    if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
 
     var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     var retry = 0
@@ -61,7 +62,7 @@ export default class ChapterEvaluator {
     return result
   }
 
-  async #evaluate(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
+  async #evaluate(chapter: ParsedChapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const params = this.#evaluate_parameters(chapter, operation, story_outputs)
     const request = this.#evaluate_request(chapter, operation, story_outputs)
@@ -85,10 +86,10 @@ export default class ChapterEvaluator {
     var result: ChapterEvaluation = {
       title: chapter.synopsis,
       operation: {
-        method: chapter.method.toString(),
+        method: chapter.method,
         path: chapter.path
       },
-      path: `${chapter.method.toString()} ${chapter.path}`,
+      path: `${chapter.method} ${chapter.path}`,
       overall: { result: overall_result(evaluations) },
       request: { parameters: params, request },
       response: {
@@ -110,7 +111,7 @@ export default class ChapterEvaluator {
     return result
   }
 
-  #evaluate_parameters(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs): Record<string, Evaluation> {
+  #evaluate_parameters(chapter: ParsedChapter, operation: ParsedOperation, story_outputs: StoryOutputs): Record<string, Evaluation> {
     const parameters: Record<string, any> = story_outputs.resolve_value(chapter.parameters) ?? {}
     return Object.fromEntries(Object.entries(parameters).map(([name, parameter]) => {
       const schema = operation.parameters[name]?.schema
@@ -120,7 +121,7 @@ export default class ChapterEvaluator {
     }))
   }
 
-  #evaluate_request(chapter: Chapter, operation: ParsedOperation, story_outputs: StoryOutputs): Evaluation {
+  #evaluate_request(chapter: ParsedChapter, operation: ParsedOperation, story_outputs: StoryOutputs): Evaluation {
     if (chapter.request?.payload === undefined) return { result: Result.PASSED }
     const content_type = chapter.request.content_type ?? APPLICATION_JSON
     const schema = operation.requestBody?.content[content_type]?.schema
@@ -129,7 +130,7 @@ export default class ChapterEvaluator {
     return this._schema_validator.validate(schema, payload)
   }
 
-  #evaluate_status(chapter: Chapter, response: ActualResponse): Evaluation {
+  #evaluate_status(chapter: ParsedChapter, response: ActualResponse): Evaluation {
     const expected_status = chapter.response?.status ?? 200
     if (response.status === expected_status && response.error === undefined) return { result: Result.PASSED }
 
@@ -166,7 +167,7 @@ export default class ChapterEvaluator {
     return messages.length > 0 ? { result: Result.FAILED, message: _.join(messages, ', ') } : { result: Result.PASSED }
   }
 
-  #evaluate_payload_schema(chapter: Chapter, response: ActualResponse, operation: ParsedOperation): Evaluation {
+  #evaluate_payload_schema(chapter: ParsedChapter, response: ActualResponse, operation: ParsedOperation): Evaluation {
     const content_type = chapter.response?.content_type ?? APPLICATION_JSON
 
     if (response.content_type !== content_type) {

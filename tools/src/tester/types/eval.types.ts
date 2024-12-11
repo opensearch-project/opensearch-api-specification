@@ -9,12 +9,12 @@
 
 import { type ChapterOutput } from '../ChapterOutput'
 import { StoryOutputs } from '../StoryOutputs'
-import type { Story } from "./story.types";
+import { ParsedStory } from './parsed_story.types';
 
 export interface StoryFile {
   display_path: string
   full_path: string
-  story: Story
+  story: ParsedStory
 }
 
 export interface Operation {

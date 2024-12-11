@@ -13,9 +13,9 @@ import ChapterReader from "./ChapterReader";
 import { StoryOutputs } from "./StoryOutputs";
 import { overall_result } from "./helpers";
 import { ChapterEvaluation, EvaluationWithOutput, Result } from './types/eval.types';
-import { SupplementalChapter } from "./types/story.types";
 import { Logger } from "../Logger";
 import { sleep, to_json } from "../helpers";
+import { ParsedSupplementalChapter } from "./types/parsed_story.types";
 
 export default class SupplementalChapterEvaluator {
   private readonly _chapter_reader: ChapterReader;
@@ -26,8 +26,8 @@ export default class SupplementalChapterEvaluator {
     this.logger = logger
   }
 
-  async evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
-    const title = `${chapter.method.toString()} ${chapter.path}`
+  async evaluate(chapter: ParsedSupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
+    const title = `${chapter.method} ${chapter.path}`
 
     let tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
     let chapter_evaluation: EvaluationWithOutput
@@ -45,7 +45,7 @@ export default class SupplementalChapterEvaluator {
     return result
   }
 
-  async #evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<EvaluationWithOutput> {
+  async #evaluate(chapter: ParsedSupplementalChapter, story_outputs: StoryOutputs): Promise<EvaluationWithOutput> {
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const output_values_evaluation = ChapterOutput.extract_output_values(response, chapter.output)
     if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
