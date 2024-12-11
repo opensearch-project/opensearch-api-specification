@@ -9,9 +9,9 @@
 
 import { type OpenAPIV3 } from 'openapi-types'
 import { resolve_ref } from '../helpers'
-import { type Chapter } from './types/story.types'
 import { type ParsedOperation } from './types/spec.types'
 import _ from 'lodash'
+import { ParsedChapter } from './types/parsed_story.types'
 
 export default class OperationLocator {
   private readonly spec: OpenAPIV3.Document
@@ -21,7 +21,7 @@ export default class OperationLocator {
     this.spec = spec
   }
 
-  locate_operation (chapter: Chapter): ParsedOperation | undefined {
+  locate_operation (chapter: ParsedChapter): ParsedOperation | undefined {
     const path = chapter.path
     const method = chapter.method.toLowerCase() as OpenAPIV3.HttpMethods
     const cache_key = path + method

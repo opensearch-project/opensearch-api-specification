@@ -9,9 +9,10 @@
 
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
-import { type Chapter, type ChapterRequest, type Output, type Request, Story } from 'tester/types/story.types'
+import { Chapter, ChapterRequest, type Output, type Request } from 'tester/types/story.types'
 import { ChapterEvaluation, Result, StoryEvaluation } from 'tester/types/eval.types'
 import StoryEvaluator from 'tester/StoryEvaluator'
+import { ParsedStory } from 'tester/types/parsed_story.types'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/test.ts'].concat(args), {
@@ -62,14 +63,14 @@ function dummy_chapter_request_with_input(parameters?: Record<string, any>, requ
 
 function chapter(synopsis: string, request: ChapterRequest): Chapter {
   return {
-    synopsis,
-    ...request
+    ...request,
+    synopsis
   }
 }
 
 
 test('check_story_variables', () => {
-  const check_story_variables = (s: Story): StoryEvaluation | undefined => StoryEvaluator.check_story_variables(s, 'display_path', 'full_path')
+  const check_story_variables = (s: ParsedStory): StoryEvaluation | undefined => StoryEvaluator.check_story_variables(s, 'display_path', 'full_path')
   const failed = (prologues: ChapterEvaluation[] = [], chapters: ChapterEvaluation[] = []): StoryEvaluation => ({
     result: Result.ERROR,
     description: 'story1',
