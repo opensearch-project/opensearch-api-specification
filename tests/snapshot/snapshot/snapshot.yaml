@@ -13,9 +13,12 @@ epilogues:
     status: [200, 404]
     parameters:
       repository: my-fs-repository
-prologues:
-  - path: /_snapshot/{repository}
-    method: PUT
+chapters:
+  - synopsis: Create and update a snapshot repository.
+    path: /_snapshot/{repository}
+    method:
+      - POST
+      - PUT
     parameters:
       repository: my-fs-repository
     request:
@@ -23,7 +26,16 @@ prologues:
         type: fs
         settings:
           location: /tmp/opensearch/repo
-chapters:
+  - synopsis: Get all snapshot repositories.
+    path: /_snapshot
+    method: GET
+    response:
+      status: 200
+      payload:
+        my-fs-repository:
+          type: fs
+          settings:
+            location: /tmp/opensearch/repo
   - synopsis: Get information about a repository.
     path: /_snapshot/{repository}
     method: GET
@@ -77,3 +89,14 @@ chapters:
       payload:
         snapshots:
           - snapshot: my-test-snapshot
+  - synopsis: Delete a snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - synopsis: Delete a snapshot repository.
+    path: /_snapshot/{repository}
+    method: DELETE
+    parameters:
+      repository: my-fs-repository
