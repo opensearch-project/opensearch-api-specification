@@ -200,17 +200,77 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelsQuery'
+            type: object
+            properties:
+              query:
+                type: object
+                # TODO: Define the query schema
+                description: The query.
+              size:
+                type: integer
+                description: The number of models to return.
+            required:
+              - query
+              - size
     ml.create_connector:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/CreateConnectorRequest'
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              version:
+                type: integer
+              protocol:
+                type: string
+              credential:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Credential'
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
+              client_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ClientConfig'
+              actions:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Action'
+            required:
+              - actions
+              - credential
+              - description
+              - name
+              - parameters
+              - protocol
+              - version
     ml.register_agents:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/RegisterAgentsRequest'
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              description:
+                type: string
+              tools:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/ToolItems'
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
+              app_type:
+                type: string
+              memory:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Memory'
+              llm:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/LLM'
+            required:
+              - name
+              - type
   responses:
     ml.register_model_group@200:
       content:
