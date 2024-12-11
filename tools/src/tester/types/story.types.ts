@@ -85,6 +85,7 @@ export type Retry = {
  * via the `definition` "Chapter".
  */
 export type Chapter = ChapterRequest & {
+  method?: HttpMethod[] | HttpMethod;
   /**
    * A brief description of the chapter.
    */
@@ -120,7 +121,7 @@ export interface ChapterRequest {
    */
   id?: string;
   path: string;
-  method: HttpMethod[] | HttpMethod;
+  method: HttpMethod;
   parameters?: {
     [k: string]: Parameter;
   };

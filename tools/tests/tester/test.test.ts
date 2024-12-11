@@ -9,10 +9,10 @@
 
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
-import { type Output, type Request } from 'tester/types/story.types'
+import { Chapter, ChapterRequest, type Output, type Request } from 'tester/types/story.types'
 import { ChapterEvaluation, Result, StoryEvaluation } from 'tester/types/eval.types'
 import StoryEvaluator from 'tester/StoryEvaluator'
-import { ParsedChapter, ParsedChapterRequest, ParsedStory } from 'tester/types/parsed_story.types'
+import { ParsedStory } from 'tester/types/parsed_story.types'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/test.ts'].concat(args), {
@@ -44,7 +44,7 @@ test('invalid story', () => {
   )
 })
 
-function dummy_chapter_request(id?: string, output?: Output): ParsedChapterRequest {
+function dummy_chapter_request(id?: string, output?: Output): ChapterRequest {
   return {
     id,
     path: '/path',
@@ -53,7 +53,7 @@ function dummy_chapter_request(id?: string, output?: Output): ParsedChapterReque
   }
 }
 
-function dummy_chapter_request_with_input(parameters?: Record<string, any>, request?: Request, id?: string, output?: Output): ParsedChapterRequest {
+function dummy_chapter_request_with_input(parameters?: Record<string, any>, request?: Request, id?: string, output?: Output): ChapterRequest {
   return {
     ...dummy_chapter_request(id, output),
     parameters,
@@ -61,10 +61,10 @@ function dummy_chapter_request_with_input(parameters?: Record<string, any>, requ
   }
 }
 
-function chapter(synopsis: string, request: ParsedChapterRequest): ParsedChapter {
+function chapter(synopsis: string, request: ChapterRequest): Chapter {
   return {
-    synopsis,
-    ...request
+    ...request,
+    synopsis
   }
 }
 

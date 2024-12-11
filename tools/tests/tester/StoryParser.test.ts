@@ -11,17 +11,17 @@ import { read_yaml } from "helpers";
 import StoryParser from "../../src/tester/StoryParser";
 import _ from "lodash";
 
-describe('StoryReader', () => {
+describe('StoryParser', () => {
   const story = StoryParser.parse(read_yaml('tools/tests/tester/fixtures/stories/passed/multiple_methods.yaml'))
 
-  test('expands prologues', () => {
-    expect(story.prologues?.length).toEqual(2)
-    expect(_.map(story.prologues, (prologue) => prologue.method)).toEqual(['HEAD', 'DELETE'])
+  test('does not expand prologues', () => {
+    expect(story.prologues?.length).toEqual(1)
+    expect(story.prologues && story.prologues[0].method).toEqual('HEAD')
   })
 
-  test('expands epilogues', () => {
-    expect(story.epilogues?.length).toEqual(2)
-    expect(_.map(story.epilogues, (epilogue) => epilogue.method)).toEqual(['HEAD', 'DELETE'])
+  test('does not expand epilogues', () => {
+    expect(story.epilogues?.length).toEqual(1)
+    expect(story.epilogues && story.epilogues[0].method).toEqual('DELETE')
   })
 
   test('expands chapters', () => {

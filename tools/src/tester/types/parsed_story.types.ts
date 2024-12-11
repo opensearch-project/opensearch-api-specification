@@ -7,17 +7,11 @@
 * compatible open source license.
 */
 
-import { Chapter, ChapterRequest, HttpMethod, Story, SupplementalChapter } from "./story.types"
+import { Chapter, ChapterRequest, Story } from "./story.types"
 
-export interface ParsedChapterRequest extends ChapterRequest {
-  method: HttpMethod
-}
-
-export type ParsedChapter = ParsedChapterRequest & Chapter
-export type ParsedSupplementalChapter = ParsedChapterRequest & SupplementalChapter
+// a chapter with a single method
+export type ParsedChapter = ChapterRequest & Chapter
 
 export interface ParsedStory extends Story {
   chapters: ParsedChapter[]
-  prologues?: ParsedSupplementalChapter[]
-  epilogues?: ParsedSupplementalChapter[]
 }

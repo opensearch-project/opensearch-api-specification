@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { Parameter } from './types/story.types'
+import { ChapterRequest, Parameter, SupplementalChapter } from './types/story.types'
 import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation, OutputReference } from './types/eval.types'
 import type ChapterEvaluator from './ChapterEvaluator'
 import { overall_result } from './helpers'
@@ -16,7 +16,7 @@ import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import { ChapterOutput } from './ChapterOutput'
 import * as semver from '../_utils/semver'
 import _ from 'lodash'
-import { ParsedChapter, ParsedChapterRequest, ParsedStory, ParsedSupplementalChapter } from './types/parsed_story.types'
+import { ParsedChapter, ParsedStory } from './types/parsed_story.types'
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator
@@ -133,7 +133,7 @@ export default class StoryEvaluator {
     return evaluations
   }
 
-  async #evaluate_supplemental_chapters(chapters: ParsedSupplementalChapter[], dry_run: boolean, story_outputs: StoryOutputs): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
+  async #evaluate_supplemental_chapters(chapters: SupplementalChapter[], dry_run: boolean, story_outputs: StoryOutputs): Promise<{ evaluations: ChapterEvaluation[], has_errors: boolean }> {
     let has_errors = false
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
@@ -179,7 +179,7 @@ export default class StoryEvaluator {
     }
   }
 
-  static #check_chapter_variables(chapter: ParsedChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
+  static #check_chapter_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation {
     const title = `${chapter.method} ${chapter.path}`
     const error = StoryEvaluator.#check_used_variables(chapter, story_outputs)
     if (error !== undefined) {
@@ -202,7 +202,7 @@ export default class StoryEvaluator {
    * @param story_outputs
    * @returns
    */
-  static #check_used_variables(chapter: ParsedChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation | undefined {
+  static #check_used_variables(chapter: ChapterRequest, story_outputs: StoryOutputs): ChapterEvaluation | undefined {
     const variables = new Set<OutputReference>()
     const title = `${chapter.method} ${chapter.path}`
     StoryEvaluator.#extract_params_variables(chapter.parameters ?? {}, variables)

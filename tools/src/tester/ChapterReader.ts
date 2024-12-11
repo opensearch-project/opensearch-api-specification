@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type ActualResponse, type Parameter } from './types/story.types'
+import { ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
 import { type StoryOutputs } from './StoryOutputs'
 import { Logger } from 'Logger'
@@ -18,7 +18,6 @@ import CBOR from 'cbor'
 import SMILE from 'smile-js'
 import { APPLICATION_CBOR, APPLICATION_JSON, APPLICATION_SMILE, APPLICATION_YAML, TEXT_PLAIN } from "./MimeTypes";
 import _ from 'lodash'
-import { ParsedChapterRequest } from './types/parsed_story.types'
 
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
@@ -29,7 +28,7 @@ export default class ChapterReader {
     this.logger = logger
   }
 
-  async read (chapter: ParsedChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
+  async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
