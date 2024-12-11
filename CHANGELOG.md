@@ -42,6 +42,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed unsupported `cause` and `create` from `/_index_template/_simulate_index/{name}` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `mappings` from `required` in `indices.simulate_template#Template` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
+- Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#]())
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
