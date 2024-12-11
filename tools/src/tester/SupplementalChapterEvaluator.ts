@@ -13,9 +13,9 @@ import ChapterReader from "./ChapterReader";
 import { StoryOutputs } from "./StoryOutputs";
 import { overall_result } from "./helpers";
 import { ChapterEvaluation, EvaluationWithOutput, Result } from './types/eval.types';
-import { SupplementalChapter } from "./types/story.types";
 import { Logger } from "../Logger";
 import { sleep, to_json } from "../helpers";
+import { SupplementalChapter } from "./types/story.types";
 
 export default class SupplementalChapterEvaluator {
   private readonly _chapter_reader: ChapterReader;

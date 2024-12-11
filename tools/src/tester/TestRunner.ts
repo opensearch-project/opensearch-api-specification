@@ -10,7 +10,6 @@
 import type StoryEvaluator from './StoryEvaluator'
 import { StoryEvaluations, type StoryFile } from './types/eval.types'
 import fs from 'fs'
-import { type Story } from './types/story.types'
 import { read_yaml } from '../helpers'
 import { Result } from './types/eval.types'
 import { type ResultLogger } from './ResultLogger'
@@ -20,6 +19,7 @@ import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
 import * as ansi from './Ansi'
 import _ from 'lodash'
 import { Logger } from 'Logger'
+import StoryParser from './StoryParser'
 
 export default class TestRunner {
   private readonly _http_client: OpenSearchHttpClient
@@ -77,7 +77,7 @@ export default class TestRunner {
     if (file.startsWith('.') || file == 'docker-compose.yml' || file == 'Dockerfile' || file.endsWith('.py')) {
       return []
     } else if (fs.statSync(path).isFile()) {
-      const story: Story = read_yaml(path)
+      const story = StoryParser.parse(read_yaml(path))
       return [{
         display_path: next_prefix === '' ? basename(path) : next_prefix,
         full_path: path,

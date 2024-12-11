@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
+import { ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
 import { type StoryOutputs } from './StoryOutputs'
 import { Logger } from 'Logger'
