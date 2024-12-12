@@ -95,19 +95,13 @@ components:
         chunk_size:
           type: string
         compress:
-          oneOf:
-            - type: string
-            - type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         concurrent_streams:
-          oneOf:
-            - type: string
-            - type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         location:
           type: string
         read_only:
-          oneOf:
-            - type: string
-            - type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
       required:
         - location
     Status:
@@ -166,13 +160,22 @@ components:
         - stage
         - stats
     ShardsStatsStage:
-      type: string
-      enum:
-        - DONE
-        - FAILURE
-        - FINALIZE
-        - INIT
-        - STARTED
+      oneOf:
+        - type: string
+          const: DONE
+          description: Number of shards in the snapshot that were successfully stored in the repository.
+        - type: string
+          const: FAILURE
+          description: Number of shards in the snapshot that were not successfully stored in the repository.
+        - type: string
+          const: FINALIZE
+          description: Number of shards in the snapshot that are in the finalizing stage of being stored in the repository.
+        - type: string
+          const: INIT
+          description: Number of shards in the snapshot that are in the initializing stage of being stored in the repository.
+        - type: string
+          const: STARTED
+          description: Number of shards in the snapshot that are in the started stage of being stored in the repository.
     ShardsStatsSummary:
       type: object
       properties:
@@ -195,7 +198,8 @@ components:
       type: object
       properties:
         file_count:
-          type: number
+          type: integer
+          format: int64
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
@@ -205,17 +209,23 @@ components:
       type: object
       properties:
         done:
-          type: number
+          type: integer
+          format: int64
         failed:
-          type: number
+          type: integer
+          format: int64
         finalizing:
-          type: number
+          type: integer
+          format: int64
         initializing:
-          type: number
+          type: integer
+          format: int64
         started:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
       required:
         - done
         - failed
@@ -245,7 +255,8 @@ components:
       type: object
       properties:
         file_count:
-          type: number
+          type: integer
+          format: int32
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
