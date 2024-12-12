@@ -58595,7 +58595,8 @@ components:
       type: object
       properties:
         file_count:
-          type: number
+          type: integer
+          format: int32
         size_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
       required:
@@ -58619,36 +58620,36 @@ components:
         chunk_size:
           type: string
         compress:
-          oneOf:
-            - type: string
-            - type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
         concurrent_streams:
-          oneOf:
-            - type: string
-            - type: number
+          $ref: '#/components/schemas/_common___StringifiedInteger'
         location:
           type: string
         read_only:
-          oneOf:
-            - type: string
-            - type: boolean
+          $ref: '#/components/schemas/_common___StringifiedBoolean'
       required:
         - location
     snapshot._common___ShardsStats:
       type: object
       properties:
         done:
-          type: number
+          type: integer
+          format: int64
         failed:
-          type: number
+          type: integer
+          format: int64
         finalizing:
-          type: number
+          type: integer
+          format: int64
         initializing:
-          type: number
+          type: integer
+          format: int64
         started:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
       required:
         - done
         - failed
@@ -58657,17 +58658,28 @@ components:
         - started
         - total
     snapshot._common___ShardsStatsStage:
-      type: string
-      enum:
-        - DONE
-        - FAILURE
-        - FINALIZE
-        - INIT
-        - STARTED
+      oneOf:
+        - type: string
+          const: DONE
+          description: Number of shards in the snapshot that were successfully stored in the repository.
+        - type: string
+          const: FAILURE
+          description: Number of shards in the snapshot that were not successfully stored in the repository.
+        - type: string
+          const: FINALIZE
+          description: Number of shards in the snapshot that are in the finalizing stage of being stored in the repository.
+        - type: string
+          const: INIT
+          description: Number of shards in the snapshot that are in the initializing stage of being stored in the repository.
+        - type: string
+          const: STARTED
+          description: Number of shards in the snapshot that are in the started stage of being stored in the repository.
     snapshot._common___ShardsStatsSummary:
       type: object
       properties:
         incremental:
+          $ref: '#/components/schemas/snapshot._common___ShardsStatsSummaryItem'
+        processed:
           $ref: '#/components/schemas/snapshot._common___ShardsStatsSummaryItem'
         total:
           $ref: '#/components/schemas/snapshot._common___ShardsStatsSummaryItem'
@@ -58686,7 +58698,8 @@ components:
       type: object
       properties:
         file_count:
-          type: number
+          type: integer
+          format: int64
         size_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
       required:
@@ -58781,6 +58794,10 @@ components:
     snapshot._common___SnapshotShardsStatus:
       type: object
       properties:
+        node:
+          $ref: '#/components/schemas/_common___NodeId'
+        reason:
+          type: string
         stage:
           $ref: '#/components/schemas/snapshot._common___ShardsStatsStage'
         stats:
@@ -58792,6 +58809,8 @@ components:
       type: object
       properties:
         incremental:
+          $ref: '#/components/schemas/snapshot._common___FileCountSnapshotStats'
+        processed:
           $ref: '#/components/schemas/snapshot._common___FileCountSnapshotStats'
         start_time_in_millis:
           $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
@@ -58828,7 +58847,6 @@ components:
         uuid:
           $ref: '#/components/schemas/_common___Uuid'
       required:
-        - include_global_state
         - indices
         - repository
         - shards_stats
