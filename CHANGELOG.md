@@ -68,6 +68,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed response code in `PUT /_plugins/_rollup/jobs/{id}` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
 - Fixed response schema for `/_render/template` and `/_render/template/{id}` ([#724](https://github.com/opensearch-project/opensearch-api-specification/pull/724))
 - Fixed data stream schema numeric property types ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
+- Fixed snapshot status numeric property types ([#729](https://github.com/opensearch-project/opensearch-api-specification/pull/729))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
