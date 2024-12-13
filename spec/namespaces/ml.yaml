@@ -77,6 +77,26 @@ paths:
         '200':
           $ref: '#/components/responses/ml.register_model@200'
   /_plugins/_ml/models/{model_id}:
+    get:
+      operationId: ml.get_model.0
+      x-operation-group: ml.get_model
+      description: Retrieves a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_model@200'
+    put:
+      operationId: ml.update_model.0
+      x-operation-group: ml.update_model
+      description: Updates a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_model@200'
     delete:
       operationId: ml.delete_model.0
       x-operation-group: ml.delete_model
@@ -127,6 +147,15 @@ paths:
           $ref: '#/components/responses/ml.delete_task@200'
   /_plugins/_ml/models/_search:
     get:
+      operationId: ml.search_models.0
+      x-operation-group: ml.search_models
+      description: Searches for models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_models'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_models@200'
+    post:
       operationId: ml.search_models.0
       x-operation-group: ml.search_models
       description: Searches for models.
@@ -497,20 +526,15 @@ components:
                 type: string
                 description: The model name.
               version:
-                type: string
-                description: The model version.
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                type: string
-                description: The portable format of the model file.
-                enum: [ONNX, TORCH_SCRIPT]
+                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
               description:
                 type: string
                 description: The model description.
               model_group_id:
-                type: string
-                description: The ID of the model group to which to register the model.
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
             required:
-              - model_format
               - name
               - version
     ml.search_models:
@@ -532,31 +556,37 @@ components:
                   $ref: '../schemas/ml._common.yaml#/components/schemas/Sort'
                 description: The sort order.
     ml.predict:
+
+    ml.update_model:
       content:
         application/json:
           schema:
             type: object
             properties:
-              input_query:
-                $ref: '../schemas/ml._common.yaml#/components/schemas/InputQuery'
-              input_index:
-                type: array
-                items:
-                  type: string
-                description: The input index.
-              text_docs:
-                type: array
-                items:
-                  type: string
-                description: The text documents.
-              return_number:
+              connector:
+                type: object
+                description: The connector to use for the model.
+              connector_id:
+                type: string
+                description: The connector ID.
+              is_enabled:
                 type: boolean
-                description: Whether to return bytes in model output.
-              target_response:
-                type: array
-                items:
-                  type: string
-                description: The target response.
+                description: Whether the model is enabled.
+              description: 
+                type: string
+                description: The model description.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              name:
+                type: string
+                description: The model name.
+              rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+              guardrails:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Guardrails'
+              interface:
+                type: object
+                description: The model interface.
     ml.train:
       content:
         application/json:
@@ -589,6 +619,30 @@ components:
                   type: string
               input_data:
                 $ref: '../schemas/ml._common.yaml#/components/schemas/PredictionResult'
+              connector:
+                type: object
+                description: The connector to use for the model.
+              connector_id:
+                type: string
+                description: The connector ID.
+              is_enabled:
+                type: boolean
+                description: Whether the model is enabled.
+              description: 
+                type: string
+                description: The model description.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              name:
+                type: string
+                description: The model name.
+              rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+              guardrails:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Guardrails'
+              interface:
+                type: object
+                description: The model interface.
     ml.create_connector:
       content:
         application/json:
@@ -874,6 +928,16 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.get_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Model'
+    ml.update_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UpdateModelResponse'
     ml.delete_task@200:
       content:
         application/json:
@@ -1031,6 +1095,18 @@ components:
       schema:
         type: string
     ml.delete_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_model::path.model_id:
       name: model_id
       in: path
       required: true
