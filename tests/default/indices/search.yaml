@@ -1,0 +1,39 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test search.
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Quentin Tarantino, title: Pulp Fiction, year: 1994}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Christopher Nolan, title: Inception, year: 2010}
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search in an index (GET).
+    path: /{index}/_search
+    method: GET
+    parameters:
+      index: movies
+    request:
+      payload:
+        query:
+          match_all: {}
+  - synopsis: Search across all indices (POST).
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        query:
+          match_all: {}
+  
