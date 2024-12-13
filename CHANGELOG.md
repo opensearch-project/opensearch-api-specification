@@ -72,6 +72,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed snapshot status numeric property types ([#729](https://github.com/opensearch-project/opensearch-api-specification/pull/729))
 - Fixed request schema for `PATCH /_plugins/_security/api/nodesdn` ([#731](https://github.com/opensearch-project/opensearch-api-specification/pull/731))
 - Fixed response schema for `GET /_plugins/_security/api/nodesdn/{cluster_name}` ([#731](https://github.com/opensearch-project/opensearch-api-specification/pull/731))
+- Fixed request body for `/_search/scroll/{scroll_id}` ([#732](https://github.com/opensearch-project/opensearch-api-specification/pull/732))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
