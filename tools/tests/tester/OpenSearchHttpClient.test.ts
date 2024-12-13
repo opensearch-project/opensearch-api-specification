@@ -73,4 +73,47 @@ describe('OpenSearchHttpClient', () => {
 
     expect((await client.get('/')).data).toEqual({ called: true })
   })
+
+  it('defaults to rejectUnauthorized', async () => {
+    let client = new OpenSearchHttpClient({
+      url: 'https://localhost:9200'
+    })
+
+    mock.onAny().reply((config) => {
+      expect(config.httpsAgent.options.rejectUnauthorized).toBe(true)
+      return [200, { called: true }]
+    })
+
+    expect((await client.get('/')).data).toEqual({ called: true })
+  })
+
+  it('sets rejectUnauthorized to false', async () => {
+    let client = new OpenSearchHttpClient({
+      url: 'https://localhost:9200',
+      insecure: true
+    })
+
+    mock.onAny().reply((config) => {
+      expect(config.httpsAgent.options.rejectUnauthorized).toEqual(false)
+      return [200, { called: true }]
+    })
+
+    expect((await client.get('/')).data).toEqual({ called: true })
+  })
+
+  it('adds a certificate file and key', async () => {
+    let client = new OpenSearchHttpClient({
+      url: 'https://localhost:9200',
+      cert: './tools/tests/tester/fixtures/keys/kirk.pem',
+      key: './tools/tests/tester/fixtures/keys/kirk-key.pem'
+    })
+
+    mock.onAny().reply((config) => {
+      expect(config.httpsAgent.options.cert.toString()).toEqual("-----BEGIN CERTIFICATE-----\ncertificate\n-----END CERTIFICATE-----\n")
+      expect(config.httpsAgent.options.key.toString()).toEqual("-----BEGIN PRIVATE KEY-----\nprivate key\n-----END PRIVATE KEY-----\n")
+      return [200, { called: true }]
+    })
+
+    expect((await client.get('/')).data).toEqual({ called: true })
+  })
 })

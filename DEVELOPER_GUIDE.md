@@ -243,6 +243,8 @@ The dump-cluster-spec tool connects to an OpenSearch cluster which has the [open
 - `--opensearch-insecure`: Disable SSL/TLS certificate verification, defaults to performing verification.
 - `--opensearch-username <username>`: The username to authenticate with the cluster, defaults to `admin`, only used when `--opensearch-password` is set.
 - `--opensearch-password <password>`: The password to authenticate with the cluster, also settable via the `OPENSEARCH_PASSWORD` environment variable.
+- `--opensearch-cert <file>`: The OpenSSL certificate file, also settable via the `OPENSEARCH_CERT` environment variable.
+- `--opensearch-key <file>`: The OpenSSL certificate private key, also settable via the `OPENSEARCH_KEY` environment variable.
 - `--output <path>`: The path to write the dumped spec to, defaults to `<repository-root>/build/opensearch-openapi-CLUSTER.yaml`.
 
 **Example**
