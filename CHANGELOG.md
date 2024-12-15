@@ -33,7 +33,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added response schema for `PUT` and `DELETE /_plugins/_transform/{id}` ([#722](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
 - Added response schema for `GET /_plugins/_knn/warmup/{index}` ([#717](https://github.com/opensearch-project/opensearch-api-specification/pull/717))
 - Added support for multiple test verbs ([#724](https://github.com/opensearch-project/opensearch-api-specification/pull/724))
-- Added `_type` to `term_vector` API specs ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
+- Added `_type` to `termvector` and `mtermvector` API specs ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
