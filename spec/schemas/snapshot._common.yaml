@@ -95,22 +95,16 @@ components:
         chunk_size:
           type: string
         compress:
-          oneOf:
-            - type: string
-            - type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         concurrent_streams:
-          oneOf:
-            - type: string
-            - type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         location:
           type: string
         read_only:
-          oneOf:
-            - type: string
-            - type: boolean
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
       required:
         - location
-    Status:
+    SnapshotStatus:
       type: object
       properties:
         include_global_state:
@@ -122,7 +116,7 @@ components:
         repository:
           type: string
         shards_stats:
-          $ref: '#/components/schemas/ShardsStats'
+          $ref: '#/components/schemas/SnapshotShardsStats'
         snapshot:
           type: string
         state:
@@ -132,7 +126,6 @@ components:
         uuid:
           $ref: '_common.yaml#/components/schemas/Uuid'
       required:
-        - include_global_state
         - indices
         - repository
         - shards_stats
@@ -148,7 +141,7 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/SnapshotShardsStatus'
         shards_stats:
-          $ref: '#/components/schemas/ShardsStats'
+          $ref: '#/components/schemas/SnapshotShardsStats'
         stats:
           $ref: '#/components/schemas/SnapshotStats'
       required:
@@ -158,28 +151,43 @@ components:
     SnapshotShardsStatus:
       type: object
       properties:
+        node:
+          $ref: '_common.yaml#/components/schemas/NodeId'
+        reason:
+          type: string
         stage:
-          $ref: '#/components/schemas/ShardsStatsStage'
+          $ref: '#/components/schemas/SnapshotShardsStatsStage'
         stats:
-          $ref: '#/components/schemas/ShardsStatsSummary'
+          $ref: '#/components/schemas/SnapshotShardsStatsSummary'
       required:
         - stage
         - stats
-    ShardsStatsStage:
-      type: string
-      enum:
-        - DONE
-        - FAILURE
-        - FINALIZE
-        - INIT
-        - STARTED
-    ShardsStatsSummary:
+    SnapshotShardsStatsStage:
+      oneOf:
+        - type: string
+          const: DONE
+          description: Number of shards in the snapshot that were successfully stored in the repository.
+        - type: string
+          const: FAILURE
+          description: Number of shards in the snapshot that were not successfully stored in the repository.
+        - type: string
+          const: FINALIZE
+          description: Number of shards in the snapshot that are in the finalizing stage of being stored in the repository.
+        - type: string
+          const: INIT
+          description: Number of shards in the snapshot that are in the initializing stage of being stored in the repository.
+        - type: string
+          const: STARTED
+          description: Number of shards in the snapshot that are in the started stage of being stored in the repository.
+    SnapshotShardsStatsSummary:
       type: object
       properties:
         incremental:
-          $ref: '#/components/schemas/ShardsStatsSummaryItem'
+          $ref: '#/components/schemas/SnapshotShardsStatsSummaryItem'
+        processed:
+          $ref: '#/components/schemas/SnapshotShardsStatsSummaryItem'
         total:
-          $ref: '#/components/schemas/ShardsStatsSummaryItem'
+          $ref: '#/components/schemas/SnapshotShardsStatsSummaryItem'
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
         time:
@@ -191,31 +199,38 @@ components:
         - start_time_in_millis
         - time_in_millis
         - total
-    ShardsStatsSummaryItem:
+    SnapshotShardsStatsSummaryItem:
       type: object
       properties:
         file_count:
-          type: number
+          type: integer
+          format: int64
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
         - file_count
         - size_in_bytes
-    ShardsStats:
+    SnapshotShardsStats:
       type: object
       properties:
         done:
-          type: number
+          type: integer
+          format: int64
         failed:
-          type: number
+          type: integer
+          format: int64
         finalizing:
-          type: number
+          type: integer
+          format: int64
         initializing:
-          type: number
+          type: integer
+          format: int64
         started:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
       required:
         - done
         - failed
@@ -227,6 +242,8 @@ components:
       type: object
       properties:
         incremental:
+          $ref: '#/components/schemas/FileCountSnapshotStats'
+        processed:
           $ref: '#/components/schemas/FileCountSnapshotStats'
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
@@ -245,7 +262,8 @@ components:
       type: object
       properties:
         file_count:
-          type: number
+          type: integer
+          format: int32
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
       required:

@@ -2,13 +2,9 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test various operations of the OpenSearch Observability Object API.
 
-prologues:
-  - path: /_plugins/_observability/object/{object_id}
-    method: DELETE
-    parameters:
-      object_id: test_object
-    status: [200, 404]
-  - path: /_plugins/_observability/object
+chapters:
+  - synopsis: Create an observability object.
+    path: /_plugins/_observability/object
     method: POST
     request:
       payload:
@@ -56,12 +52,12 @@ prologues:
             tokens:
               - name: field1
                 type: text
-    status: [200]
-  - path: /_refresh
+  - synopsis: Refresh index.
+    path: /_refresh
     method: POST
-    status: [200]
-chapters:
-  - synopsis: Retrieve specific Observability object after creation.
+    warnings:
+      multiple-paths-detected: false
+  - synopsis: Retrieve an observability object.
     path: /_plugins/_observability/object/{object_id}
     id: observatory_object
     method: GET
@@ -74,7 +70,7 @@ chapters:
         totalHits: 1
         totalHitRelation: eq
         observabilityObjectList: []
-  - synopsis: Update specific Observability object.
+  - synopsis: Update an observability object.
     path: /_plugins/_observability/object/{object_id}
     method: PUT
     parameters:
@@ -82,7 +78,6 @@ chapters:
     request:
       payload:
         objectId: test_object
-        tenant: ''
         operationalPanel:
           name: updated_test_panel
           visualizations: []
@@ -128,19 +123,7 @@ chapters:
       status: 200
       payload:
         objectId: test_object
-  - synopsis: Retrieve specific Observability object after update.
-    path: /_plugins/_observability/object/{object_id}
-    method: GET
-    parameters:
-      object_id: test_object
-    response:
-      status: 200
-      payload:
-        startIndex: 0
-        totalHits: 1
-        totalHitRelation: eq
-        observabilityObjectList: []
-  - synopsis: Retrieve list of Observability objects.
+  - synopsis: Retrieve all observability objects.
     path: /_plugins/_observability/object
     method: GET
     response:
@@ -150,6 +133,65 @@ chapters:
         totalHits: 1
         totalHitRelation: eq
         observabilityObjectList: []
+  - synopsis: Delete an observability object.
+    path: /_plugins/_observability/object/{object_id}
+    method: DELETE
+    parameters:
+      object_id: test_object
+  - synopsis: Create another observability object.
+    path: /_plugins/_observability/object
+    method: POST
+    request:
+      payload:
+        objectId: test_object
+        operationalPanel:
+          name: test_panel
+          visualizations: []
+          timeRange:
+            from: now-1h
+            to: now
+          queryFilter:
+            query: ''
+            language: ppl
+          applicationId: test_app
+        savedVisualization:
+          name: viz1
+          description: desc1
+          query: ''
+          type: line
+          selected_date_range:
+            start: now-1d
+            end: now
+            text: Last 24 hours
+          selected_timestamp:
+            name: timestamp
+            type: time
+          selected_fields:
+            text: field1
+            tokens:
+              - name: field1
+                type: text
+        savedQuery:
+          name: query1
+          description: desc1
+          query: ''
+          selected_date_range:
+            start: now-1d
+            end: now
+            text: Last 24 hours
+          selected_timestamp:
+            name: timestamp
+            type: time
+          selected_fields:
+            text: field1
+            tokens:
+              - name: field1
+                type: text
+  - synopsis: Delete an observability object (query string).
+    path: /_plugins/_observability/object
+    method: DELETE
+    parameters:
+      objectId: test_object
 epilogues:
   - path: /_plugins/_observability/object/{object_id}
     method: DELETE

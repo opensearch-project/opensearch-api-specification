@@ -1,0 +1,53 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test starting replication.
+version: '>= 1.1'
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book_1392215}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          cluster:
+            remote:
+              leader-cluster:
+                seeds: ['172.22.0.3:9300']
+epilogues:
+  - path: /_plugins/_replication/{index}/_stop
+    method: POST
+    parameters: 
+      index: books-names
+    request:
+      payload: {}
+  - path: /books-names
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Start replication.
+    path: /_plugins/_replication/{index}/_start
+    method: PUT
+    parameters:
+      index: books-names
+    request:
+      payload:
+        leader_alias: leader-cluster
+        leader_index: books
+        use_roles: 
+          leader_cluster_role: all_access
+          follower_cluster_role: all_access
+    response:
+      status: 200

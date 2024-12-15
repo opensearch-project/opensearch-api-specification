@@ -29,6 +29,11 @@ export type SupplementalChapter = ChapterRequest & {
 };
 /**
  * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "HttpMethod".
+ */
+export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Parameter".
  */
 export type Parameter = (string | number | boolean)[] | string | number | boolean;
@@ -80,6 +85,7 @@ export type Retry = {
  * via the `definition` "Chapter".
  */
 export type Chapter = ChapterRequest & {
+  method?: HttpMethod[] | HttpMethod;
   /**
    * A brief description of the chapter.
    */
@@ -115,7 +121,7 @@ export interface ChapterRequest {
    */
   id?: string;
   path: string;
-  method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+  method: HttpMethod;
   parameters?: {
     [k: string]: Parameter;
   };

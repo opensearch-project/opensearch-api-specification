@@ -30,7 +30,8 @@ export function construct_tester_components (spec_path: string): {
   opensearch_http_client: OpenSearchHttpClient
   chapter_reader: ChapterReader
   schema_validator: SchemaValidator
-  chapter_evaluator: ChapterEvaluator
+  chapter_evaluator: ChapterEvaluator,
+  supplemental_chapter_evaluator: SupplementalChapterEvaluator,
   story_validator: StoryValidator
   story_evaluator: StoryEvaluator
   result_logger: ResultLogger
@@ -62,6 +63,7 @@ export function construct_tester_components (spec_path: string): {
     chapter_reader,
     schema_validator,
     chapter_evaluator,
+    supplemental_chapter_evaluator,
     story_validator,
     story_evaluator,
     result_logger,

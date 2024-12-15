@@ -24,7 +24,16 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing `status` to `/_search/template` response ([#702](https://github.com/opensearch-project/opensearch-api-specification/pull/702))
 - Added `_type` to `rank_eval` API specs ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Added request body to `_search_shards` API specs ([#709](https://github.com/opensearch-project/opensearch-api-specification/pull/709))
-- Added string type in additionalProperties to `msearch template` ([#x](https://github.com/opensearch-project/opensearch-api-specification/pull/x))
+- Added NodeAttributes as additional property in `shard_stores` API specs ([#715](https://github.com/opensearch-project/opensearch-api-specification/pull/715))
+- Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
+- Added `sm` namespace API specifications ([#701](https://github.com/opensearch-project/opensearch-api-specification/pull/701))
+- Added schema for `/_plugins/_knn/stats`, `/_plugins/_knn/models/{model_id}`, `_train` and `_search` ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
+- Added `retry` support in `prologues` and `epilogues` ([#713](https://github.com/opensearch-project/opensearch-api-specification/pull/713))
+- Added response schema for `DELETE /_plugins/_rollup/jobs/{id}`, `POST /_plugins/_rollup/jobs/{id}/_start` and `_stop` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
+- Added response schema for `PUT` and `DELETE /_plugins/_transform/{id}` ([#722](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
+- Added response schema for `GET /_plugins/_knn/warmup/{index}` ([#717](https://github.com/opensearch-project/opensearch-api-specification/pull/717))
+- Added support for multiple test verbs ([#724](https://github.com/opensearch-project/opensearch-api-specification/pull/724))
+- Added string type in additionalProperties to `msearch template` ([#735](https://github.com/opensearch-project/opensearch-api-specification/pull/735))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -35,6 +44,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed unsupported `cause` and `create` from `/_index_template/_simulate_index/{name}` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `mappings` from `required` in `indices.simulate_template#Template` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
+- Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -52,12 +62,20 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/_ingest/pipeline/{id}/_simulate` response `docs/_source` field schema ([#689](https://github.com/opensearch-project/opensearch-api-specification/pull/689))
 - Fixed `/_scripts/painless/_execute` request and response schema ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
 - Fixed `fields` in `Hit` allowing primitive arrays ([#699](https://github.com/opensearch-project/opensearch-api-specification/pull/699))
-- Added missing `repository` query parameter to `/_cat/snapshots` ([#700](https://github.com/opensearch-project/opensearch-api-specification/pull/700))
 - Fixed `hits` in `rank_eval` allowing numbers ([#704](https://github.com/opensearch-project/opensearch-api-specification/pull/704))
 - Fixed query DSL schemas ([#706](https://github.com/opensearch-project/opensearch-api-specification/pull/706))
+- Fixed content-type of `GET /_plugins/_observability/_local/stats` ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
+- Fixed `tenant` in `ObservabilityObject` request body to not be required ([#711](https://github.com/opensearch-project/opensearch-api-specification/pull/711))
+- Fixed response code in `PUT /_plugins/_rollup/jobs/{id}` ([#716](https://github.com/opensearch-project/opensearch-api-specification/pull/716))
+- Fixed response schema for `/_render/template` and `/_render/template/{id}` ([#724](https://github.com/opensearch-project/opensearch-api-specification/pull/724))
+- Fixed data stream schema numeric property types ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
+- Fixed snapshot status numeric property types ([#729](https://github.com/opensearch-project/opensearch-api-specification/pull/729))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
+- Changed `SearchModelsQuery`, `CreateConnectorRequest` & `RegisterAgentsRequest` to be defined inline of request bodies ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
+- Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725)) 
+- Changed naming of `snapshot._common`'s `Status`, `ShardsStats`, `ShardsStatsStage`, `ShardsStatsSummary` and `ShardsStatsSummaryItem` schemas to be prefixed with `Snapshot` ([#730](https://github.com/opensearch-project/opensearch-api-specification/pull/730))
 
 ## [0.1.0] - 2024-10-25
 
@@ -165,7 +183,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added `sm` namespace API specifications ([#701](https://github.com/opensearch-project/opensearch-api-specification/pull/701))
 
 ### Changed
 

@@ -1,0 +1,30 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Load all the native library files for all the shards into native memory.
+prologues:
+  - method: PUT
+    path: /movies
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            recommendation_vector:
+              type: knn_vector
+              dimension: 8
+    status: [200]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Warmup an index.
+    method: GET
+    path: /_plugins/_knn/warmup/{index}
+    parameters:
+      index:
+        - movies
+    response:
+      status: 200

@@ -91,7 +91,33 @@ chapters:
       config_id: webhook-configuration
     response:
       status: 200
+  - synopsis: Create another channel configuration.
+    path: /_plugins/_notifications/configs
+    method: POST
+    request:
+      payload:
+        config_id: second-configuration
+        config:
+          name: Notifications Channel
+          description: Second notifications channel.
+          config_type: webhook
+          is_enabled: true
+          webhook:
+            url: http://webhook:8080/
+    response:
+      status: 200
+  - synopsis: Delete multiple channel configurations.
+    version: '>= 2.2'
+    path: /_plugins/_notifications/configs
+    method: DELETE
+    parameters:
+      config_id_list: second-configuration
+    response:
+      status: 200
 epilogues:
   - path: /_plugins/_notifications/configs/webhook-configuration
+    method: DELETE
+    status: [200,404]
+  - path: /_plugins/_notifications/configs/second-configuration
     method: DELETE
     status: [200,404]

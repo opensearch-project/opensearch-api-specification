@@ -1,15 +1,14 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test replication APIs specs.
+description: Test replication stats.
+version: '>= 1.1'
+warnings:
+  multiple-paths-detected: false
 prologues:
-  - path: /{index}
-    method: PUT
-    parameters:
-      index: music
-    request:
-      payload: {}
   - path: /_bulk
     method: POST
+    parameters:
+      refresh: true
     request:
       content_type: application/x-ndjson
       payload:
@@ -17,10 +16,6 @@ prologues:
         - {author: Selena Gomez, title: Love you like a love song, year: 2011}
         - {create: {_index: music, _id: music_1392215}}
         - {author: Justin Bieber, title: Baby, year: 2010}
-  - path: /{index}/_refresh
-    method: POST
-    parameters:
-      index: music
   - path: /_cluster/settings
     method: PUT
     request:
@@ -31,7 +26,6 @@ prologues:
               leader-cluster:
                 seeds: ['172.22.0.3:9300']
   - path: /_plugins/_replication/{index}/_start
-    version: '>= 1.1'
     method: PUT
     parameters:
       index: music-names
@@ -56,29 +50,18 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Get replication stats.
-    path: /_plugins/_replication/{index}/_status
-    version: '>= 1.1'
-    method: GET
-    parameters:
-      index: music-names
-    response:
-      status: 200
   - synopsis: Get leader stats.
     path: /_plugins/_replication/leader_stats
-    version: '>= 1.1'
     method: GET
     response:
       status: 200
   - synopsis: Get follower stats.
     path: /_plugins/_replication/follower_stats
-    version: '>= 1.1'
     method: GET
     response:
       status: 200
   - synopsis: Get auto-follow stats.
     path: /_plugins/_replication/autofollow_stats
-    version: '>= 1.1'
     method: GET
     response:
       status: 200
