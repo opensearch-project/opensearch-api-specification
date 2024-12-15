@@ -34,10 +34,16 @@ definitions:
     allOf:
       - $ref: '#/definitions/ChapterRequest'
       - properties:
+          method:
+            oneOf:
+              - type: array
+                items:
+                  $ref: '#/definitions/HttpMethod'
+              - $ref: '#/definitions/HttpMethod'
           synopsis:
             type: string
             description: A brief description of the chapter.
-            pattern: ^\p{Lu}[\s\S]*\.$
+            pattern: ^\p{Lu}[\s\S]*\.$|^\p{Lu}[\s\S]*\. \[(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS)\]$
           response:
             $ref: '#/definitions/ExpectedResponse'
           warnings:
@@ -67,18 +73,21 @@ definitions:
             items:
               type: integer
 
+  HttpMethod:
+    type: string
+    # eslint-disable-next-line yml/sort-sequence-values
+    enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
+
   ChapterRequest:
     type: object
     properties:
-      id: 
+      id:
         type: string
         description: A unique identifier for the chapter, useful for accessing outputs.
       path:
         type: string
       method:
-        type: string
-        # eslint-disable-next-line yml/sort-sequence-values
-        enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
+        $ref: '#/definitions/HttpMethod'
       parameters:
         type: object
         additionalProperties:

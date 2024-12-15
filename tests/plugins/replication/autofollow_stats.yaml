@@ -1,0 +1,78 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test replication APIs specs.
+version: '>= 1.1'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: movies
+    request:
+      payload: {}
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie_1392214}}
+        - {director: Bennett Miller, title: Moneyball, year: 2011}
+        - {create: {_index: movies, _id: movie_1392215}}
+        - {director: Badge Dale, title: The Secret Soldiers, year: 2016}
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          cluster:
+            remote:
+              leader-cluster:
+                seeds: ['172.22.0.3:9300']
+  - path: /_plugins/_replication/{index}/_start
+    method: PUT
+    parameters:
+      index: movies-names
+    request:
+      payload:
+        leader_alias: leader-cluster
+        leader_index: movies
+        use_roles: 
+          leader_cluster_role: all_access
+          follower_cluster_role: all_access
+  - path: /_plugins/_replication/_autofollow
+    method: POST
+    request:
+      payload:
+        leader_alias: leader-cluster
+        name: movies
+        pattern: 'movies-*'
+        use_roles:
+          leader_cluster_role: leader_role
+          follower_cluster_role: admin
+epilogues:
+  - path: /_plugins/_replication/_autofollow
+    method: DELETE
+    request:
+      payload:
+        leader_alias: leader-cluster
+        name: movies
+    status: [200, 404]
+  - path: /_plugins/_replication/{index}/_stop
+    method: POST
+    parameters: 
+      index: movies-names
+    request:
+      payload: {}
+  - path: /movies-names
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get auto-follow stats.
+    path: /_plugins/_replication/autofollow_stats
+    method: GET
+    response:
+      status: 200

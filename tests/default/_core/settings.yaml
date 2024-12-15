@@ -1,0 +1,58 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test settings.
+prologues:
+  - path: /movies
+    method: PUT
+  - path: /movies/_settings
+    method: PUT
+    request:
+      payload:
+        settings:
+          index.blocks.write: true
+          index:
+            number_of_replicas: 4
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get settings.
+    distributions:
+      excluded:
+        - amazon-managed
+        - amazon-serverless
+    path: /_settings
+    method: GET
+    parameters:
+      allow_no_indices: true
+      expand_wildcards: all
+      flat_settings: true
+      include_defaults: true
+      ignore_unavailable: true
+      local: true
+    response:
+      status: 200
+  - synopsis: Get settings (cluster_manager_timeout).
+    distributions:
+      excluded:
+        - amazon-managed
+        - amazon-serverless
+    path: /_settings
+    method: GET
+    version: '>= 2.0'
+    parameters:
+      allow_no_indices: true
+      expand_wildcards: all
+      flat_settings: true
+      include_defaults: true
+      ignore_unavailable: true
+      local: true
+      cluster_manager_timeout: 1s
+    response:
+      status: 200
+  - synopsis: Get settings by name.
+    path: /_settings/{name}
+    method: GET
+    parameters:
+      name: index.number_of_replicas

@@ -25,3 +25,164 @@ components:
         - always
         - missing
         - popular
+    Stats:
+      type: object
+      properties:
+        _nodes:
+          $ref: '_common.yaml#/components/schemas/NodeStatistics'
+        cluster_name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        circuit_breaker_triggered:
+          type: boolean
+        model_index_status:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/HealthStatus'
+            - type: 'null'
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NodeStats'
+    NodeStats:
+      type: object
+      properties:
+        max_distance_query_with_filter_requests:
+          type: number
+        graph_memory_usage_percentage:
+          $ref: '_common.yaml#/components/schemas/PercentageNumber'
+        graph_query_requests:
+          type: number
+        graph_memory_usage:
+          type: number
+        cache_capacity_reached:
+          type: boolean
+        load_success_count:
+          type: number
+        training_memory_usage:
+          type: number
+        indices_in_cache:
+          type: object
+          additionalProperties: true
+        script_query_errors:
+          type: number
+        hit_count:
+          type: number
+        knn_query_requests:
+          type: number
+        total_load_time:
+          type: number
+        miss_count:
+          type: number
+        min_score_query_requests:
+          type: number
+        knn_query_with_filter_requests:
+          type: number
+        training_memory_usage_percentage:
+          $ref: '_common.yaml#/components/schemas/PercentageNumber'
+        max_distance_query_requests:
+          type: number
+        lucene_initialized:
+          type: boolean
+        graph_index_requests:
+          type: number
+        faiss_initialized:
+          type: boolean
+        load_exception_count:
+          type: number
+        training_errors:
+          type: number
+        min_score_query_with_filter_requests:
+          type: number
+        eviction_count:
+          type: number
+        nmslib_initialized:
+          type: boolean
+        script_compilations:
+          type: number
+        script_query_requests:
+          type: number
+        graph_stats:
+          $ref: '#/components/schemas/GraphStats'
+        graph_query_errors:
+          type: number
+        indexing_from_model_degraded:
+          type: boolean
+        graph_index_errors:
+          type: number
+        training_requests:
+          type: number
+        script_compilation_errors:
+          type: number
+    GraphStats:
+      type: object
+      properties:
+        merge:
+          $ref: '#/components/schemas/GraphMergeStats'
+        refresh:
+          $ref: '#/components/schemas/GraphRefreshStats'
+    GraphRefreshStats:
+      type: object
+      properties:
+        total:
+          type: number
+        total_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+    GraphMergeStats:
+      type: object
+      properties:
+        current:
+          type: number
+        total:
+          type: number
+        total_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        current_docs:
+          type: number
+        total_docs:
+          type: number
+        total_size_in_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        current_size_in_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+    TrainedModel:
+      type: object
+      properties:
+        training_index:
+          type: string
+        training_field:
+          type: string
+        dimension:
+          type: integer
+          format: int32
+        max_training_vector_count:
+          type: integer
+          format: int32
+        search_size:
+          type: integer
+          format: int32
+        description:
+          type: string
+        mode:
+          type: string
+        compression_level:
+          type: string
+        method:
+          type: string
+        spaceType:
+          type: string
+      required:
+        - dimension
+        - training_field
+        - training_index
+    DeletedModel:
+      type: object
+      properties:
+        model_id:
+          type: string
+        result:
+          type: string
+          enum:
+            - deleted
+            - error
+      required:
+        - model_id
+        - result

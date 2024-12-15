@@ -1,0 +1,53 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test stopping a transform job.
+prologues:
+  - path: /{index}/_doc
+    method: POST
+    parameters:
+      index: movies
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 91
+    status: [201]
+  - path: /_plugins/_transform/movies-to-films
+    method: PUT
+    request:
+      payload:
+        transform:
+          enabled: false
+          description: A transform.
+          source_index: movies
+          target_index: films
+          data_selection_query:
+            match_all: {}
+          page_size: 10
+          groups:
+            - terms:
+                source_field: year
+                target_field: produced
+          schedule:
+            interval:
+              period: 1
+              unit: Minutes
+              start_time: 1602100553
+    status: [201]
+  - path: /_plugins/_transform/movies-to-films/_start
+    method: POST
+epilogues:
+  - path: /_plugins/_transform/movies-to-films
+    parameters:
+      force: true
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Stop a transform job.
+    path: /_plugins/_transform/{id}/_stop
+    method: POST
+    parameters:
+      id: movies-to-films

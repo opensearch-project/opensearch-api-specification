@@ -1,0 +1,78 @@
+
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test index rollups.
+
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, order_date: '2021-02-27T03:56:10+00:00', pages: 285}
+        - {create: {_index: books, _id: book_1392215}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, order_date: '2024-12-09T04:37:10-05:00', pages: 275}
+epilogues:
+  - path: /_plugins/_rollup/jobs/books
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index rollup job.
+    path: /_plugins/_rollup/jobs/{id}
+    method: PUT
+    parameters:
+      id: books
+    request:
+      payload:
+        rollup:
+          enabled: true
+          description: Rollup books.
+          schedule:
+            interval: 
+              period: 1
+              unit: Minutes
+          source_index: books
+          target_index: books_by_order_date
+          page_size: 1
+          delay: 0
+          continuous: false
+          dimensions:
+            - date_histogram:
+                source_field: order_date
+                fixed_interval: 1h
+            - terms:
+                source_field: title
+          metrics:
+            - source_field: pages
+              metrics:
+                - sum: {}
+                - avg: {}
+    response:
+      status: 201
+      payload:
+        _id: books
+        rollup:
+          rollup_id: books
+          enabled: true
+  - synopsis: Get an index rollup job.
+    path: /_plugins/_rollup/jobs/{id}
+    method: GET
+    parameters:
+      id: books
+    response:
+      status: 200
+      payload:
+        _id: books
+        rollup:
+          rollup_id: books
+  - synopsis: Delete an index rollup job.
+    path: /_plugins/_rollup/jobs/{id}
+    method: DELETE
+    parameters:
+      id: books

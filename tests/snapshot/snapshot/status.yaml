@@ -1,0 +1,66 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _snapshot/{repository}/snapshot endpoints.
+epilogues:
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+prologues:
+  - path: /_snapshot/{repository}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+  - path: /_snapshot/{repository}/{snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+    request:
+      payload:
+        indices: '*'
+        ignore_unavailable: true
+        include_global_state: false
+        partial: true
+chapters:
+  - synopsis: Get status of all running snapshots.
+    path: /_snapshot/_status
+    method: GET
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-test-snapshot
+  - synopsis: Get status of all running snapshots in specific repository.
+    path: /_snapshot/{repository}/_status
+    method: GET
+    parameters:
+      repository: my-fs-repository
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-test-snapshot
+  - synopsis: Get status of specific snapshot in specific repository.
+    path: /_snapshot/{repository}/{snapshot}/_status
+    method: GET
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-test-snapshot

@@ -251,45 +251,28 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              training_index:
-                type: string
-              training_field:
-                type: string
-              dimension:
-                type: integer
-                format: int32
-              max_training_vector_count:
-                type: integer
-                format: int32
-              search_size:
-                type: integer
-                format: int32
-              description:
-                type: string
-              mode:
-                type: string
-              compression_level:
-                type: string
-              method:
-                type: string
-              spaceType:
-                type: string
-            required:
-              - dimension
-              - training_field
-              - training_index
-      required: true
+            $ref: '../schemas/knn._common.yaml#/components/schemas/TrainedModel'
   responses:
-    knn.delete_model@200: {}
+    knn.delete_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/knn._common.yaml#/components/schemas/DeletedModel'
     knn.get_model@200:
       content:
         application/json:
           schema:
             type: object
-    knn.search_models@200: {}
-    knn.stats@200: {}
+    knn.search_models@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+    knn.stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/knn._common.yaml#/components/schemas/Stats'
     knn.train_model@200:
       content:
         application/json:
@@ -300,7 +283,11 @@ components:
                 type: string
             required:
               - model_id
-    knn.warmup@200: {}
+    knn.warmup@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
   parameters:
     knn.delete_model::path.model_id:
       name: model_id
@@ -681,12 +668,19 @@ components:
             - graph_memory_usage_percentage
             - graph_query_errors
             - graph_query_requests
+            - graph_stats
             - hit_count
             - indexing_from_model_degraded
             - indices_in_cache
             - knn_query_requests
+            - knn_query_with_filter_requests
             - load_exception_count
             - load_success_count
+            - lucene_initialized
+            - max_distance_query_requests
+            - max_distance_query_with_filter_requests
+            - min_score_query_requests
+            - min_score_query_with_filter_requests
             - miss_count
             - model_index_status
             - nmslib_initialized
