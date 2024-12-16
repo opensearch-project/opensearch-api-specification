@@ -10,6 +10,7 @@
 import { Option } from '@commander-js/extra-typings'
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type ResponseType } from 'axios'
 import * as https from 'node:https'
+import fs from 'fs'
 import { sleep } from './helpers'
 import { Logger } from './Logger'
 import { aws4Interceptor } from 'aws4-axios'
@@ -28,6 +29,12 @@ export const OPENSEARCH_USERNAME_OPTION = new Option('--opensearch-username <use
 
 export const OPENSEARCH_PASSWORD_OPTION = new Option('--opensearch-password <password>', 'password to use when authenticating with OpenSearch')
   .env('OPENSEARCH_PASSWORD')
+
+export const OPENSEARCH_CERT_OPTION = new Option('--opensearch-cert <cert>', 'client certificate file to use when authenticating with OpenSearch')
+  .env('OPENSEARCH_CERT')
+
+export const OPENSEARCH_KEY_OPTION = new Option('--opensearch-key <cert>', 'client certificate private key file name to use when authenticating with OpenSearch')
+  .env('OPENSEARCH_KEY')
 
 export const OPENSEARCH_INSECURE_OPTION = new Option('--opensearch-insecure', 'disable SSL/TLS certificate verification when connecting to OpenSearch')
   .default(DEFAULT_INSECURE)
@@ -65,6 +72,8 @@ export interface AwsAuth {
 export interface OpenSearchHttpClientOptions {
   url?: string
   insecure?: boolean
+  cert?: string,
+  key?: string,
   responseType?: ResponseType
   logger?: Logger,
   basic_auth?: BasicAuth
@@ -77,6 +86,8 @@ export type OpenSearchHttpClientCliOptions = {
   opensearchUsername?: string
   opensearchPassword?: string
   opensearchInsecure?: boolean
+  opensearchCert?: string,
+  opensearchKey?: string,
   awsAccessKeyId?: string
   awsSecretAccessKey?: string
   awsSessionToken?: string
@@ -90,6 +101,8 @@ export function get_opensearch_opts_from_cli (opts: OpenSearchHttpClientCliOptio
   return {
     url: opts.opensearchUrl,
     insecure: opts.opensearchInsecure,
+    cert: opts.opensearchCert,
+    key: opts.opensearchKey,
     basic_auth: opts.opensearchUsername !== undefined && opts.opensearchPassword !== undefined ? {
       username: opts.opensearchUsername,
       password: opts.opensearchPassword
@@ -164,7 +177,11 @@ export class OpenSearchHttpClient {
 
     this._axios = axios.create({
       baseURL: opts?.url ?? DEFAULT_URL,
-      httpsAgent: new https.Agent({ rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE) }),
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: !(opts?.insecure ?? DEFAULT_INSECURE),
+        cert: opts?.cert !== undefined && opts?.cert !== '' ? fs.readFileSync(opts?.cert) : undefined,
+        key: opts?.key !== undefined && opts?.key !== '' ? fs.readFileSync(opts?.key) : undefined,
+      }),
       responseType: opts?.responseType,
     })
 
