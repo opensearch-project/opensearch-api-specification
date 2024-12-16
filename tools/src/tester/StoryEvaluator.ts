@@ -217,10 +217,7 @@ export default class StoryEvaluator {
   static #extract_params_variables(parameters: Record<string, Parameter>, variables: Set<OutputReference>): void {
     Object.values(parameters ?? {}).forEach((param) => {
       if (typeof param === 'string') {
-        const ref = OutputReference.parse(param)
-        if (ref) {
-          variables.add(ref)
-        }
+        OutputReference.parse(param).forEach((ref) => variables.add(ref))
       }
     })
   }
@@ -229,10 +226,7 @@ export default class StoryEvaluator {
     const request_type = typeof request
     switch (request_type) {
       case 'string': {
-        const ref = OutputReference.parse(request as string)
-        if (ref !== undefined) {
-          variables.add(ref)
-        }
+        OutputReference.parse(request as string).forEach((ref) => variables.add(ref))
         break
       }
       case 'object': {
