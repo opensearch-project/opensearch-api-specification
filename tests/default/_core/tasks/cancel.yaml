@@ -1,0 +1,33 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test tasks endpoint.
+prologues:
+  - path: /books/_delete_by_query
+    id: task
+    method: POST
+    parameters:
+      refresh: true
+      conflicts: proceed
+      wait_for_completion: false
+    request:
+      payload:
+        query:
+          match_all: {}
+    output:
+      id: payload.task
+chapters:
+  - synopsis: Cancel all tasks.
+    path: /_tasks/_cancel
+    method: POST
+  - synopsis: Cancel a task.
+    path: /_tasks/{task_id}/_cancel
+    method: POST
+    parameters:
+      task_id: ${task.id}
+    response:
+      status: 200
+      payload:
+        node_failures:
+          - type: failed_node_exception
+            caused_by:
+              type: resource_not_found_exception
