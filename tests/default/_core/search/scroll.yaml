@@ -1,0 +1,107 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search scroll.
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {title: The Lion King, year: 1994}
+        - {create: {_index: movies}}
+        - {title: Drive, year: 2011}
+        - {create: {_index: movies}}
+        - {title: Frozen, year: 2013}
+        - {create: {_index: movies}}
+        - {title: Moneyball, year: 2011}
+        - {create: {_index: movies}}
+        - {title: The Cruise, year: 1998}
+  - path: /movies/_search
+    method: GET
+    id: scroll
+    parameters:
+      scroll: 10m
+    request:
+      payload:
+        query:
+          match_all: {}
+        size: 1
+    output:
+      scroll_id: payload._scroll_id
+epilogues:
+  - path: /_search/scroll/_all
+    method: DELETE
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get the next batch of results (GET).
+    method: GET
+    path: /_search/scroll
+    request:
+      payload:
+        scroll: 10m
+        scroll_id: ${scroll.scroll_id}
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _index: movies
+              _source:
+                title: Drive
+  - synopsis: Get the next batch of results (POST).
+    method: POST
+    path: /_search/scroll
+    request:
+      payload:
+        scroll: 10m
+        scroll_id: ${scroll.scroll_id}
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _index: movies
+              _source:
+                title: Frozen
+  - synopsis: Get the next batch of results (GET).
+    method: GET
+    path: /_search/scroll/{scroll_id}
+    parameters:
+      scroll_id: ${scroll.scroll_id}
+    request:
+      payload:
+        scroll: 10m
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _index: movies
+              _source:
+                title: Moneyball
+  - synopsis: Get the next batch of results (POST).
+    method: POST
+    path: /_search/scroll/{scroll_id}
+    parameters:
+      scroll_id: ${scroll.scroll_id}
+    request:
+      payload:
+        scroll: 10m
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _index: movies
+              _source:
+                title: The Cruise
+  - synopsis: Delete the scroll.
+    method: DELETE
+    path: /_search/scroll/{scroll_id}
+    parameters:
+      scroll_id: ${scroll.scroll_id}
