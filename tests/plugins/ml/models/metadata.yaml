@@ -1,0 +1,75 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of model metadata.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+version: '>= 2.11'
+warnings:
+  multiple-paths-detected: false
+prologues:
+  - path: /_plugins/_ml/models/_register
+    id: register_model
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    output:
+      task_id: payload.task_id
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create model metadata.
+    id: model_metadata
+    path: /_plugins/_ml/models/meta
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+        model_content_hash_value: 123abc
+        total_chunks: 1
+        model_config:
+          all_config: path
+          model_type: bert
+          embedding_dimension: 384
+          framework_type: sentence_transformers
+    response:
+      status: 200
+    output:
+      model_id: payload.model_id
+  - synopsis: Wait to get completed task.
+    id: get_completed_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+    retry:
+      count: 5
+      wait: 30000
+  - synopsis: Get model.
+    path: /_plugins/_ml/models/{model_id}
+    method: GET
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    response:
+      status: 200
+  - synopsis: Delete model.
+    path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    method: DELETE
