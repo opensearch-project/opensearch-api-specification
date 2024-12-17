@@ -1,0 +1,64 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test dynamic distinguished names.
+epilogues:
+  - path: /_plugins/_security/api/nodesdn/opensearch-cluster
+    method: DELETE
+    status: [200,404]
+chapters:
+  - synopsis: Add distinguished names.
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: PUT
+    parameters:
+      cluster_name: opensearch-cluster
+    request:
+      payload:
+        nodes_dn:
+          - CN=cluster.example.com
+    response:
+      status: 201
+      payload:
+        status: CREATED
+  - synopsis: Retrieve distinguished names.
+    path: /_plugins/_security/api/nodesdn
+    method: GET
+  - synopsis: Update distinguished names.
+    path: /_plugins/_security/api/nodesdn
+    method: PATCH
+    request:
+      payload:
+        - op: replace
+          path: /opensearch-cluster/nodes_dn/0
+          value: CN=Christopher Nolan,CN=admin,DC=movies,DC=opensearch,DC=org
+    response:
+      status: 200
+      payload:
+        status: OK
+  - synopsis: Update distinguished names (with cluster name).
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: PATCH
+    parameters:
+      cluster_name: opensearch-cluster
+    request:
+      payload:
+        - op: replace
+          path: /nodes_dn/0
+          value: CN=Quentin Tarantino,CN=admin,DC=movies,DC=opensearch,DC=org
+    response:
+      status: 200
+      payload:
+        status: OK
+  - synopsis: Retrieve distinguished names (with cluster name).
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: GET
+    parameters:
+      cluster_name: opensearch-cluster
+  - synopsis: Delete all distinguished names.
+    path: /_plugins/_security/api/nodesdn/{cluster_name}
+    method: DELETE
+    parameters:
+      cluster_name: opensearch-cluster
+    response:
+      status: 200
+      payload:
+        status: OK

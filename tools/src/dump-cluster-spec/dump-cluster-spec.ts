@@ -13,7 +13,9 @@ import * as process from 'node:process'
 import { write_yaml } from '../helpers'
 import {
   get_opensearch_opts_from_cli,
+  OPENSEARCH_CERT_OPTION,
   OPENSEARCH_INSECURE_OPTION,
+  OPENSEARCH_KEY_OPTION,
   OPENSEARCH_PASSWORD_OPTION,
   OPENSEARCH_URL_OPTION,
   OPENSEARCH_USERNAME_OPTION, OpenSearchHttpClient,
@@ -42,6 +44,8 @@ const command = new Command()
   .addOption(OPENSEARCH_USERNAME_OPTION)
   .addOption(OPENSEARCH_PASSWORD_OPTION)
   .addOption(OPENSEARCH_INSECURE_OPTION)
+  .addOption(OPENSEARCH_CERT_OPTION)
+  .addOption(OPENSEARCH_KEY_OPTION)
   .addOption(new Option('--output <path>', 'path to the output file').default(resolve(__dirname, '../../../build/opensearch-openapi-CLUSTER.yaml')))
   .allowExcessArguments(false)
   .parse()

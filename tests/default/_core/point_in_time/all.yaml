@@ -1,0 +1,33 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test point-in-time.
+version: '>= 2.4'
+epilogues:
+  - path: /_search/point_in_time/_all
+    method: DELETE
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {title: The Cruise, year: 1998}
+        - {create: {_index: movies}}
+        - {title: Drive, year: 1960}
+  - path: /movies/_search/point_in_time
+    method: POST
+    parameters:
+      keep_alive: 1m
+chapters:
+  - synopsis: Get all point in time.
+    path: /_search/point_in_time/_all
+    method: GET
+  - synopsis: Delete all point in time.
+    path: /_search/point_in_time/_all
+    method: DELETE
