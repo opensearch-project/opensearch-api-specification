@@ -1,0 +1,26 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test restore from a remote store.
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book1}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 60}
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Bennett Miller, title: The Cruise, year: 1998}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+chapters:
+  - synopsis: Restore from remote store.
+    path: /_remotestore/_restore
+    method: POST
+    request:
+      payload:
+        indices:
+          - movies
+
