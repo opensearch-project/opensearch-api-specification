@@ -34,6 +34,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added response schema for `GET /_plugins/_knn/warmup/{index}` ([#717](https://github.com/opensearch-project/opensearch-api-specification/pull/717))
 - Added support for multiple test verbs ([#724](https://github.com/opensearch-project/opensearch-api-specification/pull/724))
 - Added support for using a certificate and key in tests ([#731](https://github.com/opensearch-project/opensearch-api-specification/pull/731))
+- Added missing `cancelled` and `resource_stats` to `/_reindex/{task_id}/_rethrottle` ([#740](https://github.com/opensearch-project/opensearch-api-specification/pull/740))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
