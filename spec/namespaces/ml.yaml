@@ -126,6 +126,40 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.undeploy_model@200'
+  /_plugins/_ml/models/_undeploy:
+    post:
+      operationId: ml.undeploy_model.1
+      x-operation-group: ml.undeploy_model
+      description: Undeploys a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.undeploy_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.undeploy_model@200'
+  /_plugins/_ml/models/{model_id}/_unload:
+    post:
+      operationId: ml.unload_model.0
+      x-operation-group: ml.unload_model
+      deprecated: true
+      x-version-deprecated: 2.7.0
+      x-deprecation-message: Use `undeploy_model` instead.
+      parameters:
+        - $ref: '#/components/parameters/ml.unload_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.unload_model@200'
+  /_plugins/_ml/models/_unload:
+    post:
+      operationId: ml.unload_model.1
+      x-operation-group: ml.unload_model
+      deprecated: true
+      x-version-deprecated: 2.7.0
+      x-deprecation-message: Use `undeploy_model` instead.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.unload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.unload_model@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
@@ -156,7 +190,7 @@ paths:
         '200':
           $ref: '#/components/responses/ml.search_models@200'
     post:
-      operationId: ml.search_models.0
+      operationId: ml.search_models.1
       x-operation-group: ml.search_models
       description: Searches for models.
       requestBody:
@@ -588,6 +622,7 @@ components:
                 type: object
                 description: The model interface.
     ml.train:
+    ml.undeploy_model:
       content:
         application/json:
           schema:
@@ -603,6 +638,17 @@ components:
                 items:
                   type: string
     ml.train_predict:
+              node_ids:
+                type: array
+                items:
+                  $ref: '_common.yaml#/components/schemas/Id'
+              model_ids:
+                type: array
+                items:
+                  $ref: '_common.yaml#/components/schemas/Id'
+            required:
+              - model_ids
+    ml.unload_model:
       content:
         application/json:
           schema:
@@ -643,6 +689,16 @@ components:
               interface:
                 type: object
                 description: The model interface.
+              node_ids:
+                type: array
+                items:
+                  $ref: '_common.yaml#/components/schemas/Id'
+              model_ids:
+                type: array
+                items:
+                  $ref: '_common.yaml#/components/schemas/Id'
+            required:
+              - model_ids
     ml.create_connector:
       content:
         application/json:
@@ -923,6 +979,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/UndeployModelResponse'
+    ml.unload_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UnloadModelResponse'
     ml.delete_model@200:
       content:
         application/json:
@@ -1119,6 +1180,12 @@ components:
       schema:
         type: string
     ml.undeploy_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.unload_model::path.model_id:
       name: model_id
       in: path
       required: true
