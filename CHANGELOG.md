@@ -34,6 +34,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added response schema for `GET /_plugins/_knn/warmup/{index}` ([#717](https://github.com/opensearch-project/opensearch-api-specification/pull/717))
 - Added support for multiple test verbs ([#724](https://github.com/opensearch-project/opensearch-api-specification/pull/724))
 - Added support for using a certificate and key in tests ([#731](https://github.com/opensearch-project/opensearch-api-specification/pull/731))
+- Added `_type` to `termvector` and `mtermvector` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -45,6 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unsupported `cause` and `create` from `/_index_template/_simulate_index/{name}` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `mappings` from `required` in `indices.simulate_template#Template` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
+- Removed `id` from `required` in `indices.termvectors@200` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
