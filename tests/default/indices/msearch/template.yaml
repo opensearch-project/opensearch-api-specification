@@ -1,6 +1,6 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test _termvectors and _msearch/template APIs.
+description: Test _msearch/template APIs.
 prologues:  
   - path: /_bulk
     method: POST
@@ -25,7 +25,9 @@ chapters:
     path: /{index}/_msearch/template
     parameters:
       index: books
-    method: GET
+    method:
+      - GET
+      - POST
     request:
       content_type: application/x-ndjson
       payload:
@@ -33,19 +35,3 @@ chapters:
         - {source: '{"query": {"match": {"title": "{{title}}"}}}', params: {title: Mockingbird}}
         - {index: books}
         - {source: '{"query": {"match": {"title": "{{title}}"}}}', params: {title: Beast}}
-    response:
-      status: 200
-  - synopsis: Perform a multi-search template query using a POST request.
-    path: /{index}/_msearch/template
-    parameters:
-      index: books
-    method: POST
-    request:
-      content_type: application/x-ndjson
-      payload:
-        - {index: books}
-        - {source: '{"query": {"match": {"title": "{{title}}"}}}', params: {title: '1984'}}
-        - {index: books}
-        - {source: '{"query": {"match": {"author": "{{author}}"}}}', params: {author: Harper Lee}}
-    response:
-      status: 200

@@ -1,4 +1,4 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 
 description: Test document multi-search.
 epilogues:
@@ -25,7 +25,9 @@ prologues:
 chapters:
   - synopsis: Run multiple search requests in single request (GET).
     path: /_msearch
-    method: GET
+    method: 
+      - GET
+      - POST
     request:
       content_type: application/x-ndjson
       payload:
@@ -53,33 +55,3 @@ chapters:
                   _id: movie1
                 - _index: movies
                   _id: movie2
-  - synopsis: Run multiple search requests in single request (POST).
-    path: /_msearch
-    method: POST
-    request:
-      content_type: application/x-ndjson
-      payload:
-        - {index: movies}
-        - {query: {match_all: {}}}
-        - {index: books}
-        - {query: {match_all: {}}}
-    response:
-      status: 200
-      payload:
-        responses:
-          - hits:
-              total:
-                value: 2
-                relation: eq
-              hits:
-                - _index: movies
-                  _id: movie1
-                - _index: movies
-                  _id: movie2
-          - hits:
-              total:
-                value: 1
-                relation: eq
-              hits:
-                - _index: books
-                  _id: book1
