@@ -5,6 +5,7 @@
       - [Prerequisites](#prerequisites)
       - [OpenSearch Cluster](#opensearch-cluster)
       - [Run Tests](#run-tests)
+    - [Running Spec Tests that Require an Admin Certificate](#running-spec-tests-that-require-an-admin-certificate)
     - [Running Spec Tests with Amazon OpenSearch](#running-spec-tests-with-amazon-opensearch)
     - [Common Errors](#common-errors)
       - [401 Unauthorized](#401-unauthorized)
@@ -74,6 +75,19 @@ npm run test:spec -- --opensearch-insecure --verbose
 Want to help with some missing tests? Choose from the remaining paths in the test coverage report:
 ```bash
 npm run test:spec -- --opensearch-insecure --coverage-report
+```
+
+### Running Spec Tests that Require an Admin Certificate
+
+Some tests may require an admin certificate for authorization. The certificate can be provided wth `--opensearch-cert` and the key with `opensearch-key`.
+
+For example, run tests in [plugins/security](tests/plugins/security) as follows:
+```bash
+npm run test:spec--insecure -- \
+  --tests tests/plugins/security/api/nodesdn.yaml \
+  --opensearch-key tests/plugins/security/kirk-key.pem \
+  --opensearch-cert tests/plugins/security/kirk.pem \
+  --verbose
 ```
 
 ### Running Spec Tests with Amazon OpenSearch

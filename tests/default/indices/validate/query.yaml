@@ -1,6 +1,6 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test validating queries for a specific index using both GET and POST methods.
+description: Test validating queries for a specific index.
 epilogues:
   - path: /movies
     method: DELETE
@@ -18,9 +18,11 @@ prologues:
         - {create: {_index: movies, _id: movie2}}
         - {director: Nicolas Winding Refn, title: Drive, year: 1960}
 chapters:
-  - synopsis: Validate a match query (GET).
+  - synopsis: Validate a match query.
     path: /{index}/_validate/query
-    method: GET
+    method:
+      - GET
+      - POST
     parameters:
       index: movies
     request:
@@ -31,19 +33,4 @@ chapters:
     response:
       status: 200
       payload:
-        valid: true
-
-  - synopsis: Validate a match query (POST).
-    path: /{index}/_validate/query
-    method: POST
-    parameters:
-      index: movies
-    request:
-      payload:
-        query:
-          match:
-            title: Drive
-    response:
-      status: 200
-      payload: 
         valid: true
