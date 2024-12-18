@@ -996,6 +996,68 @@ components:
     UnloadModelNodeStats:
       type: object
       additionalProperties: true
+    PredictModelResponse:
+      type: object
+      properties:
+        inference_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PredictModelResult'
+    PredictModelResult:
+      type: object
+      properties:
+        output:
+          type: array
+          items:
+            $ref: '#/components/schemas/PredictModelOutput'
+    PredictModelOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The output name.
+        data_type:
+          type: string
+          description: The output data type.
+          enum:
+            - BOOLEAN
+            - FLOAT16
+            - FLOAT32
+            - FLOAT64
+            - INT32
+            - INT64
+            - INT8
+            - STRING
+            - UINT8
+            - UNKNOWN
+        shape:
+          type: array
+          items:
+            type: integer
+            format: int64
+            description: The output shape.
+        data:
+          type: array
+          items:
+            type: number
+            format: double
+            description: The output data.
+        byte_buffer:
+          $ref: '#/components/schemas/ByteBuffer'
+      required:
+        - data
+    ByteBuffer:
+      type: object
+      properties:
+        array:
+          type: string
+          description: The byte buffer array.
+        order:
+          type: string
+          description: The byte buffer order.
+          enum:
+            - BIG_ENDIAN
+            - LITTLE_ENDIAN
     Credential:
       type: object
       properties:

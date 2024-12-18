@@ -202,6 +202,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.unload_model@200'
+  /_plugins/_ml/models/{model_id}/_predict:
+    post:
+      operationId: ml.predict_model.0
+      x-operation-group: ml.predict_model
+      description: Predicts a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.predict_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.predict_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.predict_model@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
@@ -807,6 +819,22 @@ components:
                   $ref: '../schemas/_common.yaml#/components/schemas/Id'
             required:
               - model_ids
+    ml.predict_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query_text:
+                type: string
+                description: The query text.
+              text_docs:
+                type: array
+                items:
+                  type: string
+                description: The text documents.
+            required:
+              - text_docs
     ml.create_connector:
       content:
         application/json:
@@ -1143,6 +1171,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/UnloadModelResponse'
+    ml.predict_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictModelResponse'
     ml.delete_model@200:
       content:
         application/json:
@@ -1351,6 +1384,12 @@ components:
       schema:
         type: string
     ml.unload_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.predict_model::path.model_id:
       name: model_id
       in: path
       required: true
