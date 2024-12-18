@@ -1,0 +1,39 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test tasks endpoint.
+prologues:
+  - path: /books/_delete_by_query
+    id: task
+    method: POST
+    parameters:
+      refresh: true
+      conflicts: proceed
+      wait_for_completion: false
+    request:
+      payload:
+        query:
+          match_all: {}
+    output:
+      id: payload.task
+chapters:
+  - synopsis: List tasks grouped by node.
+    path: /_tasks
+    method: GET
+    parameters:
+      group_by: nodes
+  - synopsis: List tasks grouped by parent.
+    path: /_tasks
+    method: GET
+    parameters:
+      group_by: parents
+  - synopsis: List tasks grouped by none.
+    path: /_tasks
+    method: GET
+    parameters:
+      group_by: none
+  - synopsis: Get task by id.
+    id: task
+    path: /_tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${task.id}
