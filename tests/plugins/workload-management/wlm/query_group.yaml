@@ -1,0 +1,41 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: This story tests all endpoints relevant to QueryGroups, from creation to deletion.
+version: '>= 2.17'
+
+chapters:
+  - synopsis: Create a QueryGroup.
+    path: /_wlm/query_group
+    method: PUT
+    request:
+      payload:
+        name: analytics
+        resource_limits:
+          memory: 0.1
+        resiliency_mode: monitor
+  - synopsis: Get the QueryGroup by name.
+    path: /_wlm/query_group/{name}
+    method: GET
+    parameters:
+      name: analytics
+    response:
+      status: 200
+      payload:
+        query_groups:
+          - name: analytics
+            resource_limits:
+              memory: 0.1
+            resiliency_mode: monitor
+  - synopsis: Get all QueryGroups.
+    path: /_wlm/query_group
+    method: GET
+  - synopsis: Delete a QueryGroup.
+    path: /_wlm/query_group/{name}
+    parameters:
+      name: analytics
+    method: DELETE
+
+epilogues:
+  - path: /_wlm/query_group/analytics
+    method: DELETE
+    status: [200, 404]
