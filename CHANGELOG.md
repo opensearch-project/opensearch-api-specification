@@ -195,7 +195,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
 
-
 ### Changed
 
 - Replaced Smithy with a native OpenAPI spec ([#189](https://github.com/opensearch-project/opensearch-api-specification/issues/189))

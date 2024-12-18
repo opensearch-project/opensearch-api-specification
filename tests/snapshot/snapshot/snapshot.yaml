@@ -8,6 +8,12 @@ epilogues:
     parameters:
       repository: my-fs-repository
       snapshot: my-test-snapshot
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-sn-repository
+      snapshot: my-second-snapshot
   - path: /_snapshot/{repository}
     method: DELETE
     status: [200, 404]
@@ -50,7 +56,7 @@ chapters:
             location: /tmp/opensearch/repo
   - synopsis: Create a snapshot.
     path: /_snapshot/{repository}/{snapshot}
-    method: POST
+    method: PUT
     parameters:
       repository: my-fs-repository
       snapshot: my-test-snapshot
@@ -65,7 +71,22 @@ chapters:
       status: 200
       payload:
         snapshot:
-          snapshot: my-test-snapshot    
+          snapshot: my-test-snapshot
+  - synopsis: Create a second snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: POST
+    parameters:
+      repository: my-sn-repository
+      snapshot: my-second-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: '*'
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-second-snapshot
   - synopsis: Get information about a snapshot.
     path: /_snapshot/{repository}/{snapshot}
     method: GET
@@ -81,20 +102,20 @@ chapters:
     path: /_snapshot/{repository}/{snapshot}
     method: GET
     parameters:
-      repository: my-fs-repository
-      snapshot: my-test-snapshot
+      repository: my-sn-repository
+      snapshot: my-second-snapshot
       human: true
     response:
       status: 200
       payload:
         snapshots:
-          - snapshot: my-test-snapshot
+          - snapshot: my-second-snapshot
   - synopsis: Delete a snapshot.
     path: /_snapshot/{repository}/{snapshot}
     method: DELETE
     parameters:
       repository: my-fs-repository
-      snapshot: my-test-snapshot   
+      snapshot: my-test-snapshot
   - synopsis: Delete a snapshot repository.
     path: /_snapshot/{repository}
     method: DELETE
