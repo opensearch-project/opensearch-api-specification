@@ -8,7 +8,7 @@
 */
 
 import _ from 'lodash'
-import { delete_matching_keys, find_refs, sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
+import { delete_matching_keys, find_refs, sort_array_by_keys, to_json, to_ndjson, split } from '../src/helpers'
 
 describe('helpers', () => {
   describe('sort_array_by_keys', () => {
@@ -193,6 +193,29 @@ describe('helpers', () => {
         '#3': {},
         '#dup': {}
       })).toEqual(new Set(['#1', '#2', '#3', '#dup', '#/schemas/schema1', '#/schemas/schema2']))
+    })
+  })
+
+  describe('split', () => {
+    test('undefined', () => {
+      expect(split(undefined, '.')).toEqual([])
+    })
+
+    test('one element', () => {
+      expect(split('str', '.')).toEqual(['str'])
+      expect(split('str', '.', -1)).toEqual(['str'])
+      expect(split('str', '.', 0)).toEqual(['str'])
+      expect(split('str', '.', 10)).toEqual(['str'])
+    })
+
+    test('multiple elements', () => {
+      expect(split('x.y.z', '.')).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', -1)).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', 0)).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', 1)).toEqual(['x.y.z'])
+      expect(split('x.y.z', '.', 2)).toEqual(['x', 'y.z'])
+      expect(split('x.y.z', '.', 3)).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', 4)).toEqual(['x', 'y', 'z'])
     })
   })
 })

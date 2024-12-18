@@ -8,7 +8,7 @@
 */
 
 import { ChapterOutput } from './ChapterOutput'
-import { OutputReference } from './types/eval.types'
+import { OutputReference } from './OutputReference'
 import { type Parameter } from './types/story.types'
 
 export class StoryOutputs {
@@ -48,12 +48,9 @@ export class StoryOutputs {
   }
 
   resolve_string (str: string): any {
-    const ref = OutputReference.parse(str)
-    if (ref) {
-      return this.get_output_value(ref.chapter_id, ref.output_name)
-    } else {
-      return str
-    }
+    return OutputReference.replace(str, (chapter_id, output_name) => {
+      return this.get_output_value(chapter_id as string, output_name as string)
+    })
   }
 
   resolve_value (payload: any): any {
