@@ -1,0 +1,25 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test Update By Query endpoint.
+prologues:
+  - path: /books/_delete_by_query
+    id: task
+    method: POST
+    parameters:
+      refresh: true
+      conflicts: proceed
+      wait_for_completion: false
+    request:
+      payload:
+        query:
+          match_all: {}
+    output:
+      id: payload.task
+chapters:
+  - synopsis: Update by query.
+    path: /_update_by_query/{task_id}/_rethrottle
+    method: POST
+    parameters:
+      task_id: ${task.id}
+      requests_per_second: 10
+
