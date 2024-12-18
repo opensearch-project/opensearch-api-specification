@@ -244,7 +244,9 @@ Consider the following chapters in [ml/model_groups](tests/plugins/ml/ml/model_g
 ```
 As you can see, the `output` field in the first chapter saves the `model_group_id` from the response body. This value is then used in the subsequent chapters to query and delete the model group.
 
-You can also supply defaults for output values, e.g. for `payload._version` used in [cluster/routing/awareness/weights.yaml](tests/routing/cluster/routing/awareness/weights.yaml).
+You can combine multiple values, e.g. `task_id: ${task.node}:${task.id}`.
+
+You can supply defaults for output values, e.g. for `payload._version` used in [cluster/routing/awareness/weights.yaml](tests/routing/cluster/routing/awareness/weights.yaml).
 
 ```
 version:
