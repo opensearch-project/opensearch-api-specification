@@ -8,7 +8,7 @@
 */
 
 import { ChapterOutput } from './ChapterOutput'
-import { OutputReference } from './types/eval.types'
+import { OutputReference } from './OutputReference'
 import { type Parameter } from './types/story.types'
 
 export class StoryOutputs {
@@ -49,10 +49,6 @@ export class StoryOutputs {
 
   resolve_string (str: string): any {
     return OutputReference.replace(str, (chapter_id, output_name) => {
-      if (chapter_id === undefined || output_name === undefined) {
-        throw new Error(`Invalid output references in ${str}.`)
-      }
-
       return this.get_output_value(chapter_id as string, output_name as string)
     })
   }

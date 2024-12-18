@@ -8,7 +8,7 @@
 */
 
 import { ChapterRequest, Parameter, SupplementalChapter } from './types/story.types'
-import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation, OutputReference } from './types/eval.types'
+import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation } from './types/eval.types'
 import type ChapterEvaluator from './ChapterEvaluator'
 import { overall_result } from './helpers'
 import { StoryOutputs } from './StoryOutputs'
@@ -17,6 +17,7 @@ import { ChapterOutput } from './ChapterOutput'
 import * as semver from '../_utils/semver'
 import _ from 'lodash'
 import { ParsedChapter, ParsedStory } from './types/parsed_story.types'
+import { OutputReference } from './OutputReference'
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator

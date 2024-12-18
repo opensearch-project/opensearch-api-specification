@@ -160,3 +160,21 @@ export function write_json (file_path: string, content: any, replacer?: (this: a
 export async function sleep (ms: number): Promise<void> {
   await new Promise<void>((resolve) => setTimeout(resolve, ms))
 }
+
+/**
+ * Returns a string split using a delimiter, but only up to a certain number of times,
+ * returning the remainder of the string as the last element if the result.
+ *
+ * @param str a string
+ * @param delim delimiter
+ * @param count max number of splits
+ * @returns an array of strings
+ */
+export function split(str: any, delim: string, count: number = 0): string[] {
+  if (str === undefined) return []
+  const parts = str.split(delim)
+  if (count <= 0 || parts.length <= count) return parts
+  const result = parts.slice(0, count - 1)
+  result.push(parts.slice(count - 1).join(delim))
+  return result
+}

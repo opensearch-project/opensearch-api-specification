@@ -19,7 +19,11 @@ const story_outputs = new StoryOutputs({
 
 test('resolve_string', () => {
   expect(story_outputs.resolve_string('${chapter_id.x}')).toEqual(1)
+  expect(story_outputs.resolve_string('${chapter_id.y}')).toEqual(2)
   expect(story_outputs.resolve_string('${invalid_id.x}')).toBeUndefined()
+  expect(story_outputs.resolve_string('${invalid_id.y}')).toBeUndefined()
+  expect(story_outputs.resolve_string('${chapter_id.x} and ${chapter_id.y}')).toEqual('1 and 2')
+  expect(story_outputs.resolve_string('${chapter_id.x} and ${chapter_id.y} and ${invalid.invalid}')).toEqual('1 and 2 and undefined')
   expect(story_outputs.resolve_string('some_str')).toEqual('some_str')
 })
 
