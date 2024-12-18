@@ -37,6 +37,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `_type` to `termvector` and `mtermvector` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
 - Added missing `cancelled` and `resource_stats` to `/_reindex/{task_id}/_rethrottle` ([#740](https://github.com/opensearch-project/opensearch-api-specification/pull/740))
 - Added missing `cancellation_time_millis` to `POST /_tasks/_cancel` ([#747](https://github.com/opensearch-project/opensearch-api-specification/pull/747))
+- Added 404 response to `/_search/scroll` ([#749](https://github.com/opensearch-project/opensearch-api-specification/pull/749))
+- Added `node_failures` to `DELETE /_search/scroll` and `DELETE /_search/scroll/{scroll_id}` ([#749](https://github.com/opensearch-project/opensearch-api-specification/pull/749))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -191,7 +193,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added 404 response to `/_search/scroll` ([#749](https://github.com/opensearch-project/opensearch-api-specification/pull/749))
+
 
 ### Changed
 
