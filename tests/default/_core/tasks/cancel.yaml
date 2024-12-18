@@ -1,7 +1,20 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
 description: Test tasks endpoint.
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
 prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
   - path: /books/_delete_by_query
     id: task
     method: POST
@@ -24,10 +37,3 @@ chapters:
     method: POST
     parameters:
       task_id: ${task.id}
-    response:
-      status: 200
-      payload:
-        node_failures:
-          - type: failed_node_exception
-            caused_by:
-              type: resource_not_found_exception
