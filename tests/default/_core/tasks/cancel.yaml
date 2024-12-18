@@ -1,6 +1,6 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test adjusting the value of `requests_per_second` of a running delete by query.
+description: Test tasks endpoint.
 epilogues:
   - path: /books
     method: DELETE
@@ -13,28 +13,27 @@ prologues:
     request:
       content_type: application/x-ndjson
       payload:
-        - {create: {_index: books, _id: book_1392214}}
+        - {create: {_index: books}}
         - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
-        - {create: {_index: books, _id: book_1392215}}
-        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
   - path: /books/_delete_by_query
     id: task
     method: POST
     parameters:
+      refresh: true
+      conflicts: proceed
       wait_for_completion: false
-      requests_per_second: 1
     request:
       payload:
         query:
           match_all: {}
     output:
-      task_id: payload.task
+      id: payload.task
 chapters:
-  - synopsis: Change the value of `requests_per_second` on a running delete by query.
-    path: /_delete_by_query/{task_id}/_rethrottle
+  - synopsis: Cancel all tasks.
+    path: /_tasks/_cancel
+    method: POST
+  - synopsis: Cancel a task.
+    path: /_tasks/{task_id}/_cancel
     method: POST
     parameters:
-      task_id: ${task.task_id}
-      requests_per_second: 2
-    response:
-      status: 200
+      task_id: ${task.id}
