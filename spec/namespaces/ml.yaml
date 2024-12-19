@@ -80,12 +80,37 @@ paths:
     post:
       operationId: ml.create_model_meta.0
       x-operation-group: ml.create_model_meta
-      description: Creates model metadata.
+      deprecated: true
+      x-deprecation-message: Use `_register_meta` instead.
+      description: Registers model metadata.
       requestBody:
         $ref: '#/components/requestBodies/ml.create_model_meta'
       responses:
         '200':
           $ref: '#/components/responses/ml.create_model_meta@200'
+  /_plugins/_ml/models/_register_meta:
+    post:
+      operationId: ml.register_model_meta.0
+      x-operation-group: ml.register_model_meta
+      description: Registers model metadata.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model_meta'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model_meta@200'
+  /_plugins/_ml/models/{model_id}/chunk/{index}:
+    post:
+      operationId: ml.chunk_model.0
+      x-operation-group: ml.chunk_model
+      description: Chunks model.
+      parameters:
+        - $ref: '#/components/parameters/ml.chunk_model::path.index'
+        - $ref: '#/components/parameters/ml.chunk_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.chunk_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.chunk_model@200'
   /_plugins/_ml/models/_upload:
     post:
       operationId: ml.upload_model.0
@@ -662,6 +687,54 @@ components:
               - name
               - total_chunks
               - version
+    ml.register_model_meta:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_content_hash_value:
+                type: string
+                description: The model content hash value.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              total_chunks:
+                type: integer
+                format: int64
+                description: Number of chunks the model is split into.
+              url:
+                type: string
+                description: The model URL.
+              description:
+                type: string
+                description: The model description.
+            required:
+              - model_config
+              - model_content_hash_value
+              - model_format
+              - name
+              - total_chunks
+              - version
+    ml.chunk_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chunk:
+                type: string
+                description: The model chunk.
+            required:
+              - chunk
     ml.upload_model:
       content:
         application/json:
@@ -1100,6 +1173,30 @@ components:
             required:
               - model_id
               - status
+    ml.register_model_meta@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              model_id:
+                type: string
+            required:
+              - model_id
+              - status
+    ml.chunk_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status of the chunking operation.
+            required:
+              - status
     ml.upload_model@200:
       content:
         application/json:
@@ -1382,6 +1479,19 @@ components:
       schema:
         type: string
     ml.predict_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.chunk_model::path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ml.chunk_model::path.model_id:
       name: model_id
       in: path
       required: true
