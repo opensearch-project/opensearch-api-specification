@@ -867,8 +867,6 @@ paths:
         - $ref: '#/components/parameters/indices.upgrade::query.ignore_unavailable'
         - $ref: '#/components/parameters/indices.upgrade::query.only_ancient_segments'
         - $ref: '#/components/parameters/indices.upgrade::query.wait_for_completion'
-      requestBody:
-        $ref: '#/components/requestBodies/indices.upgrade'
       responses:
         '200':
           $ref: '#/components/responses/indices.upgrade@200'
@@ -1856,8 +1854,6 @@ paths:
         - $ref: '#/components/parameters/indices.upgrade::query.ignore_unavailable'
         - $ref: '#/components/parameters/indices.upgrade::query.only_ancient_segments'
         - $ref: '#/components/parameters/indices.upgrade::query.wait_for_completion'
-      requestBody:
-        $ref: '#/components/requestBodies/indices.upgrade'
       responses:
         '200':
           $ref: '#/components/responses/indices.upgrade@200'
@@ -1969,8 +1965,7 @@ components:
               settings:
                 description: Configuration options for the target index.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
             description: The configuration for the target index (`settings` and `aliases`)
     indices.create:
       content:
@@ -2179,8 +2174,7 @@ components:
                   Configuration options for the index.
                   Data streams do not support this parameter.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
             description: The conditions that needs to be met for executing rollover
     indices.shrink:
       content:
@@ -2198,8 +2192,7 @@ components:
               settings:
                 description: Configuration options for the target index.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
             description: The configuration for the target index (`settings` and `aliases`)
     indices.simulate_index_template:
       content:
@@ -2273,11 +2266,6 @@ components:
                   $ref: '../schemas/indices.update_aliases.yaml#/components/schemas/Action'
             description: The definition of `actions` to perform
       required: true
-    indices.upgrade:
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/indices._common.yaml#/components/schemas/UpgradeRequest'
     indices.validate_query:
       content:
         application/json:
@@ -2292,20 +2280,19 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              shards_acknowledged:
-                type: boolean
-              indices:
-                type: array
-                items:
-                  $ref: '../schemas/indices.add_block.yaml#/components/schemas/IndicesBlockStatus'
-            required:
-              - acknowledged
-              - indices
-              - shards_acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  shards_acknowledged:
+                    type: boolean
+                  indices:
+                    type: array
+                    items:
+                      $ref: '../schemas/indices.add_block.yaml#/components/schemas/IndicesBlockStatus'
+                required:
+                  - indices
+                  - shards_acknowledged
     indices.analyze@200:
       content:
         application/json:
@@ -2327,36 +2314,34 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              index:
-                $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
-              shards_acknowledged:
-                type: boolean
-            required:
-              - acknowledged
-              - index
-              - shards_acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  shards_acknowledged:
+                    type: boolean
+                  index:
+                    $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+                required:
+                  - index
+                  - shards_acknowledged
     indices.close@200:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              indices:
-                type: object
-                additionalProperties:
-                  $ref: '../schemas/indices.close.yaml#/components/schemas/CloseIndexResult'
-              shards_acknowledged:
-                type: boolean
-            required:
-              - acknowledged
-              - indices
-              - shards_acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  indices:
+                    type: object
+                    additionalProperties:
+                      $ref: '../schemas/indices.close.yaml#/components/schemas/CloseIndexResult'
+                  shards_acknowledged:
+                    type: boolean
+                required:
+                  - indices
+                  - shards_acknowledged
     indices.create@200:
       content:
         application/json:
@@ -2633,32 +2618,31 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              conditions:
-                type: object
-                additionalProperties:
-                  type: boolean
-              dry_run:
-                type: boolean
-              new_index:
-                type: string
-              old_index:
-                type: string
-              rolled_over:
-                type: boolean
-              shards_acknowledged:
-                type: boolean
-            required:
-              - acknowledged
-              - conditions
-              - dry_run
-              - new_index
-              - old_index
-              - rolled_over
-              - shards_acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  conditions:
+                    type: object
+                    additionalProperties:
+                      type: boolean
+                  dry_run:
+                    type: boolean
+                  new_index:
+                    type: string
+                  old_index:
+                    type: string
+                  rolled_over:
+                    type: boolean
+                  shards_acknowledged:
+                    type: boolean
+                required:
+                  - conditions
+                  - dry_run
+                  - new_index
+                  - old_index
+                  - rolled_over
+                  - shards_acknowledged
     indices.segments@200:
       content:
         application/json:
@@ -2690,18 +2674,17 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              shards_acknowledged:
-                type: boolean
-              index:
-                $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
-            required:
-              - acknowledged
-              - index
-              - shards_acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  shards_acknowledged:
+                    type: boolean
+                  index:
+                    $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+                required:
+                  - index
+                  - shards_acknowledged
     indices.simulate_index_template@200:
       content:
         application/json:
@@ -2725,18 +2708,17 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              shards_acknowledged:
-                type: boolean
-              index:
-                $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
-            required:
-              - acknowledged
-              - index
-              - shards_acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  shards_acknowledged:
+                    type: boolean
+                  index:
+                    $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+                required:
+                  - index
+                  - shards_acknowledged
     indices.stats@200:
       content:
         application/json:
@@ -2763,7 +2745,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/indices._common.yaml#/components/schemas/IndexPostUpgradeStatus'
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
+              - type: object
+                properties:
+                  upgraded_indices:
+                    type: object
+                    additionalProperties:
+                      $ref: '../schemas/indices._common.yaml#/components/schemas/UpgradeVersionStatus'
     indices.validate_query@200:
       content:
         application/json:
@@ -3658,7 +3647,8 @@ components:
         Set this parameter to 1 to merge all segments into one segment.
         The default behavior is to perform the merge as necessary.
       schema:
-        type: number
+        type: integer
+        format: int64
       style: form
     indices.forcemerge::query.only_expunge_deletes:
       in: query
@@ -4802,10 +4792,10 @@ components:
       description: List of shard health statuses used to limit the request.
       schema:
         oneOf:
-          - $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/Status'
+          - $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/ShardStoreStatus'
           - type: array
             items:
-              $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/Status'
+              $ref: '../schemas/indices.shard_stores.yaml#/components/schemas/ShardStoreStatus'
       style: form
     indices.shrink::path.index:
       in: path
