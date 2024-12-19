@@ -898,6 +898,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/clear_scroll@200'
+        '404':
+          $ref: '#/components/responses/clear_scroll@404'
   /_search/scroll/{scroll_id}:
     get:
       operationId: scroll.2
@@ -956,6 +958,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/clear_scroll@200'
+        '404':
+          $ref: '#/components/responses/clear_scroll@404'
   /_search/template:
     get:
       operationId: search_template.0
@@ -2868,6 +2872,20 @@ components:
             required:
               - num_freed
               - succeeded
+    clear_scroll@404:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              succeeded:
+                type: boolean
+              num_freed:
+                type: integer
+                format: int32
+            required:
+              - num_freed
+              - succeeded
     count@200:
       content:
         application/json:
@@ -3370,6 +3388,10 @@ components:
                 type: object
                 additionalProperties:
                   $ref: '../schemas/_core.update_by_query_rethrottle.yaml#/components/schemas/UpdateByQueryRethrottleNode'
+              node_failures:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/ErrorCause'
             required:
               - nodes
   parameters:
