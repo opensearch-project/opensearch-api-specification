@@ -1,17 +1,22 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test the creation of models.
+description: Test the creation of models using upload API (deprecated).
 distributions:
   excluded:
     - amazon-managed
     - amazon-serverless
-version: '>= 2.11'
 warnings:
   multiple-paths-detected: false
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      model_id: ${get_completed_task.model_id}
 chapters:
   - synopsis: Register model.
-    id: register_model
-    path: /_plugins/_ml/models/_register
+    id: upload_model
+    path: /_plugins/_ml/models/_upload
     method: POST
     request:
       payload:
@@ -27,7 +32,7 @@ chapters:
     path: /_plugins/_ml/tasks/{task_id}
     method: GET
     parameters:
-      task_id: ${register_model.task_id}
+      task_id: ${upload_model.task_id}
     response:
       status: 200
       payload:
@@ -37,35 +42,11 @@ chapters:
     retry:
       count: 5
       wait: 30000
-  - synopsis: Search model.
-    path: /_plugins/_ml/models/_search
-    method: GET
-    request:
-      payload:
-        query:
-          match_all: {}
-        size: 1000
-    response:
-      status: 200
-      payload:
-        hits:
-          hits:
-            - _score: 1
   - synopsis: Get model.
     path: /_plugins/_ml/models/{model_id}
     method: GET
     parameters:
       model_id: ${get_completed_task.model_id}
-    response:
-      status: 200
-  - synopsis: Update model.
-    path: /_plugins/_ml/models/{model_id}
-    method: PUT
-    parameters:
-      model_id: ${get_completed_task.model_id}
-    request:
-      payload:
-        name: updated
     response:
       status: 200
   - synopsis: Delete model.
