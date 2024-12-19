@@ -6,13 +6,20 @@ info:
 paths: {}
 components:
   schemas:
-    Status:
-      type: string
-      enum:
-        - all
-        - green
-        - red
-        - yellow
+    ShardStoreStatus:
+      oneOf:
+        - type: string
+          const: all
+          description: Return all shards, regardless of health status.
+        - type: string
+          const: green
+          description: The primary shard and all replica shards are assigned.
+        - type: string
+          const: red
+          description: The primary shard is unassigned.
+        - type: string
+          const: yellow
+          description: One or more replica shards are unassigned.
     IndicesShardStores:
       type: object
       properties:
@@ -41,6 +48,7 @@ components:
         store_exception:
           $ref: '#/components/schemas/ShardStoreException'
       additionalProperties:
+        title: nodes
         $ref: '_common.yaml#/components/schemas/NodeAttributes'
       required:
         - allocation
