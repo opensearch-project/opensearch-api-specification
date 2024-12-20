@@ -40,6 +40,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added support for combining output variables ([#737](https://github.com/opensearch-project/opensearch-api-specification/pull/737))
 - Added 404 response to `/_search/scroll` ([#749](https://github.com/opensearch-project/opensearch-api-specification/pull/749))
 - Added `node_failures` to `DELETE /_search/scroll` and `DELETE /_search/scroll/{scroll_id}` ([#749](https://github.com/opensearch-project/opensearch-api-specification/pull/749))
+- Added `GET /_plugins/_ml/models/{model_id}`, `POST /_plugins/_ml/models/_search`, `POST /_plugins/_ml/models/_unload`, `_undeploy`, `_upload`, `meta`, `_register_meta`, `POST /_plugins/_ml/models/{model_id}/_load`, `_predict`, `_unload`, `chunk/{chunk_number}`, `upload_chunk/{chunk_number}`, and `PUT /_plugins/_ml/models/{model_id}` ([#733](https://github.com/opensearch-project/opensearch-api-specification/pull/733))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
