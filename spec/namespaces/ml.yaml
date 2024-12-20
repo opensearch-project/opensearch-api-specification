@@ -98,19 +98,34 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.register_model_meta@200'
-  /_plugins/_ml/models/{model_id}/chunk/{index}:
+  /_plugins/_ml/models/{model_id}/chunk/{chunk_number}:
     post:
       operationId: ml.chunk_model.0
       x-operation-group: ml.chunk_model
-      description: Chunks model.
+      deprecated: true
+      x-deprecation-message: Use `upload_chunk` instead.
+      description: Uploads model chunk.
       parameters:
-        - $ref: '#/components/parameters/ml.chunk_model::path.index'
+        - $ref: '#/components/parameters/ml.chunk_model::path.chunk_number'
         - $ref: '#/components/parameters/ml.chunk_model::path.model_id'
       requestBody:
         $ref: '#/components/requestBodies/ml.chunk_model'
       responses:
         '200':
           $ref: '#/components/responses/ml.chunk_model@200'
+  /_plugins/_ml/models/{model_id}/upload_chunk/{chunk_number}:
+    post:
+      operationId: ml.upload_chunk.0
+      x-operation-group: ml.upload_chunk
+      description: Uploads model chunk.
+      parameters:
+        - $ref: '#/components/parameters/ml.upload_chunk::path.chunk_number'
+        - $ref: '#/components/parameters/ml.upload_chunk::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.upload_chunk'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.upload_chunk@200'
   /_plugins/_ml/models/_upload:
     post:
       operationId: ml.upload_model.0
@@ -735,6 +750,17 @@ components:
                 description: The model chunk.
             required:
               - chunk
+    ml.upload_chunk:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chunk:
+                type: string
+                description: The model chunk.
+            required:
+              - chunk
     ml.upload_model:
       content:
         application/json:
@@ -1194,7 +1220,18 @@ components:
             properties:
               status:
                 type: string
-                description: The status of the chunking operation.
+                description: The status of the chunk upload operation.
+            required:
+              - status
+    ml.upload_chunk@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status of the chunk upload operation.
             required:
               - status
     ml.upload_model@200:
@@ -1484,14 +1521,27 @@ components:
       required: true
       schema:
         type: string
-    ml.chunk_model::path.index:
-      name: index
+    ml.chunk_model::path.chunk_number:
+      name: chunk_number
       in: path
       required: true
       schema:
         type: integer
         format: int64
     ml.chunk_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.upload_chunk::path.chunk_number:
+      name: chunk_number
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ml.upload_chunk::path.model_id:
       name: model_id
       in: path
       required: true

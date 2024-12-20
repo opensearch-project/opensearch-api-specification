@@ -1,11 +1,12 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test the creation of model metadata using meta API (deprecated).
+description: Test deprecated meta and chunk APIs for model creation and chunk upload.
 distributions:
   excluded:
     - amazon-managed
     - amazon-serverless
-version: '>= 2.11'
+warnings:
+  multiple-paths-detected: false
 prologues:
   - path: /_cluster/settings
     method: PUT
@@ -40,3 +41,42 @@ chapters:
       status: 200
     output:
       model_id: payload.model_id
+  - synopsis: Upload chunk 0.
+    path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
+    method: POST
+    parameters:
+      chunk_number: 0
+      model_id: ${model_metadata.model_id}
+    request:
+      payload: 
+        chunk: chunk0
+    response:
+      status: 200
+      payload:
+        status: Uploaded
+  - synopsis: Upload chunk 1.
+    path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
+    method: POST
+    parameters:
+      chunk_number: 1
+      model_id: ${model_metadata.model_id}
+    request:
+      payload: 
+        chunk: chunk1
+    response:
+      status: 200
+      payload:
+        status: Uploaded
+  - synopsis: Upload chunk 2.
+    path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
+    method: POST
+    parameters:
+      chunk_number: 2
+      model_id: ${model_metadata.model_id}
+    request:
+      payload: 
+        chunk: chunk2
+    response:
+      status: 200
+      payload:
+        status: Uploaded
