@@ -45,8 +45,8 @@ export default class KeepDescriptions {
       } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
         inside_text = false
       } else if (inside_text) {
-        const cleanedLine = line.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
-        fs.writeSync(writer, this.prune_vars(cleanedLine));
+        const cleaned_line = line.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
+        fs.writeSync(writer, this.prune_vars(cleaned_line));
       }
       if (line.length > 0) {
         fs.writeSync(writer, "\n")
