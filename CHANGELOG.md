@@ -82,7 +82,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed request body for `/_search/scroll/{scroll_id}` ([#732](https://github.com/opensearch-project/opensearch-api-specification/pull/732))
 - Fixed type in `_msearch/template` ([#735](https://github.com/opensearch-project/opensearch-api-specification/pull/735))
 - Fixed indices API schemas ([#750](https://github.com/opensearch-project/opensearch-api-specification/pull/750))
-- Fixed cluster API schemas ([#]())
+- Fixed cluster API schemas ([#754](https://github.com/opensearch-project/opensearch-api-specification/pull/754))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
