@@ -401,6 +401,7 @@ paths:
         url: https://opensearch.org/docs/latest
       parameters:
         - $ref: '#/components/parameters/cluster.get_component_template::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/cluster.get_component_template::query.flat_settings'
         - $ref: '#/components/parameters/cluster.get_component_template::query.local'
         - $ref: '#/components/parameters/cluster.get_component_template::query.master_timeout'
       responses:
@@ -417,6 +418,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/cluster.get_component_template::path.name'
         - $ref: '#/components/parameters/cluster.get_component_template::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/cluster.get_component_template::query.flat_settings'
         - $ref: '#/components/parameters/cluster.get_component_template::query.local'
         - $ref: '#/components/parameters/cluster.get_component_template::query.master_timeout'
       responses:
@@ -528,7 +530,8 @@ components:
                 type: boolean
               shard:
                 description: Specifies the ID of the shard that you would like an explanation for.
-                type: number
+                type: integer
+                format: int32
             description: The index, shard, and primary flag to explain. Empty means 'explain the first unassigned shard'
     cluster.put_component_template:
       content:
@@ -637,7 +640,8 @@ components:
               remaining_delay_in_millis:
                 $ref: '../schemas/_common.yaml#/components/schemas/DurationValueUnitMillis'
               shard:
-                type: number
+                type: integer
+                format: int32
               unassigned_info:
                 $ref: '../schemas/cluster.allocation_explain.yaml#/components/schemas/UnassignedInformation'
               note:
@@ -772,32 +776,54 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              acknowledged:
-                type: boolean
-              explanations:
-                type: array
-                items:
-                  $ref: '../schemas/cluster.reroute.yaml#/components/schemas/RerouteExplanation'
-              state:
-                description: |-
-                  There aren't any guarantees on the output/structure of the raw cluster state.
-                  Here you will find the internal representation of the cluster, which can
-                  differ from the external representation.
-                type: object
-            required:
-              - acknowledged
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  explanations:
+                    type: array
+                    items:
+                      $ref: '../schemas/cluster.reroute.yaml#/components/schemas/RerouteExplanation'
+                  state:
+                    description: |-
+                      There aren't any guarantees on the output/structure of the raw cluster state.
+                      Here you will find the internal representation of the cluster, which can
+                      differ from the external representation.
     cluster.state@200:
       content:
         application/json:
-          schema:
-            type: object
+          schema: {}
     cluster.stats@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.stats.yaml#/components/schemas/StatsResponseBase'
+            allOf:
+              - $ref: '../schemas/nodes._common.yaml#/components/schemas/NodesResponseBase'
+              - type: object
+                properties:
+                  cluster_name:
+                    description: Name of the cluster, based on the Cluster name setting setting.
+                    $ref: '../schemas/_common.yaml#/components/schemas/Name'
+                  cluster_uuid:
+                    description: Unique identifier for the cluster.
+                    $ref: '../schemas/_common.yaml#/components/schemas/Uuid'
+                  indices:
+                    description: Contains statistics about indices with shards assigned to selected nodes.
+                    $ref: '../schemas/cluster.stats.yaml#/components/schemas/ClusterIndices'
+                  nodes:
+                    description: Contains statistics about nodes selected by the request's node filters.
+                    $ref: '../schemas/cluster.stats.yaml#/components/schemas/ClusterNodes'
+                  status:
+                    description: Health status of the cluster, based on the state of its primary and replica shards.
+                    $ref: '../schemas/_common.yaml#/components/schemas/HealthStatus'
+                  timestamp:
+                    description: Unix timestamp, in milliseconds, for the last time the cluster statistics were refreshed.
+                    $ref: '../schemas/_common.yaml#/components/schemas/EpochTimeUnitMillis'
+                required:
+                  - cluster_name
+                  - cluster_uuid
+                  - status
+                  - timestamp
   parameters:
     cluster.allocation_explain::query.include_disk_info:
       in: query
@@ -924,6 +950,14 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       x-version-added: '2.0'
+    cluster.get_component_template::query.flat_settings:
+      in: query
+      name: flat_settings
+      description: If `true`, returns settings in flat format.
+      schema:
+        type: boolean
+        default: false
+      style: form
     cluster.get_component_template::query.local:
       in: query
       name: local
