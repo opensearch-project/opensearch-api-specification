@@ -41,9 +41,9 @@ export default class KeepDescriptions {
       if (line.match(/^[\s]+((description|x-deprecation-message): \|)/)) {
         inside_text = true
       } else if (line.match(/^[\s]+((description|x-deprecation-message):)[\s]+/)) {
-        var cleaned_line = this.prune(line, /(description|x-deprecation-message):/, ' ')
-        cleaned_line = this.remove_links(line)
+        let cleaned_line = this.prune(line, /(description|x-deprecation-message):/, ' ')
         cleaned_line = this.prune_vars(cleaned_line)
+        cleaned_line = this.remove_links(cleaned_line)
         fs.writeSync(writer, cleaned_line)
       } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
         inside_text = false
