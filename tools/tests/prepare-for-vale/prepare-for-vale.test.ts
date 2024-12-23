@@ -20,3 +20,31 @@ const spec = (args: string[]): any => {
 test('--help', () => {
   expect(spec(['--help']).stdout).toContain('Usage: prepare-for-vale [options]')
 })
+
+test('process single link', () => {
+  const input = ['description: This is a [link](https://opensearch.org).']
+  const expectedOutput = 'description: This is a link.\n'
+  const result = spec(input).stdout
+  expect(result).toBe(expectedOutput)
+})
+
+test('process two links', () => {
+  const input = ['description: Here is [link one](https://opensearch.org) and [link two](https://opensearch.org/).']
+  const expectedOutput = 'description: Here is link one and link two.\n'
+  const result = spec(input).stdout
+  expect(result).toBe(expectedOutput)
+})
+
+test('process plain text without links', () => {
+  const input = ['description: This is plain text without any links.']
+  const expectedOutput = 'description: This is plain text without any links.\n'
+  const result = spec(input).stdout
+  expect(result).toBe(expectedOutput)
+})
+
+test('process complex link structures', () => {
+  const input = ['description: Check this [link with a title](https://opensearch.org "title").']
+  const expectedOutput = 'description: Check this link with a title.\n'
+  const result = spec(input).stdout
+  expect(result).toBe(expectedOutput)
+})

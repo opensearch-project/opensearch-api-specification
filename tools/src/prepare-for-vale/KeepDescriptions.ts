@@ -45,7 +45,7 @@ export default class KeepDescriptions {
       } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
         inside_text = false
       } else if (inside_text) {
-        const cleaned_line = line.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        const cleaned_line = this.remove_links(line)
         fs.writeSync(writer, this.prune_vars(cleaned_line))
       }
       if (line.length > 0) {
@@ -62,5 +62,9 @@ export default class KeepDescriptions {
     return line.replace(regex, (match) => {
       return Array(match.length + 1).join(char)
     })
+  }
+
+  remove_links(line: string): string {
+    return line.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
   }
 }
