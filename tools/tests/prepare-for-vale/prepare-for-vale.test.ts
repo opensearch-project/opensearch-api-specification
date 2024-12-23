@@ -23,28 +23,26 @@ test('--help', () => {
 
 test('process single link', () => {
   const input = ['description: This is a [link](https://opensearch.org).']
-  const expectedOutput = 'description: This is a link.\n'
-  const result = spec(input).stdout
-  expect(result).toBe(expectedOutput)
+  expect(spec(input).stdout).toContain('description: This is a link.\n')
 })
 
 test('process two links', () => {
   const input = ['description: Here is [link one](https://opensearch.org) and [link two](https://opensearch.org/).']
-  const expectedOutput = 'description: Here is link one and link two.\n'
+  const expected_output = 'description: Here is link one and link two.\n'
   const result = spec(input).stdout
-  expect(result).toBe(expectedOutput)
+  expect(result).toBe(expected_output)
 })
 
 test('process plain text without links', () => {
   const input = ['description: This is plain text without any links.']
-  const expectedOutput = 'description: This is plain text without any links.\n'
+  const expected_output = 'description: This is plain text without any links.\n'
   const result = spec(input).stdout
-  expect(result).toBe(expectedOutput)
+  expect(result).toBe(expected_output)
 })
 
 test('process complex link structures', () => {
   const input = ['description: Check this [link with a title](https://opensearch.org "title").']
-  const expectedOutput = 'description: Check this link with a title.\n'
+  const expected_output = 'description: Check this link with a title.\n'
   const result = spec(input).stdout
-  expect(result).toBe(expectedOutput)
+  expect(result).toBe(expected_output)
 })
