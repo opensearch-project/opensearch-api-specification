@@ -1,0 +1,57 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the prediction of new data with trained model.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+prologues:
+  - path: _plugins/_ml/_train/{algorithm_name}
+    id: train_model
+    method: POST
+    parameters:
+      algorithm_name: KMEANS
+    request:
+      payload:
+        parameters:
+          centroids: 3
+          iterations: 10
+          distance_type: COSINE
+        input_query:
+          _source: 
+            - petal_length_in_cm
+            - petal_width_in_cm
+          size: 10000
+        input_index:
+          - iris_data
+    output:
+      model_id: payload.model_id
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${train_model.model_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Predict trained model.
+    id: predict_trained_model
+    path: /_plugins/_ml/_predict/{algorithm_name}/{model_id}
+    method: POST
+    parameters:
+      algorithm_name: KMEANS
+      model_id: ${train_model.model_id}
+    request:
+      payload:
+        input_query:
+          _source: 
+            - petal_length_in_cm
+            - petal_width_in_cm
+          size: 10000
+        input_index:
+          - iris_data
+    response:
+      status: 200
+      payload:
+        status: COMPLETED
+    output:
+      prediction: payload.prediction_result
