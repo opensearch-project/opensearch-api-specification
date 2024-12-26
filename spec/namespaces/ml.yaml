@@ -127,6 +127,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.train@200'
+  /_plugins/_ml/_train_predict/{algorithm_name}:
+    post:
+      operationId: ml.train_predict.0
+      x-operation-group: ml.train_predict
+      description: Trains a model and predicts against the same training dataset.
+      parameters:
+        - $ref: '#/components/parameters/ml.train_predict::path.algorithm_name'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.train_predict'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.train_predict@200'
   /_plugins/_ml/connectors/_create:
     post:
       operationId: ml.create_connector.0
@@ -275,9 +287,26 @@ components:
                 $ref: '../schemas/ml._common.yaml#/components/schemas/InputQuery'
               input_index:
                 type: array
+                description: The input index.
                 items:
                   type: string
+    ml.train_predict:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/TrainParameters'
+              input_query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/InputQuery'
+              input_index:
+                type: array
                 description: The input index.
+                items:
+                  type: string
+              input_data:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/PredictionResult'
     ml.create_connector:
       content:
         application/json:
@@ -416,6 +445,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/TrainResponse'
+    ml.train_predict@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/TrainPredictResponse'
     ml.create_connector@200:
       content:
         application/json:
@@ -492,6 +526,12 @@ components:
       schema:
         type: string
     ml.train::path.algorithm_name:
+      name: algorithm_name
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.train_predict::path.algorithm_name:
       name: algorithm_name
       in: path
       required: true

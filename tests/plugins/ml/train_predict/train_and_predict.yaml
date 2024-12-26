@@ -1,0 +1,92 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test training a model, then immediately predict against the same training dataset.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+prologues:
+  - path: /_bulk
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: test_data}}
+        - {k1: 5.1, k2: 3.5, k3: 1.4}
+        - {index: {_index: test_data}}
+        - {k1: 4.9, k2: 3.1, k3: 1.4}
+        - {index: {_index: test_data}}
+        - {k1: 4.7, k2: 3.2, k3: 1.3}
+        - {index: {_index: test_data}}
+  - path: /test_data/_refresh
+    method: POST
+epilogues:
+  - path: /test_data
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Train and predict with indexed data.
+    id: train_predict_model
+    path: /_plugins/_ml/_train_predict/{algorithm_name}
+    method: POST
+    parameters:
+      algorithm_name: KMEANS
+    request:
+      payload:
+        parameters:
+          centroids: 3
+          iterations: 10
+          distance_type: COSINE
+        input_query:
+          query:
+            bool:
+              filter:
+                - range:
+                    k1:
+                      gte: 3.9
+                      lte: 4.8
+          size: 10
+        input_index:
+          - test_data
+    response:
+      status: 200
+      payload:
+        status: COMPLETED
+    output:
+      prediction: payload.prediction_result
+  - synopsis: Train and predict with data directly.
+    id: train_predict_model
+    path: /_plugins/_ml/_train_predict/{algorithm_name}
+    method: POST
+    parameters:
+      algorithm_name: KMEANS
+    request:
+      payload:
+        parameters:
+          centroids: 3
+          iterations: 10
+          distance_type: COSINE
+        input_data:
+          column_metas:
+            - name: k1
+              column_type: DOUBLE
+            - name: k2
+              column_type: DOUBLE
+          rows:
+            - values:
+                - column_type: DOUBLE
+                  value: 1.01
+                - column_type: DOUBLE
+                  value: 2.01
+            - values:
+                - column_type: DOUBLE
+                  value: 3.01
+                - column_type: DOUBLE
+                  value: 4.01
+    response:
+      status: 200
+      payload:
+        status: COMPLETED
+    output:
+      prediction: payload.prediction_result
+

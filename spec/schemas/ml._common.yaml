@@ -187,6 +187,16 @@ components:
         framework_type:
           type: string
           description: The framework type.
+    Status:
+      type: string
+      description: The status.
+      enum:
+        - CANCELLED
+        - COMPLETED
+        - COMPLETED_WITH_ERROR
+        - CREATED
+        - FAILED
+        - RUNNING
     PredictResponse:
       type: object
       properties:
@@ -196,8 +206,7 @@ components:
           items:
             $ref: '#/components/schemas/InferenceResults'
         status:
-          type: string
-          description: The status.
+          $ref: '#/components/schemas/Status'
         prediction_result:
           $ref: '#/components/schemas/PredictionResult'
     InferenceResults:
@@ -298,8 +307,7 @@ components:
             - INTEGER
             - STRING
         value:
-          type: integer
-          format: int64
+          type: number
           description: The value.
     InputQuery:
       type: object
@@ -313,6 +321,55 @@ components:
           type: integer
           format: int64
           description: The size of the query.
+        query:
+          $ref: '#/components/schemas/Query'
+    Query:
+      type: object
+      description: The query.
+      properties:
+        bool:
+          $ref: '#/components/schemas/BoolQuery'
+    BoolQuery:
+      type: object
+      description: The boolean query.
+      properties:
+        filter:
+          type: array
+          description: Filter query that appears in matching documents.
+          items:
+            $ref: '#/components/schemas/Filter'
+    Filter:
+      type: object
+      description: The filter element.
+      properties:
+        range:
+          $ref: '#/components/schemas/Range'
+    Range:
+      type: object
+      description: The filter range.
+      properties:
+        k1:
+          $ref: '#/components/schemas/Key'
+        k2:
+          $ref: '#/components/schemas/Key'
+        k3:
+          $ref: '#/components/schemas/Key'
+    Key:
+      type: object
+      description: The key.
+      properties:
+        gte:
+          type: number
+          description: Greater than or equal to.
+        lte:
+          type: number
+          description: Less than or equal to.
+        gt:
+          type: number
+          description: Greater than.
+        lt:
+          type: number
+          description: Less than.
     TrainParameters:
       type: object
       properties:
@@ -337,8 +394,16 @@ components:
         model_id:
           $ref: '_common.yaml#/components/schemas/Name'
         status:
-          type: string
-          description: The status.
+          $ref: '#/components/schemas/Status'
+      required:
+        - status
+    TrainPredictResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        prediction_result:
+          $ref: '#/components/schemas/PredictionResult'
       required:
         - status
     ModelGroupRegistration:
@@ -390,9 +455,11 @@ components:
           type: string
           enum:
             - CANCELLED
+            - CANCELLING
             - COMPLETED
             - COMPLETED_WITH_ERROR
             - CREATED
+            - EXPIRED
             - FAILED
             - RUNNING
         task_type:
