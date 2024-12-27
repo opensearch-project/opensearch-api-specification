@@ -41,11 +41,16 @@ export default class KeepDescriptions {
       if (line.match(/^[\s]+((description|x-deprecation-message): \|)/)) {
         inside_text = true
       } else if (line.match(/^[\s]+((description|x-deprecation-message):)[\s]+/)) {
-        fs.writeSync(writer, this.prune_vars(this.prune(line, /(description|x-deprecation-message):/, ' ')))
+        let cleaned_line = this.prune(line, /(description|x-deprecation-message):/, ' ')
+        cleaned_line = this.prune_vars(cleaned_line)
+        cleaned_line = this.remove_links(cleaned_line)
+        fs.writeSync(writer, cleaned_line)
       } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
         inside_text = false
       } else if (inside_text) {
-        fs.writeSync(writer, this.prune_vars(line))
+        let cleaned_line = this.remove_links(line)
+        cleaned_line = this.prune_vars(cleaned_line)
+        fs.writeSync(writer, cleaned_line)
       }
       if (line.length > 0) {
         fs.writeSync(writer, "\n")
@@ -60,6 +65,13 @@ export default class KeepDescriptions {
   prune(line: string, regex: RegExp, char: string): string {
     return line.replace(regex, (match) => {
       return Array(match.length + 1).join(char)
+    })
+  }
+
+  remove_links(line: string): string {
+    return line.replace(/\[([^\]]+)\]\([^)]+\)/g, (match, p1) => {
+      const spaces = ' '.repeat(match.length - p1.length - 1)
+      return ' ' + p1 + spaces
     })
   }
 }
