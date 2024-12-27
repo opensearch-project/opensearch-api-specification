@@ -1,28 +1,18 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test the prediction of new data.
+description: Test the undeployment of specific models from specific nodes and a model from all nodes.
 distributions:
   excluded:
     - amazon-managed
     - amazon-serverless
+version: '>= 2.11'
 prologues:
   - path: /_cluster/settings
     method: PUT
     request:
       payload:
         persistent:
-          plugins.ml_commons.only_run_on_ml_node: false
-          plugins.ml_commons.model_access_control_enabled: true
-          plugins.ml_commons.native_memory_threshold: 99
-  - path: /_plugins/_ml/model_groups/_register
-    id: create_model_group
-    method: POST
-    request:
-      payload:
-        name: NLP_Group
-        description: Model group for NLP models.
-    output:
-      test_model_group_id: payload.model_group_id
+          plugins.ml_commons.allow_custom_deployment_plan: true
   - path: /_plugins/_ml/models/_register
     id: register_model
     method: POST
@@ -47,7 +37,7 @@ prologues:
     output:
       model_id: payload.model_id
   - path: /_plugins/_ml/models/{model_id}/_deploy
-    id: deploy_model
+    id: deploy_model   
     method: POST
     parameters:
       model_id: ${get_completed_register_model_task.model_id}
@@ -65,6 +55,7 @@ prologues:
         - path: payload.state
           equal: COMPLETED
     output:
+      node_id: payload.worker_node[0]
       model_id: payload.model_id
 epilogues:
   - path: /_plugins/_ml/models/{model_id}/_undeploy
@@ -77,30 +68,22 @@ epilogues:
       model_id: ${get_completed_register_model_task.model_id}
     method: DELETE
     status: [200, 404]
-  - path: /_plugins/_ml/model_groups/{model_group_id}
-    method: DELETE
-    status: [200, 404]
-    parameters:
-      model_group_id: ${create_model_group.test_model_group_id}
-chapters:
-  - synopsis: Predict new data.
-    id: predict_data
-    path: /_plugins/_ml/models/{model_id}/_predict
+chapters:  
+  - synopsis: Undeploy specific models from specific nodes.
+    path: /_plugins/_ml/models/_undeploy
+    method: POST
+    request:
+      payload:
+        node_ids:
+          - ${get_completed_deploy_model_task.node_id}
+        model_ids: 
+          - ${get_completed_register_model_task.model_id}
+    response:
+      status: 200
+  - synopsis: Undeploy a model from all nodes.
+    path: /_plugins/_ml/models/{model_id}/_undeploy
     method: POST
     parameters:
       model_id: ${get_completed_register_model_task.model_id}
-    request:
-      payload:
-        query_text: The best selling book series in history is Harry Potter
-        text_docs:
-          - Harry Potter is written by J.K. Rowling
-          - The Great Gatsby is a story of wealth and tragedy
-          - The Lord of the Rings is an epic high fantasy novel
-          - The best selling book series in history is Harry Potter
     response:
       status: 200
-      payload:
-        inference_results:
-          - output:
-              - data:
-                  - 101

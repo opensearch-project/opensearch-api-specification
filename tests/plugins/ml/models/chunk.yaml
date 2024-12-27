@@ -1,12 +1,10 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
-description: Test deprecated meta and chunk APIs for model creation and chunk upload.
+description: Test deprecated chunk API for chunk upload.
 distributions:
   excluded:
     - amazon-managed
     - amazon-serverless
-warnings:
-  multiple-paths-detected: false
 prologues:
   - path: /_cluster/settings
     method: PUT
@@ -14,16 +12,8 @@ prologues:
       payload:
         persistent:
           plugins.ml_commons.allow_registering_model_via_local_file: true
-epilogues:
-  - path: /_plugins/_ml/models/{model_id}
-    parameters:
-      model_id: ${model_metadata.model_id}
-    method: DELETE
-    status: [200, 404]
-chapters:
-  - synopsis: Create model metadata.
+  - path: /_plugins/_ml/models/meta
     id: model_metadata
-    path: /_plugins/_ml/models/meta
     method: POST
     request:
       payload:
@@ -37,10 +27,15 @@ chapters:
           model_type: bert
           embedding_dimension: 384
           framework_type: sentence_transformers
-    response:
-      status: 200
     output:
       model_id: payload.model_id
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${model_metadata.model_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
   - synopsis: Upload chunk 0.
     path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
     method: POST
