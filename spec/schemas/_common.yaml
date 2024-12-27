@@ -1060,20 +1060,23 @@ components:
           description: |-
             The total number of non-deleted documents across all primary shards assigned to the selected nodes.
             This number is based on documents in Lucene segments and may include documents from nested fields.
-          type: number
+          type: integer
+          format: int64
         deleted:
           description: |-
             The total number of deleted documents across all primary shards assigned to the selected nodes.
             This number is based on the number of documents stored in Lucene segments.
             OpenSearch reclaims the disk space previously occupied by the deleted Lucene documents when a segment is merged.
-          type: number
+          type: integer
+          format: int64
       required:
         - count
     FielddataStats:
       type: object
       properties:
         evictions:
-          type: number
+          type: integer
+          format: int64
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
@@ -1100,16 +1103,20 @@ components:
           description: |-
             The total number of entries added to the query cache across all shards assigned to the selected nodes.
             This number includes all current and evicted entries.
-          type: number
+          type: integer
+          format: int64
         cache_size:
           description: The total number of entries currently stored in the query cache across all shards assigned to the selected nodes.
-          type: number
+          type: integer
+          format: int64
         evictions:
           description: The total number of query cache evictions across all shards assigned to the selected nodes.
-          type: number
+          type: integer
+          format: int64
         hit_count:
           description: The total number of query cache hits across all shards assigned to the selected nodes.
-          type: number
+          type: integer
+          format: int64
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
@@ -1117,10 +1124,12 @@ components:
           $ref: '#/components/schemas/ByteCount'
         miss_count:
           description: The total number of query cache misses across all shards assigned to the selected nodes.
-          type: number
+          type: integer
+          format: int64
         total_count:
           description: The total number of hits and misses stored in the query cache across all shards assigned to the selected nodes.
-          type: number
+          type: integer
+          format: int64
       required:
         - cache_count
         - cache_size
@@ -1164,13 +1173,16 @@ components:
       properties:
         failed:
           description: The number of failed upload syncs to the remote translog store.
-          type: number
+          type: integer
+          format: int64
         started:
           description: The number of upload syncs to the remote translog store that have started.
-          type: number
+          type: integer
+          format: int64
         succeeded:
           description: The number of successful upload syncs to the remote translog store.
-          type: number
+          type: integer
+          format: int64
       required:
         - failed
         - started
@@ -1225,7 +1237,6 @@ components:
           $ref: '#/components/schemas/RemoteStoreUploadDownloadStats'
       required:
         - max_refresh_time_lag_in_millis
-        - pressure
         - refresh_size_lag
         - total_time_spent_in_millis
         - total_upload_size
@@ -1261,7 +1272,8 @@ components:
       properties:
         total_rejections:
           description: The total number of requests rejected due to segment store upload backpressure. 
-          type: number
+          type: integer
+          format: int64
       required:
         - total_rejections
     RemoteStoreUploadRefreshSizeLagStats:
@@ -1300,24 +1312,42 @@ components:
         - total_download_size
         - total_time_spent_in_millis
     SegmentReplicationStats:
-      type: object
-      properties:
-        max_bytes_behind:
-          $ref: '#/components/schemas/ByteCount'
-        max_replication_lag:
-          $ref: '#/components/schemas/ByteCount'
-        total_bytes_behind:
-          $ref: '#/components/schemas/ByteCount'
-      required:
-        - max_bytes_behind
-        - max_replication_lag
-        - total_bytes_behind
+      x-version-added: 2.10.0
+      oneOf:
+        - x-version-added: 2.10.0
+          x-version-removed: 2.12.0
+          type: object
+          properties:
+            max_bytes_behind:
+              $ref: '#/components/schemas/HumanReadableByteCount'
+            max_replication_lag:
+              $ref: '#/components/schemas/Duration'
+            total_bytes_behind:
+              $ref: '#/components/schemas/HumanReadableByteCount'
+          required:
+            - max_bytes_behind
+            - max_replication_lag
+            - total_bytes_behind
+        - x-version-added: 2.12.0
+          type: object
+          properties:
+            max_bytes_behind:
+              $ref: '#/components/schemas/ByteCount'
+            max_replication_lag:
+              $ref: '#/components/schemas/DurationValueUnitMillis'
+            total_bytes_behind:
+              $ref: '#/components/schemas/ByteCount'
+          required:
+            - max_bytes_behind
+            - max_replication_lag
+            - total_bytes_behind
     SegmentsStats:
       type: object
       properties:
         count:
           description: The total number of segments across all shards assigned to the selected nodes.
-          type: number
+          type: integer
+          format: int32
         doc_values_memory:
           $ref: '#/components/schemas/HumanReadableByteCount'
         doc_values_memory_in_bytes:
@@ -1344,7 +1374,7 @@ components:
           $ref: '#/components/schemas/ByteCount'
         max_unsafe_auto_id_timestamp:
           description: The Unix timestamp, in milliseconds, of the most recently retried indexing request.
-          type: number
+          $ref: '#/components/schemas/EpochTimeUnitMillis'
         memory:
           description: The total amount of memory used for segments across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/HumanReadableByteCount'
@@ -1390,6 +1420,7 @@ components:
         remote_store:
           $ref: '#/components/schemas/RemoteStoreStats'
         segment_replication:
+          x-version-added: 2.10.0
           $ref: '#/components/schemas/SegmentReplicationStats'
       required:
         - count
@@ -1634,9 +1665,11 @@ components:
       type: object
       properties:
         periodic:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
         total_time:
           $ref: '#/components/schemas/Duration'
         total_time_in_millis:
@@ -1649,25 +1682,29 @@ components:
       type: object
       properties:
         total:
-          type: number
+          type: integer
+          format: int64
         getTime:
           $ref: '#/components/schemas/Duration'
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         exists_total:
-          type: number
+          type: integer
+          format: int64
         exists_time:
           $ref: '#/components/schemas/Duration'
         exists_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         missing_total:
-          type: number
+          type: integer
+          format: int64
         missing_time:
           $ref: '#/components/schemas/Duration'
         missing_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         current:
-          type: number
+          type: integer
+          format: int64
       required:
         - current
         - exists_time_in_millis
@@ -1680,25 +1717,31 @@ components:
       type: object
       properties:
         index_total:
-          type: number
+          type: integer
+          format: int64
         index_time:
           $ref: '#/components/schemas/Duration'
         index_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         index_current:
-          type: number
+          type: integer
+          format: int64
         index_failed:
-          type: number
+          type: integer
+          format: int64
         delete_total:
-          type: number
+          type: integer
+          format: int64
         delete_time:
           $ref: '#/components/schemas/Duration'
         delete_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         delete_current:
-          type: number
+          type: integer
+          format: int64
         noop_update_total:
-          type: number
+          type: integer
+          format: int64
         is_throttled:
           type: boolean
         throttle_time:
@@ -1727,21 +1770,25 @@ components:
       type: object
       properties:
         current:
-          type: number
+          type: integer
+          format: int64
         current_docs:
-          type: number
+          type: integer
+          format: int64
         current_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
         current_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
         total:
-          type: number
+          type: integer
+          format: int64
         total_auto_throttle:
           $ref: '#/components/schemas/HumanReadableByteCount'
         total_auto_throttle_in_bytes:
           $ref: '#/components/schemas/ByteCount'
         total_docs:
-          type: number
+          type: integer
+          format: int64
         total_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
         total_size_in_bytes:
@@ -1759,7 +1806,8 @@ components:
         total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         unreferenced_file_cleanups_performed:
-          type: number
+          type: integer
+          format: int64
       required:
         - current
         - current_docs
@@ -1775,9 +1823,11 @@ components:
       type: object
       properties:
         current_as_source:
-          type: number
+          type: integer
+          format: int64
         current_as_target:
-          type: number
+          type: integer
+          format: int64
         throttle_time:
           $ref: '#/components/schemas/Duration'
         throttle_time_in_millis:
@@ -1790,15 +1840,18 @@ components:
       type: object
       properties:
         external_total:
-          type: number
+          type: integer
+          format: int64
         external_total_time:
           $ref: '#/components/schemas/Duration'
         external_total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         listeners:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
         total_time:
           $ref: '#/components/schemas/Duration'
         total_time_in_millis:
@@ -1813,15 +1866,18 @@ components:
       type: object
       properties:
         evictions:
-          type: number
+          type: integer
+          format: int64
         hit_count:
-          type: number
+          type: integer
+          format: int64
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
         memory_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
         miss_count:
-          type: number
+          type: integer
+          format: int64
       required:
         - evictions
         - hit_count
@@ -1831,11 +1887,13 @@ components:
       type: object
       properties:
         open_contexts:
-          description: The number of open search contexts. 
-          type: number
+          description: The number of open search contexts.
+          type: integer
+          format: int64
         query_current:
-          description: The number of currently running shard query operations. 
-          type: number
+          description: The number of currently running shard query operations.
+          type: integer
+          format: int64
         query_time:
           description: The total amount of time taken to complete all shard query operations. 
           $ref: '#/components/schemas/Duration'
@@ -1844,10 +1902,12 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         query_total:
           description: The total number of shard query operations.
-          type: number
+          type: integer
+          format: int64
         concurrent_query_total:
-          description: The total number of query operations using concurrent segment search. 
-          type: number
+          description: The total number of query operations using concurrent segment search.
+          type: integer
+          format: int64
         concurrent_query_time:
           $ref: '#/components/schemas/Duration'
         concurrent_query_time_in_millis:
@@ -1855,13 +1915,16 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         concurrent_query_current:
           description: The number of currently running query operations using concurrent segment search.
-          type: number
+          type: integer
+          format: int64
         concurrent_avg_slice_count:
           description: The average slice count of all search requests. This is computed as the total slice count divided by the total number of concurrent search requests.
-          type: number
+          type: integer
+          format: int64
         fetch_current:
-          description: The number of currently running shard fetch operations. 
-          type: number
+          description: The number of currently running shard fetch operations.
+          type: integer
+          format: int64
         fetch_time:
           description: The total amount of time taken to complete all shard fetch operations.
           $ref: '#/components/schemas/Duration'
@@ -1870,10 +1933,12 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         fetch_total:
           description: The total number of shard fetch operations.
-          type: number
+          type: integer
+          format: int64
         scroll_current:
           description: The number of shard scroll operations that are currently running.
-          type: number
+          type: integer
+          format: int64
         scroll_time:
           description: The total amount of time taken to complete all shard scroll operations.
           $ref: '#/components/schemas/Duration'
@@ -1882,21 +1947,25 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
-          type: number
+          type: integer
+          format: int64
         point_in_time_total:
-          description: The total number of shard Point in Time (PIT) contexts created (completed and active) since the node last restarted. 
-          type: number
+          description: The total number of shard Point in Time (PIT) contexts created (completed and active) since the node last restarted.
+          type: integer
+          format: int64
         point_in_time_time:
           $ref: '#/components/schemas/Duration'
         point_in_time_time_in_millis:
           description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         point_in_time_current:
-          description: The number of currently open shard PIT contexts. 
-          type: number
+          description: The number of currently open shard PIT contexts.
+          type: integer
+          format: int64
         suggest_current:
-          description: The number of currently running shard suggest operations. 
-          type: number
+          description: The number of currently running shard suggest operations.
+          type: integer
+          format: int64
         suggest_time:
           description: The total amount of time take to complete all shard suggest operations.
           $ref: '#/components/schemas/Duration'
@@ -1904,10 +1973,12 @@ components:
           description: The total amount of time taken to complete all shard suggest operations, in milliseconds. 
           $ref: '#/components/schemas/DurationValueUnitMillis'
         suggest_total:
-          description: The total number of shard suggest operations. 
-          type: number
+          description: The total number of shard suggest operations.
+          type: integer
+          format: int64
         search_idle_reactivate_count_total:
-          type: number
+          type: integer
+          format: int64
         request:
           type: object
           description: Statistics related to coordinator search operations for the node. 
@@ -1934,9 +2005,11 @@ components:
       type: object
       properties:
         earliest_last_modified_age:
-          type: number
+          type: integer
+          format: int64
         operations:
-          type: number
+          type: integer
+          format: int32
         remote_store:
           $ref: '#/components/schemas/RemoteStoreTranslogStats'
         size:
@@ -1944,7 +2017,8 @@ components:
         size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
         uncommitted_operations:
-          type: number
+          type: integer
+          format: int32
         uncommitted_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
         uncommitted_size_in_bytes:
@@ -1963,16 +2037,20 @@ components:
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'    
         current:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
     WarmerStats:
       type: object
       properties:
         current:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
         total_time:
           $ref: '#/components/schemas/Duration'
         total_time_in_millis:
