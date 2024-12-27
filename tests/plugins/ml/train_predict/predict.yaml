@@ -11,14 +11,15 @@ prologues:
     request:
       content_type: application/x-ndjson
       payload:
-        - {index: {_index: iris_data}}
-        - {sepal_length_in_cm: 5.1, sepal_width_in_cm: 3.5, petal_length_in_cm: 1.4, petal_width_in_cm: 0.2, species: setosa}
-        - {index: {_index: iris_data}}
-        - {sepal_length_in_cm: 4.9, sepal_width_in_cm: 3.1, petal_length_in_cm: 1.4, petal_width_in_cm: 0.2, species: setosa}
-        - {index: {_index: iris_data}}
-        - {sepal_length_in_cm: 4.7, sepal_width_in_cm: 3.2, petal_length_in_cm: 1.3, petal_width_in_cm: 0.2, species: setosa}
-        - {index: {_index: iris_data}}
-  - path: /iris_data/_refresh
+        - {index: {_index: books_data}}
+        - {pages: 320, price: 24.99, sales_first_month: 15000, average_rating: 4.5, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 450, price: 29.99, sales_first_month: 45000, average_rating: 4.8, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 280, price: 19.99, sales_first_month: 8000, average_rating: 3.9, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 380, price: 27.99, sales_first_month: 25000, average_rating: 4.2, publication_year: 2022}
+  - path: /books_data/_refresh
     method: POST
   - path: _plugins/_ml/_train/{algorithm_name}
     id: train_model
@@ -33,11 +34,12 @@ prologues:
           distance_type: COSINE
         input_query:
           _source: 
-            - petal_length_in_cm
-            - petal_width_in_cm
+            - average_rating
+            - price
+            - sales_first_month
           size: 10000
         input_index:
-          - iris_data
+          - books_data
     output:
       model_id: payload.model_id
 epilogues:
@@ -46,12 +48,11 @@ epilogues:
       model_id: ${train_model.model_id}
     method: DELETE
     status: [200, 404]
-  - path: /iris_data
+  - path: /books_data
     method: DELETE
     status: [200, 404]
 chapters:
   - synopsis: Predict trained model.
-    id: predict_trained_model
     path: /_plugins/_ml/_predict/{algorithm_name}/{model_id}
     method: POST
     parameters:
@@ -61,14 +62,13 @@ chapters:
       payload:
         input_query:
           _source: 
-            - petal_length_in_cm
-            - petal_width_in_cm
+            - average_rating
+            - price
+            - sales_first_month
           size: 10000
         input_index:
-          - iris_data
+          - books_data
     response:
       status: 200
       payload:
         status: COMPLETED
-    output:
-      prediction: payload.prediction_result

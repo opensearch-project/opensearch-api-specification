@@ -11,17 +11,18 @@ prologues:
     request:
       content_type: application/x-ndjson
       payload:
-        - {index: {_index: test_data}}
-        - {k1: 5.1, k2: 3.5, k3: 1.4}
-        - {index: {_index: test_data}}
-        - {k1: 4.9, k2: 3.1, k3: 1.4}
-        - {index: {_index: test_data}}
-        - {k1: 4.7, k2: 3.2, k3: 1.3}
-        - {index: {_index: test_data}}
-  - path: /test_data/_refresh
+        - {index: {_index: books_data}}
+        - {pages: 320, k1: 24.99, sales_first_month: 15000, average_rating: 4.5, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 450, k1: 29.99, sales_first_month: 45000, average_rating: 4.8, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 280, k1: 19.99, sales_first_month: 8000, average_rating: 3.9, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 380, k1: 27.99, sales_first_month: 25000, average_rating: 4.2, publication_year: 2022}
+  - path: /books_data/_refresh
     method: POST
 epilogues:
-  - path: /test_data
+  - path: /books_data
     method: DELETE
     status: [200, 404]
 chapters:
@@ -43,17 +44,15 @@ chapters:
               filter:
                 - range:
                     k1:
-                      gte: 3.9
-                      lte: 4.8
+                      gte: 15.99
+                      lte: 25.99
           size: 10
         input_index:
-          - test_data
+          - books_data
     response:
       status: 200
       payload:
         status: COMPLETED
-    output:
-      prediction: payload.prediction_result
   - synopsis: Train and predict with data directly.
     id: train_predict_model
     path: /_plugins/_ml/_train_predict/{algorithm_name}
@@ -70,23 +69,20 @@ chapters:
           column_metas:
             - name: k1
               column_type: DOUBLE
-            - name: k2
+            - name: average_rating
               column_type: DOUBLE
           rows:
             - values:
                 - column_type: DOUBLE
-                  value: 1.01
+                  value: 24.99
                 - column_type: DOUBLE
-                  value: 2.01
+                  value: 29.99
             - values:
                 - column_type: DOUBLE
-                  value: 3.01
+                  value: 4.5
                 - column_type: DOUBLE
-                  value: 4.01
+                  value: 4.8
     response:
       status: 200
       payload:
         status: COMPLETED
-    output:
-      prediction: payload.prediction_result
-
