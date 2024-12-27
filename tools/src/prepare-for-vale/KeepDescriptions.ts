@@ -70,8 +70,8 @@ export default class KeepDescriptions {
 
   remove_links(line: string): string {
     return line.replace(/\[([^\]]+)\]\([^)]+\)/g, (match, p1) => {
-      const spaces = ' '.repeat(match.length - p1.length-1);
-      return ' ' + p1 + spaces;
-    });
+      const spaces = ' '.repeat(match.length - p1.length - 1)
+      return ' ' + p1 + spaces
+    })
   }
 }
