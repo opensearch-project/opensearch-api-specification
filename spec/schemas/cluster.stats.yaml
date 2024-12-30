@@ -6,29 +6,6 @@ info:
 paths: {}
 components:
   schemas:
-    StatsResponseBase:
-      allOf:
-        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
-        - type: object
-          properties:
-            cluster_name:
-              $ref: '_common.yaml#/components/schemas/Name'
-            cluster_uuid:
-              $ref: '_common.yaml#/components/schemas/Uuid'
-            indices:
-              $ref: '#/components/schemas/ClusterIndices'
-            nodes:
-              $ref: '#/components/schemas/ClusterNodes'
-            status:
-              $ref: '_common.yaml#/components/schemas/HealthStatus'
-            timestamp:
-              description: Unix timestamp, in milliseconds, for the last time the cluster statistics were refreshed.
-              type: number
-          required:
-            - cluster_name
-            - cluster_uuid
-            - status
-            - timestamp
     ClusterIndices:
       type: object
       properties:
@@ -38,7 +15,8 @@ components:
           $ref: '_common.yaml#/components/schemas/CompletionStats'
         count:
           description: Total number of indexes with shards assigned to selected nodes.
-          type: number
+          type: integer
+          format: int64
         docs:
           $ref: '_common.yaml#/components/schemas/DocStats'
         fielddata:
@@ -117,22 +95,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
         count:
           description: The number of occurrences of the field type in selected nodes.
-          type: number
+          type: integer
+          format: int32
         index_count:
           description: The number of indexes containing the field type in selected nodes.
-          type: number
-        indexed_vector_count:
-          description: For `dense_vector` field types, number of indexed vector types in selected nodes.
-          type: number
-        indexed_vector_dim_max:
-          description: For `dense_vector` field types, the maximum dimension of all indexed vector types in selected nodes.
-          type: number
-        indexed_vector_dim_min:
-          description: For `dense_vector` field types, the minimum dimension of all indexed vector types in selected nodes.
-          type: number
-        script_count:
-          description: The number of fields that declare a script.
-          type: number
+          type: integer
+          format: int32
       required:
         - count
         - index_count
@@ -144,21 +112,27 @@ components:
           $ref: '#/components/schemas/ClusterIndicesShardsIndex'
         primaries:
           description: Number of primary shards assigned to selected nodes.
-          type: number
+          type: integer
+          format: int32
         replication:
           description: Ratio of replica shards to primary shards across all selected nodes.
-          type: number
+          type: integer
+          format: int32
         total:
           description: Total number of shards assigned to selected nodes.
-          type: number
+          type: integer
+          format: int32
     ClusterIndicesShardsIndex:
       type: object
       properties:
         primaries:
+          description: Contains statistics about the number of primary shards assigned to selected nodes.
           $ref: '#/components/schemas/ClusterShardMetrics'
         replication:
+          description: Contains statistics about the number of replication shards assigned to selected nodes.
           $ref: '#/components/schemas/ClusterShardMetrics'
         shards:
+          description: Contains statistics about the number of shards assigned to selected nodes.
           $ref: '#/components/schemas/ClusterShardMetrics'
       required:
         - primaries
@@ -170,12 +144,15 @@ components:
         avg:
           description: Mean number of shards in an index, counting only shards assigned to selected nodes.
           type: number
+          format: double
         max:
           description: Maximum number of shards in an index, counting only shards assigned to selected nodes.
           type: number
+          format: double
         min:
           description: Minimum number of shards in an index, counting only shards assigned to selected nodes.
           type: number
+          format: double
       required:
         - avg
         - max
@@ -188,26 +165,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldTypes'
-        total_field_count:
-          description: Total number of fields in all non-system indexes.
-          type: number
-        total_deduplicated_field_count:
-          description: Total number of fields in all non-system indexes, accounting for mapping deduplication.
-          type: number
-        total_deduplicated_mapping_size:
-          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
-        total_deduplicated_mapping_size_in_bytes:
-          description: Total size of all mappings, in bytes, after deduplication and compression.
-          $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
         - field_types
     IndicesVersions:
       type: object
       properties:
         index_count:
-          type: number
+          type: integer
+          format: int32
         primary_shard_count:
-          type: number
+          type: integer
+          format: int32
         total_primary_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
         version:
@@ -221,23 +189,29 @@ components:
       type: object
       properties:
         count:
+          description: Contains counts for nodes selected by the request's node filters.
           $ref: '#/components/schemas/ClusterNodeCount'
         discovery_types:
           description: Contains statistics about the discovery types used by selected nodes.
           type: object
           additionalProperties:
-            type: number
+            type: integer
+            format: int32
         fs:
+          description: Contains statistics about file stores by selected nodes.
           $ref: '#/components/schemas/ClusterFileSystem'
         indexing_pressure:
           $ref: '#/components/schemas/IndexingPressure'
         ingest:
           $ref: '#/components/schemas/ClusterIngest'
         jvm:
+          description: Contains statistics about the Java Virtual Machines (JVMs) used by selected nodes.
           $ref: '#/components/schemas/ClusterJvm'
         network_types:
+          description: Contains statistics about the transport and HTTP networks used by selected nodes.
           $ref: '#/components/schemas/ClusterNetworkTypes'
         os:
+          description: Contains statistics about the operating systems used by selected nodes.
           $ref: '#/components/schemas/ClusterOperatingSystem'
         packaging_types:
           description: Contains statistics about OpenSearch distributions installed on selected nodes.
@@ -252,6 +226,7 @@ components:
           items:
             $ref: '_common.yaml#/components/schemas/PluginStats'
         process:
+          description: Contains statistics about processes used by selected nodes.
           $ref: '#/components/schemas/ClusterProcess'
         versions:
           description: Array of OpenSearch versions used on selected nodes.
@@ -262,39 +237,55 @@ components:
       type: object
       properties:
         coordinating_only:
-          type: number
+          type: integer
+          format: int32
         data:
-          type: number
+          type: integer
+          format: int32
         data_cold:
-          type: number
+          type: integer
+          format: int32
         data_content:
-          type: number
+          type: integer
+          format: int32
         data_frozen:
-          type: number
+          type: integer
+          format: int32
         data_hot:
-          type: number
+          type: integer
+          format: int32
         data_warm:
-          type: number
+          type: integer
+          format: int32
         ingest:
-          type: number
+          type: integer
+          format: int32
         master:
-          type: number
+          type: integer
+          format: int32
         cluster_manager:
-          type: number
+          type: integer
+          format: int32
           x-version-added: '2.0'
         ml:
-          type: number
+          type: integer
+          format: int32
         remote_cluster_client:
-          type: number
+          type: integer
+          format: int32
         search:
-          type: number
+          type: integer
+          format: int32
           x-version-added: '2.4'
         total:
-          type: number
+          type: integer
+          format: int32
         transform:
-          type: number
+          type: integer
+          format: int32
         voting_only:
-          type: number
+          type: integer
+          format: int32
       required:
         - coordinating_only
         - data
@@ -390,7 +381,8 @@ components:
       type: object
       properties:
         number_of_pipelines:
-          type: number
+          type: integer
+          format: int32
         processor_stats:
           type: object
           additionalProperties:
@@ -402,11 +394,14 @@ components:
       type: object
       properties:
         count:
-          type: number
+          type: integer
+          format: int64
         current:
-          type: number
+          type: integer
+          format: int64
         failed:
-          type: number
+          type: integer
+          format: int64
         time:
           $ref: '_common.yaml#/components/schemas/Duration'
         time_in_millis:
@@ -427,7 +422,8 @@ components:
           $ref: '#/components/schemas/ClusterJvmMemory'
         threads:
           description: Number of active threads in use by JVM across all selected nodes.
-          type: number
+          type: integer
+          format: int64
         versions:
           description: Contains statistics about the JVM versions used by selected nodes.
           type: array
@@ -464,7 +460,8 @@ components:
           type: boolean
         count:
           description: Total number of selected nodes using JVM.
-          type: number
+          type: integer
+          format: int32
         using_bundled_jdk:
           description: If `true`, a bundled JDK is in use by JVM.
           type: boolean
@@ -493,12 +490,14 @@ components:
           description: Contains statistics about the HTTP network types used by selected nodes.
           type: object
           additionalProperties:
-            type: number
+            type: integer
+            format: int32
         transport_types:
           description: Contains statistics about the transport network types used by selected nodes.
           type: object
           additionalProperties:
-            type: number
+            type: integer
+            format: int32
       required:
         - http_types
         - transport_types
@@ -510,7 +509,8 @@ components:
             Number of processors used to calculate thread pool size across all selected nodes.
             This number can be set with the processors setting of a node and defaults to the number of processors reported by the operating system.
             In both cases, this number will never be larger than 32.
-          type: number
+          type: integer
+          format: int32
         architectures:
           description: Contains statistics about processor architectures (for example, x86_64 or aarch64) used by selected nodes.
           type: array
@@ -518,7 +518,8 @@ components:
             $ref: '#/components/schemas/ClusterOperatingSystemArchitecture'
         available_processors:
           description: Number of processors available to JVM across all selected nodes.
-          type: number
+          type: integer
+          format: int32
         mem:
           $ref: '#/components/schemas/OperatingSystemMemoryInfo'
         names:
@@ -545,7 +546,8 @@ components:
           type: string
         count:
           description: Number of selected nodes using the architecture.
-          type: number
+          type: integer
+          format: int32
       required:
         - arch
         - count
@@ -590,7 +592,8 @@ components:
       properties:
         count:
           description: Number of selected nodes using the operating system.
-          type: number
+          type: integer
+          format: int32
         name:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
@@ -601,7 +604,8 @@ components:
       properties:
         count:
           description: Number of selected nodes using the operating system.
-          type: number
+          type: integer
+          format: int32
         pretty_name:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
@@ -612,7 +616,8 @@ components:
       properties:
         count:
           description: Number of selected nodes using the distribution flavor and file type.
-          type: number
+          type: integer
+          format: int32
         flavor:
           description: Type of OpenSearch distribution. This is always `default`.
           type: string
@@ -649,17 +654,20 @@ components:
           description: |-
             Average number of concurrently open file descriptors.
             Returns `-1` if not supported.
-          type: number
+          type: integer
+          format: int64
         max:
           description: |-
             Maximum number of concurrently open file descriptors allowed across all selected nodes.
             Returns `-1` if not supported.
-          type: number
+          type: integer
+          format: int64
         min:
           description: |-
             Minimum number of concurrently open file descriptors across all selected nodes.
             Returns -1 if not supported.
-          type: number
+          type: integer
+          format: int64
       required:
         - avg
         - max
