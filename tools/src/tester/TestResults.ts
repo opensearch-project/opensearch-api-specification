@@ -28,9 +28,14 @@ export default class TestResults {
 
   evaluated_operations(): Operation[] {
     if (this._evaluated_operations !== undefined) return this._evaluated_operations
-    this._evaluated_operations = _.uniqWith(_.compact(_.flatMap(this._evaluations.evaluations, (evaluation) =>
-      _.map(evaluation.chapters, (chapter) => chapter.operation)
-    )), isEqual)
+
+    this._evaluated_operations = _.uniqWith(_.compact(Object.entries(this._spec.spec().paths).flatMap(([path, ops]) => {
+      return Object.entries(ops as Record<string, any>).map(([method, spec]) => {
+        if (spec['x-ignorable'] !== true) {
+          return { method: method.toUpperCase(), path }
+        }
+      })
+    })), isEqual)
     return this._evaluated_operations
   }
 
@@ -87,3 +92,25 @@ export default class TestResults {
     write_json(file_path, this.test_coverage())
   }
 }
+
+// evaluated_operations(): Operation[] {
+//   if (this._evaluated_operations !== undefined) return this._evaluated_operations;
+
+//   this._evaluated_operations = _.uniqWith(
+//       _.compact(
+//           _.flatMap(this._evaluations.evaluations, (evaluation) =>
+//               _.map(evaluation.chapters, (chapter) => {
+//                 console.log(evaluation);
+//                   const operation = chapter.operation as Record<string, any>;
+//                   if(!operation) return;
+//                   if (operation['x-ignorable'] !== true) {
+//                       return {method: operation.method.toUpperCase(), path: operation.path,};
+//                   }
+//               })
+//           )
+//       ),
+//       isEqual
+//   );
+
+//   return this._evaluated_operations;
+// }
