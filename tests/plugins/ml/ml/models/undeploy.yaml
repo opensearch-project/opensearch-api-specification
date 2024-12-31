@@ -1,10 +1,6 @@
-$schema: ../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
 description: Test the undeployment of specific models from specific nodes and a model from all nodes.
-distributions:
-  excluded:
-    - amazon-managed
-    - amazon-serverless
 version: '>= 2.11'
 prologues:
   - path: /_cluster/settings
@@ -31,9 +27,6 @@ prologues:
     retry:
       count: 3
       wait: 10000
-      until:
-        - path: payload.state
-          equal: COMPLETED
     output:
       model_id: payload.model_id
   - path: /_plugins/_ml/models/{model_id}/_deploy
@@ -51,9 +44,6 @@ prologues:
     retry:
       count: 3
       wait: 10000
-      until:
-        - path: payload.state
-          equal: COMPLETED
     output:
       node_id: payload.worker_node[0]
       model_id: payload.model_id
