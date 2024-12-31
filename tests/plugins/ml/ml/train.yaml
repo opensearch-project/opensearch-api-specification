@@ -1,0 +1,55 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the training of a model synchronously.
+prologues:
+  - path: /_bulk
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: books_data}}
+        - {pages: 320, price: 24.99, sales_first_month: 15000, average_rating: 4.5, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 450, price: 29.99, sales_first_month: 45000, average_rating: 4.8, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 280, price: 19.99, sales_first_month: 8000, average_rating: 3.9, publication_year: 2022}
+        - {index: {_index: books_data}}
+        - {pages: 380, price: 27.99, sales_first_month: 25000, average_rating: 4.2, publication_year: 2022}
+  - path: /books_data/_refresh
+    method: POST
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${train_model.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /books_data
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Train model synchronously.
+    id: train_model
+    path: /_plugins/_ml/_train/{algorithm_name}
+    method: POST
+    parameters:
+      algorithm_name: KMEANS
+    request:
+      payload:
+        parameters:
+          centroids: 3
+          iterations: 10
+          distance_type: COSINE
+        input_query:
+          _source: 
+            - average_rating
+            - price
+            - sales_first_month
+          size: 10000
+        input_index:
+          - books_data
+    response:
+      status: 200
+      payload:
+        status: COMPLETED
+    output:
+      model_id: payload.model_id

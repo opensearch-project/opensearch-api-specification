@@ -187,6 +187,225 @@ components:
         framework_type:
           type: string
           description: The framework type.
+    Status:
+      type: string
+      description: The status.
+      enum:
+        - CANCELLED
+        - COMPLETED
+        - COMPLETED_WITH_ERROR
+        - CREATED
+        - FAILED
+        - RUNNING
+    PredictResponse:
+      type: object
+      properties:
+        inference_results:
+          # Update this once the PR for ML Model APIs (#733) has been merged
+          type: array
+          items:
+            $ref: '#/components/schemas/InferenceResults'
+        status:
+          $ref: '#/components/schemas/Status'
+        prediction_result:
+          $ref: '#/components/schemas/PredictionResult'
+    InferenceResults:
+      type: object
+      properties:
+        output:
+          type: array
+          items:
+            $ref: '#/components/schemas/Output'
+    Output:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The output name.
+        data_type:
+          type: string
+          description: The output data type.
+          enum:
+            - BOOLEAN
+            - FLOAT16
+            - FLOAT32
+            - FLOAT64
+            - INT32
+            - INT64
+            - INT8
+            - STRING
+            - UINT8
+            - UNKNOWN
+        shape:
+          type: array
+          items:
+            type: integer
+            format: int64
+            description: The output shape.
+        data:
+          type: array
+          items:
+            type: number
+            format: double
+            description: The output data.
+        byte_buffer:
+          $ref: '#/components/schemas/ByteBuffer'
+      required:
+        - data
+    ByteBuffer:
+      type: object
+      properties:
+        array:
+          type: string
+          description: The byte buffer array.
+        order:
+          type: string
+          description: The byte buffer order.
+          enum:
+            - BIG_ENDIAN
+            - LITTLE_ENDIAN
+    PredictionResult:
+      type: object
+      properties:
+        column_metas:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnMeta'
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rows'
+    ColumnMeta:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        column_type:
+          type: string
+          description: The column type.
+          enum:
+            - BOOLEAN
+            - DOUBLE
+            - INTEGER
+            - STRING
+    Rows:
+      type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/Values'
+    Values:
+      type: object
+      properties:
+        column_type:
+          type: string
+          description: The column type.
+          enum:
+            - BOOLEAN
+            - DOUBLE
+            - INTEGER
+            - STRING
+        value:
+          type: number
+          description: The value.
+    InputQuery:
+      type: object
+      properties:
+        _source:
+          type: array
+          items:
+            type: string
+          description: The source fields
+        size:
+          type: integer
+          format: int64
+          description: The size of the query.
+        query:
+          $ref: '#/components/schemas/Query'
+    Query:
+      type: object
+      description: The query.
+      properties:
+        bool:
+          $ref: '#/components/schemas/BoolQuery'
+    BoolQuery:
+      type: object
+      description: The Boolean query.
+      properties:
+        filter:
+          type: array
+          description: Filter query that appears in matching documents.
+          items:
+            $ref: '#/components/schemas/Filter'
+    Filter:
+      type: object
+      description: The filter element.
+      properties:
+        range:
+          $ref: '#/components/schemas/Range'
+    Range:
+      type: object
+      description: The filter range.
+      properties:
+        k1:
+          $ref: '#/components/schemas/Key'
+        k2:
+          $ref: '#/components/schemas/Key'
+        k3:
+          $ref: '#/components/schemas/Key'
+    Key:
+      type: object
+      description: The key.
+      properties:
+        gte:
+          type: number
+          description: Greater than or equal to.
+        lte:
+          type: number
+          description: Less than or equal to.
+        gt:
+          type: number
+          description: Greater than.
+        lt:
+          type: number
+          description: Less than.
+    TrainParameters:
+      type: object
+      properties:
+        centroids:
+          type: integer
+          format: int64
+          description: The centroids.
+        iterations:
+          type: integer
+          format: int64
+          description: The iterations.
+        distance_type:
+          type: string
+          description: The distance type.
+          enum:
+            - COSINE
+            - EUCLIDEAN
+            - L1
+    TrainResponse:
+      type: object
+      properties:
+        model_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        status:
+          $ref: '#/components/schemas/Status'
+      required:
+        - status
+    TrainPredictResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        prediction_result:
+          $ref: '#/components/schemas/PredictionResult'
+      required:
+        - status
     ModelGroupRegistration:
       type: object
       properties:
@@ -236,9 +455,11 @@ components:
           type: string
           enum:
             - CANCELLED
+            - CANCELLING
             - COMPLETED
             - COMPLETED_WITH_ERROR
             - CREATED
+            - EXPIRED
             - FAILED
             - RUNNING
         task_type:
