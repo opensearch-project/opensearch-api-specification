@@ -1,10 +1,6 @@
-$schema: ../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
 description: Test the prediction of new data.
-distributions:
-  excluded:
-    - amazon-managed
-    - amazon-serverless
 prologues:
   - path: /_cluster/settings
     method: PUT
@@ -41,9 +37,6 @@ prologues:
     retry:
       count: 3
       wait: 10000
-      until:
-        - path: payload.state
-          equal: COMPLETED
     output:
       model_id: payload.model_id
   - path: /_plugins/_ml/models/{model_id}/_deploy
@@ -61,9 +54,6 @@ prologues:
     retry:
       count: 3
       wait: 10000
-      until:
-        - path: payload.state
-          equal: COMPLETED
     output:
       model_id: payload.model_id
 epilogues:

@@ -1,11 +1,6 @@
-$schema: ../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
-description: Test uploading model chunk.
-distributions:
-  excluded:
-    - amazon-managed
-    - amazon-serverless
-version: '>= 2.11'
+description: Test deprecated chunk API for chunk upload.
 prologues:
   - path: /_cluster/settings
     method: PUT
@@ -13,7 +8,7 @@ prologues:
       payload:
         persistent:
           plugins.ml_commons.allow_registering_model_via_local_file: true
-  - path: /_plugins/_ml/models/_register_meta
+  - path: /_plugins/_ml/models/meta
     id: model_metadata
     method: POST
     request:
@@ -38,7 +33,7 @@ epilogues:
     status: [200, 404]
 chapters:
   - synopsis: Upload chunk 0.
-    path: /_plugins/_ml/models/{model_id}/upload_chunk/{chunk_number}
+    path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
     method: POST
     parameters:
       chunk_number: 0
@@ -51,7 +46,7 @@ chapters:
       payload:
         status: Uploaded
   - synopsis: Upload chunk 1.
-    path: /_plugins/_ml/models/{model_id}/upload_chunk/{chunk_number}
+    path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
     method: POST
     parameters:
       chunk_number: 1
@@ -64,7 +59,7 @@ chapters:
       payload:
         status: Uploaded
   - synopsis: Upload chunk 2.
-    path: /_plugins/_ml/models/{model_id}/upload_chunk/{chunk_number}
+    path: /_plugins/_ml/models/{model_id}/chunk/{chunk_number}
     method: POST
     parameters:
       chunk_number: 2
