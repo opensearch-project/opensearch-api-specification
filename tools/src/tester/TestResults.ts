@@ -28,8 +28,8 @@ export default class TestResults {
 
   evaluated_operations(): Operation[] {
     if (this._evaluated_operations !== undefined) return this._evaluated_operations;
-  
-    const allOperations = _.uniqWith(
+
+    const all_operations = _.uniqWith(
       _.compact(
         _.flatMap(this._evaluations.evaluations, (evaluation) =>
           _.map(evaluation.chapters, (chapter) => chapter.operation)
@@ -37,22 +37,21 @@ export default class TestResults {
       ),
       isEqual
     );
-  
 
-    this._evaluated_operations = allOperations.filter((operation) => {
-      const specPath = this._spec.spec().paths[operation.path];
-      if (!specPath) return true;
+    // Filter operations to exclude paths or methods not in the spec or marked as 'x-ignorable'.
+    this._evaluated_operations = all_operations.filter((operation) => {
+      const spec_path = this._spec.spec().paths[operation.path];
+      if (!spec_path) return true;
 
-      //@ts-ignore
-      const methodSpec = specPath[operation.method.toLowerCase()];
-      if (!methodSpec) return true;
-  
-      return methodSpec['x-ignorable'] !== true;
+      const method_spec = (spec_path as Record<string, any>)[operation.method.toLowerCase()];
+      if (!method_spec) return true;
+
+      return method_spec['x-ignorable'] !== true;
     });
-  
+
     return this._evaluated_operations;
   }
-  
+
 
   unevaluated_operations(): Operation[] {
     if (this._unevaluated_operations !== undefined) return this._unevaluated_operations
@@ -107,25 +106,3 @@ export default class TestResults {
     write_json(file_path, this.test_coverage())
   }
 }
-
-// evaluated_operations(): Operation[] {
-//   if (this._evaluated_operations !== undefined) return this._evaluated_operations;
-
-//   this._evaluated_operations = _.uniqWith(
-//       _.compact(
-//           _.flatMap(this._evaluations.evaluations, (evaluation) =>
-//               _.map(evaluation.chapters, (chapter) => {
-//                 console.log(evaluation);
-//                   const operation = chapter.operation as Record<string, any>;
-//                   if(!operation) return;
-//                   if (operation['x-ignorable'] !== true) {
-//                       return {method: operation.method.toUpperCase(), path: operation.path,};
-//                   }
-//               })
-//           )
-//       ),
-//       isEqual
-//   );
-
-//   return this._evaluated_operations;
-// }
