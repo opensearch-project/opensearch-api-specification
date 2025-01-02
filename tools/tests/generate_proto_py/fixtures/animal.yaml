@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch API
+  description: OpenSearch API
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/parameter___Cat'
+  /animals:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/parameter___Dog'
+      responses:
+        '200':
+          description: A list of animals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/animals___Animal"
+components:
+  parameters:
+    parameter___Cat:
+      name: a
+      schema:
+        type: string
+      in: query
+    parameter___Dog:
+      name: b
+      schema:
+        type: string
+      in: query
+  schemas:
+    actions___Bark:
+      type: string
+    actions___Meow:
+      type: string
+    animals___Animal:
+      oneOf:
+        - $ref: '#/components/schemas/animals___Dog'
+        - $ref: '#/components/schemas/animals___Cat'
+    animals___Cat:
+      type: object
+      properties:
+        meow:
+          $ref: '#/components/schemas/actions___Meow'
+    animals___Dog:
+      type: object
+      properties:
+        bark:
+          $ref: '#/components/schemas/actions___Bark'
