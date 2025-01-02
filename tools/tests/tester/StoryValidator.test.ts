@@ -45,6 +45,13 @@ describe('StoryValidator', () => {
       "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$|^\\p{Lu}[\\s\\S]*\\. \\[(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS)\\]$\"")
   })
 
+  test('invalid property', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/invalid_property.yaml')
+    expect(evaluation?.result).toBe('ERROR')
+    expect(evaluation?.message).toBe("Invalid Story: " +
+      "data/prologues/0/retry contains unsupported properties: until")
+  })
+
   test('valid story', () => {
     const evaluation = validate('tools/tests/tester/fixtures/valid_story.yaml')
     expect(evaluation).toBeUndefined()
