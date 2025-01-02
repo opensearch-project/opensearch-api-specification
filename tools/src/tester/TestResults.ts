@@ -27,11 +27,30 @@ export default class TestResults {
   }
 
   evaluated_operations(): Operation[] {
-    if (this._evaluated_operations !== undefined) return this._evaluated_operations
-    this._evaluated_operations = _.uniqWith(_.compact(_.flatMap(this._evaluations.evaluations, (evaluation) =>
-      _.map(evaluation.chapters, (chapter) => chapter.operation)
-    )), isEqual)
-    return this._evaluated_operations
+    if (this._evaluated_operations !== undefined) return this._evaluated_operations;
+
+    const all_operations = _.uniqWith(
+      _.compact(
+        _.flatMap(this._evaluations.evaluations, (evaluation) =>
+          _.map(evaluation.chapters, (chapter) => chapter.operation)
+        )
+      ),
+      isEqual
+    );
+
+    // Filter operations to exclude paths or methods not in the spec or marked as 'x-ignorable'.
+    this._evaluated_operations = all_operations.filter((operation) => {
+      const spec_path = this._spec.spec().paths[operation.path];
+      if (!spec_path) return true;
+
+      const method_spec = (spec_path as Record<string, any>)[operation.method.toLowerCase()];
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (!method_spec) return true;
+
+      return method_spec['x-ignorable'] !== true;
+    });
+
+    return this._evaluated_operations;
   }
 
   unevaluated_operations(): Operation[] {
