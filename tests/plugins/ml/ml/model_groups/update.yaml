@@ -1,0 +1,36 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of model groups.
+version: '>= 2.11'
+prologues:
+  - path: /_plugins/_ml/model_groups/_register
+    id: create_model_group
+    method: POST
+    request:
+      payload:
+        name: NLP_Group
+        description: Model group for NLP models.
+    output:
+      test_model_group_id: payload.model_group_id
+  - path: /_plugins/_ml/model_groups/{model_group_id}
+    method: GET
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+    status: [200, 404]
+epilogues:
+  - path: /_plugins/_ml/model_groups/{model_group_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+chapters:
+  - synopsis: Update model group.
+    path: /_plugins/_ml/model_groups/{model_group_id}
+    method: PUT
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+    request:
+      payload:
+        description: This is the updated description.
+    response:
+      status: 200
