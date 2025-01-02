@@ -53,7 +53,6 @@ export default class TestResults {
     return this._evaluated_operations;
   }
 
-
   unevaluated_operations(): Operation[] {
     if (this._unevaluated_operations !== undefined) return this._unevaluated_operations
     this._unevaluated_operations = this.operations().filter((operation) =>
