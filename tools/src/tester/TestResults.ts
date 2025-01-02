@@ -44,6 +44,7 @@ export default class TestResults {
       if (!spec_path) return true;
 
       const method_spec = (spec_path as Record<string, any>)[operation.method.toLowerCase()];
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!method_spec) return true;
 
       return method_spec['x-ignorable'] !== true;
