@@ -27,17 +27,32 @@ export default class TestResults {
   }
 
   evaluated_operations(): Operation[] {
-    if (this._evaluated_operations !== undefined) return this._evaluated_operations
+    if (this._evaluated_operations !== undefined) return this._evaluated_operations;
+  
+    const allOperations = _.uniqWith(
+      _.compact(
+        _.flatMap(this._evaluations.evaluations, (evaluation) =>
+          _.map(evaluation.chapters, (chapter) => chapter.operation)
+        )
+      ),
+      isEqual
+    );
+  
 
-    this._evaluated_operations = _.uniqWith(_.compact(Object.entries(this._spec.spec().paths).flatMap(([path, ops]) => {
-      return Object.entries(ops as Record<string, any>).map(([method, spec]) => {
-        if (spec['x-ignorable'] !== true) {
-          return { method: method.toUpperCase(), path }
-        }
-      })
-    })), isEqual)
-    return this._evaluated_operations
+    this._evaluated_operations = allOperations.filter((operation) => {
+      const specPath = this._spec.spec().paths[operation.path];
+      if (!specPath) return true;
+
+      //@ts-ignore
+      const methodSpec = specPath[operation.method.toLowerCase()];
+      if (!methodSpec) return true;
+  
+      return methodSpec['x-ignorable'] !== true;
+    });
+  
+    return this._evaluated_operations;
   }
+  
 
   unevaluated_operations(): Operation[] {
     if (this._unevaluated_operations !== undefined) return this._unevaluated_operations
