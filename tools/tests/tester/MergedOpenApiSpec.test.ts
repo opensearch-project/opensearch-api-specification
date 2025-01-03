@@ -21,6 +21,7 @@ describe('merged API spec', () => {
 
     test('paths', () => {
       expect(spec.paths()).toEqual({
+        '/_cluster/nodes/hot_threads': ['get'],
         '/_nodes/{id}': ['get', 'post'],
         '/_superseded/nodes/{id}': ['get'],
         '/cluster_manager': ['get', 'post'],
