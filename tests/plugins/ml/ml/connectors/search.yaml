@@ -1,0 +1,66 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the search of connectors.
+version: '>= 2.11'
+prologues:
+  - path: /_plugins/_ml/connectors/_create
+    id: create_connector
+    method: POST
+    request:
+      payload:
+        name: OpenAI Chat Connector
+        description: The connector to public OpenAI model service for GPT 3.5
+        version: 1
+        protocol: http
+        parameters:
+          endpoint: api.openai.com
+          model: gpt-3.5-turbo
+        credential:
+          openAI_key: test_api_key
+        actions:
+          - action_type: predict
+            method: POST
+            url: https://api.openai.com/v1/chat/completions
+            headers:
+              Authorization: Bearer Key
+            request_body: '{ "model": "model", "messages": "messages" }'
+    output:
+      test_connector_id: payload.connector_id
+epilogues:
+  - path: /_plugins/_ml/connectors/{connector_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      connector_id: ${create_connector.test_connector_id}
+chapters:
+  - synopsis: Search connector.
+    path: /_plugins/_ml/connectors/_search
+    method: GET
+    request:
+      payload:
+        query:
+          match_all: {}
+        size: 1000
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _score: 1
+  - synopsis: Search connector with a connector ID.
+    path: /_plugins/_ml/connectors/_search
+    method: POST
+    request:
+      payload:
+        query:
+          bool:
+            must:
+              - terms:
+                  _id: 
+                    - ${create_connector.test_connector_id}
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _score: 1

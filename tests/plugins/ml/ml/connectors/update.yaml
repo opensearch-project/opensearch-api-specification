@@ -1,23 +1,10 @@
-$schema: ../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../json_schemas/test_story.schema.yaml
 
-description: Test the creation of connectors.
-distributions:
-  excluded:
-    - amazon-managed
-    - amazon-serverless
-version: '>= 2.11'
-epilogues:
-  - path: /_plugins/_ml/connectors/{connector_id}
-    method: DELETE
-    status: [200, 404]
-    parameters:
-      connector_id: ${create_connector.test_connector_id}
-chapters:
-  - synopsis: Create connector.
-    warnings:
-      multiple-paths-detected: false
+description: Test updating a connector.
+version: '>= 2.12'
+prologues:
+  - path: /_plugins/_ml/connectors/_create
     id: create_connector
-    path: /_plugins/_ml/connectors/_create
     method: POST
     request:
       payload:
@@ -37,21 +24,22 @@ chapters:
             headers:
               Authorization: Bearer Key
             request_body: '{ "model": "model", "messages": "messages" }'
-    response:
-      status: 200
     output:
       test_connector_id: payload.connector_id
-  - synopsis: Get connector.
-    path: /_plugins/_ml/connectors/{connector_id}
-    method: GET
-    parameters:
-      connector_id: ${create_connector.test_connector_id}
-    response:
-      status: 200
-  - synopsis: Delete connector.
-    path: /_plugins/_ml/connectors/{connector_id}
+epilogues:
+  - path: /_plugins/_ml/connectors/{connector_id}
     method: DELETE
+    status: [200, 404]
     parameters:
       connector_id: ${create_connector.test_connector_id}
+chapters:
+  - synopsis: Update connector.
+    path: /_plugins/_ml/connectors/{connector_id}
+    method: PUT
+    parameters:
+      connector_id: ${create_connector.test_connector_id}
+    request:
+      payload:
+        name: This is the updated name.
     response:
       status: 200
