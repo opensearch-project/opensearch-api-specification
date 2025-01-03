@@ -24,6 +24,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.get_model_group@200'
+    put:
+      operationId: ml.update_model_group.0
+      x-operation-group: ml.update_model_group
+      x-version-added: '2.9'
+      description: Updates a model group.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_model_group::path.model_group_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_model_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_model_group@200'
     delete:
       operationId: ml.delete_model_group.0
       x-operation-group: ml.delete_model_group
@@ -33,6 +45,27 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_model_group@200'
+  /_plugins/_ml/model_groups/_search:
+    get:
+      operationId: ml.search_model_group.0
+      x-operation-group: ml.search_model_group
+      x-version-added: '2.9'
+      description: Searches for model groups.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_model_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_model_group@200'
+    post:
+      operationId: ml.search_model_group.1
+      x-operation-group: ml.search_model_group
+      x-version-added: '2.9'
+      description: Searches for model groups.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_model_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_model_group@200'
   /_plugins/_ml/models/_register:
     post:
       operationId: ml.register_model.0
@@ -207,6 +240,51 @@ components:
                 description: The add all backend roles.
             required:
               - name
+    ml.update_model_group:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model group name.
+              description:
+                type: string
+                description: The model group description.
+              add_all_backend_roles:
+                type: boolean
+                description: Whether to include all backend roles.
+              model_access_name:
+                type: string
+                description: The model access name
+              backend_roles:
+                type: array
+                items:
+                  type: string
+                description: The backend roles.
+              add_backend_roles:
+                type: array
+                items:
+                  type: string
+                description: The backend roles to add.
+    ml.search_model_group:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of model groups to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Sort'
+                description: The sort order.
     ml.register_model:
       content:
         application/json:
@@ -241,14 +319,16 @@ components:
             properties:
               query:
                 type: object
-                # TODO: Define the query schema
-                description: The query.
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
               size:
                 type: integer
+                format: int64
                 description: The number of models to return.
-            required:
-              - query
-              - size
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Sort'
+                description: The sort order.
     ml.predict:
       content:
         application/json:
@@ -377,6 +457,16 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/ModelGroup'
+    ml.update_model_group@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UpdateModelGroupResponse'
+    ml.search_model_group@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchModelGroupsResponse'
     ml.delete_model_group@200:
       content:
         application/json:
@@ -478,6 +568,12 @@ components:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
   parameters:
     ml.get_model_group::path.model_group_id:
+      name: model_group_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_model_group::path.model_group_id:
       name: model_group_id
       in: path
       required: true
