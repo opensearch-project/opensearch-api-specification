@@ -79,6 +79,7 @@ export type EvaluationWithOutput = {
 
 export enum Result {
   PASSED = 'PASSED',
+  IGNORED = 'IGNORED',
   FAILED = 'FAILED',
   SKIPPED = 'SKIPPED',
   ERROR = 'ERROR',

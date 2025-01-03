@@ -193,6 +193,11 @@ chapters:
   - synopsis: Delete the `books` index.
     path: /{index}
     method: DELETE
+    pending: | # This test is included but marked as pending, meaning it will not be executed. An explanation is provided to clarify why it has been skipped.
+       SSL needs to be configured to trust itself. 
+       For this to work, will need to:
+       1. set reindex.remote.allowlist=localhost:9200 in docker-compose.yml
+       2. setup SSL in a way that the docker instance trusts its own cert
     parameters:
       index: books
 ```

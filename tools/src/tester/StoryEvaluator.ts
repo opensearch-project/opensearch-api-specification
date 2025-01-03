@@ -111,6 +111,10 @@ export default class StoryEvaluator {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
+      if(chapter.pending){
+        evaluations.push({ title, overall: { result: Result.IGNORED, message:  chapter.pending} })
+        continue 
+      }
       if (dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
