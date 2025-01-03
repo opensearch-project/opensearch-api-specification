@@ -1,0 +1,37 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test deprecated meta API for model creation.
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.allow_registering_model_via_local_file: true
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${model_metadata.model_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create model metadata.
+    id: model_metadata
+    path: /_plugins/_ml/models/meta
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+        model_content_hash_value: 123abc
+        total_chunks: 3
+        model_config:
+          all_config: path
+          model_type: bert
+          embedding_dimension: 384
+          framework_type: sentence_transformers
+    response:
+      status: 200
+    output:
+      model_id: payload.model_id
