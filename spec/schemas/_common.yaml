@@ -385,16 +385,19 @@ components:
       description: Time unit for nanoseconds.
       type: integer
       format: int64
+    DurationValueUnitMicros:
+      allOf:
+        - $ref: '#/components/schemas/UnitMicros'
+    UnitMicros:
+      description: Time unit for microseconds.
+      type: integer
+      format: int64
     ScrollId:
       type: string
     Routing:
       type: string
     RoutingInQueryString:
-      oneOf:
-        - type: string
-        - type: array
-          items:
-            type: string
+      $ref: '#/components/schemas/StringOrStringArray'
     DateTime:
       description: |-
         A date and time, either as a string whose format depends on the context (defaulting to ISO_8601) or the
@@ -925,6 +928,12 @@ components:
             $ref: '#/components/schemas/ScrollId'
     TransportAddress:
       type: string
+    StringOrStringArray:
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
     StringifiedInteger:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -2143,11 +2152,7 @@ components:
     HttpHeaders:
       type: object
       additionalProperties:
-        oneOf:
-          - type: string
-          - type: array
-            items:
-              type: string
+        $ref: '#/components/schemas/StringOrStringArray'
     Password:
       type: string
     Username:

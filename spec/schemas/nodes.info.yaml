@@ -22,20 +22,6 @@ components:
         - settings
         - thread_pool
         - transport
-    ResponseBase:
-      allOf:
-        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
-        - type: object
-          properties:
-            cluster_name:
-              $ref: '_common.yaml#/components/schemas/Name'
-            nodes:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/NodeInfo'
-          required:
-            - cluster_name
-            - nodes
     NodeInfo:
       type: object
       properties:
@@ -78,11 +64,12 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/NodeThreadPoolInfo'
+        # NOTE: total_indexing_buffer and total_indexing_buffer_in_bytes inverted according to the standard pattern, this is a bug: https://github.com/opensearch-project/OpenSearch/issues/16910
         total_indexing_buffer:
           description: Total heap allowed to be used to hold recently indexed documents before they must be written to disk. This size is a shared pool across all shards on this node, and is controlled by Indexing Buffer settings.
-          type: number
-        total_indexing_buffer_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
+        total_indexing_buffer_in_bytes:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         transport:
           $ref: '#/components/schemas/NodeInfoTransport'
         transport_address:
@@ -138,7 +125,10 @@ components:
           items:
             type: string
         pid:
-          type: number
+          type: integer
+          format: int32
+        start_time:
+          $ref: '_common.yaml#/components/schemas/DateTime'
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
         version:
@@ -154,9 +144,7 @@ components:
         using_bundled_jdk:
           type: [boolean, 'null']
         using_compressed_ordinary_object_pointers:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         input_arguments:
           type: array
           items:
@@ -201,7 +189,8 @@ components:
         primary_interface:
           $ref: '#/components/schemas/NodeInfoNetworkInterface'
         refresh_interval:
-          type: number
+          type: integer
+          format: int32
       required:
         - primary_interface
         - refresh_interval
@@ -226,14 +215,18 @@ components:
           type: string
         available_processors:
           description: Number of processors available to the Java virtual machine
-          type: number
+          type: integer
+          format: int32
         allocated_processors:
           description: The number of processors actually used to calculate thread pool size. This number can be set with the `node.processors` setting of a node and defaults to the number of processors reported by the OS.
-          type: number
+          type: integer
+          format: int32
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         pretty_name:
           $ref: '_common.yaml#/components/schemas/Name'
+        refresh_interval:
+          $ref: '_common.yaml#/components/schemas/Duration'
         refresh_interval_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         version:
@@ -255,15 +248,19 @@ components:
         cache_size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
         cores_per_socket:
-          type: number
+          type: integer
+          format: int32
         mhz:
-          type: number
+          type: integer
+          format: int32
         model:
           type: string
         total_cores:
-          type: number
+          type: integer
+          format: int32
         total_sockets:
-          type: number
+          type: integer
+          format: int32
         vendor:
           type: string
       required:
@@ -290,10 +287,13 @@ components:
       properties:
         id:
           description: Process identifier (PID)
-          type: number
+          type: integer
+          format: int64
         mlockall:
           description: Indicates if the process address space has been successfully locked in memory
           type: boolean
+        refresh_interval:
+          $ref: '_common.yaml#/components/schemas/Duration'
         refresh_interval_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
       required:
@@ -352,11 +352,11 @@ components:
         election:
           $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
         initial_cluster_manager_nodes:
-          type: string
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
         initial_master_nodes:
-          type: string
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
         deprecation_indexing:
-          $ref: '#/components/schemas/DeprecationIndexing'
+          $ref: '#/components/schemas/NodeInfoSettingsDeprecationIndexing'
       required:
         - name
     NodeInfoSettingsClusterElection:
@@ -366,13 +366,11 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
         - strategy
-    DeprecationIndexing:
+    NodeInfoSettingsDeprecationIndexing:
       type: object
       properties:
         enabled:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
       required:
         - enabled
     NodeInfoSettingsNode:
@@ -381,7 +379,8 @@ components:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         attr:
-          $ref: '#/components/schemas/NodeInfoShardIndexingPressureEnabled'
+          type: object
+          additionalProperties: true
         max_local_storage_nodes:
           type: string
       required:
@@ -419,13 +418,6 @@ components:
           type: string
       required:
         - allowed_urls
-    NodeInfoShardIndexingPressureEnabled:
-      type: object
-      properties:
-        shard_indexing_pressure_enabled:
-          type: string
-      required:
-        - shard_indexing_pressure_enabled
     NodeInfoDiscovery:
       type: object
       properties:
@@ -455,13 +447,9 @@ components:
         type.default:
           type: string
         compression:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         port:
-          oneOf:
-            - type: number
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
     NodeInfoBootstrap:
@@ -625,15 +613,19 @@ components:
       type: object
       properties:
         core:
-          type: number
+          type: integer
+          format: int32
         keep_alive:
           $ref: '_common.yaml#/components/schemas/Duration'
         max:
-          type: number
+          type: integer
+          format: int32
         queue_size:
-          type: number
+          type: integer
+          format: int32
         size:
-          type: number
+          type: integer
+          format: int32
         type:
           type: string
       required:
