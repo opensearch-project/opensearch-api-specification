@@ -4734,6 +4734,39 @@ paths:
         - $ref: '#/components/parameters/_global___query.error_trace'
         - $ref: '#/components/parameters/_global___query.source'
         - $ref: '#/components/parameters/_global___query.filter_path'
+  /_plugins/_ml/connectors/_search:
+    get:
+      operationId: ml.search_connectors.0
+      x-operation-group: ml.search_connectors
+      x-version-added: '2.11'
+      description: Searches for standalone connectors.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_connectors'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_connectors___200'
+      parameters:
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+    post:
+      operationId: ml.search_connectors.1
+      x-operation-group: ml.search_connectors
+      x-version-added: '2.11'
+      description: Searches for standalone connectors.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_connectors'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_connectors___200'
+      parameters:
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
   /_plugins/_ml/connectors/{connector_id}:
     delete:
       operationId: ml.delete_connector.0
@@ -4749,6 +4782,38 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_connector___200'
+    get:
+      operationId: ml.get_connector.0
+      x-operation-group: ml.get_connector
+      x-version-added: '2.11'
+      description: Retrieves a standalone connector.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_connector___path.connector_id'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_connector___200'
+    put:
+      operationId: ml.update_connector.0
+      x-operation-group: ml.update_connector
+      x-version-added: '2.12'
+      description: Updates a standalone connector.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_connector___path.connector_id'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_connector'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_connector___200'
   /_plugins/_ml/model_groups/_register:
     post:
       operationId: ml.register_model_group.0
@@ -22974,6 +23039,12 @@ components:
       required: true
       schema:
         type: string
+    ml.get_connector___path.connector_id:
+      name: connector_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.get_model_group___path.model_group_id:
       name: model_group_id
       in: path
@@ -23012,6 +23083,12 @@ components:
         type: string
     ml.undeploy_model___path.model_id:
       name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_connector___path.connector_id:
+      name: connector_id
       in: path
       required: true
       schema:
@@ -27197,6 +27274,9 @@ components:
                 type: integer
               protocol:
                 type: string
+                enum:
+                  - aws_sigv4
+                  - http
               credential:
                 $ref: '#/components/schemas/ml._common___Credential'
               parameters:
@@ -27325,6 +27405,22 @@ components:
                 description: The add all backend roles.
             required:
               - name
+    ml.search_connectors:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '#/components/schemas/ml._common___Query'
+              size:
+                type: integer
+                description: The number of connectors to return.
+              sort:
+                type: array
+                items:
+                  type: string
+                description: The sort order.
     ml.search_model_group:
       content:
         application/json:
@@ -27392,6 +27488,48 @@ components:
                   type: string
               input_data:
                 $ref: '#/components/schemas/ml._common___PredictionResult'
+    ml.update_connector:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '#/components/schemas/_common___Name'
+              description:
+                type: string
+                description: The connector description.
+              version:
+                $ref: '#/components/schemas/_common___VersionNumber'
+              protocol:
+                type: string
+                description: The connector protocol.
+                enum:
+                  - aws_sigv4
+                  - http
+              parameters:
+                $ref: '#/components/schemas/ml._common___Parameters'
+              credential:
+                $ref: '#/components/schemas/ml._common___Credential'
+              actions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ml._common___Action'
+              backend_roles:
+                type: array
+                items:
+                  type: string
+                description: The backend roles.
+              access_mode:
+                type: string
+                description: The model group access mode.
+                enum:
+                  - private
+                  - public
+                  - restricted
+              parameters.skip_validating_missing_parameters:
+                type: boolean
+                description: Whether to skip validating missing parameters.
     ml.update_model_group:
       content:
         application/json:
@@ -30462,6 +30600,12 @@ components:
               - status
               - task_id
       description: ''
+    ml.get_connector___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common___GetConnectorResponse'
+      description: ''
     ml.get_model_group___200:
       content:
         application/json:
@@ -30509,6 +30653,12 @@ components:
               - status
               - task_id
       description: ''
+    ml.search_connectors___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common___SearchConnectorsResponse'
+      description: ''
     ml.search_model_group___200:
       content:
         application/json:
@@ -30538,6 +30688,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ml._common___UndeployModelResponse'
+      description: ''
+    ml.update_connector___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common___WriteResponseBase'
       description: ''
     ml.update_model_group___200:
       content:
@@ -54194,6 +54350,36 @@ components:
           $ref: '#/components/schemas/ml._common___Term'
         match:
           $ref: '#/components/schemas/ml._common___Match'
+    ml._common___GetConnectorResponse:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/_common___Name'
+        version:
+          $ref: '#/components/schemas/_common___VersionString'
+        description:
+          type: string
+          description: The connector description.
+        protocol:
+          type: string
+          description: The connector protocol.
+          enum:
+            - aws_sigv4
+            - http
+        parameters:
+          $ref: '#/components/schemas/ml._common___Parameters'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common___Action'
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
     ml._common___Headers:
       type: object
       properties:
@@ -54480,6 +54666,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ml._common___Values'
+    ml._common___SearchConnectorsResponse:
+      $ref: '#/components/schemas/ml._common___SearchResponse'
     ml._common___SearchHits:
       type: object
       properties:
@@ -54712,6 +54900,18 @@ components:
         latest_version:
           type: integer
           description: The latest version.
+        protocol:
+          type: string
+          description: The connector protocol.
+          enum:
+            - aws_sigv4
+            - http
+        parameters:
+          $ref: '#/components/schemas/ml._common___Parameters'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common___Action'
     ml._common___Status:
       type: string
       description: The status.
