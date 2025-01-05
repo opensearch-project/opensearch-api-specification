@@ -15,26 +15,47 @@ import fs from 'fs'
 describe('TestResults', () => {
   const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete')
 
-  const evaluations = [{
-    result: Result.PASSED,
-    display_path: 'PUT /{index}',
-    full_path: 'full_path',
-    description: 'description',
-    message: 'message',
-    chapters: [{
-      title: 'title',
-      operation: {
-        method: 'PUT',
-        path: '/{index}'
-      },
-      overall: {
-        result: Result.PASSED
-      },
-      path: 'PUT /{index}'
-    }],
-    epilogues: [],
-    prologues: []
-  }]
+  const evaluations = [
+    {
+      result: Result.PASSED,
+      display_path: 'PUT /{index}',
+      full_path: 'full_path',
+      description: 'description',
+      message: 'message',
+      chapters: [{
+        title: 'title',
+        operation: {
+          method: 'PUT',
+          path: '/{index}'
+        },
+        overall: {
+          result: Result.PASSED
+        },
+        path: 'PUT /{index}'
+      }],
+      epilogues: [],
+      prologues: []
+    },
+    {
+      result: Result.PASSED,
+      display_path: 'GET /_cluster/nodes/hot_threads',
+      full_path: '/_cluster/nodes/hot_threads',
+      description: 'description',
+      message: 'message',
+      chapters: [{
+        title: 'title',
+        operation: {
+          method: 'GET',
+          path: '/_cluster/nodes/hot_threads'
+        },
+        overall: {
+          result: Result.PASSED
+        },
+        path: 'GET /_cluster/nodes/hot_threads'
+      }],
+      epilogues: [],
+      prologues: []
+    }]
 
   const test_results = new TestResults(spec, { evaluations })
 
@@ -87,7 +108,8 @@ describe('TestResults', () => {
         { method: 'GET', path: '/nodes' }
       ],
       stories: [
-        'full_path'
+        'full_path',
+        '/_cluster/nodes/hot_threads'
       ]
     })
     fs.unlinkSync(filename)
