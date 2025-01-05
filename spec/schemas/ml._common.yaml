@@ -7,6 +7,8 @@ paths: {}
 components:
   schemas:
     SearchModelsResponse:
+      $ref: '#/components/schemas/SearchResponse'
+    SearchResponse:
       type: object
       properties:
         took:
@@ -18,10 +20,10 @@ components:
         _shards:
           $ref: '_common.yaml#/components/schemas/ShardStatistics'
         hits:
-          $ref: '#/components/schemas/SearchModelsHits'
+          $ref: '#/components/schemas/SearchHits'
       required:
         - hits
-    SearchModelsHits:
+    SearchHits:
       type: object
       properties:
         total:
@@ -29,7 +31,7 @@ components:
         hits:
           type: array
           items:
-            $ref: '#/components/schemas/SearchModelsHitsHit'
+            $ref: '#/components/schemas/SearchHitsHit'
         max_score:
           type: number
           format: float
@@ -50,7 +52,7 @@ components:
       required:
         - relation
         - value
-    SearchModelsHitsHit:
+    SearchHitsHit:
       type: object
       properties:
         _version:
@@ -115,6 +117,7 @@ components:
             - PARTIALLY_DEPLOYED
             - REGISTERED
             - REGISTERING
+            - UNDEPLOYED
         model_content_size_in_bytes:
           type: integer
           format: int64
@@ -171,6 +174,35 @@ components:
         url:
           type: string
           description: The model URL.
+        backend_roles:
+          type: array
+          items:
+            type: string
+          description: The backend roles.
+        owner:
+          $ref: '#/components/schemas/Owner'
+        access:
+          type: string
+          description: The model group access.
+          enum:
+            - private
+            - public
+            - restricted
+        latest_version:
+          type: integer
+          description: The latest version.
+        protocol:
+          type: string
+          description: The connector protocol.
+          enum:
+            - aws_sigv4
+            - http
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
     ModelConfig:
       type: object
       properties:
@@ -329,6 +361,14 @@ components:
       properties:
         bool:
           $ref: '#/components/schemas/BoolQuery'
+        match_all:
+          $ref: '#/components/schemas/MatchAllQuery'
+        term:
+          $ref: '#/components/schemas/Term'
+    MatchAllQuery:
+      type: object
+      description: The match all query.
+      properties: {}
     BoolQuery:
       type: object
       description: The Boolean query.
@@ -338,12 +378,35 @@ components:
           description: Filter query that appears in matching documents.
           items:
             $ref: '#/components/schemas/Filter'
+        must:
+          type: array
+          description: Query that must appears in matching documents
+          items:
+            $ref: '#/components/schemas/Filter'
+        must_not:
+          description: Query that must not appears in matching documents.
+          $ref: '#/components/schemas/Filter'
+        should:
+          type: array
+          description: Query that should appear in matching documents.
+          items:
+            $ref: '#/components/schemas/Filter'
     Filter:
       type: object
       description: The filter element.
       properties:
         range:
           $ref: '#/components/schemas/Range'
+        nested:
+          $ref: '#/components/schemas/Nested'
+        exists:
+          $ref: '#/components/schemas/Exists'
+        term:
+          $ref: '#/components/schemas/Term'
+        terms:
+          $ref: '#/components/schemas/Term'
+        match:
+          $ref: '#/components/schemas/Match'
     Range:
       type: object
       description: The filter range.
@@ -370,6 +433,150 @@ components:
         lt:
           type: number
           description: Less than.
+    Term:
+      type: object
+      description: Term to match the query.
+      properties:
+        algorithm:
+          $ref: '#/components/schemas/Algorithm'
+        _id:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/Id'
+        model_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        owner.name.keyword:
+          $ref: '#/components/schemas/OwnerNameKeyword'
+    Algorithm:
+      type: object
+      description: The algorithm.
+      properties:
+        value:
+          type: string
+          description: The function name.
+          enum:
+            - AD_LIBSVM
+            - AGENT
+            - ANOMALY_LOCALIZATION
+            - BATCH_RCF
+            - CONNECTOR
+            - FIT_RCF
+            - KMEANS
+            - LINEAR_REGRESSION
+            - LOCAL_SAMPLE_CALCULATOR
+            - LOGISTIC_REGRESSION
+            - METRICS_CORRELATION
+            - QUESTION_ANSWERING
+            - RCF_SUMMARIZE
+            - REMOTE
+            - SAMPLE_ALGO
+            - SPARSE_ENCODING
+            - SPARSE_TOKENIZE
+            - TEXT_EMBEDDING
+            - TEXT_SIMILARITY
+    OwnerNameKeyword:
+      type: object
+      description: The owner name keyword.
+      properties:
+        value:
+          $ref: '_common.yaml#/components/schemas/FieldValue'
+        boost:
+          type: number
+          description: Adjust the relevance score of a match.
+    Nested:
+      type: object
+      description: The nested filter.
+      properties:
+        query:
+          $ref: '#/components/schemas/Query'
+        path:
+          $ref: '_common.yaml#/components/schemas/Field'
+        ignore_unmapped:
+          type: boolean
+          description: Whether to ignore unmapped fields.
+        score_mode:
+          type: string
+          description: The score mode.
+          enum:
+            - avg
+            - max
+            - min
+            - none
+            - sum
+        boost:
+          type: number
+          description: Adjust the relevance score of a match.
+    Exists:
+      type: object
+      description: The exists filter.
+      properties:
+        field:
+          $ref: '_common.yaml#/components/schemas/Field'
+    Sort:
+      type: object
+      description: Sort query.
+      properties:
+        algorithm:
+          $ref: '#/components/schemas/SortOrder'
+        auto_redeploy_retry_times:
+          $ref: '#/components/schemas/SortOrder'
+        chunk_number:
+          $ref: '#/components/schemas/SortOrder'
+        created_time:
+          $ref: '#/components/schemas/SortOrder'
+        current_worker_node_count:
+          $ref: '#/components/schemas/SortOrder'
+        deploy_to_all_nodes:
+          $ref: '#/components/schemas/SortOrder'
+        is_hidden:
+          $ref: '#/components/schemas/SortOrder'
+        last_registered_time:
+          $ref: '#/components/schemas/SortOrder'
+        last_updated_time:
+          $ref: '#/components/schemas/SortOrder'
+        model_content_hash_value:
+          $ref: '#/components/schemas/SortOrder'
+        model_content_size_in_bytes:
+          $ref: '#/components/schemas/SortOrder'
+        model_format:
+          $ref: '#/components/schemas/SortOrder'
+        model_group_id:
+          $ref: '#/components/schemas/SortOrder'
+        model_state:
+          $ref: '#/components/schemas/SortOrder'
+        model_version:
+          $ref: '#/components/schemas/SortOrder'
+        planning_worker_nodes:
+          $ref: '#/components/schemas/SortOrder'
+        planning_worker_node_count:
+          $ref: '#/components/schemas/SortOrder'
+        total_chunks:
+          $ref: '#/components/schemas/SortOrder'
+        _index:
+          $ref: '#/components/schemas/SortOrder'
+        _id:
+          $ref: '#/components/schemas/SortOrder'
+        _seq_no:
+          $ref: '#/components/schemas/SortOrder'
+        _score:
+          $ref: '#/components/schemas/SortOrder'
+    SortOrder:
+      type: object
+      description: The order of the sort.
+      properties:
+        order:
+          type: string
+          description: The order.
+          enum:
+            - asc
+            - desc
+    Match:
+      type: object
+      description: Match query.
+      properties:
+        description:
+          type: string
+          description: The description.
     TrainParameters:
       type: object
       properties:
@@ -430,9 +637,15 @@ components:
         description:
           type: string
           description: The model group description.
+        owner:
+          $ref: '#/components/schemas/Owner'
         access:
           type: string
           description: The model group access.
+          enum:
+            - private
+            - public
+            - restricted
         created_time:
           type: integer
           format: int64
@@ -444,6 +657,39 @@ components:
         - description
         - latest_version
         - name
+    Owner:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        backend_roles:
+          type: array
+          items:
+            type: string
+          description: The backend roles.
+        roles:
+          type: array
+          items:
+            type: string
+          description: The roles.
+        custom_attribute_names:
+          type: array
+          items:
+            type: string
+          description: The custom attribute names.
+        user_requested_tenant:
+          type: ['null', string]
+          description: The user requested tenant.
+      required:
+        - name
+    UpdateModelGroupResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status.
+    SearchModelGroupsResponse:
+      $ref: '#/components/schemas/SearchResponse'
     Task:
       type: object
       properties:
@@ -574,3 +820,35 @@ components:
         content_type:
           type: string
       additionalProperties: true
+    GetConnectorResponse:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
+        description:
+          type: string
+          description: The connector description.
+        protocol:
+          type: string
+          description: The connector protocol.
+          enum:
+            - aws_sigv4
+            - http
+        parameters:
+          $ref: '#/components/schemas/Parameters'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
+    SearchConnectorsResponse:
+      $ref: '#/components/schemas/SearchResponse'
