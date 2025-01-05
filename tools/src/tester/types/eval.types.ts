@@ -28,6 +28,7 @@ export interface StoryEvaluation {
   full_path: string
   description: string
   message?: string
+  ignored?: string
   chapters?: ChapterEvaluation[]
   epilogues?: ChapterEvaluation[]
   prologues?: ChapterEvaluation[]
