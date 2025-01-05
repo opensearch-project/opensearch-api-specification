@@ -70,8 +70,8 @@ test('skipped/semver', async () => {
 })
 
 test('ignored', async () => {
-  const actual = await load_actual_evaluation(story_evaluator, 'skipped/semver')
-  const expected = load_expected_evaluation('skipped/semver')
+  const actual = await load_actual_evaluation(story_evaluator, 'ignored/ignored')
+  const expected = load_expected_evaluation('ignored/ignored')
   expect(actual).toEqual(expected)
 })
 
