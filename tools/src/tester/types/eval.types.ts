@@ -28,7 +28,6 @@ export interface StoryEvaluation {
   full_path: string
   description: string
   message?: string
-  pending?: string
   chapters?: ChapterEvaluation[]
   epilogues?: ChapterEvaluation[]
   prologues?: ChapterEvaluation[]
@@ -44,6 +43,7 @@ export interface ChapterEvaluation {
   overall: Evaluation,
   operation?: Operation,
   path?: string,
+  pending?: string,
   request?: {
     parameters?: Record<string, Evaluation>
     request?: Evaluation
