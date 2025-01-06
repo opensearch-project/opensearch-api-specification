@@ -384,7 +384,6 @@ components:
         max_local_storage_nodes:
           type: string
       required:
-        - attr
         - name
     NodeInfoPath:
       type: object
@@ -443,7 +442,7 @@ components:
       type: object
       properties:
         type:
-          type: string
+          $ref: '#/components/schemas/NodeInfoSettingsHttpType'
         type.default:
           type: string
         compression:
@@ -452,6 +451,17 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
+    NodeInfoSettingsHttpType:
+      oneOf:
+        - title: type
+          type: string
+        - title: config
+          $ref: '#/components/schemas/NodeInfoSettingsHttpTypeConfig'
+    NodeInfoSettingsHttpTypeConfig:
+      type: object
+      properties:
+        default:
+          type: string
     NodeInfoBootstrap:
       type: object
       properties:
@@ -463,11 +473,22 @@ components:
       type: object
       properties:
         type:
-          type: string
+          $ref: '#/components/schemas/NodeInfoSettingsTransportType'
         type.default:
           type: string
       required:
         - type
+    NodeInfoSettingsTransportType:
+      oneOf:
+        - title: type
+          type: string
+        - title: config
+          $ref: '#/components/schemas/NodeInfoSettingsTransportTypeConfig'
+    NodeInfoSettingsTransportTypeConfig:
+      type: object
+      properties:
+        default:
+          type: string
     NodeInfoSettingsNetwork:
       type: object
       properties:
@@ -684,6 +705,3 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NodeInfoIngestProcessor'
-      required:
-        - request_processors
-        - response_processors
