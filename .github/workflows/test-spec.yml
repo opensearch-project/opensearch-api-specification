@@ -105,7 +105,8 @@ jobs:
             --opensearch-url=${{ matrix.entry.url || 'https://localhost:9200'}} \
             --opensearch-cert=${{ matrix.entry.cert }} \
             --opensearch-key=${{ matrix.entry.key }} \
-            --tests=tests/${{ matrix.entry.tests || 'default' }}
+            --tests=tests/${{ matrix.entry.tests || 'default' }} \
+            --log logs/test-spec-${{ steps.tests.outputs.hash }}.log
 
       - name: Get Container Logs
         if: failure()
@@ -120,6 +121,13 @@ jobs:
         with:
           name: coverage-${{ matrix.entry.version }}-${{ steps.tests.outputs.hash }}
           path: coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ matrix.entry.version }}-${{ steps.tests.outputs.hash }}
+          path: logs/test-spec-${{ steps.tests.outputs.hash }}.log
 
   merge-coverage:
     runs-on: ubuntu-latest

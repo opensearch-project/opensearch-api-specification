@@ -8,6 +8,8 @@
 */
 
 import { Logger, LogLevel } from '../src/Logger'
+import fs from 'fs'
+import tmp from 'tmp'
 
 describe('Logger', () => {
   let log: jest.Mock
@@ -97,6 +99,36 @@ describe('Logger', () => {
         ['log'],
         ['[ERROR] error']
       ])
+    })
+  })
+
+  describe('with a log file', () => {
+    var temp: tmp.DirResult
+    var filename: string
+    var logger: Logger
+
+    beforeEach(() => {
+      temp = tmp.dirSync()
+      filename = `${temp.name}/opensearch.log`
+      logger = new Logger(LogLevel.warn, filename)
+    })
+
+    afterEach(() => {
+      fs.unlinkSync(filename)
+      temp.removeCallback()
+    })
+
+    test('logs all level messages', () => {
+      logger.log('log')
+      logger.error('error')
+      logger.warn('warn')
+      logger.info('info')
+      expect(fs.readFileSync(filename).toString()).toEqual([
+        'log',
+        '[ERROR] error',
+        '[WARNING] warn',
+        '[INFO] info'
+      ].join("\n") + "\n")
     })
   })
 })
