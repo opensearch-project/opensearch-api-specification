@@ -69,6 +69,12 @@ test('skipped/semver', async () => {
   expect(actual).toEqual(expected)
 })
 
+test('ignored', async () => {
+  const actual = await load_actual_evaluation(story_evaluator, 'ignored/ignored')
+  const expected = load_expected_evaluation('ignored/ignored')
+  expect(actual).toEqual(expected)
+})
+
 test('with an unexpected error deserializing data', async () => {
   opensearch_http_client.request = jest.fn().mockRejectedValue(new Error('This was unexpected.'))
   const actual = await load_actual_evaluation(story_evaluator, 'passed/passed')

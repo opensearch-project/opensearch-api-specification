@@ -90,6 +90,7 @@ export type Chapter = ChapterRequest & {
    * A brief description of the chapter.
    */
   synopsis: string;
+  pending?: string;
   response?: ExpectedResponse;
   warnings?: Warnings;
 };

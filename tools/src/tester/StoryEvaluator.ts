@@ -111,6 +111,7 @@ export default class StoryEvaluator {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
+
       if (dry_run) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
@@ -119,6 +120,9 @@ export default class StoryEvaluator {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is ${chapter.distributions.excluded.length > 1 ? 'one of ' : ''}${chapter.distributions.excluded.join(', ')}.` } })
       } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
         evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.` } })
+      } else if (chapter.pending != null && chapter.pending) {
+        evaluations.push({ title, overall: { result: Result.IGNORED, message:  chapter.pending } })
+        continue
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR

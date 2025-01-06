@@ -43,6 +43,7 @@ export interface ChapterEvaluation {
   overall: Evaluation,
   operation?: Operation,
   path?: string,
+  pending?: string,
   request?: {
     parameters?: Record<string, Evaluation>
     request?: Evaluation
@@ -79,6 +80,7 @@ export type EvaluationWithOutput = {
 
 export enum Result {
   PASSED = 'PASSED',
+  IGNORED = 'IGNORED',
   FAILED = 'FAILED',
   SKIPPED = 'SKIPPED',
   ERROR = 'ERROR',
