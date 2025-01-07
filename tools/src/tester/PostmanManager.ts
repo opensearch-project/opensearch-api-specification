@@ -24,24 +24,6 @@ export class PostmanManager {
     body: any,
     contentType: string
   ): void {
-    const bodyContent = body
-      ? (() => {
-          switch (contentType) {
-            case 'application/json':
-              return { mode: 'raw', raw: JSON.stringify(body) };
-            case 'text/plain':
-              return { mode: 'raw', raw: body.toString() };
-            case 'application/x-www-form-urlencoded':
-              return {
-                mode: 'urlencoded',
-                urlencoded: Object.entries(body).map(([key, value]) => ({ key, value: value.toString() })),
-              };
-            default:
-              throw new Error(`Unsupported content type: ${contentType}`);
-          }
-        })()
-      : undefined;
-  
     const item = {
       name: path,
       request: {
@@ -50,14 +32,16 @@ export class PostmanManager {
         url: {
           raw: `${url}${path}`,
           path: path.split('/').filter(Boolean),
-          query: Object.entries(params).map(([key, value]) => ({ key, value: value.toString() })),
+          query: Object.entries(params).map(([key, value]) => ({ key, value: value as string })),
         },
-        body: bodyContent,
+        body: body
+          ? { mode: contentType === 'application/json' ? 'raw' : 'formdata', raw: JSON.stringify(body) }
+          : undefined,
       },
     };
-  
+
     this.collection.item.push(item);
-  }  
+  }
 
   saveCollection(): void {
     fs.writeFileSync(this.collectionPath, JSON.stringify(this.collection, null, 2));
