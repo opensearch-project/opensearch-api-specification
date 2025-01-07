@@ -1,12 +1,3 @@
-/*
-* Copyright OpenSearch Contributors
-* SPDX-License-Identifier: Apache-2.0
-*
-* The OpenSearch Contributors require contributions made to
-* this file be licensed under the Apache-2.0 license or a
-* compatible open source license.
-*/
-
 import fs from 'fs';
 
 export class PostmanManager {
@@ -17,7 +8,7 @@ export class PostmanManager {
     this.collection_path = collection_path;
     this.collection = {
       info: {
-        name: "Generated Collection",
+        name: "OpenSearch tests",
         schema: "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
       },
       item: [],
@@ -31,8 +22,38 @@ export class PostmanManager {
     headers: Record<string, any> | undefined,
     params: Record<string, any>,
     body: any,
-    content_type: string
+    content_type: string,
+    full_path?: string
   ): void {
+    const folders: string[] = [];
+
+    if (full_path) {
+      const pathParts = full_path.split('/').filter(Boolean);
+
+      // Начинаем с папки, которая идет сразу после "tests"
+      const startIndex = pathParts.indexOf('tests');
+      
+      // Если "tests" есть в пути, берём все папки, начиная с пути после tests
+      if (startIndex !== -1) {
+        folders.push(...pathParts.slice(startIndex + 1)); // Вытягиваем все части пути после "tests"
+      }
+    }
+
+    let currentFolder = this.collection.item;
+
+    // Создание всех папок по частям
+    folders.forEach(folder => {
+      let existingFolder = currentFolder.find((item: any) => item.name === folder);
+
+      if (!existingFolder) {
+        existingFolder = { name: folder, item: [] };
+        currentFolder.push(existingFolder);
+      }
+
+      currentFolder = existingFolder.item;
+    });
+
+    // Создаем структуру для конкретного теста (файл)
     const item = {
       name: path,
       request: {
@@ -40,15 +61,19 @@ export class PostmanManager {
         header: Object.entries(headers ?? {}).map(([key, value]) => ({ key, value })),
         url: {
           raw: `${url}${path}`,
+          host: url,
           path: path.split('/').filter(Boolean),
           query: Object.entries(params).map(([key, value]) => ({ key, value: String(value) })),
         },
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         body: body ? { mode: content_type === 'application/json' ? 'raw' : 'formdata', raw: JSON.stringify(body) } : undefined,
       },
     };
 
-    this.collection.item.push(item);
+    // Проверяем, есть ли уже такой элемент, чтобы не добавлять его снова
+    const exists = currentFolder.some((existingItem: any) => existingItem.name === item.name);
+    if (!exists) {
+      currentFolder.push(item);
+    }
   }
 
   save_collection(): void {

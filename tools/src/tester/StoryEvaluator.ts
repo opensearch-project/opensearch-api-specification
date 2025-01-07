@@ -66,7 +66,7 @@ export default class StoryEvaluator {
 
     const story_outputs = new StoryOutputs()
     const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [], dry_run, story_outputs)
-    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version, distribution)
+    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version, distribution, full_path)
     const { evaluations: epilogues } = await this.#evaluate_supplemental_chapters(story.epilogues ?? [], dry_run, story_outputs)
 
     const result: StoryEvaluation = {
@@ -107,7 +107,7 @@ export default class StoryEvaluator {
     }
   }
 
-  async #evaluate_chapters(chapters: ParsedChapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
+  async #evaluate_chapters(chapters: ParsedChapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string, full_path?: string): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
       const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
@@ -124,7 +124,7 @@ export default class StoryEvaluator {
         evaluations.push({ title, overall: { result: Result.IGNORED, message:  chapter.pending } })
         continue
       } else {
-        const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
+        const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs, full_path)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR
         if (evaluation.output !== undefined && chapter.id !== undefined) {
           story_outputs.set_chapter_output(chapter.id, evaluation.output)

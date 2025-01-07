@@ -31,7 +31,7 @@ export default class ChapterReader {
     this.postman_manager = new PostmanManager(collection_path);
   }
 
-  async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
+  async read (chapter: ChapterRequest, story_outputs: StoryOutputs, full_path?: string): Promise<ActualResponse> {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
@@ -41,7 +41,7 @@ export default class ChapterReader {
       content_type
     ) : undefined
 
-    this.postman_manager.add_to_collection(this._client.get_url(), chapter.method, url_path, headers, params, request_data, content_type);
+    this.postman_manager.add_to_collection(this._client.get_url(), chapter.method, url_path, headers, params, request_data, content_type, full_path);
 
     this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] ${_.compact([to_json(headers), to_json(request_data)]).join(' | ')}`)
     await this._client.request({
