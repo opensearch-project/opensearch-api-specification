@@ -43,6 +43,7 @@ export class PostmanManager {
           path: path.split('/').filter(Boolean),
           query: Object.entries(params).map(([key, value]) => ({ key, value: String(value) })),
         },
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         body: body ? { mode: content_type === 'application/json' ? 'raw' : 'formdata', raw: JSON.stringify(body) } : undefined,
       },
     };
