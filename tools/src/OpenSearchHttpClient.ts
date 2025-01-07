@@ -221,8 +221,10 @@ export class OpenSearchHttpClient {
     }
   }
 
-  getUrl(): string | undefined {
-    if(this._opts != null && !this._opts.url) return this._opts.url ;
+  get_url(): string | undefined {
+    if (this._opts != null && this._opts.url != null && this._opts.url !== '') {
+      return this._opts.url;
+    }
     return DEFAULT_URL;
   }
 

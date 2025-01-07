@@ -23,12 +23,12 @@ import { PostmanManager } from './PostmanManager'
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
   private readonly logger: Logger
-  private readonly postmanManager: PostmanManager;
+  private readonly postman_manager: PostmanManager;
 
-  constructor (client: OpenSearchHttpClient, logger: Logger, collectionPath: string = './postman_collection.json') {
+  constructor (client: OpenSearchHttpClient, logger: Logger, collection_path: string = './postman_collection.json') {
     this._client = client
     this.logger = logger
-    this.postmanManager = new PostmanManager(collectionPath);
+    this.postman_manager = new PostmanManager(collection_path);
   }
 
   async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
@@ -41,7 +41,7 @@ export default class ChapterReader {
       content_type
     ) : undefined
 
-    this.postmanManager.addToCollection(this._client.getUrl(), chapter.method, url_path, headers, params, request_data, content_type);
+    this.postman_manager.add_to_collection(this._client.get_url(), chapter.method, url_path, headers, params, request_data, content_type);
 
     this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] ${_.compact([to_json(headers), to_json(request_data)]).join(' | ')}`)
     await this._client.request({
@@ -72,7 +72,7 @@ export default class ChapterReader {
         this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
       }
     })
-    this.postmanManager.saveCollection();
+    this.postman_manager.save_collection();
     return response as ActualResponse
   }
 
