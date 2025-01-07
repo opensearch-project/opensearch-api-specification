@@ -18,17 +18,20 @@ import CBOR from 'cbor'
 import SMILE from 'smile-js'
 import { APPLICATION_CBOR, APPLICATION_JSON, APPLICATION_SMILE, APPLICATION_YAML, TEXT_PLAIN } from "./MimeTypes";
 import _ from 'lodash'
+import { PostmanManager } from './PostmanManager'
 
 export default class ChapterReader {
   private readonly _client: OpenSearchHttpClient
   private readonly logger: Logger
+  private readonly postman_manager: PostmanManager;
 
-  constructor (client: OpenSearchHttpClient, logger: Logger) {
+  constructor (client: OpenSearchHttpClient, logger: Logger, collection_path: string = './postman_collection.json') {
     this._client = client
     this.logger = logger
+    this.postman_manager = new PostmanManager(collection_path);
   }
 
-  async read (chapter: ChapterRequest, story_outputs: StoryOutputs): Promise<ActualResponse> {
+  async read (chapter: ChapterRequest, story_outputs: StoryOutputs, full_path?: string): Promise<ActualResponse> {
     const response: Record<string, any> = {}
     const resolved_params = story_outputs.resolve_params(chapter.parameters ?? {})
     const [url_path, params] = this.#parse_url(chapter.path, resolved_params)
@@ -37,6 +40,9 @@ export default class ChapterReader {
       story_outputs.resolve_value(chapter.request.payload),
       content_type
     ) : undefined
+
+    this.postman_manager.add_to_collection(this._client.get_url(), chapter.method, url_path, headers, params, request_data, content_type, full_path);
+
     this.logger.info(`=> ${chapter.method} ${url_path} (${to_json(params)}) [${content_type}] ${_.compact([to_json(headers), to_json(request_data)]).join(' | ')}`)
     await this._client.request({
       url: url_path,
@@ -66,6 +72,7 @@ export default class ChapterReader {
         this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
       }
     })
+    this.postman_manager.save_collection();
     return response as ActualResponse
   }
 

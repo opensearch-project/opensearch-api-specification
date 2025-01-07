@@ -221,6 +221,13 @@ export class OpenSearchHttpClient {
     }
   }
 
+  get_url(): string | undefined {
+    if (this._opts != null && this._opts.url != null && this._opts.url !== '') {
+      return this._opts.url;
+    }
+    return DEFAULT_URL;
+  }
+
   async request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R> {
     return await this._axios.request(config)
   }
