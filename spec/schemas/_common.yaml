@@ -819,19 +819,37 @@ components:
       type: string
       pattern: '(?:(-1)|(0)|\d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p))'
     ByteUnit:
-      type: string
-      enum:
-        - b
-        - g
-        - gb
-        - k
-        - kb
-        - m
-        - mb
-        - p
-        - pb
-        - t
-        - tb
+      # eslint-disable yml/sort-sequence-values -- The order of `kb` & `k` etc. is important for preferring the more correct variant.
+      oneOf:
+        - title: bytes
+          type: string
+          const: b
+        - title: kilo_bytes
+          type: string
+          enum:
+            - kb
+            - k
+        - title: mega_bytes
+          type: string
+          enum:
+            - mb
+            - m
+        - title: giga_bytes
+          type: string
+          enum:
+            - gb
+            - g
+        - title: tera_bytes
+          type: string
+          enum:
+            - tb
+            - t
+        - title: peta_bytes
+          type: string
+          enum:
+            - pb
+            - p
+      # eslint-enable yml/sort-sequence-values
     ByteCount:
       type: integer
       format: int64
@@ -866,15 +884,28 @@ components:
       description: Time of day, expressed as HH:MM:SS.
       type: string
     TimeUnit:
-      type: string
-      enum:
-        - d
-        - h
-        - m
-        - micros
-        - ms
-        - nanos
-        - s
+      oneOf:
+        - title: nanoseconds
+          type: string
+          const: nanos
+        - title: microseconds
+          type: string
+          const: micros
+        - title: milliseconds
+          type: string
+          const: ms
+        - title: seconds
+          type: string
+          const: s
+        - title: minutes
+          type: string
+          const: m
+        - title: hours
+          type: string
+          const: h
+        - title: days
+          type: string
+          const: d
     HealthStatus:
       # eslint-disable yml/sort-sequence-values
       oneOf:
@@ -899,25 +930,6 @@ components:
             - red
             - RED
         # eslint-enable yml/sort-sequence-values
-    ScheduleTimeOfDay:
-      description: A time of day, expressed either as `hh:mm`, `noon`, `midnight`, or an hour/minutes structure.
-      oneOf:
-        - type: string
-        - $ref: '#/components/schemas/HourAndMinute'
-    HourAndMinute:
-      type: object
-      properties:
-        hour:
-          type: array
-          items:
-            type: number
-        minute:
-          type: array
-          items:
-            type: number
-      required:
-        - hour
-        - minute
     Uuid:
       type: string
     ScrollIds:
