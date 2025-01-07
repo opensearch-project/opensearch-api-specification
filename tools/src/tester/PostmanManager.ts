@@ -24,7 +24,6 @@ export class PostmanManager {
     };
   }
 
-
   add_to_collection(
     url: string | undefined,
     method: string,
@@ -34,33 +33,6 @@ export class PostmanManager {
     body: any,
     content_type: string
   ): void {
-    const body_content = body
-      ? (() => {
-        switch (content_type) {
-          case 'application/json':
-            return { mode: 'raw', raw: JSON.stringify(body) };
-          case 'text/plain':
-            return { mode: 'raw', raw: body.toString() };
-          case 'application/x-www-form-urlencoded':
-            return {
-              mode: 'urlencoded',
-              urlencoded: Object.entries(body).map(([key, value]) => ({
-                key,
-                value: String(value),
-              })),
-            };
-
-          case 'application/x-ndjson':
-            return {
-              mode: 'raw',
-              raw: body.map((item: any) => JSON.stringify(item)).join('\n'),
-            };
-          default:
-            throw new Error(`Unsupported content type: ${content_type}`);
-        }
-      })()
-      : undefined;
-
     const item = {
       name: path,
       request: {
@@ -71,7 +43,7 @@ export class PostmanManager {
           path: path.split('/').filter(Boolean),
           query: Object.entries(params).map(([key, value]) => ({ key, value: String(value) })),
         },
-        body: body_content,
+        body: body ? { mode: content_type === 'application/json' ? 'raw' : 'formdata', raw: JSON.stringify(body) } : undefined,
       },
     };
 
