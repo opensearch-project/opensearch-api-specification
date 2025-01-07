@@ -1,0 +1,35 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the retrieval of a memory by ID and all memories.
+version: '>= 2.12'
+prologues:
+  - path: /_plugins/_ml/memory
+    id: create_memory
+    method: POST
+    request:
+      payload:
+        name: Test memory
+    output:
+      memory_id: payload.memory_id
+epilogues:
+  - path: /_plugins/_ml/memory/{memory_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_id: ${create_memory.memory_id}
+chapters:
+  - synopsis: Get a memory by ID.
+    path: /_plugins/_ml/memory/{memory_id}
+    method: GET
+    parameters:
+      memory_id: ${create_memory.memory_id}
+    response:
+      status: 200
+  - synopsis: Get all memories.
+    path: /_plugins/_ml/memory
+    method: GET
+    request:
+      payload:
+        max_results: 10
+    response:
+      status: 200

@@ -255,6 +255,83 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_agent@200'
+  /_plugins/_ml/memory:
+    get:
+      operationId: ml.get_memory.0
+      x-operation-group: ml.get_memory
+      x-version-added: '2.12'
+      description: Get a memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_memory@200'
+    post:
+      operationId: ml.create_memory.0
+      x-operation-group: ml.create_memory
+      x-version-added: '2.12'
+      description: Create a memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_memory@200'
+  /_plugins/_ml/memory/{memory_id}:
+    get:
+      operationId: ml.get_memory.1
+      x-operation-group: ml.get_memory
+      x-version-added: '2.12'
+      description: Get a memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_memory'
+      parameters:
+        - $ref: '#/components/parameters/ml.get_memory::path.memory_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_memory@200'
+    put:
+      operationId: ml.update_memory.0
+      x-operation-group: ml.update_memory
+      x-version-added: '2.12'
+      description: Update a memory.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_memory::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_memory@200'
+    delete:
+      operationId: ml.delete_memory.0
+      x-operation-group: ml.delete_memory
+      x-version-added: '2.12'
+      description: Delete a memory.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_memory::path.memory_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_memory@200'
+  /_plugins/_ml/memory/_search:
+    get:
+      operationId: ml.search_memory.0
+      x-operation-group: ml.search_memory
+      x-version-added: '2.12'
+      description: Search memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_memory@200'
+    post:
+      operationId: ml.search_memory.1
+      x-operation-group: ml.search_memory
+      x-version-added: '2.12'
+      description: Search memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_memory@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -547,6 +624,53 @@ components:
             required:
               - name
               - type
+    ml.get_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              max_results:
+                type: integer
+                format: int64
+                description: The maximum number of results to return.
+              next_token:
+                type: integer
+                format: int64
+                description: The index of the first memory in the sorted list of memories to return.
+    ml.create_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.update_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.search_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of memories to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/SortMemory'
+                description: The sort order.
   responses:
     ml.register_model_group@200:
       content:
@@ -682,6 +806,40 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.get_memory@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetMemoryResponse'
+    ml.create_memory@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              memory_id:
+                type: string
+    ml.update_memory@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.delete_memory@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                description: Whether the memory was deleted successfully.
+            required:
+              - success
+    ml.search_memory@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchMemoryResponse'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -775,6 +933,24 @@ components:
         type: string
     ml.get_task::path.task_id:
       name: task_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_memory::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_memory::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_memory::path.memory_id:
+      name: memory_id
       in: path
       required: true
       schema:

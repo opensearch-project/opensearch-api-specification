@@ -74,6 +74,12 @@ components:
           $ref: '#/components/schemas/Source'
         model_id:
           $ref: '_common.yaml#/components/schemas/Name'
+        sort:
+          type: array
+          items:
+            type: number
+            format: float
+          description: The sort values.
       required:
         - _score
     Source:
@@ -149,8 +155,7 @@ components:
           format: int64
           description: The auto redeploy retry times.
         name:
-          type: string
-          description: The model name.
+          $ref: '_common.yaml#/components/schemas/Name'
         connector_id:
           type: string
           description: The connector ID.
@@ -203,6 +208,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Action'
+        updated_time:
+          type: string
+          format: date-time
+          description: The updated time.
+        create_time:
+          type: string
+          format: date-time
+          description: The create time.
+        application_type:
+          type: ['null', string]
+          description: The application type.
+        additional_info:
+          $ref: '#/components/schemas/AdditionalInfo'
+        user:
+          type: string
+          description: The username of the user.
     ModelConfig:
       type: object
       properties:
@@ -445,6 +466,8 @@ components:
             $ref: '_common.yaml#/components/schemas/Id'
         model_id:
           $ref: '_common.yaml#/components/schemas/Name'
+        name:
+          $ref: '#/components/schemas/OwnerNameKeyword'
         owner.name.keyword:
           $ref: '#/components/schemas/OwnerNameKeyword'
     Algorithm:
@@ -559,6 +582,28 @@ components:
         _seq_no:
           $ref: '#/components/schemas/SortOrder'
         _score:
+          $ref: '#/components/schemas/SortOrder'
+    SortMemory:
+      type: object
+      description: The sort memory query.
+      properties:
+        additional_info:
+          $ref: '#/components/schemas/SortOrder'
+        application_time:
+          $ref: '#/components/schemas/SortOrder'
+        create_time:
+          $ref: '#/components/schemas/SortOrder'
+        updated_time:
+          $ref: '#/components/schemas/SortOrder'
+        user:
+          $ref: '#/components/schemas/SortOrder'
+        _id:
+          $ref: '#/components/schemas/SortOrder'
+        _index:
+          $ref: '#/components/schemas/SortOrder'
+        _score:
+          $ref: '#/components/schemas/SortOrder'
+        _seq_no:
           $ref: '#/components/schemas/SortOrder'
     SortOrder:
       type: object
@@ -804,6 +849,27 @@ components:
       properties:
         type:
           type: string
+        memory_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        create_time:
+          type: string
+          format: date-time
+          description: The create time.
+        updated_time:
+          type: string
+          format: date-time
+          description: The updated time.
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        user:
+          type: string
+          description: The username of the user.
+        additional_info:
+          $ref: '#/components/schemas/AdditionalInfo'
+    AdditionalInfo:
+      type: object
+      description: Additional information query.
+      properties: {}
     ToolItems:
       type: object
       properties:
@@ -851,4 +917,19 @@ components:
           format: int64
           description: The last updated time.
     SearchConnectorsResponse:
+      $ref: '#/components/schemas/SearchResponse'
+    GetMemoryResponse:
+      oneOf:
+        - $ref: '#/components/schemas/Memory'
+        - type: object
+          properties:
+            memories:
+              type: array
+              items:
+                $ref: '#/components/schemas/Memory'
+            next_token:
+              type: integer
+              format: int64
+              description: The index of the first memory in the sorted list of memories.
+    SearchMemoryResponse:
       $ref: '#/components/schemas/SearchResponse'
