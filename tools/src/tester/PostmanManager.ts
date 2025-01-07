@@ -30,18 +30,15 @@ export class PostmanManager {
     if (full_path) {
       const pathParts = full_path.split('/').filter(Boolean);
 
-      // Начинаем с папки, которая идет сразу после "tests"
       const startIndex = pathParts.indexOf('tests');
       
-      // Если "tests" есть в пути, берём все папки, начиная с пути после tests
       if (startIndex !== -1) {
-        folders.push(...pathParts.slice(startIndex + 1)); // Вытягиваем все части пути после "tests"
+        folders.push(...pathParts.slice(startIndex + 1));
       }
     }
 
     let currentFolder = this.collection.item;
 
-    // Создание всех папок по частям
     folders.forEach(folder => {
       let existingFolder = currentFolder.find((item: any) => item.name === folder);
 
@@ -53,7 +50,6 @@ export class PostmanManager {
       currentFolder = existingFolder.item;
     });
 
-    // Создаем структуру для конкретного теста (файл)
     const item = {
       name: path,
       request: {
@@ -69,7 +65,6 @@ export class PostmanManager {
       },
     };
 
-    // Проверяем, есть ли уже такой элемент, чтобы не добавлять его снова
     const exists = currentFolder.some((existingItem: any) => existingItem.name === item.name);
     if (!exists) {
       currentFolder.push(item);
