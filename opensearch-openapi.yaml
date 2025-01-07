@@ -16111,9 +16111,7 @@ components:
       name: full_id
       description: When `true`, returns the full node ID. When `false`, returns the shortened node ID.
       schema:
-        anyOf:
-          - type: boolean
-          - type: string
+        $ref: '#/components/schemas/_common___StringifiedBoolean'
         default: false
       style: form
     cat.nodes___query.h:
@@ -28607,7 +28605,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/cat._common___CatPitSegmentsRecord'
+              $ref: '#/components/schemas/cat.segments___SegmentsRecord'
       description: ''
     cat.allocation___200:
       content:
@@ -28764,7 +28762,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/cat._common___CatPitSegmentsRecord'
+              $ref: '#/components/schemas/cat.segments___SegmentsRecord'
       description: ''
     cat.plugins___200:
       content:
@@ -28808,7 +28806,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/cat._common___CatSegmentReplicationRecord'
+              $ref: '#/components/schemas/cat.segment_replication___SegmentReplicationRecord'
       description: ''
     cat.segments___200:
       content:
@@ -32758,19 +32756,35 @@ components:
       type: integer
       format: int64
     _common___ByteUnit:
-      type: string
-      enum:
-        - b
-        - g
-        - gb
-        - k
-        - kb
-        - m
-        - mb
-        - p
-        - pb
-        - t
-        - tb
+      oneOf:
+        - title: bytes
+          type: string
+          const: b
+        - title: kilo_bytes
+          type: string
+          enum:
+            - kb
+            - k
+        - title: mega_bytes
+          type: string
+          enum:
+            - mb
+            - m
+        - title: giga_bytes
+          type: string
+          enum:
+            - gb
+            - g
+        - title: tera_bytes
+          type: string
+          enum:
+            - tb
+            - t
+        - title: peta_bytes
+          type: string
+          enum:
+            - pb
+            - p
     _common___ClusterDetails:
       type: object
       properties:
@@ -33325,20 +33339,6 @@ components:
             - RED
     _common___Host:
       type: string
-    _common___HourAndMinute:
-      type: object
-      properties:
-        hour:
-          type: array
-          items:
-            type: number
-        minute:
-          type: array
-          items:
-            type: number
-      required:
-        - hour
-        - minute
     _common___HttpHeaders:
       type: object
       additionalProperties:
@@ -34221,11 +34221,6 @@ components:
             window_size:
               description: The size of the individual result sets per query.
               type: number
-    _common___ScheduleTimeOfDay:
-      description: A time of day, expressed either as `hh:mm`, `noon`, `midnight`, or an hour/minutes structure.
-      oneOf:
-        - type: string
-        - $ref: '#/components/schemas/_common___HourAndMinute'
     _common___ScoreSort:
       type: object
       properties:
@@ -34841,15 +34836,28 @@ components:
       description: Time of day, expressed as HH:MM:SS.
       type: string
     _common___TimeUnit:
-      type: string
-      enum:
-        - d
-        - h
-        - m
-        - micros
-        - ms
-        - nanos
-        - s
+      oneOf:
+        - title: nanoseconds
+          type: string
+          const: nanos
+        - title: microseconds
+          type: string
+          const: micros
+        - title: milliseconds
+          type: string
+          const: ms
+        - title: seconds
+          type: string
+          const: s
+        - title: minutes
+          type: string
+          const: m
+        - title: hours
+          type: string
+          const: h
+        - title: days
+          type: string
+          const: d
     _common___TimeZone:
       type: string
     _common___TopLeftBottomRightGeoBounds:
@@ -46087,90 +46095,6 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/asynchronous_search._common___NodesStats'
-    cat._common___CatPitSegmentsRecord:
-      type: object
-      properties:
-        index:
-          type: string
-        shard:
-          type: string
-        prirep:
-          type: string
-        ip:
-          type: string
-        segment:
-          type: string
-        generation:
-          type: string
-        docs.count:
-          type: string
-        docs.deleted:
-          type: string
-        size:
-          type: string
-        size.memory:
-          type: string
-        committed:
-          type: string
-        searchable:
-          type: string
-        version:
-          type: string
-        compound:
-          type: string
-    cat._common___CatSegmentReplicationRecord:
-      type: object
-      properties:
-        shardId:
-          type: string
-        target_node:
-          type: string
-        target_host:
-          type: string
-        checkpoints_behind:
-          type: string
-        bytes_behind:
-          type: string
-        current_lag:
-          type: string
-        last_completed_lag:
-          type: string
-        rejected_requests:
-          type: string
-        stage:
-          type: string
-        time:
-          type: string
-        files_fetched:
-          type: string
-        files_percent:
-          $ref: '#/components/schemas/_common___PercentageString'
-        bytes_fetched:
-          type: string
-        bytes_percent:
-          $ref: '#/components/schemas/_common___PercentageString'
-        start_time:
-          type: string
-        stop_time:
-          type: string
-        files:
-          type: string
-        files_total:
-          type: string
-        bytes:
-          type: string
-        bytes_total:
-          type: string
-        replicating_stage_time_taken:
-          type: string
-        get_checkpoint_info_stage_time_taken:
-          type: string
-        file_diff_stage_time_taken:
-          type: string
-        get_files_stage_time_taken:
-          type: string
-        finalize_replication_stage_time_taken:
-          type: string
     cat.aliases___AliasesRecord:
       type: object
       properties:
@@ -47499,6 +47423,59 @@ components:
         type:
           description: The repository type.
           type: string
+    cat.segment_replication___SegmentReplicationRecord:
+      type: object
+      properties:
+        shardId:
+          type: string
+        target_node:
+          type: string
+        target_host:
+          type: string
+        checkpoints_behind:
+          type: string
+        bytes_behind:
+          type: string
+        current_lag:
+          type: string
+        last_completed_lag:
+          type: string
+        rejected_requests:
+          type: string
+        stage:
+          type: string
+        time:
+          type: string
+        files_fetched:
+          type: string
+        files_percent:
+          $ref: '#/components/schemas/_common___PercentageString'
+        bytes_fetched:
+          type: string
+        bytes_percent:
+          $ref: '#/components/schemas/_common___PercentageString'
+        start_time:
+          type: string
+        stop_time:
+          type: string
+        files:
+          type: string
+        files_total:
+          type: string
+        bytes:
+          type: string
+        bytes_total:
+          type: string
+        replicating_stage_time_taken:
+          type: string
+        get_checkpoint_info_stage_time_taken:
+          type: string
+        file_diff_stage_time_taken:
+          type: string
+        get_files_stage_time_taken:
+          type: string
+        finalize_replication_stage_time_taken:
+          type: string
     cat.segments___SegmentsRecord:
       type: object
       properties:
@@ -48019,7 +47996,7 @@ components:
         start_epoch:
           $ref: '#/components/schemas/_common___StringifiedEpochTimeUnitSeconds'
         start_time:
-          $ref: '#/components/schemas/_common___ScheduleTimeOfDay'
+          $ref: '#/components/schemas/_common___TimeOfDay'
         end_epoch:
           $ref: '#/components/schemas/_common___StringifiedEpochTimeUnitSeconds'
         end_time:
