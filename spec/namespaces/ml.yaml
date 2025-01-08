@@ -332,6 +332,88 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.search_memory@200'
+  /_plugins/_ml/memory/{memory_id}/messages:
+    get:
+      operationId: ml.get_message.0
+      x-operation-group: ml.get_message
+      x-version-added: '2.12'
+      description: Get a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_message::path.memory_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_message@200'
+    post:
+      operationId: ml.create_message.0
+      x-operation-group: ml.create_message
+      x-version-added: '2.12'
+      description: Create a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.create_message::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_message@200'
+  /_plugins/_ml/memory/message/{message_id}:
+    get:
+      operationId: ml.get_message.1
+      x-operation-group: ml.get_message
+      x-version-added: '2.12'
+      description: Get a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_message::path.message_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_message@200'
+    put:
+      operationId: ml.update_message.0
+      x-operation-group: ml.update_message
+      x-version-added: '2.12'
+      description: Update a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_message::path.message_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_message@200'
+  /_plugins/_ml/memory/{memory_id}/_search:
+    get:
+      operationId: ml.search_message.0
+      x-operation-group: ml.search_message
+      x-version-added: '2.12'
+      description: Search messages.
+      parameters:
+        - $ref: '#/components/parameters/ml.search_message::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_message@200'
+    post:
+      operationId: ml.search_message.1
+      x-operation-group: ml.search_message
+      x-version-added: '2.12'
+      description: Search messages.
+      parameters:
+        - $ref: '#/components/parameters/ml.search_message::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_message@200'
+  /_plugins/_ml/memory/message/{message_id}/traces:
+    get:
+      operationId: ml.get_message_traces.0
+      x-operation-group: ml.get_message_traces
+      x-version-added: '2.12'
+      description: Get a message traces.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_message_traces::path.message_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_message_traces@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -671,6 +753,63 @@ components:
                 items:
                   $ref: '../schemas/ml._common.yaml#/components/schemas/SortMemory'
                 description: The sort order.
+    ml.create_message:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              input:
+                type: string
+                description: The question in the message.
+              prompt_template:
+                type: string
+                description: The prompt template.
+              response:
+                type: string
+                description: The answer to the question.
+              origin:
+                type: string
+                description: The system name that generated the response.
+              additional_info:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/AdditionalInfo'
+    ml.update_message:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              input:
+                type: string
+                description: The question in the message.
+              prompt_template:
+                type: string
+                description: The prompt template.
+              response:
+                type: string
+                description: The answer to the question.
+              origin:
+                type: string
+                description: The system name that generated the response.
+              additional_info:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/AdditionalInfo'
+    ml.search_message:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of messages to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/SortMessage'
+                description: The sort order.
   responses:
     ml.register_model_group@200:
       content:
@@ -818,7 +957,9 @@ components:
             type: object
             properties:
               memory_id:
-                type: string
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+            required:
+              - memory_id
     ml.update_memory@200:
       content:
         application/json:
@@ -840,6 +981,36 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/SearchMemoryResponse'
+    ml.create_message@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+            required:
+              - message_id
+    ml.get_message@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetMessageResponse'
+    ml.update_message@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.search_message@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchMessageResponse'
+    ml.get_message_traces@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetMessageTracesResponse'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -951,6 +1122,42 @@ components:
         type: string
     ml.delete_memory::path.memory_id:
       name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.create_message::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_message::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_message::path.message_id:
+      name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_message::path.message_id:
+      name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.search_message::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_message_traces::path.message_id:
+      name: message_id
       in: path
       required: true
       schema:
