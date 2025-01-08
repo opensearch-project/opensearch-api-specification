@@ -33,8 +33,7 @@ components:
           items:
             $ref: '#/components/schemas/SearchHitsHit'
         max_score:
-          type: number
-          format: float
+          type: ['null', number]
           description: The maximum score.
       required:
         - hits
@@ -74,6 +73,12 @@ components:
           $ref: '#/components/schemas/Source'
         model_id:
           $ref: '_common.yaml#/components/schemas/Name'
+        sort:
+          type: array
+          items:
+            type: number
+            format: float
+          description: The sort values.
       required:
         - _score
     Source:
@@ -149,8 +154,7 @@ components:
           format: int64
           description: The auto redeploy retry times.
         name:
-          type: string
-          description: The model name.
+          $ref: '_common.yaml#/components/schemas/Name'
         connector_id:
           type: string
           description: The connector ID.
@@ -203,6 +207,42 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Action'
+        updated_time:
+          type: string
+          format: date-time
+          description: The updated time.
+        create_time:
+          type: string
+          format: date-time
+          description: The create time.
+        application_type:
+          type: ['null', string]
+          description: The application type.
+        additional_info:
+          $ref: '#/components/schemas/AdditionalInfo'
+        user:
+          type: string
+          description: The username of the user.
+        input:
+          type: ['null', string]
+          description: The question in the message.
+        memory_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        trace_number:
+          type: ['null', string]
+          description: The trace number.
+        response:
+          type: ['null', string]
+          description: The answer to the question.
+        origin:
+          type: ['null', string]
+          description: The system name that generated the response.
+        parent_message_id:
+          type: ['null', string]
+          description: The parent message ID.
+        prompt_template:
+          type: ['null', string]
+          description: The prompt template.
     ModelConfig:
       type: object
       properties:
@@ -361,6 +401,8 @@ components:
       properties:
         bool:
           $ref: '#/components/schemas/BoolQuery'
+        match:
+          $ref: '#/components/schemas/Match'
         match_all:
           $ref: '#/components/schemas/MatchAllQuery'
         term:
@@ -445,6 +487,8 @@ components:
             $ref: '_common.yaml#/components/schemas/Id'
         model_id:
           $ref: '_common.yaml#/components/schemas/Name'
+        name:
+          $ref: '#/components/schemas/OwnerNameKeyword'
         owner.name.keyword:
           $ref: '#/components/schemas/OwnerNameKeyword'
     Algorithm:
@@ -560,6 +604,52 @@ components:
           $ref: '#/components/schemas/SortOrder'
         _score:
           $ref: '#/components/schemas/SortOrder'
+    SortMemory:
+      type: object
+      description: The sort memory query.
+      properties:
+        additional_info:
+          $ref: '#/components/schemas/SortOrder'
+        application_time:
+          $ref: '#/components/schemas/SortOrder'
+        create_time:
+          $ref: '#/components/schemas/SortOrder'
+        updated_time:
+          $ref: '#/components/schemas/SortOrder'
+        user:
+          $ref: '#/components/schemas/SortOrder'
+        _id:
+          $ref: '#/components/schemas/SortOrder'
+        _index:
+          $ref: '#/components/schemas/SortOrder'
+        _score:
+          $ref: '#/components/schemas/SortOrder'
+        _seq_no:
+          $ref: '#/components/schemas/SortOrder'
+    SortMessage:
+      type: object
+      description: The sort message query.
+      properties:
+        additional_info:
+          $ref: '#/components/schemas/SortOrder'
+        create_time:
+          $ref: '#/components/schemas/SortOrder'
+        memory_id:
+          $ref: '#/components/schemas/SortOrder'
+        origin:
+          $ref: '#/components/schemas/SortOrder'
+        parent_message_id:
+          $ref: '#/components/schemas/SortOrder'
+        trace_number:
+          $ref: '#/components/schemas/SortOrder'
+        _id:
+          $ref: '#/components/schemas/SortOrder'
+        _index:
+          $ref: '#/components/schemas/SortOrder'
+        _score:
+          $ref: '#/components/schemas/SortOrder'
+        _seq_no:
+          $ref: '#/components/schemas/SortOrder'
     SortOrder:
       type: object
       description: The order of the sort.
@@ -577,6 +667,7 @@ components:
         description:
           type: string
           description: The description.
+      additionalProperties: true
     TrainParameters:
       type: object
       properties:
@@ -804,6 +895,28 @@ components:
       properties:
         type:
           type: string
+        memory_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        create_time:
+          type: string
+          format: date-time
+          description: The create time.
+        updated_time:
+          type: string
+          format: date-time
+          description: The updated time.
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        user:
+          type: string
+          description: The username of the user.
+        additional_info:
+          $ref: '#/components/schemas/AdditionalInfo'
+    AdditionalInfo:
+      type: object
+      description: Additional information query.
+      properties: {}
+      additionalProperties: true
     ToolItems:
       type: object
       properties:
@@ -852,3 +965,68 @@ components:
           description: The last updated time.
     SearchConnectorsResponse:
       $ref: '#/components/schemas/SearchResponse'
+    GetMemoryResponse:
+      oneOf:
+        - $ref: '#/components/schemas/Memory'
+        - type: object
+          properties:
+            memories:
+              type: array
+              items:
+                $ref: '#/components/schemas/Memory'
+            next_token:
+              type: integer
+              format: int64
+              description: The index of the first memory in the sorted list of memories.
+    SearchMemoryResponse:
+      $ref: '#/components/schemas/SearchResponse'
+    Message:
+      type: object
+      properties:
+        memory_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        message_id:
+          $ref: '_common.yaml#/components/schemas/Name'
+        create_time:
+          type: string
+          format: date-time
+          description: The create time.
+        input:
+          type: ['null', string]
+          description: The question in the message.
+        prompt_template:
+          type: ['null', string]
+          description: The prompt template.
+        response:
+          type: ['null', string]
+          description: The answer to the question.
+        origin:
+          type: ['null', string]
+          description: The system name that generated the response.
+        additional_info:
+          $ref: '#/components/schemas/AdditionalInfo'
+        parent_message_id:
+          type: ['null', string]
+          description: The parent message ID.
+        trace_number:
+          type: integer
+          format: int64
+          description: The trace number.
+    GetMessageResponse:
+      oneOf:
+        - $ref: '#/components/schemas/Message'
+        - type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/Message'
+    SearchMessageResponse:
+      $ref: '#/components/schemas/SearchResponse'
+    GetMessageTracesResponse:
+      type: object
+      properties:
+        traces:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'

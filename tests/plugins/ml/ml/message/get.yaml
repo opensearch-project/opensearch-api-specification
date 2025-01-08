@@ -1,0 +1,50 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the retrieval of a message by ID and all messages.
+version: '>= 2.12'
+warnings:
+  multiple-paths-detected: false
+prologues:
+  - path: /_plugins/_ml/memory
+    id: create_memory
+    method: POST
+    request:
+      payload:
+        name: Test memory
+    output:
+      memory_id: payload.memory_id
+  - path: /_plugins/_ml/memory/{memory_id}/messages
+    id: create_message
+    method: POST
+    parameters:
+      memory_id: ${create_memory.memory_id}
+    request:
+      payload:
+        input: What is the best selling novel of all time?
+        prompt_template: Hello OpenAI, can you answer this question?
+        response: Hello, this is OpenAI. Here is the answer to your question.
+        additional_info:
+          suggestion: api.openai.com
+    output:
+      message_id: payload.message_id
+epilogues:
+  - path: /_plugins/_ml/memory/{memory_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_id: ${create_memory.memory_id}
+chapters:
+  - synopsis: Get a message by ID.
+    path: /_plugins/_ml/memory/message/{message_id}
+    method: GET
+    parameters:
+      message_id: ${create_message.message_id}
+    response:
+      status: 200
+  - synopsis: Get all messages.
+    path: /_plugins/_ml/memory/{memory_id}/messages
+    method: GET
+    parameters:
+      memory_id: ${create_memory.memory_id}
+    response:
+      status: 200
