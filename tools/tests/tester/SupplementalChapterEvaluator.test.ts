@@ -86,5 +86,53 @@ describe('SupplementalChapterEvaluator', () => {
       expect(result.overall.result).toEqual(Result.ERROR)
       expect(count).toEqual(5)
     })
+
+    test('a valid response payload', async () => {
+      mock.onAny().reply(200, '{"acknowledged":true}', { "content-type": "application/json" })
+
+      expect(
+        await supplemental_chapter_evaluator.evaluate({
+          path: '/test',
+          method: 'PUT',
+          request: {
+            payload: {}
+          },
+          response: {
+            status: 200,
+            payload: {
+              acknowledged: true
+            }
+          }
+        }, story_outputs)).toEqual({
+        title: 'PUT /test',
+        overall: {
+          result: Result.PASSED
+        }
+      })
+    })
+
+    test('an invalid response payload', async () => {
+      mock.onAny().reply(200, '{"acknowledged":false}', { "content-type": "application/json" })
+
+      expect(
+        await supplemental_chapter_evaluator.evaluate({
+          path: '/test',
+          method: 'PUT',
+          request: {
+            payload: {}
+          },
+          response: {
+            status: 200,
+            payload: {
+              acknowledged: true
+            }
+          }
+        }, story_outputs)).toEqual({
+        title: 'PUT /test',
+        overall: {
+          result: Result.FAILED
+        }
+      })
+    })
   })
 })

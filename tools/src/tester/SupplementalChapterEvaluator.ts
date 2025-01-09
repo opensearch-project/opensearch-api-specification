@@ -7,22 +7,23 @@
 * compatible open source license.
 */
 
-import _ from "lodash";
-import { ChapterOutput } from "./ChapterOutput";
-import ChapterReader from "./ChapterReader";
-import { StoryOutputs } from "./StoryOutputs";
-import { overall_result } from "./helpers";
-import { ChapterEvaluation, EvaluationWithOutput, Result } from './types/eval.types';
-import { Logger } from "../Logger";
-import { sleep, to_json } from "../helpers";
-import { SupplementalChapter } from "./types/story.types";
+import _ from "lodash"
+import { ChapterOutput } from "./ChapterOutput"
+import ChapterReader from "./ChapterReader"
+import { StoryOutputs } from "./StoryOutputs"
+import { overall_result } from "./helpers"
+import { ChapterEvaluation, EvaluationWithOutput, Result } from './types/eval.types'
+import { Logger } from "../Logger"
+import { sleep, to_json } from "../helpers"
+import { Payload, SupplementalChapter } from "./types/story.types"
+import ResponsePayloadEvaluator from './ResponsePayloadEvaluator'
 
 export default class SupplementalChapterEvaluator {
-  private readonly _chapter_reader: ChapterReader;
-  private readonly logger: Logger;
+  private readonly _chapter_reader: ChapterReader
+  private readonly logger: Logger
 
   constructor(chapter_reader: ChapterReader, logger: Logger) {
-    this._chapter_reader = chapter_reader;
+    this._chapter_reader = chapter_reader
     this.logger = logger
   }
 
@@ -49,10 +50,11 @@ export default class SupplementalChapterEvaluator {
     const response = await this._chapter_reader.read(chapter, story_outputs)
     const output_values_evaluation = ChapterOutput.extract_output_values(response, chapter.output)
     if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
-
     const status = chapter.status ?? [200, 201]
     const overall = status.includes(response.status) ? { result: Result.PASSED } : { result: Result.ERROR, message: response.message, error: response.error as Error }
-    const result: Result = overall_result(_.compact([overall, output_values_evaluation.evaluation]))
+    const response_payload: Payload | undefined = overall.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
+    const payload_body_evaluation = overall.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload) : { result: Result.SKIPPED }
+    const result: Result = overall_result(_.compact([overall, payload_body_evaluation, output_values_evaluation.evaluation]))
 
     var evaluation_result: EvaluationWithOutput = { evaluation: { result } }
     if (output_values_evaluation.output) { evaluation_result.output = output_values_evaluation.output }

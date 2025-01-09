@@ -46,6 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added the ability to skip an individual chapter test ([#765](https://github.com/opensearch-project/opensearch-api-specification/pull/765))
 - Added uploading of test spec logs ([#767](https://github.com/opensearch-project/opensearch-api-specification/pull/767))
 - Added `POST /_plugins/_ml/memory`, `POST /_plugins/_ml/memory/_search`, `{memory_id}/_search`, `{memory_id}/messages`, `PUT /_plugins/_ml/memory/{memory_id}`, `message/{message_id}`,  `GET /_plugins/_ml/memory`, `GET /_plugins/_ml/memory/{memory_id}`, `_search`, `message/{message_id}`, `{memory_id}/messages`, `{memory_id}/_search`, `message/{message_id}/traces`,  and `DELETE /_plugins/_ml/memory/{memory_id}` ([#771](https://github.com/opensearch-project/opensearch-api-specification/pull/771))
+- Added support for evaluating response payloads in prologues and epilogues ([#772](https://github.com/opensearch-project/opensearch-api-specification/pull/772))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
