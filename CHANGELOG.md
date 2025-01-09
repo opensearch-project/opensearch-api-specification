@@ -96,6 +96,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed nodes API schemas ([#761](https://github.com/opensearch-project/opensearch-api-specification/pull/761))
 - Fixed ingest API schemas ([#766](https://github.com/opensearch-project/opensearch-api-specification/pull/766))
 - Fixed CAT API schemas ([#769](https://github.com/opensearch-project/opensearch-api-specification/pull/769))
+- Fixed core API schemas ([#777](https://github.com/opensearch-project/opensearch-api-specification/pull/777))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))

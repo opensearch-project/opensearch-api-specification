@@ -444,10 +444,13 @@ components:
     VersionString:
       type: string
     SearchType:
-      type: string
-      enum:
-        - dfs_query_then_fetch
-        - query_then_fetch
+      oneOf:
+        - type: string
+          const: dfs_query_then_fetch
+          description: Documents are scored using global term and document frequencies across all shards. This is usually slower but more accurate.
+        - type: string
+          const: query_then_fetch
+          description: Documents are scored using local term and document frequencies for the shard. This is usually faster but less accurate.
     SuggestMode:
       type: string
       enum:
@@ -752,7 +755,8 @@ components:
         field:
           $ref: '#/components/schemas/Field'
         id:
-          $ref: '#/components/schemas/Id'
+          type: integer
+          format: int32
         max:
           type: integer
           format: int32
@@ -1573,8 +1577,11 @@ components:
     Slices:
       description: The slice configuration used to parallelize a process.
       oneOf:
-        - type: number
-        - $ref: '#/components/schemas/SlicesCalculation'
+        - title: count
+          type: integer
+          format: int32
+        - title: calculation
+          $ref: '#/components/schemas/SlicesCalculation'
     SlicesCalculation:
       type: string
       enum:
@@ -2218,7 +2225,8 @@ components:
         node:
           $ref: '#/components/schemas/NodeName'
         shard:
-          type: number
+          type: integer
+          format: int32
         index:
           $ref: '#/components/schemas/IndexName'
         allocation_id:
@@ -2235,20 +2243,11 @@ components:
           oneOf:
             - $ref: '#/components/schemas/NodeId'
             - type: 'null'
-        relocation_failure_info:
-          $ref: '#/components/schemas/RelocationFailureInfo'
       required:
         - index
         - primary
         - shard
         - state
-    RelocationFailureInfo:
-      type: object
-      properties:
-        failed_attempts:
-          type: number
-      required:
-        - failed_attempts
     OpenSearchVersionInfo:
       type: object
       properties:
