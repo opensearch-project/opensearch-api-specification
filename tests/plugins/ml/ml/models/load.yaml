@@ -1,8 +1,6 @@
 $schema: ../../../../../json_schemas/test_story.schema.yaml
 
-description: Test the deployment of a model using load API (deprecated).
-warnings:
-  multiple-paths-detected: false
+description: Test the deployment of a model using deprecated load API.
 prologues:
   - path: /_plugins/_ml/models/_register
     id: register_model
@@ -25,6 +23,20 @@ prologues:
     output:
       model_id: payload.model_id
 epilogues:
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_load_model_task
+    method: GET
+    parameters:
+      task_id: ${load_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: RUNNING
+    output:
+      model_id: payload.model_id
   - path: /_plugins/_ml/models/{model_id}/_undeploy
     method: POST
     parameters:
@@ -46,18 +58,3 @@ chapters:
       task_id: payload.task_id
     response:
       status: 200
-  - synopsis: Wait to get completed task.
-    id: get_completed_load_model_task
-    path: /_plugins/_ml/tasks/{task_id}
-    method: GET
-    parameters:
-      task_id: ${load_model.task_id}
-    response:
-      status: 200
-      payload:
-        state: COMPLETED
-    output:
-      model_id: payload.model_id
-    retry:
-      count: 3
-      wait: 10000

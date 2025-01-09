@@ -1,7 +1,7 @@
 $schema: ../../../../../json_schemas/test_story.schema.yaml
 
 description: Test the undeployment of specific models from specific nodes and a model from all nodes.
-version: '>= 2.11'
+version: '>= 2.7'
 prologues:
   - path: /_cluster/settings
     method: PUT
@@ -27,6 +27,10 @@ prologues:
     retry:
       count: 3
       wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
     output:
       model_id: payload.model_id
   - path: /_plugins/_ml/models/{model_id}/_deploy
@@ -44,6 +48,10 @@ prologues:
     retry:
       count: 3
       wait: 10000
+    response:
+      status: 200
+      payload:
+        state: RUNNING
     output:
       node_id: payload.worker_node[0]
       model_id: payload.model_id
