@@ -70,16 +70,107 @@ paths:
     post:
       operationId: ml.register_model.0
       x-operation-group: ml.register_model
+      x-version-added: '2.7'
       description: Registers a model.
       requestBody:
         $ref: '#/components/requestBodies/ml.register_model'
       responses:
         '200':
           $ref: '#/components/responses/ml.register_model@200'
+  /_plugins/_ml/models/meta:
+    post:
+      operationId: ml.create_model_meta.0
+      x-operation-group: ml.create_model_meta
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `_register_meta` instead.
+      description: Registers model metadata.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_model_meta'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_model_meta@200'
+  /_plugins/_ml/models/_register_meta:
+    post:
+      operationId: ml.register_model_meta.0
+      x-operation-group: ml.register_model_meta
+      x-version-added: '2.7'
+      description: Registers model metadata.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model_meta'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model_meta@200'
+  /_plugins/_ml/models/{model_id}/chunk/{chunk_number}:
+    post:
+      operationId: ml.chunk_model.0
+      x-operation-group: ml.chunk_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `upload_chunk` instead.
+      description: Uploads model chunk.
+      parameters:
+        - $ref: '#/components/parameters/ml.chunk_model::path.chunk_number'
+        - $ref: '#/components/parameters/ml.chunk_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.chunk_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.chunk_model@200'
+  /_plugins/_ml/models/{model_id}/upload_chunk/{chunk_number}:
+    post:
+      operationId: ml.upload_chunk.0
+      x-operation-group: ml.upload_chunk
+      x-version-added: '2.7'
+      description: Uploads model chunk.
+      parameters:
+        - $ref: '#/components/parameters/ml.upload_chunk::path.chunk_number'
+        - $ref: '#/components/parameters/ml.upload_chunk::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.upload_chunk'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.upload_chunk@200'
+  /_plugins/_ml/models/_upload:
+    post:
+      operationId: ml.upload_model.0
+      x-operation-group: ml.upload_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `register_model` instead.
+      description: Registers a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.upload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.upload_model@200'
   /_plugins/_ml/models/{model_id}:
+    get:
+      operationId: ml.get_model.0
+      x-operation-group: ml.get_model
+      x-version-added: '1.3'
+      description: Retrieves a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_model@200'
+    put:
+      operationId: ml.update_model.0
+      x-operation-group: ml.update_model
+      x-version-added: '2.12'
+      description: Updates a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_model@200'
     delete:
       operationId: ml.delete_model.0
       x-operation-group: ml.delete_model
+      x-version-added: '1.3'
       description: Deletes a model.
       parameters:
         - $ref: '#/components/parameters/ml.delete_model::path.model_id'
@@ -90,22 +181,91 @@ paths:
     post:
       operationId: ml.deploy_model.0
       x-operation-group: ml.deploy_model
+      x-version-added: '2.7'
       description: Deploys a model.
       parameters:
         - $ref: '#/components/parameters/ml.deploy_model::path.model_id'
       responses:
         '200':
           $ref: '#/components/responses/ml.deploy_model@200'
+  /_plugins/_ml/models/{model_id}/_load:
+    post:
+      operationId: ml.load_model.0
+      x-operation-group: ml.load_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `deploy_model` instead.
+      description: Deploys a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.load_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.load_model@200'
   /_plugins/_ml/models/{model_id}/_undeploy:
     post:
       operationId: ml.undeploy_model.0
       x-operation-group: ml.undeploy_model
+      x-version-added: '2.7'
       description: Undeploys a model.
       parameters:
         - $ref: '#/components/parameters/ml.undeploy_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.undeploy_model'
       responses:
         '200':
           $ref: '#/components/responses/ml.undeploy_model@200'
+  /_plugins/_ml/models/_undeploy:
+    post:
+      operationId: ml.undeploy_model.1
+      x-operation-group: ml.undeploy_model
+      x-version-added: '2.7'
+      description: Undeploys a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.undeploy_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.undeploy_model@200'
+  /_plugins/_ml/models/{model_id}/_unload:
+    post:
+      operationId: ml.unload_model.0
+      x-operation-group: ml.unload_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `undeploy_model` instead.
+      description: Unloads a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.unload_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.unload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.unload_model@200'
+  /_plugins/_ml/models/_unload:
+    post:
+      operationId: ml.unload_model.1
+      x-operation-group: ml.unload_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `undeploy_model` instead.
+      description: Unloads a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.unload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.unload_model@200'
+  /_plugins/_ml/models/{model_id}/_predict:
+    post:
+      operationId: ml.predict_model.0
+      x-operation-group: ml.predict_model
+      x-version-added: '2.12'
+      description: Predicts a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.predict_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.predict_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.predict_model@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
@@ -129,6 +289,17 @@ paths:
     get:
       operationId: ml.search_models.0
       x-operation-group: ml.search_models
+      x-version-added: '1.3'
+      description: Searches for models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_models'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_models@200'
+    post:
+      operationId: ml.search_models.1
+      x-operation-group: ml.search_models
+      x-version-added: '1.3'
       description: Searches for models.
       requestBody:
         $ref: '#/components/requestBodies/ml.search_models'
@@ -497,20 +668,132 @@ components:
                 type: string
                 description: The model name.
               version:
-                type: string
-                description: The model version.
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                type: string
-                description: The portable format of the model file.
-                enum: [ONNX, TORCH_SCRIPT]
+                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
               description:
                 type: string
                 description: The model description.
               model_group_id:
-                type: string
-                description: The ID of the model group to which to register the model.
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
             required:
+              - name
+              - version
+    ml.create_model_meta:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_content_hash_value:
+                type: string
+                description: The model content hash value.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              total_chunks:
+                type: integer
+                format: int64
+                description: Number of chunks the model is split into.
+              url:
+                type: string
+                description: The model URL.
+              description:
+                type: string
+                description: The model description.
+            required:
+              - model_config
+              - model_content_hash_value
               - model_format
+              - name
+              - total_chunks
+              - version
+    ml.register_model_meta:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_content_hash_value:
+                type: string
+                description: The model content hash value.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              total_chunks:
+                type: integer
+                format: int64
+                description: Number of chunks the model is split into.
+              url:
+                type: string
+                description: The model URL.
+              description:
+                type: string
+                description: The model description.
+            required:
+              - model_config
+              - model_content_hash_value
+              - model_format
+              - name
+              - total_chunks
+              - version
+    ml.chunk_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chunk:
+                type: string
+                description: The model chunk.
+            required:
+              - chunk
+    ml.upload_chunk:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chunk:
+                type: string
+                description: The model chunk.
+            required:
+              - chunk
+    ml.upload_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+              description:
+                type: string
+                description: The model description.
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+            required:
               - name
               - version
     ml.search_models:
@@ -531,6 +814,84 @@ components:
                 items:
                   $ref: '../schemas/ml._common.yaml#/components/schemas/Sort'
                 description: The sort order.
+    ml.update_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector:
+                type: object
+                description: The connector to use for the model.
+              connector_id:
+                type: string
+                description: The connector ID.
+              is_enabled:
+                type: boolean
+                description: Whether the model is enabled.
+              description: 
+                type: string
+                description: The model description.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              name:
+                type: string
+                description: The model name.
+              rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+              guardrails:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Guardrails'
+              interface:
+                type: object
+                description: The model interface.
+    ml.undeploy_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              node_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+            required:
+              - model_ids
+    ml.unload_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              node_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+            required:
+              - model_ids
+    ml.predict_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query_text:
+                type: string
+                description: The query text.
+              text_docs:
+                type: array
+                items:
+                  type: string
+                description: The text documents.
+            required:
+              - text_docs
     ml.predict:
       content:
         application/json:
@@ -849,6 +1210,67 @@ components:
             required:
               - status
               - task_id
+    ml.create_model_meta@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              model_id:
+                type: string
+            required:
+              - model_id
+              - status
+    ml.register_model_meta@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              model_id:
+                type: string
+            required:
+              - model_id
+              - status
+    ml.chunk_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status of the chunk upload operation.
+            required:
+              - status
+    ml.upload_chunk@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status of the chunk upload operation.
+            required:
+              - status
+    ml.upload_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
+            required:
+              - status
+              - task_id
     ml.deploy_model@200:
       content:
         application/json:
@@ -864,16 +1286,61 @@ components:
             required:
               - status
               - task_id
+    ml.load_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
+              task_type:
+                type: string
+                enum:
+                  - BATCH_INGEST
+                  - BATCH_PREDICTION
+                  - DEPLOY_MODEL
+                  - EXECUTION
+                  - PREDICTION
+                  - REGISTER_MODEL
+                  - TRAINING
+                  - TRAINING_AND_PREDICTION
+            required:
+              - status
+              - task_id
+              - task_type
     ml.undeploy_model@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/UndeployModelResponse'
+    ml.unload_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UnloadModelResponse'
+    ml.predict_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictModelResponse'
     ml.delete_model@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.get_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Model'
+    ml.update_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UpdateModelResponse'
     ml.delete_task@200:
       content:
         application/json:
@@ -1036,13 +1503,69 @@ components:
       required: true
       schema:
         type: string
+    ml.get_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.deploy_model::path.model_id:
       name: model_id
       in: path
       required: true
       schema:
         type: string
+    ml.load_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.undeploy_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.unload_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.predict_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.chunk_model::path.chunk_number:
+      name: chunk_number
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ml.chunk_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.upload_chunk::path.chunk_number:
+      name: chunk_number
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ml.upload_chunk::path.model_id:
       name: model_id
       in: path
       required: true

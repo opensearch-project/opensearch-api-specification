@@ -136,8 +136,7 @@ components:
         model_config:
           $ref: '#/components/schemas/ModelConfig'
         model_format:
-          type: string
-          description: The model format.
+          $ref: '_common.yaml#/components/schemas/ModelFormat'
         model_task_type:
           type: string
           description: The model task type.
@@ -273,7 +272,6 @@ components:
       type: object
       properties:
         inference_results:
-          # Update this once the PR for ML Model APIs (#733) has been merged
           type: array
           items:
             $ref: '#/components/schemas/InferenceResults'
@@ -781,6 +779,149 @@ components:
           description: The status.
     SearchModelGroupsResponse:
       $ref: '#/components/schemas/SearchResponse'
+    Model:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The model name.
+        model_group_id:
+          type: string
+          description: The model group ID.
+        algorithm:
+          type: string
+          description: The algorithm.
+        model_version:
+          type: string
+          description: The model version.
+        model_format:
+          $ref: '_common.yaml#/components/schemas/ModelFormat'
+        model_state:
+          type: string
+          description: The model state.
+          enum:
+            - DEPLOYED
+            - DEPLOYING
+            - DEPLOY_FAILED
+            - PARTIALLY_DEPLOYED
+            - REGISTERED
+            - REGISTERING
+            - UNDEPLOYED
+        model_content_size_in_bytes:
+          type: integer
+          format: int64
+          description: The model content size in bytes.
+        model_content_hash_value:
+          type: string
+          description: The model content hash value.
+        model_config:
+          $ref: '#/components/schemas/ModelConfig'
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
+        last_registered_time:
+          type: integer
+          format: int64
+          description: The last registered time.
+        total_chunks:
+          type: integer
+          format: int64
+          description: The total chunks.
+        is_hidden:
+          type: boolean
+          description: Whether the model is hidden.
+      required:
+        - model_state
+    RateLimiter:
+      type: object
+      properties:
+        limit:
+          type: integer
+          format: int64
+          description: The maximum limit.
+        unit:
+          type: string
+          description: The unit of time.
+          enum:
+            - DAYS
+            - HOURS
+            - MICROSECONDS
+            - MILLISECONDS
+            - MINUTES
+            - NANOSECONDS
+            - SECONDS
+      required:
+        - limit
+        - unit
+    Guardrails:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The guardrails type.
+          enum:
+            - local_regex
+            - model
+        input_guardrail:
+          $ref: '#/components/schemas/GuardrailsInputOutput'
+        output_guardrail:
+          $ref: '#/components/schemas/GuardrailsInputOutput'
+        stop_words:
+          $ref: '_common.analysis.yaml#/components/schemas/StopWords'
+        index_name:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        source_fields:
+          $ref: '_common.yaml#/components/schemas/Fields'
+        regex:
+          type: object
+          description: The regex used for input/output validation.
+        model_id:
+          type: string
+          description: The model ID.
+        response_filter:
+          type: string
+          description: The response filter.
+        response_validation_regex:
+          type: string
+          description: The response validation regex.
+    GuardrailsInputOutput:
+      type: object
+      properties:
+        model_id:
+          type: string
+          description: The model ID.
+        response_validation_regex:
+          type: string
+          description: The response validation regex.
+    UpdateModelResponse:
+      type: object
+      properties:
+        _index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
+        result:
+          $ref: '_common.yaml#/components/schemas/Result'
+        forced_refresh:
+          type: boolean
+          description: Whether the model is forced to refresh.
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: integer
+          format: int64
+          description: The primary term.
+      required:
+        - _index
     Task:
       type: object
       properties:
@@ -836,6 +977,69 @@ components:
     UndeployModelNodeStats:
       type: object
       additionalProperties: true
+    UnloadModelResponse:
+      type: object
+      additionalProperties:
+        title: nodes
+        $ref: '#/components/schemas/UnloadModelNode'
+    UnloadModelNode:
+      type: object
+      properties:
+        stats:
+          $ref: '#/components/schemas/UnloadModelNodeStats'
+    UnloadModelNodeStats:
+      type: object
+      additionalProperties: true
+    PredictModelResponse:
+      type: object
+      properties:
+        inference_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PredictModelResult'
+    PredictModelResult:
+      type: object
+      properties:
+        output:
+          type: array
+          items:
+            $ref: '#/components/schemas/PredictModelOutput'
+    PredictModelOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The output name.
+        data_type:
+          type: string
+          description: The output data type.
+          enum:
+            - BOOLEAN
+            - FLOAT16
+            - FLOAT32
+            - FLOAT64
+            - INT32
+            - INT64
+            - INT8
+            - STRING
+            - UINT8
+            - UNKNOWN
+        shape:
+          type: array
+          items:
+            type: integer
+            format: int64
+            description: The output shape.
+        data:
+          type: array
+          items:
+            type: number
+            format: double
+            description: The output data.
+        byte_buffer:
+          $ref: '#/components/schemas/ByteBuffer'
+      required:
+        - data
     Credential:
       type: object
       properties:
