@@ -23,8 +23,7 @@ components:
         params:
           description: The search template parameters. 
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
       required:
         - id
         - ratings
@@ -34,7 +33,8 @@ components:
         query:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         size:
-          type: number
+          type: integer
+          format: int32
       required:
         - query
     DocumentRating:
@@ -46,7 +46,8 @@ components:
           $ref: '_common.yaml#/components/schemas/IndexName'
         rating:
           description: The document's relevance with regard to the specified search request.
-          type: number
+          type: integer
+          format: int32
       required:
         - _id
         - _index
@@ -79,13 +80,15 @@ components:
           properties:
             relevant_rating_threshold:
               description: Sets the rating threshold above which documents are considered to be relevant.
-              type: number
+              type: integer
+              format: int32
     RankEvalMetricBase:
       type: object
       properties:
         k:
           description: Sets the maximum number of documents retrieved per query. This value replaces the `size` parameter in the query.
-          type: number
+          type: integer
+          format: int32
     RankEvalMetricRecall:
       allOf:
         - $ref: '#/components/schemas/RankEvalMetricRatingThreshold'
@@ -109,7 +112,8 @@ components:
           properties:
             maximum_relevance:
               description: The highest relevance grade used in user-supplied relevance judgments.
-              type: number
+              type: integer
+              format: int32
           required:
             - maximum_relevance
     RankEvalMetricDetail:
@@ -118,6 +122,7 @@ components:
         metric_score:
           description: The `metric_score`, found in the `metric_details` section, shows the contribution of this query to the global quality metric score.
           type: number
+          format: double
         unrated_docs:
           description: The `unrated_docs` section contains an `_index` and `_id` entry for each document that didn't have a `ratings` value. This can be used to ask the user to supply ratings for these documents.
           type: array
@@ -133,8 +138,7 @@ components:
           type: object
           additionalProperties:
             type: object
-            additionalProperties:
-              type: number
+            additionalProperties: true
       required:
         - hits
         - metric_details
@@ -156,7 +160,8 @@ components:
         hit:
           $ref: '#/components/schemas/RankEvalHit'
         rating:
-          type: ['null', number, string]
+          type: integer
+          format: int32
       required:
         - hit
     RankEvalHit:
@@ -168,6 +173,7 @@ components:
           $ref: '_common.yaml#/components/schemas/IndexName'
         _score:
           type: number
+          format: double
         _type:
           $ref: '_common.yaml#/components/schemas/Type'
       required:
