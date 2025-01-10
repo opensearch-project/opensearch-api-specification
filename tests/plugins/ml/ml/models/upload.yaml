@@ -1,6 +1,13 @@
 $schema: ../../../../../json_schemas/test_story.schema.yaml
 
 description: Test the creation of models using upload API (deprecated).
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.native_memory_threshold: 100
 epilogues:
   - path: /_plugins/_ml/tasks/{task_id}
     id: get_completed_task
@@ -10,6 +17,10 @@ epilogues:
     retry:
       count: 3
       wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
     output:
       model_id: payload.model_id
   - path: /_plugins/_ml/models/{model_id}
