@@ -36,7 +36,7 @@ export default class ChapterEvaluator {
     this.logger = logger
   }
 
-  async evaluate(chapter: ParsedChapter, skip: boolean, story_outputs: StoryOutputs, full_path?: string): Promise<ChapterEvaluation> {
+  async evaluate(chapter: ParsedChapter, skip: boolean, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     if (skip) return { title: chapter.synopsis, overall: { result: Result.SKIPPED } }
 
     const operation = this._operation_locator.locate_operation(chapter)
@@ -48,7 +48,7 @@ export default class ChapterEvaluator {
     var result: ChapterEvaluation
 
     do {
-      result = await this.#evaluate(chapter, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined, full_path)
+      result = await this.#evaluate(chapter, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined)
 
       if (result.overall.result === Result.PASSED || result.overall.result === Result.SKIPPED) {
         return result
@@ -62,8 +62,8 @@ export default class ChapterEvaluator {
     return result
   }
 
-  async #evaluate(chapter: ParsedChapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number, full_path?: string): Promise<ChapterEvaluation> {
-    const response = await this._chapter_reader.read(chapter, story_outputs, full_path)
+  async #evaluate(chapter: ParsedChapter, operation: ParsedOperation, story_outputs: StoryOutputs, retries?: number): Promise<ChapterEvaluation> {
+    const response = await this._chapter_reader.read(chapter, story_outputs)
     const params = this.#evaluate_parameters(chapter, operation, story_outputs)
     const request = this.#evaluate_request(chapter, operation, story_outputs)
     const status = this.#evaluate_status(chapter, response)
