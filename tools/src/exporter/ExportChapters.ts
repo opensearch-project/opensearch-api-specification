@@ -8,22 +8,24 @@
 */
 
 import fs from 'fs'
-import { read_yaml } from '../helpers'
+import { read_yaml, to_ndjson } from '../helpers'
 import { basename, resolve } from 'path'
 import _ from 'lodash'
 import { StoryEvaluations, StoryFile } from 'tester/types/eval.types'
 import { Logger } from 'Logger'
 import StoryParser from './StoryParser'
 import { PostmanManager } from './PostmanManager'
+import { APPLICATION_JSON } from './MimeTypes'
+import { Parameter } from 'tester/types/story.types'
 
 export default class ExportChapters {
   private readonly _story_files: Record<string, StoryFile[]> = {}
   private readonly _logger: Logger
-  private readonly _PostmanManager: PostmanManager
+  private readonly _postman_manager: PostmanManager
 
   constructor (logger: Logger, postman_manager: PostmanManager) {
-    this._PostmanManager = postman_manager
     this._logger = logger
+    this._postman_manager = postman_manager
   }
 
   async run (story_path: string): Promise<{ results: StoryEvaluations, failed: boolean }> {
@@ -33,12 +35,20 @@ export default class ExportChapters {
 
     for (const story_file of story_files) {
         for(const chapter of story_file.story.chapters) {
-            console.log(chapter);
-            this._PostmanManager.add_to_collection('url', chapter.method, chapter.path, {}, {}, 'application/json', story_file.full_path);
-        }
-        this._logger.info(`Evaluating ${story_file.display_path} ...`)
+          const [headers, content_type] = this.#serialize_headers(chapter.request?.headers, chapter.request?.content_type)
+          let params = {}, url_path = {};
+          if(chapter.parameters !== undefined) {
+            [url_path, params] = this.#parse_url(chapter.path, chapter.parameters)
+          }
+          const request_data = chapter.request?.payload !== undefined ? this.#serialize_payload(
+              chapter.request.payload,
+              content_type
+            ) : {}
+          this._postman_manager.add_to_collection('url', chapter.method, chapter.path, headers, params, request_data, content_type, story_file.full_path);
+      }
+      this._logger.info(`Evaluating ${story_file.display_path} ...`)
     }
-    this._PostmanManager.save_collection()
+    this._postman_manager.save_collection()
 
     return { results, failed }
   }
@@ -75,5 +85,48 @@ export default class ExportChapters {
       if (a_depth !== b_depth) return a_depth - b_depth
       return a.localeCompare(b)
     })
+  }
+
+  #serialize_headers(headers?: Record<string, any>, content_type?: string): [Record<string, any> | undefined, string] {
+    headers = _.cloneDeep(headers)
+    content_type = content_type ?? APPLICATION_JSON
+    if (!headers) return [headers, content_type]
+    _.forEach(headers, (v, k) => {
+      if (k.toLowerCase() == 'content-type') {
+          content_type = v.toString()
+          if (headers) delete headers[k]
+      }
+    })
+    return [headers, content_type]
+  }
+
+  #serialize_payload(payload: any, content_type: string): any {
+    if (payload === undefined) return undefined
+    switch (content_type) {
+    case 'application/x-ndjson': return to_ndjson(payload as any[])
+    default: return payload
+    }
+  }
+
+  resolve_params (parameters: Record<string, Parameter>): Record<string, Parameter> {
+    const resolved_params: Record<string, Parameter> = {}
+    for (const [param_name, param_value] of Object.entries(parameters ?? {})) {
+      if (typeof param_value === 'string') {
+        resolved_params[param_name] = param_value
+      } else {
+        resolved_params[param_name] = param_value
+      }
+    }
+    return resolved_params
+  }
+
+  #parse_url (path: string, parameters: Record<string, Parameter>): [string, Record<string, Parameter>] {
+    const path_params = new Set<string>()
+    const parsed_path = path.replace(/{(\w+)}/g, (_, key) => {
+      path_params.add(key as string)
+      return parameters[key] as string
+    })
+    const query_params = Object.fromEntries(Object.entries(parameters).filter(([key]) => !path_params.has(key)))
+    return [parsed_path, query_params]
   }
 }
