@@ -1,0 +1,75 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the deletion of a controller.
+version: '>= 2.12'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.native_memory_threshold: 100
+  - path: /_plugins/_ml/models/_register
+    id: register_model
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    output:
+      task_id: payload.task_id
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_task
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+  - path: /_plugins/_ml/controllers/{model_id}
+    id: create_controller
+    method: POST
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    request:
+      payload:
+        user_rate_limiter:
+          user1:
+            limit: 4
+            unit: MINUTES
+          user2:
+            limit: 4
+            unit: MINUTES
+    output:
+      model_id: payload.model_id
+epilogues:
+  - path: /_plugins/_ml/controllers/{model_id}
+    parameters:
+      model_id: ${create_controller.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/tasks/{task_id}
+    parameters:
+      task_id: ${register_model.task_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Delete a controller.
+    path: /_plugins/_ml/controllers/{model_id}
+    method: DELETE
+    parameters:
+      model_id: ${create_controller.model_id}
+    response:
+      status: 200

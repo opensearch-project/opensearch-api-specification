@@ -585,6 +585,51 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.get_message_traces@200'
+  /_plugins/_ml/controllers/{model_id}:
+    get:
+      operationId: ml.get_controller.0
+      x-operation-group: ml.get_controller
+      x-version-added: '2.12'
+      description: Retrieves a controller.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_controller@200'
+    post:
+      operationId: ml.create_controller.0
+      x-operation-group: ml.create_controller
+      x-version-added: '2.12'
+      description: Creates a controller.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_controller'
+      parameters:
+        - $ref: '#/components/parameters/ml.create_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_controller@200'
+    put:
+      operationId: ml.update_controller.0
+      x-operation-group: ml.update_controller
+      x-version-added: '2.12'
+      description: Updates a controller.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_controller'
+      parameters:
+        - $ref: '#/components/parameters/ml.update_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_controller@200'
+    delete:
+      operationId: ml.delete_controller.0
+      x-operation-group: ml.delete_controller
+      x-version-added: '2.12'
+      description: Deletes a controller.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_controller@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -1171,6 +1216,24 @@ components:
                 items:
                   $ref: '../schemas/ml._common.yaml#/components/schemas/SortMessage'
                 description: The sort order.
+    ml.create_controller:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/UserRateLimiter'
+    ml.update_controller:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/UserRateLimiter'
+              model_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
   responses:
     ml.register_model_group@200:
       content:
@@ -1478,6 +1541,36 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/GetMessageTracesResponse'
+    ml.get_controller@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/UserRateLimiter'
+              model_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.create_controller@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+              status:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Status'
+    ml.update_controller@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.delete_controller@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -1681,6 +1774,30 @@ components:
         type: string
     ml.get_message_traces::path.message_id:
       name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.create_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_controller::path.model_id:
+      name: model_id
       in: path
       required: true
       schema:
