@@ -1257,3 +1257,114 @@ components:
             - MINUTES
             - NANOSECONDS
             - SECONDS
+    ProfileRequest:
+      type: object
+      properties:
+        node_ids:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/Id'
+        model_ids:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/Id'
+        task_ids:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/Id'
+        return_all_tasks:
+          type: boolean
+          description: Whether to return all tasks.
+        return_all_models:
+          type: boolean
+          description: Whether to return all models.
+    GetProfileResponse:
+      type: object
+      properties:
+        nodes:
+          $ref: '#/components/schemas/Nodes'
+    Nodes:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Node'
+    Node:
+      type: object
+      properties:
+        tasks:
+          $ref: '#/components/schemas/Tasks'
+        models:
+          $ref: '#/components/schemas/Models'
+    Models:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ModelProfile'
+    ModelProfile:
+      type: object
+      properties:
+        model_state:
+          type: string
+          description: The model state.
+          enum:
+            - DEPLOYED
+            - DEPLOYING
+            - DEPLOY_FAILED
+            - PARTIALLY_DEPLOYED
+            - REGISTERED
+            - REGISTERING
+            - UNDEPLOYED
+        predictor:
+          type: string
+          description: The predictor.
+        worker_nodes:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/NodeIds'
+        predict_request_stats:
+          $ref: '#/components/schemas/PredictRequestStats'
+        target_worker_nodes:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/NodeIds'
+        memory_size_estimation_cpu:
+          type: integer
+          format: int64
+          description: The estimated memory size in cpu
+        memory_size_estimation_gpu:
+          type: integer
+          format: int64
+          description: The estimated memory size in gpu.
+    PredictRequestStats:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int64
+          description: The total predict requests on this node.
+        max:
+          type: number
+          format: double
+          description: The maximum latency in miliseconds.
+        min:
+          type: number
+          format: double
+          description: The minimum latency in miliseconds.
+        average:
+          type: number
+          format: double
+          description: The average latency in miliseconds.
+        p50:
+          type: number
+          format: double
+          description: The 50th percentile latency in miliseconds.
+        p90:
+          type: number
+          format: double
+          description: The 90th percentile latency in miliseconds.
+        p99:
+          type: number
+          format: double
+          description: The 99th percentile latency in miliseconds.
+    Tasks:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Task'

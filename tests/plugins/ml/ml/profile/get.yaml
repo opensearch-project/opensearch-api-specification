@@ -1,0 +1,59 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the retrieval of runtime information about ML tasks and models.
+version: '>= 2.7'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.native_memory_threshold: 100
+  - path: /_plugins/_ml/models/_register
+    id: register_model
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    output:
+      task_id: payload.task_id
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_task
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+      node_id: payload.worker_node[0]
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/tasks/{task_id}
+    parameters:
+      task_id: ${register_model.task_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get runtime information of all tasks and models on a specific node.
+    path: /_plugins/_ml/profile
+    method: GET
+    request:
+      payload:
+        node_ids:
+          - ${get_completed_task.node_id}
+        return_all_tasks: true
+        return_all_models: true
+    response:
+      status: 200

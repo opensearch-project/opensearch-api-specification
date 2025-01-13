@@ -49,6 +49,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added support for evaluating response payloads in prologues and epilogues ([#772](https://github.com/opensearch-project/opensearch-api-specification/pull/772))
 - Added `GET /_plugins/_ml/models/{model_id}`, `POST /_plugins/_ml/models/_search`, `POST /_plugins/_ml/models/_unload`, `_undeploy`, `_upload`, `meta`, `_register_meta`, `POST /_plugins/_ml/models/{model_id}/_load`, `_predict`, `_unload`, `chunk/{chunk_number}`, `upload_chunk/{chunk_number}`, and `PUT /_plugins/_ml/models/{model_id}` ([#733](https://github.com/opensearch-project/opensearch-api-specification/pull/733))
 - Added `GET`, `POST`, `PUT`, `DELETE /_plugins/_ml/controllers/{model_id}` ([#779](https://github.com/opensearch-project/opensearch-api-specification/pull/779))
+- Added `GET /_plugins/_ml/profile`, `GET /_plugins/_ml/profile/models`, `models/{model_id}`, `tasks`, `tasks/{task_id}` ([#786](https://github.com/opensearch-project/opensearch-api-specification/pull/786))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
