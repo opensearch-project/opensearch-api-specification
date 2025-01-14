@@ -77,6 +77,7 @@ export default class TestRunner {
     if (file.startsWith('.') || file == 'docker-compose.yml' || file == 'Dockerfile' || file.endsWith('.py')) {
       return []
     } else if (fs.statSync(path).isFile()) {
+      this._logger.info(`Loading ${path} ...`)
       const story = StoryParser.parse(read_yaml(path))
       return [{
         display_path: next_prefix === '' ? basename(path) : next_prefix,

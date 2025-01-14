@@ -20,6 +20,7 @@
     - [Waiting for Tasks](#waiting-for-tasks)
     - [Warnings](#warnings)
       - [multiple-paths-detected](#multiple-paths-detected)
+      - [invalid-path-detected](#invalid-path-detected)
       - [Suppressing Warnings](#suppressing-warnings)
   - [Collecting Test Coverage](#collecting-test-coverage)
     - [Coverage Summary](#coverage-summary)
@@ -365,6 +366,15 @@ WARNING Multiple paths detected, please group similar tests together and move pa
   /_component_template/{name}
   /_index_template/{name}
   /{index}
+```
+
+#### invalid-path-detected
+
+The test file names expect to match the API being tested. Otherwise, a warning will be emitted.
+
+```
+PASSED  msearch/index.yaml (tests/default/_core/msearch/index.yaml)
+WARNING Invalid path detected, please move /tests/default/_core/msearch/index.yaml to /msearch.yaml.
 ```
 
 #### Suppressing Warnings

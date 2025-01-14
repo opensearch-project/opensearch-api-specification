@@ -202,6 +202,10 @@ export interface Warnings {
    * Enable/disable warnings about multiple paths being tested in the same story.
    */
   'multiple-paths-detected'?: boolean;
+  /**
+   * Enable/disable warnings about file paths that do not match paths tested in the story.
+   */
+  'invalid-path-detected'?: boolean;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
