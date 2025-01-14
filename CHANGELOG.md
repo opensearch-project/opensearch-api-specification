@@ -48,6 +48,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `POST /_plugins/_ml/memory`, `POST /_plugins/_ml/memory/_search`, `{memory_id}/_search`, `{memory_id}/messages`, `PUT /_plugins/_ml/memory/{memory_id}`, `message/{message_id}`,  `GET /_plugins/_ml/memory`, `GET /_plugins/_ml/memory/{memory_id}`, `_search`, `message/{message_id}`, `{memory_id}/messages`, `{memory_id}/_search`, `message/{message_id}/traces`,  and `DELETE /_plugins/_ml/memory/{memory_id}` ([#771](https://github.com/opensearch-project/opensearch-api-specification/pull/771))
 - Added support for evaluating response payloads in prologues and epilogues ([#772](https://github.com/opensearch-project/opensearch-api-specification/pull/772))
 - Added `GET /_plugins/_ml/models/{model_id}`, `POST /_plugins/_ml/models/_search`, `POST /_plugins/_ml/models/_unload`, `_undeploy`, `_upload`, `meta`, `_register_meta`, `POST /_plugins/_ml/models/{model_id}/_load`, `_predict`, `_unload`, `chunk/{chunk_number}`, `upload_chunk/{chunk_number}`, and `PUT /_plugins/_ml/models/{model_id}` ([#733](https://github.com/opensearch-project/opensearch-api-specification/pull/733))
+- Added `GET`, `POST`, `PUT`, `DELETE /_plugins/_ml/controllers/{model_id}` ([#779](https://github.com/opensearch-project/opensearch-api-specification/pull/779))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -96,6 +97,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed ingest API schemas ([#766](https://github.com/opensearch-project/opensearch-api-specification/pull/766))
 - Fixed CAT API schemas ([#769](https://github.com/opensearch-project/opensearch-api-specification/pull/769))
 - Fixed core API schemas ([#777](https://github.com/opensearch-project/opensearch-api-specification/pull/777))
+- Fixed Memory Circuit Breaker flaky test in ML Model APIs ([#782](https://github.com/opensearch-project/opensearch-api-specification/pull/782))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))

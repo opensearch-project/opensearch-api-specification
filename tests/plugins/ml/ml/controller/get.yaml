@@ -1,6 +1,7 @@
 $schema: ../../../../../json_schemas/test_story.schema.yaml
 
-description: Test the deployment of a model using deprecated load API.
+description: Test the retrieval of a controller.
+version: '>= 2.12'
 prologues:
   - path: /_cluster/settings
     method: PUT
@@ -19,21 +20,10 @@ prologues:
     output:
       task_id: payload.task_id
   - path: /_plugins/_ml/tasks/{task_id}
-    id: get_completed_register_model_task
+    id: get_completed_task
     method: GET
     parameters:
       task_id: ${register_model.task_id}
-    retry:
-      count: 3
-      wait: 10000
-    output:
-      model_id: payload.model_id
-epilogues:
-  - path: /_plugins/_ml/tasks/{task_id}
-    id: get_completed_load_model_task
-    method: GET
-    parameters:
-      task_id: ${load_model.task_id}
     retry:
       count: 3
       wait: 10000
@@ -43,24 +33,43 @@ epilogues:
         state: COMPLETED
     output:
       model_id: payload.model_id
-  - path: /_plugins/_ml/models/{model_id}/_undeploy
+  - path: /_plugins/_ml/controllers/{model_id}
+    id: create_controller
     method: POST
     parameters:
-      model_id: ${get_completed_register_model_task.model_id}
+      model_id: ${get_completed_task.model_id}
+    request:
+      payload:
+        user_rate_limiter:
+          user1:
+            limit: 4
+            unit: MINUTES
+          user2:
+            limit: 4
+            unit: MINUTES
+    output:
+      model_id: payload.model_id
+epilogues:
+  - path: /_plugins/_ml/controllers/{model_id}
+    parameters:
+      model_id: ${create_controller.model_id}
+    method: DELETE
     status: [200, 404]
   - path: /_plugins/_ml/models/{model_id}
     parameters:
-      model_id: ${get_completed_register_model_task.model_id}
+      model_id: ${get_completed_task.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/tasks/{task_id}
+    parameters:
+      task_id: ${register_model.task_id}
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Deploy a model.
-    id: load_model
-    path: /_plugins/_ml/models/{model_id}/_load
-    method: POST
+  - synopsis: Get a controller.
+    path: /_plugins/_ml/controllers/{model_id}
+    method: GET
     parameters:
-      model_id: ${get_completed_register_model_task.model_id}
-    output:
-      task_id: payload.task_id
+      model_id: ${create_controller.model_id}
     response:
       status: 200
