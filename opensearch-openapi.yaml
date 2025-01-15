@@ -4687,6 +4687,39 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.train___200'
+  /_plugins/_ml/{node_id}/stats/:
+    get:
+      operationId: ml.get_stats.2
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats___path.node_id'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats___200'
+  /_plugins/_ml/{node_id}/stats/{stat}:
+    get:
+      operationId: ml.get_stats.3
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats___path.node_id'
+        - $ref: '#/components/parameters/ml.get_stats___path.stat'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats___200'
   /_plugins/_ml/agents/_register:
     post:
       operationId: ml.register_agents.0
@@ -5613,6 +5646,37 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.get_profile_tasks___200'
+  /_plugins/_ml/stats:
+    get:
+      operationId: ml.get_stats.0
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats___200'
+      parameters:
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+  /_plugins/_ml/stats/{stat}:
+    get:
+      operationId: ml.get_stats.1
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats___path.stat'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats___200'
   /_plugins/_ml/tasks/{task_id}:
     delete:
       operationId: ml.delete_task.0
@@ -23754,6 +23818,26 @@ components:
       required: true
       schema:
         type: string
+    ml.get_stats___path.node_id:
+      name: node_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_stats___path.stat:
+      name: stat
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - ml_config_index_status
+          - ml_connector_count
+          - ml_connector_index_status
+          - ml_controller_index_status
+          - ml_model_count
+          - ml_model_index_status
+          - ml_task_index_status
     ml.get_task___path.task_id:
       name: task_id
       in: path
@@ -31797,6 +31881,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ml._common___GetProfileResponse'
+      description: ''
+    ml.get_stats___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common___GetStatsResponse'
       description: ''
     ml.get_task___200:
       content:
@@ -55460,6 +55550,23 @@ components:
             - SPARSE_TOKENIZE
             - TEXT_EMBEDDING
             - TEXT_SIMILARITY
+    ml._common___AlgorithmOperations:
+      type: object
+      properties:
+        deploy:
+          $ref: '#/components/schemas/ml._common___Deploy'
+        register:
+          $ref: '#/components/schemas/ml._common___Register'
+        undeploy:
+          $ref: '#/components/schemas/ml._common___Undeploy'
+        predict:
+          $ref: '#/components/schemas/ml._common___Predict'
+        train:
+          $ref: '#/components/schemas/ml._common___Train'
+    ml._common___Algorithms:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ml._common___AlgorithmOperations'
     ml._common___BoolQuery:
       type: object
       description: The Boolean query.
@@ -55534,6 +55641,8 @@ components:
         session_token:
           type: string
       additionalProperties: true
+    ml._common___Deploy:
+      $ref: '#/components/schemas/ml._common___ModelStasts'
     ml._common___Exists:
       type: object
       description: The exists filter.
@@ -55620,6 +55729,59 @@ components:
       properties:
         nodes:
           $ref: '#/components/schemas/ml._common___Nodes'
+    ml._common___GetStatsResponse:
+      type: object
+      properties:
+        ml_model_count:
+          type: integer
+          format: int64
+          description: The model count.
+        ml_connector_index_status:
+          type: string
+          description: The connector index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_config_index_status:
+          type: string
+          description: The config index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_task_index_status:
+          type: string
+          description: The task index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_connector_count:
+          type: integer
+          format: int64
+          description: The connector count.
+        ml_model_index_status:
+          type: string
+          description: The model index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_controller_index_status:
+          type: string
+          description: The controller index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        nodes:
+          $ref: '#/components/schemas/ml._common___NodeStats'
     ml._common___Guardrails:
       type: object
       properties:
@@ -55952,10 +56114,35 @@ components:
           type: integer
           format: int64
           description: The estimated memory size in GPU.
+        deploy:
+          $ref: '#/components/schemas/ml._common___Deploy'
+        register:
+          $ref: '#/components/schemas/ml._common___Register'
+        undeploy:
+          $ref: '#/components/schemas/ml._common___Undeploy'
+        predict:
+          $ref: '#/components/schemas/ml._common___Predict'
+        train:
+          $ref: '#/components/schemas/ml._common___Train'
     ml._common___Models:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/ml._common___ModelProfile'
+    ml._common___ModelStasts:
+      type: object
+      properties:
+        ml_action_request_count:
+          type: integer
+          format: int64
+          description: The request count.
+        ml_action_failure_count:
+          type: integer
+          format: int64
+          description: The failure count.
+        ml_executing_task_count:
+          type: integer
+          format: int64
+          description: The executing task count.
     ml._common___Nested:
       type: object
       description: The nested filter.
@@ -55990,6 +56177,41 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/ml._common___Node'
+    ml._common___NodeStats:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ml._common___NodeStatsDetails'
+    ml._common___NodeStatsDetails:
+      type: object
+      properties:
+        ml_deployed_model_count:
+          type: integer
+          format: int64
+          description: The deployed model count.
+        ml_jvm_heap_usage:
+          type: integer
+          format: int64
+          description: The JVM heap usage.
+        ml_failure_count:
+          type: integer
+          format: int64
+          description: The failure count.
+        ml_executing_task_count:
+          type: integer
+          format: int64
+          description: The executing task count.
+        ml_circuit_breaker_trigger_count:
+          type: integer
+          format: int64
+          description: The circuit breaker trigger count.
+        ml_request_count:
+          type: integer
+          format: int64
+          description: The request count.
+        algorithms:
+          $ref: '#/components/schemas/ml._common___Algorithms'
+        models:
+          $ref: '#/components/schemas/ml._common___Models'
     ml._common___Output:
       type: object
       properties:
@@ -56065,6 +56287,8 @@ components:
     ml._common___Parameters:
       type: object
       additionalProperties: true
+    ml._common___Predict:
+      $ref: '#/components/schemas/ml._common___ModelStasts'
     ml._common___PredictionResult:
       type: object
       properties:
@@ -56232,6 +56456,8 @@ components:
       required:
         - limit
         - unit
+    ml._common___Register:
+      $ref: '#/components/schemas/ml._common___ModelStasts'
     ml._common___Rows:
       type: object
       properties:
@@ -56672,6 +56898,8 @@ components:
         parameters:
           $ref: '#/components/schemas/ml._common___Parameters'
       additionalProperties: true
+    ml._common___Train:
+      $ref: '#/components/schemas/ml._common___ModelStasts'
     ml._common___TrainParameters:
       type: object
       properties:
@@ -56708,6 +56936,8 @@ components:
           $ref: '#/components/schemas/ml._common___Status'
       required:
         - status
+    ml._common___Undeploy:
+      $ref: '#/components/schemas/ml._common___ModelStasts'
     ml._common___UndeployModelNode:
       type: object
       properties:
