@@ -689,6 +689,49 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.get_profile_tasks@200'
+  /_plugins/_ml/stats:
+    get:
+      operationId: ml.get_stats.0
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/stats/{stat}:
+    get:
+      operationId: ml.get_stats.1
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats::path.stat'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/{node_id}/stats/:
+    get:
+      operationId: ml.get_stats.2
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats::path.node_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/{node_id}/stats/{stat}:
+    get:
+      operationId: ml.get_stats.3
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats::path.node_id'
+        - $ref: '#/components/parameters/ml.get_stats::path.stat'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -1660,6 +1703,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/GetProfileResponse'
+    ml.get_stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetStatsResponse'
   parameters:
     ml.get_model_group::path.model_group_id:
       name: model_group_id
@@ -1899,6 +1947,26 @@ components:
         type: string
     ml.get_profile_tasks::path.task_id:
       name: task_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_stats::path.stat:
+      name: stat
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - ml_config_index_status
+          - ml_connector_count
+          - ml_connector_index_status
+          - ml_controller_index_status
+          - ml_model_count
+          - ml_model_index_status
+          - ml_task_index_status
+    ml.get_stats::path.node_id:
+      name: node_id
       in: path
       required: true
       schema:

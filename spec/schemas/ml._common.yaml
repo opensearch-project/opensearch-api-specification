@@ -1333,6 +1333,16 @@ components:
           type: integer
           format: int64
           description: The estimated memory size in GPU.
+        deploy:
+          $ref: '#/components/schemas/Deploy'
+        register:
+          $ref: '#/components/schemas/Register'
+        undeploy:
+          $ref: '#/components/schemas/Undeploy'
+        predict:
+          $ref: '#/components/schemas/Predict'
+        train:
+          $ref: '#/components/schemas/Train'
     PredictRequestStats:
       type: object
       properties:
@@ -1368,3 +1378,133 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/Task'
+    GetStatsResponse:
+      type: object
+      properties:
+        ml_model_count:
+          type: integer
+          format: int64
+          description: The model count.
+        ml_connector_index_status:
+          type: string
+          description: The connector index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_config_index_status:
+          type: string
+          description: The config index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_task_index_status:
+          type: string
+          description: The task index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_connector_count:
+          type: integer
+          format: int64
+          description: The connector count.
+        ml_model_index_status:
+          type: string
+          description: The model index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        ml_controller_index_status:
+          type: string
+          description: The controller index status.
+          enum:
+            - green
+            - non-existent
+            - red
+            - yellow
+        nodes:
+          $ref: '#/components/schemas/NodeStats'
+    NodeStats:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/NodeStatsDetails'
+    NodeStatsDetails:
+      type: object
+      properties:
+        ml_deployed_model_count:
+          type: integer
+          format: int64
+          description: The deployed model count.
+        ml_jvm_heap_usage:
+          type: integer
+          format: int64
+          description: The JVM heap usage.
+        ml_failure_count:
+          type: integer
+          format: int64
+          description: The failure count.
+        ml_executing_task_count:
+          type: integer
+          format: int64
+          description: The executing task count.
+        ml_circuit_breaker_trigger_count:
+          type: integer
+          format: int64
+          description: The circuit breaker trigger count.
+        ml_request_count:
+          type: integer
+          format: int64
+          description: The request count.
+        algorithms:
+          $ref: '#/components/schemas/Algorithms'
+        models:
+          $ref: '#/components/schemas/Models'
+    Algorithms:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/AlgorithmOperations'
+    AlgorithmOperations:
+      type: object
+      properties:
+        deploy:
+          $ref: '#/components/schemas/Deploy'
+        register:
+          $ref: '#/components/schemas/Register'
+        undeploy:
+          $ref: '#/components/schemas/Undeploy'
+        predict:
+          $ref: '#/components/schemas/Predict'
+        train:
+          $ref: '#/components/schemas/Train'
+    ModelStasts:
+      type: object
+      properties:
+        ml_action_request_count:
+          type: integer
+          format: int64
+          description: The request count.
+        ml_action_failure_count:
+          type: integer
+          format: int64
+          description: The failure count.
+        ml_executing_task_count:
+          type: integer
+          format: int64
+          description: The executing task count.
+    Deploy:
+      $ref: '#/components/schemas/ModelStasts'
+    Register:
+      $ref: '#/components/schemas/ModelStasts'
+    Undeploy:
+      $ref: '#/components/schemas/ModelStasts'
+    Predict:
+      $ref: '#/components/schemas/ModelStasts'
+    Train:
+      $ref: '#/components/schemas/ModelStasts'
