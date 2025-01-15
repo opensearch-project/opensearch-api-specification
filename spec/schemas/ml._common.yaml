@@ -136,7 +136,7 @@ components:
         model_config:
           $ref: '#/components/schemas/ModelConfig'
         model_format:
-          $ref: '_common.yaml#/components/schemas/ModelFormat'
+          $ref: '#/components/schemas/ModelFormat'
         model_task_type:
           type: string
           description: The model task type.
@@ -795,7 +795,7 @@ components:
           type: string
           description: The model version.
         model_format:
-          $ref: '_common.yaml#/components/schemas/ModelFormat'
+          $ref: '#/components/schemas/ModelFormat'
         model_state:
           type: string
           description: The model state.
@@ -841,9 +841,8 @@ components:
       type: object
       properties:
         limit:
-          type: integer
-          format: int64
           description: The maximum limit.
+          $ref: '_common.yaml#/components/schemas/StringifiedDouble'
         unit:
           type: string
           description: The unit of time.
@@ -898,30 +897,6 @@ components:
         response_validation_regex:
           type: string
           description: The response validation regex.
-    UpdateModelResponse:
-      type: object
-      properties:
-        _index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-        _id:
-          $ref: '_common.yaml#/components/schemas/Id'
-        _version:
-          $ref: '_common.yaml#/components/schemas/VersionNumber'
-        result:
-          $ref: '_common.yaml#/components/schemas/Result'
-        forced_refresh:
-          type: boolean
-          description: Whether the model is forced to refresh.
-        _shards:
-          $ref: '_common.yaml#/components/schemas/ShardStatistics'
-        _seq_no:
-          $ref: '_common.yaml#/components/schemas/SequenceNumber'
-        _primary_term:
-          type: integer
-          format: int64
-          description: The primary term.
-      required:
-        - _index
     Task:
       type: object
       properties:
@@ -1169,19 +1144,6 @@ components:
           description: The last updated time.
     SearchConnectorsResponse:
       $ref: '#/components/schemas/SearchResponse'
-    GetMemoryResponse:
-      oneOf:
-        - $ref: '#/components/schemas/Memory'
-        - type: object
-          properties:
-            memories:
-              type: array
-              items:
-                $ref: '#/components/schemas/Memory'
-            next_token:
-              type: integer
-              format: int64
-              description: The index of the first memory in the sorted list of memories.
     SearchMemoryResponse:
       $ref: '#/components/schemas/SearchResponse'
     Message:
@@ -1216,47 +1178,13 @@ components:
           type: integer
           format: int64
           description: The trace number.
-    GetMessageResponse:
-      oneOf:
-        - $ref: '#/components/schemas/Message'
-        - type: object
-          properties:
-            messages:
-              type: array
-              items:
-                $ref: '#/components/schemas/Message'
     SearchMessageResponse:
       $ref: '#/components/schemas/SearchResponse'
-    GetMessageTracesResponse:
-      type: object
-      properties:
-        traces:
-          type: array
-          items:
-            $ref: '#/components/schemas/Message'
-    UserRateLimiter:
-      type: object
-      properties:
-        user1:
-          $ref: '#/components/schemas/User'
-      additionalProperties: true
-    User:
-      type: object
-      properties:
-        limit:
-          type: [integer, string]
-          description: Max Predict API calls per user per time unit.
-        unit:
-          type: string
-          description: The unit of time.
-          enum:
-            - DAYS
-            - HOURS
-            - MICROSECONDS
-            - MILLISECONDS
-            - MINUTES
-            - NANOSECONDS
-            - SECONDS
+    ModelFormat:
+      type: string
+      enum:
+        - ONNX
+        - TORCH_SCRIPT
     ProfileRequest:
       type: object
       properties:
@@ -1483,7 +1411,7 @@ components:
           $ref: '#/components/schemas/Predict'
         train:
           $ref: '#/components/schemas/Train'
-    ModelStasts:
+    ModelStats:
       type: object
       properties:
         ml_action_request_count:
@@ -1499,12 +1427,12 @@ components:
           format: int64
           description: The executing task count.
     Deploy:
-      $ref: '#/components/schemas/ModelStasts'
+      $ref: '#/components/schemas/ModelStats'
     Register:
-      $ref: '#/components/schemas/ModelStasts'
+      $ref: '#/components/schemas/ModelStats'
     Undeploy:
-      $ref: '#/components/schemas/ModelStasts'
+      $ref: '#/components/schemas/ModelStats'
     Predict:
-      $ref: '#/components/schemas/ModelStasts'
+      $ref: '#/components/schemas/ModelStats'
     Train:
-      $ref: '#/components/schemas/ModelStasts'
+      $ref: '#/components/schemas/ModelStats'

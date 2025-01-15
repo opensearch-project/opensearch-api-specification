@@ -1,6 +1,6 @@
-$schema: ../../../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
 
-description: Test the retrieval of message trace.
+description: Test updating a message.
 version: '>= 2.12'
 prologues:
   - path: /_plugins/_ml/memory
@@ -21,6 +21,7 @@ prologues:
         input: What is the best selling novel of all time?
         prompt_template: Hello OpenAI, can you answer this question?
         response: Hello, this is OpenAI. Here is the answer to your question.
+        origin: MyFirstOpenAIWrapper
         additional_info:
           suggestion: api.openai.com
     output:
@@ -32,10 +33,14 @@ epilogues:
     parameters:
       memory_id: ${create_memory.memory_id}
 chapters:
-  - synopsis: Get a message trace.
-    path: /_plugins/_ml/memory/message/{message_id}/traces
-    method: GET
+  - synopsis: Update a message.
+    path: /_plugins/_ml/memory/message/{message_id}
+    method: PUT
     parameters:
       message_id: ${create_message.message_id}
+    request:
+      payload:
+        additional_info:
+          feedback: positive
     response:
       status: 200

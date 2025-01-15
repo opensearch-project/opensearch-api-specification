@@ -428,15 +428,16 @@ paths:
           $ref: '#/components/responses/ml.delete_agent@200'
   /_plugins/_ml/memory:
     get:
-      operationId: ml.get_memory.0
-      x-operation-group: ml.get_memory
+      operationId: ml.get_all_memories.0
+      x-operation-group: ml.get_all_memories
       x-version-added: '2.12'
-      description: Get a memory.
-      requestBody:
-        $ref: '#/components/requestBodies/ml.get_memory'
+      description: Get all memories.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_all_memories::query.max_results'
+        - $ref: '#/components/parameters/ml.get_all_memories::query.next_token'
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_memory@200'
+          $ref: '#/components/responses/ml.get_all_memories@200'
     post:
       operationId: ml.create_memory.0
       x-operation-group: ml.create_memory
@@ -449,12 +450,10 @@ paths:
           $ref: '#/components/responses/ml.create_memory@200'
   /_plugins/_ml/memory/{memory_id}:
     get:
-      operationId: ml.get_memory.1
+      operationId: ml.get_memory.0
       x-operation-group: ml.get_memory
       x-version-added: '2.12'
       description: Get a memory.
-      requestBody:
-        $ref: '#/components/requestBodies/ml.get_memory'
       parameters:
         - $ref: '#/components/parameters/ml.get_memory::path.memory_id'
       responses:
@@ -505,15 +504,17 @@ paths:
           $ref: '#/components/responses/ml.search_memory@200'
   /_plugins/_ml/memory/{memory_id}/messages:
     get:
-      operationId: ml.get_message.0
-      x-operation-group: ml.get_message
+      operationId: ml.get_all_messages.0
+      x-operation-group: ml.get_all_messages
       x-version-added: '2.12'
-      description: Get a message.
+      description: Get all messages in a memory.
       parameters:
-        - $ref: '#/components/parameters/ml.get_message::path.memory_id'
+        - $ref: '#/components/parameters/ml.get_all_messages::path.memory_id'
+        - $ref: '#/components/parameters/ml.get_all_messages::query.max_results'
+        - $ref: '#/components/parameters/ml.get_all_messages::query.next_token'
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_message@200'
+          $ref: '#/components/responses/ml.get_all_messages@200'
     post:
       operationId: ml.create_message.0
       x-operation-group: ml.create_message
@@ -528,7 +529,7 @@ paths:
           $ref: '#/components/responses/ml.create_message@200'
   /_plugins/_ml/memory/message/{message_id}:
     get:
-      operationId: ml.get_message.1
+      operationId: ml.get_message.0
       x-operation-group: ml.get_message
       x-version-added: '2.12'
       description: Get a message.
@@ -582,6 +583,8 @@ paths:
       description: Get a message traces.
       parameters:
         - $ref: '#/components/parameters/ml.get_message_traces::path.message_id'
+        - $ref: '#/components/parameters/ml.get_message_traces::query.max_results'
+        - $ref: '#/components/parameters/ml.get_message_traces::query.next_token'
       responses:
         '200':
           $ref: '#/components/responses/ml.get_message_traces@200'
@@ -817,7 +820,7 @@ components:
               version:
                 $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
               description:
                 type: string
                 description: The model description.
@@ -838,7 +841,7 @@ components:
               version:
                 $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
               model_group_id:
                 $ref: '../schemas/_common.yaml#/components/schemas/Id'
               model_content_hash_value:
@@ -875,7 +878,7 @@ components:
               version:
                 $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
               model_group_id:
                 $ref: '../schemas/_common.yaml#/components/schemas/Id'
               model_content_hash_value:
@@ -934,7 +937,7 @@ components:
               version:
                 $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                $ref: '../schemas/_common.yaml#/components/schemas/ModelFormat'
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
               description:
                 type: string
                 description: The model description.
@@ -1005,8 +1008,6 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/_common.yaml#/components/schemas/Id'
-            required:
-              - model_ids
     ml.unload_model:
       content:
         application/json:
@@ -1021,8 +1022,6 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/_common.yaml#/components/schemas/Id'
-            required:
-              - model_ids
     ml.predict_model:
       content:
         application/json:
@@ -1214,20 +1213,6 @@ components:
             required:
               - name
               - type
-    ml.get_memory:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              max_results:
-                type: integer
-                format: int64
-                description: The maximum number of results to return.
-              next_token:
-                type: integer
-                format: int64
-                description: The index of the first memory in the sorted list of memories to return.
     ml.create_memory:
       content:
         application/json:
@@ -1325,7 +1310,9 @@ components:
             type: object
             properties:
               user_rate_limiter:
-                $ref: '../schemas/ml._common.yaml#/components/schemas/UserRateLimiter'
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
     ml.update_controller:
       content:
         application/json:
@@ -1333,7 +1320,9 @@ components:
             type: object
             properties:
               user_rate_limiter:
-                $ref: '../schemas/ml._common.yaml#/components/schemas/UserRateLimiter'
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
               model_id:
                 $ref: '../schemas/_common.yaml#/components/schemas/Name'
     ml.get_profile:
@@ -1520,7 +1509,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/UpdateModelResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     ml.delete_task@200:
       content:
         application/json:
@@ -1596,7 +1585,23 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/GetMemoryResponse'
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Memory'
+    ml.get_all_memories@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              memories:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Memory'
+              next_token:
+                description: The index of the next memory after the last memory in the returned list.
+                type: integer
+                format: int32
+            required:
+              - memories
     ml.create_memory@200:
       content:
         application/json:
@@ -1642,7 +1647,23 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/GetMessageResponse'
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Message'
+    ml.get_all_messages@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Message'
+              next_token:
+                description: The index of the next message after the last message in the returned list.
+                type: integer
+                format: int32
+            required:
+              - messages
     ml.update_message@200:
       content:
         application/json:
@@ -1657,7 +1678,17 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ml._common.yaml#/components/schemas/GetMessageTracesResponse'
+            type: object
+            properties:
+              traces:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Message'
+              next_token:
+                type: integer
+                format: int32
+            required:
+              - traces
     ml.get_controller@200:
       content:
         application/json:
@@ -1665,7 +1696,9 @@ components:
             type: object
             properties:
               user_rate_limiter:
-                $ref: '../schemas/ml._common.yaml#/components/schemas/UserRateLimiter'
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
               model_id:
                 $ref: '../schemas/_common.yaml#/components/schemas/Name'
     ml.create_controller@200:
@@ -1709,6 +1742,22 @@ components:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/GetStatsResponse'
   parameters:
+    ml.get_all_memories::query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        description: The maximum number of results to return. If there are fewer memories than the number set in `max_results`, the response returns only the number of memories that exist. Default is `10`.
+        type: integer
+        format: int32
+    ml.get_all_memories::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        description: The index of the first memory in the sorted list of memories to return. Memories are ordered by `create_time`. For example, if memories `A`, `B`, and `C` exist, `next_token=1` returns memories `B` and `C`. Default is `0` (return all memories).
+        type: integer
+        format: int32
     ml.get_model_group::path.model_group_id:
       name: model_group_id
       in: path
@@ -1885,12 +1934,26 @@ components:
       required: true
       schema:
         type: string
-    ml.get_message::path.memory_id:
+    ml.get_all_messages::path.memory_id:
       name: memory_id
       in: path
       required: true
       schema:
         type: string
+    ml.get_all_messages::query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_all_messages::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
     ml.get_message::path.message_id:
       name: message_id
       in: path
@@ -1915,6 +1978,20 @@ components:
       required: true
       schema:
         type: string
+    ml.get_message_traces::query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_message_traces::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
     ml.get_controller::path.model_id:
       name: model_id
       in: path

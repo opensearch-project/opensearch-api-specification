@@ -106,6 +106,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `SearchModelsQuery`, `CreateConnectorRequest` & `RegisterAgentsRequest` to be defined inline of request bodies ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725)) 
 - Changed naming of `snapshot._common`'s `Status`, `ShardsStats`, `ShardsStatsStage`, `ShardsStatsSummary` and `ShardsStatsSummaryItem` schemas to be prefixed with `Snapshot` ([#730](https://github.com/opensearch-project/opensearch-api-specification/pull/730))
+- Changed `ml.get_memory` and `ml.get_message` to split out `get_all` variants ([#796](https://github.com/opensearch-project/opensearch-api-specification/pull/796))
 
 ## [0.1.0] - 2024-10-25
 
