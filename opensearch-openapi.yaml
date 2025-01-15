@@ -4914,21 +4914,21 @@ paths:
           $ref: '#/components/responses/ml.update_controller___200'
   /_plugins/_ml/memory:
     get:
-      operationId: ml.get_memory.0
-      x-operation-group: ml.get_memory
+      operationId: ml.get_all_memories.0
+      x-operation-group: ml.get_all_memories
       x-version-added: '2.12'
-      description: Get a memory.
-      requestBody:
-        $ref: '#/components/requestBodies/ml.get_memory'
-      responses:
-        '200':
-          $ref: '#/components/responses/ml.get_memory___200'
+      description: Get all memories.
       parameters:
+        - $ref: '#/components/parameters/ml.get_all_memories___query.max_results'
+        - $ref: '#/components/parameters/ml.get_all_memories___query.next_token'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
         - $ref: '#/components/parameters/_global___query.error_trace'
         - $ref: '#/components/parameters/_global___query.source'
         - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_all_memories___200'
     post:
       operationId: ml.create_memory.0
       x-operation-group: ml.create_memory
@@ -4995,12 +4995,10 @@ paths:
         '200':
           $ref: '#/components/responses/ml.delete_memory___200'
     get:
-      operationId: ml.get_memory.1
+      operationId: ml.get_memory.0
       x-operation-group: ml.get_memory
       x-version-added: '2.12'
       description: Get a memory.
-      requestBody:
-        $ref: '#/components/requestBodies/ml.get_memory'
       parameters:
         - $ref: '#/components/parameters/ml.get_memory___path.memory_id'
         - $ref: '#/components/parameters/_global___query.pretty'
@@ -5065,12 +5063,14 @@ paths:
           $ref: '#/components/responses/ml.search_message___200'
   /_plugins/_ml/memory/{memory_id}/messages:
     get:
-      operationId: ml.get_message.0
-      x-operation-group: ml.get_message
+      operationId: ml.get_all_messages.0
+      x-operation-group: ml.get_all_messages
       x-version-added: '2.12'
-      description: Get a message.
+      description: Get all messages in a memory.
       parameters:
-        - $ref: '#/components/parameters/ml.get_message___path.memory_id'
+        - $ref: '#/components/parameters/ml.get_all_messages___path.memory_id'
+        - $ref: '#/components/parameters/ml.get_all_messages___query.max_results'
+        - $ref: '#/components/parameters/ml.get_all_messages___query.next_token'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
         - $ref: '#/components/parameters/_global___query.error_trace'
@@ -5078,7 +5078,7 @@ paths:
         - $ref: '#/components/parameters/_global___query.filter_path'
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_message___200'
+          $ref: '#/components/responses/ml.get_all_messages___200'
     post:
       operationId: ml.create_message.0
       x-operation-group: ml.create_message
@@ -5098,7 +5098,7 @@ paths:
           $ref: '#/components/responses/ml.create_message___200'
   /_plugins/_ml/memory/message/{message_id}:
     get:
-      operationId: ml.get_message.1
+      operationId: ml.get_message.0
       x-operation-group: ml.get_message
       x-version-added: '2.12'
       description: Get a message.
@@ -5137,6 +5137,8 @@ paths:
       description: Get a message traces.
       parameters:
         - $ref: '#/components/parameters/ml.get_message_traces___path.message_id'
+        - $ref: '#/components/parameters/ml.get_message_traces___query.max_results'
+        - $ref: '#/components/parameters/ml.get_message_traces___query.next_token'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
         - $ref: '#/components/parameters/_global___query.error_trace'
@@ -23754,6 +23756,42 @@ components:
       required: true
       schema:
         type: string
+    ml.get_all_memories___query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        description: The maximum number of results to return. If there are fewer memories than the number set in `max_results`, the response returns only the number of memories that exist. Default is `10`.
+        type: integer
+        format: int32
+    ml.get_all_memories___query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        description: The index of the first memory in the sorted list of memories to return. Memories are ordered by `create_time`. For example, if memories `A`, `B`, and `C` exist, `next_token=1` returns memories `B` and `C`. Default is `0` (return all memories).
+        type: integer
+        format: int32
+    ml.get_all_messages___path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_all_messages___query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_all_messages___query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
     ml.get_connector___path.connector_id:
       name: connector_id
       in: path
@@ -23778,12 +23816,20 @@ components:
       required: true
       schema:
         type: string
-    ml.get_message___path.memory_id:
-      name: memory_id
-      in: path
-      required: true
+    ml.get_message_traces___query.max_results:
+      name: max_results
+      in: query
+      required: false
       schema:
-        type: string
+        type: integer
+        format: int32
+    ml.get_message_traces___query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
     ml.get_message___path.message_id:
       name: message_id
       in: path
@@ -28159,7 +28205,9 @@ components:
             type: object
             properties:
               user_rate_limiter:
-                $ref: '#/components/schemas/ml._common___UserRateLimiter'
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ml._common___RateLimiter'
     ml.create_memory:
       content:
         application/json:
@@ -28200,7 +28248,7 @@ components:
               version:
                 $ref: '#/components/schemas/_common___VersionString'
               model_format:
-                $ref: '#/components/schemas/_common___ModelFormat'
+                $ref: '#/components/schemas/ml._common___ModelFormat'
               model_group_id:
                 $ref: '#/components/schemas/_common___Id'
               model_content_hash_value:
@@ -28225,20 +28273,6 @@ components:
               - name
               - total_chunks
               - version
-    ml.get_memory:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              max_results:
-                type: integer
-                format: int64
-                description: The maximum number of results to return.
-              next_token:
-                type: integer
-                format: int64
-                description: The index of the first memory in the sorted list of memories to return.
     ml.get_profile:
       content:
         application/json:
@@ -28335,7 +28369,7 @@ components:
               version:
                 $ref: '#/components/schemas/_common___VersionString'
               model_format:
-                $ref: '#/components/schemas/_common___ModelFormat'
+                $ref: '#/components/schemas/ml._common___ModelFormat'
               description:
                 type: string
                 description: The model description.
@@ -28385,7 +28419,7 @@ components:
               version:
                 $ref: '#/components/schemas/_common___VersionString'
               model_format:
-                $ref: '#/components/schemas/_common___ModelFormat'
+                $ref: '#/components/schemas/ml._common___ModelFormat'
               model_group_id:
                 $ref: '#/components/schemas/_common___Id'
               model_content_hash_value:
@@ -28541,8 +28575,6 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/_common___Id'
-            required:
-              - model_ids
     ml.unload_model:
       content:
         application/json:
@@ -28557,8 +28589,6 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/_common___Id'
-            required:
-              - model_ids
     ml.update_connector:
       content:
         application/json:
@@ -28608,7 +28638,9 @@ components:
             type: object
             properties:
               user_rate_limiter:
-                $ref: '#/components/schemas/ml._common___UserRateLimiter'
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ml._common___RateLimiter'
               model_id:
                 $ref: '#/components/schemas/_common___Name'
     ml.update_memory:
@@ -28720,7 +28752,7 @@ components:
               version:
                 $ref: '#/components/schemas/_common___VersionString'
               model_format:
-                $ref: '#/components/schemas/_common___ModelFormat'
+                $ref: '#/components/schemas/ml._common___ModelFormat'
               description:
                 type: string
                 description: The model description.
@@ -31813,6 +31845,40 @@ components:
               - status
               - task_id
       description: ''
+    ml.get_all_memories___200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              memories:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ml._common___Memory'
+              next_token:
+                description: The index of the next memory after the last memory in the returned list.
+                type: integer
+                format: int32
+            required:
+              - memories
+      description: ''
+    ml.get_all_messages___200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ml._common___Message'
+              next_token:
+                description: The index of the next message after the last message in the returned list.
+                type: integer
+                format: int32
+            required:
+              - messages
+      description: ''
     ml.get_connector___200:
       content:
         application/json:
@@ -31826,7 +31892,9 @@ components:
             type: object
             properties:
               user_rate_limiter:
-                $ref: '#/components/schemas/ml._common___UserRateLimiter'
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ml._common___RateLimiter'
               model_id:
                 $ref: '#/components/schemas/_common___Name'
       description: ''
@@ -31834,19 +31902,29 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ml._common___GetMemoryResponse'
+            $ref: '#/components/schemas/ml._common___Memory'
       description: ''
     ml.get_message_traces___200:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ml._common___GetMessageTracesResponse'
+            type: object
+            properties:
+              traces:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ml._common___Message'
+              next_token:
+                type: integer
+                format: int32
+            required:
+              - traces
       description: ''
     ml.get_message___200:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ml._common___GetMessageResponse'
+            $ref: '#/components/schemas/ml._common___Message'
       description: ''
     ml.get_model_group___200:
       content:
@@ -32059,7 +32137,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ml._common___UpdateModelResponse'
+            $ref: '#/components/schemas/_common___WriteResponseBase'
       description: ''
     ml.upload_chunk___200:
       content:
@@ -34964,11 +35042,6 @@ components:
         - type: integer
           format: int32
         - type: string
-    _common___ModelFormat:
-      type: string
-      enum:
-        - ONNX
-        - TORCH_SCRIPT
     _common___MultiTermQueryRewrite:
       oneOf:
         - type: string
@@ -55639,7 +55712,7 @@ components:
           type: string
       additionalProperties: true
     ml._common___Deploy:
-      $ref: '#/components/schemas/ml._common___ModelStasts'
+      $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___Exists:
       type: object
       description: The exists filter.
@@ -55692,35 +55765,6 @@ components:
           type: integer
           format: int64
           description: The last updated time.
-    ml._common___GetMemoryResponse:
-      oneOf:
-        - $ref: '#/components/schemas/ml._common___Memory'
-        - type: object
-          properties:
-            memories:
-              type: array
-              items:
-                $ref: '#/components/schemas/ml._common___Memory'
-            next_token:
-              type: integer
-              format: int64
-              description: The index of the first memory in the sorted list of memories.
-    ml._common___GetMessageResponse:
-      oneOf:
-        - $ref: '#/components/schemas/ml._common___Message'
-        - type: object
-          properties:
-            messages:
-              type: array
-              items:
-                $ref: '#/components/schemas/ml._common___Message'
-    ml._common___GetMessageTracesResponse:
-      type: object
-      properties:
-        traces:
-          type: array
-          items:
-            $ref: '#/components/schemas/ml._common___Message'
     ml._common___GetProfileResponse:
       type: object
       properties:
@@ -55974,7 +56018,7 @@ components:
           type: string
           description: The model version.
         model_format:
-          $ref: '#/components/schemas/_common___ModelFormat'
+          $ref: '#/components/schemas/ml._common___ModelFormat'
         model_state:
           type: string
           description: The model state.
@@ -56032,6 +56076,11 @@ components:
         framework_type:
           type: string
           description: The framework type.
+    ml._common___ModelFormat:
+      type: string
+      enum:
+        - ONNX
+        - TORCH_SCRIPT
     ml._common___ModelGroup:
       type: object
       properties:
@@ -56125,7 +56174,7 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/ml._common___ModelProfile'
-    ml._common___ModelStasts:
+    ml._common___ModelStats:
       type: object
       properties:
         ml_action_request_count:
@@ -56285,7 +56334,7 @@ components:
       type: object
       additionalProperties: true
     ml._common___Predict:
-      $ref: '#/components/schemas/ml._common___ModelStasts'
+      $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___PredictionResult:
       type: object
       properties:
@@ -56436,9 +56485,8 @@ components:
       type: object
       properties:
         limit:
-          type: integer
-          format: int64
           description: The maximum limit.
+          $ref: '#/components/schemas/_common___StringifiedDouble'
         unit:
           type: string
           description: The unit of time.
@@ -56454,7 +56502,7 @@ components:
         - limit
         - unit
     ml._common___Register:
-      $ref: '#/components/schemas/ml._common___ModelStasts'
+      $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___Rows:
       type: object
       properties:
@@ -56693,7 +56741,7 @@ components:
         model_config:
           $ref: '#/components/schemas/ml._common___ModelConfig'
         model_format:
-          $ref: '#/components/schemas/_common___ModelFormat'
+          $ref: '#/components/schemas/ml._common___ModelFormat'
         model_task_type:
           type: string
           description: The model task type.
@@ -56896,7 +56944,7 @@ components:
           $ref: '#/components/schemas/ml._common___Parameters'
       additionalProperties: true
     ml._common___Train:
-      $ref: '#/components/schemas/ml._common___ModelStasts'
+      $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___TrainParameters:
       type: object
       properties:
@@ -56934,7 +56982,7 @@ components:
       required:
         - status
     ml._common___Undeploy:
-      $ref: '#/components/schemas/ml._common___ModelStasts'
+      $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___UndeployModelNode:
       type: object
       properties:
@@ -56967,55 +57015,6 @@ components:
         status:
           type: string
           description: The status.
-    ml._common___UpdateModelResponse:
-      type: object
-      properties:
-        _index:
-          $ref: '#/components/schemas/_common___IndexName'
-        _id:
-          $ref: '#/components/schemas/_common___Id'
-        _version:
-          $ref: '#/components/schemas/_common___VersionNumber'
-        result:
-          $ref: '#/components/schemas/_common___Result'
-        forced_refresh:
-          type: boolean
-          description: Whether the model is forced to refresh.
-        _shards:
-          $ref: '#/components/schemas/_common___ShardStatistics'
-        _seq_no:
-          $ref: '#/components/schemas/_common___SequenceNumber'
-        _primary_term:
-          type: integer
-          format: int64
-          description: The primary term.
-      required:
-        - _index
-    ml._common___User:
-      type: object
-      properties:
-        limit:
-          type:
-            - integer
-            - string
-          description: Max Predict API calls per user per time unit.
-        unit:
-          type: string
-          description: The unit of time.
-          enum:
-            - DAYS
-            - HOURS
-            - MICROSECONDS
-            - MILLISECONDS
-            - MINUTES
-            - NANOSECONDS
-            - SECONDS
-    ml._common___UserRateLimiter:
-      type: object
-      properties:
-        user1:
-          $ref: '#/components/schemas/ml._common___User'
-      additionalProperties: true
     ml._common___Values:
       type: object
       properties:
