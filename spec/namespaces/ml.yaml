@@ -270,6 +270,7 @@ paths:
     get:
       operationId: ml.get_task.0
       x-operation-group: ml.get_task
+      x-version-added: '1.3'
       description: Retrieves a task.
       parameters:
         - $ref: '#/components/parameters/ml.get_task::path.task_id'
@@ -279,12 +280,34 @@ paths:
     delete:
       operationId: ml.delete_task.0
       x-operation-group: ml.delete_task
+      x-version-added: '1.3'
       description: Deletes a task.
       parameters:
         - $ref: '#/components/parameters/ml.delete_task::path.task_id'
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_task@200'
+  /_plugins/_ml/tasks/_search:
+    get:
+      operationId: ml.search_tasks.0
+      x-operation-group: ml.search_tasks
+      x-version-added: '1.3'
+      description: Searches for tasks.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_tasks'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_tasks@200'
+    post:
+      operationId: ml.search_tasks.1
+      x-operation-group: ml.search_tasks
+      x-version-added: '1.3'
+      description: Searches for tasks.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_tasks'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_tasks@200'
   /_plugins/_ml/models/_search:
     get:
       operationId: ml.search_models.0
@@ -735,6 +758,26 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/tools:
+    get:
+      operationId: ml.get_tools.0
+      x-operation-group: ml.get_tools
+      x-version-added: '2.12'
+      description: Get tools.
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_tools@200'
+  /_plugins/_ml/tools/{tool_name}:
+    get:
+      operationId: ml.get_tools.1
+      x-operation-group: ml.get_tools
+      x-version-added: '2.12'
+      description: Get tools.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_tools::path.tool_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_tools@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -1038,6 +1081,23 @@ components:
                 description: The text documents.
             required:
               - text_docs
+    ml.search_tasks:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of tasks to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Sort'
+                description: The sort order.
     ml.predict:
       content:
         application/json:
@@ -1520,6 +1580,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/Task'
+    ml.search_tasks@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchTasksResponse'
     ml.search_models@200:
       content:
         application/json:
@@ -1741,6 +1806,15 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/GetStatsResponse'
+    ml.get_tools@200:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/GetToolsResponse'
+              - $ref: '../schemas/ml._common.yaml#/components/schemas/GetToolsResponse'
   parameters:
     ml.get_all_memories::query.max_results:
       name: max_results
@@ -2048,3 +2122,27 @@ components:
       required: true
       schema:
         type: string
+    ml.get_tools::path.tool_name:
+      name: tool_name
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - AgentTool
+          - CatIndexTool
+          - ConnectorTool
+          - CreateAnomalyDetectorTool
+          - IndexMappingTool
+          - LogPatternTool
+          - MLModelTool
+          - NeuralSparseSearchTool
+          - PPLTool
+          - RAGTool
+          - SearchAlertsTool
+          - SearchAnomalyDetectorsTool
+          - SearchAnomalyResultsTool
+          - SearchIndexTool
+          - SearchMonitorsTool
+          - VectorDBTool
+          - VisualizationTool

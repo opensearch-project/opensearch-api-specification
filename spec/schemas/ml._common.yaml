@@ -6,6 +6,8 @@ info:
 paths: {}
 components:
   schemas:
+    SearchTasksResponse:
+      $ref: '#/components/schemas/SearchResponse'
     SearchModelsResponse:
       $ref: '#/components/schemas/SearchResponse'
     SearchResponse:
@@ -144,6 +146,10 @@ components:
           type: integer
           format: int64
           description: The last updated time.
+        last_update_time:
+          type: integer
+          format: int64
+          description: The last update time.
         last_registered_time:
           type: integer
           format: int64
@@ -211,8 +217,11 @@ components:
           format: date-time
           description: The updated time.
         create_time:
-          type: string
-          format: date-time
+          anyOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
           description: The create time.
         application_type:
           type: ['null', string]
@@ -242,6 +251,42 @@ components:
         prompt_template:
           type: ['null', string]
           description: The prompt template.
+        is_async:
+          type: boolean
+          description: Whether the task is asynchronous.
+        function_name:
+          $ref: '#/components/schemas/FunctionName'
+        input_type:
+          type: string
+          description: The input type.
+          enum:
+            - DATA_FRAME
+            - QUESTION_ANSWERING
+            - REMOTE
+            - SEARCH_QUERY
+            - TEXT_DOCS
+            - TEXT_SIMILARITY
+        worker_node:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/NodeIds'
+        task_type:
+          type: string
+          description: Task type.
+          enum:
+            - BATCH_INGEST
+            - BATCH_PREDICTION
+            - DEPLOY_MODEL
+            - EXECUTION
+            - PREDICTION
+            - REGISTER_MODEL
+            - TRAINING
+            - TRAINING_AND_PREDICTION
+        state:
+          $ref: '#/components/schemas/Status'
+        error:
+          type: string
+          description: The error message.
     ModelConfig:
       type: object
       properties:
@@ -483,6 +528,8 @@ components:
           type: array
           items:
             $ref: '_common.yaml#/components/schemas/Id'
+        function_name:
+          $ref: '#/components/schemas/FunctionName'
         model_id:
           $ref: '_common.yaml#/components/schemas/Name'
         name:
@@ -494,28 +541,30 @@ components:
       description: The algorithm.
       properties:
         value:
-          type: string
-          description: The function name.
-          enum:
-            - AD_LIBSVM
-            - AGENT
-            - ANOMALY_LOCALIZATION
-            - BATCH_RCF
-            - CONNECTOR
-            - FIT_RCF
-            - KMEANS
-            - LINEAR_REGRESSION
-            - LOCAL_SAMPLE_CALCULATOR
-            - LOGISTIC_REGRESSION
-            - METRICS_CORRELATION
-            - QUESTION_ANSWERING
-            - RCF_SUMMARIZE
-            - REMOTE
-            - SAMPLE_ALGO
-            - SPARSE_ENCODING
-            - SPARSE_TOKENIZE
-            - TEXT_EMBEDDING
-            - TEXT_SIMILARITY
+          $ref: '#/components/schemas/FunctionName'
+    FunctionName:
+      type: string
+      description: The function name.
+      enum:
+        - AD_LIBSVM
+        - AGENT
+        - ANOMALY_LOCALIZATION
+        - BATCH_RCF
+        - CONNECTOR
+        - FIT_RCF
+        - KMEANS
+        - LINEAR_REGRESSION
+        - LOCAL_SAMPLE_CALCULATOR
+        - LOGISTIC_REGRESSION
+        - METRICS_CORRELATION
+        - QUESTION_ANSWERING
+        - RCF_SUMMARIZE
+        - REMOTE
+        - SAMPLE_ALGO
+        - SPARSE_ENCODING
+        - SPARSE_TOKENIZE
+        - TEXT_EMBEDDING
+        - TEXT_SIMILARITY
     OwnerNameKeyword:
       type: object
       description: The owner name keyword.
@@ -919,10 +968,16 @@ components:
           type: string
           description: Task type.
           enum:
+            - BATCH_INGEST
+            - BATCH_PREDICTION
             - DEPLOY_MODEL
+            - EXECUTION
+            - PREDICTION
             - REGISTER_MODEL
+            - TRAINING
+            - TRAINING_AND_PREDICTION
         function_name:
-          type: string
+          $ref: '#/components/schemas/FunctionName'
         worker_node:
           type: array
           items:
@@ -1262,15 +1317,17 @@ components:
           format: int64
           description: The estimated memory size in GPU.
         deploy:
-          $ref: '#/components/schemas/Deploy'
+          $ref: '#/components/schemas/ModelStats'
         register:
-          $ref: '#/components/schemas/Register'
+          $ref: '#/components/schemas/ModelStats'
         undeploy:
-          $ref: '#/components/schemas/Undeploy'
+          $ref: '#/components/schemas/ModelStats'
         predict:
-          $ref: '#/components/schemas/Predict'
+          $ref: '#/components/schemas/ModelStats'
         train:
-          $ref: '#/components/schemas/Train'
+          $ref: '#/components/schemas/ModelStats'
+        train_predict:
+          $ref: '#/components/schemas/ModelStats'
     PredictRequestStats:
       type: object
       properties:
@@ -1402,15 +1459,17 @@ components:
       type: object
       properties:
         deploy:
-          $ref: '#/components/schemas/Deploy'
+          $ref: '#/components/schemas/ModelStats'
         register:
-          $ref: '#/components/schemas/Register'
+          $ref: '#/components/schemas/ModelStats'
         undeploy:
-          $ref: '#/components/schemas/Undeploy'
+          $ref: '#/components/schemas/ModelStats'
         predict:
-          $ref: '#/components/schemas/Predict'
+          $ref: '#/components/schemas/ModelStats'
         train:
-          $ref: '#/components/schemas/Train'
+          $ref: '#/components/schemas/ModelStats'
+        train_predict:
+          $ref: '#/components/schemas/ModelStats'
     ModelStats:
       type: object
       properties:
@@ -1426,13 +1485,25 @@ components:
           type: integer
           format: int64
           description: The executing task count.
-    Deploy:
-      $ref: '#/components/schemas/ModelStats'
-    Register:
-      $ref: '#/components/schemas/ModelStats'
-    Undeploy:
-      $ref: '#/components/schemas/ModelStats'
-    Predict:
-      $ref: '#/components/schemas/ModelStats'
-    Train:
-      $ref: '#/components/schemas/ModelStats'
+    Aggregation:
+      type: object
+      properties:
+        sum:
+          $ref: '#/components/schemas/Aggregation'
+        field:
+          type: string
+          description: The field name.
+      additionalProperties: true
+    GetToolsResponse:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        description:
+          type: string
+          description: The tool description.
+        type:
+          type: string
+          description: The tool type.
+        version:
+          $ref: '_common.yaml#/components/schemas/VersionString'
