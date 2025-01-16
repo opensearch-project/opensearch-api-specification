@@ -52,6 +52,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `GET /_plugins/_ml/profile`, `GET /_plugins/_ml/profile/models`, `models/{model_id}`, `tasks`, `tasks/{task_id}` ([#787](https://github.com/opensearch-project/opensearch-api-specification/pull/787))
 - Added `GET /_plugins/_ml/stats/`, `stats/{stat}`, `{nodeId}/stats/`, `{nodeId}/stats/{stat}` ([#794](https://github.com/opensearch-project/opensearch-api-specification/pull/794))
 - Added `GET`, `POST /_plugins/_ml/tasks/_search`, `GET /_plugins/_ml/tools`, `tools/{tool_name}` ([#797](https://github.com/opensearch-project/opensearch-api-specification/pull/797))
+- Added `POST /_plugins/_ml/agents/{agent_id}/_execute`, `GET /_plugins/_ml/agents/{agent_id}`, `GET`, `POST /_plugins/_ml/agents/_search` ([#798](https://github.com/opensearch-project/opensearch-api-specification/pull/798))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))

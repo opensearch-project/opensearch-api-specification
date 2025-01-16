@@ -433,22 +433,68 @@ paths:
     post:
       operationId: ml.register_agents.0
       x-operation-group: ml.register_agents
+      x-version-added: '2.13'
       description: Register an agent.
       requestBody:
         $ref: '#/components/requestBodies/ml.register_agents'
       responses:
         '200':
           $ref: '#/components/responses/ml.register_agents@200'
+  /_plugins/_ml/agents/{agent_id}/_execute:
+    post:
+      operationId: ml.execute_agent.0
+      x-operation-group: ml.execute_agent
+      x-version-added: '2.13'
+      description: Execute an agent.
+      parameters:
+        - $ref: '#/components/parameters/ml.execute_agent::path.agent_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.execute_agent'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.execute_agent@200'
   /_plugins/_ml/agents/{agent_id}:
+    get:
+      operationId: ml.get_agent.0
+      x-operation-group: ml.get_agent
+      x-version-added: '2.13'
+      description: Get an agent.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_agent::path.agent_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_agent@200'
     delete:
       operationId: ml.delete_agent.0
       x-operation-group: ml.delete_agent
+      x-version-added: '2.13'
       description: Delete an agent.
       parameters:
         - $ref: '#/components/parameters/ml.delete_agent::path.agent_id'
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_agent@200'
+  /_plugins/_ml/agents/_search:
+    get:
+      operationId: ml.search_agents.0
+      x-operation-group: ml.search_agents
+      x-version-added: '2.13'
+      description: Search agents.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_agents'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_agents@200'
+    post:
+      operationId: ml.search_agents.1
+      x-operation-group: ml.search_agents
+      description: Search agents.
+      x-version-added: '2.13'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_agents'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_agents@200'
   /_plugins/_ml/memory:
     get:
       operationId: ml.get_all_memories.0
@@ -869,9 +915,14 @@ components:
                 description: The model description.
               model_group_id:
                 $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              function_name:
+                type: string
+                description: The function name.
+              connector_id:
+                type: string
+                description: The connector ID.
             required:
               - name
-              - version
     ml.create_model_meta:
       content:
         application/json:
@@ -1273,6 +1324,35 @@ components:
             required:
               - name
               - type
+    ml.execute_agent:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
+              parameters.verbose:
+                type: boolean
+                description: Whether to provide verbose output.
+            required:
+              - parameters
+    ml.search_agents:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                description: The number of agents to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/SortAgent'
+                description: The sort order.
     ml.create_memory:
       content:
         application/json:
@@ -1435,6 +1515,8 @@ components:
               status:
                 type: string
               task_id:
+                type: string
+              model_id:
                 type: string
             required:
               - status
@@ -1641,11 +1723,26 @@ components:
             properties:
               agent_id:
                 type: string
+    ml.execute_agent@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictResponse'
+    ml.get_agent@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetAgentResponse'
     ml.delete_agent@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.search_agents@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchAgentsResponse'
     ml.get_memory@200:
       content:
         application/json:
@@ -1968,6 +2065,18 @@ components:
         type: string
     ml.delete_connector::path.connector_id:
       name: connector_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.execute_agent::path.agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_agent::path.agent_id:
+      name: agent_id
       in: path
       required: true
       schema:
