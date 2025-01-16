@@ -31,6 +31,18 @@ prologues:
         size: 1
     output:
       scroll_id: payload._scroll_id
+  - path: /movies/_search
+    method: GET
+    id: scroll2
+    parameters:
+      scroll: 10m
+    request:
+      payload:
+        query:
+          match_all: {}
+        size: 1
+    output:
+      scroll_id: payload._scroll_id
 epilogues:
   - path: /_search/scroll/_all
     method: DELETE
@@ -105,3 +117,9 @@ chapters:
     path: /_search/scroll/{scroll_id}
     parameters:
       scroll_id: ${scroll.scroll_id}
+  - synopsis: Delete all scrolls.
+    method: DELETE
+    path: /_search/scroll
+    request:
+      payload:
+        scroll_id: ${scroll2.scroll_id}

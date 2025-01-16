@@ -359,7 +359,7 @@ For example, an ML task returns `CREATED` when created, and `COMPLETED` when it'
 
 #### multiple-paths-detected
 
-The test runner expects all tests in the same file to be variation of the same path in order to keep tests well-organized. Otherwise, a warning will be emitted.
+The test runner expects all tests in the same file to be variation of the same path in order to keep tests well-organized. Prerequisites to the API being tested should be moved to `prologues`, and any cleanup to `epilogues`. Otherwise, a warning will be emitted.
 
 ```
 WARNING Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.
@@ -370,11 +370,11 @@ WARNING Multiple paths detected, please group similar tests together and move pa
 
 #### invalid-path-detected
 
-The test file names expect to match the API being tested. Otherwise, a warning will be emitted.
+The test file names are expected to match the one API being tested in that file. Otherwise, a warning will be emitted.
 
 ```
-PASSED  msearch/index.yaml (tests/default/_core/msearch/index.yaml)
-WARNING Invalid path detected, please move /tests/default/_core/msearch/index.yaml to /msearch.yaml.
+PASSED  plugins/ml/ml/train_and_predict.yaml (tests/plugins/ml/ml/train_and_predict.yaml)
+WARNING Invalid path detected, please move /tests/plugins/ml/ml/train_and_predict.yaml to ml/train_predict.yaml.
 ```
 
 #### Suppressing Warnings

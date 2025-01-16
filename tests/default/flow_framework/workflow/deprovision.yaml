@@ -1,4 +1,4 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 description: Test flow_framework provision endpoints.
 version: '>= 2.12'
 prologues:
@@ -7,6 +7,7 @@ prologues:
     method: POST
     parameters:
       use_case: semantic_search_with_cohere_embedding_query_enricher
+      provision: true
     request:
       payload:
         create_connector.credential.key: test_api_key
@@ -15,6 +16,7 @@ prologues:
 epilogues:
   - path: /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision
     method: POST
+    status: [200, 404]
     parameters:
       workflow_id: ${workflow.workflow_id}
   - path: /_plugins/_flow_framework/workflow/{workflow_id}
@@ -23,13 +25,19 @@ epilogues:
     parameters:
       workflow_id: ${workflow.workflow_id}
 chapters:
-  - synopsis: Provision workflow.
-    path: /_plugins/_flow_framework/workflow/{workflow_id}/_provision
+  - synopsis: Deprovision workflow.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision
     method: POST
     parameters:
       workflow_id: ${workflow.workflow_id}
-    request:
-      payload:
-        openai_key: '1234556'
     response:
       status: 200
+  - synopsis: Deprovision workflow using an invalid ID.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision
+    method: POST
+    parameters:
+      workflow_id: invalid
+    response:
+      status: 404
+
+
