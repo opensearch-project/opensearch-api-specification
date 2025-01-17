@@ -204,7 +204,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added a linter for numeric types ([#x](https://github.com/opensearch-project/opensearch-api-specification/pull/x))
+- Added a linter for numeric types ([#800](https://github.com/opensearch-project/opensearch-api-specification/pull/800))
 
 ### Changed
 

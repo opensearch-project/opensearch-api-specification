@@ -48,7 +48,6 @@ export default class SchemaVisitingValidator {
       ...this._namespaces_folder.files,
       ...this._schemas_folder.files
     ].forEach(f => { visitor.visit_specification(new SpecificationContext(f.file), f.spec()) })
-    console.log(errors);
     return errors
   }
 
@@ -73,7 +72,7 @@ export default class SchemaVisitingValidator {
     }
 
     if (schema.type === 'number') {
-      if (!schema.format) {
+      if (schema.format == null || !schema.format) {
         errors.push(ctx.error(`Schema of type 'number' must specify a valid format. Allowed formats: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
         return;
       }
@@ -81,9 +80,9 @@ export default class SchemaVisitingValidator {
         errors.push(ctx.error(`Schema of type 'number' with format '${schema.format}' is invalid. Expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
       }
     }
-  
+
     if (schema.type === 'integer') {
-      if (!schema.format) {
+      if (schema.format == null || !schema.format) {
         errors.push(ctx.error(`Schema of type 'integer' must specify a valid format. Allowed formats: ${SCHEMA_INTEGER_FORMATS.join(', ')}`));
         return;
       }
