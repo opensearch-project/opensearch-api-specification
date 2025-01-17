@@ -5745,13 +5745,13 @@ paths:
           $ref: '#/components/responses/ml.get_task___200'
   /_plugins/_ml/tools:
     get:
-      operationId: ml.get_tools.0
-      x-operation-group: ml.get_tools
+      operationId: ml.get_all_tools.0
+      x-operation-group: ml.get_all_tools
       x-version-added: '2.12'
       description: Get tools.
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_tools___200'
+          $ref: '#/components/responses/ml.get_all_tools___200'
       parameters:
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
@@ -5760,12 +5760,12 @@ paths:
         - $ref: '#/components/parameters/_global___query.filter_path'
   /_plugins/_ml/tools/{tool_name}:
     get:
-      operationId: ml.get_tools.1
-      x-operation-group: ml.get_tools
+      operationId: ml.get_tool.0
+      x-operation-group: ml.get_tool
       x-version-added: '2.12'
       description: Get tools.
       parameters:
-        - $ref: '#/components/parameters/ml.get_tools___path.tool_name'
+        - $ref: '#/components/parameters/ml.get_tool___path.tool_name'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
         - $ref: '#/components/parameters/_global___query.error_trace'
@@ -5773,7 +5773,7 @@ paths:
         - $ref: '#/components/parameters/_global___query.filter_path'
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_tools___200'
+          $ref: '#/components/responses/ml.get_tool___200'
   /_plugins/_notifications/channels:
     get:
       operationId: notifications.list_channels.0
@@ -23952,7 +23952,7 @@ components:
       required: true
       schema:
         type: string
-    ml.get_tools___path.tool_name:
+    ml.get_tool___path.tool_name:
       name: tool_name
       in: path
       required: true
@@ -31986,6 +31986,14 @@ components:
             required:
               - messages
       description: ''
+    ml.get_all_tools___200:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ml._common___Tool'
+      description: ''
     ml.get_connector___200:
       content:
         application/json:
@@ -32075,15 +32083,11 @@ components:
           schema:
             $ref: '#/components/schemas/ml._common___Task'
       description: ''
-    ml.get_tools___200:
+    ml.get_tool___200:
       content:
         application/json:
           schema:
-            oneOf:
-              - type: array
-                items:
-                  $ref: '#/components/schemas/ml._common___GetToolsResponse'
-              - $ref: '#/components/schemas/ml._common___GetToolsResponse'
+            $ref: '#/components/schemas/ml._common___Tool'
       description: ''
     ml.load_model___200:
       content:
@@ -55957,19 +55961,6 @@ components:
             - yellow
         nodes:
           $ref: '#/components/schemas/ml._common___NodeStats'
-    ml._common___GetToolsResponse:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/_common___Name'
-        description:
-          type: string
-          description: The tool description.
-        type:
-          type: string
-          description: The tool type.
-        version:
-          $ref: '#/components/schemas/_common___VersionString'
     ml._common___Guardrails:
       type: object
       properties:
@@ -57131,6 +57122,19 @@ components:
           $ref: '#/components/schemas/ml._common___OwnerNameKeyword'
         owner.name.keyword:
           $ref: '#/components/schemas/ml._common___OwnerNameKeyword'
+    ml._common___Tool:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/_common___Name'
+        description:
+          type: string
+          description: The tool description.
+        type:
+          type: string
+          description: The tool type.
+        version:
+          $ref: '#/components/schemas/_common___VersionString'
     ml._common___ToolItems:
       type: object
       properties:
