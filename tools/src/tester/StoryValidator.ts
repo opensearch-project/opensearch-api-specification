@@ -23,19 +23,25 @@ export default class StoryValidator {
 
   validate(story_file: StoryFile): StoryEvaluation | undefined {
     const schema_file_error = this.#validate_schema_path(story_file)
+    console.log("schema_file_error", schema_file_error)
     if (schema_file_error != null) return schema_file_error
     const schema_error = this.#validate_schema(story_file)
+    console.log("schema_error", schema_error)
     if (schema_error != null) return schema_error
   }
 
   #validate_schema_path(story_file: StoryFile): StoryEvaluation | undefined {
     const actual_path = story_file.story.$schema
+    console.log("actual_path", actual_path)
     const expected_path = path.relative(path.dirname(story_file.full_path), StoryValidator.SCHEMA_FILE)
+    console.log("expected_path", expected_path)
     if (actual_path !== expected_path) return this.#invalid(story_file, `Expected $schema to be ${expected_path}`)
   }
 
   #validate_schema(story_file: StoryFile): StoryEvaluation | undefined {
+    console.log("story_file", story_file)
     const message = this.json_validator.validate_data(story_file.story)
+    console.log("validate_schema message", message);
     if (message != null) return this.#invalid(story_file, message)
   }
 
