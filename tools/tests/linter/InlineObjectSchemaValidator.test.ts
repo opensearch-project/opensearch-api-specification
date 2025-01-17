@@ -34,8 +34,13 @@ test('validate()', () => {
     },
     {
       file: 'namespaces/ops.yaml',
+      location: '#/components/parameters/query.ref_object_is_ok/schema/properties/setting',
+      message: `Schema of type 'integer' must specify a valid format. Allowed formats: int32, int64`,
+    },
+    {
+      file: 'namespaces/ops.yaml',
       location: '#/components/parameters/query.ref_object_is_ok/schema/properties/bytes',
-      message: "Schema of type 'number' must specify a valid format. Allowed formats: float, double"
+      message: `Schema of type 'number' must specify a valid format. Allowed formats: float, double`
     },
     {
       file: 'schemas/schemas.yaml',
