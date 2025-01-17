@@ -35,6 +35,7 @@ export default class JsonSchemaValidator {
 
   constructor(default_schema?: Record<any, any>, options: JsonSchemaValidatorOpts = {}) {
     this.ajv = new AJV({ ...DEFAULT_AJV_OPTS, ...options.ajv_opts })
+    console.log("ajv configs", this.ajv)
     addFormats(this.ajv);
     if (options.ajv_errors_opts != null) ajv_errors(this.ajv, options.ajv_errors_opts)
     for (const keyword of options.additional_keywords ?? []) this.ajv.addKeyword(keyword)
@@ -46,6 +47,7 @@ export default class JsonSchemaValidator {
       }
     })
     this.errors_parser = new AjvErrorsParser(this.ajv, options.errors_text_opts)
+    console.log("default_schema", default_schema);
     if (default_schema) this._validate = this.ajv.compile(default_schema)
   }
 
