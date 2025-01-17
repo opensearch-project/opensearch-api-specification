@@ -33,6 +33,11 @@ test('validate()', () => {
       message: 'object schemas should be defined out-of-line via a $ref'
     },
     {
+      file: 'namespaces/ops.yaml',
+      location: '#/components/parameters/query.ref_object_is_ok/schema/properties/bytes',
+      message: "Schema of type 'number' must specify a valid format. Allowed formats: float, double"
+    },
+    {
       file: 'schemas/schemas.yaml',
       location: '#/components/schemas/additionalProperties_with_object_value_schema_can_not_be_inline/additionalProperties',
       message: 'object schemas should be defined out-of-line via a $ref'
