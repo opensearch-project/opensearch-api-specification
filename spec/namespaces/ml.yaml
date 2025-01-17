@@ -760,24 +760,24 @@ paths:
           $ref: '#/components/responses/ml.get_stats@200'
   /_plugins/_ml/tools:
     get:
-      operationId: ml.get_tools.0
-      x-operation-group: ml.get_tools
+      operationId: ml.get_all_tools.0
+      x-operation-group: ml.get_all_tools
       x-version-added: '2.12'
       description: Get tools.
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_tools@200'
+          $ref: '#/components/responses/ml.get_all_tools@200'
   /_plugins/_ml/tools/{tool_name}:
     get:
-      operationId: ml.get_tools.1
-      x-operation-group: ml.get_tools
+      operationId: ml.get_tool.0
+      x-operation-group: ml.get_tool
       x-version-added: '2.12'
       description: Get tools.
       parameters:
-        - $ref: '#/components/parameters/ml.get_tools::path.tool_name'
+        - $ref: '#/components/parameters/ml.get_tool::path.tool_name'
       responses:
         '200':
-          $ref: '#/components/responses/ml.get_tools@200'
+          $ref: '#/components/responses/ml.get_tool@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -1806,15 +1806,18 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/GetStatsResponse'
-    ml.get_tools@200:
+    ml.get_all_tools@200:
       content:
         application/json:
           schema:
-            oneOf:
-              - type: array
-                items:
-                  $ref: '../schemas/ml._common.yaml#/components/schemas/GetToolsResponse'
-              - $ref: '../schemas/ml._common.yaml#/components/schemas/GetToolsResponse'
+            type: array
+            items:
+              $ref: '../schemas/ml._common.yaml#/components/schemas/GetToolsResponse'
+    ml.get_tool@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetToolsResponse'
   parameters:
     ml.get_all_memories::query.max_results:
       name: max_results
@@ -2122,7 +2125,7 @@ components:
       required: true
       schema:
         type: string
-    ml.get_tools::path.tool_name:
+    ml.get_tool::path.tool_name:
       name: tool_name
       in: path
       required: true
