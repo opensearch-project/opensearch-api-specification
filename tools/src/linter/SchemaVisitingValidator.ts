@@ -72,12 +72,14 @@ export default class SchemaVisitingValidator {
     }
 
     if (schema.type === 'number') {
-      if (schema.format == null || !schema.format) {
-        errors.push(ctx.error(`Schema of type 'number' must specify a valid format. Allowed formats: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
-        return;
+      if (schema.format === undefined || SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
+        return
       }
-      if (!SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
-        errors.push(ctx.error(`Schema of type 'number' with format '${schema.format}' is invalid. Expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
+
+      if (SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
+        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' should instead be of type 'integer'`))
+      } else {
+        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`))
       }
     }
 
