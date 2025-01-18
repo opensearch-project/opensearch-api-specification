@@ -62,7 +62,7 @@ export default class JsonSchemaValidator {
 
   #validate(validate_func: ValidateFunction, data: any, is_schema: boolean = false): string | undefined {
     const valid = validate_func(data) as boolean
-    console.log(validate_func.errors, validate_func.evaluated, validate_func.schema, validate_func.schemaEnv, validate_func.source);
+    console.log("valid", valid);
     const errors = is_schema ? this.ajv.errors : validate_func.errors
     console.log("errors", errors);
     return valid ? undefined : this.errors_parser.parse(errors)
