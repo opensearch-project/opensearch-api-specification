@@ -16,7 +16,8 @@ const validator = new StoryValidator()
 import path_v2 from 'path'
 
 function validate(path: string): StoryEvaluation | undefined {
-  console.log(path_v2.dirname('tools/tests/tester/fixtures/invalid_story.yaml'));
+  const absolutePath = path_v2.resolve(path);
+  console.log('Resolved path:', absolutePath, path);
   const story: ParsedStory = StoryParser.parse(read_yaml(path))
   console.log(JSON.stringify(story))
   return validator.validate({ story, display_path: path, full_path: path })
