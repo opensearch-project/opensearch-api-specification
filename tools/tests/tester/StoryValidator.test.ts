@@ -16,8 +16,9 @@ import StoryParser from "../../src/tester/StoryParser";
 const validator = new StoryValidator()
 
 function validate(path: string): StoryEvaluation | undefined {
+  const path_new = "../../../json_schemas/test_story.schema.yaml";
   console.log(path);
-  const story: ParsedStory = StoryParser.parse(read_yaml(path))
+  const story: ParsedStory = StoryParser.parse(read_yaml(path_new))
   console.log(JSON.stringify(story))
   return validator.validate({ story, display_path: path, full_path: path })
 }
