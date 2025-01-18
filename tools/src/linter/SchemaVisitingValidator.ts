@@ -48,7 +48,7 @@ export default class SchemaVisitingValidator {
       ...this._namespaces_folder.files,
       ...this._schemas_folder.files
     ].forEach(f => { visitor.visit_specification(new SpecificationContext(f.file), f.spec()) })
-    
+
     return errors
   }
 
