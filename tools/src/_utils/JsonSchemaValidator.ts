@@ -34,7 +34,7 @@ export default class JsonSchemaValidator {
   message: string | undefined
 
   constructor(default_schema?: Record<any, any>, options: JsonSchemaValidatorOpts = {}) {
-    this.ajv = new AJV({ ...DEFAULT_AJV_OPTS, ...options.ajv_opts, removeAdditional: true, verbose: true, allErrors: true ,strictTypes: false})
+    this.ajv = new AJV({ ...DEFAULT_AJV_OPTS, ...options.ajv_opts, removeAdditional: false, verbose: true, allErrors: true ,strictTypes: false})
     addFormats(this.ajv);
     if (options.ajv_errors_opts != null) ajv_errors(this.ajv, options.ajv_errors_opts)
     Object.entries(options.reference_schemas ?? {}).forEach(([key, schema]) => {
@@ -63,7 +63,7 @@ export default class JsonSchemaValidator {
 
   #validate(validate_func: ValidateFunction, data: any, is_schema: boolean = false): string | undefined {
     const valid = validate_func(data) as boolean
-    console.log(valid);
+    console.log(validate_func.errors, validate_func.evaluated, validate_func.schema, validate_func.schemaEnv, validate_func.source);
     const errors = is_schema ? this.ajv.errors : validate_func.errors
     console.log("errors", errors);
     return valid ? undefined : this.errors_parser.parse(errors)
