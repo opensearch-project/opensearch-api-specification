@@ -51,7 +51,7 @@ export default class JsonSchemaValidator {
 
   validate_data(data: any, schema?: Record<any, any>): string | undefined {
     if (schema) return this.#validate(this.ajv.compile(schema), data)
-    console.log("validate_data func", this._validate, data);
+    console.log("validate_data func", data);
     if (this._validate) return this.#validate(this._validate, data)
     throw new Error('No schema provided')
   }
