@@ -18,7 +18,7 @@ export default class StoryValidator {
 
   constructor() {
     const schema = read_yaml(StoryValidator.SCHEMA_FILE)
-    this.json_validator = new JsonSchemaValidator(schema, { ajv_opts: { strictTypes: false } })
+    this.json_validator = new JsonSchemaValidator(schema)
   }
 
   validate(story_file: StoryFile): StoryEvaluation | undefined {
