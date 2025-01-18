@@ -16,7 +16,7 @@ const validator = new StoryValidator()
 
 function validate(path: string): StoryEvaluation | undefined {
   const story: ParsedStory = StoryParser.parse(read_yaml(path))
-  return validator.validate({ story, display_path: path, full_path: path });
+  return validator.validate({ story, display_path: path, full_path: path })
 }
 
 describe('StoryValidator', () => {

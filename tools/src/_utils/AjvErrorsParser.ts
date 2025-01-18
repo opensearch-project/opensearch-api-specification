@@ -27,15 +27,15 @@ export default class AjvErrorsParser {
   }
 
   parse(errors: ErrorObject[] | undefined | null): string {
-    const error_groups = this.#group_errors(errors ?? []);
+    const error_groups = this.#group_errors(errors ?? [])
     const parsed_errors = [
       this.#prohibited_property_error(error_groups.prohibited),
       this.#required_property_error(error_groups.required),
       this.#enum_error(error_groups.enum),
       ...error_groups.others
-    ].filter(e => e != null) as ErrorObject[];
-    return this.ajv.errorsText(parsed_errors, this.options);
-  }  
+    ].filter(e => e != null) as ErrorObject[]
+    return this.ajv.errorsText(parsed_errors, this.options)
+  }
 
   #group_errors(errors: ErrorObject[]): GroupedErrors {
     const categories = {
