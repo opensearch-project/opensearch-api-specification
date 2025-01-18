@@ -12,13 +12,12 @@ import { StoryEvaluation } from "../../src/tester/types/eval.types";
 import { read_yaml } from "../../src/helpers";
 import { ParsedStory } from "tester/types/parsed_story.types";
 import StoryParser from "../../src/tester/StoryParser";
-//../../../../json_schemas/test_story.schema.yaml
 const validator = new StoryValidator()
+import path_v2 from 'path'
 
 function validate(path: string): StoryEvaluation | undefined {
-  const path_new = "../../../json_schemas/test_story.schema.yaml";
-  console.log(path);
-  const story: ParsedStory = StoryParser.parse(read_yaml(path_new))
+  console.log(path_v2.dirname('tools/tests/tester/fixtures/invalid_story.yaml'));
+  const story: ParsedStory = StoryParser.parse(read_yaml(path))
   console.log(JSON.stringify(story))
   return validator.validate({ story, display_path: path, full_path: path })
 }
