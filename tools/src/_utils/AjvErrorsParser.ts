@@ -27,7 +27,6 @@ export default class AjvErrorsParser {
   }
 
   parse(errors: ErrorObject[] | undefined | null): string {
-    console.log('Raw errors:', errors); // Логируем все ошибки
     const error_groups = this.#group_errors(errors ?? []);
     const parsed_errors = [
       this.#prohibited_property_error(error_groups.prohibited),
@@ -35,7 +34,6 @@ export default class AjvErrorsParser {
       this.#enum_error(error_groups.enum),
       ...error_groups.others
     ].filter(e => e != null) as ErrorObject[];
-    console.log('Parsed errors:', parsed_errors); // Логируем после обработки
     return this.ajv.errorsText(parsed_errors, this.options);
   }  
 

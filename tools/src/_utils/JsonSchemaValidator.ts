@@ -34,9 +34,10 @@ export default class JsonSchemaValidator {
   message: string | undefined
 
   constructor(default_schema?: Record<any, any>, options: JsonSchemaValidatorOpts = {}) {
-    this.ajv = new AJV({ ...DEFAULT_AJV_OPTS, ...options.ajv_opts, removeAdditional: false, verbose: true, allErrors: true ,strictTypes: false})
+    this.ajv = new AJV({ ...DEFAULT_AJV_OPTS, ...options.ajv_opts })
     addFormats(this.ajv);
     if (options.ajv_errors_opts != null) ajv_errors(this.ajv, options.ajv_errors_opts)
+    for (const keyword of options.additional_keywords ?? []) this.ajv.addKeyword(keyword)
     Object.entries(options.reference_schemas ?? {}).forEach(([key, schema]) => {
       try {
         this.ajv.addSchema(schema, key);
@@ -50,7 +51,6 @@ export default class JsonSchemaValidator {
 
   validate_data(data: any, schema?: Record<any, any>): string | undefined {
     if (schema) return this.#validate(this.ajv.compile(schema), data)
-    console.log("validate_data func", data);
     if (this._validate) return this.#validate(this._validate, data)
     throw new Error('No schema provided')
   }
@@ -62,9 +62,7 @@ export default class JsonSchemaValidator {
 
   #validate(validate_func: ValidateFunction, data: any, is_schema: boolean = false): string | undefined {
     const valid = validate_func(data) as boolean
-    console.log("valid", valid);
     const errors = is_schema ? this.ajv.errors : validate_func.errors
-    console.log("errors", errors);
     return valid ? undefined : this.errors_parser.parse(errors)
   }
 }

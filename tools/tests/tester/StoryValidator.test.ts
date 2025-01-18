@@ -16,17 +16,15 @@ const validator = new StoryValidator()
 
 function validate(path: string): StoryEvaluation | undefined {
   const story: ParsedStory = StoryParser.parse(read_yaml(path))
-  const rr = validator.validate({ story, display_path: path, full_path: path })
-  console.log(rr);
-  return rr;
+  return validator.validate({ story, display_path: path, full_path: path });
 }
 
 describe('StoryValidator', () => {
-  // test('wrong $schema', () => {
-  //   const evaluation = validate('tools/tests/tester/fixtures/wrong_$schema.yaml')
-  //   expect(evaluation?.result).toBe('ERROR')
-  //   expect(evaluation?.message).toBe('Invalid Story: Expected $schema to be ../../../../json_schemas/test_story.schema.yaml')
-  // })
+  test('wrong $schema', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/wrong_$schema.yaml')
+    expect(evaluation?.result).toBe('ERROR')
+    expect(evaluation?.message).toBe('Invalid Story: Expected $schema to be ../../../../json_schemas/test_story.schema.yaml')
+  })
 
   test('invalid story', () => {
     const evaluation = validate('tools/tests/tester/fixtures/invalid_story.yaml')
@@ -38,23 +36,23 @@ describe('StoryValidator', () => {
       "data/chapters/1/method must be array --- data/chapters/1/method must match exactly one schema in oneOf")
   })
 
-  // test('invalid description', () => {
-  //   const evaluation = validate('tools/tests/tester/fixtures/invalid_description.yaml')
-  //   expect(evaluation?.result).toBe('ERROR')
-  //   expect(evaluation?.message).toBe("Invalid Story: " +
-  //     "data/description must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\" --- " +
-  //     "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$|^\\p{Lu}[\\s\\S]*\\. \\[(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS)\\]$\"")
-  // })
+  test('invalid description', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/invalid_description.yaml')
+    expect(evaluation?.result).toBe('ERROR')
+    expect(evaluation?.message).toBe("Invalid Story: " +
+      "data/description must match pattern \"^\\p{Lu}[\\s\\S]*\\.$\" --- " +
+      "data/chapters/0/synopsis must match pattern \"^\\p{Lu}[\\s\\S]*\\.$|^\\p{Lu}[\\s\\S]*\\. \\[(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS)\\]$\"")
+  })
 
-  // test('invalid property', () => {
-  //   const evaluation = validate('tools/tests/tester/fixtures/invalid_property.yaml')
-  //   expect(evaluation?.result).toBe('ERROR')
-  //   expect(evaluation?.message).toBe("Invalid Story: " +
-  //     "data/prologues/0/retry contains unsupported properties: until")
-  // })
+  test('invalid property', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/invalid_property.yaml')
+    expect(evaluation?.result).toBe('ERROR')
+    expect(evaluation?.message).toBe("Invalid Story: " +
+      "data/prologues/0/retry contains unsupported properties: until")
+  })
 
-  // test('valid story', () => {
-  //   const evaluation = validate('tools/tests/tester/fixtures/valid_story.yaml')
-  //   expect(evaluation).toBeUndefined()
-  // })
+  test('valid story', () => {
+    const evaluation = validate('tools/tests/tester/fixtures/valid_story.yaml')
+    expect(evaluation).toBeUndefined()
+  })
 })
