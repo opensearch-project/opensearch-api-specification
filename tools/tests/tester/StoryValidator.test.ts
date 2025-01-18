@@ -13,15 +13,12 @@ import { read_yaml } from "../../src/helpers";
 import { ParsedStory } from "tester/types/parsed_story.types";
 import StoryParser from "../../src/tester/StoryParser";
 const validator = new StoryValidator()
-import path_v2 from 'path'
 
 function validate(path: string): StoryEvaluation | undefined {
-  const absolutePath = path_v2.resolve(path);
-  const absoluteTestPath = path_v2.resolve(path);
-  console.log('Resolved path:', absolutePath, absoluteTestPath);
   const story: ParsedStory = StoryParser.parse(read_yaml(path))
-  console.log(JSON.stringify(story))
-  return validator.validate({ story, display_path: path, full_path: path })
+  const rr = validator.validate({ story, display_path: path, full_path: path })
+  console.log(rr);
+  return rr;
 }
 
 describe('StoryValidator', () => {

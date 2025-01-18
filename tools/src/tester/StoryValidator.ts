@@ -23,7 +23,6 @@ export default class StoryValidator {
 
   validate(story_file: StoryFile): StoryEvaluation | undefined {
     const schema_file_error = this.#validate_schema_path(story_file)
-    console.log("schema_file_error", schema_file_error)
     if (schema_file_error != null) return schema_file_error
     const schema_error = this.#validate_schema(story_file)
     console.log("schema_error", schema_error)
