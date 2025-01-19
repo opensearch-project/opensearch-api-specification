@@ -48,7 +48,6 @@ export default class SchemaVisitingValidator {
       ...this._namespaces_folder.files,
       ...this._schemas_folder.files
     ].forEach(f => { visitor.visit_specification(new SpecificationContext(f.file), f.spec()) })
-
     return errors
   }
 
@@ -73,26 +72,22 @@ export default class SchemaVisitingValidator {
     }
 
     if (schema.type === 'number') {
-      if (schema.format === undefined || SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
-        return
+      if (schema.format == null || !schema.format) {
+        errors.push(ctx.error(`Schema of type 'number' must specify a valid format. Allowed formats: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
+        return;
       }
-
-      if (SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
-        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' should instead be of type 'integer'`))
-      } else {
-        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`))
+      if (!SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
+        errors.push(ctx.error(`Schema of type 'number' with format '${schema.format}' is invalid. Expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
       }
     }
 
     if (schema.type === 'integer') {
-      if (schema.format === undefined || SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
-        return
+      if (schema.format == null || !schema.format) {
+        errors.push(ctx.error(`Schema of type 'integer' must specify a valid format. Allowed formats: ${SCHEMA_INTEGER_FORMATS.join(', ')}`));
+        return;
       }
-
-      if (SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
-        errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' should instead be of type 'number'`))
-      } else {
-        errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_INTEGER_FORMATS.join(', ')}`))
+      if (!SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
+        errors.push(ctx.error(`Schema of type 'integer' with format '${schema.format}' is invalid. Expected one of: ${SCHEMA_INTEGER_FORMATS.join(', ')}`));
       }
     }
   }
