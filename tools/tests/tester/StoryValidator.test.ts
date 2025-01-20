@@ -12,7 +12,6 @@ import { StoryEvaluation } from "../../src/tester/types/eval.types";
 import { read_yaml } from "../../src/helpers";
 import { ParsedStory } from "tester/types/parsed_story.types";
 import StoryParser from "../../src/tester/StoryParser";
-
 const validator = new StoryValidator()
 
 function validate(path: string): StoryEvaluation | undefined {
