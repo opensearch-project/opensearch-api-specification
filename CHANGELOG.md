@@ -52,6 +52,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `GET /_plugins/_ml/profile`, `GET /_plugins/_ml/profile/models`, `models/{model_id}`, `tasks`, `tasks/{task_id}` ([#787](https://github.com/opensearch-project/opensearch-api-specification/pull/787))
 - Added `GET /_plugins/_ml/stats/`, `stats/{stat}`, `{nodeId}/stats/`, `{nodeId}/stats/{stat}` ([#794](https://github.com/opensearch-project/opensearch-api-specification/pull/794))
 - Added `GET`, `POST /_plugins/_ml/tasks/_search`, `GET /_plugins/_ml/tools`, `tools/{tool_name}` ([#797](https://github.com/opensearch-project/opensearch-api-specification/pull/797))
+- Added `POST /_plugins/_ml/agents/{agent_id}/_execute`, `GET /_plugins/_ml/agents/{agent_id}`, `GET`, `POST /_plugins/_ml/agents/_search` ([#798](https://github.com/opensearch-project/opensearch-api-specification/pull/798))
 - Added a warning for test file names that don't match the API being tested ([#793](https://github.com/opensearch-project/opensearch-api-specification/pull/793))
 
 ### Removed
@@ -102,6 +103,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed CAT API schemas ([#769](https://github.com/opensearch-project/opensearch-api-specification/pull/769))
 - Fixed core API schemas ([#777](https://github.com/opensearch-project/opensearch-api-specification/pull/777))
 - Fixed Memory Circuit Breaker flaky error in ML APIs ([#788](https://github.com/opensearch-project/opensearch-api-specification/pull/788))
+- Fixed Aggregation schemas([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
@@ -109,6 +111,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725)) 
 - Changed naming of `snapshot._common`'s `Status`, `ShardsStats`, `ShardsStatsStage`, `ShardsStatsSummary` and `ShardsStatsSummaryItem` schemas to be prefixed with `Snapshot` ([#730](https://github.com/opensearch-project/opensearch-api-specification/pull/730))
 - Changed `ml.get_memory` and `ml.get_message` to split out `get_all` variants ([#796](https://github.com/opensearch-project/opensearch-api-specification/pull/796))
+- Changed `ml.get_tools` to have two different operation groups `ml.get_all_tools` and `ml.get_tool` ([#799](https://github.com/opensearch-project/opensearch-api-specification/pull/799))
 
 ## [0.1.0] - 2024-10-25
 

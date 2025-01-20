@@ -68,8 +68,7 @@ components:
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
         _score:
-          type: number
-          format: float
+          type: ['null', number]
           description: The score.
         _source:
           $ref: '#/components/schemas/Source'
@@ -251,6 +250,22 @@ components:
         prompt_template:
           type: ['null', string]
           description: The prompt template.
+        type:
+          type: string
+          description: The agent type
+          enum:
+            - conversational
+            - conversational_flow
+            - flow
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolItems'
+        memory:
+          $ref: '#/components/schemas/Memory'
+        app_type:
+          type: string
+          description: The app type.
         is_async:
           type: boolean
           description: Whether the task is asynchronous.
@@ -365,6 +380,9 @@ components:
             description: The output data.
         byte_buffer:
           $ref: '#/components/schemas/ByteBuffer'
+        result:
+          type: string
+          description: The output result.
       required:
         - data
     ByteBuffer:
@@ -450,6 +468,7 @@ components:
           $ref: '#/components/schemas/MatchAllQuery'
         term:
           $ref: '#/components/schemas/Term'
+      additionalProperties: true
     MatchAllQuery:
       type: object
       description: The match all query.
@@ -536,6 +555,8 @@ components:
           $ref: '#/components/schemas/OwnerNameKeyword'
         owner.name.keyword:
           $ref: '#/components/schemas/OwnerNameKeyword'
+        type:
+          $ref: '#/components/schemas/Type'
     Algorithm:
       type: object
       description: The algorithm.
@@ -574,6 +595,17 @@ components:
         boost:
           type: number
           description: Adjust the relevance score of a match.
+    Type:
+      type: object
+      description: The type.
+      properties:
+        value:
+          type: string
+          description: The agent type.
+          enum:
+            - conversational
+            - conversational_flow
+            - flow
     Nested:
       type: object
       description: The nested filter.
@@ -650,6 +682,30 @@ components:
         _seq_no:
           $ref: '#/components/schemas/SortOrder'
         _score:
+          $ref: '#/components/schemas/SortOrder'
+    SortAgent:
+      type: object
+      description: The sort agent query.
+      properties:
+        created_time:
+          $ref: '#/components/schemas/SortOrder'
+        is_hidden:
+          $ref: '#/components/schemas/SortOrder'
+        last_updated_time:
+          $ref: '#/components/schemas/SortOrder'
+        parameters:
+          $ref: '#/components/schemas/SortOrder'
+        tools:
+          $ref: '#/components/schemas/SortOrder'
+        type:
+          $ref: '#/components/schemas/SortOrder'
+        _id:
+          $ref: '#/components/schemas/SortOrder'
+        _index:
+          $ref: '#/components/schemas/SortOrder'
+        _score:
+          $ref: '#/components/schemas/SortOrder'
+        _seq_no:
           $ref: '#/components/schemas/SortOrder'
     SortMemory:
       type: object
@@ -1160,6 +1216,8 @@ components:
           type: string
         parameters:
           $ref: '#/components/schemas/Parameters'
+        include_output_in_agent_response:
+          type: boolean
       additionalProperties: true
     Headers:
       type: object
@@ -1198,6 +1256,38 @@ components:
           format: int64
           description: The last updated time.
     SearchConnectorsResponse:
+      $ref: '#/components/schemas/SearchResponse'
+    GetAgentResponse:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        type:
+          type: string
+          description: The agent type.
+          enum:
+            - conversational
+            - conversational_flow
+            - flow
+        description:
+          type: string
+          description: The agent description.
+        tools:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolItems'
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
+        is_hidden:
+          type: boolean
+          description: Whether the agent is hidden.
+    SearchAgentsResponse:
       $ref: '#/components/schemas/SearchResponse'
     SearchMemoryResponse:
       $ref: '#/components/schemas/SearchResponse'
@@ -1494,7 +1584,7 @@ components:
           type: string
           description: The field name.
       additionalProperties: true
-    GetToolsResponse:
+    Tool:
       type: object
       properties:
         name:
