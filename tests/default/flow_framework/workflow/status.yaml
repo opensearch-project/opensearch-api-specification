@@ -1,4 +1,4 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 description: Test flow_framework provision endpoints.
 version: '>= 2.12'
 prologues:
@@ -19,13 +19,19 @@ epilogues:
     parameters:
       workflow_id: ${workflow.workflow_id}
 chapters:
-  - synopsis: Search workflow state.
-    path: /_plugins/_flow_framework/workflow/state/_search
-    method: POST
-    request:
-      payload:
-        query:
-          match:
-            state: NOT_STARTED
+  - synopsis: Get workflow status.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
+    method: GET
+    parameters:
+      workflow_id: ${workflow.workflow_id}
     response:
       status: 200
+      payload:
+        state: NOT_STARTED
+  - synopsis: Get workflow status using an invalid ID.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
+    method: GET
+    parameters:
+      workflow_id: invalid
+    response:
+      status: 404

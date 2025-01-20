@@ -53,6 +53,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `GET /_plugins/_ml/stats/`, `stats/{stat}`, `{nodeId}/stats/`, `{nodeId}/stats/{stat}` ([#794](https://github.com/opensearch-project/opensearch-api-specification/pull/794))
 - Added `GET`, `POST /_plugins/_ml/tasks/_search`, `GET /_plugins/_ml/tools`, `tools/{tool_name}` ([#797](https://github.com/opensearch-project/opensearch-api-specification/pull/797))
 - Added `POST /_plugins/_ml/agents/{agent_id}/_execute`, `GET /_plugins/_ml/agents/{agent_id}`, `GET`, `POST /_plugins/_ml/agents/_search` ([#798](https://github.com/opensearch-project/opensearch-api-specification/pull/798))
+- Added a warning for test file names that don't match the API being tested ([#793](https://github.com/opensearch-project/opensearch-api-specification/pull/793))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))

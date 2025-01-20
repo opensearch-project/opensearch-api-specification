@@ -1,4 +1,4 @@
-$schema: ../../../json_schemas/test_story.schema.yaml
+$schema: ../../../../json_schemas/test_story.schema.yaml
 description: Test flow_framework provision endpoints.
 version: '>= 2.12'
 prologues:
@@ -13,25 +13,23 @@ prologues:
     output:
       workflow_id: payload.workflow_id
 epilogues:
+  - path: /_plugins/_flow_framework/workflow/{workflow_id}/_deprovision
+    method: POST
+    parameters:
+      workflow_id: ${workflow.workflow_id}
   - path: /_plugins/_flow_framework/workflow/{workflow_id}
     method: DELETE
     status: [200, 404]
     parameters:
       workflow_id: ${workflow.workflow_id}
 chapters:
-  - synopsis: Get workflow status.
-    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
-    method: GET
+  - synopsis: Provision workflow.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_provision
+    method: POST
     parameters:
       workflow_id: ${workflow.workflow_id}
+    request:
+      payload:
+        openai_key: '1234556'
     response:
       status: 200
-      payload:
-        state: NOT_STARTED
-  - synopsis: Get workflow status using an invalid ID.
-    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
-    method: GET
-    parameters:
-      workflow_id: invalid
-    response:
-      status: 404

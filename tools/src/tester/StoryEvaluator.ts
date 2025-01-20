@@ -18,6 +18,7 @@ import * as semver from '../_utils/semver'
 import _ from 'lodash'
 import { ParsedChapter, ParsedStory } from './types/parsed_story.types'
 import { OutputReference } from './OutputReference'
+import * as path from 'path'
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator
@@ -79,7 +80,7 @@ export default class StoryEvaluator {
       result: overall_result(prologues.concat(chapters).concat(epilogues).concat(prologues).map(e => e.overall)),
     }
 
-    const warnings = this.#chapter_warnings(story)
+    const warnings = this.#chapter_warnings(story, full_path)
     if (warnings !== undefined) {
       result.warnings = warnings
     }
@@ -87,10 +88,11 @@ export default class StoryEvaluator {
     return result
   }
 
-  #chapter_warnings(story: ParsedStory): string[] | undefined {
-    const result = _.compact([
-      this.#warning_if_mismatched_chapter_paths(story)
-    ])
+  #chapter_warnings(story: ParsedStory, full_path: string): string[] | undefined {
+    const result = _.compact(_.flattenDeep([
+      [this.#warning_if_mismatched_chapter_paths(story)],
+      this.#warning_if_invalid_path(story, full_path)
+    ]))
     return result.length > 0 ? result : undefined
   }
 
@@ -103,8 +105,32 @@ export default class StoryEvaluator {
     const normalized_paths = _.map(paths, (path) => path.replaceAll(/\/\{[^}]+}/g, '').replaceAll('//', '/'))
     const operations_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
     if (operations_counts.length > 1) {
-      return `Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.\n  ${_.join(_.uniq(paths), "\n  ")}\n`
+      return `Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.\n  ${_.join(_.uniq(paths), "\n  ")}`
     }
+  }
+
+  #warning_if_invalid_path(story: ParsedStory, full_path: string): string[] | undefined {
+    if (story.warnings?.['invalid-path-detected'] === false) return
+    const paths = _.compact(_.map(story.chapters, (chapter) => {
+      if (chapter.warnings?.['multiple-paths-detected'] === false) return // not the path being tested
+      return chapter.path
+    }))
+    const normalized_paths = _.uniq(_.map(paths, (path) =>
+      path
+        .replaceAll('/_plugins/', '')
+        .replaceAll(/\/\{[^}]+}/g, '')
+        .replaceAll('/_', '/')
+        .replace(/^_/, '')
+        .replaceAll('//', '/')
+      + '.yaml'
+    ))
+
+    return _.compact(_.map(normalized_paths, (normalized_path) => {
+      if (!full_path.endsWith(normalized_path)) {
+        const relative_path = path.relative('.', full_path)
+        return `Invalid path detected, please move /${relative_path} to ${normalized_path}.`
+      }
+    }))
   }
 
   async #evaluate_chapters(chapters: ParsedChapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
