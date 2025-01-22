@@ -104,6 +104,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed CAT API schemas ([#769](https://github.com/opensearch-project/opensearch-api-specification/pull/769))
 - Fixed core API schemas ([#777](https://github.com/opensearch-project/opensearch-api-specification/pull/777))
 - Fixed Memory Circuit Breaker flaky error in ML APIs ([#788](https://github.com/opensearch-project/opensearch-api-specification/pull/788))
+- Fixed GeoDistanceSort schema ([#805](https://github.com/opensearch-project/opensearch-api-specification/pull/805))
 - Fixed Aggregation schemas([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
 
 ### Changed
