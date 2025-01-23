@@ -64,7 +64,7 @@ paths:
       operationId: cluster.put_decommission_awareness.0
       x-operation-group: cluster.put_decommission_awareness
       x-version-added: '1.0'
-      description: Decommissions a cluster zone based on awareness. It greatly benefits multi-zone deployments, where awareness attributes can aid in applying new upgrades to a cluster in a controlled fashion. 
+      description: Decommissions a cluster zone based on awareness. This can greatly benefit multi-zone deployments, where awareness attributes can aid in applying new upgrades to a cluster in a controlled fashion. 
       externalDocs:
         url: https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-decommission/#example-decommissioning-and-recommissioning-a-zone
       parameters:
@@ -130,8 +130,8 @@ paths:
       x-operation-group: cluster.pending_tasks
       x-version-added: '1.0'
       description: |-
-        Returns a list of any cluster-level changes, such as index creation, mapping updates,
-        or new allocations, which have not completed.
+        Returns a list of pending cluster-level tasks, such as index creation, mapping updates,
+        or new allocations.
       externalDocs:
         url: https://opensearch.org/docs/latest
       parameters:
@@ -369,7 +369,7 @@ paths:
       operationId: cluster.post_voting_config_exclusions.0
       x-operation-group: cluster.post_voting_config_exclusions
       x-version-added: '1.0'
-      description: Updates the cluster voting configuration by excluding certain node IDs or  names.
+      description: Updates the cluster voting configuration by excluding certain node IDs or names.
       externalDocs:
         url: https://opensearch.org/docs/latest
       parameters:
@@ -526,13 +526,13 @@ components:
               index:
                 $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
               primary:
-                description: When `true`, returns a routing explanation for the primary shard based on node ID.
+                description: When `true`, returns a routing explanation for the primary shard based on the node ID.
                 type: boolean
               shard:
                 description: Specifies the ID of the shard that you would like an explanation for.
                 type: integer
                 format: int32
-            description: The index, shard, and primary flag to explain. Leave this empty to explain the first unassigned shard.
+            description: The index, shard, and primary flag for which to generate an explanation. Leave this empty to generate an explanation for the first unassigned shard.
     cluster.put_component_template:
       content:
         application/json:
@@ -542,7 +542,7 @@ components:
               allow_auto_create:
                 description: |-
                   This setting overrides the `action.auto_create_index` cluster setting.
-                  When set to `true` inside a component template, indexes are automatically created using that
+                  When set to `true` in a component template, indexes are automatically created using that
                   template. When set to `false`, data streams matching the component template must always be explicitly created.
                 type: boolean
               template:
@@ -803,7 +803,7 @@ components:
                     description: The name of the cluster.
                     $ref: '../schemas/_common.yaml#/components/schemas/Name'
                   cluster_uuid:
-                    description: The unique identifier for the cluster.
+                    description: The unique identifier of the cluster.
                     $ref: '../schemas/_common.yaml#/components/schemas/Uuid'
                   indices:
                     description: Displays statistics about indexes in the cluster.
@@ -815,7 +815,7 @@ components:
                     description: The health status of the cluster, based on the state of its primary and replica shards.
                     $ref: '../schemas/_common.yaml#/components/schemas/HealthStatus'
                   timestamp:
-                    description: The Unix timestamp, in milliseconds, for the last time any cluster statistics were refreshed.
+                    description: The Unix timestamp, in milliseconds, indicating when any cluster statistics were last refreshed.
                     $ref: '../schemas/_common.yaml#/components/schemas/EpochTimeUnitMillis'
                 required:
                   - cluster_name
@@ -844,7 +844,7 @@ components:
       name: name
       description: |-
         The name of the component template to delete.
-        Supports Wildcard (*) expressions.
+        Supports wildcard (*) expressions.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Name'
@@ -878,7 +878,7 @@ components:
         Specifies whether to wait for all excluded nodes to be removed from the
         cluster before clearing the voting configuration exclusions list.
         When `true`, all excluded nodes are removed from
-        the cluster before this API takes any action. When `false` then the
+        the cluster before this API takes any action. When `false`, the
         voting configuration exclusions list is cleared even if some excluded
         nodes are still in the cluster.
       schema:
@@ -906,7 +906,7 @@ components:
       name: local
       description: |-
         When `true`, the request retrieves information from the local node only.
-        When `false, information is retrieved from the cluster-manager node.
+        When `false, information is retrieved from the cluster manager node.
       schema:
         type: boolean
         default: false
@@ -949,7 +949,7 @@ components:
       name: local
       description: |-
         When `true`, the request retrieves information from the local node only.
-        When `false`, information is retrieved from the cluster-manager node.
+        When `false`, information is retrieved from the cluster manager node.
       schema:
         type: boolean
         default: false
@@ -1026,10 +1026,10 @@ components:
     cluster.health::query.awareness_attribute:
       name: awareness_attribute
       in: query
-      description: The name of the awareness attribute, for which to return cluster health (for example, `zone`). Applicable only if level is set to `awareness_attributes`.
+      description: The name of the awareness attribute for which to return the cluster health status (for example, `zone`). Applicable only if `level` is set to `awareness_attributes`.
       schema:
         type: string
-        description: The name of the awareness attribute, for which to return cluster health (for example, `zone`). Applicable only if level is set to `awareness_attributes`.
+        description: The name of the awareness attribute for which to return the cluster health status (for example, `zone`). Applicable only if `level` is set to `awareness_attributes`.
     cluster.health::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
@@ -1102,7 +1102,7 @@ components:
     cluster.health::query.wait_for_nodes:
       in: query
       name: wait_for_nodes
-      description: Waits until the specified number of nodes (`N`) is available. Accepts `>=N`, `<=N`, `>N` and `<N`. You can also use `ge(N)`, `le(N)`, `gt(N)`, and `lt(N)` notation.
+      description: Waits until the specified number of nodes (`N`) is available. Accepts `>=N`, `<=N`, `>N`, and `<N`. You can also use `ge(N)`, `le(N)`, `gt(N)`, and `lt(N)` notation.
       schema:
         oneOf:
           - type: string
@@ -1111,7 +1111,7 @@ components:
     cluster.health::query.wait_for_status:
       in: query
       name: wait_for_status
-      description: Wait until the cluster health reaches the specified status or better.
+      description: Waits until the cluster health reaches the specified status or better.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/HealthStatus'
       style: form
@@ -1126,7 +1126,7 @@ components:
       name: local
       description: |-
         When `true`, the request retrieves information from the local node only.
-        When `false`, information is retrieved from the cluster-manager node.
+        When `false`, information is retrieved from the cluster manager node.
       schema:
         type: boolean
         default: false
@@ -1145,7 +1145,7 @@ components:
       name: node_ids
       description: |-
         A comma-separated list of node IDs to exclude
-        from the voting configuration. When using this setting, you can not also specify `node_names`.
+        from the voting configuration. When using this setting, you cannot also specify `node_names`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Ids'
       style: form
@@ -1153,8 +1153,8 @@ components:
       in: query
       name: node_names
       description: |-
-        A comma-separated list node names to exclude from the
-        voting configuration. When using this setting, you can not also specify `node_ids`.
+        A comma-separated list of node names to exclude from the
+        voting configuration. When using this setting, you cannot also specify `node_ids`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Names'
       style: form
@@ -1176,8 +1176,8 @@ components:
         The name of the component template to create.
         OpenSearch includes the following built-in component templates: `logs-mappings`; 'logs-settings`; `metrics-mappings`; `metrics-settings`;`synthetics-mapping`; `synthetics-settings`.
         OpenSearch uses these templates to configure backing indexes for its data streams.
-        If you want to overwrite one of these templates, set the `version` for your replacement template higher than the current version.
-        If you want to disable all built-in component and index templates, set `stack.templates.enabled` to `false` using the cluster update settings API.
+        If you want to overwrite one of these templates, set the replacement template `version` to a higher value than the current version.
+        If you want to disable all built-in component and index templates, set `stack.templates.enabled` to `false` using the Cluster Update Settings API.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Name'
@@ -1235,7 +1235,7 @@ components:
     cluster.put_settings::query.flat_settings:
       in: query
       name: flat_settings
-      description: Return settings in a flat format.
+      description: Returns settings in a flat format.
       schema:
         type: boolean
         default: false
@@ -1279,7 +1279,7 @@ components:
     cluster.reroute::query.explain:
       in: query
       name: explain
-      description: When `true`,the response contains an explanation of why certain commands can or cannot be executed.
+      description: When `true`, the response contains an explanation of why certain commands can or cannot be executed.
       schema:
         type: boolean
       style: form
@@ -1306,7 +1306,7 @@ components:
     cluster.reroute::query.retry_failed:
       in: query
       name: retry_failed
-      description: When `true`, retries the shard allocation if the allocation was blocked due to too many subsequent failures.
+      description: When `true`, retries shard allocation if it was blocked because of too many subsequent failures.
       schema:
         type: boolean
       style: form
@@ -1326,7 +1326,7 @@ components:
     cluster.state::path.metric:
       in: path
       name: metric
-      description: Limit the information returned to the specified metrics.
+      description: Limits the information returned to only the specified metrics.
       required: true
       schema:
         type: array
@@ -1336,7 +1336,7 @@ components:
     cluster.state::query.allow_no_indices:
       in: query
       name: allow_no_indices
-      description: Whether to ignore if a wildcard indexes' expression resolves into no concrete indexes. This include the `_all` string or when no indexes have been specified.
+      description: Whether to ignore a wildcard index expression that resolves into no concrete indexes. This includes the `_all` string or when no indexes have been specified.
       schema:
         type: boolean
       style: form
@@ -1355,7 +1355,7 @@ components:
     cluster.state::query.flat_settings:
       in: query
       name: flat_settings
-      description: Return settings in a flat format.
+      description: Returns settings in a flat format.
       schema:
         type: boolean
         default: false
@@ -1363,7 +1363,7 @@ components:
     cluster.state::query.ignore_unavailable:
       in: query
       name: ignore_unavailable
-      description: Whether the specified concrete indexes should be ignored when unavailable (missing or closed)
+      description: Whether the specified concrete indexes should be ignored when unavailable (missing or closed).
       schema:
         type: boolean
       style: form
