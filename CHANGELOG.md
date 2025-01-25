@@ -107,6 +107,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed Memory Circuit Breaker flaky error in ML APIs ([#788](https://github.com/opensearch-project/opensearch-api-specification/pull/788))
 - Fixed GeoDistanceSort schema ([#805](https://github.com/opensearch-project/opensearch-api-specification/pull/805))
 - Fixed Aggregation schemas([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
+- Fixed swapped schema references in nodes info API buffer fields([#808](https://github.com/opensearch-project/opensearch-api-specification/pull/808))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
