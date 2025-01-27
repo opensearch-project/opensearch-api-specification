@@ -23,7 +23,7 @@ export class PostmanManager {
       item: [],
     };
   }
-  
+
   add_to_collection(
     url: string | undefined,
     method: string,
@@ -35,28 +35,26 @@ export class PostmanManager {
     full_path?: string
   ): void {
     const folders: string[] = [];
+    console.log(full_path)
+    if (full_path != null && full_path) {
+      const path_parts = full_path.split('/').filter(Boolean);
 
-    if (full_path) {
-      const pathParts = full_path.split('/').filter(Boolean);
+      const start_index = path_parts.indexOf('tests');
 
-      const startIndex = pathParts.indexOf('tests');
-      
-      if (startIndex !== -1) {
-        folders.push(...pathParts.slice(startIndex + 1));
+      if (start_index !== -1) {
+        folders.push(...path_parts.slice(start_index + 1));
       }
     }
 
-    let currentFolder = this.collection.item;
-
+    let current_folder = this.collection.item;
     folders.forEach(folder => {
-      let existingFolder = currentFolder.find((item: any) => item.name === folder);
+      let existing_folder = current_folder.find((item: any) => item.name === folder);
 
-      if (!existingFolder) {
-        existingFolder = { name: folder, item: [] };
-        currentFolder.push(existingFolder);
+      if (existing_folder == null) {
+        existing_folder = { name: folder, item: [] };
+        current_folder.push(existing_folder);
       }
-
-      currentFolder = existingFolder.item;
+      current_folder = existing_folder.item;
     });
 
     const item = {
@@ -70,13 +68,13 @@ export class PostmanManager {
           path: path.split('/').filter(Boolean),
           query: Object.entries(params).map(([key, value]) => ({ key, value: String(value) })),
         },
-        body: body ? { mode: content_type === 'application/json' ? 'raw' : 'formdata', raw: JSON.stringify(body) } : undefined,
+        body: body != null ? { mode: content_type === 'application/json' ? 'raw' : 'formdata', raw: JSON.stringify(body) } : undefined,
       },
     };
 
-    const exists = currentFolder.some((existingItem: any) => existingItem.name === item.name);
-    if (!exists) {
-      currentFolder.push(item);
+    const exists = current_folder.some((existing_item: any) => existing_item.name === item.name);
+    if (exists != null) {
+      current_folder.push(item);
     }
   }
 

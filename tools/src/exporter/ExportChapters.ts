@@ -11,7 +11,7 @@ import fs from 'fs'
 import { read_yaml, to_ndjson } from '../helpers'
 import { basename, resolve } from 'path'
 import _ from 'lodash'
-import { StoryEvaluations, StoryFile } from 'tester/types/eval.types'
+import { StoryFile } from 'tester/types/eval.types'
 import { Logger } from 'Logger'
 import StoryParser from './StoryParser'
 import { PostmanManager } from './PostmanManager'
@@ -28,29 +28,25 @@ export default class ExportChapters {
     this._postman_manager = postman_manager
   }
 
-  async run (story_path: string): Promise<{ results: StoryEvaluations, failed: boolean }> {
-    let failed = false
+  run (story_path: string): void {
     const story_files = this.story_files(story_path)
-    const results: StoryEvaluations = { evaluations: [] }
 
     for (const story_file of story_files) {
-        for(const chapter of story_file.story.chapters) {
-          const [headers, content_type] = this.#serialize_headers(chapter.request?.headers, chapter.request?.content_type)
-          let params = {}, url_path = {};
-          if(chapter.parameters !== undefined) {
-            [url_path, params] = this.#parse_url(chapter.path, chapter.parameters)
-          }
-          const request_data = chapter.request?.payload !== undefined ? this.#serialize_payload(
-              chapter.request.payload,
-              content_type
-            ) : {}
-          this._postman_manager.add_to_collection('url', chapter.method, chapter.path, headers, params, request_data, content_type, story_file.full_path);
+      for (const chapter of story_file.story.chapters) {
+        const [headers, content_type] = this.#serialize_headers(chapter.request?.headers, chapter.request?.content_type)
+        let params = {};
+        if (chapter.parameters !== undefined) {
+          params = this.#parse_url(chapter.path, chapter.parameters)
+        }
+        const request_data = chapter.request?.payload !== undefined ? this.#serialize_payload(
+          chapter.request.payload,
+          content_type
+        ) : {}
+        this._postman_manager.add_to_collection('url', chapter.method, chapter.path, headers, params, request_data, content_type, story_file.full_path);
       }
       this._logger.info(`Evaluating ${story_file.display_path} ...`)
     }
     this._postman_manager.save_collection()
-
-    return { results, failed }
   }
 
   story_files(story_path: string): StoryFile[] {
@@ -93,8 +89,8 @@ export default class ExportChapters {
     if (!headers) return [headers, content_type]
     _.forEach(headers, (v, k) => {
       if (k.toLowerCase() == 'content-type') {
-          content_type = v.toString()
-          if (headers) delete headers[k]
+        content_type = v.toString()
+        if (headers) delete headers[k]
       }
     })
     return [headers, content_type]
@@ -103,8 +99,8 @@ export default class ExportChapters {
   #serialize_payload(payload: any, content_type: string): any {
     if (payload === undefined) return undefined
     switch (content_type) {
-    case 'application/x-ndjson': return to_ndjson(payload as any[])
-    default: return payload
+      case 'application/x-ndjson': return to_ndjson(payload as any[])
+      default: return payload
     }
   }
 
@@ -120,13 +116,13 @@ export default class ExportChapters {
     return resolved_params
   }
 
-  #parse_url (path: string, parameters: Record<string, Parameter>): [string, Record<string, Parameter>] {
+  #parse_url (path: string, parameters: Record<string, Parameter>): Record<string, Parameter> {
     const path_params = new Set<string>()
-    const parsed_path = path.replace(/{(\w+)}/g, (_, key) => {
+    path.replace(/{(\w+)}/g, (_, key) => {
       path_params.add(key as string)
       return parameters[key] as string
     })
     const query_params = Object.fromEntries(Object.entries(parameters).filter(([key]) => !path_params.has(key)))
-    return [parsed_path, query_params]
+    return query_params
   }
 }
