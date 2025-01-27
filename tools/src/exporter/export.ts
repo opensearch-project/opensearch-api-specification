@@ -9,28 +9,6 @@
 
 import { Logger, LogLevel } from '../Logger'
 import { Command, Option } from '@commander-js/extra-typings'
-import {
-  AWS_ACCESS_KEY_ID_OPTION,
-  AWS_REGION_OPTION,
-  AWS_SECRET_ACCESS_KEY_OPTION,
-  AWS_SERVICE_OPTION,
-  AWS_SESSION_TOKEN_OPTION,
-  get_opensearch_opts_from_cli,
-  OPENSEARCH_CERT_OPTION,
-  OPENSEARCH_INSECURE_OPTION,
-  OPENSEARCH_KEY_OPTION,
-  OPENSEARCH_PASSWORD_OPTION,
-  OPENSEARCH_URL_OPTION,
-  OPENSEARCH_USERNAME_OPTION,
-  OpenSearchHttpClient
-} from '../OpenSearchHttpClient'
-import * as process from 'node:process'
-import ChapterReader from 'tester/ChapterReader'
-import SupplementalChapterEvaluator from 'tester/SupplementalChapterEvaluator'
-import StoryValidator from 'tester/StoryValidator'
-import StoryEvaluator from 'tester/StoryEvaluator'
-import { ConsoleResultLogger } from 'tester/ResultLogger'
-import TestRunner from 'tester/TestRunner'
 import ExportChapters from './ExportChapters'
 import { PostmanManager } from './PostmanManager'
 
