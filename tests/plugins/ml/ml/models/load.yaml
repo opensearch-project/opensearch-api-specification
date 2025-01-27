@@ -1,0 +1,66 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the deployment of a model using deprecated load API.
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.jvm_heap_memory_threshold: 100
+  - path: /_plugins/_ml/models/_register
+    id: register_model
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    output:
+      task_id: payload.task_id
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_register_model_task
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    output:
+      model_id: payload.model_id
+epilogues:
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_load_model_task
+    method: GET
+    parameters:
+      task_id: ${load_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+  - path: /_plugins/_ml/models/{model_id}/_undeploy
+    method: POST
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Deploy a model.
+    id: load_model
+    path: /_plugins/_ml/models/{model_id}/_load
+    method: POST
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    output:
+      task_id: payload.task_id
+    response:
+      status: 200

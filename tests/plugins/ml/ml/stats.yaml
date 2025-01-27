@@ -1,0 +1,77 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the retrieval of the statistics.
+version: '>= 2.7'
+warnings:
+  multiple-paths-detected: false
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.jvm_heap_memory_threshold: 100
+  - path: /_plugins/_ml/models/_register
+    id: register_model
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    output:
+      task_id: payload.task_id
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_task
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+      node_id: payload.worker_node[0]
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/tasks/{task_id}
+    parameters:
+      task_id: ${register_model.task_id}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get all stats for all nodes.
+    path: /_plugins/_ml/stats
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get a specified stat for all nodes.
+    path: /_plugins/_ml/stats/{stat}
+    method: GET
+    parameters:
+      stat: ml_model_index_status
+    response:
+      status: 200
+  - synopsis: Get all stats for a specific node.
+    path: /_plugins/_ml/{node_id}/stats
+    method: GET
+    parameters:
+      node_id: ${get_completed_task.node_id}
+    response:
+      status: 200
+  - synopsis: Get a specified stat for a specific node.
+    path: /_plugins/_ml/{node_id}/stats/{stat}
+    method: GET
+    parameters:
+      node_id: ${get_completed_task.node_id}
+      stat: ml_task_index_status
+    response:
+      status: 200

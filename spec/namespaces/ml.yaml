@@ -70,16 +70,107 @@ paths:
     post:
       operationId: ml.register_model.0
       x-operation-group: ml.register_model
+      x-version-added: '2.7'
       description: Registers a model.
       requestBody:
         $ref: '#/components/requestBodies/ml.register_model'
       responses:
         '200':
           $ref: '#/components/responses/ml.register_model@200'
+  /_plugins/_ml/models/meta:
+    post:
+      operationId: ml.create_model_meta.0
+      x-operation-group: ml.create_model_meta
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `_register_meta` instead.
+      description: Registers model metadata.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_model_meta'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_model_meta@200'
+  /_plugins/_ml/models/_register_meta:
+    post:
+      operationId: ml.register_model_meta.0
+      x-operation-group: ml.register_model_meta
+      x-version-added: '2.7'
+      description: Registers model metadata.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_model_meta'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_model_meta@200'
+  /_plugins/_ml/models/{model_id}/chunk/{chunk_number}:
+    post:
+      operationId: ml.chunk_model.0
+      x-operation-group: ml.chunk_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `upload_chunk` instead.
+      description: Uploads model chunk.
+      parameters:
+        - $ref: '#/components/parameters/ml.chunk_model::path.chunk_number'
+        - $ref: '#/components/parameters/ml.chunk_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.chunk_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.chunk_model@200'
+  /_plugins/_ml/models/{model_id}/upload_chunk/{chunk_number}:
+    post:
+      operationId: ml.upload_chunk.0
+      x-operation-group: ml.upload_chunk
+      x-version-added: '2.7'
+      description: Uploads model chunk.
+      parameters:
+        - $ref: '#/components/parameters/ml.upload_chunk::path.chunk_number'
+        - $ref: '#/components/parameters/ml.upload_chunk::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.upload_chunk'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.upload_chunk@200'
+  /_plugins/_ml/models/_upload:
+    post:
+      operationId: ml.upload_model.0
+      x-operation-group: ml.upload_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `register_model` instead.
+      description: Registers a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.upload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.upload_model@200'
   /_plugins/_ml/models/{model_id}:
+    get:
+      operationId: ml.get_model.0
+      x-operation-group: ml.get_model
+      x-version-added: '1.3'
+      description: Retrieves a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_model@200'
+    put:
+      operationId: ml.update_model.0
+      x-operation-group: ml.update_model
+      x-version-added: '2.12'
+      description: Updates a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_model@200'
     delete:
       operationId: ml.delete_model.0
       x-operation-group: ml.delete_model
+      x-version-added: '1.3'
       description: Deletes a model.
       parameters:
         - $ref: '#/components/parameters/ml.delete_model::path.model_id'
@@ -90,26 +181,96 @@ paths:
     post:
       operationId: ml.deploy_model.0
       x-operation-group: ml.deploy_model
+      x-version-added: '2.7'
       description: Deploys a model.
       parameters:
         - $ref: '#/components/parameters/ml.deploy_model::path.model_id'
       responses:
         '200':
           $ref: '#/components/responses/ml.deploy_model@200'
+  /_plugins/_ml/models/{model_id}/_load:
+    post:
+      operationId: ml.load_model.0
+      x-operation-group: ml.load_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `deploy_model` instead.
+      description: Deploys a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.load_model::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.load_model@200'
   /_plugins/_ml/models/{model_id}/_undeploy:
     post:
       operationId: ml.undeploy_model.0
       x-operation-group: ml.undeploy_model
+      x-version-added: '2.7'
       description: Undeploys a model.
       parameters:
         - $ref: '#/components/parameters/ml.undeploy_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.undeploy_model'
       responses:
         '200':
           $ref: '#/components/responses/ml.undeploy_model@200'
+  /_plugins/_ml/models/_undeploy:
+    post:
+      operationId: ml.undeploy_model.1
+      x-operation-group: ml.undeploy_model
+      x-version-added: '2.7'
+      description: Undeploys a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.undeploy_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.undeploy_model@200'
+  /_plugins/_ml/models/{model_id}/_unload:
+    post:
+      operationId: ml.unload_model.0
+      x-operation-group: ml.unload_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `undeploy_model` instead.
+      description: Unloads a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.unload_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.unload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.unload_model@200'
+  /_plugins/_ml/models/_unload:
+    post:
+      operationId: ml.unload_model.1
+      x-operation-group: ml.unload_model
+      deprecated: true
+      x-version-deprecated: '2.7'
+      x-deprecation-message: Use `undeploy_model` instead.
+      description: Unloads a model.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.unload_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.unload_model@200'
+  /_plugins/_ml/models/{model_id}/_predict:
+    post:
+      operationId: ml.predict_model.0
+      x-operation-group: ml.predict_model
+      x-version-added: '2.12'
+      description: Predicts a model.
+      parameters:
+        - $ref: '#/components/parameters/ml.predict_model::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.predict_model'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.predict_model@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
       x-operation-group: ml.get_task
+      x-version-added: '1.3'
       description: Retrieves a task.
       parameters:
         - $ref: '#/components/parameters/ml.get_task::path.task_id'
@@ -119,16 +280,49 @@ paths:
     delete:
       operationId: ml.delete_task.0
       x-operation-group: ml.delete_task
+      x-version-added: '1.3'
       description: Deletes a task.
       parameters:
         - $ref: '#/components/parameters/ml.delete_task::path.task_id'
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_task@200'
+  /_plugins/_ml/tasks/_search:
+    get:
+      operationId: ml.search_tasks.0
+      x-operation-group: ml.search_tasks
+      x-version-added: '1.3'
+      description: Searches for tasks.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_tasks'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_tasks@200'
+    post:
+      operationId: ml.search_tasks.1
+      x-operation-group: ml.search_tasks
+      x-version-added: '1.3'
+      description: Searches for tasks.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_tasks'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_tasks@200'
   /_plugins/_ml/models/_search:
     get:
       operationId: ml.search_models.0
       x-operation-group: ml.search_models
+      x-version-added: '1.3'
+      description: Searches for models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_models'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_models@200'
+    post:
+      operationId: ml.search_models.1
+      x-operation-group: ml.search_models
+      x-version-added: '1.3'
       description: Searches for models.
       requestBody:
         $ref: '#/components/requestBodies/ml.search_models'
@@ -139,6 +333,7 @@ paths:
     post:
       operationId: ml.predict.0
       x-operation-group: ml.predict
+      x-version-added: '1.3'
       description: Predicts new data with trained model.
       parameters:
         - $ref: '#/components/parameters/ml.predict::path.algorithm_name'
@@ -152,6 +347,7 @@ paths:
     post:
       operationId: ml.train.0
       x-operation-group: ml.train
+      x-version-added: '1.3'
       description: Trains a model synchronously.
       parameters:
         - $ref: '#/components/parameters/ml.train::path.algorithm_name'
@@ -164,6 +360,7 @@ paths:
     post:
       operationId: ml.train_predict.0
       x-operation-group: ml.train_predict
+      x-version-added: '1.3'
       description: Trains a model and predicts against the same training dataset.
       parameters:
         - $ref: '#/components/parameters/ml.train_predict::path.algorithm_name'
@@ -239,22 +436,397 @@ paths:
     post:
       operationId: ml.register_agents.0
       x-operation-group: ml.register_agents
+      x-version-added: '2.13'
       description: Register an agent.
       requestBody:
         $ref: '#/components/requestBodies/ml.register_agents'
       responses:
         '200':
           $ref: '#/components/responses/ml.register_agents@200'
+  /_plugins/_ml/agents/{agent_id}/_execute:
+    post:
+      operationId: ml.execute_agent.0
+      x-operation-group: ml.execute_agent
+      x-version-added: '2.13'
+      description: Execute an agent.
+      parameters:
+        - $ref: '#/components/parameters/ml.execute_agent::path.agent_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.execute_agent'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.execute_agent@200'
   /_plugins/_ml/agents/{agent_id}:
+    get:
+      operationId: ml.get_agent.0
+      x-operation-group: ml.get_agent
+      x-version-added: '2.13'
+      description: Get an agent.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_agent::path.agent_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_agent@200'
     delete:
       operationId: ml.delete_agent.0
       x-operation-group: ml.delete_agent
+      x-version-added: '2.13'
       description: Delete an agent.
       parameters:
         - $ref: '#/components/parameters/ml.delete_agent::path.agent_id'
       responses:
         '200':
           $ref: '#/components/responses/ml.delete_agent@200'
+  /_plugins/_ml/agents/_search:
+    get:
+      operationId: ml.search_agents.0
+      x-operation-group: ml.search_agents
+      x-version-added: '2.13'
+      description: Search agents.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_agents'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_agents@200'
+    post:
+      operationId: ml.search_agents.1
+      x-operation-group: ml.search_agents
+      description: Search agents.
+      x-version-added: '2.13'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_agents'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_agents@200'
+  /_plugins/_ml/memory:
+    get:
+      operationId: ml.get_all_memories.0
+      x-operation-group: ml.get_all_memories
+      x-version-added: '2.12'
+      description: Get all memories.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_all_memories::query.max_results'
+        - $ref: '#/components/parameters/ml.get_all_memories::query.next_token'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_all_memories@200'
+    post:
+      operationId: ml.create_memory.0
+      x-operation-group: ml.create_memory
+      x-version-added: '2.12'
+      description: Create a memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_memory@200'
+  /_plugins/_ml/memory/{memory_id}:
+    get:
+      operationId: ml.get_memory.0
+      x-operation-group: ml.get_memory
+      x-version-added: '2.12'
+      description: Get a memory.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_memory::path.memory_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_memory@200'
+    put:
+      operationId: ml.update_memory.0
+      x-operation-group: ml.update_memory
+      x-version-added: '2.12'
+      description: Update a memory.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_memory::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_memory@200'
+    delete:
+      operationId: ml.delete_memory.0
+      x-operation-group: ml.delete_memory
+      x-version-added: '2.12'
+      description: Delete a memory.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_memory::path.memory_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_memory@200'
+  /_plugins/_ml/memory/_search:
+    get:
+      operationId: ml.search_memory.0
+      x-operation-group: ml.search_memory
+      x-version-added: '2.12'
+      description: Search memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_memory@200'
+    post:
+      operationId: ml.search_memory.1
+      x-operation-group: ml.search_memory
+      x-version-added: '2.12'
+      description: Search memory.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_memory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_memory@200'
+  /_plugins/_ml/memory/{memory_id}/messages:
+    get:
+      operationId: ml.get_all_messages.0
+      x-operation-group: ml.get_all_messages
+      x-version-added: '2.12'
+      description: Get all messages in a memory.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_all_messages::path.memory_id'
+        - $ref: '#/components/parameters/ml.get_all_messages::query.max_results'
+        - $ref: '#/components/parameters/ml.get_all_messages::query.next_token'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_all_messages@200'
+    post:
+      operationId: ml.create_message.0
+      x-operation-group: ml.create_message
+      x-version-added: '2.12'
+      description: Create a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.create_message::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_message@200'
+  /_plugins/_ml/memory/message/{message_id}:
+    get:
+      operationId: ml.get_message.0
+      x-operation-group: ml.get_message
+      x-version-added: '2.12'
+      description: Get a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_message::path.message_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_message@200'
+    put:
+      operationId: ml.update_message.0
+      x-operation-group: ml.update_message
+      x-version-added: '2.12'
+      description: Update a message.
+      parameters:
+        - $ref: '#/components/parameters/ml.update_message::path.message_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_message@200'
+  /_plugins/_ml/memory/{memory_id}/_search:
+    get:
+      operationId: ml.search_message.0
+      x-operation-group: ml.search_message
+      x-version-added: '2.12'
+      description: Search messages.
+      parameters:
+        - $ref: '#/components/parameters/ml.search_message::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_message@200'
+    post:
+      operationId: ml.search_message.1
+      x-operation-group: ml.search_message
+      x-version-added: '2.12'
+      description: Search messages.
+      parameters:
+        - $ref: '#/components/parameters/ml.search_message::path.memory_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.search_message'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.search_message@200'
+  /_plugins/_ml/memory/message/{message_id}/traces:
+    get:
+      operationId: ml.get_message_traces.0
+      x-operation-group: ml.get_message_traces
+      x-version-added: '2.12'
+      description: Get a message traces.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_message_traces::path.message_id'
+        - $ref: '#/components/parameters/ml.get_message_traces::query.max_results'
+        - $ref: '#/components/parameters/ml.get_message_traces::query.next_token'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_message_traces@200'
+  /_plugins/_ml/controllers/{model_id}:
+    get:
+      operationId: ml.get_controller.0
+      x-operation-group: ml.get_controller
+      x-version-added: '2.12'
+      description: Retrieves a controller.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_controller@200'
+    post:
+      operationId: ml.create_controller.0
+      x-operation-group: ml.create_controller
+      x-version-added: '2.12'
+      description: Creates a controller.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.create_controller'
+      parameters:
+        - $ref: '#/components/parameters/ml.create_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.create_controller@200'
+    put:
+      operationId: ml.update_controller.0
+      x-operation-group: ml.update_controller
+      x-version-added: '2.12'
+      description: Updates a controller.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_controller'
+      parameters:
+        - $ref: '#/components/parameters/ml.update_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_controller@200'
+    delete:
+      operationId: ml.delete_controller.0
+      x-operation-group: ml.delete_controller
+      x-version-added: '2.12'
+      description: Deletes a controller.
+      parameters:
+        - $ref: '#/components/parameters/ml.delete_controller::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.delete_controller@200'
+  /_plugins/_ml/profile:
+    get:
+      operationId: ml.get_profile.0
+      x-operation-group: ml.get_profile
+      x-version-added: '2.4'
+      description: Get a profile.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_profile'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_profile@200'
+  /_plugins/_ml/profile/models:
+    get:
+      operationId: ml.get_profile_models.0
+      x-operation-group: ml.get_profile_models
+      x-version-added: '2.4'
+      description: Get a profile models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_profile_models'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_profile_models@200'
+  /_plugins/_ml/profile/models/{model_id}:
+    get:
+      operationId: ml.get_profile_models.1
+      x-operation-group: ml.get_profile_models
+      x-version-added: '2.11'
+      description: Get a profile models.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_profile_models'
+      parameters:
+        - $ref: '#/components/parameters/ml.get_profile_models::path.model_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_profile_models@200'
+  /_plugins/_ml/profile/tasks:
+    get:
+      operationId: ml.get_profile_tasks.0
+      x-operation-group: ml.get_profile_tasks
+      x-version-added: '2.4'
+      description: Get a profile tasks.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_profile_tasks'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_profile_tasks@200'
+  /_plugins/_ml/profile/tasks/{task_id}:
+    get:
+      operationId: ml.get_profile_tasks.1
+      x-operation-group: ml.get_profile_tasks
+      x-version-added: '2.11'
+      description: Get a profile tasks.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.get_profile_tasks'
+      parameters:
+        - $ref: '#/components/parameters/ml.get_profile_tasks::path.task_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_profile_tasks@200'
+  /_plugins/_ml/stats:
+    get:
+      operationId: ml.get_stats.0
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/stats/{stat}:
+    get:
+      operationId: ml.get_stats.1
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats::path.stat'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/{node_id}/stats:
+    get:
+      operationId: ml.get_stats.2
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats::path.node_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/{node_id}/stats/{stat}:
+    get:
+      operationId: ml.get_stats.3
+      x-operation-group: ml.get_stats
+      x-version-added: '1.3'
+      description: Get stats.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_stats::path.node_id'
+        - $ref: '#/components/parameters/ml.get_stats::path.stat'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_stats@200'
+  /_plugins/_ml/tools:
+    get:
+      operationId: ml.get_all_tools.0
+      x-operation-group: ml.get_all_tools
+      x-version-added: '2.12'
+      description: Get tools.
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_all_tools@200'
+  /_plugins/_ml/tools/{tool_name}:
+    get:
+      operationId: ml.get_tool.0
+      x-operation-group: ml.get_tool
+      x-version-added: '2.12'
+      description: Get tools.
+      parameters:
+        - $ref: '#/components/parameters/ml.get_tool::path.tool_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.get_tool@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -338,20 +910,137 @@ components:
                 type: string
                 description: The model name.
               version:
-                type: string
-                description: The model version.
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
               model_format:
-                type: string
-                description: The portable format of the model file.
-                enum: [ONNX, TORCH_SCRIPT]
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
               description:
                 type: string
                 description: The model description.
               model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              function_name:
                 type: string
-                description: The ID of the model group to which to register the model.
+                description: The function name.
+              connector_id:
+                type: string
+                description: The connector ID.
             required:
+              - name
+    ml.create_model_meta:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_content_hash_value:
+                type: string
+                description: The model content hash value.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              total_chunks:
+                type: integer
+                format: int64
+                description: Number of chunks the model is split into.
+              url:
+                type: string
+                description: The model URL.
+              description:
+                type: string
+                description: The model description.
+            required:
+              - model_config
+              - model_content_hash_value
               - model_format
+              - name
+              - total_chunks
+              - version
+    ml.register_model_meta:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_content_hash_value:
+                type: string
+                description: The model content hash value.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              total_chunks:
+                type: integer
+                format: int64
+                description: Number of chunks the model is split into.
+              url:
+                type: string
+                description: The model URL.
+              description:
+                type: string
+                description: The model description.
+            required:
+              - model_config
+              - model_content_hash_value
+              - model_format
+              - name
+              - total_chunks
+              - version
+    ml.chunk_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chunk:
+                type: string
+                description: The model chunk.
+            required:
+              - chunk
+    ml.upload_chunk:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chunk:
+                type: string
+                description: The model chunk.
+            required:
+              - chunk
+    ml.upload_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The model name.
+              version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionString'
+              model_format:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelFormat'
+              description:
+                type: string
+                description: The model description.
+              model_group_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Id'
+            required:
               - name
               - version
     ml.search_models:
@@ -367,6 +1056,97 @@ components:
                 type: integer
                 format: int64
                 description: The number of models to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Sort'
+                description: The sort order.
+    ml.update_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              connector:
+                type: object
+                description: The connector to use for the model.
+              connector_id:
+                type: string
+                description: The connector ID.
+              is_enabled:
+                type: boolean
+                description: Whether the model is enabled.
+              description: 
+                type: string
+                description: The model description.
+              model_config:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/ModelConfig'
+              name:
+                type: string
+                description: The model name.
+              rate_limiter:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+              guardrails:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Guardrails'
+              interface:
+                type: object
+                description: The model interface.
+    ml.undeploy_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              node_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+    ml.unload_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              node_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+              model_ids:
+                type: array
+                items:
+                  $ref: '../schemas/_common.yaml#/components/schemas/Id'
+    ml.predict_model:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query_text:
+                type: string
+                description: The query text.
+              text_docs:
+                type: array
+                items:
+                  type: string
+                description: The text documents.
+            required:
+              - text_docs
+    ml.search_tasks:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of tasks to return.
               sort:
                 type: array
                 items:
@@ -547,6 +1327,162 @@ components:
             required:
               - name
               - type
+    ml.execute_agent:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
+              parameters.verbose:
+                type: boolean
+                description: Whether to provide verbose output.
+            required:
+              - parameters
+    ml.search_agents:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                description: The number of agents to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/SortAgent'
+                description: The sort order.
+    ml.create_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.update_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.search_memory:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of memories to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/SortMemory'
+                description: The sort order.
+    ml.create_message:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              input:
+                type: string
+                description: The question in the message.
+              prompt_template:
+                type: string
+                description: The prompt template.
+              response:
+                type: string
+                description: The answer to the question.
+              origin:
+                type: string
+                description: The system name that generated the response.
+              additional_info:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/AdditionalInfo'
+    ml.update_message:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              input:
+                type: string
+                description: The question in the message.
+              prompt_template:
+                type: string
+                description: The prompt template.
+              response:
+                type: string
+                description: The answer to the question.
+              origin:
+                type: string
+                description: The system name that generated the response.
+              additional_info:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/AdditionalInfo'
+    ml.search_message:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Query'
+              size:
+                type: integer
+                format: int64
+                description: The number of messages to return.
+              sort:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/SortMessage'
+                description: The sort order.
+    ml.create_controller:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_rate_limiter:
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+    ml.update_controller:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_rate_limiter:
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+              model_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.get_profile:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/ProfileRequest'
+    ml.get_profile_models:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/ProfileRequest'
+    ml.get_profile_tasks:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/ProfileRequest'
   responses:
     ml.register_model_group@200:
       content:
@@ -583,6 +1519,69 @@ components:
                 type: string
               task_id:
                 type: string
+              model_id:
+                type: string
+            required:
+              - status
+              - task_id
+    ml.create_model_meta@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              model_id:
+                type: string
+            required:
+              - model_id
+              - status
+    ml.register_model_meta@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              model_id:
+                type: string
+            required:
+              - model_id
+              - status
+    ml.chunk_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status of the chunk upload operation.
+            required:
+              - status
+    ml.upload_chunk@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status of the chunk upload operation.
+            required:
+              - status
+    ml.upload_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
             required:
               - status
               - task_id
@@ -601,12 +1600,57 @@ components:
             required:
               - status
               - task_id
+    ml.load_model@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              task_id:
+                type: string
+              task_type:
+                type: string
+                enum:
+                  - BATCH_INGEST
+                  - BATCH_PREDICTION
+                  - DEPLOY_MODEL
+                  - EXECUTION
+                  - PREDICTION
+                  - REGISTER_MODEL
+                  - TRAINING
+                  - TRAINING_AND_PREDICTION
+            required:
+              - status
+              - task_id
+              - task_type
     ml.undeploy_model@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/UndeployModelResponse'
+    ml.unload_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/UnloadModelResponse'
+    ml.predict_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictModelResponse'
     ml.delete_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.get_model@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Model'
+    ml.update_model@200:
       content:
         application/json:
           schema:
@@ -621,6 +1665,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/Task'
+    ml.search_tasks@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchTasksResponse'
     ml.search_models@200:
       content:
         application/json:
@@ -677,12 +1726,215 @@ components:
             properties:
               agent_id:
                 type: string
+    ml.execute_agent@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictResponse'
+    ml.get_agent@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetAgentResponse'
     ml.delete_agent@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.search_agents@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchAgentsResponse'
+    ml.get_memory@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Memory'
+    ml.get_all_memories@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              memories:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Memory'
+              next_token:
+                description: The index of the next memory after the last memory in the returned list.
+                type: integer
+                format: int32
+            required:
+              - memories
+    ml.create_memory@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              memory_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+            required:
+              - memory_id
+    ml.update_memory@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.delete_memory@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                description: Whether the memory was deleted successfully.
+            required:
+              - success
+    ml.search_memory@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchMemoryResponse'
+    ml.create_message@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+            required:
+              - message_id
+    ml.get_message@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Message'
+    ml.get_all_messages@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Message'
+              next_token:
+                description: The index of the next message after the last message in the returned list.
+                type: integer
+                format: int32
+            required:
+              - messages
+    ml.update_message@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.search_message@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/SearchMessageResponse'
+    ml.get_message_traces@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              traces:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Message'
+              next_token:
+                type: integer
+                format: int32
+            required:
+              - traces
+    ml.get_controller@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_rate_limiter:
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/RateLimiter'
+              model_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+    ml.create_controller@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              model_id:
+                $ref: '../schemas/_common.yaml#/components/schemas/Name'
+              status:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Status'
+    ml.update_controller@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.delete_controller@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    ml.get_profile@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetProfileResponse'
+    ml.get_profile_models@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetProfileResponse'
+    ml.get_profile_tasks@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetProfileResponse'
+    ml.get_stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/GetStatsResponse'
+    ml.get_all_tools@200:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/ml._common.yaml#/components/schemas/Tool'
+    ml.get_tool@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/Tool'
   parameters:
+    ml.get_all_memories::query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        description: The maximum number of results to return. If there are fewer memories than the number set in `max_results`, the response returns only the number of memories that exist. Default is `10`.
+        type: integer
+        format: int32
+    ml.get_all_memories::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        description: The index of the first memory in the sorted list of memories to return. Memories are ordered by `create_time`. For example, if memories `A`, `B`, and `C` exist, `next_token=1` returns memories `B` and `C`. Default is `0` (return all memories).
+        type: integer
+        format: int32
     ml.get_model_group::path.model_group_id:
       name: model_group_id
       in: path
@@ -707,13 +1959,69 @@ components:
       required: true
       schema:
         type: string
+    ml.get_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.deploy_model::path.model_id:
       name: model_id
       in: path
       required: true
       schema:
         type: string
+    ml.load_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.undeploy_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.unload_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.predict_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.chunk_model::path.chunk_number:
+      name: chunk_number
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ml.chunk_model::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.upload_chunk::path.chunk_number:
+      name: chunk_number
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ml.upload_chunk::path.model_id:
       name: model_id
       in: path
       required: true
@@ -767,6 +2075,18 @@ components:
       required: true
       schema:
         type: string
+    ml.execute_agent::path.agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_agent::path.agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.delete_agent::path.agent_id:
       name: agent_id
       in: path
@@ -779,3 +2099,165 @@ components:
       required: true
       schema:
         type: string
+    ml.get_memory::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_memory::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_memory::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.create_message::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_all_messages::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_all_messages::query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_all_messages::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_message::path.message_id:
+      name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_message::path.message_id:
+      name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.search_message::path.memory_id:
+      name: memory_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_message_traces::path.message_id:
+      name: message_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_message_traces::query.max_results:
+      name: max_results
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_message_traces::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+    ml.get_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.create_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.update_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.delete_controller::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_profile_models::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_profile_tasks::path.task_id:
+      name: task_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_stats::path.stat:
+      name: stat
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - ml_config_index_status
+          - ml_connector_count
+          - ml_connector_index_status
+          - ml_controller_index_status
+          - ml_model_count
+          - ml_model_index_status
+          - ml_task_index_status
+    ml.get_stats::path.node_id:
+      name: node_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.get_tool::path.tool_name:
+      name: tool_name
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - AgentTool
+          - CatIndexTool
+          - ConnectorTool
+          - CreateAnomalyDetectorTool
+          - IndexMappingTool
+          - LogPatternTool
+          - MLModelTool
+          - NeuralSparseSearchTool
+          - PPLTool
+          - RAGTool
+          - SearchAlertsTool
+          - SearchAnomalyDetectorsTool
+          - SearchAnomalyResultsTool
+          - SearchIndexTool
+          - SearchMonitorsTool
+          - VectorDBTool
+          - VisualizationTool

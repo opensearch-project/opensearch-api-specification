@@ -1,0 +1,27 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the deletion of a memory.
+version: '>= 2.12'
+prologues:
+  - path: /_plugins/_ml/memory
+    id: create_memory
+    method: POST
+    request:
+      payload:
+        name: Test memory
+    output:
+      memory_id: payload.memory_id
+epilogues:
+  - path: /_plugins/_ml/memory/{memory_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_id: ${create_memory.memory_id}
+chapters:
+  - synopsis: Delete a memory.
+    path: /_plugins/_ml/memory/{memory_id}
+    method: DELETE
+    parameters:
+      memory_id: ${create_memory.memory_id}
+    response:
+      status: 200

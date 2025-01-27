@@ -215,9 +215,6 @@ components:
     GeoTile:
       description: A map tile reference, represented as `{zoom}/{x}/{y}`.
       type: string
-    GeoHexCell:
-      description: A map hex cell (H3) reference.
-      type: string
     IndexName:
       type: string
     Field:
@@ -407,6 +404,10 @@ components:
         - type: string
         - $ref: '#/components/schemas/EpochTimeUnitMillis'
     Indices:
+      description: |-
+        A comma-separated list of data streams, indexes, and aliases used to limit the request.
+        Supports wildcards (`*`).
+        To target all data streams and indexes, omit this parameter or use `*` or `_all`.
       oneOf:
         - $ref: '#/components/schemas/IndexName'
         - type: array
@@ -419,6 +420,7 @@ components:
           items:
             $ref: '#/components/schemas/Field'
     ExpandWildcards:
+      description: Specifies the type of index that wildcard expressions can match. Supports comma-separated values.
       oneOf:
         - $ref: '#/components/schemas/ExpandWildcard'
         - type: array
@@ -444,10 +446,13 @@ components:
     VersionString:
       type: string
     SearchType:
-      type: string
-      enum:
-        - dfs_query_then_fetch
-        - query_then_fetch
+      oneOf:
+        - type: string
+          const: dfs_query_then_fetch
+          description: Documents are scored using global term and document frequencies across all shards. This is usually slower but more accurate.
+        - type: string
+          const: query_then_fetch
+          description: Documents are scored using local term and document frequencies for the shard. This is usually faster but less accurate.
     SuggestMode:
       type: string
       enum:
@@ -645,6 +650,10 @@ components:
           $ref: '#/components/schemas/SortOrder'
         unit:
           $ref: '#/components/schemas/DistanceUnit'
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/components/schemas/GeoLocation'
     SortMode:
       type: string
       enum:
@@ -739,9 +748,11 @@ components:
     GeoHashPrecision:
       description: The level of geohash precision, which can be expressed as a geohash length between 1 and 12 or as a distance measure, such as "1km" or "10m".
       oneOf:
-        - type: integer
+        - title: geohash_length
+          type: integer
           format: int32
-        - type: string
+        - title: distance
+          type: string
     GeoTilePrecision:
       type: number
     EmptyObject:
@@ -752,7 +763,8 @@ components:
         field:
           $ref: '#/components/schemas/Field'
         id:
-          $ref: '#/components/schemas/Id'
+          type: integer
+          format: int32
         max:
           type: integer
           format: int32
@@ -770,6 +782,7 @@ components:
             - 'true'
             - wait_for
     WaitForActiveShards:
+      description: Waits until the specified number of shards is active before returning a response. Use `all` for all shards.
       oneOf:
         - title: count
           type: integer
@@ -802,12 +815,14 @@ components:
       required:
         - found
     Names:
+      description: A comma-separated list of aliases to retrieve. Supports wildcards (`*`).  To retrieve all aliases, omit this parameter or use `*` or `_all`.
       oneOf:
         - $ref: '#/components/schemas/Name'
         - type: array
           items:
             $ref: '#/components/schemas/Name'
     NodeIds:
+      description: A comma-separated list of node IDs used to filter results. Supports [node filters](https://opensearch.org/docs/latest/api-reference/nodes-apis/index/#node-filters).
       oneOf:
         - $ref: '#/components/schemas/NodeId'
         - type: array
@@ -819,19 +834,37 @@ components:
       type: string
       pattern: '(?:(-1)|(0)|\d+(\.\d+)?(b|kb|k|mb|m|gb|g|tb|t|pb|p))'
     ByteUnit:
-      type: string
-      enum:
-        - b
-        - g
-        - gb
-        - k
-        - kb
-        - m
-        - mb
-        - p
-        - pb
-        - t
-        - tb
+      # eslint-disable yml/sort-sequence-values -- The order of `kb` & `k` etc. is important for preferring the more correct variant.
+      oneOf:
+        - title: bytes
+          type: string
+          const: b
+        - title: kilo_bytes
+          type: string
+          enum:
+            - kb
+            - k
+        - title: mega_bytes
+          type: string
+          enum:
+            - mb
+            - m
+        - title: giga_bytes
+          type: string
+          enum:
+            - gb
+            - g
+        - title: tera_bytes
+          type: string
+          enum:
+            - tb
+            - t
+        - title: peta_bytes
+          type: string
+          enum:
+            - pb
+            - p
+      # eslint-enable yml/sort-sequence-values
     ByteCount:
       type: integer
       format: int64
@@ -866,15 +899,29 @@ components:
       description: Time of day, expressed as HH:MM:SS.
       type: string
     TimeUnit:
-      type: string
-      enum:
-        - d
-        - h
-        - m
-        - micros
-        - ms
-        - nanos
-        - s
+      description: Specifies the time units, for example, `5d` or `7h`. For more information, see [Supported units](https://opensearch.org/docs/latest/api-reference/units/).
+      oneOf:
+        - title: nanoseconds
+          type: string
+          const: nanos
+        - title: microseconds
+          type: string
+          const: micros
+        - title: milliseconds
+          type: string
+          const: ms
+        - title: seconds
+          type: string
+          const: s
+        - title: minutes
+          type: string
+          const: m
+        - title: hours
+          type: string
+          const: h
+        - title: days
+          type: string
+          const: d
     HealthStatus:
       # eslint-disable yml/sort-sequence-values
       oneOf:
@@ -899,25 +946,6 @@ components:
             - red
             - RED
         # eslint-enable yml/sort-sequence-values
-    ScheduleTimeOfDay:
-      description: A time of day, expressed either as `hh:mm`, `noon`, `midnight`, or an hour/minutes structure.
-      oneOf:
-        - type: string
-        - $ref: '#/components/schemas/HourAndMinute'
-    HourAndMinute:
-      type: object
-      properties:
-        hour:
-          type: array
-          items:
-            type: number
-        minute:
-          type: array
-          items:
-            type: number
-      required:
-        - hour
-        - minute
     Uuid:
       type: string
     ScrollIds:
@@ -1023,12 +1051,14 @@ components:
     ulong:
       type: number
     Level:
+      description: Specifies the level of detail of the returned information.
       type: string
       enum:
         - cluster
         - indices
         - shards
     WaitForEvents:
+      description: Waits until all currently queued events with the given priority are processed. 
       type: string
       enum:
         - high
@@ -1561,8 +1591,11 @@ components:
     Slices:
       description: The slice configuration used to parallelize a process.
       oneOf:
-        - type: number
-        - $ref: '#/components/schemas/SlicesCalculation'
+        - title: count
+          type: integer
+          format: int32
+        - title: calculation
+          $ref: '#/components/schemas/SlicesCalculation'
     SlicesCalculation:
       type: string
       enum:
@@ -1695,6 +1728,11 @@ components:
           format: int64
         getTime:
           $ref: '#/components/schemas/Duration'
+          deprecated: true
+          x-version-deprecated: '2.19'
+        time:
+          $ref: '#/components/schemas/Duration'
+          x-version-added: '2.19'
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         exists_total:
@@ -2206,7 +2244,8 @@ components:
         node:
           $ref: '#/components/schemas/NodeName'
         shard:
-          type: number
+          type: integer
+          format: int32
         index:
           $ref: '#/components/schemas/IndexName'
         allocation_id:
@@ -2223,20 +2262,11 @@ components:
           oneOf:
             - $ref: '#/components/schemas/NodeId'
             - type: 'null'
-        relocation_failure_info:
-          $ref: '#/components/schemas/RelocationFailureInfo'
       required:
         - index
         - primary
         - shard
         - state
-    RelocationFailureInfo:
-      type: object
-      properties:
-        failed_attempts:
-          type: number
-      required:
-        - failed_attempts
     OpenSearchVersionInfo:
       type: object
       properties:

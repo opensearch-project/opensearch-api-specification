@@ -6,11 +6,8 @@ distributions:
     - amazon-managed
     - amazon-serverless
 version: '>= 2.11'
-warnings:
-  multiple-paths-detected: false
-chapters:
-  - synopsis: Register model.
-    id: register_model
+prologues:
+  - id: register_model
     path: /_plugins/_ml/models/_register
     method: POST
     request:
@@ -22,8 +19,7 @@ chapters:
       status: 200
     output:
       task_id: payload.task_id
-  - synopsis: Wait to get completed task.
-    id: get_completed_task
+  - id: get_completed_task
     path: /_plugins/_ml/tasks/{task_id}
     method: GET
     parameters:
@@ -37,6 +33,7 @@ chapters:
     retry:
       count: 5
       wait: 30000
+chapters:
   - synopsis: Search model.
     path: /_plugins/_ml/models/_search
     method: GET
@@ -51,6 +48,23 @@ chapters:
         hits:
           hits:
             - _score: 1
+  - synopsis: Get model.
+    path: /_plugins/_ml/models/{model_id}
+    method: GET
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    response:
+      status: 200
+  - synopsis: Update model.
+    path: /_plugins/_ml/models/{model_id}
+    method: PUT
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    request:
+      payload:
+        name: updated
+    response:
+      status: 200
   - synopsis: Delete model.
     path: /_plugins/_ml/models/{model_id}
     parameters:

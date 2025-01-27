@@ -64,23 +64,6 @@ export type Version = string;
  */
 export type DistributionsList = string[];
 /**
- * Number of times to retry on error.
- *
- *
- * This interface was referenced by `Story`'s JSON-Schema
- * via the `definition` "Retry".
- */
-export type Retry = {
-  /**
-   * Number of retries.
-   */
-  count: number;
-  /**
-   * Number of milliseconds to wait before retrying.
-   */
-  wait?: number;
-};
-/**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Chapter".
  */
@@ -90,6 +73,9 @@ export type Chapter = ChapterRequest & {
    * A brief description of the chapter.
    */
   synopsis: string;
+  /**
+   * An explanation is provided to clarify why it has been skipped.
+   */
   pending?: string;
   response?: ExpectedResponse;
   warnings?: Warnings;
@@ -131,6 +117,7 @@ export interface ChapterRequest {
   version?: Version;
   distributions?: Distributions;
   retry?: Retry;
+  response?: ExpectedResponse;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -178,6 +165,23 @@ export interface Distributions {
   excluded?: DistributionsList;
 }
 /**
+ * Number of times to retry on error.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Retry".
+ */
+export interface Retry {
+  /**
+   * Number of retries.
+   */
+  count: number;
+  /**
+   * Number of milliseconds to wait before retrying.
+   */
+  wait?: number;
+}
+/**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "ExpectedResponse".
  */
@@ -198,6 +202,10 @@ export interface Warnings {
    * Enable/disable warnings about multiple paths being tested in the same story.
    */
   'multiple-paths-detected'?: boolean;
+  /**
+   * Enable/disable warnings about file paths that do not match paths tested in the story.
+   */
+  'invalid-path-detected'?: boolean;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema

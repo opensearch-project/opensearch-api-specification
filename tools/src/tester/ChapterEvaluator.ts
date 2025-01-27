@@ -16,12 +16,12 @@ import type OperationLocator from './OperationLocator'
 import type SchemaValidator from './SchemaValidator'
 import { type StoryOutputs } from './StoryOutputs'
 import { ChapterOutput } from './ChapterOutput'
-import { Operation, atomizeChangeset, diff } from 'json-diff-ts'
 import _ from 'lodash'
 import { Logger } from 'Logger'
 import { sleep, to_json } from '../helpers'
-import { APPLICATION_JSON } from "./MimeTypes";
+import { APPLICATION_JSON } from "./MimeTypes"
 import { ParsedChapter } from './types/parsed_story.types'
+import ResponsePayloadEvaluator from './ResponsePayloadEvaluator'
 
 export default class ChapterEvaluator {
   private readonly logger: Logger
@@ -70,7 +70,7 @@ export default class ChapterEvaluator {
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
     const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
     const response_payload: Payload | undefined = status.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
-    const payload_body_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_body(response, response_payload) : { result: Result.SKIPPED }
+    const payload_body_evaluation = status.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload) : { result: Result.SKIPPED }
 
     if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
 
@@ -149,22 +149,6 @@ export default class ChapterEvaluator {
     }
 
     return result
-  }
-
-  #evaluate_payload_body(response: ActualResponse, expected_payload?: Payload): Evaluation {
-    if (expected_payload == null) return { result: Result.PASSED }
-    const payload = response.payload
-    this.logger.info(`${to_json(payload)}`)
-    const delta = atomizeChangeset(diff(expected_payload, payload))
-    const messages: string[] = _.compact(delta.map((value, _index, _array) => {
-      switch (value.type) {
-        case Operation.UPDATE:
-          return `expected ${value.path.replace('$.', '')}='${value.oldValue}', got '${value.value}'`
-        case Operation.REMOVE:
-          return `missing ${value.path.replace('$.', '')}='${value.value}'`
-      }
-    }))
-    return messages.length > 0 ? { result: Result.FAILED, message: _.join(messages, ', ') } : { result: Result.PASSED }
   }
 
   #evaluate_payload_schema(chapter: ParsedChapter, response: ActualResponse, operation: ParsedOperation): Evaluation {

@@ -1,0 +1,57 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the retrieval of all memories.
+version: '>= 2.12'
+prologues:
+  - path: /_plugins/_ml/memory
+    id: create_memory_1
+    method: POST
+    request:
+      payload:
+        name: Test memory 1
+    output:
+      memory_id: payload.memory_id
+  - path: /_plugins/_ml/memory
+    id: create_memory_2
+    method: POST
+    request:
+      payload:
+        name: Test memory 2
+    output:
+      memory_id: payload.memory_id
+epilogues:
+  - path: /_plugins/_ml/memory/{memory_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_id: ${create_memory_1.memory_id}
+  - path: /_plugins/_ml/memory/{memory_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_id: ${create_memory_2.memory_id}
+chapters:
+  - synopsis: Get all memories (Initial Page).
+    id: get_all_memories_1
+    path: /_plugins/_ml/memory
+    method: GET
+    parameters:
+      max_results: 1
+    response:
+      status: 200
+      payload:
+        memories:
+          - name: Test memory 2
+    output:
+      next_token: payload.next_token
+  - synopsis: Get all memories (Subsequent Page).
+    path: /_plugins/_ml/memory
+    method: GET
+    parameters:
+      max_results: 1
+      next_token: ${get_all_memories_1.next_token}
+    response:
+      status: 200
+      payload:
+        memories:
+          - name: Test memory 1

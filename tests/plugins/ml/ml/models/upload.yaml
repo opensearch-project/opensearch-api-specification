@@ -1,0 +1,44 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of models using upload API (deprecated).
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.jvm_heap_memory_threshold: 100
+epilogues:
+  - path: /_plugins/_ml/tasks/{task_id}
+    id: get_completed_task
+    method: GET
+    parameters:
+      task_id: ${upload_model.task_id}
+    retry:
+      count: 3
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+  - path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      model_id: ${get_completed_task.model_id}
+chapters:
+  - synopsis: Upload model.
+    id: upload_model
+    path: /_plugins/_ml/models/_upload
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id

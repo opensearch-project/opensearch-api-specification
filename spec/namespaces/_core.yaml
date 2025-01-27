@@ -455,6 +455,7 @@ paths:
         - $ref: '#/components/parameters/reindex::query.max_docs'
         - $ref: '#/components/parameters/reindex::query.refresh'
         - $ref: '#/components/parameters/reindex::query.requests_per_second'
+        - $ref: '#/components/parameters/reindex::query.require_alias'
         - $ref: '#/components/parameters/reindex::query.scroll'
         - $ref: '#/components/parameters/reindex::query.slices'
         - $ref: '#/components/parameters/reindex::query.timeout'
@@ -1028,8 +1029,6 @@ paths:
         - $ref: '#/components/parameters/search_shards::query.local'
         - $ref: '#/components/parameters/search_shards::query.preference'
         - $ref: '#/components/parameters/search_shards::query.routing'
-      requestBody:
-        $ref: '#/components/requestBodies/search_shards'
       responses:
         '200':
           $ref: '#/components/responses/search_shards@200'
@@ -1047,8 +1046,6 @@ paths:
         - $ref: '#/components/parameters/search_shards::query.local'
         - $ref: '#/components/parameters/search_shards::query.preference'
         - $ref: '#/components/parameters/search_shards::query.routing'
-      requestBody:
-        $ref: '#/components/requestBodies/search_shards'
       responses:
         '200':
           $ref: '#/components/responses/search_shards@200'
@@ -2011,8 +2008,6 @@ paths:
         - $ref: '#/components/parameters/search_shards::query.local'
         - $ref: '#/components/parameters/search_shards::query.preference'
         - $ref: '#/components/parameters/search_shards::query.routing'
-      requestBody:
-        $ref: '#/components/requestBodies/search_shards'
       responses:
         '200':
           $ref: '#/components/responses/search_shards@200'
@@ -2031,8 +2026,6 @@ paths:
         - $ref: '#/components/parameters/search_shards::query.local'
         - $ref: '#/components/parameters/search_shards::query.preference'
         - $ref: '#/components/parameters/search_shards::query.routing'
-      requestBody:
-        $ref: '#/components/requestBodies/search_shards'
       responses:
         '200':
           $ref: '#/components/responses/search_shards@200'
@@ -2538,6 +2531,11 @@ components:
                 type: object
                 additionalProperties:
                   $ref: '../schemas/_common.aggregations.yaml#/components/schemas/AggregationContainer'
+              aggs:
+                description: Defines the aggregations that are run as part of the search request.
+                type: object
+                additionalProperties:
+                  $ref: '../schemas/_common.aggregations.yaml#/components/schemas/AggregationContainer'
               collapse:
                 $ref: '../schemas/_core.search.yaml#/components/schemas/FieldCollapse'
               explain:
@@ -2698,46 +2696,6 @@ components:
                 type: string
             description: The search definition template and its parameters.
       required: true
-    search_shards:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              query:
-                description: Defines the search query to filter shards. Supports any query that is valid for the `_search` endpoint.
-                type: object
-                additionalProperties:
-                  type: object
-              indices_boost:
-                description: Allows increasing the relevance of specific indexes in the search.
-                type: object
-                additionalProperties:
-                  type: number
-              allow_partial_search_results:
-                description: Indicates whether partial search results are allowed if some shards are unavailable.
-                type: boolean
-              _source:
-                description: Specifies which fields to include in the `_source` response or excludes specific fields.
-                oneOf:
-                  - type: boolean
-                  - type: array
-                    items:
-                      type: string
-              from:
-                description: The starting offset (default 0) for paginated results.
-                type: integer
-              size:
-                description: The maximum number of results to return (default 10).
-                type: integer
-              sort:
-                description: A list of fields and directions for sorting the results.
-                type: array
-                items:
-                  type: object
-                  additionalProperties:
-                    type: string
-            description: Defines the parameters that can be used in the `search_shards` endpoint request. See documentation for supported query syntax.
     termvectors:
       content:
         application/json:
@@ -2916,7 +2874,7 @@ components:
               pit_id:
                 type: string
               _shards:
-                $ref: '../schemas/_core._common.yaml#/components/schemas/ShardStatistics'
+                $ref: '../schemas/_common.yaml#/components/schemas/ShardStatistics'
               creation_time:
                 type: integer
                 format: int64
@@ -2939,7 +2897,7 @@ components:
               pits:
                 type: array
                 items:
-                  $ref: '../schemas/_core._common.yaml#/components/schemas/PitsDetailsDeleteAll'
+                  $ref: '../schemas/_core.pit.yaml#/components/schemas/DeletedPit'
     delete_by_query@200:
       content:
         application/json:
@@ -2964,7 +2922,7 @@ components:
               pits:
                 type: array
                 items:
-                  $ref: '../schemas/_core._common.yaml#/components/schemas/DeletedPit'
+                  $ref: '../schemas/_core.pit.yaml#/components/schemas/DeletedPit'
     delete_script@200:
       content:
         application/json:
@@ -3040,7 +2998,7 @@ components:
               pits:
                 type: array
                 items:
-                  $ref: '../schemas/_core._common.yaml#/components/schemas/PitDetail'
+                  $ref: '../schemas/_core.pit.yaml#/components/schemas/PitDetail'
     get_script@200:
       content:
         application/json:
@@ -3186,8 +3144,7 @@ components:
                   $ref: '../schemas/_core.rank_eval.yaml#/components/schemas/RankEvalMetricDetail'
               failures:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
             required:
               - details
               - failures
@@ -3222,8 +3179,7 @@ components:
             properties:
               template_output:
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
             required:
               - template_output
     scripts_painless_execute@200:
@@ -3657,10 +3613,6 @@ components:
     count::query.expand_wildcards:
       in: query
       name: expand_wildcards
-      description: |-
-        Type of index that wildcard patterns can match.
-        If the request can target data streams, this argument determines whether wildcard expressions match hidden data streams.
-        Supports comma-separated values, such as `open,hidden`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
       style: form
@@ -3948,10 +3900,7 @@ components:
       description: Set to `true` or `false` to return the `_source` field or not, or a list of fields to return.
       style: form
       schema:
-        type: array
-        items:
-          type: string
-        description: Set to `true` or `false` to return the `_source` field or not, or a list of fields to return.
+        $ref: '../schemas/_core.search.yaml#/components/schemas/SourceConfigParam'
       explode: true
     delete_by_query::query._source_excludes:
       name: _source_excludes
@@ -5336,6 +5285,11 @@ components:
         format: float
         default: 0
       style: form
+    reindex::query.require_alias:
+      in: query
+      name: require_alias
+      schema:
+        type: boolean
     reindex::query.scroll:
       in: query
       name: scroll
@@ -6290,10 +6244,7 @@ components:
       description: Set to `true` or `false` to return the `_source` field or not, or a list of fields to return.
       style: form
       schema:
-        type: array
-        items:
-          type: string
-        description: Set to `true` or `false` to return the `_source` field or not, or a list of fields to return.
+        $ref: '../schemas/_core.search.yaml#/components/schemas/SourceConfigParam'
       explode: true
     update_by_query::query._source_excludes:
       name: _source_excludes

@@ -53,19 +53,16 @@ components:
         - $ref: '#/components/schemas/UnmappedSamplerAggregate'
         - $ref: '#/components/schemas/GeoHashGridAggregate'
         - $ref: '#/components/schemas/GeoTileGridAggregate'
-        - $ref: '#/components/schemas/GeoHexGridAggregate'
         - $ref: '#/components/schemas/RangeAggregate'
         - $ref: '#/components/schemas/DateRangeAggregate'
         - $ref: '#/components/schemas/GeoDistanceAggregate'
         - $ref: '#/components/schemas/IpRangeAggregate'
-        - $ref: '#/components/schemas/IpPrefixAggregate'
         - $ref: '#/components/schemas/FiltersAggregate'
         - $ref: '#/components/schemas/AdjacencyMatrixAggregate'
         - $ref: '#/components/schemas/SignificantLongTermsAggregate'
         - $ref: '#/components/schemas/SignificantStringTermsAggregate'
         - $ref: '#/components/schemas/UnmappedSignificantTermsAggregate'
         - $ref: '#/components/schemas/CompositeAggregate'
-        - $ref: '#/components/schemas/FrequentItemSetsAggregate'
         - $ref: '#/components/schemas/ScriptedMetricAggregate'
         - $ref: '#/components/schemas/TopHitsAggregate'
         - $ref: '#/components/schemas/InferenceAggregate'
@@ -883,39 +880,6 @@ components:
               $ref: '_common.yaml#/components/schemas/GeoTile'
           required:
             - key
-    GeoHexGridAggregate:
-      allOf:
-        - $ref: '#/components/schemas/MultiBucketAggregateBaseGeoHexGridBucket'
-        - type: object
-    MultiBucketAggregateBaseGeoHexGridBucket:
-      allOf:
-        - $ref: '#/components/schemas/AggregateBase'
-        - type: object
-          properties:
-            buckets:
-              $ref: '#/components/schemas/BucketsGeoHexGridBucket'
-          required:
-            - buckets
-    BucketsGeoHexGridBucket:
-      description: |-
-        Aggregation buckets. By default they are returned as an array, but if the aggregation has keys configured for
-        the different buckets, the result is a dictionary.
-      oneOf:
-        - type: object
-          additionalProperties:
-            $ref: '#/components/schemas/GeoHexGridBucket'
-        - type: array
-          items:
-            $ref: '#/components/schemas/GeoHexGridBucket'
-    GeoHexGridBucket:
-      allOf:
-        - $ref: '#/components/schemas/MultiBucketBase'
-        - type: object
-          properties:
-            key:
-              $ref: '_common.yaml#/components/schemas/GeoHexCell'
-          required:
-            - key
     RangeAggregate:
       allOf:
         - $ref: '#/components/schemas/MultiBucketAggregateBaseRangeBucket'
@@ -999,47 +963,6 @@ components:
               type: string
             to:
               type: string
-    IpPrefixAggregate:
-      allOf:
-        - $ref: '#/components/schemas/MultiBucketAggregateBaseIpPrefixBucket'
-        - type: object
-    MultiBucketAggregateBaseIpPrefixBucket:
-      allOf:
-        - $ref: '#/components/schemas/AggregateBase'
-        - type: object
-          properties:
-            buckets:
-              $ref: '#/components/schemas/BucketsIpPrefixBucket'
-          required:
-            - buckets
-    BucketsIpPrefixBucket:
-      description: |-
-        Aggregation buckets. By default they are returned as an array, but if the aggregation has keys configured for
-        the different buckets, the result is a dictionary.
-      oneOf:
-        - type: object
-          additionalProperties:
-            $ref: '#/components/schemas/IpPrefixBucket'
-        - type: array
-          items:
-            $ref: '#/components/schemas/IpPrefixBucket'
-    IpPrefixBucket:
-      allOf:
-        - $ref: '#/components/schemas/MultiBucketBase'
-        - type: object
-          properties:
-            is_ipv6:
-              type: boolean
-            key:
-              type: string
-            prefix_length:
-              type: number
-            netmask:
-              type: string
-          required:
-            - is_ipv6
-            - key
-            - prefix_length
     FiltersAggregate:
       allOf:
         - $ref: '#/components/schemas/MultiBucketAggregateBaseFiltersBucket'
@@ -1252,46 +1175,6 @@ components:
               $ref: '#/components/schemas/CompositeAggregateKey'
           required:
             - key
-    FrequentItemSetsAggregate:
-      allOf:
-        - $ref: '#/components/schemas/MultiBucketAggregateBaseFrequentItemSetsBucket'
-        - type: object
-    MultiBucketAggregateBaseFrequentItemSetsBucket:
-      allOf:
-        - $ref: '#/components/schemas/AggregateBase'
-        - type: object
-          properties:
-            buckets:
-              $ref: '#/components/schemas/BucketsFrequentItemSetsBucket'
-          required:
-            - buckets
-    BucketsFrequentItemSetsBucket:
-      description: |-
-        Aggregation buckets. By default they are returned as an array, but if the aggregation has keys configured for
-        the different buckets, the result is a dictionary.
-      oneOf:
-        - type: object
-          additionalProperties:
-            $ref: '#/components/schemas/FrequentItemSetsBucket'
-        - type: array
-          items:
-            $ref: '#/components/schemas/FrequentItemSetsBucket'
-    FrequentItemSetsBucket:
-      allOf:
-        - $ref: '#/components/schemas/MultiBucketBase'
-        - type: object
-          properties:
-            key:
-              type: object
-              additionalProperties:
-                type: array
-                items:
-                  type: string
-            support:
-              type: number
-          required:
-            - key
-            - support
     ScriptedMetricAggregate:
       allOf:
         - $ref: '#/components/schemas/AggregateBase'
@@ -1587,14 +1470,8 @@ components:
               $ref: '#/components/schemas/BucketSelectorAggregation'
             bucket_sort:
               $ref: '#/components/schemas/BucketSortAggregation'
-            bucket_count_ks_test:
-              $ref: '#/components/schemas/BucketKsAggregation'
-            bucket_correlation:
-              $ref: '#/components/schemas/BucketCorrelationAggregation'
             cardinality:
               $ref: '#/components/schemas/CardinalityAggregation'
-            categorize_text:
-              $ref: '#/components/schemas/CategorizeTextAggregation'
             children:
               $ref: '#/components/schemas/ChildrenAggregation'
             composite:
@@ -1615,8 +1492,6 @@ components:
               $ref: '#/components/schemas/ExtendedStatsAggregation'
             extended_stats_bucket:
               $ref: '#/components/schemas/ExtendedStatsBucketAggregation'
-            frequent_item_sets:
-              $ref: '#/components/schemas/FrequentItemSetsAggregation'
             filter:
               $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
             filters:
@@ -1633,16 +1508,12 @@ components:
               $ref: '#/components/schemas/GeoLineAggregation'
             geotile_grid:
               $ref: '#/components/schemas/GeoTileGridAggregation'
-            geohex_grid:
-              $ref: '#/components/schemas/GeohexGridAggregation'
             global:
               $ref: '#/components/schemas/GlobalAggregation'
             histogram:
               $ref: '#/components/schemas/HistogramAggregation'
             ip_range:
               $ref: '#/components/schemas/IpRangeAggregation'
-            ip_prefix:
-              $ref: '#/components/schemas/IpPrefixAggregation'
             inference:
               $ref: '#/components/schemas/InferenceAggregation'
             line:
@@ -1755,7 +1626,8 @@ components:
           properties:
             buckets:
               description: The target number of buckets.
-              type: number
+              type: integer
+              format: int32
             field:
               $ref: '_common.yaml#/components/schemas/Field'
             format:
@@ -1772,8 +1644,7 @@ components:
               type: string
             params:
               type: object
-              additionalProperties:
-                type: object
+              additionalProperties: true
             script:
               $ref: '_common.yaml#/components/schemas/Script'
             time_zone:
@@ -1804,15 +1675,9 @@ components:
         field:
           $ref: '_common.yaml#/components/schemas/Field'
         missing:
-          $ref: '#/components/schemas/Missing'
+          $ref: '_common.yaml#/components/schemas/FieldValue'
         script:
           $ref: '_common.yaml#/components/schemas/Script'
-    Missing:
-      oneOf:
-        - type: string
-        - type: number
-        - type: number
-        - type: boolean
     AverageBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -1848,11 +1713,14 @@ components:
         forms depending on its type. Refer to each aggregation's documentation to know what buckets
         path forms they accept.
       oneOf:
-        - type: string
-        - type: array
+        - title: single
+          type: string
+        - title: array
+          type: array
           items:
             type: string
-        - type: object
+        - title: dict
+          type: object
           additionalProperties:
             type: string
     BoxplotAggregation:
@@ -1863,6 +1731,7 @@ components:
             compression:
               description: Limits the maximum number of nodes used by the underlying TDigest algorithm to `20 * compression`, enabling control of memory usage and approximation error.
               type: number
+              format: double
     BucketScriptAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -1884,96 +1753,18 @@ components:
           properties:
             from:
               description: Buckets in positions prior to `from` will be truncated.
-              type: number
+              type: integer
+              format: int32
             gap_policy:
               $ref: '#/components/schemas/GapPolicy'
             size:
               description: |-
                 The number of buckets to return.
                 Defaults to all buckets of the parent aggregation.
-              type: number
+              type: integer
+              format: int32
             sort:
               $ref: '_common.yaml#/components/schemas/Sort'
-    BucketKsAggregation:
-      allOf:
-        - $ref: '#/components/schemas/BucketPathAggregation'
-        - type: object
-          properties:
-            alternative:
-              description: |-
-                A list of string values indicating which K-S test alternative to calculate. The valid values
-                are: "greater", "less", "two_sided". This parameter is key for determining the K-S statistic used
-                when calculating the K-S test. Default value is all possible alternative hypotheses.
-              type: array
-              items:
-                type: string
-            fractions:
-              description: |-
-                A list of doubles indicating the distribution of the samples with which to compare to the `buckets_path` results.
-                In typical usage this is the overall proportion of documents in each bucket, which is compared with the actual
-                document proportions in each bucket from the sibling aggregation counts. The default is to assume that overall
-                documents are uniformly distributed on these buckets, which they would be if one used equal percentiles of a
-                metric to define the bucket end points.
-              type: array
-              items:
-                type: number
-            sampling_method:
-              description: |-
-                Indicates the sampling methodology when calculating the K-S test. Note, this is sampling of the returned values.
-                This determines the cumulative distribution function (CDF) points used comparing the two samples. Default is
-                `upper_tail`, which emphasizes the upper end of the CDF points. Valid options are: `upper_tail`, `uniform`,
-                and `lower_tail`.
-              type: string
-    BucketCorrelationAggregation:
-      allOf:
-        - $ref: '#/components/schemas/BucketPathAggregation'
-        - type: object
-          properties:
-            function:
-              $ref: '#/components/schemas/BucketCorrelationFunction'
-          required:
-            - function
-    BucketCorrelationFunction:
-      type: object
-      properties:
-        count_correlation:
-          $ref: '#/components/schemas/BucketCorrelationFunctionCountCorrelation'
-      required:
-        - count_correlation
-    BucketCorrelationFunctionCountCorrelation:
-      type: object
-      properties:
-        indicator:
-          $ref: '#/components/schemas/BucketCorrelationFunctionCountCorrelationIndicator'
-      required:
-        - indicator
-    BucketCorrelationFunctionCountCorrelationIndicator:
-      type: object
-      properties:
-        doc_count:
-          description: |-
-            The total number of documents that initially created the expectations. It's required to be greater
-            than or equal to the sum of all values in the `buckets_path` as this is the originating superset of data
-            to which the term values are correlated.
-          type: number
-        expectations:
-          description: |-
-            An array of numbers with which to correlate the configured `bucket_path` values.
-            The length of this value must always equal the number of buckets returned by the `bucket_path`.
-          type: array
-          items:
-            type: number
-        fractions:
-          description: |-
-            An array of fractions to use when averaging and calculating variance. This should be used if
-            the pre-calculated data and the `buckets_path` have known gaps. The length of fractions, if provided,
-            must equal expectations.
-          type: array
-          items:
-            type: number
-      required:
-        - doc_count
-        - expectations
     CardinalityAggregation:
       allOf:
         - $ref: '#/components/schemas/MetricAggregationBase'
@@ -1983,7 +1774,8 @@ components:
               description: |-
                 A unique count below which counts are expected to be close to accurate.
                 This allows to trade memory for accuracy.
-              type: number
+              type: integer
+              format: int32
             rehash:
               type: boolean
             execution_hint:
@@ -1996,75 +1788,6 @@ components:
         - save_memory_heuristic
         - save_time_heuristic
         - segment_ordinals
-    CategorizeTextAggregation:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          properties:
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-            max_unique_tokens:
-              description: |-
-                The maximum number of unique tokens at any position up to `max_matched_tokensg`. Must be larger than 1.
-                Smaller values use less memory and create fewer categories. Larger values will use more memory and
-                create narrower categories. Max allowed value is 100.
-              type: number
-            max_matched_tokens:
-              description: |-
-                The maximum number of token positions to match on before attempting to merge categories. Larger
-                values will use more memory and create narrower categories. Max allowed value is 100.
-              type: number
-            similarity_threshold:
-              description: |-
-                The minimum percentage of tokens that must match for text to be added to the category bucket. Must
-                be between 1 and 100. The larger the value the narrower the categories. Larger values will increase memory
-                usage and create narrower categories.
-              type: number
-            categorization_filters:
-              description: |-
-                This property expects an array of regular expressions. The expressions are used to filter out matching
-                sequences from the categorization field values. You can use this functionality to fine tune the categorization
-                by excluding sequences from consideration when categories are defined. For example, you can exclude SQL
-                statements that appear in your log files. This property cannot be used at the same time as `categorization_analyzer`.
-                If you only want to define simple regular expression filters that are applied prior to tokenization, setting
-                this property is the easiest method. If you also want to customize the tokenizer or post-tokenization filtering,
-                use the `categorization_analyzer` property instead and include the filters as `pattern_replace` character filters.
-              type: array
-              items:
-                type: string
-            categorization_analyzer:
-              $ref: '#/components/schemas/CategorizeTextAnalyzer'
-            shard_size:
-              description: The number of categorization buckets to return from each shard before merging all the results.
-              type: number
-            size:
-              description: The number of buckets to return.
-              type: number
-            min_doc_count:
-              description: The minimum number of documents in a bucket to be returned to the results.
-              type: number
-            shard_min_doc_count:
-              description: The minimum number of documents in a bucket to be returned from the shard before merging.
-              type: number
-          required:
-            - field
-    CategorizeTextAnalyzer:
-      oneOf:
-        - type: string
-        - $ref: '#/components/schemas/CustomCategorizeTextAnalyzer'
-    CustomCategorizeTextAnalyzer:
-      type: object
-      properties:
-        char_filter:
-          type: array
-          items:
-            type: string
-        tokenizer:
-          type: string
-        filter:
-          type: array
-          items:
-            type: string
     ChildrenAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -2081,7 +1804,8 @@ components:
               $ref: '#/components/schemas/CompositeAggregateKey'
             size:
               description: The number of composite buckets that should be returned.
-              type: number
+              type: integer
+              format: int32
             sources:
               description: |-
                 The value sources used to build composite buckets.
@@ -2095,18 +1819,18 @@ components:
       type: object
       properties:
         terms:
-          $ref: '#/components/schemas/CompositeTermsAggregation'
+          $ref: '#/components/schemas/CompositeTermsAggregationSource'
         histogram:
-          $ref: '#/components/schemas/CompositeHistogramAggregation'
+          $ref: '#/components/schemas/CompositeHistogramAggregationSource'
         date_histogram:
-          $ref: '#/components/schemas/CompositeDateHistogramAggregation'
+          $ref: '#/components/schemas/CompositeDateHistogramAggregationSource'
         geotile_grid:
-          $ref: '#/components/schemas/CompositeGeoTileGridAggregation'
-    CompositeTermsAggregation:
+          $ref: '#/components/schemas/CompositeGeoTileGridAggregationSource'
+    CompositeTermsAggregationSource:
       allOf:
-        - $ref: '#/components/schemas/CompositeAggregationBase'
+        - $ref: '#/components/schemas/CompositeValuesSource'
         - type: object
-    CompositeAggregationBase:
+    CompositeValuesSource:
       type: object
       properties:
         field:
@@ -2140,18 +1864,19 @@ components:
         - number
         - numeric
         - string
-    CompositeHistogramAggregation:
+    CompositeHistogramAggregationSource:
       allOf:
-        - $ref: '#/components/schemas/CompositeAggregationBase'
+        - $ref: '#/components/schemas/CompositeValuesSource'
         - type: object
           properties:
             interval:
               type: number
+              format: double
           required:
             - interval
-    CompositeDateHistogramAggregation:
+    CompositeDateHistogramAggregationSource:
       allOf:
-        - $ref: '#/components/schemas/CompositeAggregationBase'
+        - $ref: '#/components/schemas/CompositeValuesSource'
         - type: object
           properties:
             format:
@@ -2164,13 +1889,14 @@ components:
               $ref: '_common.yaml#/components/schemas/Duration'
             time_zone:
               $ref: '_common.yaml#/components/schemas/TimeZone'
-    CompositeGeoTileGridAggregation:
+    CompositeGeoTileGridAggregationSource:
       allOf:
-        - $ref: '#/components/schemas/CompositeAggregationBase'
+        - $ref: '#/components/schemas/CompositeValuesSource'
         - type: object
           properties:
             precision:
-              type: number
+              type: integer
+              format: int32
             bounds:
               $ref: '_common.yaml#/components/schemas/GeoBounds'
     CumulativeCardinalityAggregation:
@@ -2181,6 +1907,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
         - type: object
+    HistogramOrder:
+      type: object
+      properties:
+        _count:
+          $ref: '_common.yaml#/components/schemas/SortOrder'
+        _key:
+          $ref: '_common.yaml#/components/schemas/SortOrder'
     DateHistogramAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -2207,17 +1940,17 @@ components:
               description: |-
                 Only returns buckets that have `min_doc_count` number of documents.
                 By default, all buckets between the first bucket that matches documents and the last one are returned.
-              type: number
+              type: integer
+              format: int32
             missing:
               $ref: '_common.yaml#/components/schemas/DateTime'
             offset:
               $ref: '_common.yaml#/components/schemas/Duration'
             order:
-              $ref: '#/components/schemas/AggregateOrder'
+              $ref: '#/components/schemas/HistogramOrder'
             params:
               type: object
-              additionalProperties:
-                type: object
+              additionalProperties: true
             script:
               $ref: '_common.yaml#/components/schemas/Script'
             time_zone:
@@ -2226,16 +1959,49 @@ components:
               description: Set to `true` to associate a unique string key with each bucket and return the ranges as a hash rather than an array.
               type: boolean
     CalendarInterval:
-      type: string
-      enum:
-        - day
-        - hour
-        - minute
-        - month
-        - quarter
-        - second
-        - week
-        - year
+      # eslint-disable yml/sort-sequence-values -- The order of `second` & `1s` etc. is important for preferring the more correct variant.
+      oneOf:
+        - title: second
+          type: string
+          enum:
+            - second
+            - 1s
+        - title: minute
+          type: string
+          enum:
+            - minute
+            - 1m
+        - title: hour
+          type: string
+          enum:
+            - hour
+            - 1h
+        - title: day
+          type: string
+          enum:
+            - day
+            - 1d
+        - title: week
+          type: string
+          enum:
+            - week
+            - 1w
+        - title: month
+          type: string
+          enum:
+            - month
+            - 1M
+        - title: quarter
+          type: string
+          enum:
+            - quarter
+            - 1q
+        - title: year
+          type: string
+          enum:
+            - year
+            - 1Y
+      # eslint-enable yml/sort-sequence-values
     ExtendedBoundsFieldDateMath:
       type: object
       properties:
@@ -2251,8 +2017,11 @@ components:
         A date range limit, represented either as a DateMath expression or a number expressed
         according to the target field's precision.
       oneOf:
-        - $ref: '_common.yaml#/components/schemas/DateMath'
-        - type: number
+        - title: expr
+          $ref: '_common.yaml#/components/schemas/DateMath'
+        - title: value
+          type: number
+          format: double
     AggregateOrder:
       oneOf:
         - type: object
@@ -2278,7 +2047,7 @@ components:
               description: The date format used to format `from` and `to` in the response.
               type: string
             missing:
-              $ref: '#/components/schemas/Missing'
+              $ref: '_common.yaml#/components/schemas/FieldValue'
             ranges:
               description: Array of date ranges.
               type: array
@@ -2312,12 +2081,14 @@ components:
               $ref: '#/components/schemas/SamplerAggregationExecutionHint'
             max_docs_per_value:
               description: Limits how many documents are permitted per choice of de-duplicating value.
-              type: number
+              type: integer
+              format: int32
             script:
               $ref: '_common.yaml#/components/schemas/Script'
             shard_size:
               description: Limits how many top-scoring documents are collected in the sample processed on each shard.
-              type: number
+              type: integer
+              format: int32
             field:
               $ref: '_common.yaml#/components/schemas/Field'
     SamplerAggregationExecutionHint:
@@ -2334,6 +2105,7 @@ components:
             sigma:
               description: The number of standard deviations above/below the mean to display.
               type: number
+              format: double
     ExtendedStatsBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2342,60 +2114,36 @@ components:
             sigma:
               description: The number of standard deviations above/below the mean to display.
               type: number
-    FrequentItemSetsAggregation:
-      type: object
-      properties:
-        fields:
-          description: Fields to analyze.
-          type: array
-          items:
-            $ref: '#/components/schemas/FrequentItemSetsField'
-        minimum_set_size:
-          description: The minimum size of one item set.
-          type: number
-        minimum_support:
-          description: The minimum support of one item set.
-          type: number
-        size:
-          description: The number of top item sets to return.
-          type: number
-        filter:
-          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-      required:
-        - fields
-    FrequentItemSetsField:
-      type: object
-      properties:
-        field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        exclude:
-          $ref: '#/components/schemas/TermsExclude'
-        include:
-          $ref: '#/components/schemas/TermsInclude'
-      required:
-        - field
+              format: double
     TermsExclude:
       oneOf:
-        - type: string
-        - type: array
+        - title: regexp
+          type: string
+        - title: terms
+          type: array
           items:
             type: string
     TermsInclude:
       oneOf:
-        - type: string
-        - type: array
+        - title: regexp
+          type: string
+        - title: terms
+          type: array
           items:
             type: string
-        - $ref: '#/components/schemas/TermsPartition'
+        - title: partition
+          $ref: '#/components/schemas/TermsPartition'
     TermsPartition:
       type: object
       properties:
         num_partitions:
           description: The number of partitions.
-          type: number
+          type: integer
+          format: int64
         partition:
           description: The partition number for this request.
-          type: number
+          type: integer
+          format: int64
       required:
         - num_partitions
         - partition
@@ -2422,10 +2170,12 @@ components:
         Aggregation buckets. By default they are returned as an array, but if the aggregation has keys configured for
         the different buckets, the result is a dictionary.
       oneOf:
-        - type: object
+        - title: keyed
+          type: object
           additionalProperties:
             $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-        - type: array
+        - title: array
+          type: array
           items:
             $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
     GeoBoundsAggregation:
@@ -2442,7 +2192,8 @@ components:
         - type: object
           properties:
             count:
-              type: number
+              type: integer
+              format: int64
             location:
               $ref: '_common.yaml#/components/schemas/GeoLocation'
     GeoDistanceAggregation:
@@ -2490,10 +2241,12 @@ components:
               description: |-
                 Allows for more accurate counting of the top cells returned in the final result the aggregation.
                 Defaults to returning `max(10,(size x number-of-shards))` buckets from each shard.
-              type: number
+              type: integer
+              format: int32
             size:
               description: The maximum number of geohash buckets to return.
-              type: number
+              type: integer
+              format: int32
     GeoLineAggregation:
       type: object
       properties:
@@ -2510,7 +2263,8 @@ components:
           description: |-
             The maximum length of the line represented in the aggregation.
             Valid sizes are between 1 and 10000.
-          type: number
+          type: integer
+          format: int32
       required:
         - point
         - sort
@@ -2541,34 +2295,14 @@ components:
               description: |-
                 Allows for more accurate counting of the top cells returned in the final result the aggregation.
                 Defaults to returning `max(10,(size x number-of-shards))` buckets from each shard.
-              type: number
+              type: integer
+              format: int32
             size:
               description: The maximum number of buckets to return.
-              type: number
+              type: integer
+              format: int32
             bounds:
               $ref: '_common.yaml#/components/schemas/GeoBounds'
-    GeohexGridAggregation:
-      allOf:
-        - $ref: '#/components/schemas/BucketAggregationBase'
-        - type: object
-          properties:
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-            precision:
-              description: |-
-                Integer zoom of the key used to defined cells or buckets
-                in the results. Value should be between 0 and 15.
-              type: number
-            bounds:
-              $ref: '_common.yaml#/components/schemas/GeoBounds'
-            size:
-              description: Maximum number of buckets to return.
-              type: number
-            shard_size:
-              description: Number of buckets returned from each shard.
-              type: number
-          required:
-            - field
     GlobalAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -2589,23 +2323,27 @@ components:
                 The interval for the buckets.
                 Must be a positive decimal.
               type: number
+              format: double
             min_doc_count:
               description: |-
                 Only returns buckets that have `min_doc_count` number of documents.
                 By default, the response will fill gaps in the histogram with empty buckets.
-              type: number
+              type: integer
+              format: int32
             missing:
               description: |-
                 The value to apply to documents that do not have a value.
                 By default, documents without a value are ignored.
               type: number
+              format: double
             offset:
               description: |-
                 By default, the bucket keys start with 0 and then continue in even spaced steps of `interval`.
                 The bucket boundaries can be shifted by using the `offset` option.
               type: number
+              format: double
             order:
-              $ref: '#/components/schemas/AggregateOrder'
+              $ref: '#/components/schemas/HistogramOrder'
             script:
               $ref: '_common.yaml#/components/schemas/Script'
             format:
@@ -2649,33 +2387,6 @@ components:
         to:
           description: End of the range.
           type: ['null', string]
-    IpPrefixAggregation:
-      allOf:
-        - $ref: '#/components/schemas/BucketAggregationBase'
-        - type: object
-          properties:
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-            prefix_length:
-              description: |-
-                Length of the network prefix. For IPv4 addresses the accepted range is [0, 32].
-                For IPv6 addresses the accepted range is [0, 128].
-              type: number
-            is_ipv6:
-              description: Defines whether the prefix applies to IPv6 addresses.
-              type: boolean
-            append_prefix_length:
-              description: Defines whether the prefix length is appended to IP address keys in the response.
-              type: boolean
-            keyed:
-              description: Defines whether buckets are returned as a hash rather than an array in the response.
-              type: boolean
-            min_doc_count:
-              description: Minimum number of documents in a bucket for it to be included in the response.
-              type: number
-          required:
-            - field
-            - prefix_length
     InferenceAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2703,16 +2414,19 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
         num_top_feature_importance_values:
           description: Specifies the maximum number of feature importance values per document.
-          type: number
+          type: integer
+          format: int32
     ClassificationInferenceOptions:
       type: object
       properties:
         num_top_classes:
           description: Specifies the number of top class predictions to return. Defaults to 0.
-          type: number
+          type: integer
+          format: int32
         num_top_feature_importance_values:
           description: Specifies the maximum number of feature importance values per document.
-          type: number
+          type: integer
+          format: int32
         prediction_field_type:
           description: 'Specifies the type of the predicted field to write. Acceptable values are: string, number, Boolean. When Boolean is provided 1.0 is transformed to true and 0.0 to false.'
           type: string
@@ -2743,6 +2457,7 @@ components:
               type: object
               additionalProperties:
                 type: number
+                format: double
     MaxAggregation:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
@@ -2759,6 +2474,7 @@ components:
             compression:
               description: Limits the maximum number of nodes used by the underlying TDigest algorithm to `20 * compression`, enabling control of memory usage and approximation error.
               type: number
+              format: double
     MinAggregation:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
@@ -2775,7 +2491,7 @@ components:
             field:
               $ref: '_common.yaml#/components/schemas/Field'
             missing:
-              $ref: '#/components/schemas/Missing'
+              $ref: '_common.yaml#/components/schemas/FieldValue'
     MovingAverageAggregation:
       type: object
       discriminator:
@@ -2808,9 +2524,11 @@ components:
             minimize:
               type: boolean
             predict:
-              type: number
+              type: integer
+              format: int32
             window:
-              type: number
+              type: integer
+              format: int32
     SimpleMovingAverageAggregation:
       allOf:
         - $ref: '#/components/schemas/MovingAverageAggregationBase'
@@ -2844,6 +2562,7 @@ components:
       properties:
         alpha:
           type: number
+          format: float
     HoltMovingAverageAggregation:
       allOf:
         - $ref: '#/components/schemas/MovingAverageAggregationBase'
@@ -2863,8 +2582,10 @@ components:
       properties:
         alpha:
           type: number
+          format: float
         beta:
           type: number
+          format: float
     HoltWintersMovingAverageAggregation:
       allOf:
         - $ref: '#/components/schemas/MovingAverageAggregationBase'
@@ -2884,21 +2605,28 @@ components:
       properties:
         alpha:
           type: number
+          format: float
         beta:
           type: number
+          format: float
         gamma:
           type: number
+          format: float
         pad:
           type: boolean
         period:
-          type: number
+          type: integer
+          format: int32
         type:
           $ref: '#/components/schemas/HoltWintersType'
     HoltWintersType:
-      type: string
-      enum:
-        - add
-        - mult
+      oneOf:
+        - title: additive
+          type: string
+          const: add
+        - title: multiplicative
+          type: string
+          const: mult
     MovingPercentilesAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2906,12 +2634,14 @@ components:
           properties:
             window:
               description: The size of window to "slide" across the histogram.
-              type: number
+              type: integer
+              format: int32
             shift:
               description: |-
                 By default, the window consists of the last n values excluding the current bucket.
                 Increasing `shift` by 1, moves the starting window position by 1 to the right.
-              type: number
+              type: integer
+              format: int32
             keyed:
               type: boolean
     MovingFunctionAggregation:
@@ -2926,10 +2656,12 @@ components:
               description: |-
                 By default, the window consists of the last n values excluding the current bucket.
                 Increasing `shift` by 1, moves the starting window position by 1 to the right.
-              type: number
+              type: integer
+              format: int32
             window:
               description: The size of window to "slide" across the histogram.
-              type: number
+              type: integer
+              format: int32
     MultiTermsAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -2938,24 +2670,28 @@ components:
             collect_mode:
               $ref: '#/components/schemas/TermsAggregationCollectMode'
             order:
-              $ref: '#/components/schemas/AggregateOrder'
+              $ref: '#/components/schemas/HistogramOrder'
             min_doc_count:
               description: The minimum number of documents in a bucket for it to be returned.
-              type: number
+              type: integer
+              format: int32
             shard_min_doc_count:
               description: The minimum number of documents in a bucket on each shard for it to be returned.
-              type: number
+              type: integer
+              format: int32
             shard_size:
               description: |-
                 The number of candidate terms produced by each shard.
                 By default, `shard_size` will be automatically estimated based on the number of shards and the `size` parameter.
-              type: number
+              type: integer
+              format: int32
             show_term_doc_count_error:
               description: Calculates the doc count error on per term basis.
               type: boolean
             size:
               description: The number of term buckets should be returned out of the overall terms list.
-              type: number
+              type: integer
+              format: int32
             terms:
               description: The field from which to generate sets of terms.
               type: array
@@ -2974,7 +2710,7 @@ components:
         field:
           $ref: '_common.yaml#/components/schemas/Field'
         missing:
-          $ref: '#/components/schemas/Missing'
+          $ref: '_common.yaml#/components/schemas/FieldValue'
       required:
         - field
     NestedAggregation:
@@ -3019,12 +2755,10 @@ components:
               type: boolean
             values:
               description: An array of values for which to calculate the percentile ranks.
-              oneOf:
-                - type: array
-                  items:
-                    type: number
-                - type: 'null'
-                - type: string
+              type: array
+              items:
+                type: number
+                format: double
             hdr:
               $ref: '#/components/schemas/HdrMethod'
             tdigest:
@@ -3034,13 +2768,15 @@ components:
       properties:
         number_of_significant_value_digits:
           description: Specifies the resolution of values for the histogram in number of significant digits.
-          type: number
+          type: integer
+          format: int32
     TDigest:
       type: object
       properties:
         compression:
           description: Limits the maximum number of nodes used by the underlying TDigest algorithm to `20 * compression`, enabling control of memory usage and approximation error.
-          type: number
+          type: integer
+          format: int32
     PercentilesAggregation:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
@@ -3056,6 +2792,7 @@ components:
               type: array
               items:
                 type: number
+                format: double
             hdr:
               $ref: '#/components/schemas/HdrMethod'
             tdigest:
@@ -3070,6 +2807,7 @@ components:
               type: array
               items:
                 type: number
+                format: double
     RangeAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -3081,7 +2819,8 @@ components:
               description: |-
                 The value to apply to documents that do not have a value.
                 By default, documents without a value are ignored.
-              type: number
+              type: integer
+              format: int32
             ranges:
               description: An array of ranges used to bucket documents.
               type: array
@@ -3107,14 +2846,16 @@ components:
               $ref: '#/components/schemas/TermsInclude'
             max_doc_count:
               description: The maximum number of documents a term should appear in.
-              type: number
+              type: integer
+              format: int64
             missing:
-              $ref: '#/components/schemas/Missing'
+              $ref: '_common.yaml#/components/schemas/FieldValue'
             precision:
               description: |-
                 The precision of the internal CuckooFilters.
                 Smaller precision leads to better approximation, but higher memory usage.
               type: number
+              format: double
             value_type:
               type: string
     RateAggregation:
@@ -3145,7 +2886,8 @@ components:
           properties:
             shard_size:
               description: Limits how many top-scoring documents are collected in the sample processed on each shard.
-              type: number
+              type: integer
+              format: int32
     ScriptedMetricAggregation:
       allOf:
         - $ref: '#/components/schemas/MetricAggregationBase'
@@ -3162,8 +2904,7 @@ components:
                 A global object with script parameters for `init`, `map` and `combine` scripts.
                 It is shared between the scripts.
               type: object
-              additionalProperties:
-                type: object
+              additionalProperties: true
             reduce_script:
               $ref: '_common.yaml#/components/schemas/Script'
     SerialDifferencingAggregation:
@@ -3175,7 +2916,8 @@ components:
               description: |-
                 The historical bucket to subtract from the current value.
                 Must be a positive, non-zero integer.
-              type: number
+              type: integer
+              format: int32
     SignificantTermsAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -3199,7 +2941,8 @@ components:
               $ref: '_common.yaml#/components/schemas/EmptyObject'
             min_doc_count:
               description: Only return terms that are found in more than `min_doc_count` hits.
-              type: number
+              type: integer
+              format: int64
             mutual_information:
               $ref: '#/components/schemas/MutualInformationHeuristic'
             percentage:
@@ -3210,15 +2953,18 @@ components:
               description: |-
                 Regulates the certainty a shard has if the term should actually be added to the candidate list or not with respect to the `min_doc_count`.
                 Terms will only be considered if their local shard frequency within the set is higher than the `shard_min_doc_count`.
-              type: number
+              type: integer
+              format: int64
             shard_size:
               description: |-
                 Can be used to control the volumes of candidate terms produced by each shard.
                 By default, `shard_size` will be automatically estimated based on the number of shards and the `size` parameter.
-              type: number
+              type: integer
+              format: int32
             size:
               description: The number of buckets returned out of the overall terms list.
-              type: number
+              type: integer
+              format: int32
     ChiSquareHeuristic:
       type: object
       properties:
@@ -3288,7 +3034,8 @@ components:
               $ref: '_common.yaml#/components/schemas/EmptyObject'
             min_doc_count:
               description: Only return values that are found in more than `min_doc_count` hits.
-              type: number
+              type: integer
+              format: int64
             mutual_information:
               $ref: '#/components/schemas/MutualInformationHeuristic'
             percentage:
@@ -3299,15 +3046,18 @@ components:
               description: |-
                 Regulates the certainty a shard has if the values should actually be added to the candidate list or not with respect to the `min_doc_count`.
                 Values will only be considered if their local shard frequency within the set is higher than the `shard_min_doc_count`.
-              type: number
+              type: integer
+              format: int64
             shard_size:
               description: |-
                 The number of candidate terms produced by each shard.
                 By default, `shard_size` will be automatically estimated based on the number of shards and the `size` parameter.
-              type: number
+              type: integer
+              format: int32
             size:
               description: The number of buckets returned out of the overall terms list.
-              type: number
+              type: integer
+              format: int32
             source_fields:
               $ref: '_common.yaml#/components/schemas/Fields'
     StatsAggregation:
@@ -3351,9 +3101,10 @@ components:
               $ref: '#/components/schemas/TermsInclude'
             min_doc_count:
               description: Only return values that are found in more than `min_doc_count` hits.
-              type: number
+              type: integer
+              format: int32
             missing:
-              $ref: '#/components/schemas/Missing'
+              $ref: '_common.yaml#/components/schemas/FieldValue'
             missing_order:
               $ref: '#/components/schemas/MissingOrder'
             missing_bucket:
@@ -3369,13 +3120,15 @@ components:
               description: |-
                 The number of candidate terms produced by each shard.
                 By default, `shard_size` will be automatically estimated based on the number of shards and the `size` parameter.
-              type: number
+              type: integer
+              format: int32
             show_term_doc_count_error:
               description: Set to `true` to return the `doc_count_error_upper_bound`, which is an upper bound to the error on the `doc_count` returned by each shard.
               type: boolean
             size:
               description: The number of buckets returned out of the overall terms list.
-              type: number
+              type: integer
+              format: int32
             format:
               type: string
     TopHitsAggregation:
@@ -3390,7 +3143,8 @@ components:
               type: boolean
             from:
               description: Starting document offset.
-              type: number
+              type: integer
+              format: int32
             highlight:
               $ref: '_core.search.yaml#/components/schemas/Highlight'
             script_fields:
@@ -3400,7 +3154,8 @@ components:
                 $ref: '_common.yaml#/components/schemas/ScriptField'
             size:
               description: The maximum number of top matching hits to return per bucket.
-              type: number
+              type: integer
+              format: int32
             sort:
               $ref: '_common.yaml#/components/schemas/Sort'
             _source:
@@ -3458,7 +3213,8 @@ components:
                     $ref: '#/components/schemas/TopMetricsValue'
             size:
               description: The number of top documents from which to return metrics.
-              type: number
+              type: integer
+              format: int32
             sort:
               $ref: '_common.yaml#/components/schemas/Sort'
     TopMetricsValue:
@@ -3501,6 +3257,7 @@ components:
         missing:
           description: A value or weight to use if the field is missing.
           type: number
+          format: double
         script:
           $ref: '_common.yaml#/components/schemas/Script'
     VariableWidthHistogramAggregation:
@@ -3510,14 +3267,17 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
         buckets:
           description: The target number of buckets.
-          type: number
+          type: integer
+          format: int32
         shard_size:
           description: |-
             The number of buckets that the coordinating node will request from each shard.
             Defaults to `buckets * 50`.
-          type: number
+          type: integer
+          format: int32
         initial_buffer:
           description: |-
             Specifies the number of individual documents that will be stored in memory on a shard before the initial bucketing algorithm is run.
             Defaults to `min(10 * shard_size, 50000)`.
-          type: number
+          type: integer
+          format: int32
