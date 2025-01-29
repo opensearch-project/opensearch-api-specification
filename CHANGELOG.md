@@ -56,6 +56,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a warning for test file names that don't match the API being tested ([#793](https://github.com/opensearch-project/opensearch-api-specification/pull/793))
 - Added `time` field to the `GetStats` schema in `_common.yml` ([#803](https://github.com/opensearch-project/opensearch-api-specification/pull/803))
 - Added version for `POST /_plugins/_ml/_train/{algorithm_name}`, `_predict/{algorithm_name}/{model_id}`, and `_train_predict/{algorithm_name}` ([#763](https://github.com/opensearch-project/opensearch-api-specification/pull/763))
+- Added `POST _plugins/_security/api/internalusers/{username}` response `201` [#810](https://github.com/opensearch-project/opensearch-api-specification/pull/810)
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
