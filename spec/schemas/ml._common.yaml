@@ -1580,6 +1580,8 @@ components:
       properties:
         sum:
           $ref: '#/components/schemas/Aggregation'
+        max:
+          $ref: '#/components/schemas/Aggregation'
         field:
           type: string
           description: The field name.
@@ -1597,3 +1599,70 @@ components:
           description: The tool type.
         version:
           $ref: '_common.yaml#/components/schemas/VersionString'
+    ExecuteAlgorithmResponse:
+      oneOf:
+        - $ref: '#/components/schemas/ExecuteLocalSampleCalculatorResponse'
+        - type: object
+          properties:
+            results:
+              type: array
+              items:
+                $ref: '#/components/schemas/ExecuteAnomalyLocalizationResponse'
+    ExecuteLocalSampleCalculatorResponse:
+      type: object
+      properties:
+        result:
+          type: number
+          description: The result.
+    ExecuteAnomalyLocalizationResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        result:
+          $ref: '#/components/schemas/Result'
+    Result:
+      type: object
+      properties:
+        buckets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Buckets'
+    Buckets:
+      type: object
+      properties:
+        start_time:
+          type: integer
+          format: int64
+          description: The start time.
+        end_time:
+          type: integer
+          format: int64
+          description: The end time.
+        overall_aggregate_value:
+          type: number
+          format: double
+          description: The overall aggregate value.
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+    Entity:
+      type: object
+      properties:
+        key:
+          type: array
+          items:
+            type: string
+        contribution_value:
+          type: number
+          format: double
+          description: The contribution value.
+        base_value:
+          type: number
+          format: double
+          description: The base value.
+        new_value:
+          type: number
+          format: double
+          description: The new value.

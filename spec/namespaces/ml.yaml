@@ -827,6 +827,19 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.get_tool@200'
+  /_plugins/_ml/_execute/{algorithm_name}:
+    post:
+      operationId: ml.execute_algorithm.0
+      x-operation-group: ml.execute_algorithm
+      x-version-added: '2.0'
+      description: Execute an algorithm.
+      parameters:
+        - $ref: '#/components/parameters/ml.execute_algorithm::path.algorithm_name'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.execute_algorithm'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.execute_algorithm@200'
 components:
   requestBodies:
     ml.register_model_group:
@@ -1483,6 +1496,62 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/ProfileRequest'
+    ml.execute_algorithm:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              operation:
+                type: string
+                description: The calculator operation.
+                enum:
+                  - max
+                  - min
+                  - sum
+              input_data:
+                type: array
+                items:
+                  type: number
+                description: The input data.
+              index_name:
+                type: string
+                description: The index name.
+              attribute_field_names:
+                type: array
+                items:
+                  type: string
+                description: The attribute field names
+              aggregations:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/Aggregation'
+              time_field_name:
+                type: string
+                description: The time field name.
+              start_time:
+                type: integer
+                format: int64
+                description: The start time.
+              end_time:
+                type: integer
+                format: int64
+                description: The end time.
+              min_time_interval:
+                type: integer
+                format: int64
+                description: The minimum time interval.
+              num_outputs:
+                type: integer
+                format: int64
+                description: The number of outputs.
+              metrics:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+                description: The metrics input.
   responses:
     ml.register_model_group@200:
       content:
@@ -1918,6 +1987,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/Tool'
+    ml.execute_algorithm@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/ExecuteAlgorithmResponse'
   parameters:
     ml.get_all_memories::query.max_results:
       name: max_results
@@ -2261,3 +2335,12 @@ components:
           - SearchMonitorsTool
           - VectorDBTool
           - VisualizationTool
+    ml.execute_algorithm::path.algorithm_name:
+      name: algorithm_name
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - anomaly_localization
+          - local_sample_calculator
