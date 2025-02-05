@@ -4635,6 +4635,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/knn.warmup___200'
+  /_plugins/_ml/_execute/{algorithm_name}:
+    post:
+      operationId: ml.execute_algorithm.0
+      x-operation-group: ml.execute_algorithm
+      x-version-added: '2.0'
+      description: Execute an algorithm.
+      parameters:
+        - $ref: '#/components/parameters/ml.execute_algorithm___path.algorithm_name'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.execute_algorithm'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.execute_algorithm___200'
   /_plugins/_ml/_predict/{algorithm_name}/{model_id}:
     post:
       operationId: ml.predict.0
@@ -23846,6 +23864,15 @@ components:
       required: true
       schema:
         type: string
+    ml.execute_algorithm___path.algorithm_name:
+      name: algorithm_name
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - anomaly_localization
+          - local_sample_calculator
     ml.get_agent___path.agent_id:
       name: agent_id
       in: path
@@ -28405,6 +28432,62 @@ components:
                 description: Whether to provide verbose output.
             required:
               - parameters
+    ml.execute_algorithm:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              operation:
+                type: string
+                description: The calculator operation.
+                enum:
+                  - max
+                  - min
+                  - sum
+              input_data:
+                type: array
+                items:
+                  type: number
+                description: The input data.
+              index_name:
+                type: string
+                description: The index name.
+              attribute_field_names:
+                type: array
+                items:
+                  type: string
+                description: The attribute field names
+              aggregations:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ml._common___Aggregation'
+              time_field_name:
+                type: string
+                description: The time field name.
+              start_time:
+                type: integer
+                format: int64
+                description: The start time.
+              end_time:
+                type: integer
+                format: int64
+                description: The end time.
+              min_time_interval:
+                type: integer
+                format: int64
+                description: The minimum time interval.
+              num_outputs:
+                type: integer
+                format: int64
+                description: The number of outputs.
+              metrics:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+                description: The metrics input.
     ml.get_profile:
       content:
         application/json:
@@ -32019,6 +32102,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ml._common___PredictResponse'
+      description: ''
+    ml.execute_algorithm___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ml._common___ExecuteAlgorithmResponse'
       description: ''
     ml.get_agent___200:
       content:
@@ -55589,6 +55678,8 @@ components:
       properties:
         sum:
           $ref: '#/components/schemas/ml._common___Aggregation'
+        max:
+          $ref: '#/components/schemas/ml._common___Aggregation'
         field:
           type: string
           description: The field name.
@@ -55613,6 +55704,8 @@ components:
         train:
           $ref: '#/components/schemas/ml._common___ModelStats'
         train_predict:
+          $ref: '#/components/schemas/ml._common___ModelStats'
+        execute:
           $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___Algorithms:
       type: object
@@ -55640,6 +55733,25 @@ components:
           description: Query that should appear in matching documents.
           items:
             $ref: '#/components/schemas/ml._common___Filter'
+    ml._common___Buckets:
+      type: object
+      properties:
+        start_time:
+          type: integer
+          format: int64
+          description: The start time.
+        end_time:
+          type: integer
+          format: int64
+          description: The end time.
+        overall_aggregate_value:
+          type: number
+          format: double
+          description: The overall aggregate value.
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common___Entity'
     ml._common___ByteBuffer:
       type: object
       properties:
@@ -55692,6 +55804,47 @@ components:
         session_token:
           type: string
       additionalProperties: true
+    ml._common___Entity:
+      type: object
+      properties:
+        key:
+          type: array
+          items:
+            type: string
+        contribution_value:
+          type: number
+          format: double
+          description: The contribution value.
+        base_value:
+          type: number
+          format: double
+          description: The base value.
+        new_value:
+          type: number
+          format: double
+          description: The new value.
+    ml._common___ExecuteAlgorithmResponse:
+      oneOf:
+        - $ref: '#/components/schemas/ml._common___ExecuteLocalSampleCalculatorResponse'
+        - type: object
+          properties:
+            results:
+              type: array
+              items:
+                $ref: '#/components/schemas/ml._common___ExecuteAnomalyLocalizationResponse'
+    ml._common___ExecuteAnomalyLocalizationResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        result:
+          $ref: '#/components/schemas/ml._common___Result'
+    ml._common___ExecuteLocalSampleCalculatorResponse:
+      type: object
+      properties:
+        result:
+          type: number
+          description: The result.
     ml._common___Exists:
       type: object
       description: The exists filter.
@@ -56204,6 +56357,8 @@ components:
           $ref: '#/components/schemas/ml._common___ModelStats'
         train_predict:
           $ref: '#/components/schemas/ml._common___ModelStats'
+        execute:
+          $ref: '#/components/schemas/ml._common___ModelStats'
     ml._common___Models:
       type: object
       additionalProperties:
@@ -56537,6 +56692,13 @@ components:
       required:
         - limit
         - unit
+    ml._common___Result:
+      type: object
+      properties:
+        buckets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ml._common___Buckets'
     ml._common___Rows:
       type: object
       properties:
