@@ -422,47 +422,33 @@ components:
           required:
             - queries
     DistanceFeatureQuery:
-      oneOf:
-        - $ref: '#/components/schemas/GeoDistanceFeatureQuery'
-        - $ref: '#/components/schemas/DateDistanceFeatureQuery'
-    GeoDistanceFeatureQuery:
-      allOf:
-        - $ref: '#/components/schemas/DistanceFeatureQueryBaseGeoLocationDistance'
-        - type: object
-    DistanceFeatureQueryBaseGeoLocationDistance:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            origin:
-              $ref: '_common.yaml#/components/schemas/GeoLocation'
-            pivot:
-              $ref: '_common.yaml#/components/schemas/Distance'
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-          required:
-            - field
-            - origin
-            - pivot
-    DateDistanceFeatureQuery:
-      allOf:
-        - $ref: '#/components/schemas/DistanceFeatureQueryBaseDateMathDuration'
-        - type: object
-    DistanceFeatureQueryBaseDateMathDuration:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            origin:
-              $ref: '_common.yaml#/components/schemas/DateMath'
-            pivot:
-              $ref: '_common.yaml#/components/schemas/Duration'
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-          required:
-            - field
-            - origin
-            - pivot
+        - oneOf:
+          - type: object
+            properties:
+              origin:
+                $ref: '_common.yaml#/components/schemas/GeoLocation'
+              pivot:
+                $ref: '_common.yaml#/components/schemas/Distance'
+              field:
+                $ref: '_common.yaml#/components/schemas/Field'
+            required:
+              - field
+              - origin
+              - pivot
+          - type: object
+            properties:
+              origin:
+                $ref: '_common.yaml#/components/schemas/DateMath'
+              pivot:
+                $ref: '_common.yaml#/components/schemas/Duration'
+              field:
+                $ref: '_common.yaml#/components/schemas/Field'
+            required:
+              - field
+              - origin
+              - pivot
     ExistsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -528,17 +514,19 @@ components:
               $ref: '#/components/schemas/RandomScoreFunction'
             script_score:
               $ref: '#/components/schemas/ScriptScoreFunction'
-          minProperties: 1
+          minProperties: 0
           maxProperties: 1
     DecayFunction:
-      oneOf:
-        - $ref: '#/components/schemas/DateDecayFunction'
-        - $ref: '#/components/schemas/NumericDecayFunction'
-        - $ref: '#/components/schemas/GeoDecayFunction'
-    DateDecayFunction:
       allOf:
         - $ref: '#/components/schemas/DecayFunctionBase'
         - type: object
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: placement
+            $ref: '#/components/schemas/DecayPlacement'
+          minProperties: 1
     DecayFunctionBase:
       type: object
       properties:
@@ -551,14 +539,50 @@ components:
         - max
         - min
         - sum
-    NumericDecayFunction:
-      allOf:
-        - $ref: '#/components/schemas/DecayFunctionBase'
-        - type: object
-    GeoDecayFunction:
-      allOf:
-        - $ref: '#/components/schemas/DecayFunctionBase'
-        - type: object
+    DecayPlacement:
+      anyOf:
+        - $ref: '#/components/schemas/DateDecayPlacement'
+        - $ref: '#/components/schemas/GeoDecayPlacement'
+        - $ref: '#/components/schemas/NumericDecayPlacement'
+    DateDecayPlacement:
+      type: object
+      properties:
+        decay:
+          type: number
+          format: double
+        offset:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        origin:
+          $ref: '_common.yaml#/components/schemas/DateTime'
+        scale:
+          $ref: '_common.yaml#/components/schemas/Duration'
+    GeoDecayPlacement:
+      type: object
+      properties:
+        decay:
+          type: number
+          format: double
+        offset:
+          $ref: '_common.yaml#/components/schemas/Distance'
+        origin:
+          $ref: '_common.yaml#/components/schemas/GeoLocation'
+        scale:
+          $ref: '_common.yaml#/components/schemas/Distance'
+    NumericDecayPlacement:
+      type: object
+      properties:
+        decay:
+          type: number
+          format: double
+        offset:
+          type: number
+          format: double
+        origin:
+          type: number
+          format: double
+        scale:
+          type: number
+          format: double
     FieldValueFactorScoreFunction:
       type: object
       properties:
@@ -662,7 +686,11 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
           additionalProperties:
+            title: bounding_box
             $ref: '_common.yaml#/components/schemas/GeoBounds'
           minProperties: 1
     GeoExecution:
@@ -689,7 +717,11 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
           additionalProperties:
+            title: location
             $ref: '_common.yaml#/components/schemas/GeoLocation'
           minProperties: 2
           required:
@@ -703,6 +735,22 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: polygon
+            $ref: '#/components/schemas/GeoPolygonPoints'
+          minProperties: 1
+    GeoPolygonPoints:
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+              $ref: '_common.yaml#/components/schemas/GeoLocation'
+      required:
+        - points
     GeoShape:
       type: object
       properties:
@@ -710,9 +758,11 @@ components:
           type: string
         coordinates:
           type: array
-    GeoShapeField:
+    GeoShapeQueryField:
       type: object
       properties:
+        indexed_shape:
+          $ref: '#/components/schemas/FieldLookup'
         shape:
           $ref: '#/components/schemas/GeoShape'
         relation: 
@@ -726,8 +776,12 @@ components:
           properties:
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
           additionalProperties:
-            $ref: '#/components/schemas/GeoShapeField'
+            title: shape
+            $ref: '#/components/schemas/GeoShapeQueryField'
           minProperties: 1
     HasChildQuery:
       allOf:
@@ -1014,26 +1068,32 @@ components:
               format: float
               x-version-added: '2.14'
             filter:
-              description: The filters for the k-NN search query.
-              oneOf:
-                - $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-                - type: array
-                  items:
-                    $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+              description: The filter for the k-NN search query.
+              $ref: '#/components/schemas/QueryContainer'
             method_parameters:
               type: object
               x-version-added: '2.16'
-              additionalProperties:
-                type: integer
-                format: int32
+              additionalProperties: true
             rescore:
-              type: object
+              $ref: '#/components/schemas/KnnQueryRescore'
               x-version-added: '2.17'
-              additionalProperties:
-                type: number
-                format: float
+            expand_nested_docs:
+              type: boolean
+              x-version-added: '2.19'
           required:
             - vector
+    KnnQueryRescore:
+      oneOf:
+        - title: enable
+          type: boolean
+        - title: context
+          $ref: '#/components/schemas/RescoreContext'
+    RescoreContext:
+      type: object
+      properties:
+        oversample_factor:
+          type: number
+          format: float
     MatchQuery:
       oneOf:
         - title: query
@@ -1085,7 +1145,9 @@ components:
       type: string
       enum:
         - all
+        - ALL
         - none
+        - NONE
     MatchAllQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1597,34 +1659,65 @@ components:
           required:
             - query
     RangeQuery:
-      oneOf:
-        - $ref: '#/components/schemas/DateRangeQuery'
-        - $ref: '#/components/schemas/NumberRangeQuery'
-    DateRangeQuery:
       allOf:
         - $ref: '#/components/schemas/RangeQueryBase'
-        - type: object
-          properties:
-            gt:
-              $ref: '_common.yaml#/components/schemas/DateMath'
-            gte:
-              $ref: '_common.yaml#/components/schemas/DateMath'
-            lt:
-              $ref: '_common.yaml#/components/schemas/DateMath'
-            lte:
-              $ref: '_common.yaml#/components/schemas/DateMath'
-            from:
-              oneOf:
-                - $ref: '_common.yaml#/components/schemas/DateMath'
-                - type: 'null'
-            to:
-              oneOf:
-                - $ref: '_common.yaml#/components/schemas/DateMath'
-                - type: 'null'
-            format:
-              $ref: '_common.yaml#/components/schemas/DateFormat'
-            time_zone:
-              $ref: '_common.yaml#/components/schemas/TimeZone'
+        - oneOf:
+            - $ref: '#/components/schemas/NumberRangeQueryParameters'
+            - $ref: '#/components/schemas/DateRangeQueryParameters'
+    DateRangeQueryParameters:
+      type: object
+      properties:
+        gt:
+          $ref: '_common.yaml#/components/schemas/DateMath'
+        gte:
+          $ref: '_common.yaml#/components/schemas/DateMath'
+        lt:
+          $ref: '_common.yaml#/components/schemas/DateMath'
+        lte:
+          $ref: '_common.yaml#/components/schemas/DateMath'
+        from:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/DateMath'
+            - type: 'null'
+        to:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/DateMath'
+            - type: 'null'
+        format:
+          $ref: '_common.yaml#/components/schemas/DateFormat'
+        time_zone:
+          $ref: '_common.yaml#/components/schemas/TimeZone'
+    NumberRangeQueryParameters:
+      type: object
+      properties:
+        gt:
+          description: Greater than.
+          type: number
+          format: double
+        gte:
+          description: Greater than or equal to.
+          type: number
+          format: double
+        lt:
+          description: Less than.
+          type: number
+          format: double
+        lte:
+          description: Less than or equal to.
+          type: number
+          format: double
+        from:
+          oneOf:
+            - type: number
+              format: double
+            - type: string
+            - type: 'null'
+        to:
+          oneOf:
+            - type: number
+              format: double
+            - type: string
+            - type: 'null'
     RangeQueryBase:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1638,27 +1731,6 @@ components:
         - contains
         - intersects
         - within
-    NumberRangeQuery:
-      allOf:
-        - $ref: '#/components/schemas/RangeQueryBase'
-        - type: object
-          properties:
-            gt:
-              description: Greater than.
-              type: number
-            gte:
-              description: Greater than or equal to.
-              type: number
-            lt:
-              description: Less than.
-              type: number
-            lte:
-              description: Less than or equal to.
-              type: number
-            from:
-              type: ['null', number, string]
-            to:
-              type: ['null', number, string]
     RankFeatureQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1915,7 +1987,10 @@ components:
     SpanGapQuery:
       description: Can only be used as a clause in a `span_near` query.
       type: object
+      propertyNames:
+        $ref: '_common.yaml#/components/schemas/Field'
       additionalProperties:
+        title: span_width
         type: integer
         format: int32
       minProperties: 1
@@ -2034,7 +2109,11 @@ components:
           properties:
             _name: {}
             boost: {}
+          propertyNames:
+            title: field
+            type: string
           additionalProperties:
+            title: terms
             $ref: '#/components/schemas/TermsQueryField'
           minProperties: 1
     TermsQueryField:
@@ -2118,9 +2197,11 @@ components:
           type: string
         coordinates:
           type: array
-    XyShapeField:
+    XyShapeQueryField:
       type: object
       properties:
+        indexed_shape:
+          $ref: '#/components/schemas/FieldLookup'
         shape:
           $ref: '#/components/schemas/XyShape'
         relation: 
@@ -2132,7 +2213,26 @@ components:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
+          properties:
+            ignore_unmapped:
+              type: boolean
+          propertyNames:
+            title: field
+            type: string
           additionalProperties:
-            $ref: '#/components/schemas/XyShapeField'
+            title: xy_shape
+            $ref: '#/components/schemas/XyShapeQueryField'
           minProperties: 1
-          maxProperties: 1
+    FieldLookup:
+      type: object
+      properties:
+        id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        path:
+          $ref: '_common.yaml#/components/schemas/Field'
+        routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+      required:
+        - id
