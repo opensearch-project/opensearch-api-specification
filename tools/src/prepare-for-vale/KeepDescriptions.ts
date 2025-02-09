@@ -12,7 +12,7 @@ import fg from 'fast-glob'
 import { Logger } from '../Logger'
 
 /**
- * Keeps only description: field values.
+ * Keeps only description: field values and type: number with its next line.
  */
 export default class KeepDescriptions {
   root_folder: string
@@ -34,28 +34,37 @@ export default class KeepDescriptions {
 
   process_file(filename: string): void {
     const contents = fs.readFileSync(filename, 'utf-8')
-    var writer = fs.openSync(filename, 'w+')
+    const lines = contents.split(/\r?\n/)
+    const writer = fs.openSync(filename, 'w+')
 
-    var inside_text = false
-    contents.split(/\r?\n/).forEach((line) => {
+    let inside_text = false
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i]
+
       if (line.match(/^[\s]+((description|x-deprecation-message): \|)/)) {
         inside_text = true
       } else if (line.match(/^[\s]+((description|x-deprecation-message):)[\s]+/)) {
         let cleaned_line = this.prune(line, /(description|x-deprecation-message):/, ' ')
         cleaned_line = this.prune_vars(cleaned_line)
         cleaned_line = this.remove_links(cleaned_line)
-        fs.writeSync(writer, cleaned_line)
+        fs.writeSync(writer, cleaned_line + "\n")
       } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
         inside_text = false
       } else if (inside_text) {
         let cleaned_line = this.remove_links(line)
         cleaned_line = this.prune_vars(cleaned_line)
-        fs.writeSync(writer, cleaned_line)
+        fs.writeSync(writer, cleaned_line + "\n")
+      } else if (line.includes("type: number")) {
+        fs.writeSync(writer, line + "\n")
+        if (i + 1 < lines.length) {
+          fs.writeSync(writer, lines[i + 1] + "\n")
+        }
       }
+
       if (line.length > 0) {
         fs.writeSync(writer, "\n")
       }
-    })
+    }
   }
 
   prune_vars(line: string): string {
