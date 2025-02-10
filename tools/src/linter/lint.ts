@@ -16,13 +16,14 @@ const command = new Command()
   .description('Validate the OpenSearch multi-file spec.')
   .addOption(new Option('-s, --source <path>', 'path to the root folder of the multi-file spec').default(resolve(__dirname, '../../../spec')))
   .addOption(new Option('--verbose', 'whether to print the full stack trace of errors').default(false))
+  .addOption(new Option('--changed-only', 'whether to only validate changed files').default(false))
   .allowExcessArguments(false)
   .parse()
 
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 logger.log(`Validating ${opts.source} ...`)
-const validator = new SpecValidator(opts.source, logger)
+const validator = new SpecValidator(opts.source, logger, opts.changedOnly)
 const errors = validator.validate()
 
 if (errors.length === 0) {
