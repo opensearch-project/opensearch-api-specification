@@ -20,6 +20,7 @@ import {
   SpecificationContext
 } from '../_utils'
 import { type OpenAPIV3 } from 'openapi-types'
+import { namespace_file } from '../../tests/linter/factories/namespace_file'
 
 export default class SchemaVisitingValidator {
   private readonly _namespaces_folder: NamespacesFolder
@@ -52,6 +53,33 @@ export default class SchemaVisitingValidator {
     return errors
   }
 
+  validateFile(filePath: string): ValidationError[] {
+    const errors: ValidationError[] = []
+    const visitor = this.createVisitor(errors)
+    
+    const targetFile = [...this._namespaces_folder.files, ...this._schemas_folder.files].find(f => f.file === filePath)
+
+    if (!targetFile) {
+      return [{ message: `File not found in namespaces/schemas: ${filePath}`, file: filePath }]
+    }
+
+    visitor.visit_specification(new SpecificationContext(targetFile.file), targetFile.spec())
+
+    return errors
+  }
+
+  private createVisitor(errors: ValidationError[]): SchemaVisitor {
+    const validating_functions = [
+      this.#validate_numeric_schema.bind(this)
+    ]
+
+    return new SchemaVisitor((ctx, schema) => {
+      for (const f of validating_functions) {
+        f(ctx, schema, errors)
+      }
+    })
+  }
+
   #validate_inline_object_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3.SchemaObject>, errors: ValidationError[]): void {
     if (is_ref(schema) || schema.type !== 'object' || schema.properties === undefined) {
       return
@@ -73,26 +101,16 @@ export default class SchemaVisitingValidator {
     }
 
     if (schema.type === 'number') {
-      if (schema.format === undefined || SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
-        return
-      }
-
-      if (SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
-        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' should instead be of type 'integer'`))
-      } else {
-        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`))
+      if (schema.format == null || !schema.format) {
+        errors.push(ctx.error(`Schema of type 'number' must specify a valid format. Allowed formats: ${SCHEMA_NUMBER_FORMATS.join(', ')}`));
+        return;
       }
     }
 
     if (schema.type === 'integer') {
-      if (schema.format === undefined || SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
-        return
-      }
-
-      if (SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
-        errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' should instead be of type 'number'`))
-      } else {
-        errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_INTEGER_FORMATS.join(', ')}`))
+      if (schema.format == null || !schema.format) {
+        errors.push(ctx.error(`Schema of type 'integer' must specify a valid format. Allowed formats: ${SCHEMA_INTEGER_FORMATS.join(', ')}`));
+        return;
       }
     }
   }
