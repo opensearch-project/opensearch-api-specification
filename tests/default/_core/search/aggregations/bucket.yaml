@@ -1,0 +1,49 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test aggregation within bucket aggregation.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - { create: { _index: jobads } }
+        - { title: Nurse, hirerId: 445212, salaryType: monthly, salary: 2000, isSalaryHidden: true }
+        - { create: { _index: jobads } }
+        - { title: Doctor, hirerId: 445212, salaryType: monthly, salary: 5000, isSalaryHidden: false }
+        - { create: { _index: jobads } }
+        - { title: Engineer, hirerId: 55123, salaryType: annual, salary: 36000, isSalaryHidden: true }
+chapters:
+  - synopsis: Aggregate within bucket aggregation
+    path: /{index}/_search
+    parameters:
+      index: jobads
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          jobAdsWithHiddenSalary:
+            filter:
+              term:
+                isSalaryHidden: true
+            aggs:
+              numOfHirers:
+                cardinality:
+                  field: hirerId
+    response:
+      status: 200
+      payload:
+        aggregations:
+          jobAdsWithHiddenSalary:
+            doc_count: 2
+            numOfHirers:
+              value: 2
+epilogues:
+  - path: /jobads
+    method: DELETE
+    status: [200, 404]
