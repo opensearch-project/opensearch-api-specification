@@ -11,37 +11,37 @@ prologues:
     request:
       content_type: application/x-ndjson
       payload:
-        - { create: { _index: jobads } }
-        - { title: Nurse, hirerId: 445212, salaryType: monthly, salary: 2000, isSalaryHidden: true }
-        - { create: { _index: jobads } }
-        - { title: Doctor, hirerId: 445212, salaryType: monthly, salary: 5000, isSalaryHidden: false }
-        - { create: { _index: jobads } }
-        - { title: Engineer, hirerId: 55123, salaryType: annual, salary: 36000, isSalaryHidden: true }
+        - {create: {_index: movies}}
+        - {title: Pearl Harbour, directorId: 445212, cost: 2000, isCostHidden: true}
+        - {create: {_index: movies}}
+        - {title: The Doctor, directorId: 445212, cost: 5000, isCostHidden: false}
+        - {create: {_index: movies}}
+        - {title: Home Sweet Home, directorId: 55123, cost: 36000, isCostHidden: true}
 chapters:
   - synopsis: Aggregate within bucket aggregation
     path: /{index}/_search
     parameters:
-      index: jobads
+      index: movies
     method: POST
     request:
       payload:
         size: 0
         aggs:
-          jobAdsWithHiddenSalary:
+          moviesWithHiddenCost:
             filter:
               term:
-                isSalaryHidden: true
+                isCostHidden: true
             aggs:
-              numOfHirers:
+              numOfDirectors:
                 cardinality:
-                  field: hirerId
+                  field: directorId
     response:
       status: 200
       payload:
         aggregations:
-          jobAdsWithHiddenSalary:
+          moviesWithHiddenCost:
             doc_count: 2
-            numOfHirers:
+            numOfDirectors:
               value: 2
 epilogues:
   - path: /jobads
