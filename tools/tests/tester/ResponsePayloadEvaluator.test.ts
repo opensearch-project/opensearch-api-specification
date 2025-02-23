@@ -39,5 +39,9 @@ describe('ResponsePayloadEvaluator', () => {
     test('succeeds with a matching payload using contains', () => {
       expect(evaluator.evaluate(create_response({ x: 1 }), undefined, ["x"])).toEqual({ result: Result.PASSED })
     })
+
+    test('fails with a non-matching payload using container', () => {
+      expect(evaluator.evaluate(create_response({ x: 1 }), undefined, ["y"])).toEqual({ result: Result.FAILED, message: "Response payload is missing required values: y" })
+    })
   })
 })
