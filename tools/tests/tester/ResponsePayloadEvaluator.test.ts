@@ -25,19 +25,15 @@ describe('ResponsePayloadEvaluator', () => {
 
   describe('evaluate', () => {
     test('succeeds without an expected payload', () => {
-      expect(evaluator.evaluate(create_response({}), undefined, undefined)).toEqual({ result: Result.PASSED })
+      expect(evaluator.evaluate(create_response({}), undefined)).toEqual({ result: Result.PASSED })
     })
 
     test('fails with a non-matching payload', () => {
-      expect(evaluator.evaluate(create_response({}), { x: 1 }, undefined)).toEqual({ result: Result.FAILED, message: "missing x='1'" })
+      expect(evaluator.evaluate(create_response({}), { x: 1 })).toEqual({ result: Result.FAILED, message: "missing x='1'" })
     })
 
     test('succeeds with a matching payload', () => {
-      expect(evaluator.evaluate(create_response({ x: 1 }), { x: 1 }, undefined)).toEqual({ result: Result.PASSED })
-    })
-
-    test('succeeds with a matching payload using contains', () => {
-      expect(evaluator.evaluate(create_response({ x: 1 }), undefined, ["x"])).toEqual({ result: Result.PASSED })
+      expect(evaluator.evaluate(create_response({ x: 1 }), { x: 1 })).toEqual({ result: Result.PASSED })
     })
   })
 })

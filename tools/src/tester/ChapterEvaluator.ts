@@ -70,8 +70,7 @@ export default class ChapterEvaluator {
     const payload_schema_evaluation = status.result === Result.PASSED ? this.#evaluate_payload_schema(chapter, response, operation) : { result: Result.SKIPPED }
     const output_values_evaluation: EvaluationWithOutput = status.result === Result.PASSED ? ChapterOutput.extract_output_values(response, chapter.output) : { evaluation: { result: Result.SKIPPED } }
     const response_payload: Payload | undefined = status.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
-    const response_contains: string[] | undefined = status.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.contains) : chapter.response?.contains
-    const payload_body_evaluation = status.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload, response_contains) : { result: Result.SKIPPED }
+    const payload_body_evaluation = status.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload) : { result: Result.SKIPPED }
 
     if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
 
