@@ -53,7 +53,8 @@ export default class SupplementalChapterEvaluator {
     const status = chapter.status ?? [200, 201]
     const overall = status.includes(response.status) ? { result: Result.PASSED } : { result: Result.ERROR, message: response.message, error: response.error as Error }
     const response_payload: Payload | undefined = overall.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
-    const payload_body_evaluation = overall.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload) : { result: Result.SKIPPED }
+    const response_contains: string[] | undefined = overall.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.contains) : chapter.response?.contains
+    const payload_body_evaluation = overall.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload, response_contains) : { result: Result.SKIPPED }
     const result: Result = overall_result(_.compact([overall, payload_body_evaluation, output_values_evaluation.evaluation]))
 
     var evaluation_result: EvaluationWithOutput = { evaluation: { result } }

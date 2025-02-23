@@ -192,6 +192,7 @@ export interface ExpectedResponse {
   status: number;
   content_type?: string;
   payload?: Payload;
+  contains?: string[];
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
