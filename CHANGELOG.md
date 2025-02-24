@@ -58,6 +58,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added version for `POST /_plugins/_ml/_train/{algorithm_name}`, `_predict/{algorithm_name}/{model_id}`, and `_train_predict/{algorithm_name}` ([#763](https://github.com/opensearch-project/opensearch-api-specification/pull/763))
 - Added `POST _plugins/_security/api/internalusers/{username}` response `201` ([#810](https://github.com/opensearch-project/opensearch-api-specification/pull/810))
 - Added `POST /_plugins/_ml/_execute/{algorithm_name}` ([#811](https://github.com/opensearch-project/opensearch-api-specification/pull/811))
+- Added search suggester types ([#817](https://github.com/opensearch-project/opensearch-api-specification/pull/817))
+- Added `SimplePatternTokenizer` and `SimplePatternSplitTokenizer` ([#820](https://github.com/opensearch-project/opensearch-api-specification/pull/820))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -108,7 +110,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed core API schemas ([#777](https://github.com/opensearch-project/opensearch-api-specification/pull/777))
 - Fixed Memory Circuit Breaker flaky error in ML APIs ([#788](https://github.com/opensearch-project/opensearch-api-specification/pull/788))
 - Fixed GeoDistanceSort schema ([#805](https://github.com/opensearch-project/opensearch-api-specification/pull/805))
-- Fixed Aggregation schemas([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
+- Fixed Aggregation schemas ([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
+- Fixed FilterQueryRequestProcessor to use correct query type ([#821](https://github.com/opensearch-project/opensearch-api-specification/pull/821))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
