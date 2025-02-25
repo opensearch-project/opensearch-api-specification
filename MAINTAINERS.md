@@ -8,9 +8,9 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 ## Current Maintainers
 
 | Maintainer           | GitHub ID                                     | Affiliation |
-|----------------------|-----------------------------------------------|-------------|
+| -------------------- | --------------------------------------------- | ----------- |
 | Alen Abeshov         | [aabeshov](https://github.com/aabeshov)       |             |
-| Daniel Doubrovkine   | [dblock](https://github.com/dblock)           | Amazon      |
+| Daniel Doubrovkine   | [dblock](https://github.com/dblock)           | Independent |
 | Harsha Vamsi Kalluri | [harshavamsi](https://github.com/harshavamsi) | Amazon      |
 | Sachet Alva          | [sachetalva](https://github.com/sachetalva)   | Amazon      |
 | Theo Truong          | [nhtruong](https://github.com/nhtruong)       | Amazon      |
@@ -22,6 +22,6 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 ## Emeritus
 
 | Maintainer  | GitHub ID                               | Affiliation |
-|-------------|-----------------------------------------|-------------|
+| ----------- | --------------------------------------- | ----------- |
 | Abhi Kalra  | [abhivka7](https://github.com/abhivka7) | Amazon      |
 | Pranav Garg | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
