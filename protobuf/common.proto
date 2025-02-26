@@ -1,0 +1,256 @@
+/**
+This is the generated from spec. DON NOT manually modified.
+ */
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+import "google/protobuf/struct.proto";
+import "common.proto";
+
+message QueryContainer {
+
+  // The match all query returns all documents. This query can be useful in testing large document sets if you need to return the entire set.
+  optional MatchAllQuery match_all = 1;
+}
+
+message MatchAllQuery {
+
+  // Boosts the clause by the given multiplier. Useful for weighing clauses in compound queries. Values in the [0, 1) range decrease relevance, and values greater than 1 increase relevance. Default is 1.
+  optional float boost = 1;
+
+  // Query name for query tagging
+  optional string name = 2;
+}
+
+message SourceConfigParam {
+
+  oneof source_config_param {
+    // `true` or `false` to return the `_source` field or not
+    bool bool_value = 1;
+    // list of fields to be retrieved from `_source`
+    StringArray string_array = 2;
+  }
+
+}
+
+message StringArray{
+  repeated string string_array = 1;
+}
+
+message WaitForActiveShards {
+
+  enum WaitForActiveShardOptions {
+    WAIT_FOR_ACTIVE_SHARD_OPTIONS_UNSPECIFIED = 0;
+    WAIT_FOR_ACTIVE_SHARD_OPTIONS_ALL = 1;
+    WAIT_FOR_ACTIVE_SHARD_OPTIONS_INDEX_SETTING = 2;
+  }
+
+  oneof wait_for_active_shards {
+    int32 int32_value = 1;
+    WaitForActiveShardOptions wait_for_active_shard_options = 2;
+  }
+
+}
+
+message ObjectMap {
+  map<string, Value> fields = 1;
+
+  message Value {
+    // The kind of value.
+    oneof value {
+      // Represents a null value.
+      NullValue null_value = 1;
+      // Represents a .google.protobuf.DoubleValue value.
+      GeneralNumber general_number = 2;
+      // Represents a .google.protobuf.StringValue value.
+      string string_value = 3;
+      // Represents a boolean value.
+      bool bool_value = 4;
+      // Represents a structured value.
+      ObjectMap object_map = 5;
+      // Represents a repeated `Value`.
+      ListValue list_value = 6;
+    }
+
+  }
+
+  enum NullValue {
+    NULL_VALUE_UNSPECIFIED = 0;
+    NULL_VALUE_NULL = 1;
+  }
+
+
+  // `ListValue` is a wrapper around a repeated field of values.
+  // The JSON representation for `ListValue` is JSON array.
+  message ListValue {
+    // Repeated field of dynamically typed values.
+    repeated ValueWithoutWrappers value_without_wrappers = 1;
+  }
+
+  message ValueWithoutWrappers {
+    oneof value_without_wrappers {
+      NullValue null_value = 1;
+      int32 int32 = 2;
+      int64 int64 = 3;
+      float float = 4;
+      double double = 5;
+      string string = 6;
+      bool bool = 7;
+      ObjectMap object_map = 8;
+      ListValue list_value = 9;
+    }
+  }
+}
+
+message GeneralNumber {
+  oneof value{
+    int32 int32_value = 1;
+    int64 int64_value = 2;
+    float float_value = 3;
+    double double_value = 4;
+  }
+}
+
+message Script {
+  oneof script {
+    // Defines an inline script to execute as part of a query.
+    InlineScript inline_script = 1;
+    // References a stored script by its ID for use in a query.
+    StoredScriptId stored_script_id = 2;
+  }
+}
+
+message InlineScript {
+  // [optional]
+  // The parameters that can be passed to the script.
+  ObjectMap params = 1;
+
+  // [optional]
+  // The script's language. Default is painless.
+  ScriptLanguage lang = 2;
+
+  map<string, string> options = 3;
+
+  // [required]
+  // The script source.
+  string source = 4;
+}
+
+message ScriptLanguage {
+  enum BuiltinScriptLanguage {
+    BUILTIN_SCRIPT_LANGUAGE_UNSPECIFIED = 0;
+    BUILTIN_SCRIPT_LANGUAGE_EXPRESSION = 1;
+    BUILTIN_SCRIPT_LANGUAGE_JAVA = 2;
+    BUILTIN_SCRIPT_LANGUAGE_MUSTACHE = 3;
+    BUILTIN_SCRIPT_LANGUAGE_PAINLESS = 4;
+  }
+  BuiltinScriptLanguage builtin_script_language = 1;
+  string string_value = 2;
+}
+
+message StoredScriptId {
+  // [optional]
+  // The parameters that can be passed to the script.
+  ObjectMap params = 1;
+  // [required]
+  // The ID of a stored script previously created using the Create Stored Script API.
+  string id = 2;
+}
+
+message SourceConfig {
+
+  oneof source_config{
+    // [optional] if the source_config is bool value. true: The entire document source is returned. false: The document source is not returned.
+    bool bool_value = 1;
+    // [optional] Array of patterns containing source fields to return.
+    StringArray string_array = 2;
+    // [optional] source_filter type containing a list of source fields to include or exclude.
+    SourceFilter source_filter = 3;
+  }
+}
+
+message SourceFilter {
+  // [optional] Wildcard (*) patterns are supported as array elements to specify source fields to exclude from the response.
+  repeated string excludes = 1;
+  // [optional] Wildcard (*) patterns are supported as array elements to specify source fields to return.
+  repeated string includes = 2;
+}
+
+enum NullValue {
+  NULL_VALUE_UNSPECIFIED = 0;
+  NULL_VALUE_NULL = 1;
+}
+
+message ShardStatistics {
+  // [required] Number of shards that failed to execute the request. Note that shards that are not allocated will be considered neither successful nor failed. Having failed+successful less than total is thus an indication that some of the shards were not allocated.
+  int32 failed = 1;
+
+  // [required] Number of shards that executed the request successfully.
+  int32 successful = 2;
+
+  // [required] Total number of shards that require querying, including unallocated shards.
+  int32 total = 3;
+
+  // [optional] An array of any shard-specific failures that occurred during the search operation.
+  repeated ShardFailure failures = 4;
+
+  // [optional] Number of shards that skipped the request because a lightweight check helped realize that no documents could possibly match on this shard. This typically happens when a search request includes a range filter and the shard only has values that fall outside of that range.
+  optional int32 skipped = 5;
+
+}
+
+message ShardFailure {
+
+  // [optional] Name of the index in which the shard failure occurred.
+  optional string index = 1;
+
+  // [optional] ID of the node where the shard is located.
+  optional string node = 2;
+
+  // [required] Provides details about the error that caused the shard failure.
+  ErrorCause reason = 3;
+
+  // [required] The shard number where the failure occurred.
+  int32 shard = 4;
+
+  // [optional] Error status.
+  optional string status = 5;
+
+}
+
+message ErrorCause {
+
+  // The type of error
+  optional string type = 1;
+
+  // A human-readable explanation of the error, in english
+  optional string reason = 2;
+
+  // The server stack trace. Present only if the `error_trace=true` parameter was sent with the request.
+  optional string stack_trace = 3;
+
+  optional ErrorCause caused_by = 4;
+
+  repeated ErrorCause root_cause = 5;
+
+  repeated ErrorCause suppressed = 6;
+
+  optional string index = 7;
+
+  optional string shard = 8;
+
+  optional string index_uuid = 9;
+
+  .google.protobuf.Struct additional_details = 10;
+
+}
+
+message FieldValueResponse {
+  oneof value{
+    double double_value = 1;
+    string string_value = 2;
+    .google.protobuf.Struct object = 3;
+    bool bool_value = 4;
+  }
+}
