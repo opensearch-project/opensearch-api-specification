@@ -70,6 +70,15 @@ chapters:
         mode: on_disk
         compression_level: 32x
         spaceType: l2
+        method:
+          name: ivf
+          engine: faiss
+          parameters:
+            nlist: 9
+            encoder:
+              name: pq
+              parameters:
+                code_size: 3
     response:
       status: 200
     output:
@@ -104,5 +113,28 @@ chapters:
         mode: on_disk
         compression_level: 32x
         spaceType: l2
+        method:
+          name: ivf
+          engine: faiss
+          parameters:
+            nlist: 9
+            encoder:
+              name: pq
+              parameters:
+                code_size: 3
     response:
       status: 200
+  - synopsis: Wait for the model to get trained (2).
+    warnings:
+      multiple-paths-detected: false
+    method: GET
+    path: /_plugins/_knn/models/{model_id}
+    parameters:
+      model_id: model-1
+    retry:
+      count: 3
+    response:
+      status: 200
+      payload:
+        model_id: model-1
+        state: created
