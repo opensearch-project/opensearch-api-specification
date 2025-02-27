@@ -60,6 +60,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `POST /_plugins/_ml/_execute/{algorithm_name}` ([#811](https://github.com/opensearch-project/opensearch-api-specification/pull/811))
 - Added search suggester types ([#817](https://github.com/opensearch-project/opensearch-api-specification/pull/817))
 - Added `SimplePatternTokenizer` and `SimplePatternSplitTokenizer` ([#820](https://github.com/opensearch-project/opensearch-api-specification/pull/820))
+- Added `optional_extended_plugins` field to `PluginStats` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -120,7 +121,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed naming of `snapshot._common`'s `Status`, `ShardsStats`, `ShardsStatsStage`, `ShardsStatsSummary` and `ShardsStatsSummaryItem` schemas to be prefixed with `Snapshot` ([#730](https://github.com/opensearch-project/opensearch-api-specification/pull/730))
 - Changed `ml.get_memory` and `ml.get_message` to split out `get_all` variants ([#796](https://github.com/opensearch-project/opensearch-api-specification/pull/796))
 - Changed `ml.get_tools` to have two different operation groups `ml.get_all_tools` and `ml.get_tool` ([#799](https://github.com/opensearch-project/opensearch-api-specification/pull/799))
-- Update `PluginStats` with new field in response `optional_extended_plugins` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
+- Changed `FlowFrameworkDeleteResponse` to utilize `WriteResponseBase` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 
 ## [0.1.0] - 2024-10-25
 
