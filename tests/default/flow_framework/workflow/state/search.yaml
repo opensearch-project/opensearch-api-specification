@@ -18,13 +18,15 @@ prologues:
     output:
       workflow_id: payload.workflow_id
 chapters:
-  - synopsis: Search for a workflow.
+  - synopsis: Search for a workflow state.
     path: /_plugins/_flow_framework/workflow/state/_search
     method: GET
     request:
       payload:
         query:
-          match_all: {}
+          term:
+            workflow_id:
+              value: ${workflow.workflow_id}
     response:
       status: 200
       payload:
@@ -32,5 +34,4 @@ chapters:
           hits:
             - _index: .plugins-flow-framework-state
               _source:
-                state: NOT_STARTED
-            
+                workflow_id: ${workflow.workflow_id}
