@@ -53,17 +53,17 @@ export default class SchemaVisitingValidator {
     return errors
   }
 
-  validateFile(filePath: string): ValidationError[] {
+  validate_file(file_path: string): ValidationError[] {
     const errors: ValidationError[] = []
     const visitor = this.createVisitor(errors)
-    
-    const targetFile = [...this._namespaces_folder.files, ...this._schemas_folder.files].find(f => f.file === filePath)
 
-    if (!targetFile) {
-      return [{ message: `File not found in namespaces/schemas: ${filePath}`, file: filePath }]
+    const target_file = [...this._namespaces_folder.files, ...this._schemas_folder.files].find(f => f.file === filePath)
+
+    if (!target_file) {
+      return [{ message: `File not found in namespaces/schemas: ${file_path}`, file: file_path }]
     }
 
-    visitor.visit_specification(new SpecificationContext(targetFile.file), targetFile.spec())
+    visitor.visit_specification(new SpecificationContext(target_file.file), target_file.spec())
 
     return errors
   }

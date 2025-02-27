@@ -28,7 +28,7 @@ export default class SpecValidator {
   schemas_validator: SchemasValidator
   schema_refs_validator: SchemaRefsValidator
   inline_object_schema_validator: SchemaVisitingValidator
-  changedOnly: boolean
+  changed_only: boolean
 
   constructor (root_folder: string, logger: Logger, changedOnly: boolean) {
     this.logger = logger
@@ -39,7 +39,7 @@ export default class SpecValidator {
     this.schemas_validator = new SchemasValidator(root_folder, logger)
     this.schema_refs_validator = new SchemaRefsValidator(this.namespaces_folder, this.schemas_folder)
     this.inline_object_schema_validator = new SchemaVisitingValidator(this.namespaces_folder, this.schemas_folder)
-    this.changedOnly = changedOnly
+    this.changed_only = changedOnly
   }
 
   private getChangedFiles(): string[] {
@@ -47,23 +47,23 @@ export default class SpecValidator {
       const output = execSync('git diff --name-only origin/main', { encoding: 'utf-8' })
       return output.split('\n').filter(file => file.endsWith('.yml') || file.endsWith('.yaml'))
     } catch (error) {
-      this.logger.error('Error:' + error)
+      this.logger.error(`Error getting changed files: ${error}`)
       return []
     }
   }
 
-  validateChangedFiles(): ValidationError[] {
-    const changedFiles = this.getChangedFiles()
+  validate_changed_files(): ValidationError[] {
+    const changed_files = this.getChangedFiles()
   
-    if (changedFiles.length === 0) {
+    if (changed_files.length === 0) {
       this.logger.log('No valid files to check')
       return []
     }
   
-    this.logger.log(`Checking diff files:\n${changedFiles.join('\n')}`)
+    this.logger.log(`Checking diff files:\n${changed_files.join('\n')}`)
     let errors: ValidationError[] = []
   
-    for (const file of changedFiles) {
+    for (const file of changed_files) {
       let normalizedFile = file
     
       if (file.startsWith('spec/')) {
@@ -72,14 +72,14 @@ export default class SpecValidator {
         normalizedFile = relative(resolve('schemas'), resolve(file))
       }
     
-      errors = errors.concat(this.inline_object_schema_validator.validateFile(normalizedFile))
+      errors = errors.concat(this.inline_object_schema_validator.validate_file(normalizedFile))
     }
   
     return errors
   }
 
   validate (): ValidationError[] {
-    if (this.changedOnly) return this.validateChangedFiles()
+    if (this.changed_only) return this.validate_changed_files()
 
     const component_errors = [
       ...this.namespaces_folder.validate(),
