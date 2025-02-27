@@ -27,6 +27,10 @@ prologues:
         - {recommendation_vector: [1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], duration: 12.2}
         - {index: {_index: movies, _id: '2'}}
         - {recommendation_vector: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5], duration: 7.1}
+        - {index: {_index: movies, _id: '3'}}
+        - {recommendation_vector: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5], duration: 4.8}
+        - {index: {_index: movies, _id: '4'}}
+        - {recommendation_vector: [4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5], duration: 18.6}
     status: [200]
   - method: POST
     path: /_plugins/_knn/models/model-1/_train
@@ -41,6 +45,15 @@ prologues:
         mode: on_disk
         compression_level: 32x
         spaceType: l2
+        method:
+          name: ivf
+          engine: faiss
+          parameters:
+            nlist: 4
+            encoder:
+              name: pq
+              parameters:
+                code_size: 2
     status: [200]
 epilogues:
   - path: /movies
