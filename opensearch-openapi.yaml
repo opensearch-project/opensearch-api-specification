@@ -23114,7 +23114,7 @@ components:
       in: query
       description: The default operator for query string query (AND or OR).
       schema:
-        $ref: '#/components/schemas/knn._common___DefaultOperator'
+        $ref: '#/components/schemas/_common.query_dsl___Operator'
     knn.search_models___query.df:
       name: df
       in: query
@@ -23242,7 +23242,7 @@ components:
       in: query
       description: Search operation type.
       schema:
-        $ref: '#/components/schemas/knn._common___SearchType'
+        $ref: '#/components/schemas/_common___SearchType'
     knn.search_models___query.seq_no_primary_term:
       name: seq_no_primary_term
       in: query
@@ -23304,7 +23304,7 @@ components:
       in: query
       description: Specify suggest mode.
       schema:
-        $ref: '#/components/schemas/knn._common___SuggestMode'
+        $ref: '#/components/schemas/_common___SuggestMode'
     knn.search_models___query.suggest_size:
       name: suggest_size
       in: query
@@ -30808,7 +30808,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/flow_framework.common___FlowFrameworkDeleteResponse'
+            $ref: '#/components/schemas/_common___WriteResponseBase'
       description: ''
     flow_framework.delete___400:
       description: Work Flow Id Null Error
@@ -35618,6 +35618,11 @@ components:
             - string
         opensearch_version:
           $ref: '#/components/schemas/_common___VersionString'
+        optional_extended_plugins:
+          type: array
+          items:
+            type: string
+          x-version-added: '2.19'
       required:
         - classname
         - description
@@ -51948,32 +51953,6 @@ components:
           description: A map of workflows. Presently, only the provision key is supported. The value for the workflow key is a key-value map that includes fields for `user_params` and lists of nodes and edges.
       required:
         - name
-    flow_framework.common___FlowFrameworkDeleteResponse:
-      type: object
-      properties:
-        _index:
-          type: string
-          description: The name of the index where the document was stored.
-        _id:
-          type: string
-          description: The unique identifier of the deleted document.
-        _version:
-          type: integer
-          description: The version of the document after the deletion.
-        result:
-          type: string
-          description: The result of the deletion operation.
-          enum:
-            - deleted
-            - not_found
-        _shards:
-          $ref: '#/components/schemas/flow_framework.common___shards'
-        _seq_no:
-          type: integer
-          description: The sequence number assigned to the document after the deletion.
-        _primary_term:
-          type: integer
-          description: The primary term assigned to the document after the deletion.
     flow_framework.common___FlowFrameworkGetResponse:
       type: object
       properties:
@@ -52055,17 +52034,20 @@ components:
       description: Provision the workflow as part of the request.
       type: boolean
       default: false
-    flow_framework.common___query:
-      type: object
-      description: The search query to match workflows. Use `match_all` to retrieve all workflows, or `match` to search by specific fields like `use_case`.
-      properties:
-        match:
-          type: object
-        match_all:
-          type: object
     flow_framework.common___Reprovision:
       type: boolean
       default: false
+    flow_framework.common___ResourcesCreated:
+      type: object
+      properties:
+        workflow_step_name:
+          type: string
+        workflow_step_id:
+          type: string
+        resource_type:
+          type: string
+        resource_id:
+          type: string
     flow_framework.common___SearchStateResponse:
       type: object
       properties:
@@ -52077,11 +52059,17 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/flow_framework.common___user'
+        provision_start_time:
+          $ref: '#/components/schemas/_common___DateTime'
+        provision_end_time:
+          $ref: '#/components/schemas/_common___DateTime'
+        resources_created:
+          $ref: '#/components/schemas/flow_framework.common___ResourcesCreated'
     flow_framework.common___SearchWorkflowRequest:
       type: object
       properties:
         query:
-          $ref: '#/components/schemas/flow_framework.common___query'
+          $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
     flow_framework.common___shards:
       type: object
       properties:
@@ -55558,6 +55546,13 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/_common___ActionStatusOptions'
+    insights._common___GroupingType:
+      type: string
+      enum:
+        - NONE
+        - SIMILARITY
+        - none
+        - similarity
     insights._common___Measurement:
       type: object
       properties:
@@ -55741,6 +55736,10 @@ components:
     insights._common___TopQuery:
       type: object
       properties:
+        id:
+          type: string
+        group_by:
+          $ref: '#/components/schemas/insights._common___GroupingType'
         timestamp:
           type: integer
           description: The timestamp of the query execution.
@@ -56191,12 +56190,6 @@ components:
         conditions:
           type: object
           additionalProperties: true
-    knn._common___DefaultOperator:
-      type: string
-      description: The default operator for query string query (AND or OR).
-      enum:
-        - AND
-        - OR
     knn._common___DeletedModel:
       type: object
       properties:
@@ -56241,6 +56234,20 @@ components:
           $ref: '#/components/schemas/knn._common___GraphMergeStats'
         refresh:
           $ref: '#/components/schemas/knn._common___GraphRefreshStats'
+    knn._common___KnnMethod:
+      type: object
+      properties:
+        name:
+          type: string
+        space_type:
+          type: string
+        engine:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: true
+      required:
+        - name
     knn._common___NodeStats:
       type: object
       properties:
@@ -56311,12 +56318,6 @@ components:
           type: number
         script_compilation_errors:
           type: number
-    knn._common___SearchType:
-      type: string
-      description: Search operation type.
-      enum:
-        - dfs_query_then_fetch
-        - query_then_fetch
     knn._common___Stats:
       type: object
       properties:
@@ -56334,13 +56335,6 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/knn._common___NodeStats'
-    knn._common___SuggestMode:
-      type: string
-      description: Specify suggest mode.
-      enum:
-        - always
-        - missing
-        - popular
     knn._common___TrainedModel:
       type: object
       properties:
@@ -56364,7 +56358,7 @@ components:
         compression_level:
           type: string
         method:
-          type: string
+          $ref: '#/components/schemas/knn._common___KnnMethod'
         spaceType:
           type: string
       required:
