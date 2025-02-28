@@ -6,25 +6,6 @@ info:
 paths: {}
 components:
   schemas:
-    DefaultOperator:
-      type: string
-      description: The default operator for query string query (AND or OR).
-      enum:
-        - AND
-        - OR
-    SearchType:
-      type: string
-      description: Search operation type.
-      enum:
-        - dfs_query_then_fetch
-        - query_then_fetch
-    SuggestMode:
-      type: string
-      description: Specify suggest mode.
-      enum:
-        - always
-        - missing
-        - popular
     Stats:
       type: object
       properties:
@@ -143,6 +124,20 @@ components:
           $ref: '_common.yaml#/components/schemas/ByteCount'
         current_size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
+    KnnMethod:
+      type: object
+      properties:
+        name:
+          type: string
+        space_type:
+          type: string
+        engine:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: true
+      required:
+        - name
     TrainedModel:
       type: object
       properties:
@@ -166,7 +161,7 @@ components:
         compression_level:
           type: string
         method:
-          type: string
+          $ref: '#/components/schemas/KnnMethod'
         spaceType:
           type: string
       required:

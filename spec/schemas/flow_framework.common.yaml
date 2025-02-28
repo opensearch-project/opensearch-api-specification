@@ -76,30 +76,6 @@ components:
         version:
           $ref: '#/components/schemas/version'
       minProperties: 1
-    FlowFrameworkDeleteResponse:
-      type: object
-      properties:
-        _index:
-          type: string
-          description: The name of the index where the document was stored.
-        _id:
-          type: string
-          description: The unique identifier of the deleted document.
-        _version:
-          type: integer
-          description: The version of the document after the deletion.
-        result:
-          type: string
-          description: The result of the deletion operation.
-          enum: [deleted, not_found]
-        _shards:
-          $ref: '#/components/schemas/shards'
-        _seq_no:
-          type: integer
-          description: The sequence number assigned to the document after the deletion.
-        _primary_term:
-          type: integer
-          description: The primary term assigned to the document after the deletion.
     FlowFrameworkGetResponse:
       type: object
       properties:
@@ -148,14 +124,6 @@ components:
         skipped:
           type: integer
           description: The number of shards where the deletion was skipped.
-    query:
-      type: object
-      description: The search query to match workflows. Use `match_all` to retrieve all workflows, or `match` to search by specific fields like `use_case`.
-      properties:
-        match:
-          type: object
-        match_all:
-          type: object
     total:
       type: object
       properties:
@@ -224,6 +192,23 @@ components:
           type: string
         user:
           $ref: '#/components/schemas/user'
+        provision_start_time:
+          $ref: '_common.yaml#/components/schemas/DateTime'
+        provision_end_time:
+          $ref: '_common.yaml#/components/schemas/DateTime'
+        resources_created:
+          $ref: '#/components/schemas/ResourcesCreated'
+    ResourcesCreated:
+      type: object
+      properties:
+        workflow_step_name:
+          type: string
+        workflow_step_id:
+          type: string
+        resource_type:
+          type: string
+        resource_id:
+          type: string
     user:
       type: object
       properties:
@@ -367,7 +352,7 @@ components:
       type: object
       properties:
         query:
-          $ref: '#/components/schemas/query'
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
     WorkflowSearchResponse:
       type: object
       properties:
