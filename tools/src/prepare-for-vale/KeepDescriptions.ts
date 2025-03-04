@@ -24,7 +24,6 @@ export default class KeepDescriptions {
   }
 
   process(): void {
-    this.root_folder
     const files = fg.globSync([`${this.root_folder}/**/*.{yaml,yml}`], { dot: true })
     files.forEach((path) => {
       this.logger.log(path)
@@ -38,14 +37,14 @@ export default class KeepDescriptions {
 
     var inside_text = false
     contents.split(/\r?\n/).forEach((line) => {
-      if (line.match(/^[\s]+((description|x-deprecation-message): \|)/)) {
+      if (line.match(/^\s+((description|x-deprecation-message): \|)/)) {
         inside_text = true
-      } else if (line.match(/^[\s]+((description|x-deprecation-message):)[\s]+/)) {
+      } else if (line.match(/^\s+((description|x-deprecation-message):)[\s]+/)) {
         let cleaned_line = this.prune(line, /(description|x-deprecation-message):/, ' ')
         cleaned_line = this.prune_vars(cleaned_line)
         cleaned_line = this.remove_links(cleaned_line)
         fs.writeSync(writer, cleaned_line)
-      } else if (inside_text && line.match(/^[\s]*[\w\\$]*:/)) {
+      } else if (inside_text && line.match(/^\s*[\w\\$]*:/)) {
         inside_text = false
       } else if (inside_text) {
         let cleaned_line = this.remove_links(line)
@@ -59,7 +58,7 @@ export default class KeepDescriptions {
   }
 
   prune_vars(line: string): string {
-    return this.prune(line, /([`])(?:(?=(\\?))\2.)*?\1/g, '*')
+    return this.prune(line, /(`)(?:(?=(\\?))\2.)*?\1/g, '*')
   }
 
   prune(line: string, regex: RegExp, char: string): string {
@@ -69,9 +68,6 @@ export default class KeepDescriptions {
   }
 
   remove_links(line: string): string {
-    return line.replace(/\[([^\]]+)\]\([^)]+\)/g, (match, p1) => {
-      const spaces = ' '.repeat(match.length - p1.length - 1)
-      return ' ' + p1 + spaces
-    })
+    return line.replace(/\[([^\]]+)]\([^)]+\)/g, '$1')
   }
 }
