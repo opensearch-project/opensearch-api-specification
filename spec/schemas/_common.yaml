@@ -1054,14 +1054,25 @@ components:
         - shards
     WaitForEvents:
       description: Waits until all currently queued events with the given priority are processed. 
-      type: string
-      enum:
-        - high
-        - immediate
-        - languid
-        - low
-        - normal
-        - urgent
+      oneOf:
+        - type: string
+          const: immediate
+          description: Highest priority, processed as soon as possible.
+        - type: string
+          const: urgent
+          description: Very high priority, processed after immediate events.
+        - type: string
+          const: high
+          description: High priority, processed after urgent events.
+        - type: string
+          const: normal
+          description: Default priority, processed after high priority events.
+        - type: string
+          const: low
+          description: Low priority, processed after normal events.
+        - type: string
+          const: languid
+          description: Lowest priority, processed after all other events.
     DataStreamName:
       type: string
     CompletionStats:
