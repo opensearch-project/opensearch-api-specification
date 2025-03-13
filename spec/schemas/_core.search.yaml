@@ -42,6 +42,8 @@ components:
         - type: string
           const: gte
           description: Lower bound, including returned events or sequences.
+    Hit.TDocument:
+      x-is-generic-type-parameter: true
     Hit:
       type: object
       properties:
@@ -52,7 +54,10 @@ components:
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
         _score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: double
         _explanation:
           $ref: '_core.explain.yaml#/components/schemas/Explanation'
         fields:
@@ -91,7 +96,7 @@ components:
         _routing:
           type: string
         _source:
-          type: object
+          $ref: '#/components/schemas/Hit.TDocument'
         _seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         _primary_term:
