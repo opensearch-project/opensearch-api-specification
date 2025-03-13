@@ -4635,6 +4635,74 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/knn.warmup___200'
+  /_plugins/_ltr/{node_id}/stats:
+    get:
+      operationId: ltr.stats.2
+      x-operation-group: ltr.stats
+      x-version-added: '1.0'
+      description: Provides information about the current status of the LTR plugin.
+      parameters:
+        - $ref: '#/components/parameters/ltr.stats___path.node_id'
+        - $ref: '#/components/parameters/ltr.stats___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.stats___200'
+  /_plugins/_ltr/{node_id}/stats/{stat}:
+    get:
+      operationId: ltr.stats.3
+      x-operation-group: ltr.stats
+      x-version-added: '1.0'
+      description: Provides information about the current status of the LTR plugin.
+      parameters:
+        - $ref: '#/components/parameters/ltr.stats___path.node_id'
+        - $ref: '#/components/parameters/ltr.stats___path.stat'
+        - $ref: '#/components/parameters/ltr.stats___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.stats___200'
+  /_plugins/_ltr/stats:
+    get:
+      operationId: ltr.stats.0
+      x-operation-group: ltr.stats
+      x-version-added: '1.0'
+      description: Provides information about the current status of the LTR plugin.
+      parameters:
+        - $ref: '#/components/parameters/ltr.stats___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.stats___200'
+  /_plugins/_ltr/stats/{stat}:
+    get:
+      operationId: ltr.stats.1
+      x-operation-group: ltr.stats
+      x-version-added: '1.0'
+      description: Provides information about the current status of the LTR plugin.
+      parameters:
+        - $ref: '#/components/parameters/ltr.stats___path.stat'
+        - $ref: '#/components/parameters/ltr.stats___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.stats___200'
   /_plugins/_ml/_execute/{algorithm_name}:
     post:
       operationId: ml.execute_algorithm.0
@@ -23731,6 +23799,36 @@ components:
         type: boolean
         default: false
         description: Verbose mode. Display column headers.
+    ltr.stats___path.node_id:
+      name: node_id
+      in: path
+      description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+      schema:
+        type: array
+        description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+        items:
+          type: string
+      required: true
+    ltr.stats___path.stat:
+      name: stat
+      in: path
+      description: Comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
+      schema:
+        type: array
+        description: Comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
+        items:
+          type: string
+          enum:
+            - cache
+            - request_error_count
+            - request_total_count
+      required: true
+    ltr.stats___query.timeout:
+      name: timeout
+      in: query
+      description: The time in milliseconds to wait for a response.
+      schema:
+        $ref: '#/components/schemas/_common___Duration'
     mget___path.index:
       in: path
       name: index
@@ -31976,6 +32074,12 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/cat.shards___ShardsRecord'
+      description: ''
+    ltr.stats___200:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ltr._common___Stats'
       description: ''
     mget___200:
       content:
@@ -56404,6 +56508,67 @@ components:
         - dimension
         - training_field
         - training_index
+    ltr._common___CacheStat:
+      type: object
+      properties:
+        eviction_count:
+          type: integer
+        miss_count:
+          type: integer
+        entry_count:
+          type: integer
+        memory_usage_in_bytes:
+          type: integer
+        hit_count:
+          type: integer
+    ltr._common___CacheStats:
+      type: object
+      properties:
+        feature:
+          $ref: '#/components/schemas/ltr._common___CacheStat'
+        featureset:
+          $ref: '#/components/schemas/ltr._common___CacheStat'
+        model:
+          $ref: '#/components/schemas/ltr._common___CacheStat'
+    ltr._common___NodeStats:
+      type: object
+      properties:
+        cache:
+          $ref: '#/components/schemas/ltr._common___CacheStats'
+        request_total_count:
+          type: integer
+        request_error_count:
+          type: integer
+    ltr._common___Stats:
+      type: object
+      properties:
+        _nodes:
+          $ref: '#/components/schemas/_common___NodeStatistics'
+        cluster_name:
+          $ref: '#/components/schemas/_common___Name'
+        stores:
+          $ref: '#/components/schemas/ltr._common___StoreStats'
+        status:
+          type: string
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ltr._common___NodeStats'
+    ltr._common___StoreStat:
+      type: object
+      properties:
+        model_count:
+          type: integer
+        featureset_count:
+          type: integer
+        feature_count:
+          type: integer
+        status:
+          type: string
+    ltr._common___StoreStats:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/ltr._common___StoreStat'
     ml._common___Action:
       type: object
       properties:
