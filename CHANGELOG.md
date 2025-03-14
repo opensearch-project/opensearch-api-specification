@@ -118,6 +118,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed Aggregation schemas ([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
 - Fixed FilterQueryRequestProcessor to use correct query type ([#821](https://github.com/opensearch-project/opensearch-api-specification/pull/821))
 - Fixed `knn.train_model`'s request body `method` field to accept an object rather than a string ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
+- Fixed REST status codes for RBAC and provisioning for Flow Framework plugin
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
