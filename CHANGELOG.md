@@ -6,6 +6,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added specs for UBI plugin endpoints ([#844](https://github.com/opensearch-project/opensearch-api-specification/pull/844))
 - Added defaults for Snapshot APIs ([#830](https://github.com/opensearch-project/opensearch-api-specification/pull/830))
 - Added specs for LTR plugin for stats endpoints ([#786](https://github.com/opensearch-project/opensearch-api-specification/issues/786/))
 - Added defaults for Cluster APIs ([#824](https://github.com/opensearch-project/opensearch-api-specification/pull/824/))
