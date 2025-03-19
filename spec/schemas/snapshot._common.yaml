@@ -97,6 +97,7 @@ components:
 
     Repository:
       type: object
+      description: The name of the repository to store the snapshot.
       properties:
         type:
           type: string
@@ -110,6 +111,7 @@ components:
 
     RepositorySettings:
       type: object
+      description: The settings for the snapshot repository.
       properties:
         chunk_size:
           type: string
@@ -187,7 +189,28 @@ components:
         stats:
           $ref: '#/components/schemas/SnapshotShardsStatsSummary'
           description: The statistical summary of the shard snapshot.
-
+      required:
+        - stage
+        - stats
+        
+    SnapshotShardsStatsStage:
+      oneOf:
+        - type: string
+          const: DONE
+          description: The number of shards in the snapshot that were successfully stored in the repository.
+        - type: string
+          const: FAILURE
+          description: The number of shards in the snapshot that were not successfully stored in the repository.
+        - type: string
+          const: FINALIZE
+          description: The number of shards in the snapshot that are in the finalizing stage of being stored in the repository.
+        - type: string
+          const: INIT
+          description: The number of shards in the snapshot that are in the initializing stage of being stored in the repository.
+        - type: string
+          const: STARTED
+          description: The number of shards in the snapshot that are in the started stage of being stored in the repository.
+          
     SnapshotShardsStatsSummary:
       type: object
       properties:
