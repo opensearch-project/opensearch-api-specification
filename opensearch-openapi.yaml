@@ -62716,24 +62716,32 @@ components:
       properties:
         error:
           type: string
+          description: An error message that describes the bad request.
         status:
           type: integer
+          description: The HTTP status code.
     sm._common___CreateUpdatePolicyRequest:
       type: object
       properties:
         description:
           type: string
+          description: A user-provided description of the snapshot policy.
         creation:
           $ref: '#/components/schemas/sm._common___CreationConfig'
+          description: The configuration for the snapshot creation schedule.
         deletion:
           $ref: '#/components/schemas/sm._common___DeletionConfig'
+          description: The configuration for snapshot deletion rules and schedule.
         snapshot_config:
           $ref: '#/components/schemas/sm._common___SnapshotConfig'
+          description: The core configuration for how snapshots should be created and managed.
         notification:
           $ref: '#/components/schemas/sm._common___NotificationConfig'
+          description: The configuration for notification settings and conditions.
         enabled:
           type: boolean
-          description: 'Whether the policy should be enabled at creation. Default: true'
+          description: Whether the policy should be enabled at creation.
+          default: true
       required:
         - creation
         - snapshot_config
@@ -62744,7 +62752,7 @@ components:
           $ref: '#/components/schemas/sm._common___CronSchedule'
         time_limit:
           type: string
-          description: Maximum time for snapshot creation.
+          description: The maximum amount of time for allowed snapshot creation.
       required:
         - schedule
     sm._common___CronExpression:
@@ -62752,8 +62760,10 @@ components:
       properties:
         expression:
           type: string
+          description: The cron expression that defines the schedule.
         timezone:
           type: string
+          description: The timezone used for the cron schedule.
       required:
         - expression
         - timezone
@@ -62767,20 +62777,28 @@ components:
       properties:
         _index:
           type: string
+          description: The index name where the policy was stored.
         _id:
           type: string
+          description: The ID of the deleted policy.
         _version:
           type: integer
+          description: The version number of the operation.
         result:
           type: string
+          description: The result of the delete operation.
         forced_refresh:
           type: boolean
+          description: Whether a refresh was forced after the operation.
         _shards:
           $ref: '#/components/schemas/sm._common___ShardsInfo'
+          description: Information about shard operations.
         _seq_no:
           type: integer
+          description: The sequence number for optimistic concurrency control.
         _primary_term:
           type: integer
+          description: The primary term for optimistic concurrency control.
       required:
         - _id
         - _index
@@ -62808,13 +62826,16 @@ components:
           $ref: '#/components/schemas/sm._common___DeletionCondition'
         time_limit:
           type: string
+          description: The maximum amount of time allowed for snapshot deletion operations.
     sm._common___ExecutionInfo:
       type: object
       properties:
         message:
           type: string
+          description: A detailed message about the policy execution result.
         cause:
           type: string
+          description: The reason policy execution failed, if applicable.
     sm._common___ExecutionMetadata:
       type: object
       properties:
@@ -62840,8 +62861,10 @@ components:
       properties:
         total_policies:
           type: integer
+          description: The total number of policies found.
         policies:
           type: array
+          description: A list of snapshot management policies.
           items:
             $ref: '#/components/schemas/sm._common___ListedPolicy'
       required:
@@ -62852,10 +62875,13 @@ components:
       properties:
         start_time:
           type: integer
+          description: When the interval schedule should start.
         period:
           type: integer
+          description: The number of time units between executions.
         unit:
           type: string
+          description: The time unit for the interval period (Days, Hours, or Minutes).
           enum:
             - Days
             - Hours
@@ -62874,12 +62900,16 @@ components:
       properties:
         _id:
           type: string
+          description: The policy ID.
         _seq_no:
           type: integer
+          description: The sequence number for optimistic concurrency control.
         _primary_term:
           type: integer
+          description: The primary term for optimistic concurrency control.
         sm_policy:
           $ref: '#/components/schemas/sm._common___SMPolicy'
+          description: The complete snapshot management policy configuration.
       required:
         - _id
         - sm_policy
@@ -62888,12 +62918,15 @@ components:
       properties:
         root_cause:
           type: array
+          description: An array of root causes for the error.
           items:
             $ref: '#/components/schemas/sm._common___RootCause'
         type:
           type: string
+          description: The error type.
         reason:
           type: string
+          description: The detailed reason for the error.
       required:
         - reason
         - type
@@ -62902,8 +62935,10 @@ components:
       properties:
         error:
           $ref: '#/components/schemas/sm._common___NotFoundError'
+          description: The detailed error information.
         status:
           type: integer
+          description: The HTTP status code.
       required:
         - error
         - status
@@ -62920,15 +62955,19 @@ components:
         creation:
           type: boolean
           default: true
+          description: Whether to send notifications for a successful snapshot creation.
         deletion:
           type: boolean
           default: false
+          description: Whether to send notifications for a successful snapshot deletion.
         failure:
           type: boolean
           default: false
+          description: Whether to send notifications for failed operations.
         time_limit_exceeded:
           type: boolean
           default: false
+          description: Whether to send notifications when operations exceed time limits.
     sm._common___NotificationConfig:
       type: object
       properties:
@@ -62948,14 +62987,19 @@ components:
       properties:
         _id:
           type: string
+          description: The policy ID.
         _version:
           type: integer
+          description: The version number of the policy document.
         _seq_no:
           type: integer
+          description: The sequence number for optimistic concurrency control.
         _primary_term:
           type: integer
+          description: The primary term for optimistic concurrency control.
         sm_policy:
           $ref: '#/components/schemas/sm._common___SMPolicy'
+          description: The complete snapshot management policy configuration.
       required:
         - _id
         - _primary_term
@@ -62967,49 +63011,59 @@ components:
       properties:
         count:
           type: integer
+          description: The number of retry attempts made.
     sm._common___RootCause:
       type: object
       properties:
         type:
           type: string
+          description: The type of the root cause error.
         reason:
           type: string
+          description: Detailed explanation of the root cause.
     sm._common___ShardsInfo:
       type: object
       properties:
         total:
           type: integer
+          description: The total number of shards.
         successful:
           type: integer
+          description: The number of shards that completed successfully.
         failed:
           type: integer
+          description: The number of shards that failed.
     sm._common___SMPolicy:
       type: object
       properties:
         name:
           type: string
+          description: The unique identifier for the snapshot policy.
         description:
           type: string
         schema_version:
           type: integer
+          description: The version number of the policy schema.
         creation:
           $ref: '#/components/schemas/sm._common___CreationConfig'
         deletion:
           $ref: '#/components/schemas/sm._common___DeletionConfig'
-          description: Configuration for snapshot deletion, optional.
+          description: The configuration for snapshot deletion.
         snapshot_config:
           $ref: '#/components/schemas/sm._common___SnapshotConfig'
         notification:
           $ref: '#/components/schemas/sm._common___NotificationConfig'
         schedule:
           $ref: '#/components/schemas/sm._common___IntervalSchedule'
-          description: System-generated schedule metadata returned by the API.
+          description: The system-generated schedule metadata returned by the API.
         enabled:
           type: boolean
         last_updated_time:
           type: integer
+          description: When the policy was last modified.
         enabled_time:
           type: integer
+          description: When the policy was last enabled.
       required:
         - creation
         - description
@@ -63049,171 +63103,192 @@ components:
       properties:
         current_state:
           type: string
+          description: The current state of the policy execution.
         trigger:
           $ref: '#/components/schemas/sm._common___TriggerMetadata'
+          description: Any information about what triggered the policy execution.
         latest_execution:
           $ref: '#/components/schemas/sm._common___ExecutionMetadata'
+          description: Details about the most recent policy execution.
         retry:
           $ref: '#/components/schemas/sm._common___RetryMetadata'
+          description: Information about any retry attempts that occurred.
     sm._common___TriggerMetadata:
       type: object
       properties:
         time:
           type: integer
+          description: When the policy was triggered.
     snapshot._common___FileCountSnapshotStats:
       type: object
       properties:
         file_count:
           type: integer
           format: int32
+          description: The number of files in the snapshot.
         size_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
-      required:
-        - file_count
-        - size_in_bytes
+          description: The total size of files in the snapshot.
     snapshot._common___Repository:
       type: object
       description: The name of the repository to store the snapshot.
       properties:
         type:
           type: string
+          description: The type of the snapshot repository.
         uuid:
           $ref: '#/components/schemas/_common___Uuid'
+          description: The unique identifier for the repository.
         settings:
           $ref: '#/components/schemas/snapshot._common___RepositorySettings'
-      required:
-        - settings
-        - type
+          description: The configuration settings for the repository.
     snapshot._common___RepositorySettings:
       type: object
       description: The settings for the snapshot repository.
       properties:
         chunk_size:
           type: string
+          description: The chunk size for the repository.
         compress:
           $ref: '#/components/schemas/_common___StringifiedBoolean'
+          description: Whether compression is enabled for the repository.
         concurrent_streams:
           $ref: '#/components/schemas/_common___StringifiedInteger'
+          description: The number of concurrent streams for the repository.
         location:
           type: string
+          description: The location where snapshots are stored.
         read_only:
           $ref: '#/components/schemas/_common___StringifiedBoolean'
-      required:
-        - location
+          description: Whether the repository is read-only.
     snapshot._common___SnapshotIndexStats:
       type: object
       properties:
         shards:
           type: object
+          description: The status of individual shards in the snapshot.
           additionalProperties:
             $ref: '#/components/schemas/snapshot._common___SnapshotShardsStatus'
         shards_stats:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStats'
+          description: The statistics about snapshot shards.
         stats:
           $ref: '#/components/schemas/snapshot._common___SnapshotStats'
-      required:
-        - shards
-        - shards_stats
-        - stats
+          description: The detailed statistics about the snapshot.
     snapshot._common___SnapshotInfo:
       type: object
       properties:
         data_streams:
           type: array
+          description: The list of data streams included in the snapshot.
           items:
             type: string
         duration:
           $ref: '#/components/schemas/_common___Duration'
+          description: The total time taken to complete the snapshot.
         duration_in_millis:
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
+          description: The total time taken to complete the snapshot in milliseconds.
         end_time:
           $ref: '#/components/schemas/_common___DateTime'
+          description: The time when the snapshot completed.
         end_time_in_millis:
           $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
+          description: The time when the snapshot completed in milliseconds.
         failures:
           type: array
+          description: The list of shard failures that occurred during the snapshot.
           items:
             $ref: '#/components/schemas/snapshot._common___SnapshotShardFailure'
         include_global_state:
           type: boolean
+          description: Whether the snapshot includes the cluster state.
         indices:
           type: array
+          description: The list of indexes included in the snapshot.
           items:
             $ref: '#/components/schemas/_common___IndexName'
         metadata:
           $ref: '#/components/schemas/_common___Metadata'
+          description: The custom metadata attached to the snapshot.
         pinned_timestamp:
           $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
+          description: The timestamp when the snapshot was pinned.
         reason:
           type: string
+          description: The reason for the snapshot creation.
         remote_store_index_shallow_copy:
           type: boolean
+          description: Whether the snapshot uses remote store index shallow copy.
         snapshot:
           $ref: '#/components/schemas/_common___Name'
+          description: The name of the snapshot.
         shards:
           $ref: '#/components/schemas/_common___ShardStatistics'
+          description: The statistics about the shards included in the snapshot.
         start_time:
           $ref: '#/components/schemas/_common___DateTime'
+          description: The time when the snapshot started.
         start_time_in_millis:
           $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
+          description: The time when the snapshot started in milliseconds.
         state:
           type: string
+          description: The current state of the snapshot.
         uuid:
           $ref: '#/components/schemas/_common___Uuid'
+          description: The unique identifier for the snapshot.
         version:
           $ref: '#/components/schemas/_common___VersionString'
+          description: The version of OpenSearch when the snapshot was created.
         version_id:
           $ref: '#/components/schemas/_common___VersionNumber'
-      required:
-        - data_streams
-        - snapshot
-        - uuid
+          description: The internal version number of OpenSearch when the snapshot was created.
     snapshot._common___SnapshotShardFailure:
       type: object
       properties:
         index:
           $ref: '#/components/schemas/_common___IndexName'
+          description: The name of the index containing the failed shard.
         node_id:
           $ref: '#/components/schemas/_common___Id'
+          description: The ID of the node where the shard failure occurred.
         reason:
           type: string
+          description: The reason for the shard failure.
         shard_id:
           $ref: '#/components/schemas/_common___Id'
+          description: The ID of the failed shard.
         status:
           type: string
-      required:
-        - index
-        - reason
-        - shard_id
-        - status
+          description: The status of the failed shard.
     snapshot._common___SnapshotShardsStats:
       type: object
       properties:
         done:
           type: integer
           format: int64
+          description: The number of completed shard snapshots.
         failed:
           type: integer
           format: int64
+          description: The number of failed shard snapshots.
         finalizing:
           type: integer
           format: int64
+          description: The number of finalizing shard snapshots.
         initializing:
           type: integer
           format: int64
+          description: The number of initializing shard snapshots.
         started:
           type: integer
           format: int64
+          description: The number of started shard snapshots.
         total:
           type: integer
           format: int64
-      required:
-        - done
-        - failed
-        - finalizing
-        - initializing
-        - started
-        - total
+          description: The total number of shard snapshots.
     snapshot._common___SnapshotShardsStatsStage:
       oneOf:
         - type: string
@@ -63236,43 +63311,47 @@ components:
       properties:
         incremental:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStatsSummaryItem'
+          description: The incremental statistics for the shard snapshot.
         processed:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStatsSummaryItem'
+          description: The processed statistics for the shard snapshot.
         total:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStatsSummaryItem'
+          description: The total statistics for the shard snapshot.
         start_time_in_millis:
           $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
+          description: When the shard snapshot started in milliseconds.
         time:
           $ref: '#/components/schemas/_common___Duration'
+          description: The total time taken for the shard snapshot.
         time_in_millis:
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
-      required:
-        - incremental
-        - start_time_in_millis
-        - time_in_millis
-        - total
+          description: The total time taken for the shard snapshot in milliseconds.
     snapshot._common___SnapshotShardsStatsSummaryItem:
       type: object
       properties:
         file_count:
           type: integer
           format: int64
+          description: The number of files in the shard snapshot.
         size_in_bytes:
           $ref: '#/components/schemas/_common___ByteCount'
-      required:
-        - file_count
-        - size_in_bytes
+          description: The total size of files in the shard snapshot.
     snapshot._common___SnapshotShardsStatus:
       type: object
       properties:
         node:
           $ref: '#/components/schemas/_common___NodeId'
+          description: The ID of the node containing the shard.
         reason:
           type: string
+          description: The reason for the current shard status.
         stage:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStatsStage'
+          description: The current stage of the shard snapshot.
         stats:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStatsSummary'
+          description: The statistical summary of the shard snapshot.
       required:
         - stage
         - stats
@@ -63281,61 +63360,62 @@ components:
       properties:
         incremental:
           $ref: '#/components/schemas/snapshot._common___FileCountSnapshotStats'
+          description: The incremental statistics for the snapshot.
         processed:
           $ref: '#/components/schemas/snapshot._common___FileCountSnapshotStats'
+          description: The processed statistics for the snapshot.
         start_time_in_millis:
           $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
+          description: When the snapshot started in milliseconds.
         time:
           $ref: '#/components/schemas/_common___Duration'
+          description: The total time taken for the snapshot.
         time_in_millis:
           $ref: '#/components/schemas/_common___DurationValueUnitMillis'
+          description: The total time taken for the snapshot in milliseconds.
         total:
           $ref: '#/components/schemas/snapshot._common___FileCountSnapshotStats'
-      required:
-        - incremental
-        - start_time_in_millis
-        - time_in_millis
-        - total
+          description: The total statistics for the snapshot.
     snapshot._common___SnapshotStatus:
       type: object
       properties:
         include_global_state:
           type: boolean
+          description: Whether the snapshot includes the cluster state.
         indices:
           type: object
+          description: The status of indexes in the snapshot.
           additionalProperties:
             $ref: '#/components/schemas/snapshot._common___SnapshotIndexStats'
         repository:
           type: string
+          description: The name of the repository containing the snapshot.
         shards_stats:
           $ref: '#/components/schemas/snapshot._common___SnapshotShardsStats'
+          description: The statistics about snapshot shards.
         snapshot:
           type: string
+          description: The name of the snapshot.
         state:
           type: string
+          description: The current state of the snapshot.
         stats:
           $ref: '#/components/schemas/snapshot._common___SnapshotStats'
+          description: The detailed statistics about the snapshot.
         uuid:
           $ref: '#/components/schemas/_common___Uuid'
-      required:
-        - indices
-        - repository
-        - shards_stats
-        - snapshot
-        - state
-        - stats
-        - uuid
+          description: The unique identifier for the snapshot.
     snapshot.cleanup_repository___CleanupRepositoryResults:
       type: object
       properties:
         deleted_blobs:
-          description: Number of binary large objects (blobs) removed during cleanup.
           type: integer
           format: int64
+          description: The number of binary large objects (blobs) removed during cleanup.
         deleted_bytes:
-          description: Number of bytes freed by cleanup operations.
           type: integer
           format: int64
+          description: The number of bytes freed by cleanup operations.
       required:
         - deleted_blobs
         - deleted_bytes
@@ -63344,12 +63424,15 @@ components:
       properties:
         indices:
           type: array
+          description: The list of indexes that were restored.
           items:
             $ref: '#/components/schemas/_common___IndexName'
         snapshot:
           type: string
+          description: The name of the snapshot that was restored.
         shards:
           $ref: '#/components/schemas/_common___ShardStatistics'
+          description: Any statistics about the restored shards.
       required:
         - indices
         - shards
@@ -63359,6 +63442,7 @@ components:
       properties:
         name:
           $ref: '#/components/schemas/_common___Name'
+          description: The name of the node that verified the repository.
       required:
         - name
     sql._common___Cursor:
