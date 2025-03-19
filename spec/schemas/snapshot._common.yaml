@@ -11,261 +11,273 @@ components:
       properties:
         data_streams:
           type: array
+          description: The list of data streams included in the snapshot.
           items:
             type: string
         duration:
           $ref: '_common.yaml#/components/schemas/Duration'
+          description: The total time taken to complete the snapshot.
         duration_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+          description: The total time taken to complete the snapshot in milliseconds.
         end_time:
           $ref: '_common.yaml#/components/schemas/DateTime'
+          description: The time when the snapshot completed.
         end_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+          description: The time when the snapshot completed in milliseconds.
         failures:
           type: array
+          description: The list of shard failures that occurred during the snapshot.
           items:
             $ref: '#/components/schemas/SnapshotShardFailure'
         include_global_state:
           type: boolean
+          description: Whether the snapshot includes the cluster state.
         indices:
           type: array
+          description: The list of indices included in the snapshot.
           items:
             $ref: '_common.yaml#/components/schemas/IndexName'
         metadata:
           $ref: '_common.yaml#/components/schemas/Metadata'
+          description: The custom metadata attached to the snapshot.
         pinned_timestamp:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+          description: The timestamp when the snapshot was pinned.
         reason:
           type: string
+          description: The reason for the snapshot creation.
         remote_store_index_shallow_copy:
           type: boolean
+          description: Whether the snapshot uses remote store index shallow copy.
         snapshot:
           $ref: '_common.yaml#/components/schemas/Name'
+          description: The name of the snapshot.
         shards:
           $ref: '_common.yaml#/components/schemas/ShardStatistics'
+          description: The statistics about the shards included in the snapshot.
         start_time:
           $ref: '_common.yaml#/components/schemas/DateTime'
+          description: The time when the snapshot started.
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+          description: The time when the snapshot started in milliseconds.
         state:
           type: string
+          description: The current state of the snapshot.
         uuid:
           $ref: '_common.yaml#/components/schemas/Uuid'
+          description: The unique identifier for the snapshot.
         version:
           $ref: '_common.yaml#/components/schemas/VersionString'
+          description: The version of OpenSearch when the snapshot was created.
         version_id:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
-      required:
-        - data_streams
-        - snapshot
-        - uuid
+          description: The internal version number of OpenSearch when the snapshot was created.
+
     SnapshotShardFailure:
       type: object
       properties:
         index:
           $ref: '_common.yaml#/components/schemas/IndexName'
+          description: The name of the index containing the failed shard.
         node_id:
           $ref: '_common.yaml#/components/schemas/Id'
+          description: The ID of the node where the shard failure occurred.
         reason:
           type: string
+          description: The reason for the shard failure.
         shard_id:
           $ref: '_common.yaml#/components/schemas/Id'
+          description: The ID of the failed shard.
         status:
           type: string
-      required:
-        - index
-        - reason
-        - shard_id
-        - status
+          description: The status of the failed shard.
+
     Repository:
       type: object
       properties:
         type:
           type: string
+          description: The type of the snapshot repository.
         uuid:
           $ref: '_common.yaml#/components/schemas/Uuid'
+          description: The unique identifier for the repository.
         settings:
           $ref: '#/components/schemas/RepositorySettings'
-      required:
-        - settings
-        - type
+          description: The configuration settings for the repository.
+
     RepositorySettings:
       type: object
       properties:
         chunk_size:
           type: string
+          description: The chunk size for the repository.
         compress:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+          description: Whether compression is enabled for the repository.
         concurrent_streams:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+          description: The number of concurrent streams for the repository.
         location:
           type: string
+          description: The location where snapshots are stored.
         read_only:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
-      required:
-        - location
+          description: Whether the repository is read-only.
+
     SnapshotStatus:
       type: object
       properties:
         include_global_state:
           type: boolean
+          description: Whether the snapshot includes the cluster state.
         indices:
           type: object
+          description: The status of indices in the snapshot.
           additionalProperties:
             $ref: '#/components/schemas/SnapshotIndexStats'
         repository:
           type: string
+          description: The name of the repository containing the snapshot.
         shards_stats:
           $ref: '#/components/schemas/SnapshotShardsStats'
+          description: The statistics about snapshot shards.
         snapshot:
           type: string
+          description: The name of the snapshot.
         state:
           type: string
+          description: The current state of the snapshot.
         stats:
           $ref: '#/components/schemas/SnapshotStats'
+          description: The detailed statistics about the snapshot.
         uuid:
           $ref: '_common.yaml#/components/schemas/Uuid'
-      required:
-        - indices
-        - repository
-        - shards_stats
-        - snapshot
-        - state
-        - stats
-        - uuid
+          description: The unique identifier for the snapshot.
+
     SnapshotIndexStats:
       type: object
       properties:
         shards:
           type: object
+          description: The status of individual shards in the snapshot.
           additionalProperties:
             $ref: '#/components/schemas/SnapshotShardsStatus'
         shards_stats:
           $ref: '#/components/schemas/SnapshotShardsStats'
+          description: The statistics about snapshot shards.
         stats:
           $ref: '#/components/schemas/SnapshotStats'
-      required:
-        - shards
-        - shards_stats
-        - stats
+          description: The detailed statistics about the snapshot.
+
     SnapshotShardsStatus:
       type: object
       properties:
         node:
           $ref: '_common.yaml#/components/schemas/NodeId'
+          description: The ID of the node containing the shard.
         reason:
           type: string
+          description: The reason for the current shard status.
         stage:
           $ref: '#/components/schemas/SnapshotShardsStatsStage'
+          description: The current stage of the shard snapshot.
         stats:
           $ref: '#/components/schemas/SnapshotShardsStatsSummary'
-      required:
-        - stage
-        - stats
-    SnapshotShardsStatsStage:
-      oneOf:
-        - type: string
-          const: DONE
-          description: Number of shards in the snapshot that were successfully stored in the repository.
-        - type: string
-          const: FAILURE
-          description: Number of shards in the snapshot that were not successfully stored in the repository.
-        - type: string
-          const: FINALIZE
-          description: Number of shards in the snapshot that are in the finalizing stage of being stored in the repository.
-        - type: string
-          const: INIT
-          description: Number of shards in the snapshot that are in the initializing stage of being stored in the repository.
-        - type: string
-          const: STARTED
-          description: Number of shards in the snapshot that are in the started stage of being stored in the repository.
+          description: The statistical summary of the shard snapshot.
+
     SnapshotShardsStatsSummary:
       type: object
       properties:
         incremental:
           $ref: '#/components/schemas/SnapshotShardsStatsSummaryItem'
+          description: The incremental statistics for the shard snapshot.
         processed:
           $ref: '#/components/schemas/SnapshotShardsStatsSummaryItem'
+          description: The processed statistics for the shard snapshot.
         total:
           $ref: '#/components/schemas/SnapshotShardsStatsSummaryItem'
+          description: The total statistics for the shard snapshot.
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+          description: When the shard snapshot started in milliseconds.
         time:
           $ref: '_common.yaml#/components/schemas/Duration'
+          description: The total time taken for the shard snapshot.
         time_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
-      required:
-        - incremental
-        - start_time_in_millis
-        - time_in_millis
-        - total
+          description: The total time taken for the shard snapshot in milliseconds.
+
     SnapshotShardsStatsSummaryItem:
       type: object
       properties:
         file_count:
           type: integer
           format: int64
+          description: The number of files in the shard snapshot.
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
-      required:
-        - file_count
-        - size_in_bytes
+          description: The total size of files in the shard snapshot.
+
     SnapshotShardsStats:
       type: object
       properties:
         done:
           type: integer
           format: int64
+          description: The number of completed shard snapshots.
         failed:
           type: integer
           format: int64
+          description: The number of failed shard snapshots.
         finalizing:
           type: integer
           format: int64
+          description: The number of finalizing shard snapshots.
         initializing:
           type: integer
           format: int64
+          description: The number of initializing shard snapshots.
         started:
           type: integer
           format: int64
+          description: The number of started shard snapshots.
         total:
           type: integer
           format: int64
-      required:
-        - done
-        - failed
-        - finalizing
-        - initializing
-        - started
-        - total
+          description: The total number of shard snapshots.
+
     SnapshotStats:
       type: object
       properties:
         incremental:
           $ref: '#/components/schemas/FileCountSnapshotStats'
+          description: The incremental statistics for the snapshot.
         processed:
           $ref: '#/components/schemas/FileCountSnapshotStats'
+          description: The processed statistics for the snapshot.
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+          description: When the snapshot started in milliseconds.
         time:
           $ref: '_common.yaml#/components/schemas/Duration'
+          description: The total time taken for the snapshot.
         time_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+          description: The total time taken for the snapshot in milliseconds.
         total:
           $ref: '#/components/schemas/FileCountSnapshotStats'
-      required:
-        - incremental
-        - start_time_in_millis
-        - time_in_millis
-        - total
+          description: The total statistics for the snapshot.
+
     FileCountSnapshotStats:
       type: object
       properties:
         file_count:
           type: integer
           format: int32
+          description: The number of files in the snapshot.
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
-      required:
-        - file_count
-        - size_in_bytes
+          description: The total size of files in the snapshot.

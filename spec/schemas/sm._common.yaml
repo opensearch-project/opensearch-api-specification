@@ -6,41 +6,50 @@ info:
 paths: {}
 components:
   schemas:
-    # The request body for creating/updating a policy
     CreateUpdatePolicyRequest:
       type: object
       properties:
         description:
           type: string
+          description: "A user-provided description of the snapshot policy."
         creation:
           $ref: '#/components/schemas/CreationConfig'
+          description: "The configuration for the snapshot creation schedule."
         deletion:
           $ref: '#/components/schemas/DeletionConfig'
+          description: "The configuration for snapshot deletion rules and schedule."
         snapshot_config:
           $ref: '#/components/schemas/SnapshotConfig'
+          description: "The core configuration for how snapshots should be created and managed."
         notification:
           $ref: '#/components/schemas/NotificationConfig'
+          description: "The configuration for notification settings and conditions."
         enabled:
           type: boolean
-          description: 'Whether the policy should be enabled at creation. Default: true'
+          description: "Whether the policy should be enabled at creation."
+          default: true
       required:
         - creation
         - snapshot_config
 
-    # The main returned policy response object after GET, POST, PUT
     PolicyResponse:
       type: object
       properties:
         _id:
           type: string
+          description: "The policy ID."
         _version:
           type: integer
+          description: "The version number of the policy document"
         _seq_no:
           type: integer
+          description: "The sequence number for optimistic concurrency control."
         _primary_term:
           type: integer
+          description: "The rrimary term for optimistic concurrency control."
         sm_policy:
           $ref: '#/components/schemas/SMPolicy'
+          description: "The complete snapshot management policy configuration."
       required:
         - _id
         - _primary_term
@@ -48,34 +57,37 @@ components:
         - _version
         - sm_policy
 
-    # The internal structure of sm_policy
     SMPolicy:
       type: object
       properties:
         name:
           type: string
+          description: "The unique identifier for the snapshot policy"
         description:
           type: string
         schema_version:
           type: integer
+          description: "The version number of the policy schema."
         creation:
           $ref: '#/components/schemas/CreationConfig'
         deletion:
           $ref: '#/components/schemas/DeletionConfig'
-          description: Configuration for snapshot deletion, optional.
+          description: The configuration for snapshot deletion.
         snapshot_config:
           $ref: '#/components/schemas/SnapshotConfig'
         notification:
           $ref: '#/components/schemas/NotificationConfig'
         schedule:
           $ref: '#/components/schemas/IntervalSchedule'
-          description: System-generated schedule metadata returned by the API.
+          description: The system-generated schedule metadata returned by the API.
         enabled:
           type: boolean
         last_updated_time:
           type: integer
+          description: "When the policy was last modified."
         enabled_time:
           type: integer
+          description: "When the policy was last enabled."
       required:
         - creation
         - description
@@ -87,8 +99,10 @@ components:
       properties:
         total_policies:
           type: integer
+          description: "The total number of policies found."
         policies:
           type: array
+          description: "A list of snapshot management policies."
           items:
             $ref: '#/components/schemas/ListedPolicy'
       required:
@@ -100,17 +114,20 @@ components:
       properties:
         _id:
           type: string
+          description: "The policy ID."
         _seq_no:
           type: integer
+          description: "The sequence number for optimistic concurrency control."
         _primary_term:
           type: integer
+          description: "The primary term for optimistic concurrency control."
         sm_policy:
           $ref: '#/components/schemas/SMPolicy'
+          description: "The complete snapshot management policy configuration"
       required:
         - _id
         - sm_policy
 
-    # Creation and Deletion Configurations
     CreationConfig:
       type: object
       properties:
@@ -118,7 +135,7 @@ components:
           $ref: '#/components/schemas/CronSchedule'
         time_limit:
           type: string
-          description: Maximum time for snapshot creation.
+          description: The maximum amount of time for allowed snapshot creation.
       required:
         - schedule
 
@@ -131,7 +148,7 @@ components:
           $ref: '#/components/schemas/DeletionCondition'
         time_limit:
           type: string
-      # deletion is optional as per docs, so no required block here.
+          description: "The maximum amount of time allowed for snapshot deletion operations."
 
     DeletionCondition:
       type: object
@@ -142,10 +159,6 @@ components:
           type: integer
         min_count:
           type: integer
-      # Not all are mandatory according to the doc, min_count default 1
-      # To align strictly with doc, remove required:
-      # required:
-      #   - min_count
 
     SnapshotConfig:
       type: object
@@ -190,8 +203,10 @@ components:
       properties:
         expression:
           type: string
+          description: "The cron expression that defines the schedule."
         timezone:
           type: string
+          description: "The timezone used for the cron schedule."
       required:
         - expression
         - timezone
@@ -207,10 +222,13 @@ components:
       properties:
         start_time:
           type: integer
+          description: "When the interval schedule should start."
         period:
           type: integer
+          description: "The number of time units between executions."
         unit:
           type: string
+          description: "The time unit for the interval period (Days, Hours, or Minutes)"
           enum: [Days, Hours, Minutes]
       required:
         - period
@@ -237,15 +255,19 @@ components:
         creation:
           type: boolean
           default: true
+          description: "Whether to send notifications for a successful snapshot creation."
         deletion:
           type: boolean
           default: false
+          description: "Whether to send notifications for a successful snapshot deletion."
         failure:
           type: boolean
           default: false
+          description: "Whether to send notifications for failed operations."
         time_limit_exceeded:
           type: boolean
           default: false
+          description: "Whether to send notifications when operations exceed time limits."
 
     PolicyExplanation:
       type: object
@@ -276,26 +298,33 @@ components:
       properties:
         current_state:
           type: string
+          description: "The current state of the policy execution."
         trigger:
           $ref: '#/components/schemas/TriggerMetadata'
+          description: "Any information about what triggered the policy execution."
         latest_execution:
           $ref: '#/components/schemas/ExecutionMetadata'
+          description: "Details about the most recent policy execution."
         retry:
           $ref: '#/components/schemas/RetryMetadata'
+          description: "Information about any retry attempts that occured."
 
     TriggerMetadata:
       type: object
       properties:
         time:
           type: integer
+          description: "When the policy was triggered."
 
     ExecutionInfo:
       type: object
       properties:
         message:
           type: string
+          description: "A detailed message about the policy execution result."
         cause:
           type: string
+          description: "The reason policy execution failed, if applicable"
 
     ExecutionMetadata:
       type: object
@@ -308,36 +337,48 @@ components:
       properties:
         count:
           type: integer
+          description: "The number of retry attempts made."
 
     ShardsInfo:
       type: object
       properties:
         total:
           type: integer
+          description: "The total number of shards."
         successful:
           type: integer
+          description: "The number of shards that completed successfully."
         failed:
           type: integer
+          description: "The number of shards that failed."
 
     DeletePolicyResponse:
       type: object
       properties:
         _index:
           type: string
+          description: "The index name where the policy was stored."
         _id:
           type: string
+          description: "The ID of the deleted policy."
         _version:
           type: integer
+          description: "The version number of the operation."
         result:
           type: string
+          description: "The result of the delete operation."
         forced_refresh:
           type: boolean
+          description: "Whether a refresh was forced after the operation."
         _shards:
           $ref: '#/components/schemas/ShardsInfo'
+          description: "Information about shard operations"
         _seq_no:
           type: integer
+          description: "The sequence number for optimistic concurrency control."
         _primary_term:
           type: integer
+          description: "The primary term for optimistic concurrency control."
       required:
         - _id
         - _index
@@ -353,20 +394,25 @@ components:
       properties:
         type:
           type: string
+          description: "The type of the root cause error."
         reason:
           type: string
+          description: "Detailed explanation of the root cause"
 
     NotFoundError:
       type: object
       properties:
         root_cause:
           type: array
+          description: "An array of root causes for the error."
           items:
             $ref: '#/components/schemas/RootCause'
         type:
           type: string
+          description: "The error type."
         reason:
           type: string
+          description: "The detailed reason for the error."
       required:
         - reason
         - type
@@ -376,8 +422,10 @@ components:
       properties:
         error:
           $ref: '#/components/schemas/NotFoundError'
+          description: "The detailed error information."
         status:
           type: integer
+          description: "The HTTP status code."
       required:
         - error
         - status
@@ -387,5 +435,7 @@ components:
       properties:
         error:
           type: string
+          description: "An error message that describes the bad request."
         status:
           type: integer
+          description: "The HTTP status code."
