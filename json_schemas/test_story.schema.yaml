@@ -190,15 +190,21 @@ definitions:
     type: object
     properties:
       status:
-        type: integer
-        description: The expected HTTP status code. Default to 200.
-        default: 200
+        oneOf:
+          - type: integer
+            description: The expected HTTP status code.
+          - type: array
+            description: List of acceptable HTTP status codes.
+            items:
+              type: integer
+            minItems: 1
       content_type:
         type: string
         default: application/json
       payload:
         $ref: '#/definitions/Payload'
-    required: [status]
+    required:
+      - status
     additionalProperties: false
 
   ActualResponse:
