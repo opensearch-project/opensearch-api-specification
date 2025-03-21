@@ -5,6 +5,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Added
+
+- Added defaults for Snapshot APIs ([#830](https://github.com/opensearch-project/opensearch-api-specification/pull/830))
+- Added defaults for Snapshot API request body fields ([#846](https://github.com/opensearch-project/opensearch-api-specification/pull/846/))
 - Added specs for LTR plugin for stats endpoints ([#786](https://github.com/opensearch-project/opensearch-api-specification/issues/786/))
 - Added defaults for Cluster APIs ([#824](https://github.com/opensearch-project/opensearch-api-specification/pull/824/))
 - Added `aggs` alias for nested aggregations ([#818](https://github.com/opensearch-project/opensearch-api-specification/pull/818))
@@ -65,6 +68,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `SimplePatternTokenizer` and `SimplePatternSplitTokenizer` ([#820](https://github.com/opensearch-project/opensearch-api-specification/pull/820))
 - Added `optional_extended_plugins` field to `PluginStats` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 - Added `id` & `group_by` fields to `TopQuery` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
+- Added `normalizer` to `WildcardProperty` ([#847](https://github.com/opensearch-project/opensearch-api-specification/pull/847))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
