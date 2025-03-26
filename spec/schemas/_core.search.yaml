@@ -35,10 +35,13 @@ components:
         - relation
         - value
     TotalHitsRelation:
-      type: string
-      enum:
-        - eq
-        - gte
+      oneOf:
+        - type: string
+          const: eq
+          description: Accurate.
+        - type: string
+          const: gte
+          description: Lower bound, including returned events or sequences.
     Hit:
       type: object
       properties:
@@ -245,7 +248,7 @@ components:
         delegate:
           type: string
         delegate_debug:
-          $ref: '#/components/schemas/AggregationProfileDebug'
+          $ref: '#/components/schemas/AggregationProfileDelegateDebug'
         chars_fetched:
           type: integer
           format: int32
@@ -286,6 +289,11 @@ components:
           type: array
           items:
             type: string
+        map_reducer:
+          type: string
+    AggregationProfileDelegateDebug:
+      type: object
+      properties:
         segments_with_doc_count_field:
           type: integer
           format: int32
@@ -302,8 +310,6 @@ components:
         segments_collected:
           type: integer
           format: int32
-        map_reducer:
-          type: string
     AggregationProfileDelegateDebugFilter:
       type: object
       properties:
@@ -474,9 +480,11 @@ components:
       type: object
       properties:
         load_source:
-          type: number
+          type: integer
+          format: int32
         load_source_count:
-          type: number
+          type: integer
+          format: int32
         load_stored_fields:
           type: integer
           format: int32
@@ -507,9 +515,12 @@ components:
           format: int32
     Suggest:
       oneOf:
-        - $ref: '#/components/schemas/CompletionSuggest'
-        - $ref: '#/components/schemas/PhraseSuggest'
-        - $ref: '#/components/schemas/TermSuggest'
+        - title: completion
+          $ref: '#/components/schemas/CompletionSuggest'
+        - title: phrase
+          $ref: '#/components/schemas/PhraseSuggest'
+        - title: term
+          $ref: '#/components/schemas/TermSuggest'
     CompletionSuggest:
       allOf:
         - $ref: '#/components/schemas/SuggestBase'
@@ -559,8 +570,10 @@ components:
     Context:
       description: Text or location that we want similar documents for or a lookup to a document's field for the text.
       oneOf:
-        - type: string
-        - $ref: '_common.yaml#/components/schemas/GeoLocation'
+        - title: category
+          type: string
+        - title: location
+          $ref: '_common.yaml#/components/schemas/GeoLocation'
     SuggestBase:
       type: object
       properties:
@@ -596,7 +609,7 @@ components:
           type: string
         score:
           type: number
-          format: float
+          format: double
         highlighted:
           type: string
         collate_match:
@@ -624,16 +637,15 @@ components:
           type: string
         score:
           type: number
-          format: float
-        freq:
-          type: number
           format: double
+        freq:
+          type: integer
+          format: int64
         highlighted:
           type: string
         collate_match:
           type: boolean
       required:
-        - freq
         - score
         - text
     TrackHits:
@@ -643,8 +655,10 @@ components:
         response does not include the total number of hits matching the query.
         Default is `10,000` hits.
       oneOf:
-        - type: boolean
-        - type: integer
+        - title: enabled
+          type: boolean
+        - title: count
+          type: integer
           format: int32
     SourceConfigParam:
       description: |-
@@ -927,6 +941,295 @@ components:
         text:
           description: The global suggest text, which avoids repetition when the same text is used in several suggesters.
           type: string
+      additionalProperties:
+        title: suggesters
+        description: The named suggesters.
+        $ref: '#/components/schemas/FieldSuggester'
+    FieldSuggester:
+      allOf:
+        - type: object
+          properties:
+            prefix:
+              type: string
+            regex:
+              type: string
+            text:
+              type: string
+        - type: object
+          properties:
+            completion:
+              $ref: '#/components/schemas/CompletionSuggester'
+            phrase:
+              $ref: '#/components/schemas/PhraseSuggester'
+            term:
+              $ref: '#/components/schemas/TermSuggester'
+          minProperties: 1
+          maxProperties: 1
+    CompletionSuggester:
+      allOf:
+        - $ref: '#/components/schemas/SuggesterBase'
+        - type: object
+          properties:
+            contexts:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompletionContext'
+            fuzzy:
+              $ref: '#/components/schemas/SuggestFuzziness'
+            regex:
+              type: string
+            skip_duplicates:
+              type: boolean
+    PhraseSuggester:
+      allOf:
+        - $ref: '#/components/schemas/SuggesterBase'
+        - type: object
+          properties:
+            collate:
+              $ref: '#/components/schemas/PhraseSuggestCollate'
+            confidence:
+              type: number
+              format: double
+            direct_generator:
+              type: array
+              items:
+                $ref: '#/components/schemas/DirectGenerator'
+            force_unigrams:
+              type: boolean
+            gram_size:
+              type: integer
+              format: int32
+            highlight:
+              $ref: '#/components/schemas/PhraseSuggestHighlight'
+            max_errors:
+              type: number
+              format: double
+            real_word_error_likelihood:
+              type: number
+              format: double
+            separator:
+              type: string
+            shard_size:
+              type: integer
+              format: int32
+            smoothing:
+              $ref: '#/components/schemas/SmoothingModel'
+            text:
+              type: string
+            token_limit:
+              type: integer
+              format: int32
+    SuggesterBase:
+      type: object
+      properties:
+        analyzer:
+          type: string
+        field:
+          type: string
+        size:
+          type: integer
+          format: int32
+      required:
+        - field
+    CompletionContext:
+      oneOf:
+        - title: context
+          $ref: '#/components/schemas/Context'
+        - type: object
+          properties:
+            boost:
+              type: number
+              format: double
+            context:
+              $ref: '#/components/schemas/Context'
+            neighbours:
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/GeoHashPrecision'
+            precision:
+              $ref: '_common.yaml#/components/schemas/GeoHashPrecision'
+            prefix:
+              type: boolean
+          required:
+            - context
+    SuggestFuzziness:
+      type: object
+      properties:
+        fuzziness:
+          type: string
+        min_length:
+          type: integer
+          format: int32
+        prefix_length:
+          type: integer
+          format: int32
+        transpositions:
+          type: boolean
+        unicode_aware:
+          type: boolean
+      required:
+        - fuzziness
+        - min_length
+        - prefix_length
+        - transpositions
+        - unicode_aware
+    PhraseSuggestCollate:
+      type: object
+      properties:
+        params:
+          type: object
+          additionalProperties: true
+        prune:
+          type: boolean
+        query:
+          $ref: '#/components/schemas/PhraseSuggestCollateQuery'
+      required:
+        - query
+    PhraseSuggestCollateQuery:
+      type: object
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+    DirectGenerator:
+      type: object
+      properties:
+        field:
+          type: string
+        max_edits:
+          type: integer
+          format: int32
+        max_inspections:
+          type: number
+          format: float
+        max_term_freq:
+          type: number
+          format: float
+        min_doc_freq:
+          type: number
+          format: float
+        min_word_length:
+          type: integer
+          format: int32
+        post_filter:
+          type: string
+        pre_filter:
+          type: string
+        prefix_length:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        suggest_mode:
+          $ref: '_common.yaml#/components/schemas/SuggestMode'
+      required:
+        - field
+    PhraseSuggestHighlight:
+      type: object
+      properties:
+        post_tag:
+          type: string
+        pre_tag:
+          type: string
+      required:
+        - post_tag
+        - pre_tag
+    SmoothingModel:
+      type: object
+      properties:
+        laplace:
+          $ref: '#/components/schemas/LaplaceSmoothingModel'
+        linear_interpolation:
+          $ref: '#/components/schemas/LinearInterpolationSmoothingModel'
+        stupid_backoff:
+          $ref: '#/components/schemas/StupidBackoffSmoothingModel'
+      minProperties: 1
+      maxProperties: 1
+    LaplaceSmoothingModel:
+      type: object
+      properties:
+        alpha:
+          type: number
+          format: double
+      required:
+        - alpha
+    LinearInterpolationSmoothingModel:
+      type: object
+      properties:
+        bigram_lambda:
+          type: number
+          format: double
+        trigram_lambda:
+          type: number
+          format: double
+        unigram_lambda:
+          type: number
+          format: double
+      required:
+        - bigram_lambda
+        - trigram_lambda
+        - unigram_lambda
+    StupidBackoffSmoothingModel:
+      type: object
+      properties:
+        discount:
+          type: number
+          format: double
+      required:
+        - discount
+    TermSuggester:
+      allOf:
+        - $ref: '#/components/schemas/SuggesterBase'
+        - type: object
+          properties:
+            lowercase_terms:
+              type: boolean
+            max_edits:
+              type: integer
+              format: int32
+            max_inspections:
+              type: integer
+              format: int32
+            max_term_freq:
+              type: number
+              format: float
+            min_doc_freq:
+              type: number
+              format: float
+            min_word_length:
+              type: integer
+              format: int32
+            prefix_length:
+              type: integer
+              format: int32
+            shard_size:
+              type: integer
+              format: int32
+            sort:
+              $ref: '#/components/schemas/SuggestSort'
+            string_distance:
+              $ref: '#/components/schemas/StringDistance'
+            suggest_mode:
+              $ref: '_common.yaml#/components/schemas/SuggestMode'
+            text:
+              type: string
+    SuggestSort:
+      type: string
+      enum:
+        - frequency
+        - score
+    StringDistance:
+      type: string
+      enum:
+        - damerau_levenshtein
+        - internal
+        - jaro_winkler
+        - levenshtein
+        - ngram
     PointInTimeReference:
       type: object
       properties:

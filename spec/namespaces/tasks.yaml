@@ -105,7 +105,7 @@ components:
     tasks.cancel::path.task_id:
       in: path
       name: task_id
-      description: ID of the task.
+      description: The task ID.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
@@ -113,14 +113,14 @@ components:
     tasks.cancel::query.actions:
       in: query
       name: actions
-      description: Comma-separated list or wildcard expression of actions used to limit the request.
+      description: A comma-separated list of actions that should be returned. Keep empty to return all.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/StringOrStringArray'
       style: form
     tasks.cancel::query.nodes:
       in: query
       name: nodes
-      description: Comma-separated list of node IDs or names used to limit the request.
+      description: A comma-separated list of node IDs or names used to limit the returned information. Use `_local` to return information from the node you're connecting to, specify the node name to get information from a specific node, or keep the parameter empty to get information from all nodes.
       schema:
         type: array
         items:
@@ -129,14 +129,14 @@ components:
     tasks.cancel::query.parent_task_id:
       in: query
       name: parent_task_id
-      description: Parent task ID used to limit the tasks.
+      description: Returns tasks with a specified parent task ID (`node_id:task_number`). Keep empty or set to -1 to return all.
       schema:
         type: string
       style: form
     tasks.cancel::query.wait_for_completion:
       in: query
       name: wait_for_completion
-      description: Should the request block until the cancellation of the task and its descendant tasks is completed. Defaults to false
+      description: Waits for the matching task to complete. When `true`, the request is blocked until the task has completed.
       schema:
         type: boolean
         default: false
@@ -144,7 +144,7 @@ components:
     tasks.get::path.task_id:
       in: path
       name: task_id
-      description: ID of the task.
+      description: The task ID.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -152,16 +152,15 @@ components:
     tasks.get::query.timeout:
       in: query
       name: timeout
-      description: |-
-        Period to wait for a response.
-        If no response is received before the timeout expires, the request fails and returns an error.
+      description: The amount of time to wait for a response. 
       schema:
+        default: 30s
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
     tasks.get::query.wait_for_completion:
       in: query
       name: wait_for_completion
-      description: If `true`, the request blocks until the task has completed.
+      description: Waits for the matching task to complete. When `true`, the request is blocked until the task has completed.
       schema:
         type: boolean
         default: false
@@ -169,14 +168,14 @@ components:
     tasks.list::query.actions:
       in: query
       name: actions
-      description: Comma-separated list or wildcard expression of actions used to limit the request.
+      description: A comma-separated list of actions that should be returned. Keep empty to return all.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/StringOrStringArray'
       style: form
     tasks.list::query.detailed:
       in: query
       name: detailed
-      description: If `true`, the response includes detailed information about shard recoveries.
+      description: When `true`, the response includes detailed information about shard recoveries.
       schema:
         type: boolean
         default: false
@@ -184,39 +183,40 @@ components:
     tasks.list::query.group_by:
       in: query
       name: group_by
-      description: Key used to group tasks in the response.
+      description: Groups tasks by parent/child relationships or nodes.
       schema:
         $ref: '../schemas/tasks._common.yaml#/components/schemas/GroupBy'
+        default: nodes
       style: form
     tasks.list::query.nodes:
       name: nodes
       in: query
-      description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+      description: A comma-separated list of node IDs or names used to limit the returned information. Use `_local` to return information from the node you're connecting to, specify the node name to get information from a specific node, or keep the parameter empty to get information from all nodes.
       style: form
       schema:
         type: array
         items:
           type: string
-        description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+        description: A comma-separated list of node IDs or names used to limit the returned information. Use `_local` to return information from the node you're connecting to, specify the node name to get information from a specific node, or keep the parameter empty to get information from all nodes.
       explode: true
     tasks.list::query.parent_task_id:
       in: query
       name: parent_task_id
-      description: Parent task ID used to limit returned information. To return all tasks, omit this parameter or use a value of `-1`.
+      description: Returns tasks with a specified parent task ID (`node_id:task_number`). Keep empty or set to -1 to return all.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
       style: form
     tasks.list::query.timeout:
       in: query
       name: timeout
-      description: Period to wait for a response. If no response is received before the timeout expires, the request fails and returns an error.
+      description: The amount of time to wait for a response. 
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
     tasks.list::query.wait_for_completion:
       in: query
       name: wait_for_completion
-      description: If `true`, the request blocks until the operation is complete.
+      description: Waits for the matching task to complete. When `true`, the request is blocked until the task has completed.
       schema:
         type: boolean
         default: false

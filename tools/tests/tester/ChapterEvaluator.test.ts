@@ -73,6 +73,37 @@ describe('ChapterEvaluator', () => {
       )
     })
 
+    test('a successful response for array of status codes', async () => {
+      mock.onAny().reply(200, '{"acknowledged":true}', { "content-type": "application/json" })
+
+      expect(
+        await chapter_evaluator.evaluate({
+          synopsis: 'Perform a PUT /{index} with multiple possible status codes.',
+          path: '/{index}',
+          method: 'PUT',
+          parameters: {
+            index: 'test'
+          },
+          request: {
+            payload: {}
+          },
+          response: {
+            status: [200, 202]  // Expecting either 200 or 202
+          }
+        }, false, story_outputs)).toEqual(
+        {
+          title: 'Perform a PUT /{index} with multiple possible status codes.',
+          path: 'PUT /{index}',
+          operation: { method: 'PUT', path: '/{index}' },
+          request: { parameters: { index: { result: 'PASSED' } }, request: { result: 'PASSED' } },
+          response: { output_values: { result: 'SKIPPED' }, payload_body: { result: 'PASSED' }, payload_schema: { result: 'PASSED' }, status: { result: 'PASSED' } },
+          overall: {
+            result: Result.PASSED
+          }
+        }
+      )
+    })
+
     test('retries', async () => {
       var count = 0
 

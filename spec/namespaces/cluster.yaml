@@ -834,7 +834,7 @@ components:
     cluster.allocation_explain::query.include_yes_decisions:
       in: query
       name: include_yes_decisions
-      description: When `true`, returns any `YES` decisions in the allocation explanation.
+      description: When `true`, returns any `YES` decisions in the allocation explanation. `YES` decisions indicate when a particular shard allocation attempt was successful for the given node.
       schema:
         type: boolean
         default: false
@@ -852,7 +852,7 @@ components:
     cluster.delete_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
-      description: Operation timeout for connection to cluster-manager node.
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       x-version-added: '2.0'
@@ -897,6 +897,7 @@ components:
       style: simple
     cluster.exists_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
@@ -932,14 +933,18 @@ components:
       style: simple
     cluster.get_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+        default: 30s
       x-version-added: '2.0'
     cluster.get_component_template::query.flat_settings:
       in: query
       name: flat_settings
-      description: If `true`, returns settings in flat format.
+      description: |- 
+        Whether to return settings in the flat form, which can improve readability, especially for heavily nested settings.
+        For example, the flat form of `"cluster": { "max_shards_per_node": 500 }` is `"cluster.max_shards_per_node": "500"`.
       schema:
         type: boolean
         default: false
@@ -973,6 +978,7 @@ components:
       required: true
     cluster.get_settings::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
@@ -980,7 +986,9 @@ components:
     cluster.get_settings::query.flat_settings:
       in: query
       name: flat_settings
-      description: When `true`, returns cluster settings in a flat format.
+      description: |- 
+        Whether to return settings in the flat form, which can improve readability, especially for heavily nested settings.
+        For example, the flat form of `"cluster": { "max_shards_per_node": 500 }` is `"cluster.max_shards_per_node": "500"`.
       schema:
         type: boolean
         default: false
@@ -1033,6 +1041,7 @@ components:
     cluster.health::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       x-version-added: '2.0'
@@ -1041,6 +1050,7 @@ components:
       name: expand_wildcards
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
+        default: open
       style: form
     cluster.health::query.level:
       in: query
@@ -1069,6 +1079,7 @@ components:
     cluster.health::query.timeout:
       in: query
       name: timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
@@ -1076,6 +1087,7 @@ components:
       in: query
       name: wait_for_active_shards
       schema:
+        default: 0
         $ref: '../schemas/_common.yaml#/components/schemas/WaitForActiveShards'
       style: form
     cluster.health::query.wait_for_events:
@@ -1098,6 +1110,7 @@ components:
       description: Whether to wait until there are no relocating shards in the cluster.
       schema:
         type: boolean
+        default: false
       style: form
     cluster.health::query.wait_for_nodes:
       in: query
@@ -1117,6 +1130,7 @@ components:
       style: form
     cluster.pending_tasks::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
@@ -1145,7 +1159,7 @@ components:
       name: node_ids
       description: |-
         A comma-separated list of node IDs to exclude
-        from the voting configuration. When using this setting, you cannot also specify `node_names`.
+        from the voting configuration. When using this setting, you cannot also specify `node_names`. Either `node_ids` or `node_names` are required to receive a valid response.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Ids'
       style: form
@@ -1154,7 +1168,7 @@ components:
       name: node_names
       description: |-
         A comma-separated list of node names to exclude from the
-        voting configuration. When using this setting, you cannot also specify `node_ids`.
+        voting configuration. When using this setting, you cannot also specify `node_ids`. Either `node_ids` or `node_names` are required to receive a valid response.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Names'
       style: form
@@ -1174,16 +1188,17 @@ components:
       name: name
       description: |-
         The name of the component template to create.
-        OpenSearch includes the following built-in component templates: `logs-mappings`; 'logs-settings`; `metrics-mappings`; `metrics-settings`;`synthetics-mapping`; `synthetics-settings`.
+        OpenSearch includes the following built-in component templates: `logs-mappings`, `logs-settings`, `metrics-mappings`, `metrics-settings`, `synthetics-mapping`, and `synthetics-settings`.
         OpenSearch uses these templates to configure backing indexes for its data streams.
         If you want to overwrite one of these templates, set the replacement template `version` to a higher value than the current version.
-        If you want to disable all built-in component and index templates, set `stack.templates.enabled` to `false` using the Cluster Update Settings API.
+        If you want to disable all built-in component and index templates, set `stack.templates.enabled` to `false` using the [Cluster Update Settings API](https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-settings/).
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Name'
       style: simple
     cluster.put_component_template::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
@@ -1221,13 +1236,14 @@ components:
     cluster.put_decommission_awareness::path.awareness_attribute_value:
       name: awareness_attribute_value
       in: path
-      description: The value of the awareness attribute.
+      description: The value of the awareness attribute. For example, if you have shards allocated in two different zones, you can give each zone a value of `zone-a` or `zoneb`. The cluster decommission operation decommissions the zone listed in the method.
       schema:
         type: string
-        description: The value of the awareness attribute.
+        description: The value of the awareness attribute. For example, if you have shards allocated in two different zones, you can give each zone a value of `zone-a` or `zoneb`. The cluster decommission operation decommissions the zone listed in the method.
       required: true
     cluster.put_settings::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
@@ -1235,7 +1251,9 @@ components:
     cluster.put_settings::query.flat_settings:
       in: query
       name: flat_settings
-      description: Returns settings in a flat format.
+      description: |- 
+        Whether to return settings in the flat form, which can improve readability, especially for heavily nested settings.
+        For example, the flat form of `"cluster": { "max_shards_per_node": 500 }` is `"cluster.max_shards_per_node": "500"`.
       schema:
         type: boolean
         default: false
@@ -1258,14 +1276,15 @@ components:
     cluster.put_weighted_routing::path.attribute:
       name: attribute
       in: path
-      description: The name of the awareness attribute.
+      description: The name of awareness attribute, usually `zone`.
       schema:
         type: string
-        description: The name of the awareness attribute.
+        description: The name of awareness attribute, usually `zone`.
       required: true
     cluster.reroute::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       x-version-added: '2.0'
@@ -1279,7 +1298,7 @@ components:
     cluster.reroute::query.explain:
       in: query
       name: explain
-      description: When `true`, the response contains an explanation of why certain commands can or cannot be executed.
+      description: When `true`, the response contains an explanation of why reroute certain commands can or cannot be executed.
       schema:
         type: boolean
       style: form
@@ -1326,7 +1345,7 @@ components:
     cluster.state::path.metric:
       in: path
       name: metric
-      description: Limits the information returned to only the specified metrics.
+      description: Limits the information returned to only the [specified metric groups](https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/#metric-groups).
       required: true
       schema:
         type: array
@@ -1342,6 +1361,7 @@ components:
       style: form
     cluster.state::query.cluster_manager_timeout:
       name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://opensearch.org/docs/latest/api-reference/common-parameters/#time-units).
       in: query
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
@@ -1355,7 +1375,9 @@ components:
     cluster.state::query.flat_settings:
       in: query
       name: flat_settings
-      description: Returns settings in a flat format.
+      description: |- 
+        Whether to return settings in the flat form, which can improve readability, especially for heavily nested settings.
+        For example, the flat form of `"cluster": { "max_shards_per_node": 500 }` is `"cluster.max_shards_per_node": "500"`.
       schema:
         type: boolean
         default: false
@@ -1401,7 +1423,7 @@ components:
     cluster.stats::path.index_metric:
       in: path
       name: index_metric
-      description: A comma-separated list of index metric groups, for example, `docs,store`.
+      description: A comma-separated list of [index metric groups](https://opensearch.org/docs/latest/api-reference/cluster-api/cluster-stats/#index-metric-groups), for example, `docs,store`.
       required: true
       schema:
         type: array
@@ -1429,7 +1451,9 @@ components:
     cluster.stats::query.flat_settings:
       in: query
       name: flat_settings
-      description: When `true`, returns settings in a flat format.
+      description: |- 
+        Whether to return settings in the flat form, which can improve readability, especially for heavily nested settings.
+        For example, the flat form of `"cluster": { "max_shards_per_node": 500 }` is `"cluster.max_shards_per_node": "500"`.
       schema:
         type: boolean
         default: false
