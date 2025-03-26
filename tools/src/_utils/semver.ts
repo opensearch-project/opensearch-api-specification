@@ -17,5 +17,5 @@ export function coerce(version?: string): undefined | string {
 export function satisfies(version: string | semver.SemVer | undefined, range: string): boolean {
   if (version === undefined || version === '') return true
   if (semver.validRange(range) == null) throw `Invalid semver ${range}.`
-  return semver.satisfies(version, range)
+  return semver.satisfies(version, range, { includePrerelease: true })
 }
