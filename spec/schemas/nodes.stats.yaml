@@ -145,7 +145,7 @@ components:
         admission_control:
           $ref: '#/components/schemas/ShardAdmissionControlStats'
         caches:
-          $ref: '#/components/schemas/ShardCachesStats'
+          $ref: '#/components/schemas/CachesStats'
     Http:
       type: object
       properties:
@@ -470,11 +470,11 @@ components:
           additionalProperties:
             type: integer
             format: int64
-    ShardCachesStats:
+    CachesStats:
       type: object
       additionalProperties:
-        $ref: '#/components/schemas/ShardCacheStats'
-    ShardCacheStats:
+        $ref: '#/components/schemas/CacheStats'
+    CacheStatsBase:
       type: object
       properties:
         size:
@@ -493,8 +493,31 @@ components:
         item_count:
           type: integer
           format: int64
-        store_name:
-          type: string
+    CacheStats:
+      allOf:
+        - $ref: '#/components/schemas/CacheStatsBase'
+        - type: object
+          properties:
+            store_name:
+              type: string
+            indices:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/CacheIndicesStats'
+            shards:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/CacheShardStats'
+    CacheIndicesStats:
+      allOf:
+        - $ref: '#/components/schemas/CacheStatsBase'
+        - type: object
+          properties: {}
+    CacheShardStats:
+      allOf:
+        - $ref: '#/components/schemas/CacheStatsBase'
+        - type: object
+          properties: {}
     AdaptiveSelection:
       type: object
       properties:
