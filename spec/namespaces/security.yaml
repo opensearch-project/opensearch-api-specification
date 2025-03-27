@@ -457,6 +457,8 @@ paths:
         - amazon-serverless
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache@405'
         '501':
           $ref: '#/components/responses/security.cache@501'
     post:
@@ -469,6 +471,8 @@ paths:
       x-ignorable: true
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache@405'
         '501':
           $ref: '#/components/responses/security.cache@501'
     put:
@@ -481,6 +485,8 @@ paths:
       x-ignorable: true
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache@405'
         '501':
           $ref: '#/components/responses/security.cache@501'
     delete:
@@ -1559,7 +1565,14 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.cache@405:
+      x-version-added: '3.0'
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/ClientError'
     security.cache@501:
+      x-version-removed: '3.0'
       content:
         application/json:
           schema:
@@ -1978,7 +1991,11 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+            oneOf:
+              - x-version-removed: '3.0'
+                $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+              - x-version-added: '3.0'
+                $ref: '../schemas/security._common.yaml#/components/schemas/ClientError'
     security.patch_action_group@200:
       content:
         application/json:
@@ -2216,7 +2233,11 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+            oneOf:
+              - x-version-removed: '3.0'
+                $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+              - x-version-added: '3.0'
+                $ref: '../schemas/security._common.yaml#/components/schemas/ClientError'
     security.who_am_i@200:
       content:
         application/json:
