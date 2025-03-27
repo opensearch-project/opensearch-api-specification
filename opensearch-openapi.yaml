@@ -3740,6 +3740,8 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/flow_framework.create___201'
+        '202':
+          $ref: '#/components/responses/flow_framework.create___202'
         '400':
           $ref: '#/components/responses/flow_framework.create___400'
         '403':
@@ -3935,6 +3937,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/flow_framework.provision___200'
+        '202':
+          $ref: '#/components/responses/flow_framework.provision___202'
         '400':
           $ref: '#/components/responses/flow_framework.provision___400'
         '403':
@@ -7180,6 +7184,8 @@ paths:
         - amazon-serverless
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache___405'
         '501':
           $ref: '#/components/responses/security.cache___501'
       parameters:
@@ -7198,6 +7204,8 @@ paths:
       x-ignorable: true
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache___405'
         '501':
           $ref: '#/components/responses/security.cache___501'
       parameters:
@@ -7216,6 +7224,8 @@ paths:
       x-ignorable: true
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache___405'
         '501':
           $ref: '#/components/responses/security.cache___501'
       parameters:
@@ -14507,6 +14517,8 @@ paths:
         - amazon-serverless
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache___405'
         '501':
           $ref: '#/components/responses/security.cache___501'
       parameters:
@@ -14526,6 +14538,8 @@ paths:
       x-ignorable: true
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache___405'
         '501':
           $ref: '#/components/responses/security.cache___501'
       parameters:
@@ -14545,6 +14559,8 @@ paths:
       x-ignorable: true
       description: Not supported for the Cache API.
       responses:
+        '405':
+          $ref: '#/components/responses/security.cache___405'
         '501':
           $ref: '#/components/responses/security.cache___501'
       parameters:
@@ -30931,6 +30947,19 @@ components:
             required:
               - workflow_id
       description: ''
+    flow_framework.create___202:
+      x-version-added: '3.0'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              workflow_id:
+                type: string
+                description: The ID of the workflow to be updated. Required for the PUT method.
+            required:
+              - workflow_id
+      description: ''
     flow_framework.create___400:
       description: Bad Request - Multiple possible reasons
       content:
@@ -31048,6 +31077,14 @@ components:
           schema:
             $ref: '#/components/schemas/flow_framework.errors___TemplateNotFoundError'
     flow_framework.provision___200:
+      x-version-removed: '3.0'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/flow_framework.common___WorkflowIDResponse'
+      description: ''
+    flow_framework.provision___202:
+      x-version-added: '3.0'
       content:
         application/json:
           schema:
@@ -33320,7 +33357,15 @@ components:
           schema:
             $ref: '#/components/schemas/security._common___Ok'
       description: ''
+    security.cache___405:
+      x-version-added: '3.0'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/security._common___ClientError'
+      description: ''
     security.cache___501:
+      x-version-removed: '3.0'
       content:
         application/json:
           schema:
@@ -33819,7 +33864,11 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/security._common___Error'
+            oneOf:
+              - x-version-removed: '3.0'
+                $ref: '#/components/schemas/security._common___Error'
+              - x-version-added: '3.0'
+                $ref: '#/components/schemas/security._common___ClientError'
       description: ''
     security.patch_action_group___200:
       content:
@@ -34104,7 +34153,11 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/security._common___Error'
+            oneOf:
+              - x-version-removed: '3.0'
+                $ref: '#/components/schemas/security._common___Error'
+              - x-version-added: '3.0'
+                $ref: '#/components/schemas/security._common___ClientError'
       description: ''
     security.who_am_i_protected___200:
       content:
@@ -44404,6 +44457,9 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
+            pagination_depth:
+              type: integer
+              format: int32
     _common.query_dsl___IdsQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -51761,6 +51817,10 @@ components:
         voting_only:
           type: integer
           format: int32
+        warm:
+          type: integer
+          format: int32
+          x-version-added: '3.0'
       required:
         - coordinating_only
         - data
@@ -52971,6 +53031,9 @@ components:
           $ref: '#/components/schemas/indices._common___IndexRoutingAllocationDisk'
         total_shards_per_node:
           $ref: '#/components/schemas/_common___StringifiedInteger'
+        total_primary_shards_per_node:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+          x-version-added: '3.0'
     indices._common___IndexRoutingAllocationDisk:
       type: object
       properties:
@@ -58447,9 +58510,17 @@ components:
             $ref: '#/components/schemas/nodes.info___NodeThreadPoolInfo'
         total_indexing_buffer:
           description: Total heap allowed to be used to hold recently indexed documents before they must be written to disk. This size is a shared pool across all shards on this node, and is controlled by Indexing Buffer settings.
-          $ref: '#/components/schemas/_common___ByteCount'
+          oneOf:
+            - $ref: '#/components/schemas/_common___ByteCount'
+              x-version-removed: '3.0'
+            - $ref: '#/components/schemas/_common___HumanReadableByteCount'
+              x-version-added: '3.0'
         total_indexing_buffer_in_bytes:
-          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+          oneOf:
+            - $ref: '#/components/schemas/_common___HumanReadableByteCount'
+              x-version-removed: '3.0'
+            - $ref: '#/components/schemas/_common___ByteCount'
+              x-version-added: '3.0'
         transport:
           $ref: '#/components/schemas/nodes.info___NodeInfoTransport'
         transport_address:
@@ -59150,6 +59221,54 @@ components:
           format: double
         tripped:
           description: Total number of times the circuit breaker has been triggered and prevented an out of memory error.
+          type: integer
+          format: int64
+    nodes.stats___CacheIndicesStats:
+      allOf:
+        - $ref: '#/components/schemas/nodes.stats___CacheStatsBase'
+        - type: object
+          properties: {}
+    nodes.stats___CacheShardStats:
+      allOf:
+        - $ref: '#/components/schemas/nodes.stats___CacheStatsBase'
+        - type: object
+          properties: {}
+    nodes.stats___CachesStats:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/nodes.stats___CacheStats'
+    nodes.stats___CacheStats:
+      allOf:
+        - $ref: '#/components/schemas/nodes.stats___CacheStatsBase'
+        - type: object
+          properties:
+            store_name:
+              type: string
+            indices:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/nodes.stats___CacheIndicesStats'
+            shards:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/nodes.stats___CacheShardStats'
+    nodes.stats___CacheStatsBase:
+      type: object
+      properties:
+        size:
+          $ref: '#/components/schemas/_common___HumanReadableByteCount'
+        size_in_bytes:
+          $ref: '#/components/schemas/_common___ByteCount'
+        evictions:
+          type: integer
+          format: int64
+        hit_count:
+          type: integer
+          format: int64
+        miss_count:
+          type: integer
+          format: int64
+        item_count:
           type: integer
           format: int64
     nodes.stats___CgroupCpuAcctStats:
@@ -59953,31 +60072,6 @@ components:
           $ref: '#/components/schemas/nodes.stats___UsageStats'
         global_cpu_usage:
           $ref: '#/components/schemas/nodes.stats___UsageStats'
-    nodes.stats___ShardCachesStats:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/nodes.stats___ShardCacheStats'
-    nodes.stats___ShardCacheStats:
-      type: object
-      properties:
-        size:
-          $ref: '#/components/schemas/_common___HumanReadableByteCount'
-        size_in_bytes:
-          $ref: '#/components/schemas/_common___ByteCount'
-        evictions:
-          type: integer
-          format: int64
-        hit_count:
-          type: integer
-          format: int64
-        miss_count:
-          type: integer
-          format: int64
-        item_count:
-          type: integer
-          format: int64
-        store_name:
-          type: string
     nodes.stats___ShardClusterManagerThrottlingStats:
       type: object
       properties:
@@ -60480,7 +60574,7 @@ components:
         admission_control:
           $ref: '#/components/schemas/nodes.stats___ShardAdmissionControlStats'
         caches:
-          $ref: '#/components/schemas/nodes.stats___ShardCachesStats'
+          $ref: '#/components/schemas/nodes.stats___CachesStats'
     nodes.stats___ThreadCount:
       type: object
       properties:
@@ -62247,6 +62341,13 @@ components:
       required:
         - current_password
         - password
+    security._common___ClientError:
+      type: object
+      properties:
+        status:
+          type: integer
+        error:
+          type: string
     security._common___ComplianceConfig:
       type: object
       properties:
