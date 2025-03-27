@@ -34799,19 +34799,24 @@ components:
         - proceed
     _common___CoordsGeoBounds:
       type: object
+      description: The geographical bounds specified using coordinate values.
       properties:
         top:
           type: number
           format: double
+          description: The top boundary latitude.
         bottom:
           type: number
           format: double
+          description: The bottom boundary latitude.
         left:
           type: number
           format: double
+          description: The left boundary longitude.
         right:
           type: number
           format: double
+          description: The right boundary longitude.
       required:
         - bottom
         - left
@@ -34909,28 +34914,31 @@ components:
       required:
         - count
     _common___DocStatus:
-      description: The item level REST category class codes during indexing.
+      description: The item level HTTP response status code during indexing.
       type: object
       properties:
         1xx:
           type: integer
           format: int32
+          description: The number of informational responses.
         2xx:
           type: integer
           format: int32
+          description: The number of successful responses.
         3xx:
           type: integer
           format: int32
+          description: The number of redirection responses.
         4xx:
           type: integer
           format: int32
+          description: The number of client error responses.
         5xx:
           type: integer
           format: int32
+          description: The number of server error responses.
     _common___Duration:
-      description: |-
-        A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and
-        `d` (days). Also accepts "0" without a unit and "-1" to indicate an unspecified value.
+      description: A duration. Units can be `nanos`, `micros`, `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours) and `d` (days). Also accepts `0` without a unit and `-1` to indicate an unspecified value.
       pattern: ^(?:(-1)|([0-9\.]+)(?:d|h|m|s|ms|micros|nanos))$
       type: string
     _common___DurationLarge:
@@ -35055,30 +35063,46 @@ components:
     _common___FieldSort:
       oneOf:
         - title: order
+          description: The sort order direction.
           $ref: '#/components/schemas/_common___SortOrder'
         - type: object
+          description: The detailed field sort options.
           properties:
             missing:
               $ref: '#/components/schemas/_common___FieldValue'
+              description: The value to use when the field is missing.
             mode:
               $ref: '#/components/schemas/_common___SortMode'
+              description: The mode for sorting on array fields.
             nested:
               $ref: '#/components/schemas/_common___NestedSortValue'
+              description: The nested path sort options.
             order:
               $ref: '#/components/schemas/_common___SortOrder'
+              description: The sort order direction.
             unmapped_type:
               $ref: '#/components/schemas/_common.mapping___FieldType'
+              description: The type to use for unmapped fields.
             numeric_type:
               $ref: '#/components/schemas/_common___FieldSortNumericType'
+              description: The numeric type to use for sorting.
             format:
               type: string
+              description: The format to use for the sort values.
     _common___FieldSortNumericType:
-      type: string
-      enum:
-        - date
-        - date_nanos
-        - double
-        - long
+      oneOf:
+        - type: string
+          const: date
+          description: The field contains date values.
+        - type: string
+          const: date_nanos
+          description: The field contains date values with nanosecond precision.
+        - type: string
+          const: double
+          description: The field contains double-precision floating-point values.
+        - type: string
+          const: long
+          description: The field contains long integer values.
     _common___FieldValue:
       description: A field value.
       type:
@@ -35106,23 +35130,29 @@ components:
     _common___Fuzziness:
       oneOf:
         - type: string
+          description: The fuzziness value as `AUTO`, or a string edit distance.
         - type: integer
+          description: The fuzziness value as a numeric edit distance.
           format: int32
     _common___GeoBounds:
       description: |-
         A geo-bounding box. It can be represented in the following ways:
-        - As 4 top/bottom/left/right coordinates.
-        - As 2 top_left/bottom_right points.
-        - As 2 top_right/bottom_left points.
-        - As a Well Known Text (WKT) bounding box.
+         - As 4 top/bottom/left/right coordinates.
+         - As 2 top_left/bottom_right points.
+         - As 2 top_right/bottom_left points.
+         - As a Well Known Text (WKT) bounding box.
       oneOf:
         - title: coords
+          description: The bounds specified using coordinate values.
           $ref: '#/components/schemas/_common___CoordsGeoBounds'
         - title: tlbr
+          description: The bounds specified using upper-left and lower-right points.
           $ref: '#/components/schemas/_common___TopLeftBottomRightGeoBounds'
         - title: trbl
+          description: The bounds specified using upper-right and lower-left points.
           $ref: '#/components/schemas/_common___TopRightBottomLeftGeoBounds'
         - title: wkt
+          description: The bounds specified using WKT format.
           $ref: '#/components/schemas/_common___WktGeoBounds'
     _common___GeoDistanceSort:
       type: object
@@ -35142,14 +35172,19 @@ components:
         items:
           $ref: '#/components/schemas/_common___GeoLocation'
     _common___GeoDistanceType:
-      type: string
-      enum:
-        - arc
-        - plane
+      oneOf:
+        - type: string
+          const: arc
+          description: The arc calculation method uses great circle distance.
+        - type: string
+          const: plane
+          description: The plane calculation method uses faster but less accurate flat-earth distance.
     _common___GeoHash:
       type: string
+      description: The geohash string representation of a geographical location.
     _common___GeoHashLocation:
       type: object
+      description: The geographical location specified using a geohash.
       properties:
         geohash:
           $ref: '#/components/schemas/_common___GeoHash'
@@ -35183,21 +35218,25 @@ components:
     _common___GeoLocation:
       description: |-
         A latitude/longitude as a two-dimensional point. It can be represented in the following ways:
-        - As a `{lat, long}` object.
-        - As a geohash value.
-        - As a `[lon, lat]` array.
-        - As a string in `"<lat>, <lon>"` or WKT point format.
+         - As a `{lat, long}` object.
+         - As a geohash value.
+         - As a `[lon, lat]` array.
+         - As a string in `<lat>, <lon>` or WKT point format.
       oneOf:
         - title: latlon
+          description: The location specified using latitude and longitude coordinates.
           $ref: '#/components/schemas/_common___LatLonGeoLocation'
         - title: geohash
+          description: The location specified using a geohash value.
           $ref: '#/components/schemas/_common___GeoHashLocation'
         - title: coords
+          description: The location specified as an array of `[longitude, latitude]`.
           type: array
           items:
             type: number
             format: double
         - title: text
+          description: The location specified as a string in `lat,lon` or WKT format.
           type: string
     _common___GeoShapeRelation:
       type: string
@@ -35294,6 +35333,7 @@ components:
         - ttf
     _common___Id:
       type: string
+      description: The unique identifier for a resource.
     _common___Ids:
       oneOf:
         - $ref: '#/components/schemas/_common___Id'
@@ -35437,13 +35477,14 @@ components:
       type: string
     _common___LatLonGeoLocation:
       type: object
+      description: The geographical location specified using latitude and longitude.
       properties:
         lat:
-          description: Latitude
+          description: The latitude coordinate.
           type: number
           format: double
         lon:
-          description: Longitude
+          description: The longitude coordinate.
           type: number
           format: double
       required:
@@ -35511,6 +35552,7 @@ components:
         - total_time_in_millis
     _common___Metadata:
       type: object
+      description: The custom metadata attached to a resource.
       additionalProperties: true
     _common___MinimumShouldMatch:
       description: The minimum number of terms that should match as an integer, percentage, or range.
@@ -35521,14 +35563,23 @@ components:
     _common___MultiTermQueryRewrite:
       oneOf:
         - type: string
-          enum:
-            - constant_score
-            - constant_score_boolean
-            - scoring_boolean
+          const: constant_score
+          description: The constant score rewrite method assigns the same score to all matching documents.
+        - type: string
+          const: constant_score_boolean
+          description: The constant score Boolean rewrite method creates a Boolean query with a constant score.
+        - type: string
+          const: scoring_boolean
+          description: The scoring Boolean rewrite method creates a Boolean query that scores each term separately.
         - type: string
           pattern: top_terms(_blended_freqs|_boost)?_\d+
+          description: The top terms query rewrite method with optional parameters.
+        - type: string
+          pattern: top_terms(_blended_freqs|_boost)?_\d+
+          description: The top terms query rewrite method with optional parameters.
     _common___Name:
       type: string
+      description: The name of a resource or configuration element.
     _common___Names:
       description: A comma-separated list of aliases to retrieve. Supports wildcards (`*`).  To retrieve all aliases, omit this parameter or use `*` or `_all`.
       oneOf:
@@ -36183,11 +36234,14 @@ components:
           additionalProperties: true
     _common___ScriptField:
       type: object
+      description: The configuration for a script field.
       properties:
         script:
           $ref: '#/components/schemas/_common___Script'
+          description: The script to execute for this field.
         ignore_failure:
           type: boolean
+          description: Whether to ignore failures during script execution.
       required:
         - script
     _common___ScriptLanguage:
@@ -36570,7 +36624,9 @@ components:
     _common___Sort:
       oneOf:
         - $ref: '#/components/schemas/_common___SortOptions'
+          description: The single sort option.
         - type: array
+          description: The list of sort options.
           items:
             $ref: '#/components/schemas/_common___SortOptions'
     _common___SortMode:
@@ -36585,15 +36641,19 @@ components:
       oneOf:
         - type: string
           const: _score
+          description: Sort by document score.
         - type: string
           const: _doc
+          description: Sort by document index order.
         - type: string
+          description: Sort by field name.
           not:
             type: string
             enum:
               - _doc
               - _score
         - type: object
+          description: Sort by score options.
           properties:
             _score:
               $ref: '#/components/schemas/_common___ScoreSort'
@@ -36606,6 +36666,7 @@ components:
           minProperties: 1
           maxProperties: 1
         - type: object
+          description: Sort by field options.
           propertyNames:
             allOf:
               - $ref: '#/components/schemas/_common___Field'
@@ -36808,21 +36869,27 @@ components:
       type: string
     _common___TopLeftBottomRightGeoBounds:
       type: object
+      description: The geographical bounds specified using upper-left and lower-right points.
       properties:
         top_left:
           $ref: '#/components/schemas/_common___GeoLocation'
+          description: The upper-left corner coordinates.
         bottom_right:
           $ref: '#/components/schemas/_common___GeoLocation'
+          description: The lower-right corner coordinates.
       required:
         - bottom_right
         - top_left
     _common___TopRightBottomLeftGeoBounds:
       type: object
+      description: The geographical bounds specified using upper-right and lower-left points.
       properties:
         top_right:
           $ref: '#/components/schemas/_common___GeoLocation'
+          description: The upper-right corner coordinates.
         bottom_left:
           $ref: '#/components/schemas/_common___GeoLocation'
+          description: The lower-left corner coordinates.
       required:
         - bottom_left
         - top_right
@@ -36858,6 +36925,7 @@ components:
       type: string
     _common___Type:
       type: string
+      description: The type of document or resource.
       x-version-removed: '2.0'
     _common___uint:
       type: integer
@@ -36956,9 +37024,11 @@ components:
         - total_time_in_millis
     _common___WktGeoBounds:
       type: object
+      description: The geographical bounds specified using Well-Known Text (WKT) format.
       properties:
         wkt:
           type: string
+          description: The WKT string representation of the geographical bounds.
       required:
         - wkt
     _common___WriteResponseBase:
@@ -36994,6 +37064,7 @@ components:
     _common___XyCartesianCoordinates:
       x-version-added: '2.4'
       type: object
+      description: The Cartesian coordinates specified using x and y values.
       properties:
         x:
           description: The x coordinate.
@@ -37015,13 +37086,16 @@ components:
          - As a string in `"x, y"` or WKT point format.
       oneOf:
         - title: cartesian
+          description: The location specified using x and y coordinates.
           $ref: '#/components/schemas/_common___XyCartesianCoordinates'
         - title: coords
+          description: The location specified as an array of [x, y] coordinates.
           type: array
           items:
             type: number
             format: double
         - title: text
+          description: The location specified as a string in `x,y` or WKT format.
           type: string
     _common.aggregations___AdjacencyMatrixAggregate:
       allOf:
