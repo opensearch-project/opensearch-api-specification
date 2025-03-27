@@ -20,20 +20,26 @@ components:
       minProperties: 1
       maxProperties: 1
     IndexOperation:
-      $ref: '#/components/schemas/WriteOperation'
+      allOf:
+        - $ref: '#/components/schemas/WriteOperation'
+        - type: object
+          properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '_common.yaml#/components/schemas/SequenceNumber'
+            op_type:
+              $ref: '_common.yaml#/components/schemas/OpType'
+            version:
+              $ref: '_common.yaml#/components/schemas/VersionNumber'
+            version_type:
+              $ref: '_common.yaml#/components/schemas/VersionType'
     WriteOperation:
       allOf:
         - $ref: '#/components/schemas/OperationBase'
         - type: object
           properties:
-            dynamic_templates:
-              description: |-
-                A map from the full name of fields to the name of dynamic templates.
-                If a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template.
-                If a field is already defined in the mapping, then this parameter won't be used.
-              type: object
-              additionalProperties:
-                type: string
             pipeline:
               description: |-
                 The pipeline ID for preprocessing documents.
@@ -52,15 +58,6 @@ components:
           $ref: '_common.yaml#/components/schemas/IndexName'
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
-        if_primary_term:
-          type: integer
-          format: int64
-        if_seq_no:
-          $ref: '_common.yaml#/components/schemas/SequenceNumber'
-        version:
-          $ref: '_common.yaml#/components/schemas/VersionNumber'
-        version_type:
-          $ref: '_common.yaml#/components/schemas/VersionType'
     CreateOperation:
       $ref: '#/components/schemas/WriteOperation'
     UpdateOperation:
@@ -68,6 +65,11 @@ components:
         - $ref: '#/components/schemas/OperationBase'
         - type: object
           properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '_common.yaml#/components/schemas/SequenceNumber'
             require_alias:
               description: When `true`, the request's actions must target an index alias.
               type: boolean
@@ -75,7 +77,19 @@ components:
               type: integer
               format: int32
     DeleteOperation:
-      $ref: '#/components/schemas/OperationBase'
+      allOf:
+        - $ref: '#/components/schemas/OperationBase'
+        - type: object
+          properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '_common.yaml#/components/schemas/SequenceNumber'
+            version:
+              $ref: '_common.yaml#/components/schemas/VersionNumber'
+            version_type:
+              $ref: '_common.yaml#/components/schemas/VersionType'
     UpdateAction:
       type: object
       properties:
@@ -135,7 +149,7 @@ components:
         _seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         _shards:
-          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+          $ref: '_common.yaml#/components/schemas/ShardInfo'
         _version:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         forced_refresh:
