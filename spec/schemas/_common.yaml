@@ -1102,6 +1102,7 @@ components:
             $ref: '#/components/schemas/ScrollId'
     TransportAddress:
       type: string
+      description: The transport address of a node.
     StringOrStringArray:
       oneOf:
         - type: string
@@ -1151,51 +1152,92 @@ components:
         - $ref: '#/components/schemas/EpochTimeUnitMillis'
         - type: string
     DFIIndependenceMeasure:
-      type: string
-      enum:
-        - chisquared
-        - saturated
-        - standardized
+      oneOf:
+        - type: string
+          const: chisquared
+          description: The chi-squared measure of independence.
+        - type: string
+          const: saturated
+          description: The saturated measure of independence.
+        - type: string
+          const: standardized
+          description: The standardized measure of independence.
     DFRAfterEffect:
-      type: string
-      enum:
-        - b
-        - l
-        - no
+      oneOf:
+        - type: string
+          const: b
+          description: The basic after effect.
+        - type: string
+          const: l
+          description: The Laplace after effect.
+        - type: string
+          const: no
+          description: No after effect.
     DFRBasicModel:
-      type: string
-      enum:
-        - be
-        - d
-        - g
-        - if
-        - in
-        - ine
-        - p
+      oneOf:
+        - type: string
+          const: be
+          description: The Bose-Einstein model.
+        - type: string
+          const: d
+          description: The divergence from independence model.
+        - type: string
+          const: g
+          description: The geometric model.
+        - type: string
+          const: if
+          description: The inverse frequency model.
+        - type: string
+          const: in
+          description: The inverse document frequency model.
+        - type: string
+          const: ine
+          description: The inverse expected document frequency model.
+        - type: string
+          const: p
+          description: The Poisson model.
     TermFrequencyNormalization:
-      type: string
-      enum:
-        - h1
-        - h2
-        - h3
-        - no
-        - z
+      oneOf:
+        - type: string
+          const: h1
+          description: The first normalization of Hazm.
+        - type: string
+          const: h2
+          description: The second normalization of Hazm.
+        - type: string
+          const: h3
+          description: The third normalization of Hazm.
+        - type: string
+          const: no
+          description: No normalization.
+        - type: string
+          const: z
+          description: The Zipfian normalization.
     IBDistribution:
-      type: string
-      enum:
-        - ll
-        - spl
+      oneOf:
+        - type: string
+          const: ll
+          description: The log-logistic distribution.
+        - type: string
+          const: spl
+          description: The smoothed power-law distribution.
     IBLambda:
-      type: string
-      enum:
-        - df
-        - ttf
+      oneOf:
+        - type: string
+          const: df
+          description: The document frequency lambda.
+        - type: string
+          const: ttf
+          description: The total term frequency lambda.
     byte:
       type: number
+      description: The byte value.
     short:
       type: number
+      description: The short integer value.
     ulong:
       type: number
+      description: The unsigned long integer value.
     Level:
       description: Specifies the level of detail of the returned information.
       type: string
@@ -1233,24 +1275,30 @@ components:
           description: The total amount, in bytes, of memory used for completion across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/ByteCount'
         size:
+          description: The human-readable size of memory used for completion.
           $ref: '#/components/schemas/HumanReadableByteCount'
         fields:
           type: object
+          description: The per-field completion statistics.
           additionalProperties:
             $ref: '#/components/schemas/FieldSizeUsage'
       required:
         - size_in_bytes
     FieldSizeUsage:
       type: object
+      description: The memory usage statistics for a field.
       properties:
         size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The human-readable size of memory used.
         size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The size of memory used in bytes.
       required:
         - size_in_bytes
     DocStats:
       type: object
+      description: The document-level statistics.
       properties:
         count:
           description: |-
@@ -1268,32 +1316,41 @@ components:
       required:
         - count
     FielddataStats:
+      description: The statistics about field data memory usage.
       type: object
       properties:
         evictions:
           type: integer
           format: int64
+          description: The number of times field data was evicted from memory.
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The human-readable amount of memory used for field data.
         memory_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The amount of memory used for field data in bytes.
         fields:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/FieldMemoryUsage'
+            description: The per-field field data statistics.
       required:
         - memory_size_in_bytes
     FieldMemoryUsage:
       type: object
+      description: The memory usage statistics for a field.
       properties:
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The human-readable amount of memory used.
         memory_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The amount of memory used in bytes.
       required:
         - memory_size_in_bytes
     QueryCacheStats:
       type: object
+      description: The statistics about query cache usage.
       properties:
         cache_count:
           description: |-
@@ -1315,6 +1372,7 @@ components:
           format: int64
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The human-readable amount of memory used for the query cache.
         memory_size_in_bytes:
           description: The total amount, in bytes, of memory used for the query cache across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/ByteCount'
@@ -1336,10 +1394,10 @@ components:
         - total_count
     RemoteStoreStats:
       type: object
-      description: Statistics related to remote segment store operations.
+      description: The statistics related to remote segment store operations.
       properties:
         upload:
-          $ref: '#/components/schemas/RemoteStoreUploadStats'
+          $ref: '#/components/schemas/RemoteStoreUploadStats'     
         download:
           $ref: '#/components/schemas/RemoteStoreDownloadStats'
       required:
@@ -1347,6 +1405,7 @@ components:
         - upload
     RemoteStoreTranslogStats:
       type: object
+      description: The statistics related to remote translog operations.
       properties:
         upload:
           $ref: '#/components/schemas/RemoteStoreTranslogUploadStats'
@@ -1354,7 +1413,7 @@ components:
         - upload
     RemoteStoreTranslogUploadStats:
       type: object
-      description: Statistics related to uploads to the remote translog store.
+      description: The statistics related to uploads to the remote translog store.
       properties:
         total_uploads:
           $ref: '#/components/schemas/RemoteStoreTranslogUploadTotalUploadsStats'
@@ -1411,7 +1470,7 @@ components:
         - succeeded_bytes
     RemoteStoreUploadStats:
       type: object
-      description: Statistics related to uploads to the remote segment store.
+      description: Any statistics related to uploads to the remote segment store.
       properties:
         max_refresh_time_lag:
           description: The maximum duration that the remote refresh is behind the local refresh.
@@ -1493,7 +1552,7 @@ components:
         - total_bytes
     RemoteStoreDownloadStats:
       type: object
-      description: Statistics related to downloads to the remote segment store. 
+      description: Any statistics related to downloads to the remote segment store. 
       properties:
         total_download_size:
           description: The total amount of data downloaded from the remote segment store. 
@@ -1513,32 +1572,41 @@ components:
         - x-version-added: 2.10.0
           x-version-removed: 2.12.0
           type: object
+          description: The segment replication statistics for versions 2.10.0 to 2.12.0.
           properties:
             max_bytes_behind:
               $ref: '#/components/schemas/HumanReadableByteCount'
+              description: The maximum number of bytes the replica is behind the primary.
             max_replication_lag:
               $ref: '#/components/schemas/Duration'
+              description: The maximum replication lag between primary and replica shards.
             total_bytes_behind:
               $ref: '#/components/schemas/HumanReadableByteCount'
+              description: The total number of bytes all replicas are behind their primaries.
           required:
             - max_bytes_behind
             - max_replication_lag
             - total_bytes_behind
         - x-version-added: 2.12.0
           type: object
+          description: The segment replication statistics for version 2.12.0 and later.
           properties:
             max_bytes_behind:
               $ref: '#/components/schemas/ByteCount'
+              description: The maximum number of bytes the replica is behind the primary.
             max_replication_lag:
               $ref: '#/components/schemas/DurationValueUnitMillis'
+              description: The maximum replication lag between primary and replica shards in milliseconds.
             total_bytes_behind:
               $ref: '#/components/schemas/ByteCount'
+              description: The total number of bytes all replicas are behind their primaries.
           required:
             - max_bytes_behind
             - max_replication_lag
             - total_bytes_behind
     SegmentsStats:
       type: object
+      description: The statistics about segments.
       properties:
         count:
           description: The total number of segments across all shards assigned to the selected nodes.
@@ -1546,6 +1614,7 @@ components:
           format: int32
         doc_values_memory:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The human-readable amount of memory used for doc values.
         doc_values_memory_in_bytes:
           description: The total amount, in bytes, of memory used for document values across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/ByteCount'
@@ -1563,8 +1632,10 @@ components:
           $ref: '#/components/schemas/ByteCount'
         index_writer_memory:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The human-readable amount of memory used by index writers.
         index_writer_max_memory_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The maximum amount of memory, in bytes, used by index writers.
         index_writer_memory_in_bytes:
           description: The total amount, in bytes, of memory used by all index writers across all shards assigned to the selected nodes.
           $ref: '#/components/schemas/ByteCount'
