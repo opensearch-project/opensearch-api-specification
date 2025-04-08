@@ -1,9 +1,73 @@
 openapi: 3.1.0
 info:
-  title: OpenSearch ML API
-  description: OpenSearch ML API.
+  title: OpenSearch LTR API
+  description: OpenSearch Learning to Rank API.
   version: 1.0.0
 paths:
+  /_ltr:
+    get:
+      operationId: ltr.list_stores.0
+      x-operation-group: ltr.list_stores
+      x-version-added: '1.0'
+      description: Lists all available feature stores.
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.list_stores@200'
+
+    put:
+      operationId: ltr.create_default_store.0
+      x-operation-group: ltr.create_default_store
+      x-version-added: '1.0'
+      description: Creates the default feature store.
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.create_default_store@200'
+
+    delete:
+      operationId: ltr.delete_default_store.0
+      x-operation-group: ltr.delete_default_store
+      x-version-added: '1.0'
+      description: Deletes the default feature store.
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.delete_default_store@200'
+
+  /_ltr/{store}:
+    get:
+      operationId: ltr.get_store.0
+      x-operation-group: ltr.get_store
+      x-version-added: '1.0'
+      description: Checks if a store exists.
+      parameters:
+        - $ref: '#/components/parameters/ltr.get_store::path.store'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.get_store@200'
+        '404':
+          $ref: '#/components/responses/ltr.get_store@404'
+
+    put:
+      operationId: ltr.create_store.0
+      x-operation-group: ltr.create_store
+      x-version-added: '1.0'
+      description: Creates a new feature store with the specified name.
+      parameters:
+        - $ref: '#/components/parameters/ltr.create_store::path.store'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.create_store@200'
+
+    delete:
+      operationId: ltr.delete_store.0
+      x-operation-group: ltr.delete_store
+      x-version-added: '1.0'
+      description: Deletes a feature store with the specified name.
+      parameters:
+        - $ref: '#/components/parameters/ltr.delete_store::path.store'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.delete_store@200'
+
   /_plugins/_ltr/stats:
     get:
       operationId: ltr.stats.0
@@ -59,6 +123,27 @@ paths:
 
 components:
   parameters:
+    ltr.get_store::path.store:
+      name: store
+      in: path
+      description: The name of the feature store.
+      schema:
+        type: string
+      required: true
+    ltr.create_store::path.store:
+      name: store
+      in: path
+      description: The name of the feature store.
+      schema:
+        type: string
+      required: true
+    ltr.delete_store::path.store:
+      name: store
+      in: path
+      description: The name of the feature store.
+      schema:
+        type: string
+      required: true
     ltr.stats::query.timeout:
       name: timeout
       in: query
@@ -91,7 +176,57 @@ components:
       required: true
 
   responses:
+    ltr.list_stores@200:
+      description: Returns a list of available feature stores.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/ListStoresResponse'
+    
+    ltr.delete_default_store@200:
+      description: Successfully deleted the default feature store.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+
+    ltr.get_store@200:
+      description: Returns information about the store existence.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/StoreExistsResponse'
+
+    ltr.get_store@404:
+      description: The store does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/StoreExistsResponse'
+
+    ltr.create_store@200:
+      description: Successfully created the feature store.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+
+    ltr.create_default_store@200:
+      description: Successfully created the default feature store.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+
+    ltr.delete_store@200:
+      description: Successfully deleted the feature store.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            
     ltr.stats@200:
+      description: Provides information about the current status of the LTR plugin.
       content:
         application/json:
           schema:
