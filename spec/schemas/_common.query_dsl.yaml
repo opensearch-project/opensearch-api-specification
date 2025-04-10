@@ -422,33 +422,35 @@ components:
           required:
             - queries
     DistanceFeatureQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - oneOf:
-            - type: object
-              properties:
-                origin:
-                  $ref: '_common.yaml#/components/schemas/GeoLocation'
-                pivot:
-                  $ref: '_common.yaml#/components/schemas/Distance'
-                field:
-                  $ref: '_common.yaml#/components/schemas/Field'
-              required:
-                - field
-                - origin
-                - pivot
-            - type: object
-              properties:
-                origin:
-                  $ref: '_common.yaml#/components/schemas/DateMath'
-                pivot:
-                  $ref: '_common.yaml#/components/schemas/Duration'
-                field:
-                  $ref: '_common.yaml#/components/schemas/Field'
-              required:
-                - field
-                - origin
-                - pivot
+      oneOf:
+        - allOf:
+          - $ref: '#/components/schemas/QueryBase'
+          - type: object
+            properties:
+              origin:
+                $ref: '_common.yaml#/components/schemas/GeoLocation'
+              pivot:
+                $ref: '_common.yaml#/components/schemas/Distance'
+              field:
+                $ref: '_common.yaml#/components/schemas/Field'
+            required:
+              - field
+              - origin
+              - pivot
+        - allOf:
+          - $ref: '#/components/schemas/QueryBase'
+          - type: object
+            properties:
+              origin:
+                $ref: '_common.yaml#/components/schemas/DateMath'
+              pivot:
+                $ref: '_common.yaml#/components/schemas/Duration'
+              field:
+                $ref: '_common.yaml#/components/schemas/Field'
+            required:
+              - field
+              - origin
+              - pivot
     ExistsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1664,11 +1666,13 @@ components:
           required:
             - query
     RangeQuery:
-      allOf:
-        - $ref: '#/components/schemas/RangeQueryBase'
-        - oneOf:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/RangeQueryBase'
             - $ref: '#/components/schemas/NumberRangeQueryParameters'
-            - $ref: '#/components/schemas/DateRangeQueryParameters'
+        - allOf:
+          - $ref: '#/components/schemas/RangeQueryBase'
+          - $ref: '#/components/schemas/DateRangeQueryParameters'
     DateRangeQueryParameters:
       type: object
       properties:
