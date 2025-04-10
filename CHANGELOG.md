@@ -138,6 +138,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `ml.get_tools` to have two different operation groups `ml.get_all_tools` and `ml.get_tool` ([#799](https://github.com/opensearch-project/opensearch-api-specification/pull/799))
 - Changed `FlowFrameworkDeleteResponse` to utilize `WriteResponseBase` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 - Changed `DistanceFeatureQuery` and `RangeQuery` from (allOf + oneOf) to (oneOf + allOf) ([#865](https://github.com/opensearch-project/opensearch-api-specification/pull/865))
+- Changed `ClusterJvm.versions`, `ClusterOperatingSystemName.name` and `ClusterOperatingSystemPrettyName.pretty_name` to not be required as AOS does not return them ([#866](https://github.com/opensearch-project/opensearch-api-specification/pull/866))
 
 ## [0.1.0] - 2024-10-25
 
