@@ -24949,7 +24949,7 @@ components:
     observability.delete_object___path.object_id:
       in: path
       name: object_id
-      description: The ID of the Observability Object.
+      description: The ID of the observability object to delete.
       required: true
       schema:
         type: string
@@ -24957,7 +24957,7 @@ components:
     observability.delete_objects___query.objectId:
       in: query
       name: objectId
-      description: The ID of a single Observability Object to delete.
+      description: The ID of a single observability object to delete.
       required: false
       schema:
         type: string
@@ -24965,7 +24965,7 @@ components:
     observability.delete_objects___query.objectIdList:
       in: query
       name: objectIdList
-      description: A comma-separated list of Observability Object IDs to delete.
+      description: A comma-separated list of observability object IDs to delete.
       required: false
       schema:
         type: string
@@ -24973,7 +24973,7 @@ components:
     observability.get_object___path.object_id:
       in: path
       name: object_id
-      description: The ID of the Observability Object.
+      description: The ID of the observability object to retrieve.
       required: true
       schema:
         type: string
@@ -24981,7 +24981,7 @@ components:
     observability.update_object___path.object_id:
       in: path
       name: object_id
-      description: The ID of the Observability Object.
+      description: The ID of the observability object to update.
       required: true
       schema:
         type: string
@@ -32830,7 +32830,7 @@ components:
                 type: string
       description: ''
     observability.create_object___200:
-      description: Created
+      description: The API successfully created the observability object.
       content:
         application/json:
           schema:
@@ -32839,65 +32839,67 @@ components:
               objectId:
                 type: string
     observability.delete_object___200:
-      description: Deleted
+      description: The API successfully deleted the observability object.
       content:
         application/json:
           schema:
             type: object
             properties:
               deleteResponseList:
+                description: The list of deletion response for each object.
                 type: object
                 additionalProperties:
                   type: string
     observability.delete_object___404:
-      description: Not Found
+      description: The API could not find the observability object to delete.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/observability._common___NotFoundResponse'
     observability.delete_objects___200:
-      description: Deleted
+      description: The API successfully deleted the specified observability objects.
       content:
         application/json:
           schema:
             type: object
             properties:
               deleteResponseList:
+                description: The list of deletion responses for each object.
                 type: object
                 additionalProperties:
                   type: string
     observability.delete_objects___404:
-      description: Not Found
+      description: The API could not find one or more observability objects to delete.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/observability._common___NotFoundResponse'
     observability.get_localstats___200:
-      description: Retrieves
+      description: The API successfully retrieved local statistics.
       content:
         text/plain:
           schema:
             type: string
     observability.get_object___200:
-      description: Successful response of retrieving specific Observability Object.
+      description: The API successfully retrieved the specified observability object.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/observability._common___ObservabilityObjectList'
     observability.get_object___404:
-      description: Not Found
+      description: The API could not find the specified observability object.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/observability._common___NotFoundResponse'
     observability.list_objects___200:
-      description: Successful response of retrieving all Observability Objects.
+      description: The API successfully retrieved all observability objects.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/observability._common___ObservabilityObjectList'
     observability.update_object___200:
-      description: Updated
+      description: The API successfully updated the observability object.
       content:
         application/json:
           schema:
@@ -32905,8 +32907,9 @@ components:
             properties:
               objectId:
                 type: string
+                description: The unique identifier of the updated observability object.
     observability.update_object___404:
-      description: Not Found
+      description: The API could not find the observability object to update.
       content:
         application/json:
           schema:
@@ -61445,21 +61448,26 @@ components:
         - url
     observability._common___ErrorResponse:
       type: object
+      description: The detailed error response.
       properties:
         root_cause:
           type: array
+          description: The list of root causes for the error.
           items:
             $ref: '#/components/schemas/observability._common___RootCause'
         type:
           type: string
+          description: The type of error.
         reason:
           type: string
+          description: The reason for the error.
       required:
         - reason
         - root_cause
         - type
     observability._common___NotFoundResponse:
       type: object
+      description: The error response when a resource is not found.
       properties:
         error:
           $ref: '#/components/schemas/observability._common___ErrorResponse'
@@ -61470,15 +61478,20 @@ components:
         - status
     observability._common___ObservabilityObject:
       type: object
+      description: The core observability object containing visualization and query data.
       properties:
         objectId:
           type: string
+          description: The unique identifier of the observability object.
         lastUpdatedTimeMs:
           type: integer
+          description: When the object was last updated in milliseconds.
         createdTimeMs:
           type: integer
+          description: When the object was created in milliseconds.
         tenant:
           type: string
+          description: The tenant associated with the observability object.
         operationalPanel:
           $ref: '#/components/schemas/observability._common___OperationalPanel'
         savedVisualization:
@@ -61489,15 +61502,20 @@ components:
         - objectId
     observability._common___ObservabilityObjectList:
       type: object
+      description: A list of observability objects with pagination details.
       properties:
         startIndex:
           type: integer
+          description: The starting index of the returned objects.
         totalHits:
           type: integer
+          description: The total number of matching objects.
         totalHitRelation:
           type: string
+          description: The relationship of total hits to the query.
         observabilityObjectList:
           type: array
+          description: The list of observability objects.
           items:
             $ref: '#/components/schemas/observability._common___ObservabilityObject'
       required:
@@ -61507,11 +61525,14 @@ components:
         - totalHits
     observability._common___OperationalPanel:
       type: object
+      description: The panel configuration for operational visualizations.
       properties:
         name:
           type: string
+          description: The name of the operational panel.
         visualizations:
           type: array
+          description: The list of visualizations in the panel.
           items:
             $ref: '#/components/schemas/observability._common___Visualization'
         timeRange:
@@ -61520,6 +61541,7 @@ components:
           $ref: '#/components/schemas/observability._common___QueryFilter'
         applicationId:
           type: string
+          description: The identifier of the associated application.
       required:
         - applicationId
         - name
@@ -61528,11 +61550,14 @@ components:
         - visualizations
     observability._common___QueryFilter:
       type: object
+      description: The filter configuration for queries.
       properties:
         query:
           type: string
+          description: The query string.
         language:
           type: string
+          description: The query language used.
       required:
         - language
         - query
@@ -61541,20 +61566,26 @@ components:
       properties:
         type:
           type: string
+          description: The type of the root cause.
         reason:
           type: string
+          description: The reason for the root cause.
       required:
         - reason
         - type
     observability._common___SavedQuery:
       type: object
+      description: The configuration for a saved query.
       properties:
         name:
           type: string
+          description: The name of the saved query.
         description:
           type: string
+          description: The description of the saved query.
         query:
           type: string
+          description: The query string.
         selected_date_range:
           $ref: '#/components/schemas/observability._common___SelectedDateRange'
         selected_timestamp:
@@ -61570,15 +61601,20 @@ components:
         - selected_timestamp
     observability._common___SavedVisualization:
       type: object
+      description: The configuration for a saved visualization.
       properties:
         name:
           type: string
+          description: The name of the saved visualization.
         description:
           type: string
+          description: The description of the saved visualization.
         query:
           type: string
+          description: The query associated with the visualization.
         type:
           type: string
+          description: The type of visualization.
         selected_date_range:
           $ref: '#/components/schemas/observability._common___SelectedDateRange'
         selected_timestamp:
@@ -61595,24 +61631,31 @@ components:
         - type
     observability._common___SelectedDateRange:
       type: object
+      description: The date range selection configuration.
       properties:
         start:
           type: string
+          description: The start date of the range.
         end:
           type: string
+          description: The end date of the range.
         text:
           type: string
+          description: The text representation of the date range.
       required:
         - end
         - start
         - text
     observability._common___SelectedFields:
       type: object
+      description: The field selection configuration.
       properties:
         text:
           type: string
+          description: The text representation of selected fields.
         tokens:
           type: array
+          description: The list of field tokens.
           items:
             $ref: '#/components/schemas/observability._common___Token'
       required:
@@ -61620,49 +61663,65 @@ components:
         - tokens
     observability._common___SelectedTimestamp:
       type: object
+      description: The timestamp field selection configuration.
       properties:
         name:
           type: string
+          description: The name of the selected timestamp field.
         type:
           type: string
+          description: The type of the timestamp field.
       required:
         - name
         - type
     observability._common___TimeRange:
       type: object
+      description: The time range configuration for queries and visualizations.
       properties:
         to:
           type: string
+          description: The end time of the range.
         from:
           type: string
+          description: The start time of the range.
       required:
         - from
         - to
     observability._common___Token:
       type: object
+      description: The configuration for a field token.
       properties:
         name:
           type: string
+          description: The name of the token.
         type:
           type: string
+          description: The type of the token.
       required:
         - name
         - type
     observability._common___Visualization:
       type: object
+      description: The configuration for a single visualization.
       properties:
         id:
           type: string
+          description: The unique identifier of the visualization.
         savedVisualizationId:
           type: string
+          description: The identifier of the saved visualization.
         x:
           type: integer
+          description: The x-coordinate position of the visualization.
         'y':
           type: integer
+          description: The y-coordinate position of the visualization.
         w:
           type: integer
+          description: The width of the visualization.
         h:
           type: integer
+          description: The height of the visualization.
       required:
         - h
         - id
