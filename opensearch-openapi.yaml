@@ -3721,7 +3721,7 @@ paths:
       operationId: flow_framework.create.0
       x-operation-group: flow_framework.create
       x-version-added: '2.12'
-      description: Create a workflow.
+      description: Creates a new workflow template.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
@@ -3800,7 +3800,7 @@ paths:
       operationId: flow_framework.get_steps.0
       x-operation-group: flow_framework.get_steps
       x-version-added: '2.12'
-      description: Get a list of workflow steps.
+      description: Retrieves available workflow steps.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow-steps/
       parameters:
@@ -3822,7 +3822,7 @@ paths:
       operationId: flow_framework.delete.0
       x-operation-group: flow_framework.delete
       x-version-added: '2.12'
-      description: Delete a workflow.
+      description: Deletes a workflow template.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/delete-workflow/
       parameters:
@@ -3846,7 +3846,7 @@ paths:
       x-version-added: '2.12'
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow/
-      description: Get a workflow.
+      description: Retrieves a workflow template.
       parameters:
         - $ref: '#/components/parameters/flow_framework.get___path.workflow_id'
         - $ref: '#/components/parameters/_global___query.pretty'
@@ -3863,7 +3863,7 @@ paths:
       operationId: flow_framework.update.0
       x-operation-group: flow_framework.update
       x-version-added: '2.12'
-      description: Update a workflow. You can only update a complete workflow if it has not yet been provisioned.
+      description: Updates a workflow template that has not been provisioned.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/create-workflow/
       parameters:
@@ -3893,7 +3893,7 @@ paths:
       operationId: flow_framework.deprovision.0
       x-operation-group: flow_framework.deprovision
       x-version-added: '2.12'
-      description: Deprovision workflow's resources when you no longer need it.
+      description: Deprovision workflow's resources when you no longer need them.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/deprovision-workflow/
       parameters:
@@ -3948,7 +3948,7 @@ paths:
       operationId: flow_framework.get_status.0
       x-operation-group: flow_framework.get_status
       x-version-added: '2.12'
-      description: Get the provisioning deployment status until it is complete.
+      description: Retrieves the current workflow provisioning status.
       externalDocs:
         url: https://opensearch.org/docs/latest/automating-configurations/api/get-workflow-status/
       parameters:
@@ -19910,7 +19910,7 @@ components:
       schema:
         $ref: '#/components/schemas/flow_framework.common___UpdateFields'
     flow_framework.create___query.use_case:
-      description: To use a workflow template, specify it in the `use_case` query parameter when creating a workflow.
+      description: Specifies the workflow template to use.
       in: query
       name: use_case
       schema:
@@ -19930,7 +19930,7 @@ components:
       in: query
       name: clear_status
       schema:
-        description: Delete the workflow state (without deprovisioning resources) after deleting the template. OpenSearch deletes the workflow state only if the provisioning status is not IN_PROGRESS. Default is false.
+        description: Whether to delete the workflow state without deprovisioning resources. OpenSearch deletes the workflow state only if the provisioning status is not `IN_PROGRESS`. .
         type: boolean
         default: false
     flow_framework.deprovision___path.workflow_id:
@@ -19951,7 +19951,7 @@ components:
       schema:
         $ref: '#/components/schemas/flow_framework.common___WorkflowID'
     flow_framework.get_status___query.all:
-      description: The all parameter specifies whether the response should return all fields.
+      description: Whether to return all fields in the response.
       in: query
       name: all
       schema:
@@ -19998,7 +19998,7 @@ components:
       schema:
         $ref: '#/components/schemas/flow_framework.common___UpdateFields'
     flow_framework.update___query.use_case:
-      description: To use a workflow template, specify it in the `use_case` query parameter when creating a workflow.
+      description: Specifies the workflow template to use.
       in: query
       name: use_case
       schema:
@@ -30921,7 +30921,7 @@ components:
             properties:
               workflow_id:
                 type: string
-                description: The ID of the workflow to be updated. Required for the PUT method.
+                description: The ID of the workflow.
             required:
               - workflow_id
       description: ''
@@ -30939,7 +30939,6 @@ components:
               - workflow_id
       description: ''
     flow_framework.create___400:
-      description: Bad Request - Multiple possible reasons
       content:
         application/json:
           schema:
@@ -30954,6 +30953,7 @@ components:
               - $ref: '#/components/schemas/flow_framework.errors___UnsupportedFieldUpdateError'
               - $ref: '#/components/schemas/flow_framework.errors___InvalidTemplateVersionError'
               - $ref: '#/components/schemas/flow_framework.errors___TemplateNameRequiredError'
+      description: ''
     flow_framework.create___403:
       content:
         application/json:
@@ -52578,11 +52578,11 @@ components:
         - index_uuid
         - node_ids
     flow_framework.common___All:
-      description: The all parameter specifies whether the response should return all fields.
+      description: Whether to return all fields in the response.
       type: boolean
       default: false
     flow_framework.common___AllowDelete:
-      description: Required when deleting resources involves a high potential for data loss.
+      description: Specifies whether to allow deletion of resources with potential data loss.
       type: string
     flow_framework.common___FlowFrameworkCreate:
       type: object
@@ -52595,7 +52595,7 @@ components:
           description: A description of the workflow.
         use_case:
           type: string
-          description: A use case, which can be used with the Search Workflow API to find related workflows.
+          description: A use case ID, which can be used with the Search Workflow API to find related workflows.
         version:
           $ref: '#/components/schemas/flow_framework.common___version'
         workflows:
@@ -52608,22 +52608,28 @@ components:
       properties:
         name:
           type: string
+          description: The name of the workflow.
         version:
           $ref: '#/components/schemas/flow_framework.common___version'
         description:
           type: string
+          description: The description of the workflow.
         use_case:
           type: string
+          description: A use case ID, which can be used with the Search Workflow API to find related workflows.
         workflows:
           type: object
         user:
           $ref: '#/components/schemas/flow_framework.common___user'
         created_time:
           type: integer
+          description: When the workflow was created.
         last_updated_time:
           type: integer
+          description: When the workflow was last updated.
         last_provisioned_time:
           type: number
+          description: When the workflow was last provisioned.
     flow_framework.common___FlowFrameworkUpdate:
       type: object
       properties:
@@ -52635,7 +52641,7 @@ components:
           description: A description of the workflow.
         use_case:
           type: string
-          description: A use case, which can be used with the Search Workflow API to find related workflows.
+          description: A use case ID, which can be used with the Search Workflow API to find related workflows.
         workflows:
           type: object
         version:
@@ -52681,38 +52687,48 @@ components:
         _source:
           $ref: '#/components/schemas/flow_framework.common___FlowFrameworkGetResponse'
     flow_framework.common___Provision:
-      description: Provision the workflow as part of the request.
+      description: Whether to provision the workflow as part of the request.
       type: boolean
       default: false
     flow_framework.common___Reprovision:
       type: boolean
       default: false
+      description: Whether to reprovision an existing workflow.
     flow_framework.common___ResourcesCreated:
       type: object
       properties:
         workflow_step_name:
           type: string
+          description: The name of the workflow step.
         workflow_step_id:
           type: string
+          description: The unique identifier for the workflow step.
         resource_type:
           type: string
+          description: The type of resource created.
         resource_id:
           type: string
+          description: The unique identifier for the created resource.
     flow_framework.common___SearchStateResponse:
       type: object
       properties:
         workflow_id:
           type: string
+          description: The ID of the workflow.
         provisioning_progress:
           type: string
+          description: The current progress status of the provisioning operation.
         state:
           type: string
+          description: The current state of the workflow.
         user:
           $ref: '#/components/schemas/flow_framework.common___user'
         provision_start_time:
           $ref: '#/components/schemas/_common___DateTime'
+          description: When the provisioning operation started.
         provision_end_time:
           $ref: '#/components/schemas/_common___DateTime'
+          description: When the provisioning operation completed.
         resources_created:
           $ref: '#/components/schemas/flow_framework.common___ResourcesCreated'
     flow_framework.common___SearchWorkflowRequest:
@@ -52720,6 +52736,7 @@ components:
       properties:
         query:
           $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
+          description: The query used to search for workflows.
     flow_framework.common___shards:
       type: object
       properties:
@@ -52745,8 +52762,9 @@ components:
             - type: 'null'
             - type: number
               format: float
-              description: The maximum score of the search hits.
+              description: The maximum score across all search hits.
         hits:
+          description: The list of search hits.
           type: array
           items:
             $ref: '#/components/schemas/flow_framework.common___StateItems'
@@ -52779,43 +52797,50 @@ components:
       properties:
         value:
           type: integer
-          description: Total number of matching documents.
+          description: The total number of matching documents.
         relation:
           type: string
           description: The relation of the total hits.
     flow_framework.common___UpdateFields:
-      description: Update only the fields included in the request body.
+      description: Whether to update only the fields included in the request body..
       type: boolean
       default: false
     flow_framework.common___UseCase:
       type: string
+      description: The workflow template to use.
     flow_framework.common___user:
       type: object
       properties:
         name:
           type: string
+          description: The name of the user.
         backend_roles:
           type: array
+          description: The list of backend roles assigned to the user.
           items:
             type: string
         roles:
           type: array
+          description: The list of roles assigned to the user.
           items:
             type: string
         custom_attribute_names:
+          description: The list of custom attributes associated with the user.
           type: array
           items:
             type: string
         user_requested_tenant:
+          description: The tenant requested by the user.
           type: string
           nullable: true
     flow_framework.common___UserProvidedSubstitutionExpressions:
       type: object
+      description: A map of user-provided substitution expressions and their values.
       additionalProperties:
         type: string
-        description: The value for the user-provided key. Keys represent substitution expressions.
+        description: The value for the user-provided substitution expression.
     flow_framework.common___Validation:
-      description: Validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
+      description: Specifies the validation type. Valid values are `all` (validate the template) and `none` (do not validate the template).
       type: string
       default: all
     flow_framework.common___version:
@@ -52832,21 +52857,22 @@ components:
           description: A list of minimum required OpenSearch versions.
     flow_framework.common___WorkflowID:
       type: string
+      description: The ID of the workflow.
     flow_framework.common___WorkflowIDResponse:
       type: object
       properties:
         workflow_id:
           type: string
-          description: The ID of the workflow
+          description: The ID of the workflow.
     flow_framework.common___WorkflowSearchResponse:
       type: object
       properties:
         took:
           type: integer
-          description: Time in milliseconds that the request took to complete.
+          description: The amount of time in milliseconds that the request took to complete.
         timed_out:
           type: boolean
-          description: Indicates if the request timed out.
+          description: Whether the request timed out.
         _shards:
           $ref: '#/components/schemas/flow_framework.common___shards'
         hits:
@@ -52856,10 +52882,10 @@ components:
       properties:
         took:
           type: integer
-          description: Time in milliseconds that the request took to complete.
+          description: The amount of time in milliseconds that the request took to complete.
         timed_out:
           type: boolean
-          description: Indicates if the request timed out.
+          description: Whether the request timed out.
         _shards:
           $ref: '#/components/schemas/flow_framework.common___shards'
         hits:
@@ -52869,14 +52895,14 @@ components:
       properties:
         workflow_id:
           type: string
-          description: The ID of the workflow
+          description: The ID of the workflow.
         error:
           type: string
-          description: Any error state associated with the workflow
+          description: The error message if the workflow failed.
           nullable: true
         state:
           type: string
-          description: The current state of the workflow
+          description: The current state of the workflow.
         resources_created:
           type: array
           items:
@@ -52887,14 +52913,14 @@ components:
       properties:
         workflow_id:
           type: string
-          description: The ID of the workflow
+          description: The ID of the workflow.
         error:
           type: string
-          description: Any error state associated with the workflow
+          description: The error message if the workflow failed.
           nullable: true
         state:
           type: string
-          description: The current state of the workflow
+          description: The current state of the workflow.
           enum:
             - COMPLETED
             - FAILED
@@ -52904,63 +52930,66 @@ components:
           type: array
           items:
             type: string
-          description: A list of resources created by the workflow
+          description: A list of resources created by the workflow.
         provisioning_progress:
           type: string
-          description: The progress of the provisioning process
+          description: The current progress of the provisioning process.
           nullable: true
         provision_start_time:
           type: string
           format: date-time
-          description: The start time of the provisioning process
+          description: When the provisioning process started.
         provision_end_time:
           type: string
           format: date-time
-          description: The end time of the provisioning process
+          description: When the provisioning process completed.
         user:
           $ref: '#/components/schemas/flow_framework.common___user'
         user_outputs:
           type: array
           items:
             type: string
-          description: Outputs generated by the user
+          description: The list of outputs generated by the user.
     flow_framework.common___WorkflowStep:
       type: object
+      description: A map of workflow steps and their configurations.
       properties:
         inputs:
           type: array
           items:
             type: string
-          description: The list of required inputs for the workflow step
+          description: The list of required inputs for the workflow step.
         outputs:
           type: array
           items:
             type: string
-          description: The list of outputs generated by the workflow step
+          description: The list of outputs generated by the workflow step.
         required_plugins:
           type: array
           items:
             type: string
-          description: The list of plugins required for the workflow step
+          description: The list of plugins required for the workflow step.
         timeout:
           $ref: '#/components/schemas/_common___Duration'
     flow_framework.common___WorkflowStepName:
       type: string
+      description: The name of the workflow step.
     flow_framework.common___WorkflowSteps:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/flow_framework.common___WorkflowStep'
     flow_framework.errors___BadRequestError:
       type: object
+      description: Indicates that the request contains invalid parameters or body.
       properties:
         error:
           type: string
-          description: Error message when the request body or parameters are invalid.
         status:
           type: integer
-          description: HTTP status code for the error.
+          description: The HTTP status code for the error.
     flow_framework.errors___ConflictError:
       type: object
+      description: Indicates that conflicting parameters were provided in the request.
       properties:
         error:
           type: string
@@ -52968,31 +52997,33 @@ components:
           type: integer
     flow_framework.errors___DeprovisioningError:
       type: object
+      description: Indicates that some resources could not be deprovisioned and names the resources.
       properties:
         error:
           type: string
-          description: Describes the deprovisioning error and identifies resources that were not deprovisioned
       required:
         - error
     flow_framework.errors___DeprovisioningForbiddenError:
       type: object
+      description: Describes the resources that require the `allow_delete` parameter for deprovisioning.
       properties:
         error:
           type: string
-          description: Describes the resources that require the `allow_delete` parameter for deprovisioning
       required:
         - error
     flow_framework.errors___DuplicateKeyError:
       type: object
+      description: Indicates that a duplicate key was found in the request.
       properties:
         error:
           type: string
           description: Error message when a duplicate key is found in the request.
         status:
           type: integer
-          description: HTTP status code for the error.
+          description: The HTTP status code for the error.
     flow_framework.errors___FlowFrameworkAPIDisabledError:
       type: object
+      description: Indicates that the Flow Framework API is disabled.
       properties:
         error:
           type: string
@@ -53000,6 +53031,7 @@ components:
           type: integer
     flow_framework.errors___InvalidParameterError:
       type: object
+      description: Indicates that invalid parameters were provided in the request.
       properties:
         error:
           type: string
@@ -53007,6 +53039,7 @@ components:
           type: integer
     flow_framework.errors___InvalidRequestBodyFieldError:
       type: object
+      description: Indicates that a field in the request body has an invalid type.
       properties:
         error:
           type: string
@@ -53016,12 +53049,13 @@ components:
           description: HTTP status code for the error.
     flow_framework.errors___InvalidTemplateVersionError:
       type: object
+      description: Indicates that the template version is invalid or missing.
       properties:
         error:
           type: string
-          description: Error message when the template version is invalid or missing.
     flow_framework.errors___MaxWorkflowsLimitError:
       type: object
+      description: Indicates that the maximum number of workflows has been reached.
       properties:
         error:
           type: string
@@ -53029,6 +53063,7 @@ components:
           type: integer
     flow_framework.errors___MissingParameterError:
       type: object
+      description: Indicates that required parameters are missing from the request.
       properties:
         error:
           type: string
@@ -53036,6 +53071,7 @@ components:
           type: integer
     flow_framework.errors___ParameterConflictError:
       type: object
+      description: Indicates that mutually exclusive parameters were provided in the request.
       properties:
         error:
           type: string
@@ -53043,6 +53079,7 @@ components:
           type: integer
     flow_framework.errors___RequestBodyParsingFailedError:
       type: object
+      description: Indicates that the request body could not be parsed.
       properties:
         error:
           type: string
@@ -53055,18 +53092,20 @@ components:
       properties:
         error:
           type: string
-          description: Error message when the request times out.
+          description: Indicates that the request exceeded the time limit.
         status:
           type: integer
           description: HTTP status code for the error.
     flow_framework.errors___TemplateNameRequiredError:
       type: object
+      description: Indicates that the template name is missing from the request.
       properties:
         error:
           type: string
           description: Error message when the template name is missing.
     flow_framework.errors___TemplateNotFoundError:
       type: object
+      description: Indicates that the requested template could not be found.
       properties:
         error:
           type: string
@@ -53074,12 +53113,13 @@ components:
           type: integer
     flow_framework.errors___UnsupportedFieldUpdateError:
       type: object
+      description: Indicates an attempt to update a field that cannot be modified independently.
       properties:
         error:
           type: string
-          description: Error message when trying to update an unsupported field in a template.
     flow_framework.errors___WorkFlowIdNullError:
       type: object
+      description: Indicates that the workflow ID is missing.
       properties:
         error:
           type: string
@@ -53087,12 +53127,13 @@ components:
           type: integer
     flow_framework.errors___WorkflowParsingError:
       type: object
+      description: Indicates that the workflow template could not be parsed.
       properties:
         error:
           type: string
-          description: Error message when workflow parsing fails.
     flow_framework.errors___WorkflowSaveError:
       type: object
+      description: Indicates that the workflow state could not be saved.
       properties:
         error:
           type: string
@@ -53100,6 +53141,7 @@ components:
           type: integer
     flow_framework.errors___WorkflowStepsRetrieveError:
       type: object
+      description: Indicates that the workflow steps could not be retrieved.
       properties:
         error:
           type: string
