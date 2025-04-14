@@ -9,7 +9,7 @@ paths:
       operationId: ppl.query.0
       x-operation-group: ppl.query
       x-version-added: '1.0'
-      description: Send a PPL query to the PPL plugin. 
+      description: Executes a PPL query against OpenSearch indices.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -25,7 +25,7 @@ paths:
       operationId: ppl.explain.0
       x-operation-group: ppl.explain
       x-version-added: '1.0'
-      description: Shows how a query is executed against OpenSearch.
+      description: Returns the execution plan for a PPL query.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -41,7 +41,7 @@ paths:
       operationId: ppl.get_stats.0
       x-operation-group: ppl.get_stats
       x-version-added: '1.0'
-      description: Collect metrics for the plugin within the interval.
+      description: Retrieves performance metrics for the PPL plugin.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
       parameters:
@@ -54,7 +54,7 @@ paths:
       operationId: ppl.post_stats.1
       x-operation-group: ppl.post_stats
       x-version-added: '1.0'
-      description: By a stats endpoint, you are able to collect metrics for the plugin within the interval.
+      description: Retrieves filtered performance metrics for the PPL plugin.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
       parameters:
@@ -70,69 +70,72 @@ components:
     ppl.query::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON, YAML).
       schema:
         type: string
     ppl.query::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results.
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     ppl.explain::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON, YAML).
       schema:
         type: string
     ppl.explain::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results.
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     ppl.get_stats::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON, YAML).
       schema:
         type: string
     ppl.get_stats::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results.
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     ppl.post_stats::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON, YAML).
       schema:
         type: string
     ppl.post_stats::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results.
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
   requestBodies:
     ppl.query:
+      description: Contains the PPL query to execute.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/Query'
       required: true
     ppl.explain:
+      description: Contains the PPL query to explain.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/Explain'
       required: true
     ppl.post_stats:
+      description: Defines the statistics collection parameters.
       content:
         application/json:
           schema:
@@ -140,22 +143,25 @@ components:
       required: true
   responses:
     ppl.query@200:
-      description: ''
+      description: Returns query results and metadata.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/QueryResponse'
     ppl.explain@200:
+      description: Returns the query execution plan.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/ExplainResponse'
     ppl.get_stats@200:
+      description: Returns plugin performance metrics.
       content:
         text/plain:
           schema:
             type: string
     ppl.post_stats@200:
+      description: Returns filtered plugin performance metrics.
       content:
         text/plain:
           schema:
