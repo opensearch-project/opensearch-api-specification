@@ -186,10 +186,7 @@ export interface Retry {
  * via the `definition` "ExpectedResponse".
  */
 export interface ExpectedResponse {
-  /**
-   * The expected HTTP status code. Default to 200.
-   */
-  status: number;
+  status: number | number[];
   content_type?: string;
   payload?: Payload;
 }

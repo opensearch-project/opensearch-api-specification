@@ -11,10 +11,14 @@ components:
       properties:
         query:
           type: string
+          description: The SQL query string to execute.
         filter:
           type: object
+          description: The filter to apply to query results.
         fetch_size:
           type: integer
+          description: The number of results to return in each response.
+
     QueryResponse:
       type: object
       properties:
@@ -22,94 +26,128 @@ components:
           type: array
           items:
             type: object
+          description: The schema of the query result.
         datarows:
           type: array
           items:
             type: array
+          description: The rows of data returned by the query.
         cursor:
           type: string
+          description: The cursor identifier for pagination.
         total:
           type: integer
+          description: The total number of hits.
         size:
           type: integer
+          description: The number of rows in the current response.
         status:
           type: integer
+          description: The status code of the response.
+
     Explain:
       type: object
       properties:
         query:
           type: string
+          description: The SQL query to explain.
         filter:
           type: object
+          description: The filter to apply when explaining the query.
         fetch_size:
           type: integer
+          description: The number of results to analyze.
+
     ExplainResponse:
       type: object
       properties:
         root:
           $ref: '#/components/schemas/ExplainBody'
+
     ExplainBody:
       type: object
       properties:
         name:
           type: string
+          description: The name of the execution step.
         description:
           type: object
+          description: The details about the execution step.
         children:
           type: array
           items: 
             $ref: '#/components/schemas/ExplainBody'
+          description: The child steps in the execution plan.
+
     Stats:
       type: object
       properties:
         start_time:
           type: string
+          description: When the query execution started.
         end_time:
           type: object
+          description: When the query execution ended.
         cluster_name:
           type: object
+          description: The name of the cluster executing the query.
         index:
           type: object
+          description: The index information for the query.
         query:
           type: object
+          description: The query information.
         user:
           type: object
+          description: The user information.
         execution_time:
           type: object
+          description: The time taken to execute the query.
+
     SqlClose:
       type: object
       properties:
         cursor:
           type: string
+          description: The cursor identifier to close.
+
     SqlCloseResponse:
       type: object
       properties:
         succeeded:
           type: boolean
+          description: Whether the cursor was closed successfully.
+
     SqlSettings:
       type: object
       properties:
         transient:
           $ref: '#/components/schemas/Transient'
+
     SqlSettingsPlain:
       type: object
       properties:
         transient:
           $ref: '#/components/schemas/TransientPlain'
+
     SqlSettingsResponse:
       type: object
       properties:
         acknowledged:
           type: boolean
+          description: Whether the settings were acknowledged.
         persistent:
           type: object
+          description: The permanent settings that persist through restarts.
         transient:
           $ref: '#/components/schemas/Transient'
+
     Transient:
       type: object
       properties:
         plugins:
           $ref: '#/components/schemas/Plugins'
+
     Plugins:
       type: object
       properties:
@@ -119,6 +157,7 @@ components:
           $ref: '#/components/schemas/PluginsQuery'
         sql:
           $ref: '#/components/schemas/Sql'
+
     Ppl:
       type: object
       properties:
@@ -126,15 +165,20 @@ components:
           anyOf:
             - type: boolean
             - type: string
+          description: Whether the PPL plugin is enabled.
+
     PluginsQuery:
       type: object
       properties:
         memory_limit:
           type: string
+          description: The maximum memory allowed for queries.
         size_limit:
           anyOf:
             - type: string
             - type: integer
+          description: The maximum result set size.
+
     Sql:
       type: object
       properties:
@@ -142,29 +186,40 @@ components:
           anyOf:
             - type: boolean
             - type: string
+          description: Whether the SQL plugin is enabled.
         slowlog:
           anyOf:
             - type: integer
             - type: string
+          description: The threshold in milliseconds for logging slow queries.
         cursor:
           $ref: '#/components/schemas/Cursor'
+
     Cursor:
       type: object
       properties:
         keep_alive:
           type: string
+          description: The time to keep cursors alive.
+
     TransientPlain:
       type: object
       properties:
         plugins.sql.enabled:
           type: boolean
+          description: Whether the SQL plugin is enabled.
         plugins.ppl.enabled:
           type: boolean
+          description: Whether the PPL plugin is enabled.
         plugins.sql.slowlog:
           type: integer
+          description: The threshold in milliseconds for logging slow queries.
         plugins.sql.cursor.keep_alive:
           type: string
+          description: The time to keep cursors alive.
         plugins.query.memory_limit:
           type: string
+          description: The maximum memory allowed for queries.
         plugins.query.size_limit:
           type: integer
+          description: The maximum result set size.

@@ -9,7 +9,7 @@ paths:
       operationId: sql.settings.0
       x-operation-group: sql.settings
       x-version-added: '1.0'
-      description: Adds SQL settings to the standard OpenSearch cluster settings.
+      description: Updates SQL plugin settings in the OpenSearch cluster configuration.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/settings/
       parameters:
@@ -24,7 +24,7 @@ paths:
       operationId: sql.query.0
       x-operation-group: sql.query
       x-version-added: '1.0'
-      description: Send a SQL/PPL query to the SQL plugin. 
+      description: Executes SQL or PPL queries against OpenSearch indices.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -40,7 +40,7 @@ paths:
       operationId: sql.explain.0
       x-operation-group: sql.explain
       x-version-added: '1.0'
-      description: Shows how a query is executed against OpenSearch.
+      description: Returns the execution plan for a SQL or PPL query.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -56,7 +56,7 @@ paths:
       operationId: sql.close.0
       x-operation-group: sql.close
       x-version-added: '1.0'
-      description: Clear the cursor context.
+      description: Closes an open cursor to free server-side resources.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -72,7 +72,7 @@ paths:
       operationId: sql.get_stats.0
       x-operation-group: sql.get_stats
       x-version-added: '1.0'
-      description: Collect metrics for the plugin within the interval.
+      description: Retrieves performance metrics for the SQL plugin.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
       parameters:
@@ -85,7 +85,7 @@ paths:
       operationId: sql.post_stats.1
       x-operation-group: sql.post_stats
       x-version-added: '1.0'
-      description: By a stats endpoint, you are able to collect metrics for the plugin within the interval.
+      description: Retrieves filtered performance metrics for the SQL plugin.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/monitoring/
       parameters:
@@ -101,76 +101,77 @@ components:
     sql.settings::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON or YAML).
       schema:
         type: string
     sql.query::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON or YAML).
       schema:
         type: string
     sql.query::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     sql.explain::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON or YAML).
       schema:
         type: string
     sql.explain::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     sql.close::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON or YAML).
       schema:
         type: string
     sql.close::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     sql.get_stats::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON or YAML).
       schema:
         type: string
     sql.get_stats::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
     sql.post_stats::query.format:
       name: format
       in: query
-      description: A short version of the Accept header (for example, `json`, `yaml`).
+      description: Specifies the response format (JSON or YAML).
       schema:
         type: string
     sql.post_stats::query.sanitize:
       name: sanitize
       in: query
-      description: Specifies whether to escape special characters in the results
+      description: Whether to escape special characters in the results.
       schema:
         type: boolean
         default: true
   requestBodies:
     sql.settings:
+      description: Contains SQL plugin configuration settings.
       content:
         application/json:
           schema:
@@ -178,52 +179,62 @@ components:
               - $ref: '../schemas/sql._common.yaml#/components/schemas/SqlSettingsPlain'
               - $ref: '../schemas/sql._common.yaml#/components/schemas/SqlSettings'
     sql.query:
+      description: Contains the SQL or PPL query to execute.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/Query'
     sql.explain:
+      description: Contains the SQL or PPL query to explain.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/Explain'
     sql.close:
+      description: Contains the cursor identifier to close.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/SqlClose'
     sql.post_stats:
+      description: Defines the statistics collection parameters.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/Stats'
   responses:
     sql.settings@200:
+      description: Returns the updated SQL settings.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/SqlSettingsResponse'
     sql.query@200:
+      description: Returns query results and metadata.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/QueryResponse'
     sql.explain@200:
+      description: Returns the query execution plan.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/ExplainResponse'
     sql.close@200:
+      description: Returns cursor closing status.
       content:
         application/json:
           schema:
             $ref: '../schemas/sql._common.yaml#/components/schemas/SqlCloseResponse'
     sql.get_stats@200:
+      description: Returns plugin performance metrics.
       content:
         text/plain:
           schema:
             type: string
     sql.post_stats@200:
+      description: Returns filtered plugin performance metrics.
       content:
         text/plain:
           schema:

@@ -69,6 +69,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `optional_extended_plugins` field to `PluginStats` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 - Added `id` & `group_by` fields to `TopQuery` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 - Added `normalizer` to `WildcardProperty` ([#847](https://github.com/opensearch-project/opensearch-api-specification/pull/847))
+- Added `pagination_depth` to `HybridQuery` ([#848](https://github.com/opensearch-project/opensearch-api-specification/pull/848))
+- Added `warm` to `ClusterNodeCount` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
+- Added `total_primary_shards_per_node` to `IndexRoutingAllocation` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -81,6 +84,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `mappings` from `required` in `indices.simulate_template#Template` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Removed `id` from `required` in `indices.termvectors@200` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
+- Removed duplicate `string` from `MultiTermQueryRewrite` ([#862](https://github.com/opensearch-project/opensearch-api-specification/pull/862/))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -122,6 +126,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed Aggregation schemas ([#801](https://github.com/opensearch-project/opensearch-api-specification/pull/801))
 - Fixed FilterQueryRequestProcessor to use correct query type ([#821](https://github.com/opensearch-project/opensearch-api-specification/pull/821))
 - Fixed `knn.train_model`'s request body `method` field to accept an object rather than a string ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
+- Fixed REST status codes for RBAC and provisioning for Flow Framework plugin ([#842](https://github.com/opensearch-project/opensearch-api-specification/pull/842), [#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
+- Fixed swapped schema references in nodes info API buffer fields ([#808](https://github.com/opensearch-project/opensearch-api-specification/pull/808))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
@@ -131,6 +137,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `ml.get_memory` and `ml.get_message` to split out `get_all` variants ([#796](https://github.com/opensearch-project/opensearch-api-specification/pull/796))
 - Changed `ml.get_tools` to have two different operation groups `ml.get_all_tools` and `ml.get_tool` ([#799](https://github.com/opensearch-project/opensearch-api-specification/pull/799))
 - Changed `FlowFrameworkDeleteResponse` to utilize `WriteResponseBase` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
+- Changed `DistanceFeatureQuery` and `RangeQuery` from (allOf + oneOf) to (oneOf + allOf) ([#865](https://github.com/opensearch-project/opensearch-api-specification/pull/865))
+- Changed `ClusterJvm.versions`, `ClusterOperatingSystemName.name` and `ClusterOperatingSystemPrettyName.pretty_name` to not be required as AOS does not return them ([#866](https://github.com/opensearch-project/opensearch-api-specification/pull/866))
 
 ## [0.1.0] - 2024-10-25
 
