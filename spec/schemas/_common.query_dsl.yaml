@@ -316,6 +316,16 @@ components:
           format: float
         _name:
           type: string
+    ValueType:
+      type: object
+      properties:
+        value_type:
+          description: |-
+            Specifies the types of values used for filtering. Valid values are default and bitmap. If omitted, the value defaults to default.
+          type: string
+          enum:
+            - bitmap
+            - default
     BoostingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -2114,6 +2124,7 @@ components:
     TermsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
+        - $ref: '#/components/schemas/ValueType'
         - type: object
           properties:
             _name: {}
@@ -2144,6 +2155,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
+        store:
+          type: boolean
+      required:
+        - id
+        - index
+        - path
     TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
