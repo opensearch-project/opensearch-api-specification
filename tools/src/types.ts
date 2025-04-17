@@ -7,9 +7,9 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 
-export interface OperationSpec extends OpenAPIV3.OperationObject {
+export interface OperationSpec extends OpenAPIV3_1.OperationObject {
   'x-operation-group': string
   'x-version-added': string
   'x-version-removed'?: string
@@ -19,13 +19,13 @@ export interface OperationSpec extends OpenAPIV3.OperationObject {
   'x-distributions-included'?: string[]
   'x-distributions-excluded'?: string[]
 
-  parameters?: OpenAPIV3.ReferenceObject[]
-  requestBody?: OpenAPIV3.ReferenceObject
-  responses: Record<string, OpenAPIV3.ReferenceObject>
+  parameters?: OpenAPIV3_1.ReferenceObject[]
+  requestBody?: OpenAPIV3_1.ReferenceObject
+  responses: Record<string, OpenAPIV3_1.ReferenceObject>
 }
 
-export interface ParameterSpec extends OpenAPIV3.ParameterObject {
-  schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject
+export interface ParameterSpec extends Omit<OpenAPIV3_1.ParameterObject, 'schema'> {
+  schema?: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject
   'x-data-type'?: string
   'x-version-deprecated'?: string
   'x-deprecation-message'?: string
@@ -37,7 +37,3 @@ export interface ValidationError {
   location?: string
   message: string
 }
-
-export type HttpVerb = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS' | 'TRACE'
-export type OperationPath = string
-export type SupersededOperationMap = Record<OperationPath, { superseded_by: OperationPath, operations: HttpVerb[] }>

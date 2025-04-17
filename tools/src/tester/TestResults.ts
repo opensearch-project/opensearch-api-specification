@@ -40,7 +40,7 @@ export default class TestResults {
 
     // Filter operations to exclude paths or methods not in the spec or marked as 'x-ignorable'.
     this._evaluated_operations = all_operations.filter((operation) => {
-      const spec_path = this._spec.spec().paths[operation.path];
+      const spec_path = this._spec.spec().paths?.[operation.path];
       if (!spec_path) return true;
 
       const method_spec = (spec_path as Record<string, any>)[operation.method.toLowerCase()];
@@ -68,7 +68,7 @@ export default class TestResults {
   operations(): Operation[] {
     if (this._operations !== undefined) return this._operations
 
-    this._operations = _.uniqWith(_.compact(Object.entries(this._spec.spec().paths).flatMap(([path, ops]) => {
+    this._operations = _.uniqWith(_.compact(Object.entries(this._spec.spec().paths ?? {}).flatMap(([path, ops]) => {
       return Object.entries(ops as Record<string, any>).map(([method, spec]) => {
         if (spec['x-ignorable'] !== true) {
           return { method: method.toUpperCase(), path }
