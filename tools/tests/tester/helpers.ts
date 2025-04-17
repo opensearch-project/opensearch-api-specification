@@ -16,7 +16,7 @@ import ChapterReader from 'tester/ChapterReader'
 import SchemaValidator from 'tester/SchemaValidator'
 import ChapterEvaluator from 'tester/ChapterEvaluator'
 import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import TestRunner from 'tester/TestRunner'
 import { NoOpResultLogger, type ResultLogger } from 'tester/ResultLogger'
 import * as process from 'node:process'
@@ -25,7 +25,7 @@ import { Logger } from 'Logger'
 import StoryValidator from "../../src/tester/StoryValidator";
 
 export function construct_tester_components (spec_path: string): {
-  specification: OpenAPIV3.Document
+  specification: OpenAPIV3_1.Document
   operation_locator: OperationLocator
   opensearch_http_client: OpenSearchHttpClient
   chapter_reader: ChapterReader
@@ -38,7 +38,7 @@ export function construct_tester_components (spec_path: string): {
   test_runner: TestRunner
 } {
   const logger = new Logger()
-  const specification: OpenAPIV3.Document = read_yaml(spec_path)
+  const specification: OpenAPIV3_1.Document = read_yaml(spec_path)
   const operation_locator = new OperationLocator(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
     insecure: true,

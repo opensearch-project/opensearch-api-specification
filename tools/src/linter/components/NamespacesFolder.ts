@@ -24,8 +24,9 @@ export default class NamespacesFolder extends FolderValidator<NamespaceFile> {
   validate_duplicate_paths (): ValidationError[] {
     const paths: Record<string, [{ path: string, namespace: string }]> = {}
     for (const file of this.files) {
-      if (file.spec().paths == null) continue
-      Object.keys(file.spec().paths).sort().forEach((path) => {
+      const file_paths = file.spec().paths
+      if (file_paths == null) continue
+      Object.keys(file_paths).sort().forEach((path) => {
         const normalized_path = path.replaceAll(/\{[^}]+}/g, '{}')
         const path_entry = {
           path,

@@ -10,18 +10,18 @@
 import _, { extend, isEmpty } from 'lodash'
 import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import * as semver from '../_utils/semver'
 
 // Extract a versioned API
 export default class OpenApiVersionExtractor {
   private _spec?: Record<string, any>
-  private _source_spec: OpenAPIV3.Document
+  private _source_spec: OpenAPIV3_1.Document
   private _target_version?: string
   private _target_distribution?: string
   private _logger: Logger
 
-  constructor(source_spec: OpenAPIV3.Document, target_version?: string, target_distribution?: string, logger: Logger = new Logger()) {
+  constructor(source_spec: OpenAPIV3_1.Document, target_version?: string, target_distribution?: string, logger: Logger = new Logger()) {
     this._source_spec = source_spec
     this._target_version = semver.coerce(target_version)
     this._target_distribution = target_distribution
@@ -29,11 +29,11 @@ export default class OpenApiVersionExtractor {
     this._spec = undefined
   }
 
-  extract(): OpenAPIV3.Document {
-    if (this._spec) return this._spec as OpenAPIV3.Document
+  extract(): OpenAPIV3_1.Document {
+    if (this._spec) return this._spec as OpenAPIV3_1.Document
     this._spec = _.cloneDeep(this._source_spec)
     this.#extract()
-    return this._spec as OpenAPIV3.Document
+    return this._spec as OpenAPIV3_1.Document
   }
 
   write_to(output_path: string): OpenApiVersionExtractor {
