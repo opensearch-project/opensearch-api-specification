@@ -13,5 +13,6 @@ import { Chapter, ChapterRequest, Story } from "./story.types"
 export type ParsedChapter = ChapterRequest & Chapter
 
 export interface ParsedStory extends Story {
+  $schema: string
   chapters: ParsedChapter[]
 }

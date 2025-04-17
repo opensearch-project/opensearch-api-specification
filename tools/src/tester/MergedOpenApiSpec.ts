@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { OpenAPIV3 } from 'openapi-types'
+import { OpenAPIV3_1 } from 'openapi-types'
 import { Logger } from '../Logger'
 import { determine_possible_schema_types, HTTP_METHODS, SpecificationContext } from '../_utils';
 import { SchemaVisitor } from '../_utils/SpecificationVisitor';
@@ -22,7 +22,7 @@ export default class MergedOpenApiSpec {
   target_version?: string
   target_distribution?: string
 
-  protected _spec: OpenAPIV3.Document | undefined
+  protected _spec: OpenAPIV3_1.Document | undefined
 
   constructor (spec_path: string, target_version?: string, target_distribution?: string, logger: Logger = new Logger()) {
     this.logger = logger
@@ -31,7 +31,7 @@ export default class MergedOpenApiSpec {
     this.target_distribution = target_distribution
   }
 
-  spec (): OpenAPIV3.Document {
+  spec (): OpenAPIV3_1.Document {
     if (this._spec) return this._spec
     const merger = new OpenApiMerger(this.file_path, this.logger)
     var spec = merger.spec()
@@ -59,7 +59,7 @@ export default class MergedOpenApiSpec {
     return obj
   }
 
-  private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3.Document): void {
+  private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3_1.Document): void {
     const visitor = new SchemaVisitor((ctx, schema) => {
       // If already has unevaluatedProperties then don't set
       if ((schema as any).unevaluatedProperties !== undefined) return;
@@ -71,7 +71,7 @@ export default class MergedOpenApiSpec {
       const types = determine_possible_schema_types(spec, schema)
 
       // Don't apply to multi-type or non-object schemas
-      if (types.length > 1 || types[0] !== 'object') return;
+      if (types.size > 1 || !types.has('object')) return;
 
       // Don't apply to basic { type: object } schemas
       if (Object.keys(schema).filter(k => k !== 'type' && k !== 'description').length === 0) return;

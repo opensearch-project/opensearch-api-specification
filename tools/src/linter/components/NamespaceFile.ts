@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { type OperationSpec, type ValidationError } from 'types'
 import OperationGroup from './OperationGroup'
 import _ from 'lodash'
@@ -106,7 +106,7 @@ export default class NamespaceFile extends FileValidator {
   }
 
   validate_parameter_refs (): ValidationError[] {
-    const parameters = this.spec().components?.parameters as Record<string, OpenAPIV3.ParameterObject> | undefined
+    const parameters = this.spec().components?.parameters as Record<string, OpenAPIV3_1.ParameterObject> | undefined
     if (!parameters) return []
     return _.entries(parameters).map(([name, p]) => {
       const group = name.split('::')[0]

@@ -9,23 +9,23 @@
 
 import ValidatorBase from './ValidatorBase'
 import { type ValidationError } from 'types'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { read_yaml } from '../../../helpers'
 import JsonSchemaValidator from "../../../_utils/JsonSchemaValidator";
 
-export default class FileValidator extends ValidatorBase {
+export default class FileValidator<Spec = OpenAPIV3_1.Document> extends ValidatorBase {
   file_path: string
   has_json_schema: boolean = false
-  protected _spec: OpenAPIV3.Document | undefined
+  protected _spec: Spec | undefined
 
   constructor (file_path: string) {
     super(file_path.split('/').slice(-2).join('/'))
     this.file_path = file_path
   }
 
-  spec (): OpenAPIV3.Document {
-    if (this._spec) return this._spec
-    this._spec = read_yaml<OpenAPIV3.Document>(this.file_path)
+  spec (): Spec {
+    if (this._spec !== undefined) return this._spec
+    this._spec = read_yaml<Spec>(this.file_path)
     return this._spec
   }
 

@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import fs from 'fs'
 import _ from 'lodash'
 import { read_yaml, write_yaml } from '../helpers'
@@ -23,8 +23,8 @@ export default class OpenApiMerger {
   protected _spec: Record<string, any>
   protected _merged: boolean = false
 
-  paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
-  schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
+  paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
+  schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
     this.logger = logger
@@ -48,7 +48,7 @@ export default class OpenApiMerger {
     return this
   }
 
-  spec(): OpenAPIV3.Document {
+  spec(): OpenAPIV3_1.Document {
     if (!this._merged) {
       this.#merge_schemas()
       this.#merge_namespaces()
@@ -60,7 +60,7 @@ export default class OpenApiMerger {
       this._merged = true
     }
 
-    return this._spec as OpenAPIV3.Document
+    return this._spec as OpenAPIV3_1.Document
   }
 
   // Merge files from <spec_root>/namespaces folder.
