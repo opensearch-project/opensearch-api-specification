@@ -7,19 +7,27 @@ paths: {}
 components:
   schemas:
     IndicesBlockOptions:
+      description: The type of block to add to an index.
       type: string
-      enum:
-        - metadata
-        - read
-        - read_only
-        - write
+      oneOf:
+        - description: Blocks metadata changes to the index.
+          const: metadata
+        - description: Blocks read operations on the index.
+          const: read
+        - description: Makes the index read-only.
+          const: read_only
+        - description: Blocks write operations on the index.
+          const: write
+
     IndicesBlockStatus:
+      description: The status of a block operation on an index.
       type: object
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/IndexName'
         blocked:
           type: boolean
+          description: Whether the block operation was successful.
       required:
         - blocked
         - name
