@@ -8,9 +8,11 @@ components:
   schemas:
     ShardFileSizeInfo:
       type: object
+      description: The size information for shard files.
       properties:
         description:
           type: string
+          description: The description of the file type.
         size:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         size_in_bytes:
@@ -24,11 +26,13 @@ components:
         count:
           type: integer
           format: int64
+          description: The number of files.
       required:
         - description
         - size_in_bytes
     AllIndicesStats:
       type: object
+      description: The statistics for all indexes.
       properties:
         primaries:
           $ref: '#/components/schemas/IndexStats'
@@ -39,6 +43,7 @@ components:
         - total
     IndicesStats:
       type: object
+      description: The statistics for specific indexes.
       properties:
         uuid:
           $ref: '_common.yaml#/components/schemas/Uuid'
@@ -48,6 +53,7 @@ components:
           $ref: '#/components/schemas/IndexStats'
         shards:
           type: object
+          description: The statistics for individual shards.
           additionalProperties:
             type: array
             items:
@@ -58,6 +64,7 @@ components:
         - uuid
     IndexStatsBase:
       type: object
+      description: The base statistics for an index.
       properties:
         docs:
           $ref: '_common.yaml#/components/schemas/DocStats'
@@ -117,6 +124,7 @@ components:
           properties: {}
     Metric:
       type: string
+      description: The type of statistics to retrieve.
       enum:
         - _all
         - completion
@@ -138,17 +146,21 @@ components:
         - warmer
     ShardCommit:
       type: object
+      description: The commit information for a shard.
       properties:
         generation:
           type: integer
           format: int32
+          description: The generation number of the commit.
         id:
           $ref: '_common.yaml#/components/schemas/Id'
         num_docs:
           type: integer
           format: int64
+          description: The number of documents in the commit.
         user_data:
           type: object
+          description: The user-defined data associated with the commit.
           additionalProperties:
             type: string
       required:
@@ -158,27 +170,34 @@ components:
         - user_data
     ShardPath:
       type: object
+      description: The path information for a shard.
       properties:
         data_path:
           type: string
+          description: The path to the shard's data.
         is_custom_data_path:
           type: boolean
+          description: Whether the shard uses a custom data path.
         state_path:
           type: string
+          description: The path to the shard's state.
       required:
         - data_path
         - is_custom_data_path
         - state_path
     ShardRetentionLeases:
       type: object
+      description: The retention lease information for a shard.
       properties:
         primary_term:
           type: integer
           format: int64
+          description: The primary term of the retention leases.
         version:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         leases:
           type: array
+          description: The list of retention leases.
           items:
             $ref: '#/components/schemas/ShardLease'
       required:
@@ -187,6 +206,7 @@ components:
         - version
     ShardLease:
       type: object
+      description: The retention lease details.
       properties:
         id:
           $ref: '_common.yaml#/components/schemas/Id'
@@ -204,13 +224,17 @@ components:
         - timestamp
     ShardRouting:
       type: object
+      description: The routing information for a shard.
       properties:
         node:
           type: string
+          description: The node containing the shard.
         primary:
           type: boolean
+          description: Whether this is a primary shard.
         relocating_node:
           type: ['null', string]
+          description: The node where the shard is relocating to.
         state:
           $ref: '#/components/schemas/ShardRoutingState'
       required:
@@ -219,6 +243,7 @@ components:
         - state
     ShardRoutingState:
       type: string
+      description: The state of shard routing.
       enum:
         - INITIALIZING
         - RELOCATING
@@ -226,13 +251,16 @@ components:
         - UNASSIGNED
     ShardSequenceNumber:
       type: object
+      description: The sequence number information for a shard.
       properties:
         global_checkpoint:
           type: integer
           format: int64
+          description: The global checkpoint for the shard.
         local_checkpoint:
           type: integer
           format: int64
+          description: The local checkpoint for the shard.
         max_seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
       required:
