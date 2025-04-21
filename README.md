@@ -1,4 +1,4 @@
-<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px" alt="OpenSearch logo">
+<img src="https://opensearch.org/wp-content/uploads/2025/01/opensearch_logo_default.svg" height="64px" alt="OpenSearch logo">
 
 ## OpenSearch API Specification
 
