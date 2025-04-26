@@ -53,7 +53,7 @@ Set up an OpenSearch cluster with Docker:
 ```bash
 export OPENSEARCH_PASSWORD=<<your_password>>
 cd tests/default
-docker-compose up -d
+docker compose up -d
 ```
 #### Run Tests
 
