@@ -1,0 +1,98 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the verbose_pipeline parameter with search pipelines.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.16'
+prologues:
+  # Create test data
+  - path: /test_index/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        field1: test value
+        field2: 123
+        
+epilogues:
+  # Clean up
+  - path: /_search/pipeline/test_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /test_index
+    method: DELETE
+    status: [200, 404]
+    
+chapters:
+  # Create a pipeline with multiple processors
+  - synopsis: Create search pipeline with multiple processors.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: test_pipeline
+    request:
+      payload:
+        request_processors:
+          - filter_query:
+              tag: filter_processor
+              description: Filter processor for testing
+              query:
+                match_all: {}
+        response_processors:
+          - sort:
+              field: field2
+              order: asc
+              target_field: sorted_field
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+      
+  # Test with verbose_pipeline: false (default)
+  - synopsis: Search with default verbose_pipeline (false) should not return processor_results.
+    path: /{index}/_search
+    method: GET
+    parameters:
+      index: test_index
+      search_pipeline: test_pipeline
+      verbose_pipeline: false
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+          hits:
+            - _index: test_index
+              _source:
+                field1: test value
+                field2: 123
+        
+  # Test with verbose_pipeline: true
+  - synopsis: Search with verbose_pipeline enabled should return processor_results.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}/_search
+    method: GET
+    parameters:
+      index: test_index
+      search_pipeline: test_pipeline
+      verbose_pipeline: true
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+          hits:
+            - _index: test_index
+              _source:
+                field1: test value
+                field2: 123
+        processor_results:
+          - processor_name: filter_query
+          # duration_millis: 0
+          - processor_name: sort
+            input_data: []
+            output_data: []
