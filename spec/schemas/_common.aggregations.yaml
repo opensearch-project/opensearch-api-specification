@@ -518,10 +518,6 @@ components:
           format: int64
       required:
         - doc_count
-      additionalProperties:
-        description: Nested aggregations.
-        title: aggregations
-        $ref: '#/components/schemas/Aggregate'
     DateHistogramAggregate:
       allOf:
         - $ref: '#/components/schemas/MultiBucketAggregateBaseDateHistogramBucket'
@@ -584,7 +580,7 @@ components:
                         $ref: '#/components/schemas/VariableWidthHistogramBucket'
           required:
             - buckets
-    MultiBucketAggregateBase.TBucket:
+    TBucket:
       x-is-generic-type-parameter: true
     MultiBucketAggregateBase:
       allOf:
@@ -597,10 +593,10 @@ components:
                 - oneOf:
                     - type: object
                       additionalProperties:
-                        $ref: '#/components/schemas/MultiBucketAggregateBase.TBucket'
+                        $ref: '#/components/schemas/TBucket'
                     - type: array
                       items:
-                        $ref: '#/components/schemas/MultiBucketAggregateBase.TBucket'
+                        $ref: '#/components/schemas/TBucket'
           required:
             - buckets
     VariableWidthHistogramBucket:
@@ -2176,15 +2172,15 @@ components:
             - year
             - 1Y
       # eslint-enable yml/sort-sequence-values
-    ExtendedBounds.T:
+    T:
       x-is-generic-type-parameter: true
     ExtendedBounds:
       type: object
       properties:
         max:
-          $ref: '#/components/schemas/ExtendedBounds.T'
+          $ref: '#/components/schemas/T'
         min:
-          $ref: '#/components/schemas/ExtendedBounds.T'
+          $ref: '#/components/schemas/T'
       required:
         - max
         - min
@@ -2350,8 +2346,6 @@ components:
                 By default, the named filters aggregation returns the buckets as an object.
                 Set to `false` to return the buckets as an array of objects.
               type: boolean
-    Buckets.TBucket:
-      x-is-generic-type-parameter: true
     Buckets:
       description: |-
         Aggregation buckets. By default they are returned as an array, but if the aggregation has keys configured for
@@ -2360,11 +2354,11 @@ components:
         - title: keyed
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/Buckets.TBucket'
+            $ref: '#/components/schemas/TBucket'
         - title: array
           type: array
           items:
-            $ref: '#/components/schemas/Buckets.TBucket'
+            $ref: '#/components/schemas/TBucket'
     BucketsQueryContainer:
       allOf:
         - $ref: '#/components/schemas/Buckets'
