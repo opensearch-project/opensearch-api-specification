@@ -375,8 +375,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ShardFailure'
-        primary:
-          $ref: '#/components/schemas/uint'
       required:
         - failed
         - successful
@@ -421,10 +419,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorCause'
-        headers:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/StringOrStringArray'
       required:
         - type
       additionalProperties:
@@ -549,9 +543,20 @@ components:
               required:
                 - source
     ScriptLanguage:
+      oneOf:
+        - title: builtin
+          $ref: '#/components/schemas/BuiltinScriptLanguage'
+        - title: custom
+          type: string
+          not:
+            $ref: '#/components/schemas/BuiltinScriptLanguage'
+    BuiltinScriptLanguage:
       type: string
-      description: |-
-        Built in scripts include: 'expression', 'java', 'mustache', and 'painless', but custom script languages can be provided as well.
+      enum:
+        - expression
+        - java
+        - mustache
+        - painless
     ScriptBase:
       type: object
       properties:
@@ -961,9 +966,6 @@ components:
           type: object
           description: The source of the document.
           additionalProperties: true
-      additionalProperties: 
-        title: metadata_fields
-        description: Any additional information about the document.
       required:
         - found
     Names:
