@@ -123,6 +123,32 @@ components:
           $ref: '#/components/schemas/HitsMetadata'
       required:
         - hits
+    ProcessorExecutionDetail:
+      type: object
+      properties:
+        processor_name:
+          type: string
+        duration_millis:
+          type: integer
+          format: int64
+        input_data:
+          oneOf:
+            - type: object 
+            - type: array
+              items: 
+                type: object
+        output_data: 
+          oneOf:
+            - type: object 
+            - type: array
+              items: 
+                type: object
+        status: 
+          type: string
+        tag:
+          type: string 
+        error:
+          type: string
     NestedIdentity:
       type: object
       properties:
@@ -1266,6 +1292,11 @@ components:
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
           $ref: '#/components/schemas/HitsMetadata'
+        processor_results: 
+          x-version-added: '3.0'
+          type: array
+          items: 
+            $ref: '#/components/schemas/ProcessorExecutionDetail'
         aggregations:
           type: object
           additionalProperties:

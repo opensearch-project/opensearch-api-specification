@@ -72,6 +72,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `pagination_depth` to `HybridQuery` ([#848](https://github.com/opensearch-project/opensearch-api-specification/pull/848))
 - Added `warm` to `ClusterNodeCount` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
 - Added `total_primary_shards_per_node` to `IndexRoutingAllocation` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
+- Added `verbose_pipeline`, to SearchRequest ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
+- Added `store` and `value_type` to TermsQuery  ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -85,6 +87,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Removed `id` from `required` in `indices.termvectors@200` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
 - Removed duplicate `string` from `MultiTermQueryRewrite` ([#862](https://github.com/opensearch-project/opensearch-api-specification/pull/862/))
+- Removed unneeded `ExplanationDetail` from `Explanation` ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
