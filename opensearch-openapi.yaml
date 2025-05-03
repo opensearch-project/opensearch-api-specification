@@ -6358,7 +6358,7 @@ paths:
       operationId: query.datasources_list.0
       x-operation-group: query.datasources_list
       x-version-added: '2.7'
-      description: Retrieves a list of all available datasources.
+      description: Retrieves a list of all available data sources.
       responses:
         '200':
           $ref: '#/components/responses/query.datasources_list___200'
@@ -8724,7 +8724,7 @@ paths:
       operationId: sql.query.0
       x-operation-group: sql.query
       x-version-added: '1.0'
-      description: Executes SQL or PPL queries against OpenSearch indices.
+      description: Executes SQL or PPL queries against OpenSearch indexes.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -9520,6 +9520,7 @@ paths:
         - $ref: '#/components/parameters/search___query.track_scores'
         - $ref: '#/components/parameters/search___query.track_total_hits'
         - $ref: '#/components/parameters/search___query.typed_keys'
+        - $ref: '#/components/parameters/search___query.verbose_pipeline'
         - $ref: '#/components/parameters/search___query.version'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
@@ -9588,6 +9589,7 @@ paths:
         - $ref: '#/components/parameters/search___query.track_scores'
         - $ref: '#/components/parameters/search___query.track_total_hits'
         - $ref: '#/components/parameters/search___query.typed_keys'
+        - $ref: '#/components/parameters/search___query.verbose_pipeline'
         - $ref: '#/components/parameters/search___query.version'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
@@ -12684,6 +12686,7 @@ paths:
         - $ref: '#/components/parameters/search___query.track_scores'
         - $ref: '#/components/parameters/search___query.track_total_hits'
         - $ref: '#/components/parameters/search___query.typed_keys'
+        - $ref: '#/components/parameters/search___query.verbose_pipeline'
         - $ref: '#/components/parameters/search___query.version'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
@@ -12753,6 +12756,7 @@ paths:
         - $ref: '#/components/parameters/search___query.track_scores'
         - $ref: '#/components/parameters/search___query.track_total_hits'
         - $ref: '#/components/parameters/search___query.typed_keys'
+        - $ref: '#/components/parameters/search___query.verbose_pipeline'
         - $ref: '#/components/parameters/search___query.version'
         - $ref: '#/components/parameters/_global___query.pretty'
         - $ref: '#/components/parameters/_global___query.human'
@@ -15797,7 +15801,7 @@ paths:
       operationId: sql.query.0_superseded
       x-operation-group: sql.query
       x-version-added: '1.0'
-      description: Executes SQL or PPL queries against OpenSearch indices.
+      description: Executes SQL or PPL queries against OpenSearch indexes.
       externalDocs:
         url: https://opensearch.org/docs/latest/search-plugins/sql/sql-ppl-api/
       parameters:
@@ -26058,6 +26062,20 @@ components:
       schema:
         type: boolean
       style: form
+    search___query.verbose_pipeline:
+      x-version-added: '3.0'
+      in: query
+      name: verbose_pipeline
+      description: |-
+        Enables or disables verbose mode for the search pipeline.
+        When verbose mode is enabled, detailed information about each processor
+        in the search pipeline is included in the search response. This includes
+        the processor name, execution status, input, output, and time taken for processing.
+        This parameter is primarily intended for debugging purposes, allowing users
+        to track how data flows and transforms through the search pipeline.
+      schema:
+        type: boolean
+      style: form
     search___query.version:
       in: query
       name: version
@@ -30883,7 +30901,7 @@ components:
               matched:
                 type: boolean
               explanation:
-                $ref: '#/components/schemas/_core.explain___ExplanationDetail'
+                $ref: '#/components/schemas/_core.explain___Explanation'
               get:
                 $ref: '#/components/schemas/_common___InlineGet'
             required:
@@ -46075,9 +46093,16 @@ components:
           $ref: '#/components/schemas/_common___Field'
         routing:
           $ref: '#/components/schemas/_common___Routing'
+        store:
+          type: boolean
+      required:
+        - id
+        - index
+        - path
     _common.query_dsl___TermsQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+        - $ref: '#/components/schemas/_common.query_dsl___ValueType'
         - type: object
           properties:
             _name: {}
@@ -46130,6 +46155,15 @@ components:
               type: string
           required:
             - value
+    _common.query_dsl___ValueType:
+      type: object
+      properties:
+        value_type:
+          description: Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
+          type: string
+          enum:
+            - bitmap
+            - default
     _common.query_dsl___WildcardQuery:
       oneOf:
         - title: value
@@ -46350,30 +46384,7 @@ components:
         details:
           type: array
           items:
-            $ref: '#/components/schemas/_core.explain___ExplanationDetail'
-        value:
-          oneOf:
-            - type: integer
-              format: int32
-            - type: integer
-              format: int64
-            - type: number
-              format: float
-            - type: number
-              format: double
-      required:
-        - description
-        - details
-        - value
-    _core.explain___ExplanationDetail:
-      type: object
-      properties:
-        description:
-          type: string
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/_core.explain___ExplanationDetail'
+            $ref: '#/components/schemas/_core.explain___Explanation'
         value:
           anyOf:
             - type: integer
@@ -46386,6 +46397,7 @@ components:
               format: double
       required:
         - description
+        - details
         - value
     _core.field_caps___FieldCapability:
       type: object
@@ -48023,6 +48035,32 @@ components:
           $ref: '#/components/schemas/_common___Duration'
       required:
         - id
+    _core.search___ProcessorExecutionDetail:
+      type: object
+      properties:
+        processor_name:
+          type: string
+        duration_millis:
+          type: integer
+          format: int64
+        input_data:
+          oneOf:
+            - type: object
+            - type: array
+              items:
+                type: object
+        output_data:
+          oneOf:
+            - type: object
+            - type: array
+              items:
+                type: object
+        status:
+          type: string
+        tag:
+          type: string
+        error:
+          type: string
     _core.search___Profile:
       type: object
       properties:
@@ -48170,6 +48208,11 @@ components:
           $ref: '#/components/schemas/_common___PhaseTook'
         hits:
           $ref: '#/components/schemas/_core.search___HitsMetadata'
+        processor_results:
+          x-version-added: '3.0'
+          type: array
+          items:
+            $ref: '#/components/schemas/_core.search___ProcessorExecutionDetail'
         aggregations:
           type: object
           additionalProperties:
