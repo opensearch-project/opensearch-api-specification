@@ -345,6 +345,23 @@ components:
         - failed
         - successful
         - total
+    ShardInfo:
+      type: object
+      properties:
+        failed:
+          $ref: '#/components/schemas/uint'
+        successful:
+          $ref: '#/components/schemas/uint'
+        total:
+          $ref: '#/components/schemas/uint'
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardFailure'
+      required:
+        - failed
+        - successful
+        - total
     uint:
       type: integer
     ShardFailure:
@@ -509,11 +526,13 @@ components:
               required:
                 - source
     ScriptLanguage:
-      anyOf:
+      oneOf:
         - title: builtin
           $ref: '#/components/schemas/BuiltinScriptLanguage'
         - title: custom
           type: string
+          not:
+            $ref: '#/components/schemas/BuiltinScriptLanguage'
     BuiltinScriptLanguage:
       type: string
       enum:
@@ -907,8 +926,12 @@ components:
           const: all
           description: Wait for all shards to be active.
         - type: string
-          const: index-setting
-          description: Wait for the number of shards specified in the index settings.
+          not: 
+            type: string
+            const: all
+          description: A numeric value greater than or equal to 0
+        - type: 'null'
+          description: null represents the default value (which defaults to one shard copy).
     InlineGetDictUserDefined:
       type: object
       description: The inline get operation results for user-defined dictionaries.
@@ -933,6 +956,9 @@ components:
           type: object
           description: The source of the document.
           additionalProperties: true
+      additionalProperties: 
+        type: object 
+        title: metadata_fields 
       required:
         - found
     Names:
