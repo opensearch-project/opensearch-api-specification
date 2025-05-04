@@ -16278,7 +16278,7 @@ components:
       name: routing
       description: Custom value used to route operations to a specific shard.
       schema:
-        $ref: '#/components/schemas/_common___RoutingInQueryString'
+        $ref: '#/components/schemas/_common___Routing'
       style: form
     bulk___query.timeout:
       in: query
@@ -35619,6 +35619,9 @@ components:
           type: object
           description: The source of the document.
           additionalProperties: true
+      additionalProperties:
+        type: object
+        title: metadata_fields
       required:
         - found
     _common___InlineScript:
@@ -36539,11 +36542,13 @@ components:
       required:
         - script
     _common___ScriptLanguage:
-      anyOf:
+      oneOf:
         - title: builtin
           $ref: '#/components/schemas/_common___BuiltinScriptLanguage'
         - title: custom
           type: string
+          not:
+            $ref: '#/components/schemas/_common___BuiltinScriptLanguage'
     _common___ScriptSort:
       type: object
       properties:
@@ -36889,6 +36894,23 @@ components:
       required:
         - reason
         - shard
+    _common___ShardInfo:
+      type: object
+      properties:
+        failed:
+          $ref: '#/components/schemas/_common___uint'
+        successful:
+          $ref: '#/components/schemas/_common___uint'
+        total:
+          $ref: '#/components/schemas/_common___uint'
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/_common___ShardFailure'
+      required:
+        - failed
+        - successful
+        - total
     _common___ShardsOperationResponseBase:
       description: The base response for operations involving shards.
       type: object
@@ -37357,8 +37379,12 @@ components:
           const: all
           description: Wait for all shards to be active.
         - type: string
-          const: index-setting
-          description: Wait for the number of shards specified in the index settings.
+          not:
+            type: string
+            const: all
+          description: A numeric value greater than or equal to 0
+        - type: 'null'
+          description: null represents the default value (which defaults to one shard copy).
     _common___WaitForActiveShards:
       description: Waits until the specified number of shards is active before returning a response. Use `all` for all shards.
       oneOf:
@@ -46238,9 +46264,35 @@ components:
     _core.bulk___CreateOperation:
       $ref: '#/components/schemas/_core.bulk___WriteOperation'
     _core.bulk___DeleteOperation:
-      $ref: '#/components/schemas/_core.bulk___OperationBase'
+      allOf:
+        - $ref: '#/components/schemas/_core.bulk___OperationBase'
+        - type: object
+          properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '#/components/schemas/_common___SequenceNumber'
+            version:
+              $ref: '#/components/schemas/_common___VersionNumber'
+            version_type:
+              $ref: '#/components/schemas/_common___VersionType'
     _core.bulk___IndexOperation:
-      $ref: '#/components/schemas/_core.bulk___WriteOperation'
+      allOf:
+        - $ref: '#/components/schemas/_core.bulk___WriteOperation'
+        - type: object
+          properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '#/components/schemas/_common___SequenceNumber'
+            op_type:
+              $ref: '#/components/schemas/_common___OpType'
+            version:
+              $ref: '#/components/schemas/_common___VersionNumber'
+            version_type:
+              $ref: '#/components/schemas/_common___VersionType'
     _core.bulk___OperationBase:
       type: object
       properties:
@@ -46250,15 +46302,6 @@ components:
           $ref: '#/components/schemas/_common___IndexName'
         routing:
           $ref: '#/components/schemas/_common___Routing'
-        if_primary_term:
-          type: integer
-          format: int64
-        if_seq_no:
-          $ref: '#/components/schemas/_common___SequenceNumber'
-        version:
-          $ref: '#/components/schemas/_common___VersionNumber'
-        version_type:
-          $ref: '#/components/schemas/_common___VersionType'
     _core.bulk___OperationContainer:
       type: object
       properties:
@@ -46307,7 +46350,7 @@ components:
         _seq_no:
           $ref: '#/components/schemas/_common___SequenceNumber'
         _shards:
-          $ref: '#/components/schemas/_common___ShardStatistics'
+          $ref: '#/components/schemas/_common___ShardInfo'
         _version:
           $ref: '#/components/schemas/_common___VersionNumber'
         forced_refresh:
@@ -46348,6 +46391,11 @@ components:
         - $ref: '#/components/schemas/_core.bulk___OperationBase'
         - type: object
           properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '#/components/schemas/_common___SequenceNumber'
             require_alias:
               description: When `true`, the request's actions must target an index alias.
               type: boolean
@@ -46359,14 +46407,6 @@ components:
         - $ref: '#/components/schemas/_core.bulk___OperationBase'
         - type: object
           properties:
-            dynamic_templates:
-              description: |-
-                A map from the full name of fields to the name of dynamic templates.
-                If a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template.
-                If a field is already defined in the mapping, then this parameter won't be used.
-              type: object
-              additionalProperties:
-                type: string
             pipeline:
               description: |-
                 The pipeline ID for preprocessing documents.
