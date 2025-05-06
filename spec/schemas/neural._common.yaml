@@ -19,18 +19,7 @@ components:
         cluster_name:
           type: string
         info:
-          type: object
-          properties:
-            cluster_version:
-              $ref: '#/components/schemas/InfoStringStat'
-            processors:
-              type: object
-              properties:
-                ingest:
-                  type: object
-                  properties:
-                    text_embedding_processors_in_pipelines:
-                      $ref: '#/components/schemas/InfoCounterStat'
+          $ref: '#/components/schemas/NestedNeuralInfoStats'
         all_nodes:
           $ref: '#/components/schemas/NestedNeuralNodeStats'
         nodes:
@@ -45,23 +34,43 @@ components:
         cluster_name:
           type: string
         info:
-          type: object
-          properties:
-            "cluster_version":
-              $ref: '#/components/schemas/InfoStringStat'
-            "processors.ingest.text_embedding_processors_in_pipelines":
-              $ref: '#/components/schemas/InfoCounterStat'
+          $ref: '#/components/schemas/FlatNeuralInfoStats'
         all_nodes:
           $ref: '#/components/schemas/FlatNeuralNodeStats'
         nodes:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/FlatNeuralNodeStats'
+    FlatNeuralInfoStats:
+      type: object
+      properties:
+        "cluster_version":
+          $ref: '#/components/schemas/InfoStringStat'
+          x-version-added: '3.0'
+        "processors.ingest.text_embedding_processors_in_pipelines":
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: '3.0'
+    NestedNeuralInfoStats:
+      type: object  
+      properties:
+        cluster_version:
+          $ref: '#/components/schemas/InfoStringStat'
+          x-version-added: '3.0'
+        processors:
+          type: object
+          properties:
+            ingest:
+              type: object
+              properties:
+                text_embedding_processors_in_pipelines:
+                  $ref: '#/components/schemas/InfoCounterStat'
+                  x-version-added: '3.0'
     FlatNeuralNodeStats:
       type: object
       properties:
         "processors.ingest.text_embedding_executions":
           $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: '3.0'
     NestedNeuralNodeStats:
       type: object
       properties:
@@ -73,6 +82,7 @@ components:
               properties:
                 text_embedding_executions:
                   $ref: '#/components/schemas/TimestampedEventCounterStat'
+                  x-version-added: '3.0'
     NodesInfo:
       type: object
       properties:

@@ -10,45 +10,18 @@ prologues:
     request:
       payload:
         persistent:
-          plugins.ml_commons.jvm_heap_memory_threshold: 100
-          plugins.ml_commons.only_run_on_ml_node: false
           plugins.neural_search.stats_enabled: true
-  - path: /_plugins/_ml/models/_register
-    id: register_model
-    method: POST
-    request:
-      payload:
-        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
-        version: 1.0.1
-        model_format: TORCH_SCRIPT
-    output:
-      task_id: payload.task_id
-  - path: /_plugins/_ml/tasks/{task_id}
-    id: get_completed_task
+  - path: /_cat/nodes
+    id: node
     method: GET
     parameters:
-      task_id: ${register_model.task_id}
-    retry:
-      count: 3
-      wait: 10000
-    response:
-      status: 200
-      payload:
-        state: COMPLETED
+      full_id: true
+      size: 1
+      format: json
+      h: id
     output:
-      model_id: payload.model_id
-      node_id: payload.worker_node[0]
+      id: payload[0].id
 epilogues:
-  - path: /_plugins/_ml/models/{model_id}
-    parameters:
-      model_id: ${get_completed_task.model_id}
-    method: DELETE
-    status: [200, 404]
-  - path: /_plugins/_ml/tasks/{task_id}
-    parameters:
-      task_id: ${register_model.task_id}
-    method: DELETE
-    status: [200, 404]
   - path: /_cluster/settings
     method: PUT
     request:
@@ -64,6 +37,10 @@ chapters:
   - synopsis: Get all stats for all nodes with flat_stat_paths and include_metadata.  
     path: /_plugins/_neural/stats
     method: GET
+    parameters:
+      stat: text_embedding_executions
+      flat_stat_paths: true
+      include_metadata: true
     response:
       status: 200
   - synopsis: Get a specified stat for all nodes.
@@ -71,22 +48,20 @@ chapters:
     method: GET
     parameters:
       stat: text_embedding_executions
-      flat_stat_paths: true
-      include_metadata: true
     response:
       status: 200
   - synopsis: Get all stats for a specific node.
     path: /_plugins/_neural/{node_id}/stats
     method: GET
     parameters:
-      node_id: ${get_completed_task.node_id}
+      node_id: ${node.id}
     response:
       status: 200
   - synopsis: Get a specified stat for a specific node.
     path: /_plugins/_neural/{node_id}/stats/{stat}
     method: GET
     parameters:
-      node_id: ${get_completed_task.node_id}
+      node_id: ${node.id}
       stat: text_embedding_executions
     response:
       status: 200
