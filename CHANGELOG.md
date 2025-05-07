@@ -136,6 +136,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed Bulk API schemas ([#843](https://github.com/opensearch-project/opensearch-api-specification/pull/843))
 - Fixed aggregate schemas ([#840](https://github.com/opensearch-project/opensearch-api-specification/pull/840))
 - Fixed `security.get_sslinfo` response structure inline with v3.0.0 ([#885](https://github.com/opensearch-project/opensearch-api-specification/pull/885))
+- Fixed schema for ScoreCombination in NormalizationPhaseResultsProcessor ([#887](https://github.com/opensearch-project/opensearch-api-specification/pull/887))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
