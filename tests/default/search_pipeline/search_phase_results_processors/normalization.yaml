@@ -1,0 +1,52 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search pipeline endpoints with normalization processors.
+
+prologues: []
+
+epilogues:
+  - path: /_search/pipeline/{id}
+    parameters:
+      id: spec-test-normalization-pipeline
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Create a pipeline with a normalization processor.
+    version: '>=2.10'
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: spec-test-normalization-pipeline
+    request:
+      payload:
+        description: Example pipeline for testing the pipeline endpoints as used with hybrid queries.
+        phase_results_processors:
+          - normalization-processor:
+              normalization:
+                technique: min_max
+              combination:
+                technique: arithmetic_mean
+                parameters:
+                  weights:
+                    - 0.3
+                    - 0.7
+  - synopsis: Get all search pipelines.
+    version: '>=2.10'
+    method: GET
+    path: /_search/pipeline
+    response:
+      status: 200
+      payload:
+        spec-test-normalization-pipeline:
+          description: Example pipeline for testing the pipeline endpoints as used with hybrid queries.
+          phase_results_processors:
+          - normalization-processor:
+              normalization:
+                technique: min_max
+              combination:
+                technique: arithmetic_mean
+                parameters:
+                  weights:
+                    - 0.3
+                    - 0.7
