@@ -72,6 +72,11 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `pagination_depth` to `HybridQuery` ([#848](https://github.com/opensearch-project/opensearch-api-specification/pull/848))
 - Added `warm` to `ClusterNodeCount` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
 - Added `total_primary_shards_per_node` to `IndexRoutingAllocation` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
+- Added `verbose_pipeline`, to SearchRequest ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
+- Added `store` and `value_type` to TermsQuery  ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
+- Added `search_only` to `IndexSettingBlocks` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
+- Added `searchOnly` to `NodeShard` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
+- Added `GET /_plugins/_neural/stats` ([#850](https://github.com/opensearch-project/opensearch-api-specification/pull/850))
 - Added `ToolAttributes` to `ml._common.yaml` ([#878](https://github.com/opensearch-project/opensearch-api-specification/pull/878)) 
 
 ### Removed
@@ -86,6 +91,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Removed `id` from `required` in `indices.termvectors@200` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
 - Removed duplicate `string` from `MultiTermQueryRewrite` ([#862](https://github.com/opensearch-project/opensearch-api-specification/pull/862/))
+- Removed unneeded `ExplanationDetail` from `Explanation` ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -129,6 +135,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `knn.train_model`'s request body `method` field to accept an object rather than a string ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 - Fixed REST status codes for RBAC and provisioning for Flow Framework plugin ([#842](https://github.com/opensearch-project/opensearch-api-specification/pull/842), [#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
 - Fixed swapped schema references in nodes info API buffer fields ([#808](https://github.com/opensearch-project/opensearch-api-specification/pull/808))
+- Fixed Bulk API schemas ([#843](https://github.com/opensearch-project/opensearch-api-specification/pull/843))
+- Fixed aggregate schemas ([#840](https://github.com/opensearch-project/opensearch-api-specification/pull/840))
+- Fixed `security.get_sslinfo` response structure inline with v3.0.0 ([#885](https://github.com/opensearch-project/opensearch-api-specification/pull/885))
+- Fixed schema for ScoreCombination in NormalizationPhaseResultsProcessor ([#887](https://github.com/opensearch-project/opensearch-api-specification/pull/887))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))

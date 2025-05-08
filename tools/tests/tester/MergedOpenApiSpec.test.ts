@@ -31,7 +31,7 @@ describe('merged API spec', () => {
     })
 
     test('has all responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500','503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1',
         'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
       ])
@@ -71,7 +71,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '1.3', undefined, new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'removed-2.0', 'added-1.3-removed-2.0',
         'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
       ])
@@ -82,7 +82,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', undefined, 'oracle-managed', new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1',
         'distributed-excluded-amazon-serverless'
       ])
@@ -93,7 +93,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', undefined, new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0',
         'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
       ])
@@ -104,7 +104,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', 'amazon-serverless', new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0',
         'distributed-included-all'
       ])
@@ -115,7 +115,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', 'oracle-managed', new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0',
         'distributed-excluded-amazon-serverless'
       ])
@@ -126,7 +126,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.1', undefined, new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1',
         'distributed-included-all', 'distributed-included-amazon-managed', 'distributed-excluded-amazon-serverless'
       ])

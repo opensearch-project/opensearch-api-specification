@@ -263,23 +263,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/FieldValue'
-    GeoLine:
-      type: object
-      properties:
-        type:
-          description: Always `"LineString"`
-          type: string
-        coordinates:
-          description: An array of `[lon, lat]` coordinates.
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-              format: double
-      required:
-        - coordinates
-        - type
     ClusterStatistics:
       type: object
       properties:
@@ -358,6 +341,23 @@ components:
             $ref: '#/components/schemas/ShardFailure'
         skipped:
           $ref: '#/components/schemas/uint'
+      required:
+        - failed
+        - successful
+        - total
+    ShardInfo:
+      type: object
+      properties:
+        failed:
+          $ref: '#/components/schemas/uint'
+        successful:
+          $ref: '#/components/schemas/uint'
+        total:
+          $ref: '#/components/schemas/uint'
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardFailure'
       required:
         - failed
         - successful
@@ -526,11 +526,13 @@ components:
               required:
                 - source
     ScriptLanguage:
-      anyOf:
+      oneOf:
         - title: builtin
           $ref: '#/components/schemas/BuiltinScriptLanguage'
         - title: custom
           type: string
+          not:
+            $ref: '#/components/schemas/BuiltinScriptLanguage'
     BuiltinScriptLanguage:
       type: string
       enum:
@@ -719,12 +721,16 @@ components:
         ignore_unmapped:
           type: boolean
           description: Whether to ignore unmapped fields and not sort based on them.
+        nested:
+          $ref: '#/components/schemas/NestedSortValue'
         order:
           $ref: '#/components/schemas/SortOrder'
           description: The direction of the sort order.
         unit:
           $ref: '#/components/schemas/DistanceUnit'
           description: The unit of distance measurement.
+        validation_method:
+          $ref: '_common.query_dsl.yaml#/components/schemas/GeoValidationMethod'
       additionalProperties:
         type: array
         description: The geo points to use for distance calculation.
@@ -920,8 +926,12 @@ components:
           const: all
           description: Wait for all shards to be active.
         - type: string
-          const: index-setting
-          description: Wait for the number of shards specified in the index settings.
+          not: 
+            type: string
+            const: all
+          description: A numeric value greater than or equal to 0
+        - type: 'null'
+          description: null represents the default value (which defaults to one shard copy).
     InlineGetDictUserDefined:
       type: object
       description: The inline get operation results for user-defined dictionaries.
@@ -946,6 +956,9 @@ components:
           type: object
           description: The source of the document.
           additionalProperties: true
+      additionalProperties: 
+        type: object 
+        title: metadata_fields 
       required:
         - found
     Names:
@@ -1810,7 +1823,6 @@ components:
         - _version
         - result
     Result:
-      type: string
       oneOf:
         - type: string
           const: created
@@ -1828,7 +1840,6 @@ components:
           const: updated
           description: The document was updated.
     Conflicts:
-      type: string
       oneOf:
         - type: string
           const: abort
@@ -1847,7 +1858,6 @@ components:
           $ref: '#/components/schemas/SlicesCalculation'
           description: The method to calculate the number of slices.
     SlicesCalculation:
-      type: string
       oneOf:
         - type: string
           const: auto
@@ -1946,7 +1956,6 @@ components:
         - lang
         - source
     OpType:
-      type: string
       oneOf:
         - type: string
           const: create
@@ -2458,7 +2467,6 @@ components:
         - total
         - total_time_in_millis
     GeoShapeRelation:
-      type: string
       oneOf:
         - type: string
           const: contains
@@ -2648,6 +2656,9 @@ components:
           format: int32
         index:
           $ref: '#/components/schemas/IndexName'
+        searchOnly:
+          type: boolean
+          description: Indicates if this shard is configured for search operations only
         allocation_id:
           type: object
           additionalProperties:

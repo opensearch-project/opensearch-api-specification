@@ -8,7 +8,7 @@ components:
   schemas:
     IndexSettings:
       type: object
-      description: The index settings to be updated.
+      description: The configuration settings for an index.
       properties:
         index:
           $ref: '#/components/schemas/IndexSettings'
@@ -32,6 +32,7 @@ components:
           $ref: '#/components/schemas/IndexCheckOnStartup'
         codec:
           type: string
+          description: The compression type for stored data.
         routing_partition_size:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         load_fixed_bitset_filters_eagerly:
@@ -40,6 +41,7 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         auto_expand_replicas:
           type: string
+          description: The range of replicas to maintain.
         merge:
           $ref: '#/components/schemas/IndexSettingsMerge'
         merge.scheduler.max_thread_count:
@@ -115,9 +117,7 @@ components:
         verified_before_close:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         format:
-          oneOf:
-            - type: string
-            - type: number
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_slices_per_scroll:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         translog:
@@ -131,9 +131,7 @@ components:
         query_string.lenient:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         priority:
-          oneOf:
-            - type: number
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         top_metrics_max_size:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         analysis:
@@ -162,14 +160,16 @@ components:
         title: custom_settings
     IndexSettingsIndexing:
       type: object
+      description: The indexing-related settings for an index.
       properties:
         slowlog:
           $ref: '#/components/schemas/IndexingSlowlog'
     SoftDeletes:
       type: object
+      description: The configuration for soft deletes.
       properties:
         enabled:
-          description: Indicates whether soft deletes are enabled on the index.
+          description: Whether soft deletes are enabled on the index.
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         retention:
           $ref: '#/components/schemas/SoftDeletesRetention'
@@ -177,11 +177,13 @@ components:
           $ref: '#/components/schemas/RetentionLease'
     SoftDeletesRetention:
       type: object
+      description: The retention configuration for soft deletes.
       properties:
         operations:
           $ref: '_common.yaml#/components/schemas/StringifiedLong'
     RetentionLease:
       type: object
+      description: The retention lease configuration.
       properties:
         period:
           $ref: '_common.yaml#/components/schemas/Duration'
@@ -189,6 +191,7 @@ components:
         - period
     IndexSegmentSort:
       type: object
+      description: The configuration for segment sorting.
       properties:
         field:
           $ref: '_common.yaml#/components/schemas/Fields'
@@ -212,27 +215,32 @@ components:
                 $ref: '#/components/schemas/SegmentSortMissing'
     SegmentSortOrder:
       type: string
+      description: The sort order for segments.
       enum:
         - asc
         - desc
     SegmentSortMode:
       type: string
+      description: The sort mode for segments.
       enum:
         - max
         - min
     SegmentSortMissing:
       type: string
+      description: The handling of missing values in segment sorting.
       enum:
         - _first
         - _last
     IndexCheckOnStartup:
       type: string
+      description: The type of check to perform when starting an index.
       enum:
         - checksum
         - 'false'
         - 'true'
     IndexSettingsMerge:
       type: object
+      description: The configuration for segment merging.
       properties:
         log_byte_size_policy:
           $ref: '#/components/schemas/IndexSettingsMergeLogByteSizePolicy'
@@ -256,6 +264,7 @@ components:
           $ref: '#/components/schemas/IndexSettingsMergeScheduler'
     IndexSettingsMergeScheduler:
       type: object
+      description: The configuration for merge scheduling.
       properties:
         auto_throttle:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
@@ -264,6 +273,7 @@ components:
         max_merge_count:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsMergePolicy:
+      description: The policy configuration for segment merging.
       oneOf:
         - title: name
           $ref: '#/components/schemas/IndexSettingsMergePolicyName'
@@ -271,12 +281,14 @@ components:
           $ref: '#/components/schemas/IndexSettingsMergeTieredPolicy'
     IndexSettingsMergePolicyName:
       type: string
+      description: The type of merge policy.
       enum:
         - default
         - log_byte_size
         - tiered
     IndexSettingsMergeTieredPolicy:
       type: object
+      description: The configuration for tiered merge policy.
       properties:
         deletes_pct_allowed:
           $ref: '_common.yaml#/components/schemas/StringifiedDouble'
@@ -297,6 +309,7 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedDouble'
     IndexSettingsMergeLogByteSizePolicy:
       type: object
+      description: The configuration for log byte size merge policy.
       properties:
         max_merge_segment:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
@@ -312,6 +325,7 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedDouble'
     IndexSettingsSearch:
       type: object
+      description: The configuration for search operations.
       properties:
         concurrent:
           $ref: '#/components/schemas/IndexSettingsSearchConcurrent'
@@ -319,6 +333,7 @@ components:
           $ref: '#/components/schemas/IndexSettingsSearchConcurrentSegmentSearch'
         default_pipeline:
           type: string
+          description: The default search pipeline to use.
         idle:
           $ref: '#/components/schemas/SearchIdle'
         slowlog:
@@ -327,31 +342,39 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexSettingsSearchConcurrent:
       type: object
+      description: The configuration for concurrent search operations.
       properties:
         max_slice_count:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsSearchConcurrentSegmentSearch:
+      description: The configuration for concurrent segment search.
       type: object
       properties:
         mode:
           type: string
+          description: The mode of concurrent segment search.
         enabled:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     SearchIdle:
+      description: The configuration for search idle behavior.
       type: object
       properties:
         after:
           $ref: '_common.yaml#/components/schemas/Duration'
     SearchSlowlog:
+      description: The configuration for search slow log.
       type: object
       properties:
         level:
           type: string
+          description: The log level for slow searches.
         reformat:
           type: boolean
+          description: Whether to reformat the logged search source.
         threshold:
           $ref: '#/components/schemas/SearchSlowlogThresholds'
     SearchSlowlogThresholds:
+      description: The threshold configuration for search slow log.
       type: object
       properties:
         query:
@@ -359,6 +382,7 @@ components:
         fetch:
           $ref: '#/components/schemas/SlowlogThresholdLevels'
     SlowlogThresholdLevels:
+      description: The threshold levels for slow log.
       type: object
       properties:
         warn:
@@ -370,6 +394,7 @@ components:
         trace:
           $ref: '_common.yaml#/components/schemas/Duration'
     IndexSettingBlocks:
+      description: The block settings that control index operations.
       type: object
       properties:
         read_only:
@@ -382,17 +407,23 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         metadata:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        search_only:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+          description: When true, the index is in search-only mode, allowing only read operations
     IndexSettingsAnalyze:
+      description: The configuration for text analysis.
       type: object
       properties:
         max_token_count:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsHighlight:
+      description: The configuration for highlighting.
       type: object
       properties:
         max_analyzed_offset:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexRouting:
+      description: The routing configuration for index operations.
       type: object
       properties:
         allocation:
@@ -400,6 +431,7 @@ components:
         rebalance:
           $ref: '#/components/schemas/IndexRoutingRebalance'
     IndexRoutingAllocation:
+      description: The configuration for shard allocation.
       type: object
       properties:
         enable:
@@ -416,45 +448,67 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           x-version-added: '3.0'
     IndexRoutingAllocationOptions:
-      type: string
-      enum:
-        - all
-        - new_primaries
-        - none
-        - primaries
+      description: The options for shard allocation control.
+      oneOf:
+        - description: Allows shard allocation for all shards.
+          const: all
+          type: string
+        - description: Allows shard allocation only for new primary shards.
+          const: new_primaries
+          type: string
+        - description: Prevents shard allocation.
+          const: none
+          type: string
+        - description: Allows shard allocation only for primary shards.
+          const: primaries
+          type: string
     IndexRoutingAllocationInclude:
       type: object
+      description: The inclusion rules for shard allocation.
       properties:
         _tier_preference:
           type: string
+          description: The data tier preference for the index.
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
     IndexRoutingAllocationInitialRecovery:
       type: object
+      description: The configuration for initial shard recovery.
       properties:
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
     IndexRoutingAllocationDisk:
       type: object
+      description: The disk-based allocation settings.
       properties:
         threshold_enabled:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexRoutingRebalance:
       type: object
+      description: The configuration for shard rebalancing.
       properties:
         enable:
           $ref: '#/components/schemas/IndexRoutingRebalanceOptions'
       required:
         - enable
     IndexRoutingRebalanceOptions:
-      type: string
-      enum:
-        - all
-        - none
-        - primaries
-        - replicas
+      description: The options for shard rebalancing control.
+      oneOf:
+        - description: Allows rebalancing of all shards.
+          const: all
+          type: string
+        - description: Prevents shard rebalancing.
+          const: none
+          type: string
+        - description: Allows rebalancing of primary shards only.
+          const: primaries
+          type: string
+        - description: Allows rebalancing of replica shards only.
+          const: replicas
+          type: string
     IndexSettingsLifecycle:
       type: object
+      description: The index lifecycle management configuration.
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
@@ -462,13 +516,13 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         origination_date:
           description: |-
-            If specified, this is the timestamp used to calculate the index age for its phase transitions. Use this setting
+            The timestamp used to calculate the index age for its phase transitions. Use this setting
             if you create a new index that contains old data and want to use the original creation date to calculate the index
             age. Specified as a Unix epoch value in milliseconds.
           $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
         parse_origination_date:
           description: |-
-            Set to `true` to parse the origination date from the index name. This origination date is used to calculate the index age
+            When `true`, parses the origination date from the index name. This origination date is used to calculate the index age
             for its phase transitions. The index name must match the pattern `^.*-{date_format}-\\d+`, where the `date_format` is
             `yyyy.MM.dd` and the trailing digits are optional. An index that was rolled over would normally match the full format,
             for example `logs-2016.10.31-000002`). If the index name doesn't match the pattern, index creation fails.
@@ -484,19 +538,23 @@ components:
       required:
         - name
     IndexSettingsLifecycleStep:
+      description: The configuration for the lifecycle step execution.
       type: object
       properties:
         wait_time_threshold:
           $ref: '_common.yaml#/components/schemas/Duration'
     IndexVersioning:
+      description: The versioning information for the index.
       type: object
       properties:
         created:
           $ref: '_common.yaml#/components/schemas/VersionString'
         created_string:
           type: string
+          description: The string representation of the version when the index was created.
     Translog:
       type: object
+      description: The translog configuration.
       properties:
         sync_interval:
           $ref: '_common.yaml#/components/schemas/Duration'
@@ -509,14 +567,23 @@ components:
         retention:
           $ref: '#/components/schemas/TranslogRetention'
     TranslogDurability:
-      type: string
-      enum:
-        - ASYNC
-        - REQUEST
-        - async
-        - request
+      description: The durability settings for the translog.
+      oneOf:
+        - description: Asynchronous durability - acknowledges write operations after they are written to memory.
+          const: ASYNC
+          type: string
+        - description: Request durability - acknowledges write operations after they are written to disk.
+          const: REQUEST
+          type: string
+        - description: Asynchronous durability (lowercase variant).
+          const: async
+          type: string
+        - description: Request durability (lowercase variant).
+          const: request
+          type: string
     TranslogRetention:
       type: object
+      description: The retention configuration for the translog.
       properties:
         size:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
@@ -524,39 +591,48 @@ components:
           $ref: '_common.yaml#/components/schemas/Duration'
     IndexSettingsQueryString:
       type: object
+      description: The configuration for query string parsing.
       properties:
         lenient:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
     IndexSettingsAnalysis:
       type: object
+      description: The text analysis configuration.
       properties:
         analyzer:
           type: object
+          description: The custom analyzer configurations.
           additionalProperties:
             $ref: '_common.analysis.yaml#/components/schemas/Analyzer'
         char_filter:
           type: object
+          description: The custom character filter configurations.
           additionalProperties:
             $ref: '_common.analysis.yaml#/components/schemas/CharFilter'
         filter:
           type: object
+          description: The custom token filter configurations.
           additionalProperties:
             $ref: '_common.analysis.yaml#/components/schemas/TokenFilter'
         normalizer:
           type: object
+          description: The custom normalizer configurations.
           additionalProperties:
             $ref: '_common.analysis.yaml#/components/schemas/Normalizer'
         tokenizer:
           type: object
+          description: The custom tokenizer configurations.
           additionalProperties:
             $ref: '_common.analysis.yaml#/components/schemas/Tokenizer'
     IndexSettingsQueries:
       type: object
+      description: The configuration for query caching.
       properties:
         cache:
           $ref: '#/components/schemas/IndexSettingsQueriesCache'
     IndexSettingsQueriesCache:
       type: object
+      description: The query cache settings.
       properties:
         enabled:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
@@ -564,6 +640,7 @@ components:
         - enabled
     IndexSettingsSimilarity:
       type: object
+      description: The configuration for similarity algorithms.
       properties:
         bm25:
           $ref: '#/components/schemas/IndexSettingsSimilarityBm25'
@@ -581,19 +658,24 @@ components:
           $ref: '#/components/schemas/IndexSettingsSimilarityScriptedTfidf'
     IndexSettingsSimilarityBm25:
       type: object
+      description: The BM25 similarity algorithm configuration.
       properties:
         b:
           type: number
           format: float
+          description: The length normalization parameter.
         discount_overlaps:
           type: boolean
+          description: Whether to discount overlapping tokens.
         k1:
           type: number
           format: float
+          description: The term frequency normalization parameter.
         type:
-          type: string
-          enum:
-            - BM25
+          oneOf:
+            - description: The BM25 similarity algorithm.
+              const: BM25
+              type: string
       required:
         - b
         - discount_overlaps
@@ -601,6 +683,7 @@ components:
         - type
     IndexSettingsSimilarityDfi:
       type: object
+      description: The divergence from independence (DFI) similarity algorithm configuration.
       properties:
         independence_measure:
           $ref: '_common.yaml#/components/schemas/DFIIndependenceMeasure'
@@ -612,6 +695,7 @@ components:
         - independence_measure
         - type
     IndexSettingsSimilarityDfr:
+      description: The divergence from randomness (DFR) similarity algorithm configuration.
       type: object
       properties:
         after_effect:
@@ -631,6 +715,7 @@ components:
         - type
     IndexSettingsSimilarityIb:
       type: object
+      description: The information-based similarity algorithm configuration.
       properties:
         distribution:
           $ref: '_common.yaml#/components/schemas/IBDistribution'
@@ -648,11 +733,13 @@ components:
         - normalization
         - type
     IndexSettingsSimilarityLmd:
+      description: The LM Dirichlet similarity algorithm configuration.
       type: object
       properties:
         mu:
           type: number
           format: float
+          description: The smoothing parameter.
         type:
           type: string
           enum:
@@ -662,10 +749,12 @@ components:
         - type
     IndexSettingsSimilarityLmj:
       type: object
+      description: The LM Jelinek-Mercer similarity algorithm configuration.
       properties:
         lambda:
           type: number
           format: float
+          description: The optimal mixture parameter.
         type:
           type: string
           enum:
@@ -675,6 +764,7 @@ components:
         - type
     IndexSettingsSimilarityScriptedTfidf:
       type: object
+      description: The scripted TF/IDF similarity algorithm configuration.
       properties:
         script:
           $ref: '_common.yaml#/components/schemas/Script'
@@ -687,6 +777,7 @@ components:
         - type
     IndexSettingsMapping:
       type: object
+      description: The mapping configuration for the index.
       properties:
         coerce:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
@@ -757,9 +848,11 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexingSlowlog:
       type: object
+      description: The configuration for indexing slow log.
       properties:
         level:
           type: string
+          description: The log level for slow indexing operations.
         source:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         reformat:
@@ -768,11 +861,13 @@ components:
           $ref: '#/components/schemas/IndexingSlowlogThresholds'
     IndexingSlowlogThresholds:
       type: object
+      description: The threshold configuration for indexing slow log.
       properties:
         index:
           $ref: '#/components/schemas/SlowlogThresholdLevels'
     IndexingPressure:
       type: object
+      description: The configuration for indexing backpressure.
       properties:
         memory:
           $ref: '#/components/schemas/IndexingPressureMemory'
@@ -780,10 +875,11 @@ components:
         - memory
     IndexingPressureMemory:
       type: object
+      description: The memory-related settings for indexing backpressure.
       properties:
         limit:
           description: |-
-            Number of outstanding bytes that may be consumed by indexing requests. When this limit is reached or exceeded,
+            The number of outstanding bytes that may be consumed by indexing requests. When this limit is reached or exceeded,
             the node will reject new coordinating and primary operations. When replica operations consume 1.5x this limit,
             the node will reject new replica operations. Defaults to 10% of the heap.
           oneOf:
@@ -797,9 +893,8 @@ components:
           $ref: '#/components/schemas/StorageType'
         allow_mmap:
           description: |-
-            You can restrict the use of the `mmapfs` and the related `hybridfs` store types with the setting `node.store.allow_mmap`.
-            This is a Boolean setting indicating whether or not memory-mapping is allowed. The default is to allow it. This
-            setting is useful, for example, if you are in an environment where you can not control the ability to create a lot
+            Whether memory-mapping is allowed. You can restrict the use of the `mmapfs` and the related `hybridfs` store types with the setting `node.store.allow_mmap`.
+            This setting is useful, for example, if you are in an environment where you can not control the ability to create a lot
             of memory maps so you need disable the ability to use memory-mapping.
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         fs:
@@ -808,6 +903,7 @@ components:
           $ref: '#/components/schemas/IndexSettingsStoreHybrid'
         preload:
           type: array
+          description: The list of files to preload into memory.
           items:
             type: string
         stats_refresh_interval:
@@ -816,16 +912,22 @@ components:
         - type
     IndexSettingsStoreFs:
       type: object
+      description: The filesystem storage configuration.
       properties:
         fs_lock:
           $ref: '#/components/schemas/IndexSettingsStoreFsLock'
     IndexSettingsStoreFsLock:
-      type: string
-      enum:
-        - native
-        - simple
+      description: The type of file system lock.
+      oneOf:
+        - description: Uses native file system locks.
+          const: native
+          type: string
+        - description: Uses simple file system locks.
+          const: simple
+          type: string
     IndexSettingsStoreHybrid:
       type: object
+      description: The hybrid storage type configuration.
       properties:
         mmap:
           $ref: '#/components/schemas/IndexSettingsStoreHybridMmap'
@@ -833,29 +935,46 @@ components:
           $ref: '#/components/schemas/IndexSettingsStoreHybridNio'
     IndexSettingsStoreHybridMmap:
       type: object
+      description: The memory-mapped storage configuration.
       properties:
         extensions:
           type: array
+          description: The file extensions to use memory-mapping for.
           items:
             type: string
     IndexSettingsStoreHybridNio:
       type: object
+      description: The NIO storage configuration.
       properties:
         extensions:
           type: array
+          description: The file extensions to use NIO for.
           items:
             type: string
     StorageType:
       anyOf:
-        - type: string
-          enum:
-            - fs
-            - hybridfs
-            - mmapfs
-            - niofs
-        - type: string
+        - title: builtin
+          $ref: '#/components/schemas/BuiltinStorageType'
+        - title: custom
+          type: string
+    BuiltinStorageType:
+      description: The type of storage implementation.
+      oneOf:
+        - description: Uses the default file system implementation.
+          const: fs
+          type: string
+        - description: Uses a hybrid of memory-mapped and regular file system implementation.
+          const: hybridfs
+          type: string
+        - description: Uses memory-mapped file system implementation.
+          const: mmapfs
+          type: string
+        - description: Uses NIO file system implementation.
+          const: niofs
+          type: string
     IndexSettingsStarTree:
       type: object
+      description: The star tree indexing configuration.
       properties:
         default:
           $ref: '#/components/schemas/IndexSettingsStarTreeDefault'
@@ -864,11 +983,13 @@ components:
         max_fields:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsStarTreeDefault:
+      description: The default settings for star tree indexing.
       type: object
       properties:
         max_leaf_docs:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsStarTreeField:
+      description: The field-specific settings for star tree indexing.
       type: object
       properties:
         default:
@@ -881,73 +1002,88 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexSettingsStarTreeFieldDefault:
       type: object
+      description: The field-specific settings for star tree indexing.
       properties:
         date_intervals:
           type: array
+          description: The list of date intervals to use.
           items:
             type: string
         metrics:
           type: array
+          description: The list of metrics to calculate.
           items:
             type: string
     NumericFielddata:
       type: object
+      description: The configuration for numeric field data.
       properties:
         format:
           $ref: '#/components/schemas/NumericFielddataFormat'
       required:
         - format
     NumericFielddataFormat:
-      type: string
-      enum:
-        - array
-        - disabled
+      description: The format for numeric field data.
+      oneOf:
+        - description: Uses array format for field data.
+          const: array
+          type: string
+        - description: Disables field data.
+          const: disabled
+          type: string
     FielddataFrequencyFilter:
       type: object
+      description: The frequency filter configuration for field data.
       properties:
         max:
           type: number
           format: double
+          description: The maximum frequency threshold.
         min:
           type: number
           format: double
+          description: The minimum frequency threshold.
         min_segment_size:
           type: integer
+          description: The minimum segment size to apply the filter.
       required:
         - max
         - min
         - min_segment_size
     AliasDefinition:
       type: object
+      description: The configuration for an index alias.
       properties:
         filter:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         index_routing:
           description: |-
-            Value used to route indexing operations to a specific shard.
-            If specified, this overwrites the `routing` value for indexing operations.
+            The value used to route indexing operations to a specific shard.
+            When specified, this overwrites the `routing` value for indexing operations.
           type: string
         is_write_index:
-          description: If `true`, the index is the write index for the alias.
+          description: When `true`, the index is the write index for the alias.
           type: boolean
         routing:
-          description: Value used to route indexing and search operations to a specific shard.
+          description: The value used to route indexing and search operations to a specific shard.
           type: string
         search_routing:
           description: |-
-            Value used to route search operations to a specific shard.
-            If specified, this overwrites the `routing` value for search operations.
+            The value used to route search operations to a specific shard.
+            When specified, this overwrites the `routing` value for search operations.
           type: string
         is_hidden:
           description: |-
-            If `true`, the alias is hidden.
+            When `true`, the alias is hidden.
             All indexes for the alias must have the same `is_hidden` value.
           type: boolean
     IndexState:
       type: object
+      description: The state configuration of an index.
       properties:
         aliases:
           type: object
+          description: The aliases associated with the index.
           additionalProperties:
             $ref: '#/components/schemas/Alias'
         mappings:
@@ -960,6 +1096,7 @@ components:
           $ref: '_common.yaml#/components/schemas/DataStreamName'
     Alias:
       type: object
+      description: The index alias configuration.
       properties:
         filter:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
@@ -967,11 +1104,11 @@ components:
           $ref: '_common.yaml#/components/schemas/Routing'
         is_hidden:
           description: |-
-            If `true`, the alias is hidden.
+            When `true`, the alias is hidden.
             All indexes for the alias must have the same `is_hidden` value.
           type: boolean
         is_write_index:
-          description: If `true`, the index is the write index for the alias.
+          description: When `true`, the index is the write index for the alias.
           type: boolean
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
@@ -983,14 +1120,14 @@ components:
         _meta:
           $ref: '_common.yaml#/components/schemas/Metadata'
         allow_custom_routing:
-          description: If `true`, the data stream allows custom routing on write request.
+          description: When `true`, the data stream allows custom routing on write request.
           type: boolean
         generation:
-          description: Current generation for the data stream. This number acts as a cumulative count of the stream's rollovers, starting at 1.
+          description: The current generation number for the data stream. This number acts as a cumulative count of the stream's rollovers, starting at 1.
           type: integer
           format: int64
         hidden:
-          description: If `true`, the data stream is hidden.
+          description: When `true`, the data stream is hidden.
           type: boolean
         ilm_policy:
           $ref: '_common.yaml#/components/schemas/Name'
@@ -1001,7 +1138,7 @@ components:
           type: boolean
         indices:
           description: |-
-            Array of objects containing information about the data stream's backing indexes.
+            An array of objects containing information about the data stream's backing indexes.
             The last item in this array contains information about the stream's current write index.
           type: array
           items:
@@ -1009,12 +1146,12 @@ components:
         name:
           $ref: '_common.yaml#/components/schemas/DataStreamName'
         replicated:
-          description: If `true`, the data stream is created and managed by cross-cluster replication and the local cluster can not write into this data stream or change its mappings.
+          description: When `true`, the data stream is created and managed by cross-cluster replication and the local cluster can not write into this data stream or change its mappings.
           type: boolean
         status:
           $ref: '_common.yaml#/components/schemas/HealthStatus'
         system:
-          description: If `true`, the data stream is created and managed by an OpenSearch stack component and cannot be modified through normal user interaction.
+          description: When `true`, the data stream is created and managed by an OpenSearch stack component and cannot be modified through normal user interaction.
           type: boolean
         template:
           $ref: '_common.yaml#/components/schemas/Name'
@@ -1029,12 +1166,14 @@ components:
         - timestamp_field
     ManagedBy:
       type: string
+      description: The component managing the data stream or index.
       enum:
         - Data stream lifecycle
         - Index Lifecycle Management
         - Unmanaged
     DataStreamIndex:
       type: object
+      description: The configuration for a data stream's backing index.
       properties:
         index_name:
           $ref: '_common.yaml#/components/schemas/IndexName'
@@ -1051,6 +1190,7 @@ components:
         - index_name
         - index_uuid
     DataStreamTimestampField:
+      description: The timestamp field configuration for a data stream.
       type: object
       properties:
         name:
@@ -1058,6 +1198,7 @@ components:
       required:
         - name
     IndexTemplate:
+      description: The configuration for an index template.
       type: object
       properties:
         index_patterns:
@@ -1075,7 +1216,7 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         priority:
           description: |-
-            Priority to determine index template precedence when a new data stream or index is created.
+            The priority to determine index template precedence when a new data stream or index is created.
             The index template with the highest priority is chosen.
             If no priority is specified the template is treated as though it is of priority 0 (lowest priority).
             This number is not automatically generated by OpenSearch.
@@ -1085,17 +1226,18 @@ components:
           $ref: '_common.yaml#/components/schemas/Metadata'
         allow_auto_create:
           type: boolean
+          description: Whether the template allows automatic index creation.
         data_stream:
           $ref: '#/components/schemas/IndexTemplateDataStreamConfiguration'
       required:
         - index_patterns
-      description: New index template definition to be simulated, if no index template name is specified.
     IndexTemplateSummary:
       type: object
+      description: The summary configuration for an index template.
       properties:
         aliases:
           description: |-
-            Aliases to add.
+            The aliases to add.
             If the index template includes a `data_stream` object, these are data stream aliases.
             Otherwise, these are index aliases.
             Data stream aliases ignore the `index_routing`, `routing`, and `search_routing` options.
@@ -1108,17 +1250,19 @@ components:
           $ref: '#/components/schemas/IndexSettings'
     IndexTemplateDataStreamConfiguration:
       type: object
+      description: The data stream configuration for an index template.
       properties:
         hidden:
-          description: If `true`, the data stream is hidden.
+          description: When `true`, the data stream is hidden.
           type: boolean
         allow_custom_routing:
-          description: If `true`, the data stream supports custom routing.
+          description: When `true`, the data stream supports custom routing.
           type: boolean
         timestamp_field:
           $ref: '#/components/schemas/DataStreamTimestampField'
     TemplateMapping:
       type: object
+      description: The mapping configuration for a template.
       properties:
         aliases:
           type: object
@@ -1133,8 +1277,10 @@ components:
         order:
           type: integer
           format: int32
+          description: The order in which the template should be applied.
         settings:
           type: object
+          description: The index settings to apply.
           additionalProperties: true
         version:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
@@ -1146,6 +1292,7 @@ components:
         - settings
     IndexGetUpgradeStatus:
       type: object
+      description: The upgrade status information for indexes.
       properties:
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
@@ -1155,10 +1302,12 @@ components:
           $ref: '_common.yaml#/components/schemas/ByteCount'
         indices:
           type: object
+          description: The upgrade status for individual indexes.
           additionalProperties:
             $ref: '#/components/schemas/UpgradeStatus'
     UpgradeStatus:
       type: object
+      description: The upgrade status details for an index.
       properties:
         size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
@@ -1168,6 +1317,7 @@ components:
           $ref: '_common.yaml#/components/schemas/ByteCount'
     UpgradeVersionStatus:
       type: object
+      description: The version status for an upgrade operation.
       properties:
         upgrade_version:
           $ref: '_common.yaml#/components/schemas/VersionString'
@@ -1175,22 +1325,26 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionString'
     IndexError:
       type: object
+      description: The error information for an index operation.
       properties:
         error:
           $ref: '#/components/schemas/IndexErrorCause'
         status:
           type: number
+          description: The HTTP status code for the error.
     IndexErrorCause:
       type: object
+      description: The detailed cause of an index error.
       properties:
         type:
-          description: The type of error
+          description: The type of error.
           type: string
         reason:
-          description: A human-readable explanation of the error, in english
+          description: A human-readable explanation of the error.
           type: string
         root_cause:
           type: array
+          description: The underlying causes of the error.
           items:
             $ref: '#/components/schemas/IndexErrorCause'
         index:
@@ -1207,6 +1361,7 @@ components:
         title: metadata
         description: Additional details about the error.
     DataStreamStats:
+      description: The statistics for a data stream.
       type: object
       properties:
         backing_indices:
@@ -1220,7 +1375,7 @@ components:
         store_size:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         store_size_bytes:
-          description: Total size, in bytes, of all shards for the data stream's backing indexes.
+          description: The total size, in bytes, of all shards for the data stream's backing indexes.
           $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
         - backing_indices

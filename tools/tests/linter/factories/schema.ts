@@ -8,10 +8,10 @@
 */
 
 import Schema from 'linter/components/Schema'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 
 export function schema (name: string, spec: Record<string, any> = {}): Schema {
-  return new Schema('_common.yaml', name, spec as OpenAPIV3.SchemaObject)
+  return new Schema('_common.yaml', name, spec as OpenAPIV3_1.SchemaObject)
 }
 
 interface MockedReturnedValues {
