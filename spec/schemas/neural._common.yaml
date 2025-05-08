@@ -1,0 +1,153 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `neural._common` Category
+  description: Schemas of `neural._common` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    NeuralStats:
+      oneOf:
+        - $ref: '#/components/schemas/NestedNeuralStats'
+        - $ref: '#/components/schemas/FlatNeuralStats'
+    # Separate schemas for flattened vs unflattened
+    NestedNeuralStats:
+      type: object
+      properties:
+        _nodes:
+          $ref: '#/components/schemas/NodesInfo'
+        cluster_name:
+          type: string
+        info:
+          $ref: '#/components/schemas/NestedNeuralInfoStats'
+        all_nodes:
+          $ref: '#/components/schemas/NestedNeuralNodeStats'
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NestedNeuralNodeStats'
+    FlatNeuralStats:
+      type: object
+      properties:
+        _nodes:
+          $ref: '#/components/schemas/NodesInfo'
+        cluster_name:
+          type: string
+        info:
+          $ref: '#/components/schemas/FlatNeuralInfoStats'
+        all_nodes:
+          $ref: '#/components/schemas/FlatNeuralNodeStats'
+        nodes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/FlatNeuralNodeStats'
+    FlatNeuralInfoStats:
+      type: object
+      properties:
+        cluster_version:
+          $ref: '#/components/schemas/InfoStringStat'
+          x-version-added: '3.0'
+        processors.ingest.text_embedding_processors_in_pipelines:
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: '3.0'
+    NestedNeuralInfoStats:
+      type: object  
+      properties:
+        cluster_version:
+          $ref: '#/components/schemas/InfoStringStat'
+          x-version-added: '3.0'
+        processors:
+          $ref: '#/components/schemas/NestedNeuralInfoStatsProcessors'
+    NestedNeuralInfoStatsProcessors:
+      type: object
+      properties:
+        ingest:
+          $ref: '#/components/schemas/NestedNeuralInfoStatsProcessorsIngest'
+    NestedNeuralInfoStatsProcessorsIngest:
+      type: object
+      properties:
+        text_embedding_processors_in_pipelines:
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: '3.0'
+    FlatNeuralNodeStats:
+      type: object
+      properties:
+        processors.ingest.text_embedding_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: '3.0'
+    NestedNeuralNodeStats:
+      type: object
+      properties:
+        processors:
+          $ref: '#/components/schemas/NestedNeuralNodeStatsProcessors'
+    NestedNeuralNodeStatsProcessors:
+      type: object
+      properties:
+        ingest:
+          $ref: '#/components/schemas/NestedNeuralNodeStatsProcessorsIngest'
+    NestedNeuralNodeStatsProcessorsIngest:
+      type: object
+      properties:
+        text_embedding_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: '3.0'
+    NodesInfo:
+      type: object
+      properties:
+        total:
+          type: integer
+        successful:
+          type: integer
+        failed:
+          type: integer
+    StatMetadata:
+      type: object
+      required:
+        - stat_type
+        - value
+      properties:
+        value:
+          oneOf:
+            - type: integer
+            - type: string
+        stat_type:
+          type: string
+          enum:
+            - info_counter
+            - info_string
+            - timestamped_event_counter
+    # Stat Types
+    InfoStringStat:
+      oneOf:
+        - type: string
+        - allOf:
+            - $ref: '#/components/schemas/StatMetadata'
+            - type: object
+              properties:
+                stat_type:
+                  type: string
+                  const: info_string
+    InfoCounterStat:
+      oneOf:
+        - type: integer
+        - allOf:
+            - $ref: '#/components/schemas/StatMetadata'
+            - type: object
+              properties:
+                stat_type:
+                  type: string
+                  const: info_counter
+    TimestampedEventCounterStat:
+      oneOf:
+        - type: integer
+        - allOf:
+            - $ref: '#/components/schemas/StatMetadata'
+            - type: object
+              properties:
+                stat_type:
+                  type: string
+                  const: timestamped_event_counter
+                trailing_interval_value:
+                  type: integer
+                minutes_since_last_event:
+                  type: integer
