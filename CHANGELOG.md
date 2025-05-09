@@ -77,6 +77,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `search_only` to `IndexSettingBlocks` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
 - Added `searchOnly` to `NodeShard` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
 - Added `GET /_plugins/_neural/stats` ([#850](https://github.com/opensearch-project/opensearch-api-specification/pull/850))
+- Added `ToolAttributes` to `ml._common.yaml` ([#878](https://github.com/opensearch-project/opensearch-api-specification/pull/878)) 
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
