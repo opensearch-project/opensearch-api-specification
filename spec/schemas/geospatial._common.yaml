@@ -1,0 +1,392 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `geospatial` Category
+  description: Schemas of `geospatial` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    GeoSpatialGeojsonUploadResponse:
+      type: object
+      properties:
+        took:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        errors:
+          type: boolean
+          description: Whether there were any errors.
+        total:
+          type: integer
+          description: Total number of features processed.
+        success:
+          type: integer
+          description: Number of features successfully uploaded.
+        failure:
+          type: integer
+          description: Number of features that failed to upload.
+      required:
+        - errors
+        - failure
+        - success
+        - took
+        - total
+    GeoSpatialUploadStats:
+      type: object
+      properties:
+        total:
+          $ref: '#/components/schemas/UploadStatsTotal'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/UploadStatsMetric'
+      required:
+        - metrics
+        - total
+    UploadStatsTotal:
+      type: object
+      properties:
+        request_count:
+          type: integer
+          description: Total number of upload requests.
+        upload:
+          type: integer
+          description: Total number of uploads.
+        success:
+          type: integer
+          description: Total successful uploads.
+        failed:
+          type: integer
+          description: Total failed uploads.
+        duration:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+      required:
+        - duration
+        - failed
+        - request_count
+        - success
+        - upload
+    UploadStatsMetric:
+      type: object
+      properties:
+        node_id:
+          $ref: '_common.yaml#/components/schemas/NodeId'
+        id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        type:
+          type: string
+          description: Type of upload (such as "GeoJSON").
+        upload:
+          type: integer
+          description: Number of features in this upload.
+        success:
+          type: integer
+          description: Number of successful features in this upload.
+        failed:
+          type: integer
+          description: Number of failed features in this upload.
+        duration:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+      required:
+        - duration
+        - failed
+        - id
+        - node_id
+        - success
+        - type
+        - upload
+    GetDataSourceResponse:
+      type: object
+      properties:
+        datasources:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSource'
+      required:
+        - datasources
+    DataSource:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        state:
+          type: string
+          enum:
+            - AVAILABLE
+            - CREATE_FAILED
+            - CREATING
+            - DELETING
+          description: State of the datasource.
+        endpoint:
+          type: string
+          description: URL endpoint for the datasource.
+        update_interval_in_days:
+          type: integer
+          description: Update interval.
+        next_update_at_in_epoch_millis:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        database:
+          type: object
+          $ref: '#/components/schemas/Database'
+        update_stats:
+          type: object
+          $ref: '#/components/schemas/UpdateStats'
+      required:
+        - database
+        - endpoint
+        - name
+        - next_update_at_in_epoch_millis
+        - state
+        - update_interval_in_days
+        - update_stats
+    Database:
+      type: object
+      properties:
+        provider:
+          type: string
+        sha256_hash:
+          type: string
+        updated_at_in_epoch_millis:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        valid_for_in_days:
+          type: integer
+        fields:
+          type: array
+          items:
+            type: string
+    UpdateStats:
+      type: object
+      properties:
+        last_succeeded_at_in_epoch_millis:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        last_processing_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+    PutIP2GeoDataSourceRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          description: URL endpoint for the datasource.
+          default: 'https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json'
+        update_interval_in_days:
+          type: integer
+          description: Update interval in days.
+          default: 3
+    GeoJSONRequest:
+      type: object
+      properties:
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        field:
+          type: string
+          default: location
+          description: Field name for the geospatial data.
+        type:
+          type: string
+          description: Field type for the geospatial data.
+          enum:
+            - geo_point
+            - geo_shape
+        data:
+          type: array
+          maxItems: 10000
+          description: Array of GeoJSON features.
+          items:
+            $ref: '#/components/schemas/GeoJSONData'
+      required:
+        - data
+        - index
+        - type
+    GeoJSONData:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Feature
+            - FeatureCollection
+        geometry:
+          oneOf:
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/Point'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/MultiPoint'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/LineString'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/MultiLineString'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/Polygon'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/MultiPolygon'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/GeometryCollection'
+            - allOf:
+                - $ref: '#/components/schemas/GeoShapes'
+                - $ref: '#/components/schemas/Envelope'
+        properties:
+          type: object
+      required:
+        - geometry
+        - type
+    GeoShapes:
+      oneOf:
+        - $ref: '#/components/schemas/Point'
+        - $ref: '#/components/schemas/MultiPoint'
+        - $ref: '#/components/schemas/LineString'
+        - $ref: '#/components/schemas/MultiLineString'
+        - $ref: '#/components/schemas/Polygon'
+        - $ref: '#/components/schemas/MultiPolygon'
+        - $ref: '#/components/schemas/Envelope'
+      description: |-
+        GeoJSON `geoshape` types supported by OpenSearch.
+        For more details, see: https://docs.opensearch.org/docs/latest/field-types/supported-field-types/geo-shape.
+    Geometry:
+      oneOf:
+        - $ref: '#/components/schemas/GeoShapes'
+        - $ref: '#/components/schemas/GeometryCollection'
+    Point:
+      type: object
+      required:
+        - coordinates
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+        coordinates:
+          $ref: '#/components/schemas/PointCoordinates'
+    MultiPoint:
+      type: object
+      required:
+        - coordinates
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPoint
+        coordinates:
+          $ref: '#/components/schemas/MultiPointCoordinates'
+    LineString:
+      type: object
+      required:
+        - coordinates
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - LineString
+        coordinates:
+          $ref: '#/components/schemas/LineStringCoordinates'
+    MultiLineString:
+      type: object
+      required:
+        - coordinates
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiLineString
+        coordinates:
+          $ref: '#/components/schemas/MultiLineStringCoordinates'
+    Polygon:
+      type: object
+      required:
+        - coordinates
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Polygon
+        coordinates:
+          $ref: '#/components/schemas/PolygonCoordinates'
+    MultiPolygon:
+      type: object
+      required:
+        - coordinates
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - MultiPolygon
+        coordinates:
+          $ref: '#/components/schemas/MultiPolygonCoordinates'
+    Envelope:
+      type: array
+      minItems: 2
+      maxItems: 2
+      items:
+        $ref: '#/components/schemas/PointCoordinates'
+      description: |-
+        An envelope specified by upper-left and lower-right points
+        [[minLon, maxLat], [maxLon, minLat]].
+    GeometryCollection:
+      type: object
+      required:
+        - geometries
+        - type
+      properties:
+        type:
+          type: string
+          enum: [GeometryCollection]
+        geometries:
+          type: array
+          maxItems: 100
+          description: Array of geometry objects.
+          items:
+            $ref: '#/components/schemas/Geometry'
+    PointCoordinates:
+      type: array
+      minItems: 2
+      maxItems: 2
+      items:
+        type: number
+        minimum: -180
+        maximum: 180
+      description: |-
+        A Point coordinates array [longitude, latitude].
+        - longitude must be between -180 and 180
+        - latitude must be between -90 and 90.
+    MultiPointCoordinates:
+      type: array
+      items:
+        $ref: '#/components/schemas/PointCoordinates'
+      description: An array of Point coordinates.
+    LineStringCoordinates:
+      type: array
+      minItems: 2
+      items:
+        $ref: '#/components/schemas/PointCoordinates'
+      description: An array of Point coordinates forming a line.
+    MultiLineStringCoordinates:
+      type: array
+      items:
+        $ref: '#/components/schemas/LineStringCoordinates'
+      description: An array of LineString coordinates.
+    PolygonCoordinates:
+      type: array
+      items:
+        type: array
+        items:
+          $ref: '#/components/schemas/PointCoordinates'
+        minItems: 4
+      description: |-
+        An array of linear ring coordinate arrays.
+        - First and last points must be the same to close the polygon
+        - Minimum 4 points required (first and last being the same).
+    MultiPolygonCoordinates:
+      type: array
+      items:
+        $ref: '#/components/schemas/PolygonCoordinates'
+      description: An array of Polygon coordinates.
