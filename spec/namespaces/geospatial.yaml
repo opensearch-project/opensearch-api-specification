@@ -43,28 +43,16 @@ paths:
         '200':
           $ref: '#/components/responses/geospatial.get_upload_stats@200'
 
-  /_plugins/geospatial/ip2geo/datasource:
-    get:
-      operationId: geospatial.get_all_ip_to_geo_datasources.0
-      x-operation-group: geospatial.get_all_ip_to_geo_datasources
-      x-version-added: '2.11'
-      description: Get information about all IP2Geo data sources.
-      externalDocs:
-        url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/'
-      responses:
-        '200':
-          $ref: '#/components/responses/geospatial.get_all_ip_to_geo_datasources@200'
-
-  /_plugins/geospatial/ip2geo/datasource/{datasource_name}:
+  /_plugins/geospatial/ip2geo/datasource/{name}:
     get:
       operationId: geospatial.get_ip_to_geo_datasource.0
       x-operation-group: geospatial.get_ip_to_geo_datasource
       x-version-added: '2.11'
-      description: Get information for a specific IP2Geo data source.
+      description: Get one or more IP2Geo data sources, defaulting to returning all if no names specified.
       externalDocs:
         url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#sending-a-get-request'
       parameters:
-        - $ref: '#/components/parameters/geospatial.get_ip_to_geo_datasource::path.datasource_name'
+        - $ref: '#/components/parameters/geospatial.get_ip_to_geo_datasource::path.name'
       responses:
         '200':
           $ref: '#/components/responses/geospatial.get_ip_to_geo_datasource@200'
@@ -80,7 +68,7 @@ paths:
       externalDocs:
         url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#data-source-options'
       parameters:
-        - $ref: '#/components/parameters/geospatial.put_ip_to_geo_datasource::path.datasource_name'
+        - $ref: '#/components/parameters/geospatial.put_ip_to_geo_datasource::path.name'
       requestBody:
         $ref: '#/components/requestBodies/geospatial.put_ip_to_geo_datasource'
       responses:
@@ -96,13 +84,13 @@ paths:
       externalDocs:
         url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#deleting-the-ip2geo-data-source'
       parameters:
-        - $ref: '#/components/parameters/geospatial.delete_ip_to_geo_datasource::path.datasource_name'
+        - $ref: '#/components/parameters/geospatial.delete_ip_to_geo_datasource::path.name'
       responses:
         '200':
           $ref: '#/components/responses/geospatial.delete_ip_to_geo_datasource@200'
         '404':
           $ref: '#/components/responses/geospatial.delete_ip_to_geo_datasource@404'
-  /_plugins/geospatial/ip2geo/datasource/{datasource_name}/_settings:
+  /_plugins/geospatial/ip2geo/datasource/{name}/_settings:
     put:
       operationId: geospatial.put_ip_to_geo_datasource_settings.0
       x-operation-group: geospatial.put_ip_to_geo_datasource_settings
@@ -111,7 +99,7 @@ paths:
       externalDocs:
         url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#updating-an-ip2geo-data-source'
       parameters:
-        - $ref: '#/components/parameters/geospatial.put_ip_to_geo_datasource_settings::path.datasource_name'
+        - $ref: '#/components/parameters/geospatial.put_ip_to_geo_datasource_settings::path.name'
       requestBody:
         $ref: '#/components/requestBodies/geospatial.put_ip_to_geo_datasource_settings'
       responses:
@@ -122,26 +110,26 @@ paths:
 
 components:
   parameters:
-    geospatial.get_ip_to_geo_datasource::path.datasource_name:
-      name: datasource_name
+    geospatial.get_ip_to_geo_datasource::path.name:
+      name: name
+      in: path
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/StringOrStringArray'
+    geospatial.put_ip_to_geo_datasource::path.name:
+      name: name
       in: path
       required: true
       schema:
         type: string
-    geospatial.put_ip_to_geo_datasource::path.datasource_name:
-      name: datasource_name
+    geospatial.delete_ip_to_geo_datasource::path.name:
+      name: name
       in: path
       required: true
       schema:
         type: string
-    geospatial.delete_ip_to_geo_datasource::path.datasource_name:
-      name: datasource_name
-      in: path
-      required: true
-      schema:
-        type: string
-    geospatial.put_ip_to_geo_datasource_settings::path.datasource_name:
-      name: datasource_name
+    geospatial.put_ip_to_geo_datasource_settings::path.name:
+      name: name
       in: path
       required: true
       schema:
@@ -196,12 +184,6 @@ components:
         application/json:
           schema:
             $ref: '../schemas/geospatial._common.yaml#/components/schemas/GeoSpatialUploadStats'
-    geospatial.get_all_ip_to_geo_datasources@200:
-      description: Provides information for getting IP2Geo data source.
-      content:
-        application/json:
-          schema:
-            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GetDataSourceResponse'
     geospatial.get_ip_to_geo_datasource@200:
       description: Provides information for getting IP2Geo data source.
       content:
