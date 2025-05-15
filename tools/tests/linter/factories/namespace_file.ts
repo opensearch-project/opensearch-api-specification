@@ -8,7 +8,7 @@
 */
 
 import NamespaceFile from 'linter/components/NamespaceFile'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { mocked_operation_group } from './operation_group'
 
 export function namespace_file (fixture_file: string): NamespaceFile {
@@ -33,7 +33,7 @@ export function mocked_namespace_file (ops: { returned_values?: MockedReturnedVa
   // eslint-disable-next-line @typescript-eslint/dot-notation
   if (ops.groups_errors) ns_file['_operation_groups'] = ops.groups_errors.map((errors) => mocked_operation_group({ validate: errors }))
   // eslint-disable-next-line @typescript-eslint/dot-notation
-  if (ops.spec) ns_file['_spec'] = { paths: {}, components: {}, ...ops.spec } as OpenAPIV3.Document
+  if (ops.spec) ns_file['_spec'] = { paths: {}, components: {}, ...ops.spec } as OpenAPIV3_1.Document
 
   if (ops.returned_values) {
     if (ops.returned_values.validate) {

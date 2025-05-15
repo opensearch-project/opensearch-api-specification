@@ -6,6 +6,8 @@ info:
 paths: {}
 components:
   schemas:
+    T:
+      x-is-generic-type-parameter: true
     HitsMetadata:
       type: object
       properties:
@@ -18,9 +20,17 @@ components:
         hits:
           type: array
           items:
-            $ref: '#/components/schemas/Hit'
+            allOf:
+              - $ref: '#/components/schemas/Hit'
+              - type: object
+                properties:
+                  _source:
+                    $ref: '#/components/schemas/T'
         max_score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: float
       required:
         - hits
     TotalHits:
@@ -42,6 +52,8 @@ components:
         - type: string
           const: gte
           description: Lower bound, including returned events or sequences.
+    TDocument:
+      x-is-generic-type-parameter: true
     Hit:
       type: object
       properties:
@@ -52,7 +64,10 @@ components:
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
         _score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: double
         _explanation:
           $ref: '_core.explain.yaml#/components/schemas/Explanation'
         fields:
@@ -91,7 +106,7 @@ components:
         _routing:
           type: string
         _source:
-          type: object
+          $ref: '#/components/schemas/TDocument'
         _seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         _primary_term:
@@ -101,9 +116,6 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         sort:
           $ref: '_common.yaml#/components/schemas/SortResults'
-      required:
-        - _id
-        - _index
     InnerHitsResult:
       type: object
       properties:
@@ -111,6 +123,32 @@ components:
           $ref: '#/components/schemas/HitsMetadata'
       required:
         - hits
+    ProcessorExecutionDetail:
+      type: object
+      properties:
+        processor_name:
+          type: string
+        duration_millis:
+          type: integer
+          format: int64
+        input_data:
+          oneOf:
+            - type: object 
+            - type: array
+              items: 
+                type: object
+        output_data: 
+          oneOf:
+            - type: object 
+            - type: array
+              items: 
+                type: object
+        status: 
+          type: string
+        tag:
+          type: string 
+        error:
+          type: string
     NestedIdentity:
       type: object
       properties:
@@ -1254,6 +1292,11 @@ components:
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
           $ref: '#/components/schemas/HitsMetadata'
+        processor_results: 
+          x-version-added: '3.0'
+          type: array
+          items: 
+            $ref: '#/components/schemas/ProcessorExecutionDetail'
         aggregations:
           type: object
           additionalProperties:
@@ -1264,9 +1307,6 @@ components:
           type: object
           additionalProperties:
             type: object
-        max_score:
-          type: number
-          format: float
         num_reduce_phases:
           type: integer
           format: int32

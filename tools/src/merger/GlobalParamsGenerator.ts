@@ -7,18 +7,18 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import _ from 'lodash'
 import { read_yaml } from '../helpers'
 import { is_ref, SpecificationContext } from "../_utils";
 import { SchemaVisitor } from "../_utils/SpecificationVisitor";
 
 export default class GlobalParamsGenerator {
-  global_params: Record<string, OpenAPIV3.ParameterObject>
+  global_params: Record<string, OpenAPIV3_1.ParameterObject>
 
   constructor (root_path: string) {
     const file_path = root_path + '/_global_parameters.yaml'
-    const spec: OpenAPIV3.Document = read_yaml(file_path)
+    const spec: OpenAPIV3_1.Document = read_yaml(file_path)
     this.global_params = this.create_global_params(spec)
   }
 
@@ -34,7 +34,7 @@ export default class GlobalParamsGenerator {
     })
   }
 
-  create_global_params (spec: OpenAPIV3.Document): Record<string, OpenAPIV3.ParameterObject> {
+  create_global_params (spec: OpenAPIV3_1.Document): Record<string, OpenAPIV3_1.ParameterObject> {
     const ref_rewriter = new SchemaVisitor((_, schema) => {
       if (!is_ref(schema)) return
 
@@ -45,7 +45,7 @@ export default class GlobalParamsGenerator {
 
     const ctx = new SpecificationContext('_global_parameters.yaml').child('components').child('parameters')
 
-    const params = (spec.components?.parameters ?? {}) as Record<string, OpenAPIV3.ParameterObject>
+    const params = (spec.components?.parameters ?? {}) as Record<string, OpenAPIV3_1.ParameterObject>
     _.entries(params).forEach(([original_key, param]) => {
       const global_key = `_global::${param.in}.${param.name}`
       _.set(param, 'x-global', true)

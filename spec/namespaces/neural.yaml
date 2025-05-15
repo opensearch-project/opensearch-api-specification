@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Neural Search API
+  description: OpenSearch Neural API.
+  version: 1.0.0
+paths:
+  /_plugins/_neural/stats:
+    get:
+      operationId: neural.stats.0
+      x-operation-group: neural.stats
+      x-version-added: '3.0'
+      description: Provides information about the current status of the neural-search plugin.
+      parameters:
+        - $ref: '#/components/parameters/neural.stats::query.flat_stat_paths'
+        - $ref: '#/components/parameters/neural.stats::query.include_metadata'
+      responses:
+        '200':
+          $ref: '#/components/responses/neural.stats@200'
+  /_plugins/_neural/stats/{stat}:
+    get:
+      operationId: neural.stats.1
+      x-operation-group: neural.stats
+      x-version-added: '3.0'
+      description: Provides information about the current status of the neural-search plugin.
+      parameters:
+        - $ref: '#/components/parameters/neural.stats::path.stat'
+        - $ref: '#/components/parameters/neural.stats::query.flat_stat_paths'
+        - $ref: '#/components/parameters/neural.stats::query.include_metadata'
+      responses:
+        '200':
+          $ref: '#/components/responses/neural.stats@200'
+  /_plugins/_neural/{node_id}/stats:
+    get:
+      operationId: neural.stats.2
+      x-operation-group: neural.stats
+      x-version-added: '3.0'
+      description: Provides information about the current status of the neural-search plugin.
+      parameters:
+        - $ref: '#/components/parameters/neural.stats::path.node_id'
+        - $ref: '#/components/parameters/neural.stats::query.flat_stat_paths'
+        - $ref: '#/components/parameters/neural.stats::query.include_metadata'
+      responses:
+        '200':
+          $ref: '#/components/responses/neural.stats@200'
+  /_plugins/_neural/{node_id}/stats/{stat}:
+    get:
+      operationId: neural.stats.3
+      x-operation-group: neural.stats
+      x-version-added: '3.0'
+      description: Provides information about the current status of the neural-search plugin.
+      parameters:
+        - $ref: '#/components/parameters/neural.stats::path.node_id'
+        - $ref: '#/components/parameters/neural.stats::path.stat'
+        - $ref: '#/components/parameters/neural.stats::query.flat_stat_paths'
+        - $ref: '#/components/parameters/neural.stats::query.include_metadata'
+      responses:
+        '200':
+          $ref: '#/components/responses/neural.stats@200'
+components:
+  responses:
+    neural.stats@200:
+      description: Successful response containing neural stats
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/neural._common.yaml#/components/schemas/NeuralStats'
+  parameters:
+    neural.stats::path.node_id:
+      name: node_id
+      in: path
+      description: Comma-separated list of node IDs or names to limit the returned information; leave empty to get information from all nodes.
+      schema:
+        type: string
+      required: true
+    neural.stats::path.stat:
+      name: stat
+      in: path
+      description: Comma-separated list of stats to retrieve; use empty string to retrieve all stats.
+      schema:
+        type: string
+        enum:
+          - cluster_version
+          - text_embedding_executions
+          - text_embedding_processors_in_pipelines
+      required: true
+    neural.stats::query.flat_stat_paths:
+      in: query
+      name: flat_stat_paths
+      description: |- 
+        Whether to return stats in the flat form, which can improve readability, especially for heavily nested stats.
+        For example, the flat form of `"processors": { "ingest": { "text_embedding_executions": 20181212 } }` is 
+        `"processors.ingest.text_embedding_executions": "20181212"`.
+      schema:
+        type: boolean
+        default: false
+      style: form
+    neural.stats::query.include_metadata:
+      in: query
+      name: include_metadata
+      description: |- 
+        Whether to return stat metadata instead of the raw stat value, includes additional information about the stat.
+        These can include things like type hints, time since last stats being recorded, or recent rolling interval values
+      schema:
+        type: boolean
+        default: false
+      style: form

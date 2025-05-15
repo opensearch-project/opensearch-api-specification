@@ -73,6 +73,12 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `pagination_depth` to `HybridQuery` ([#848](https://github.com/opensearch-project/opensearch-api-specification/pull/848))
 - Added `warm` to `ClusterNodeCount` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
 - Added `total_primary_shards_per_node` to `IndexRoutingAllocation` ([#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
+- Added `verbose_pipeline`, to SearchRequest ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
+- Added `store` and `value_type` to TermsQuery  ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
+- Added `search_only` to `IndexSettingBlocks` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
+- Added `searchOnly` to `NodeShard` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
+- Added `GET /_plugins/_neural/stats` ([#850](https://github.com/opensearch-project/opensearch-api-specification/pull/850))
+- Added `ToolAttributes` to `ml._common.yaml` ([#878](https://github.com/opensearch-project/opensearch-api-specification/pull/878)) 
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -85,6 +91,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `mappings` from `required` in `indices.simulate_template#Template` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
 - Removed `HealthStatusCapatilized` and merged it with `HealthStatus` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Removed `id` from `required` in `indices.termvectors@200` ([#734](https://github.com/opensearch-project/opensearch-api-specification/pull/734))
+- Removed duplicate `string` from `MultiTermQueryRewrite` ([#862](https://github.com/opensearch-project/opensearch-api-specification/pull/862/))
+- Removed unneeded `ExplanationDetail` from `Explanation` ([#860](https://github.com/opensearch-project/opensearch-api-specification/pull/860))
+- Removed unsupported `max_score` from ResponseBody ([#891](https://github.com/opensearch-project/opensearch-api-specification/pull/891))
 
 ### Fixed
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -128,6 +137,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `knn.train_model`'s request body `method` field to accept an object rather than a string ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
 - Fixed REST status codes for RBAC and provisioning for Flow Framework plugin ([#842](https://github.com/opensearch-project/opensearch-api-specification/pull/842), [#852](https://github.com/opensearch-project/opensearch-api-specification/pull/852))
 - Fixed swapped schema references in nodes info API buffer fields ([#808](https://github.com/opensearch-project/opensearch-api-specification/pull/808))
+- Fixed Bulk API schemas ([#843](https://github.com/opensearch-project/opensearch-api-specification/pull/843))
+- Fixed aggregate schemas ([#840](https://github.com/opensearch-project/opensearch-api-specification/pull/840))
+- Fixed `security.get_sslinfo` response structure inline with v3.0.0 ([#885](https://github.com/opensearch-project/opensearch-api-specification/pull/885))
+- Fixed schema for ScoreCombination in NormalizationPhaseResultsProcessor ([#887](https://github.com/opensearch-project/opensearch-api-specification/pull/887))
 
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
@@ -137,6 +150,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `ml.get_memory` and `ml.get_message` to split out `get_all` variants ([#796](https://github.com/opensearch-project/opensearch-api-specification/pull/796))
 - Changed `ml.get_tools` to have two different operation groups `ml.get_all_tools` and `ml.get_tool` ([#799](https://github.com/opensearch-project/opensearch-api-specification/pull/799))
 - Changed `FlowFrameworkDeleteResponse` to utilize `WriteResponseBase` ([#814](https://github.com/opensearch-project/opensearch-api-specification/pull/814))
+- Changed `DistanceFeatureQuery` and `RangeQuery` from (allOf + oneOf) to (oneOf + allOf) ([#865](https://github.com/opensearch-project/opensearch-api-specification/pull/865))
+- Changed `ClusterJvm.versions`, `ClusterOperatingSystemName.name` and `ClusterOperatingSystemPrettyName.pretty_name` to not be required as AOS does not return them ([#866](https://github.com/opensearch-project/opensearch-api-specification/pull/866))
+- Changed `ScriptedMetricAggregate` value from true to {} ([#892](https://github.com/opensearch-project/opensearch-api-specification/pull/892))
 
 ## [0.1.0] - 2024-10-25
 

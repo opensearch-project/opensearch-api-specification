@@ -263,23 +263,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/FieldValue'
-    GeoLine:
-      type: object
-      properties:
-        type:
-          description: Always `"LineString"`
-          type: string
-        coordinates:
-          description: An array of `[lon, lat]` coordinates.
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-              format: double
-      required:
-        - coordinates
-        - type
     ClusterStatistics:
       type: object
       properties:
@@ -358,6 +341,23 @@ components:
             $ref: '#/components/schemas/ShardFailure'
         skipped:
           $ref: '#/components/schemas/uint'
+      required:
+        - failed
+        - successful
+        - total
+    ShardInfo:
+      type: object
+      properties:
+        failed:
+          $ref: '#/components/schemas/uint'
+        successful:
+          $ref: '#/components/schemas/uint'
+        total:
+          $ref: '#/components/schemas/uint'
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardFailure'
       required:
         - failed
         - successful
@@ -526,11 +526,13 @@ components:
               required:
                 - source
     ScriptLanguage:
-      anyOf:
+      oneOf:
         - title: builtin
           $ref: '#/components/schemas/BuiltinScriptLanguage'
         - title: custom
           type: string
+          not:
+            $ref: '#/components/schemas/BuiltinScriptLanguage'
     BuiltinScriptLanguage:
       type: string
       enum:
@@ -567,9 +569,6 @@ components:
         - type: string
           const: scoring_boolean
           description: The scoring Boolean rewrite method creates a Boolean query that scores each term separately.
-        - type: string
-          pattern: top_terms(_blended_freqs|_boost)?_\d+
-          description: The top terms query rewrite method with optional parameters.
         - type: string
           pattern: top_terms(_blended_freqs|_boost)?_\d+
           description: The top terms query rewrite method with optional parameters.
@@ -722,12 +721,16 @@ components:
         ignore_unmapped:
           type: boolean
           description: Whether to ignore unmapped fields and not sort based on them.
+        nested:
+          $ref: '#/components/schemas/NestedSortValue'
         order:
           $ref: '#/components/schemas/SortOrder'
           description: The direction of the sort order.
         unit:
           $ref: '#/components/schemas/DistanceUnit'
           description: The unit of distance measurement.
+        validation_method:
+          $ref: '_common.query_dsl.yaml#/components/schemas/GeoValidationMethod'
       additionalProperties:
         type: array
         description: The geo points to use for distance calculation.
@@ -923,8 +926,12 @@ components:
           const: all
           description: Wait for all shards to be active.
         - type: string
-          const: index-setting
-          description: Wait for the number of shards specified in the index settings.
+          not: 
+            type: string
+            const: all
+          description: A numeric value greater than or equal to 0
+        - type: 'null'
+          description: null represents the default value (which defaults to one shard copy).
     InlineGetDictUserDefined:
       type: object
       description: The inline get operation results for user-defined dictionaries.
@@ -949,6 +956,9 @@ components:
           type: object
           description: The source of the document.
           additionalProperties: true
+      additionalProperties: 
+        type: object 
+        title: metadata_fields 
       required:
         - found
     Names:
@@ -1760,6 +1770,7 @@ components:
         - version
     NodeStatistics:
       type: object
+      description: The statistics about node operations.
       properties:
         failures:
           type: array
@@ -1780,6 +1791,7 @@ components:
         - total
     WriteResponseBase:
       type: object
+      description: The base response for write operations.
       properties:
         _type:
           $ref: '#/components/schemas/Type'
@@ -1790,8 +1802,10 @@ components:
         _primary_term:
           type: integer
           format: int64
+          description: The primary term of the document.
         result:
           $ref: '#/components/schemas/Result'
+
         _seq_no:
           $ref: '#/components/schemas/SequenceNumber'
         _shards:
@@ -1809,53 +1823,75 @@ components:
         - _version
         - result
     Result:
-      type: string
-      enum:
-        - created
-        - deleted
-        - noop
-        - not_found
-        - updated
+      oneOf:
+        - type: string
+          const: created
+          description: The document was created.
+        - type: string
+          const: deleted
+          description: The document was deleted.
+        - type: string
+          const: noop
+          description: The update operation didn't change anything.
+        - type: string
+          const: not_found
+          description: The document was not found.
+        - type: string
+          const: updated
+          description: The document was updated.
     Conflicts:
-      type: string
-      enum:
-        - abort
-        - proceed
+      oneOf:
+        - type: string
+          const: abort
+          description: Abort the operation on version conflicts.
+        - type: string
+          const: proceed
+          description: Proceed with the operation on version conflicts.
     Slices:
       description: The slice configuration used to parallelize a process.
       oneOf:
         - title: count
           type: integer
           format: int32
+          description: The number of slices to use.
         - title: calculation
           $ref: '#/components/schemas/SlicesCalculation'
+          description: The method to calculate the number of slices.
     SlicesCalculation:
-      type: string
-      enum:
-        - auto
+      oneOf:
+        - type: string
+          const: auto
+          description: Automatically determine the number of slices.
     Retries:
       type: object
+      description: The retry statistics for bulk and search operations.
       properties:
         bulk:
           type: integer
           format: int64
+          description: The number of bulk operation retries.
         search:
           type: integer
           format: int64
+          description: The number of search operation retries.
       required:
         - bulk
         - search
     TaskId:
       type: string
+      description: The unique identifier of a task.
     TaskFailure:
       type: object
+      description: The details of a task failure.
       properties:
         task_id:
           type: integer
+          description: The ID of the failed task.
         node_id:
           $ref: '#/components/schemas/NodeId'
         status:
           type: string
+          description: The status of the failed task.
         reason:
           $ref: '#/components/schemas/ErrorCause'
       required:
@@ -1865,56 +1901,70 @@ components:
         - task_id
     InlineGet:
       type: object
+      description: The result of an inline get operation.
       properties:
         fields:
           type: object
+          description: The fields retrieved from the document.
           additionalProperties:
             type: object
         found:
+          description: Whether the document was found.
           type: boolean
         _seq_no:
           $ref: '#/components/schemas/SequenceNumber'
         _primary_term:
           type: number
+          description: The primary term of the document.
         _routing:
           $ref: '#/components/schemas/Routing'
         _source:
           type: object
+          description: The source of the document.
       required:
         - found
     IndexAlias:
       type: string
+      description: The name of an index alias.
     ErrorResponseBase:
+      description: The base structure for error responses.
       type: object
       properties:
         error:
           $ref: '#/components/schemas/ErrorCause'
         status:
           type: number
+          description: The HTTP status code.
       required:
         - error
         - status
     StoredScript:
       type: object
+      description: The definition of a stored script.
       properties:
         lang:
           $ref: '#/components/schemas/ScriptLanguage'
         options:
           type: object
+          description: The options for the script.
           additionalProperties:
             type: string
         source:
-          description: The script source.
+          description: The location of the source code for the script.
           type: string
       required:
         - lang
         - source
     OpType:
-      type: string
-      enum:
-        - create
-        - index
+      oneOf:
+        - type: string
+          const: create
+          description: Create a new document.
+        - type: string
+          const: index
+          description: Create a new document or replace an existing one.
     ShardsOperationResponseBase:
+      description: The base response for operations involving shards.
       type: object
       properties:
         _shards:
@@ -1925,6 +1975,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/AcknowledgedResponseBase'
         - type: object
+          description: The base response for index operations.
           properties:
             _shards:
               $ref: '#/components/schemas/ShardStatistics'
@@ -1936,13 +1987,16 @@ components:
             $ref: '#/components/schemas/DataStreamName'
     FlushStats:
       type: object
+      description: The statistics about flush operations.
       properties:
         periodic:
           type: integer
           format: int64
+          description: The number of periodic flush operations.
         total:
           type: integer
           format: int64
+          description: The total number of flush operations.
         total_time:
           $ref: '#/components/schemas/Duration'
         total_time_in_millis:
@@ -1953,10 +2007,12 @@ components:
         - total_time_in_millis
     GetStats:
       type: object
+      description: The statistics about get operations.
       properties:
         total:
           type: integer
           format: int64
+          description: The total number of get operations.
         getTime:
           $ref: '#/components/schemas/Duration'
           deprecated: true
@@ -1969,6 +2025,7 @@ components:
         exists_total:
           type: integer
           format: int64
+          description: The total number of successful get operations.
         exists_time:
           $ref: '#/components/schemas/Duration'
         exists_time_in_millis:
@@ -1976,6 +2033,7 @@ components:
         missing_total:
           type: integer
           format: int64
+          description: The total number of failed get operations due to missing documents.
         missing_time:
           $ref: '#/components/schemas/Duration'
         missing_time_in_millis:
@@ -1983,6 +2041,7 @@ components:
         current:
           type: integer
           format: int64
+          description: The number of current get operations.
       required:
         - current
         - exists_time_in_millis
@@ -1993,23 +2052,30 @@ components:
         - total
     IndexingStats:
       type: object
+      description: The statistics about indexing operations.
       properties:
         index_total:
           type: integer
           format: int64
+          description: The total number of indexing operations.
         index_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on indexing operations.
         index_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on indexing operations in milliseconds.
         index_current:
           type: integer
           format: int64
+          description: The number of current indexing operations.
         index_failed:
           type: integer
           format: int64
+          description: The number of failed indexing operations.
         delete_total:
           type: integer
           format: int64
+          description: The total number of delete operations.
         delete_time:
           $ref: '#/components/schemas/Duration'
         delete_time_in_millis:
@@ -2017,15 +2083,20 @@ components:
         delete_current:
           type: integer
           format: int64
+          description: The number of current delete operations.
         noop_update_total:
           type: integer
           format: int64
+          description: The total number of noop update operations.
         is_throttled:
           type: boolean
+          description: Whether indexing is currently throttled.
         throttle_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent throttling indexing operations.
         throttle_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent throttling indexing operations in milliseconds.
         doc_status:
           $ref: '#/components/schemas/DocStatus'
         types:
@@ -2046,46 +2117,64 @@ components:
         - throttle_time_in_millis
     MergesStats:
       type: object
+      description: The statistics about merge operations.
       properties:
         current:
           type: integer
+          description: The number of current merge operations.
           format: int64
         current_docs:
           type: integer
+          description: The number of documents in current merge operations.
           format: int64
         current_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The size of current merge operations in a human-readable format.
         current_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The size of current merge operations in bytes.
         total:
           type: integer
           format: int64
+          description: The total number of merge operations.
         total_auto_throttle:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total auto-throttle size in a human-readable format.
         total_auto_throttle_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The total auto-throttle size in bytes.
         total_docs:
           type: integer
           format: int64
+          description: The total number of documents that have been merged.
         total_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total size of merge operations in a human-readable format.
         total_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The total size of merge operations in bytes.
         total_stopped_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time merge operations have been stopped.
         total_stopped_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time merge operations have been stopped in milliseconds.
         total_throttled_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time merge operations have been throttled.
         total_throttled_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time merge operations have been throttled in milliseconds.
         total_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on merge operations.
         total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on merge operations in milliseconds.
         unreferenced_file_cleanups_performed:
           type: integer
           format: int64
+          description: The number of unreferenced file cleanups performed.
       required:
         - current
         - current_docs
@@ -2099,41 +2188,54 @@ components:
         - total_time_in_millis
     RecoveryStats:
       type: object
+      description: The statistics about recovery operations.
       properties:
         current_as_source:
           type: integer
           format: int64
+          description: The number of ongoing recoveries for which this node is the source.
         current_as_target:
           type: integer
           format: int64
+          description: The number of ongoing recoveries for which this node is the target.
         throttle_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time recovery operations have been throttled.
         throttle_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time recovery operations have been throttled in milliseconds.
       required:
         - current_as_source
         - current_as_target
         - throttle_time_in_millis
     RefreshStats:
       type: object
+      description: The statistics about refresh operations.
       properties:
         external_total:
           type: integer
           format: int64
+          description: The total number of external refresh operations.
         external_total_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on external refresh operations.
         external_total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on external refresh operations in milliseconds.
         listeners:
           type: integer
           format: int64
+          description: The number of refresh listeners.
         total:
           type: integer
           format: int64
+          description: The total number of refresh operations.
         total_time:
           $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on refresh operations.
         total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on refresh operations in milliseconds.
       required:
         - external_total
         - external_total_time_in_millis
@@ -2142,20 +2244,26 @@ components:
         - total_time_in_millis
     RequestCacheStats:
       type: object
+      description: The statistics about request cache operations.
       properties:
         evictions:
           type: integer
           format: int64
+          description: The number of request cache evictions.
         hit_count:
           type: integer
           format: int64
+          description: The number of request cache hits.
         memory_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The size of the request cache in a human-readable format.
         memory_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The size of the request cache in bytes.
         miss_count:
           type: integer
           format: int64
+          description: The number of request cache misses.
       required:
         - evictions
         - hit_count
@@ -2163,6 +2271,7 @@ components:
         - miss_count
     SearchStats:
       type: object
+      description: The statistics about search operations.
       properties:
         open_contexts:
           description: The number of open search contexts.
@@ -2257,6 +2366,7 @@ components:
         search_idle_reactivate_count_total:
           type: integer
           format: int64
+          description: The total number of idle search reactivations.
         request:
           type: object
           description: Statistics related to coordinator search operations for the node. 
@@ -2264,6 +2374,7 @@ components:
             $ref: '#/components/schemas/RequestStats'
         groups:
           type: object
+          description: The search statistics grouped by search groups.
           additionalProperties:
             $ref: '#/components/schemas/SearchStats'
       required:
@@ -2281,26 +2392,34 @@ components:
         - suggest_total
     TranslogStats:
       type: object
+      description: The statistics about translog operations.
       properties:
         earliest_last_modified_age:
           type: integer
           format: int64
+          description: The age of the oldest translog entry.
         operations:
           type: integer
           format: int32
+          description: The number of operations in the translog.
         remote_store:
           $ref: '#/components/schemas/RemoteStoreTranslogStats'
         size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The size of the translog in a human-readable format.
         size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The size of the translog in bytes.
         uncommitted_operations:
           type: integer
           format: int32
+          description: The number of uncommitted operations in the translog.
         uncommitted_size:
           $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The size of uncommitted operations in a human-readable format.
         uncommitted_size_in_bytes:
           $ref: '#/components/schemas/ByteCount'
+          description: The size of uncommitted operations in bytes.
       required:
         - earliest_last_modified_age
         - operations
@@ -2309,41 +2428,58 @@ components:
         - uncommitted_size_in_bytes
     RequestStats:
       type: object
+      description: The statistics about request operations.
       properties:
         time:
           $ref: '#/components/schemas/Duration'
+          description: The total time spent on request operations.
         time_in_millis:
-          $ref: '#/components/schemas/DurationValueUnitMillis'    
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total time spent on request operations in milliseconds.    
         current:
           type: integer
           format: int64
+          description: The number of current request operations.
         total:
           type: integer
           format: int64
+          description: The total number of request operations.
     WarmerStats:
       type: object
+      description: The statistics about index warmer operations.
       properties:
         current:
           type: integer
           format: int64
+          description: The number of current warmer operations.
         total:
           type: integer
           format: int64
+          description: The total number of warmer operations.
         total_time:
           $ref: '#/components/schemas/Duration'
+          description: The total time spent on warmer operations.
         total_time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total time spent on warmer operations in milliseconds.
       required:
         - current
         - total
         - total_time_in_millis
     GeoShapeRelation:
-      type: string
-      enum:
-        - contains
-        - disjoint
-        - intersects
-        - within
+      oneOf:
+        - type: string
+          const: contains
+          description: The shape contains the query shape.
+        - type: string
+          const: disjoint
+          description: The shape has no points in common with the query shape.
+        - type: string
+          const: intersects
+          description: The shape shares any points in common with the query shape.
+        - type: string
+          const: within
+          description: The shape is within the query shape.
     StringifiedVersionNumber:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -2355,17 +2491,24 @@ components:
         - $ref: '#/components/schemas/VersionNumber'
         - type: string
     ActionStatusOptions:
-      type: string
-      enum:
-        - failure
-        - simulated
-        - success
-        - throttled
+      oneOf:
+        - type: string
+          const: failure
+          description: The action failed.
+        - type: string
+          const: simulated
+          description: The action was simulated.
+        - type: string
+          const: success
+          description: The action succeeded.
+        - type: string
+          const: throttled
+          description: The action was throttled.
     NodeAttributes:
       type: object
       properties:
         attributes:
-          description: Lists node attributes.
+          description: A list of node attributes.
           type: object
           additionalProperties:
             type: string
@@ -2381,56 +2524,85 @@ components:
           $ref: '#/components/schemas/NodeRoles'
         external_id:
           type: string
+          description: The roles of the node.
       required:
         - attributes
         - ephemeral_id
         - name
         - transport_address
     NodeRoles:
-      description: Node roles.
+      description: The role assigned to the node.
       type: array
       items:
         $ref: '#/components/schemas/NodeRole'
     NodeRole:
       oneOf:
         - type: string
-          enum:
-            - client
-            - coordinating_only
-            - data
-            - data_cold
-            - data_content
-            - data_frozen
-            - data_hot
-            - data_warm
-            - ingest
-            - ml
-            - remote_cluster_client
-            - transform
-            - voting_only
+          const: client
+          description: The node can act as a client node.
         - type: string
-          enum:
-            - master
+          const: coordinating_only
+          description: The node only performs coordination tasks.
+        - type: string
+          const: data
+          description: The node can store data.
+        - type: string
+          const: data_cold
+          description: The node can store cold data.
+        - type: string
+          const: data_content
+          description: The node can store content data.
+        - type: string
+          const: data_frozen
+          description: The node can store frozen data.
+        - type: string
+          const: data_hot
+          description: The node can store hot data.
+        - type: string
+          const: data_warm
+          description: The node can store warm data.
+        - type: string
+          const: ingest
+          description: The node can perform ingest operations.
+        - type: string
+          const: ml
+          description: The node can perform machine learning operations.
+        - type: string
+          const: remote_cluster_client
+          description: The node can act as a remote cluster client.
+        - type: string
+          const: transform
+          description: The node can perform transform operations.
+        - type: string
+          const: voting_only
+          description: The node can only vote in cluster decisions.
+        - type: string
+          const: master
           deprecated: true
           x-version-deprecated: '2.0'
           x-deprecation-message: Use `cluster_manager` instead.
         - type: string
-          enum:
-            - cluster_manager
+          const: cluster_manager
+          description: The node can act as a cluster manager.
           x-version-added: '2.0'
     HttpHeaders:
       type: object
+      description: The HTTP headers.
       additionalProperties:
         $ref: '#/components/schemas/StringOrStringArray'
     Password:
       type: string
+      description: The password for authentication.
     Username:
       type: string
+      description: The username for authentication.
     BaseNode:
       type: object
+      description: The base information about a node.
       properties:
         attributes:
           type: object
+          description: The attributes of the node.
           additionalProperties:
             type: string
         host:
@@ -2447,15 +2619,18 @@ components:
         - name
     RankContainer:
       type: object
+      description: The container for ranking configuration.
       properties:
         rrf:
           $ref: '#/components/schemas/RrfRank'
+          description: The reciprocal rank fusion configuration.
       minProperties: 1
       maxProperties: 1
     RrfRank:
       allOf:
         - $ref: '#/components/schemas/RankBase'
         - type: object
+          description: The reciprocal rank fusion ranking configuration.
           properties:
             rank_constant:
               description: To what degree documents found in individual result sets per query influence the final ranked result set.
@@ -2465,8 +2640,10 @@ components:
               type: number
     RankBase:
       type: object
+      description: The base configuration for ranking.
     NodeShard:
       type: object
+      description: The information about a shard on a node.
       properties:
         state:
           $ref: 'indices.stats.yaml#/components/schemas/ShardRoutingState'
@@ -2479,12 +2656,16 @@ components:
           format: int32
         index:
           $ref: '#/components/schemas/IndexName'
+        searchOnly:
+          type: boolean
+          description: Indicates if this shard is configured for search operations only
         allocation_id:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/Id'
         recovery_source:
           type: object
+          description: The recovery source information for this shard.
           additionalProperties:
             $ref: '#/components/schemas/Id'
         unassigned_info:
@@ -2493,6 +2674,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/NodeId'
             - type: 'null'
+              description: No relocation is in progress.
       required:
         - index
         - primary
@@ -2500,27 +2682,38 @@ components:
         - state
     OpenSearchVersionInfo:
       type: object
+      description: The version information for OpenSearch.
       properties:
         build_date:
           $ref: '#/components/schemas/DateTime'
+          description: When the version was built.
         build_flavor:
           type: string
+          description: The flavor of the build.
         build_hash:
           type: string
+          description: The hash of the build.
         build_snapshot:
           type: boolean
+          description: Whether this is a snapshot build.
         build_type:
           type: string
+          description: The type of the build.
         distribution:
           type: string
+          description: The distribution name.
         lucene_version:
           $ref: '#/components/schemas/VersionString'
+          description: The version of Lucene being used.
         minimum_index_compatibility_version:
           $ref: '#/components/schemas/VersionString'
+          description: The minimum compatible index version.
         minimum_wire_compatibility_version:
           $ref: '#/components/schemas/VersionString'
+          description: The minimum compatible wire protocol version.
         number:
           type: string
+          description: The version number.
       required:
         - build_date
         - build_hash
@@ -2533,19 +2726,26 @@ components:
         - number
     PhaseTook:
       type: object
+      description: The time taken by different phases of the search.
       properties:
         dfs_pre_query:
           $ref: '#/components/schemas/uint'
+          description: The time taken for the distributed frequency search `pre-query` phase.
         query:
           $ref: '#/components/schemas/uint'
+          description: The time taken for the `query` phase.
         fetch:
           $ref: '#/components/schemas/uint'
+          description: The time taken for the `fetch` phase.
         dfs_query:
           $ref: '#/components/schemas/uint'
+          description: The time taken for the distributed frequency search query phase.
         expand:
           $ref: '#/components/schemas/uint'
+          description: The time taken for the `expand` phase.
         can_match:
           $ref: '#/components/schemas/uint'
+          description: The time taken for the `can_match` phase.
       required:
         - can_match
         - dfs_pre_query
@@ -2555,6 +2755,7 @@ components:
         - query
     BulkByScrollTaskStatus:
       type: object
+      description: The status of a bulk by scroll task.
       properties:
         slice_id:
           type: integer
@@ -2601,8 +2802,10 @@ components:
           type: string
         throttled_until_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: When the throttling will end in milliseconds.
         throttled_until:
           $ref: '#/components/schemas/Duration'
+          description: The amount time before the throttling will end.
         slices:
           type: array
           items:
@@ -2621,20 +2824,26 @@ components:
       oneOf:
         - title: status
           $ref: '#/components/schemas/BulkByScrollTaskStatus'
+          description: The status of the bulk by scroll task.
         - title: exception
           $ref: '#/components/schemas/ErrorCause'
+          description: The error that occurred during the bulk by scroll task.
     BulkByScrollResponseBase:
       allOf:
         - $ref: '#/components/schemas/BulkByScrollTaskStatus'
+          description: The base response for bulk by scroll operations.
         - type: object
           properties:
             took:
               type: integer
               format: int64
+              description: The time taken by the operation in milliseconds.
             timed_out:
               type: boolean
+              description: Whether the operation timed out.
             failures:
               type: array
+              description: The list of failures that occurred during the operation.
               items:
                 $ref: '#/components/schemas/BulkByScrollFailure'
           required:
@@ -2647,6 +2856,7 @@ components:
         - $ref: '#/components/schemas/ScrollableHitSourceSearchFailure'
     BulkItemResponseFailure:
       type: object
+      description: The details of a bulk item operation failure.
       properties:
         cause:
           $ref: '#/components/schemas/ErrorCause'
@@ -2663,6 +2873,7 @@ components:
         - status
     ScrollableHitSourceSearchFailure:
       type: object
+      description: The details of a search failure during scrolling.
       properties:
         index:
           $ref: '#/components/schemas/IndexName'
@@ -2682,12 +2893,15 @@ components:
     BatchSize:
       type: integer
       format: int64
+      description: The size of a batch operation.
     ResourceType:
       type: string
+      description: The type of resource.
       enum:
         - index_or_alias
     ResourceStats:
       type: object
+      description: The statistics about resource usage.
       properties:
         average:
           $ref: '#/components/schemas/ResourceStat'
@@ -2707,6 +2921,7 @@ components:
         - total
     ResourceStat:
       type: object
+      description: Any statistics about CPU and memory usage.
       properties:
         cpu_time_in_nanos:
           $ref: '#/components/schemas/DurationValueUnitNanos'
@@ -2717,11 +2932,14 @@ components:
         - memory_in_bytes
     ThreadInfo:
       type: object
+      description: The information about thread usage.
       properties:
         thread_executions:
           type: number
+          description: The number of thread executions.
         active_threads:
           type: number
+          description: The number of currently active threads.
       required:
         - active_threads
         - thread_executions

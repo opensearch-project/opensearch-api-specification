@@ -8,27 +8,33 @@ components:
   schemas:
     RecoveryStatus:
       type: object
+      description: The status of recovery operations.
       properties:
         shards:
           type: array
+          description: The list of shard recovery statuses.
           items:
             $ref: '#/components/schemas/ShardRecovery'
       required:
         - shards
     ShardRecovery:
       type: object
+      description: The recovery status of a shard.
       properties:
         id:
           type: integer
           format: int32
+          description: The shard ID.
         index:
           $ref: '#/components/schemas/RecoveryIndexStatus'
         primary:
           type: boolean
+          description: Whether this is a primary shard.
         source:
           $ref: '#/components/schemas/RecoveryOrigin'
         stage:
           type: string
+          description: The current recovery stage.
         start:
           $ref: '#/components/schemas/RecoveryStartStatus'
         start_time:
@@ -49,6 +55,7 @@ components:
           $ref: '#/components/schemas/TranslogStatus'
         type:
           type: string
+          description: The type of recovery operation.
         verify_index:
           $ref: '#/components/schemas/VerifyIndex'
       required:
@@ -65,6 +72,7 @@ components:
         - verify_index
     RecoveryIndexStatus:
       type: object
+      description: The index recovery status.
       properties:
         bytes:
           $ref: '#/components/schemas/RecoveryBytes'
@@ -92,6 +100,7 @@ components:
         - total_time_in_millis
     RecoveryBytes:
       type: object
+      description: The byte-level recovery statistics.
       properties:
         percent:
           $ref: '_common.yaml#/components/schemas/PercentageString'
@@ -118,9 +127,11 @@ components:
         - total_in_bytes
     RecoveryFiles:
       type: object
+      description: The file-level recovery statistics.
       properties:
         details:
           type: array
+          description: The detailed information about recovered files.
           items:
             $ref: '#/components/schemas/FileDetails'
         percent:
@@ -128,12 +139,15 @@ components:
         recovered:
           type: integer
           format: int64
+          description: The number of recovered files.
         reused:
           type: integer
           format: int64
+          description: The number of reused files.
         total:
           type: integer
           format: int64
+          description: The total number of files.
       required:
         - percent
         - recovered
@@ -141,24 +155,30 @@ components:
         - total
     FileDetails:
       type: object
+      description: The details of a recovered file.
       properties:
         length:
           type: integer
           format: int64
+          description: The length of the file in bytes.
         name:
           type: string
+          description: The name of the file.
         recovered:
           type: integer
           format: int64
+          description: The number of bytes recovered.
       required:
         - length
         - name
         - recovered
     RecoveryOrigin:
       type: object
+      description: The source or target of a recovery operation.
       properties:
         hostname:
           type: string
+          description: The hostname of the node.
         host:
           $ref: '_common.yaml#/components/schemas/Host'
         transport_address:
@@ -171,6 +191,7 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
         bootstrap_new_history_uuid:
           type: boolean
+          description: Whether a new history UUID was bootstrapped.
         repository:
           $ref: '_common.yaml#/components/schemas/Name'
         snapshot:
@@ -183,14 +204,19 @@ components:
           $ref: '_common.yaml#/components/schemas/IndexName'
         isSearchableSnapshot:
           type: boolean
+          description: Whether this is a searchable snapshot.
         remoteStoreIndexShallowCopy:
           type: boolean
+          description: Whether this is a shallow copy from a remote store.
         sourceRemoteStoreRepository:
           type: ['null', string]
+          description: The source remote store repository.
         sourceRemoteTranslogRepository:
           type: ['null', string]
+          description: The source remote translog repository.
     RecoveryStartStatus:
       type: object
+      description: The status at the start of recovery.
       properties:
         check_index_time:
           $ref: '_common.yaml#/components/schemas/Duration'
@@ -205,18 +231,22 @@ components:
         - total_time_in_millis
     TranslogStatus:
       type: object
+      description: The transaction log recovery status.
       properties:
         percent:
           $ref: '_common.yaml#/components/schemas/PercentageString'
         recovered:
           type: integer
           format: int32
+          description: The number of recovered transaction log operations.
         total:
           type: integer
           format: int32
+          description: The total number of transaction log operations.
         total_on_start:
           type: integer
           format: int32
+          description: The number of transaction log operations at start.
         total_time:
           $ref: '_common.yaml#/components/schemas/Duration'
         total_time_in_millis:
@@ -229,6 +259,7 @@ components:
         - total_time_in_millis
     VerifyIndex:
       type: object
+      description: The index verification status.
       properties:
         check_index_time:
           $ref: '_common.yaml#/components/schemas/Duration'

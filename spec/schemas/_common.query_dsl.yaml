@@ -316,6 +316,16 @@ components:
           format: float
         _name:
           type: string
+    ValueType:
+      type: object
+      properties:
+        value_type:
+          description: |-
+            Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
+          type: string
+          enum:
+            - bitmap
+            - default
     BoostingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -422,9 +432,9 @@ components:
           required:
             - queries
     DistanceFeatureQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - oneOf:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
             - type: object
               properties:
                 origin:
@@ -437,6 +447,8 @@ components:
                 - field
                 - origin
                 - pivot
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
             - type: object
               properties:
                 origin:
@@ -1664,10 +1676,12 @@ components:
           required:
             - query
     RangeQuery:
-      allOf:
-        - $ref: '#/components/schemas/RangeQueryBase'
-        - oneOf:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/RangeQueryBase'
             - $ref: '#/components/schemas/NumberRangeQueryParameters'
+        - allOf:
+            - $ref: '#/components/schemas/RangeQueryBase'
             - $ref: '#/components/schemas/DateRangeQueryParameters'
     DateRangeQueryParameters:
       type: object
@@ -2110,6 +2124,7 @@ components:
     TermsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
+        - $ref: '#/components/schemas/ValueType'
         - type: object
           properties:
             _name: {}
@@ -2140,6 +2155,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
+        store:
+          type: boolean
+      required:
+        - id
+        - index
+        - path
     TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'

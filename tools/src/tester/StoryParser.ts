@@ -12,7 +12,7 @@ import { Chapter, Story } from "./types/story.types";
 import { ParsedChapter, ParsedStory } from "./types/parsed_story.types";
 
 export default class StoryParser {
-  static parse(story: Story): ParsedStory {
+  static parse(story: Story & { $schema: string }): ParsedStory {
     return {
       ...story,
       chapters: this.#expand_chapters(story.chapters),
