@@ -11,7 +11,7 @@ import { type OperationSpec, type ValidationError } from 'types'
 import _ from 'lodash'
 import ValidatorBase from './base/ValidatorBase'
 
-const GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z_]*[a-z]+)$/
+const GROUP_REGEX = /^([a-z]+[a-z_]*[a-z]+\.)?([a-z]+[a-z0-9_]*[a-z0-9]+)$/
 
 export default class Operation extends ValidatorBase {
   path: string

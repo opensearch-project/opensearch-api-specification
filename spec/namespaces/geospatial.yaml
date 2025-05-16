@@ -1,0 +1,240 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Geospatial API
+  description: OpenSearch Geospatial API.
+  version: 1.0.0
+paths:
+  /_plugins/geospatial/geojson/_upload:
+    post:
+      operationId: geospatial.geojson_upload_post.0
+      x-operation-group: geospatial.geojson_upload_post
+      x-version-added: '2.11'
+      description: |- 
+        Use an OpenSearch query to upload `GeoJSON`, operation will fail if index exists.
+        - When type is `geo_point`, only Point geometry is allowed
+        - When type is `geo_shape`, all geometry types are allowed (Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection, Envelope).
+      requestBody:
+        $ref: '#/components/requestBodies/geospatial.geojson_upload_post'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.geojson_upload_post@200'
+        '400':
+          $ref: '#/components/responses/geospatial.geojson_upload_post@400'
+    put:
+      operationId: geospatial.geojson_upload_put.0
+      x-operation-group: geospatial.geojson_upload_put
+      x-version-added: '2.11'
+      description: |- 
+        Use an OpenSearch query to upload `GeoJSON` regardless if index exists.
+        - When type is `geo_point`, only Point geometry is allowed
+        - When type is `geo_shape`, all geometry types are allowed (Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection, Envelope).
+      requestBody:
+        $ref: '#/components/requestBodies/geospatial.geojson_upload_put'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.geojson_upload_put@200'
+  /_plugins/geospatial/_upload/stats:
+    get:
+      operationId: geospatial.get_upload_stats.0
+      x-operation-group: geospatial.get_upload_stats
+      x-version-added: '2.11'
+      description: Retrieves statistics for all geospatial uploads.
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.get_upload_stats@200'
+
+  /_plugins/geospatial/ip2geo/datasource:
+    get:
+      operationId: geospatial.get_ip2geo_datasource.0
+      x-operation-group: geospatial.get_ip2geo_datasource
+      x-version-added: '2.11'
+      description: Get one or more IP2Geo data sources, defaulting to returning all if no names specified.
+      externalDocs:
+        url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#sending-a-get-request'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.get_ip2geo_datasource@200'
+
+  /_plugins/geospatial/ip2geo/datasource/{name}:
+    get:
+      operationId: geospatial.get_ip2geo_datasource.1
+      x-operation-group: geospatial.get_ip2geo_datasource
+      x-version-added: '2.11'
+      description: Get one or more IP2Geo data sources, defaulting to returning all if no names specified.
+      externalDocs:
+        url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#sending-a-get-request'
+      parameters:
+        - $ref: '#/components/parameters/geospatial.get_ip2geo_datasource::path.name'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.get_ip2geo_datasource@200'
+    put:
+      operationId: geospatial.put_ip2geo_datasource.0
+      x-operation-group: geospatial.put_ip2geo_datasource
+      x-version-added: '2.11'
+      description: |-
+        Create a specific IP2Geo data source.
+        Default values:
+          - `endpoint`: `"https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json"`
+          - `update_interval_in_days`: 3.
+      externalDocs:
+        url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#data-source-options'
+      parameters:
+        - $ref: '#/components/parameters/geospatial.put_ip2geo_datasource::path.name'
+      requestBody:
+        $ref: '#/components/requestBodies/geospatial.put_ip2geo_datasource'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.put_ip2geo_datasource@200'
+        '400':
+          $ref: '#/components/responses/geospatial.put_ip2geo_datasource@400'
+    delete:
+      operationId: geospatial.delete_ip2geo_datasource.0
+      x-operation-group: geospatial.delete_ip2geo_datasource
+      x-version-added: '2.11'
+      description: Delete a specific IP2Geo data source.
+      externalDocs:
+        url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#deleting-the-ip2geo-data-source'
+      parameters:
+        - $ref: '#/components/parameters/geospatial.delete_ip2geo_datasource::path.name'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.delete_ip2geo_datasource@200'
+        '404':
+          $ref: '#/components/responses/geospatial.delete_ip2geo_datasource@404'
+  /_plugins/geospatial/ip2geo/datasource/{name}/_settings:
+    put:
+      operationId: geospatial.put_ip2geo_datasource_settings.0
+      x-operation-group: geospatial.put_ip2geo_datasource_settings
+      x-version-added: '2.11'
+      description: Update a specific IP2Geo data source.
+      externalDocs:
+        url: 'https://docs.opensearch.org/docs/latest/ingest-pipelines/processors/ip2geo/#updating-an-ip2geo-data-source'
+      parameters:
+        - $ref: '#/components/parameters/geospatial.put_ip2geo_datasource_settings::path.name'
+      requestBody:
+        $ref: '#/components/requestBodies/geospatial.put_ip2geo_datasource_settings'
+      responses:
+        '200':
+          $ref: '#/components/responses/geospatial.put_ip2geo_datasource_settings@200'
+        '404':
+          $ref: '#/components/responses/geospatial.put_ip2geo_datasource_settings@404'
+
+components:
+  parameters:
+    geospatial.get_ip2geo_datasource::path.name:
+      name: name
+      in: path
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/StringOrStringArray'
+    geospatial.put_ip2geo_datasource::path.name:
+      name: name
+      in: path
+      required: true
+      schema:
+        type: string
+    geospatial.delete_ip2geo_datasource::path.name:
+      name: name
+      in: path
+      required: true
+      schema:
+        type: string
+    geospatial.put_ip2geo_datasource_settings::path.name:
+      name: name
+      in: path
+      required: true
+      schema:
+        type: string
+  requestBodies:
+    geospatial.geojson_upload_post:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GeoJSONRequest'
+    geospatial.geojson_upload_put:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GeoJSONRequest'
+    geospatial.put_ip2geo_datasource:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/PutIP2GeoDataSourceRequest'
+    geospatial.put_ip2geo_datasource_settings:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/PutIP2GeoDataSourceRequest'
+  responses:
+    geospatial.geojson_upload_post@200:
+      description: Provides information for uploading `GeoJSON` result.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GeoSpatialGeojsonUploadResponse'
+    geospatial.geojson_upload_put@200:
+      description: Provides information for uploading `GeoJSON` result.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GeoSpatialGeojsonUploadResponse'
+    geospatial.geojson_upload_post@400:
+      description: Invalid request for uploading `GeoJSON` result.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    geospatial.get_upload_stats@200:
+      description: Provides information for getting all stats for upload.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GeoSpatialUploadStats'
+    geospatial.get_ip2geo_datasource@200:
+      description: Provides information for getting IP2Geo data source.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/geospatial._common.yaml#/components/schemas/GetDataSourceResponse'
+    geospatial.put_ip2geo_datasource@200:
+      description: Provides information for deleting IP2Geo data source.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    geospatial.delete_ip2geo_datasource@200:
+      description: Provides information for deleting IP2Geo data source.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    geospatial.put_ip2geo_datasource_settings@200:
+      description: Acknowledged response when create, delete or update a data source.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    geospatial.put_ip2geo_datasource@400:
+      description: Invalid request for creating a data source.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    geospatial.delete_ip2geo_datasource@404:
+      description: Invalid request for deleting a data source.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    geospatial.put_ip2geo_datasource_settings@404:
+      description: Invalid request for updating a data source setting.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
