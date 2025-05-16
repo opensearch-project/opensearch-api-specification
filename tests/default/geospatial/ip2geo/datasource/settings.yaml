@@ -1,0 +1,48 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the API endpoints of geospatial plugin.
+version: '>= 2.11'
+prologues:
+  - path: /_plugins/geospatial/ip2geo/datasource/{name}
+    method: PUT
+    parameters:
+      name: my-datasource1
+    request:
+      payload:
+        endpoint: https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json
+        update_interval_in_days: 5
+    response:
+      status: 200
+  - path: _plugins/geospatial/ip2geo/datasource/no-exist-datasource1
+    method: DELETE
+    status: [200, 404]
+epilogues:
+  - path: _plugins/geospatial/ip2geo/datasource/my-datasource1
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Update a specific datasource setting.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}/_settings
+    method: PUT
+    parameters:
+      name: my-datasource1
+    request:
+      payload:
+        endpoint: https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json
+        update_interval_in_days: 10
+    response:
+      status: 200
+    retry:
+      count: 5
+      wait: 30000
+  - synopsis: Update a not exist datasource setting.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}/_settings
+    method: PUT
+    parameters:
+      name: no-exist-datasource1
+    request:
+      payload:
+        endpoint: https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json
+        update_interval_in_days: 10
+    response:
+      status: 404

@@ -1,0 +1,67 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the API endpoints of geospatial plugin.
+version: '>= 2.11'
+prologues:
+  - path: _plugins/geospatial/ip2geo/datasource/my-datasource
+    method: DELETE
+    status: [200, 404]
+  - path: _plugins/geospatial/ip2geo/datasource/no-exist-datasource
+    method: DELETE
+    status: [200, 404]
+epilogues:
+  - path: _plugins/geospatial/ip2geo/datasource/my-datasource
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a new specific datasource.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}
+    method: PUT
+    parameters:
+      name: my-datasource
+    request:
+      payload:
+        endpoint: https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json
+        update_interval_in_days: 5
+    response:
+      status: 200
+  - synopsis: Create an already exist datasource.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}
+    method: PUT
+    parameters:
+      name: my-datasource
+    request:
+      payload:
+        endpoint: https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json
+        update_interval_in_days: 5
+    response:
+      status: 400
+  - synopsis: Get a specific datasource.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}
+    method: GET
+    parameters:
+      name: my-datasource
+    response:
+      status: 200
+  - synopsis: Get all datasources.
+    path: /_plugins/geospatial/ip2geo/datasource
+    method: GET
+    response:
+      status: 200
+  - synopsis: Delete a specific datasource.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}
+    method: DELETE
+    parameters:
+      name: my-datasource
+    response:
+      status: 200
+    retry:
+      count: 5
+      wait: 30000
+  - synopsis: Delete a non exist datasource.
+    path: /_plugins/geospatial/ip2geo/datasource/{name}
+    method: DELETE
+    parameters:
+      name: no-exist-datasource
+    response:
+      status: 404

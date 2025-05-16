@@ -19,11 +19,11 @@ test('validate_group()', () => {
 
   const invalid_group = operation({ 'x-operation-group': 'indices_' })
   expect(invalid_group.validate_group())
-    .toEqual(invalid_group.error('Invalid x-operation-group \'indices_\'. Must match regex: /^([a-z]+[a-z_]*[a-z]+\\.)?([a-z]+[a-z_]*[a-z]+)$/.'))
+    .toEqual(invalid_group.error('Invalid x-operation-group \'indices_\'. Must match regex: /^([a-z]+[a-z_]*[a-z]+\\.)?([a-z]+[a-z0-9_]*[a-z0-9]+)$/.'))
 
   const invalid_action = operation({ 'x-operation-group': 'indices.create.index' })
   expect(invalid_action.validate_group())
-    .toEqual(invalid_action.error('Invalid x-operation-group \'indices.create.index\'. Must match regex: /^([a-z]+[a-z_]*[a-z]+\\.)?([a-z]+[a-z_]*[a-z]+)$/.'))
+    .toEqual(invalid_action.error('Invalid x-operation-group \'indices.create.index\'. Must match regex: /^([a-z]+[a-z_]*[a-z]+\\.)?([a-z]+[a-z0-9_]*[a-z0-9]+)$/.'))
 
   const valid_group = operation({ 'x-operation-group': 'indices.create' })
   expect(valid_group.validate_group())
