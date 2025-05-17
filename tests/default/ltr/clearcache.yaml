@@ -1,0 +1,35 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test LTR cache clear endpoints.
+prologues:
+  - method: PUT
+    path: /_ltr
+    status: [200, 400]
+  - method: PUT
+    path: /_ltr/test_store
+    status: [200, 400]
+
+epilogues:
+  - path: /_ltr/test_store
+    method: DELETE
+    status: [200, 404]
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Clear cache for default store.
+    method: POST
+    path: /_ltr/_clearcache
+    response:
+      status: 200
+      payload: { "acknowledged": true }
+  
+  - synopsis: Clear cache for specific store.
+    method: POST
+    path: /_ltr/{store}/_clearcache
+    parameters:
+      store: test_store
+    response:
+      status: 200
+      payload: { "acknowledged": true }
