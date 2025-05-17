@@ -1,0 +1,64 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Manage LTR stores.
+version: '>= 2.17.1'
+prologues: []
+
+epilogues:
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+  - path: _ltr/test_store
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Create the default feature store.
+    method: PUT
+    path: /_ltr
+    response:
+      status: 200
+
+  - synopsis: List all available feature stores.
+    method: GET
+    path: /_ltr
+    response:
+      status: 200
+
+  - synopsis: Create a new feature store with a specific name.
+    method: PUT
+    path: /_ltr/{store}
+    parameters:
+      store: test_store
+    response:
+      status: 200
+
+  - synopsis: Check if a specific store exists.
+    method: GET
+    path: /_ltr/{store}
+    parameters:
+      store: test_store
+    response:
+      status: 200
+
+  - synopsis: Delete a specific feature store.
+    method: DELETE
+    path: /_ltr/{store}
+    parameters:
+      store: test_store
+    response:
+      status: 200
+
+  - synopsis: Delete the default feature store.
+    method: DELETE
+    path: /_ltr
+    response:
+      status: 200
+
+  - synopsis: Verify store no longer exists.
+    method: GET
+    path: /_ltr/{store}
+    parameters:
+      store: test_store
+    response:
+      status: 404
