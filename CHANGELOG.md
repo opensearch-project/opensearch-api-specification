@@ -6,6 +6,15 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+### Removed
+
+### Fixed
+
+### Changed
+
+## [0.2.0] - 2025-05-15
+
+### Added
 - Added specs for LTR plugin for store endpoints ([#861](https://github.com/opensearch-project/opensearch-api-specification/pull/861))
 - Added defaults for Snapshot APIs ([#830](https://github.com/opensearch-project/opensearch-api-specification/pull/830))
 - Added defaults for Snapshot API request body fields ([#846](https://github.com/opensearch-project/opensearch-api-specification/pull/846/))
@@ -16,7 +25,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added Python and Ruby spec validators ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added verbose output of the story being evaluated ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added `_search` with `sort: direction` ([#658](https://github.com/opensearch-project/opensearch-api-specification/pull/658))
-- Added `_common.mapping:FlatObjectProperty` ([#661](https://github.com/opensearch-project/opensearch-api-specification/pull/661)) 
+- Added `_common.mapping:FlatObjectProperty` ([#661](https://github.com/opensearch-project/opensearch-api-specification/pull/661))
 - Added `HEAD /{index}/_doc/{id}` returning `404` ([#670](https://github.com/opensearch-project/opensearch-api-specification/pull/670))
 - Added `_common.mapping:IcuCollationKeywordProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
 - Added `/_cluster/stats/{metric}/nodes/{node_id}` and `/_cluster/stats/{metric}/{index_metric}/nodes/{node_id}` ([#639](https://github.com/opensearch-project/opensearch-api-specification/pull/639))
@@ -86,7 +95,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
 - Removed unsupported `_common.mapping:DenseVectorProperty`, `_common.mapping:SparseVectorProperty`, and `_common.mapping:FlattenedProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
 - Removed unsupported time series dimension properties and types ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
-- Removed unsupported `script` and `on_script_error` from `NumberPropertyBase` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666)) 
+- Removed unsupported `script` and `on_script_error` from `NumberPropertyBase` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
 - Removed unsupported `required` from `ppl` responses ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed invalid `externalDocs` from `flow_framework.create/update::query.use_case` ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Removed unsupported `cause` and `create` from `/_index_template/_simulate_index/{name}` ([#691](https://github.com/opensearch-project/opensearch-api-specification/pull/691))
@@ -147,7 +156,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
 - Changed `SearchModelsQuery`, `CreateConnectorRequest` & `RegisterAgentsRequest` to be defined inline of request bodies ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
-- Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725)) 
+- Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Changed naming of `snapshot._common`'s `Status`, `ShardsStats`, `ShardsStatsStage`, `ShardsStatsSummary` and `ShardsStatsSummaryItem` schemas to be prefixed with `Snapshot` ([#730](https://github.com/opensearch-project/opensearch-api-specification/pull/730))
 - Changed `ml.get_memory` and `ml.get_message` to split out `get_all` variants ([#796](https://github.com/opensearch-project/opensearch-api-specification/pull/796))
 - Changed `ml.get_tools` to have two different operation groups `ml.get_all_tools` and `ml.get_tool` ([#799](https://github.com/opensearch-project/opensearch-api-specification/pull/799))
