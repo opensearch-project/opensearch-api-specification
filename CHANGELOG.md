@@ -77,8 +77,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `search_only` to `IndexSettingBlocks` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
 - Added `searchOnly` to `NodeShard` ([#883](https://github.com/opensearch-project/opensearch-api-specification/pull/883))
 - Added `GET /_plugins/_neural/stats` ([#850](https://github.com/opensearch-project/opensearch-api-specification/pull/850))
-- Added `ToolAttributes` to `ml._common.yaml` ([#878](https://github.com/opensearch-project/opensearch-api-specification/pull/878)) 
+- Added `ToolAttributes` to `ml._common.yaml` ([#878](https://github.com/opensearch-project/opensearch-api-specification/pull/878))
 - Added `GET _plugins/geospatial/_upload/stats`, `PUT`, `POST _plugins/geospatial/geojson/_upload`, `GET _plugins/geospatial/ip2geo/datasource`, `GET`, `PUT`, `DELETE _plugins/geospatial/ip2geo/datasource/{name}` and `PUT _plugins/geospatial/ip2geo/datasource/{name}/_settings` ([#893](https://github.com/opensearch-project/opensearch-api-specification/pull/893))
+- Added schemas for the score ranker search processor ([#899](https://github.com/opensearch-project/opensearch-api-specification/pull/899))
 
 ### Removed
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
@@ -154,6 +155,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `ClusterJvm.versions`, `ClusterOperatingSystemName.name` and `ClusterOperatingSystemPrettyName.pretty_name` to not be required as AOS does not return them ([#866](https://github.com/opensearch-project/opensearch-api-specification/pull/866))
 - Changed `ScriptedMetricAggregate` value from true to {} ([#892](https://github.com/opensearch-project/opensearch-api-specification/pull/892))
 - Changed `WaitForActiveShards` to utilize `StringifiedInteger` ([#896](https://github.com/opensearch-project/opensearch-api-specification/pull/896))
+- Changed `NeuralStats` schema validation from `oneOf` to `anyOf` ([#900](https://github.com/opensearch-project/opensearch-api-specification/pull/900))
 
 ## [0.1.0] - 2024-10-25
 
