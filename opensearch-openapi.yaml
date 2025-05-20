@@ -37751,6 +37751,7 @@ components:
       oneOf:
         - type: integer
         - type: string
+          pattern: ^[+-]?\d+$
     _common___StringifiedLong:
       oneOf:
         - type: integer
@@ -37989,18 +37990,13 @@ components:
         - type: string
           const: all
           description: Wait for all shards to be active.
-        - type: string
-          not:
-            type: string
-            const: all
-          description: A numeric value greater than or equal to 0
         - type: 'null'
           description: null represents the default value (which defaults to one shard copy).
     _common___WaitForActiveShards:
       description: Waits until the specified number of shards is active before returning a response. Use `all` for all shards.
       oneOf:
         - title: count
-          type: integer
+          $ref: '#/components/schemas/_common___StringifiedInteger'
           description: The number of active shards to wait for.
         - title: option
           $ref: '#/components/schemas/_common___WaitForActiveShardOptions'
@@ -46741,11 +46737,13 @@ components:
     _common.query_dsl___TermsQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
-        - $ref: '#/components/schemas/_common.query_dsl___ValueType'
         - type: object
           properties:
             _name: {}
             boost: {}
+            value_type:
+              description: Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
+              $ref: '#/components/schemas/_common.query_dsl___TermsQueryValueType'
           propertyNames:
             title: field
             type: string
@@ -46761,6 +46759,11 @@ components:
             $ref: '#/components/schemas/_common___FieldValue'
         - title: lookup
           $ref: '#/components/schemas/_common.query_dsl___TermsLookup'
+    _common.query_dsl___TermsQueryValueType:
+      type: string
+      enum:
+        - bitmap
+        - default
     _common.query_dsl___TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -46794,15 +46797,6 @@ components:
               type: string
           required:
             - value
-    _common.query_dsl___ValueType:
-      type: object
-      properties:
-        value_type:
-          description: Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
-          type: string
-          enum:
-            - bitmap
-            - default
     _common.query_dsl___WildcardQuery:
       oneOf:
         - title: value
@@ -60077,7 +60071,8 @@ components:
           type: string
         strict:
           type: boolean
-      additionalProperties: true
+      additionalProperties:
+        title: attributes
     ml._common___ToolItems:
       type: object
       properties:
