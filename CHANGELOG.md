@@ -6,6 +6,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added specs for Search Relevance Workbench plugin for query set endpoints ([#897](https://github.com/opensearch-project/opensearch-api-specification/pull/897))
 - Added defaults for Snapshot APIs ([#830](https://github.com/opensearch-project/opensearch-api-specification/pull/830))
 - Added defaults for Snapshot API request body fields ([#846](https://github.com/opensearch-project/opensearch-api-specification/pull/846/))
 - Added specs for LTR plugin for stats endpoints ([#786](https://github.com/opensearch-project/opensearch-api-specification/issues/786/))
