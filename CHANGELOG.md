@@ -12,9 +12,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Changed
 
-## [0.2.0] - 2025-05-15
+## [0.2.0] - 2025-05-25
 
 ### Added
+
 - Added specs for LTR plugin for store endpoints ([#861](https://github.com/opensearch-project/opensearch-api-specification/pull/861))
 - Added defaults for Snapshot APIs ([#830](https://github.com/opensearch-project/opensearch-api-specification/pull/830))
 - Added defaults for Snapshot API request body fields ([#846](https://github.com/opensearch-project/opensearch-api-specification/pull/846/))
@@ -92,6 +93,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added schemas for the score ranker search processor ([#899](https://github.com/opensearch-project/opensearch-api-specification/pull/899))
 
 ### Removed
+
 - Removed unsupported `_common.mapping:SourceField`'s `mode` field and associated `_common.mapping:SourceFieldMode` enum ([#652](https://github.com/opensearch-project/opensearch-api-specification/pull/652))
 - Removed unsupported `_common.mapping:DenseVectorProperty`, `_common.mapping:SparseVectorProperty`, and `_common.mapping:FlattenedProperty` ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
 - Removed unsupported time series dimension properties and types ([#666](https://github.com/opensearch-project/opensearch-api-specification/pull/666))
@@ -107,6 +109,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unsupported `max_score` from ResponseBody ([#891](https://github.com/opensearch-project/opensearch-api-specification/pull/891))
 
 ### Fixed
+
 - Spec passes OpenAPI 3.1.0 validations ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Disallowed characters (`::`, `@`, and `:`) in key names are replaced with `___` on merge ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
 - Added missing `required` to `path` parameters ([#646](https://github.com/opensearch-project/opensearch-api-specification/pull/646))
@@ -154,6 +157,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed schema for ScoreCombination in NormalizationPhaseResultsProcessor ([#887](https://github.com/opensearch-project/opensearch-api-specification/pull/887))
 
 ### Changed
+
 - Changed `tasks._common:TaskInfo` and `tasks._common:TaskGroup` to be composed of a `tasks._common:TaskInfoBase` ([#683](https://github.com/opensearch-project/opensearch-api-specification/pull/683))
 - Changed `SearchModelsQuery`, `CreateConnectorRequest` & `RegisterAgentsRequest` to be defined inline of request bodies ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
 - Changed `indices.data_streams_stats:DataStreamsStatsItem` to instead be `indices._common:DataStreamStats` ([#725](https://github.com/opensearch-project/opensearch-api-specification/pull/725))
@@ -353,5 +357,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Security
 
-[unreleased]: https://github.com/opensearch-project/opensearch-api-specification/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/opensearch-project/opensearch-api-specification/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/opensearch-project/opensearch-api-specification/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/opensearch-project/opensearch-api-specification/compare/1db184063a463c5180a2cc824b1efc1aeebfd5eb...v0.1.0
