@@ -69,9 +69,12 @@ paths:
       x-version-added: '3.1'
       description: Creates a judgment.
       requestBody:
-        oneOf:
-          - $ref: '#/components/requestBodies/put_judgment_ubi'
-          - $ref: '#/components/requestBodies/put_judgment_llm'
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/put_judgment_ubi'
+                - $ref: '#/components/schemas/put_judgment_llm'
       responses:
         '200':
           content:
@@ -102,14 +105,15 @@ paths:
         - $ref: '#/components/parameters/judgment_id'
       responses:
         '200':
-          application/json:
-            schema:
-              type: object
-              properties:
-                id: 
-                  type: string
-                result:
-                  type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: string
+                  result:
+                    type: string
   _plugins/search_relevance/search_configurations:
     get:
       operationId: search_relevance.get_search_configurations.0
@@ -170,14 +174,15 @@ paths:
         - $ref: '#/components/parameters/search_configuration_id'
       responses:
         '200':
-          application/json:
-            schema:
-              type: object
-              properties:
-                id: 
-                  type: string
-                result:
-                  type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                #properties:
+                #  id: 
+                #    type: string
+                #  result:
+                #    type: string
   _plugins/search_relevance/experiments:
     get:
       operationId: search_relevance.get_experiments.0
@@ -214,11 +219,11 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  experiments_id:
-                    type: string
-                  experiments_result:
-                    type: string
+                #properties:
+                #  experiments_id:
+                #    type: string
+                #  experiments_result:
+                #    type: string
   _plugins/search_relevance/experiments/{experiment_id}:
     get:
       operationId: search_relevance.get_experiments.1
@@ -232,7 +237,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
+                type: object
+                #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
     delete:
       operationId: search_relevance.delete_experiments.0
       x-operation-group: search_relevance.delete_experiments
@@ -242,14 +248,15 @@ paths:
         - $ref: '#/components/parameters/experiment_id'
       responses:
         '200':
-          application/json:
-            schema:
-              type: object
-              properties:
-                id: 
-                  type: string
-                result:
-                  type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                #properties:
+                #  id: 
+                #    type: string
+                #  result:
+                #    type: string
 components:
   parameters:
     query_set_id: 
@@ -279,6 +286,41 @@ components:
       schema:
         type:
           string
+  schemas:
+    put_judgment_ubi:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        querySetId:
+          type: string
+        clickModel:
+          type: string
+        maxRank:
+          type: integer
+    put_judgment_llm:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        querySetId:
+          type: string
+        modelId:
+          type: string
+        maxRank:
+          type: integer
+        searchConfigurationList:
+          type: array
+          items:
+            type: string
   requestBodies:
     create_query:
       content:
@@ -307,60 +349,57 @@ components:
               sampling:
                 type: string
               querySetQueries:
-                type: string
-    put_judgment_ubi:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-              type:
-                type: string
-              querySetId:
-                type: string
-              clickModel:
-                type: string
-              maxRank:
-                type: integer
-    put_judgment_llm:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-              type:
-                type: string
-              querySetId:
-                type: string
-              modelId:
-                type: string
-              maxRank:
-                type: integer
-              searchConfigurationList:
                 type: array
                 items:
-                  type: string
+                  type: object
+    put_judgment_ubi:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        querySetId:
+          type: string
+        clickModel:
+          type: string
+        maxRank:
+          type: integer
+    put_judgment_llm:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        querySetId:
+          type: string
+        modelId:
+          type: string
+        maxRank:
+          type: integer
+        searchConfigurationList:
+          type: array
+          items:
+            type: string
   responses:
     query_set@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
+            type: object
+            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
     query_sets_list@200:
       content:
         application/json:
           schema:
-            type: array
-            items: 
-              $ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
+            type: object
+            #items: 
+            #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
     query_set_creation@200:
       content:
         application/json:
@@ -376,25 +415,26 @@ components:
         application/json:
           schema:
             type: object
-            properties:
-              id: 
-                type: string
-              result:
-                type: string
+            #properties:
+            #  id: 
+            #    type: string
+            #  result:
+            #    type: string
     judgment_list@200:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
+            type: object
+            #items:
+            #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
     search_configurations_list@200:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
+          type: object
+            #type: array
+            #items:
+            #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
     judgment@200:
       content:
         application/json:
@@ -404,6 +444,7 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
+            type: object
+            #type: array
+            #items:
+            #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
