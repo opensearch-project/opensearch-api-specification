@@ -214,6 +214,9 @@ components:
           maxProperties: 1
         span_within:
           $ref: '#/components/schemas/SpanWithinQuery'
+        template:
+          description: Returns documents using a search template with placeholder values.
+          $ref: '#/components/schemas/TemplateQuery'
         term:
           description: |-
             Returns documents that contain an exact term in a provided field.
@@ -2094,6 +2097,28 @@ components:
           required:
             - big
             - little
+    TemplateQuery:
+      type: object
+      properties:
+        knn:
+          $ref: '#/components/schemas/TemplateKnnQuery'
+    TemplateKnnQuery:
+      type: object
+      properties:
+        text_embedding:
+          $ref: '_common.query_dsl.yaml#/components/schemas/VectorField'
+        vector_field:
+          $ref: '_common.query_dsl.yaml#/components/schemas/VectorField'
+      additionalProperties: true
+    VectorField:
+      type: object
+      properties:
+        vector:
+          $ref: '#/components/schemas/QueryVector'
+        k:
+          description: The total number of nearest neighbors to return as top hits.
+          type: integer
+          format: int32
     TermQuery:
       oneOf:
         - title: value
