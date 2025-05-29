@@ -176,3 +176,65 @@ components:
           description: Cache statistics per node.
           additionalProperties:
             $ref: '#/components/schemas/NodeDetails'
+    
+    SearchResponse:
+      type: object
+      description: OpenSearch search response for LTR store elements.
+      properties:
+        took:
+          type: integer
+          description: Time in milliseconds the search took.
+        timed_out:
+          type: boolean
+          description: Whether the search timed out.
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+        hits:
+          $ref: '#/components/schemas/SearchHits'
+    
+    SearchHits:
+      type: object
+      description: Search hits container.
+      properties:
+        total:
+          $ref: '#/components/schemas/SearchHitsTotal'
+        max_score:
+          type: number
+          nullable: true
+          description: Maximum score of the hits.
+        hits:
+          type: array
+          description: Array of hit objects.
+          items:
+            $ref: '#/components/schemas/SearchHit'
+    
+    SearchHitsTotal:
+      type: object
+      description: Total hits information.
+      properties:
+        value:
+          type: integer
+          description: Total number of hits.
+        relation:
+          type: string
+          enum: [eq, gte]
+          description: Relation of the total hits count.
+    
+    SearchHit:
+      type: object
+      description: Individual search hit.
+      properties:
+        _index:
+          type: string
+          description: Index name.
+        _id:
+          type: string
+          description: Document ID.
+        _score:
+          type: number
+          nullable: true
+          description: Document score.
+        _source:
+          type: object
+          description: Document source.
+          additionalProperties: true

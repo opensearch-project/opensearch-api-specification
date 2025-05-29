@@ -1,0 +1,74 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Search for LTR featuresets.
+version: '>= 2.19'
+prologues:
+  - path: /_ltr
+    method: PUT
+    status: [200]
+  - path: /_ltr/{store}
+    method: PUT
+    parameters:
+      store: test_store
+    status: [200]
+
+epilogues:
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+  - path: /_ltr/{store}
+    method: DELETE
+    parameters:
+      store: test_store
+    status: [200, 404]
+
+chapters:
+  - synopsis: Search for featuresets in the default store.
+    method: GET
+    path: /_ltr/_featureset
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in the default store with prefix filter.
+    method: GET
+    path: /_ltr/_featureset
+    parameters:
+      prefix: test
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in the default store with pagination.
+    method: GET
+    path: /_ltr/_featureset
+    parameters:
+      from: 0
+      size: 10
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in a specific store.
+    method: GET
+    path: /_ltr/{store}/_featureset
+    parameters:
+      store: test_store
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in a specific store with prefix filter.
+    method: GET
+    path: /_ltr/{store}/_featureset
+    parameters:
+      store: test_store
+      prefix: test
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in a specific store with pagination.
+    method: GET
+    path: /_ltr/{store}/_featureset
+    parameters:
+      store: test_store
+      from: 0
+      size: 5
+    response:
+      status: 200
