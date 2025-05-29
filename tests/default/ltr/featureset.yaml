@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Search for LTR featuresets.
+description: LTR featureset operations including search and CRUD.
 version: '>= 2.19'
 prologues:
   - path: /_ltr
@@ -23,6 +23,7 @@ epilogues:
     status: [200, 404]
 
 chapters:
+  # Search operations
   - synopsis: Search for featuresets in the default store.
     method: GET
     path: /_ltr/_featureset
@@ -72,3 +73,132 @@ chapters:
       size: 5
     response:
       status: 200
+
+  # Individual featureset CRUD operations (default store)
+  - synopsis: Create a featureset in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    request:
+      payload:
+        features:
+          - name: feature1
+            params:
+              - field: title
+          - name: feature2
+            params:
+              - field: description
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a featureset from the default store.
+    method: GET
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    response:
+      status: 200
+
+  - synopsis: Update a featureset in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    request:
+      payload:
+        features:
+          - name: feature1
+            params:
+              - field: title
+          - name: feature2
+            params:
+              - field: description
+          - name: feature3
+            params:
+              - field: content
+    response:
+      status: [200, 201]
+
+  - synopsis: Delete a featureset from the default store.
+    method: DELETE
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted featureset from the default store.
+    method: GET
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    response:
+      status: 404
+
+  # Individual featureset CRUD operations (named store)
+  - synopsis: Create a featureset in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    request:
+      payload:
+        features:
+          - name: feature1
+            params:
+              - field: title
+          - name: feature2
+            params:
+              - field: description
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a featureset from a specific store.
+    method: GET
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    response:
+      status: 200
+
+  - synopsis: Update a featureset in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    request:
+      payload:
+        features:
+          - name: feature1
+            params:
+              - field: title
+          - name: feature2
+            params:
+              - field: description
+          - name: feature3
+            params:
+              - field: content
+    response:
+      status: [200, 201]
+
+  - synopsis: Delete a featureset from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted featureset from a specific store.
+    method: GET
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    response:
+      status: 404

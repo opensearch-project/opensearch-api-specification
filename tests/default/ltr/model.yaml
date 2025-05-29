@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Search for LTR models.
+description: LTR model operations including search and CRUD.
 version: '>= 2.19'
 prologues:
   - path: /_ltr
@@ -23,6 +23,7 @@ epilogues:
     status: [200, 404]
 
 chapters:
+  # Search operations
   - synopsis: Search for models in the default store.
     method: GET
     path: /_ltr/_model
@@ -72,3 +73,174 @@ chapters:
       size: 5
     response:
       status: 200
+
+  # Individual model CRUD operations (default store)
+  - synopsis: Create a model in the default store.
+    method: PUT
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model
+    request:
+      payload:
+        model:
+          feature_set:
+            name: test_featureset
+            features:
+              - name: title
+                params: query_string
+                template:
+                  match:
+                    title: "{{query_string}}"
+              - name: popularity_score
+                params: query_string
+                template:
+                  match:
+                    popularity_score: "{{query_string}}"
+          model:
+            type: model/linear
+            definition:
+              title: 1.0
+              popularity_score: 0.5
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a model from the default store.
+    method: GET
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model
+    response:
+      status: 200
+
+  - synopsis: Try to update a model in the default store (should fail).
+    method: PUT
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model
+    request:
+      payload:
+        model:
+          feature_set:
+            name: test_featureset
+            features:
+              - name: title
+                params: query_string
+                template:
+                  match:
+                    title: "{{query_string}}"
+              - name: popularity_score
+                params: query_string
+                template:
+                  match:
+                    popularity_score: "{{query_string}}"
+          model:
+            type: model/linear
+            definition:
+              title: 1.2
+              popularity_score: 0.7
+    response:
+      status: [400, 409]
+
+  - synopsis: Delete a model from the default store.
+    method: DELETE
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted model from the default store.
+    method: GET
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model
+    response:
+      status: 404
+
+  # Individual model CRUD operations (named store)
+  - synopsis: Create a model in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store
+    request:
+      payload:
+        model:
+          feature_set:
+            name: test_featureset_store
+            features:
+              - name: title
+                params: query_string
+                template:
+                  match:
+                    title: "{{query_string}}"
+              - name: popularity_score
+                params: query_string
+                template:
+                  match:
+                    popularity_score: "{{query_string}}"
+          model:
+            type: model/linear
+            definition:
+              title: 0.5
+              popularity_score: 1.0
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a model from a specific store.
+    method: GET
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store
+    response:
+      status: 200
+
+  - synopsis: Try to update a model in a specific store (should fail).
+    method: PUT
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store
+    request:
+      payload:
+        model:
+          feature_set:
+            name: test_featureset_store
+            features:
+              - name: title
+                params: query_string
+                template:
+                  match:
+                    title: "{{query_string}}"
+              - name: popularity_score
+                params: query_string
+                template:
+                  match:
+                    popularity_score: "{{query_string}}"
+          model:
+            type: model/linear
+            definition:
+              title: 0.7
+              popularity_score: 1.2
+    response:
+      status: [400, 409]
+
+  - synopsis: Delete a model from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted model from a specific store.
+    method: GET
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store
+    response:
+      status: 404

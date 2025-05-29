@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Search for LTR features.
+description: LTR feature operations including search and CRUD.
 version: '>= 2.19'
 prologues:
   - path: /_ltr
@@ -23,6 +23,7 @@ epilogues:
     status: [200, 404]
 
 chapters:
+  # Search operations
   - synopsis: Search for features in the default store.
     method: GET
     path: /_ltr/_feature
@@ -72,3 +73,110 @@ chapters:
       size: 5
     response:
       status: 200
+
+  # Individual feature CRUD operations (default store)
+  - synopsis: Create a feature in the default store.
+    method: PUT
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature
+    request:
+      payload:
+        template:
+          match:
+            title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a feature from the default store.
+    method: GET
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature
+    response:
+      status: 200
+
+  - synopsis: Update a feature in the default store.
+    method: PUT
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature
+    request:
+      payload:
+        query:
+          match:
+            description: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Delete a feature from the default store.
+    method: DELETE
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted feature from the default store.
+    method: GET
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature
+    response:
+      status: 404
+
+  # Individual feature CRUD operations (named store)
+  - synopsis: Create a feature in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store
+    request:
+      payload:
+        query:
+          match:
+            title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a feature from a specific store.
+    method: GET
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store
+    response:
+      status: 200
+
+  - synopsis: Update a feature in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store
+    request:
+      payload:
+        query:
+          match:
+            description: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Delete a feature from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted feature from a specific store.
+    method: GET
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store
+    response:
+      status: 404
