@@ -5,6 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Added
+- Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
 
 ### Removed
 
