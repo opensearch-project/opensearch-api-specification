@@ -1,0 +1,218 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+description: LTR featureset add features operations.
+version: '>= 2.19'
+prologues:
+  - path: /_ltr
+    method: PUT
+    status: [200]
+  - path: /_ltr/{store}
+    method: PUT
+    parameters:
+      store: test_store
+    status: [200]
+  - path: /_ltr/_featureset/{id}
+    method: PUT
+    parameters:
+      id: test_featureset
+    request:
+      payload:
+        featureset:
+          features:
+            - name: initial_feature
+              params:
+                - query_string
+              template:
+                match:
+                  title: "{{query_string}}"
+    status: [201]
+  - path: /_ltr/{store}/_featureset/{id}
+    method: PUT
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    request:
+      payload:
+        featureset:
+          features:
+            - name: initial_feature
+              params:
+                - query_string
+              template:
+                match:
+                  title: "{{query_string}}"
+    status: [201]
+  - path: /_ltr/_feature/{id}
+    method: PUT
+    parameters:
+      id: filtered_feature
+    request:
+      payload:
+        feature:
+          params:
+            - query_string
+          template:
+            match:
+              category: "{{query_string}}"
+    status: [201]
+  - path: /_ltr/{store}/_feature/{id}
+    method: PUT
+    parameters:
+      store: test_store
+      id: store_filtered_feature
+    request:
+      payload:
+        feature:
+          params:
+            - query_string
+          template:
+            match:
+              status: "{{query_string}}"
+    status: [201]
+
+epilogues:
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+  - path: /_ltr/{store}
+    method: DELETE
+    parameters:
+      store: test_store
+    status: [200, 404]
+
+chapters:
+  - synopsis: Add features to featureset in default store.
+    method: POST
+    path: /_ltr/_featureset/{name}/_addfeatures
+    parameters:
+      name: test_featureset
+    request:
+      payload:
+        features:
+          - name: new_feature_1
+            params:
+              - query_string
+            template:
+              match:
+                content: "{{query_string}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to featureset with merge parameter.
+    method: POST
+    path: /_ltr/_featureset/{name}/_addfeatures
+    parameters:
+      name: test_featureset
+      merge: true
+    request:
+      payload:
+        features:
+          - name: new_feature_2
+            params:
+              - query_string
+            template:
+              match:
+                tags: "{{query_string}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to featureset with routing parameter.
+    method: POST
+    path: /_ltr/_featureset/{name}/_addfeatures
+    parameters:
+      name: test_featureset
+      routing: "custom_routing"
+    request:
+      payload:
+        features:
+          - name: new_feature_3
+            params:
+              - query_string
+            template:
+              match:
+                description: "{{query_string}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to featureset with query path parameter.
+    method: POST
+    path: /_ltr/_featureset/{name}/_addfeatures/{query}
+    parameters:
+      name: test_featureset
+      query: "filtered_feature"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to featureset in named store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_addfeatures
+    parameters:
+      store: test_store
+      name: test_featureset_store
+    request:
+      payload:
+        features:
+          - name: store_feature_1
+            params:
+              - query_string
+            template:
+              match:
+                author: "{{query_string}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to featureset in named store with merge.
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_addfeatures
+    parameters:
+      store: test_store
+      name: test_featureset_store
+      merge: false
+    request:
+      payload:
+        features:
+          - name: store_feature_2
+            params:
+              - query_string
+            template:
+              match:
+                keywords: "{{query_string}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to featureset in named store with query parameter.
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_addfeatures/{query}
+    parameters:
+      store: test_store
+      name: test_featureset_store
+      query: "store_filtered_feature"
+    response:
+      status: [200, 201]
+
+  - synopsis: Add features to new featureset (creates if not exists).
+    method: POST
+    path: /_ltr/_featureset/{name}/_addfeatures
+    parameters:
+      name: new_featureset
+    request:
+      payload:
+        features:
+          - name: error_feature
+            params:
+              - query_string
+            template:
+              match:
+                field: "{{query_string}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Test 400 error - invalid feature payload.
+    method: POST
+    path: /_ltr/_featureset/{name}/_addfeatures
+    parameters:
+      name: test_featureset
+    request:
+      payload:
+        invalid_payload: "bad_data"
+    response:
+      status: 400
