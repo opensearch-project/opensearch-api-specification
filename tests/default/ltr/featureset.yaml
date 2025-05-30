@@ -134,11 +134,75 @@ chapters:
     response:
       status: [409]
 
+  # POST update operations (default store)
+  - synopsis: Create a featureset for POST update testing in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_post
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Update a featureset using POST in the default store.
+    method: POST
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_post
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  description: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Update a featureset using POST with routing in the default store.
+    method: POST
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+      routing: test_routing
+    request:
+      payload:
+        featureset:
+          name: test_featureset_post
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  content: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
   - synopsis: Delete a featureset from the default store.
     method: DELETE
     path: /_ltr/_featureset/{id}
     parameters:
       id: test_featureset
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the POST test featureset from the default store.
+    method: DELETE
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
     response:
       status: [200, 404]
 
@@ -213,12 +277,80 @@ chapters:
     response:
       status: [409]
 
+  # POST update operations (named store)
+  - synopsis: Create a featureset for POST update testing in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_post
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Update a featureset using POST in a specific store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_post
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  description: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Update a featureset using POST with routing in a specific store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+      routing: test_routing
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_post
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  content: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
   - synopsis: Delete a featureset from a specific store.
     method: DELETE
     path: /_ltr/{store}/_featureset/{id}
     parameters:
       store: test_store
       id: test_featureset_store
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the POST test featureset from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
     response:
       status: [200, 404]
 

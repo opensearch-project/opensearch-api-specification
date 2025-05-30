@@ -115,11 +115,69 @@ chapters:
     response:
       status: [200, 201, 409]
 
+  # POST update operations (default store)
+  - synopsis: Create a feature for POST update testing in the default store.
+    method: PUT
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature_post
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Update a feature using POST in the default store.
+    method: POST
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature_post
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              description: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Update a feature using POST with routing in the default store.
+    method: POST
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature_post
+      routing: test_routing
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              content: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
   - synopsis: Delete a feature from the default store.
     method: DELETE
     path: /_ltr/_feature/{id}
     parameters:
       id: test_feature
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the POST test feature from the default store.
+    method: DELETE
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature_post
     response:
       status: [200, 404]
 
@@ -175,12 +233,74 @@ chapters:
     response:
       status: [200, 201, 409]
 
+  # POST update operations (named store)
+  - synopsis: Create a feature for POST update testing in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store_post
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
+  - synopsis: Update a feature using POST in a specific store.
+    method: POST
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store_post
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              description: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Update a feature using POST with routing in a specific store.
+    method: POST
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store_post
+      routing: test_routing
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              content: "{{keywords}}"
+    response:
+      status: [200, 404, 409]
+
   - synopsis: Delete a feature from a specific store.
     method: DELETE
     path: /_ltr/{store}/_feature/{id}
     parameters:
       store: test_store
       id: test_feature_store
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the POST test feature from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store_post
     response:
       status: [200, 404]
 
