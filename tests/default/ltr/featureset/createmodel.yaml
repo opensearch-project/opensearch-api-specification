@@ -61,11 +61,22 @@ epilogues:
     parameters:
       id: my_model
     status: [200, 404]
+  - path: /_ltr/_model/{id}
+    method: DELETE
+    parameters:
+      id: my_model_routing
+    status: [200, 404]
   - path: /_ltr/{store}/_model/{id}
     method: DELETE
     parameters:
       store: mystore
       id: my_model
+    status: [200, 404]
+  - path: /_ltr/{store}/_model/{id}
+    method: DELETE
+    parameters:
+      store: mystore
+      id: my_model_routing
     status: [200, 404]
   # Clean up featuresets
   - path: /_ltr/_featureset/{id}
@@ -108,6 +119,24 @@ chapters:
     response:
       status: [200, 201]
 
+  - synopsis: Create a model from featureset with routing in the default store.
+    method: POST
+    path: /_ltr/_featureset/{name}/_createmodel
+    parameters:
+      name: my_featureset
+      routing: test_routing_value
+    request:
+      payload:
+        model:
+          name: my_model_routing
+          model:
+            type: model/linear
+            definition:
+              feature1: 1.0
+              feature2: 0.5
+    response:
+      status: [200, 201]
+
   # Try to update/recreate the model (should fail)
   - synopsis: Try to recreate a model from featureset (should fail).
     method: POST
@@ -142,6 +171,25 @@ chapters:
             definition:
               feature1: 1.3
               feature2: 0.3
+    response:
+      status: [200, 201]
+
+  - synopsis: Create a model from featureset with routing in a named store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_createmodel
+    parameters:
+      store: mystore
+      name: my_featureset
+      routing: test_routing_value
+    request:
+      payload:
+        model:
+          name: my_model_routing
+          model:
+            type: model/linear
+            definition:
+              feature1: 1.0
+              feature2: 0.5
     response:
       status: [200, 201]
 

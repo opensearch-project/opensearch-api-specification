@@ -98,6 +98,25 @@ chapters:
     response:
       status: [200, 201]
 
+  - synopsis: Create a featureset with routing parameter in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_routing
+      routing: test_routing_value
+    request:
+      payload:
+        featureset:
+          name: test_featureset_routing
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
   - synopsis: Get a featureset from the default store.
     method: GET
     path: /_ltr/_featureset/{id}
@@ -239,6 +258,26 @@ chapters:
     response:
       status: [200, 201]
 
+  - synopsis: Create a featureset with routing parameter in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_routing
+      routing: test_routing_value
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_routing
+          features:
+            - name: feature1
+              params: ["keywords"]
+              template:
+                match:
+                  title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
   - synopsis: Get a featureset from a specific store.
     method: GET
     path: /_ltr/{store}/_featureset/{id}
@@ -351,6 +390,24 @@ chapters:
     parameters:
       store: test_store
       id: test_featureset_store_post
+    response:
+      status: [200, 404]
+
+  # Cleanup routing test featuresets
+  - synopsis: Delete the routing test featureset from the default store.
+    method: DELETE
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_routing
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the routing test featureset from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_routing
     response:
       status: [200, 404]
 

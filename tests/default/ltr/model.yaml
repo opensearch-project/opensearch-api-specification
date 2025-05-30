@@ -104,6 +104,30 @@ chapters:
     response:
       status: [200, 201]
 
+  - synopsis: Create a model with routing parameter in the default store.
+    method: PUT
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model_routing
+      routing: test_routing_value
+    request:
+      payload:
+        model:
+          feature_set:
+            name: test_featureset_routing
+            features:
+              - name: title
+                params: query_string
+                template:
+                  match:
+                    title: "{{query_string}}"
+          model:
+            type: model/linear
+            definition:
+              title: 1.0
+    response:
+      status: [200, 201]
+
   - synopsis: Get a model from the default store.
     method: GET
     path: /_ltr/_model/{id}
@@ -192,6 +216,31 @@ chapters:
     response:
       status: [200, 201]
 
+  - synopsis: Create a model with routing parameter in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store_routing
+      routing: test_routing_value
+    request:
+      payload:
+        model:
+          feature_set:
+            name: test_featureset_store_routing
+            features:
+              - name: title
+                params: query_string
+                template:
+                  match:
+                    title: "{{query_string}}"
+          model:
+            type: model/linear
+            definition:
+              title: 0.8
+    response:
+      status: [200, 201]
+
   - synopsis: Get a model from a specific store.
     method: GET
     path: /_ltr/{store}/_model/{id}
@@ -242,7 +291,23 @@ chapters:
     response:
       status: [200, 404]
 
+  # Cleanup routing test models
+  - synopsis: Delete the routing test model from the default store.
+    method: DELETE
+    path: /_ltr/_model/{id}
+    parameters:
+      id: test_model_routing
+    response:
+      status: [200, 404]
 
+  - synopsis: Delete the routing test model from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_model/{id}
+    parameters:
+      store: test_store
+      id: test_model_store_routing
+    response:
+      status: [200, 404]
 
   - synopsis: Try to get a deleted model from a specific store.
     method: GET

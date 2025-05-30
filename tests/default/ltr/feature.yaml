@@ -91,6 +91,23 @@ chapters:
     response:
       status: [200, 201, 409]
 
+  - synopsis: Create a feature with routing parameter in the default store.
+    method: PUT
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature_routing
+      routing: test_routing_value
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              title: "{{keywords}}"
+    response:
+      status: [200, 201, 409]
+
   - synopsis: Get a feature from the default store.
     method: GET
     path: /_ltr/_feature/{id}
@@ -207,6 +224,24 @@ chapters:
     response:
       status: [200, 201]
 
+  - synopsis: Create a feature with routing parameter in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store_routing
+      routing: test_routing_value
+    request:
+      payload:
+        feature:
+          params:
+            - keywords
+          template:
+            match:
+              title: "{{keywords}}"
+    response:
+      status: [200, 201]
+
   - synopsis: Get a feature from a specific store.
     method: GET
     path: /_ltr/{store}/_feature/{id}
@@ -301,6 +336,24 @@ chapters:
     parameters:
       store: test_store
       id: test_feature_store_post
+    response:
+      status: [200, 404]
+
+  # Cleanup routing test features
+  - synopsis: Delete the routing test feature from the default store.
+    method: DELETE
+    path: /_ltr/_feature/{id}
+    parameters:
+      id: test_feature_routing
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the routing test feature from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_feature/{id}
+    parameters:
+      store: test_store
+      id: test_feature_store_routing
     response:
       status: [200, 404]
 
