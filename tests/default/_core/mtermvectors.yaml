@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Test _mtermvectors APIs.
+description: Test _mtermvectors and _termvectors APIs.
 prologues:
   - path: /books
     method: PUT
@@ -14,7 +14,7 @@ prologues:
               term_vector: yes
               type: text
             year:
-              type: integer     
+              type: integer
   - path: /_bulk
     method: POST
     parameters:
@@ -32,7 +32,7 @@ epilogues:
     status: [200, 404]
 
 chapters:
-  - synopsis: Retrieve term vectors for specific documents.
+  - synopsis: Retrieve term vectors for specific documents using _mtermvectors.
     path: /_mtermvectors
     method:
       - GET
@@ -42,3 +42,27 @@ chapters:
         docs:
           - _id: book1
             _index: books
+          - _id: book2
+            _index: books
+    response:
+      status: 200
+
+  - synopsis: Retrieve term vectors for a document using GET /{index}/_termvectors/{id}.
+    path: /{index}/_termvectors/{id}
+    method: GET
+    parameters:
+      index: books
+      id: book1
+      fields: title
+    response:
+      status: 200
+
+  - synopsis: Retrieve term vectors for a document using POST /{index}/_termvectors/{id}.
+    path: /{index}/_termvectors/{id}
+    method: POST
+    parameters:
+      index: books
+      id: book2
+    response:
+      status: 200
+
