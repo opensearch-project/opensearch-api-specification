@@ -267,6 +267,8 @@ paths:
           $ref: '#/components/responses/ltr.create_feature@200'
         '201':
           $ref: '#/components/responses/ltr.create_feature@201'
+        '409':
+          $ref: '#/components/responses/ltr.create_feature@409'
 
     delete:
       operationId: ltr.delete_feature.0
@@ -311,6 +313,8 @@ paths:
           $ref: '#/components/responses/ltr.create_feature@200'
         '201':
           $ref: '#/components/responses/ltr.create_feature@201'
+        '409':
+          $ref: '#/components/responses/ltr.create_feature@409'
 
     delete:
       operationId: ltr.delete_feature.1
@@ -354,6 +358,8 @@ paths:
           $ref: '#/components/responses/ltr.create_featureset@200'
         '201':
           $ref: '#/components/responses/ltr.create_featureset@201'
+        '409':
+          $ref: '#/components/responses/ltr.create_featureset@409'
 
     delete:
       operationId: ltr.delete_featureset.0
@@ -398,6 +404,8 @@ paths:
           $ref: '#/components/responses/ltr.create_featureset@200'
         '201':
           $ref: '#/components/responses/ltr.create_featureset@201'
+        '409':
+          $ref: '#/components/responses/ltr.create_featureset@409'
 
     delete:
       operationId: ltr.delete_featureset.1
@@ -503,6 +511,47 @@ paths:
           $ref: '#/components/responses/ltr.delete_model@200'
         '404':
           $ref: '#/components/responses/ltr.delete_model@404'
+
+  /_ltr/_featureset/{name}/_createmodel:
+    post:
+      operationId: ltr.create_model_from_set.0
+      x-operation-group: ltr.create_model_from_set
+      x-version-added: '2.19'
+      description: Create a model from an existing featureset in the default feature store.
+      parameters:
+        - $ref: '#/components/parameters/ltr.create_model_from_set::path.name'
+      requestBody:
+        $ref: '#/components/requestBodies/ltr.create_model_from_set'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.create_model_from_set@200'
+        '201':
+          $ref: '#/components/responses/ltr.create_model_from_set@201'
+        '405':
+          $ref: '#/components/responses/ltr.create_model_from_set@405'
+
+  /_ltr/{store}/_featureset/{name}/_createmodel:
+    post:
+      operationId: ltr.create_model_from_set.1
+      x-operation-group: ltr.create_model_from_set
+      x-version-added: '2.19'
+      description: Create a model from an existing featureset in the default feature store.
+      parameters:
+        - $ref: '#/components/parameters/ltr.create_model_from_set::path.name'
+        - $ref: '#/components/parameters/ltr.create_model_from_set::path.store'
+      requestBody:
+        $ref: '#/components/requestBodies/ltr.create_model_from_set'
+      responses:
+        '200':
+          $ref: '#/components/responses/ltr.create_model_from_set@200'
+        '201':
+          $ref: '#/components/responses/ltr.create_model_from_set@201'
+        '405':
+          $ref: '#/components/responses/ltr.create_model_from_set@405'
+
+
+
+
 
 
 components:
@@ -781,6 +830,22 @@ components:
       schema:
         type: string
       required: true
+    ltr.create_model_from_set::path.name:
+      name: name
+      in: path
+      description: The name of the featureset to use for creating the model.
+      schema:
+        type: string
+      required: true
+    ltr.create_model_from_set::path.store:
+      name: store
+      in: path
+      description: The name of the feature store.
+      schema:
+        type: string
+      required: true
+
+
 
   responses:
     ltr.list_stores@200:
@@ -887,28 +952,35 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/NotFoundResponse'
 
     ltr.create_feature@200:
       description: Successfully updated the feature.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
 
     ltr.create_feature@201:
       description: Successfully created the feature.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+
+    ltr.create_feature@409:
+      description: Feature update failed due to version conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
 
     ltr.delete_feature@200:
       description: Successfully deleted the feature.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
 
     ltr.delete_feature@404:
       description: The feature does not exist.
@@ -930,35 +1002,42 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/NotFoundResponse'
 
     ltr.create_featureset@200:
       description: Successfully updated the featureset.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
 
     ltr.create_featureset@201:
       description: Successfully created the featureset.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+
+    ltr.create_featureset@409:
+      description: Featureset update failed - featuresets cannot be updated.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
 
     ltr.delete_featureset@200:
       description: Successfully deleted the featureset.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/AcknowledgedResponse'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
 
     ltr.delete_featureset@404:
       description: The featureset does not exist.
       content:
         application/json:
           schema:
-            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/NotFoundResponse'
 
     ltr.get_model@200:
       description: Successfully retrieved the model.
@@ -1010,6 +1089,31 @@ components:
           schema:
             $ref: '../schemas/ltr._common.yaml#/components/schemas/NotFoundResponse'
 
+    ltr.create_model_from_set@200:
+      description: Successfully updated the model.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+
+    ltr.create_model_from_set@201:
+      description: Successfully created the model.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+
+    ltr.create_model_from_set@405:
+      description: Model update failed - models cannot be updated.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+
+
+
+
+
   requestBodies:
     ltr.create_feature:
       description: The feature definition.
@@ -1031,6 +1135,15 @@ components:
 
     ltr.create_model:
       description: The model definition.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
+      required: true
+
+    ltr.create_model_from_set:
+      description: The model definition for creating from a featureset.
       content:
         application/json:
           schema:
