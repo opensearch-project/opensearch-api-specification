@@ -5,7 +5,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Added
-
+- Added specs for alert and finding endpoints of security_analytics plugin ([#907](https://github.com/opensearch-project/opensearch-api-specification/pull/907))
 ### Removed
 
 ### Fixed
