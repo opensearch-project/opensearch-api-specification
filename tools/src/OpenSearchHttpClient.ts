@@ -15,7 +15,7 @@ import { sleep } from './helpers'
 import { Logger } from './Logger'
 import { aws4Interceptor } from 'aws4-axios'
 
-const DEFAULT_URL = 'http://localhost:9200'
+const DEFAULT_URL = 'https://localhost:9200'
 const DEFAULT_USER = 'admin'
 const DEFAULT_INSECURE = false
 
