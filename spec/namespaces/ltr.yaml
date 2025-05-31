@@ -662,29 +662,27 @@ paths:
 
   /_ltr/_featureset/{name}/_addfeatures/{query}:
     post:
-      operationId: ltr.add_features_to_set.1
-      x-operation-group: ltr.add_features_to_set
+      operationId: ltr.add_features_to_set_by_query.0
+      x-operation-group: ltr.add_features_to_set_by_query
       x-version-added: '2.19'
       description: Add features to an existing featureset in the default feature store.
       parameters:
-        - $ref: '#/components/parameters/ltr.add_features_to_set::path.name'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::path.query'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::query.merge'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::query.routing'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::query.version'
-      requestBody:
-        $ref: '#/components/requestBodies/ltr.add_features_to_set'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::path.name'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::path.query'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::query.merge'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::query.routing'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::query.version'
       responses:
         '200':
-          $ref: '#/components/responses/ltr.add_features_to_set@200'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@200'
         '201':
-          $ref: '#/components/responses/ltr.add_features_to_set@201'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@201'
         '400':
-          $ref: '#/components/responses/ltr.add_features_to_set@400'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@400'
         '404':
-          $ref: '#/components/responses/ltr.add_features_to_set@404'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@404'
         '409':
-          $ref: '#/components/responses/ltr.add_features_to_set@409'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@409'
 
   /_ltr/{store}/_featureset/{name}/_addfeatures:
     post:
@@ -714,30 +712,28 @@ paths:
 
   /_ltr/{store}/_featureset/{name}/_addfeatures/{query}:
     post:
-      operationId: ltr.add_features_to_set.3
-      x-operation-group: ltr.add_features_to_set
+      operationId: ltr.add_features_to_set_by_query.1
+      x-operation-group: ltr.add_features_to_set_by_query
       x-version-added: '2.19'
       description: Add features to an existing featureset in the default feature store.
       parameters:
-        - $ref: '#/components/parameters/ltr.add_features_to_set::path.name'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::path.query'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::path.store'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::query.merge'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::query.routing'
-        - $ref: '#/components/parameters/ltr.add_features_to_set::query.version'
-      requestBody:
-        $ref: '#/components/requestBodies/ltr.add_features_to_set'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::path.name'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::path.query'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::path.store'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::query.merge'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::query.routing'
+        - $ref: '#/components/parameters/ltr.add_features_to_set_by_query::query.version'
       responses:
         '200':
-          $ref: '#/components/responses/ltr.add_features_to_set@200'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@200'
         '201':
-          $ref: '#/components/responses/ltr.add_features_to_set@201'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@201'
         '400':
-          $ref: '#/components/responses/ltr.add_features_to_set@400'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@400'
         '404':
-          $ref: '#/components/responses/ltr.add_features_to_set@404'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@404'
         '409':
-          $ref: '#/components/responses/ltr.add_features_to_set@409'
+          $ref: '#/components/responses/ltr.add_features_to_set_by_query@409'
 
 
 
@@ -1043,13 +1039,6 @@ components:
       schema:
         type: string
       required: true
-    ltr.add_features_to_set::path.query:
-      name: query
-      in: path
-      description: Query string to filter features to add.
-      schema:
-        type: string
-      required: true
     ltr.add_features_to_set::path.store:
       name: store
       in: path
@@ -1148,6 +1137,49 @@ components:
       description: Specific routing value.
       schema:
         type: string
+      required: false
+    ltr.add_features_to_set_by_query::path.name:
+      name: name
+      in: path
+      description: The name of the featureset to add features to.
+      schema:
+        type: string
+      required: true
+    ltr.add_features_to_set_by_query::path.query:
+      name: query
+      in: path
+      description: Query string to filter existing features from the store by name. When provided, only features matching this query will be added to the featureset, and no request body should be included.
+      schema:
+        type: string
+      required: true
+    ltr.add_features_to_set_by_query::path.store:
+      name: store
+      in: path
+      description: The name of the feature store.
+      schema:
+        type: string
+      required: true
+    ltr.add_features_to_set_by_query::query.merge:
+      name: merge
+      in: query
+      description: Whether to merge the feature list or append only.
+      schema:
+        type: boolean
+        default: false
+      required: false
+    ltr.add_features_to_set_by_query::query.routing:
+      name: routing
+      in: query
+      description: Specific routing value.
+      schema:
+        type: string
+      required: false
+    ltr.add_features_to_set_by_query::query.version:
+      name: version
+      in: query
+      description: Version check to ensure featureset is modified with expected version.
+      schema:
+        type: integer
       required: false
 
 
@@ -1487,6 +1519,41 @@ components:
             $ref: '../schemas/ltr._common.yaml#/components/schemas/NotFoundResponse'
 
     ltr.update_featureset@409:
+      description: Featureset update failed due to version conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+
+    ltr.add_features_to_set_by_query@200:
+      description: Successfully updated the featureset with filtered features.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+
+    ltr.add_features_to_set_by_query@201:
+      description: Successfully created the featureset with filtered features.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+
+    ltr.add_features_to_set_by_query@400:
+      description: Bad request - invalid query parameters or feature filtering.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+
+    ltr.add_features_to_set_by_query@404:
+      description: The featureset or filtered features do not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ltr._common.yaml#/components/schemas/NotFoundResponse'
+
+    ltr.add_features_to_set_by_query@409:
       description: Featureset update failed due to version conflict.
       content:
         application/json:
