@@ -1,0 +1,104 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `security_analytics.findings` Category
+  description: Schemas of `security_analytics.findings` Category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    GetFindingsResponse:
+      type: object
+      properties:
+        total_findings:
+          type: integer
+          format: int64
+        findings:
+          $ref: '#/components/schemas/Findings'
+      required:
+        - findings
+        - total_findings
+
+    Findings:
+      type: array
+      items:
+        $ref: '#/components/schemas/Finding'
+
+    Finding:
+      type: object
+      properties:
+        detectorId:
+          type: string
+        id:
+          type: string
+        related_doc_ids:
+          type: array
+          items:
+            type: string
+        index:
+          type: string
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Query'
+        timestamp:
+          type: string
+        document_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+
+    Query:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        fields:
+          type: array
+          items:
+            type: string
+        query:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        query_field_names:
+          type: array
+          items:
+            type: string
+
+    Document:
+      type: object
+      properties:
+        index:
+          type: string
+        id:
+          type: string
+        found:
+          type: boolean
+        document:
+          type: string
+
+    SearchFindingCorrelationsResponse:
+      type: object
+      properties:
+        findings: 
+          type: array
+          items:
+            $ref: '#/components/schemas/FindingWithScore'
+      required:
+        - findings
+
+    FindingWithScore:
+      type: object
+      properties:
+        finding:
+          type: string
+        detector_type:
+          type: string
+        score:
+          type: number
+          format: float
+
