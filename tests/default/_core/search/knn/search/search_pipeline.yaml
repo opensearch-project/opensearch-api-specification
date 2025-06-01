@@ -1,0 +1,150 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with template query and ML inference processor.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.19'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.only_run_on_ml_node: false
+          plugins.ml_commons.jvm_heap_memory_threshold: 100
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            director:
+              type: text
+            title:
+              type: text
+            year:
+              type: integer
+            embedding:
+              type: knn_vector
+              dimension: 5
+              method:
+                name: hnsw
+                space_type: l2
+                engine: faiss
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        director: Bennett Miller
+        title: Moneyball
+        year: 2011
+        embedding: [1.4, 2.3, 3.5, 4.1, 9.2]
+    status: [201]
+  - id: register_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/all-distilroberta-v1
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+        function_name: text_embedding
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id
+  - id: get_completed_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+    retry:
+      count: 5
+      wait: 30000
+  - id: deploy_model
+    path: /_plugins/_ml/models/{model_id}/_deploy
+    method: POST
+    parameters:
+      model_id: ${get_completed_task.model_id}
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id
+  - id: get_completed_deploy_model_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${deploy_model.task_id}
+    retry:
+      count: 6
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+  - path: /_search/pipeline/ml_inference_pipeline
+    method: PUT
+    request:
+      payload:
+        request_processors:
+          - ml_inference:
+              model_id: ${get_completed_deploy_model_task.model_id}
+              function_name: text_embedding
+              model_config:
+                return_number: true
+                target_response:
+                  - sentence_embedding
+              input_map:
+                - text_docs: ext.ml_inference.text
+              model_input: '{"text_docs":["happy passage"],"return_number":"true","target_response":["sentence_embedding"]}'
+              output_map:
+                - modelPredictionOutcome: $.inference_results[0].output[0].data
+    response:
+      status: 200
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}/_undeploy
+    method: POST
+    parameters:
+      model_id: ${get_completed_deploy_model_task.model_id}
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_deploy_model_task.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search using a template with ML inference processor.
+    path: /{index}/_search
+    parameters:
+      index: movies
+      search_pipeline: ml_inference_pipeline
+    method: GET
+    request:
+      payload:
+        query:
+          template:
+            knn:
+              embedding:
+                vector: [1.4, 2.3, 3.5, 4.1, 9.2]
+                k: 5
+        ext:
+          ml_inference:
+            text: movie
+    response:
+      status: 200
