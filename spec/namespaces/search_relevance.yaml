@@ -12,57 +12,57 @@ paths:
       description: Lists the current query sets available.
       responses:
         '200':
-          $ref: '#/components/responses/query_sets_list@200'
+          $ref: '#/components/responses/search_relevance.get_query_sets@200'
     post:
       operationId: search_relevance.post_query_sets.0
       x-operation-group: search_relevance.post_query_sets
       x-version-added: '3.1'
       description: Creates a new query set by sampling queries from the user behavior data. 
       requestBody:
-        $ref: '#/components/requestBodies/create_query'
+        $ref: '#/components/requestBodies/search_relevance.post_query_sets'
       responses:
         '200':
-          $ref: '#/components/responses/query_set_creation@200'
+          $ref: '#/components/responses/search_relevance.post_query_sets@200'
     put:
       operationId: search_relevance.put_query_sets.0
       x-operation-group: search_relevance.put_query_sets
       x-version-added: '3.1'
       description: Creates a new query set by uploading manually.
       requestBody:
-        $ref: '#/components/requestBodies/put_query'
+        $ref: '#/components/requestBodies/search_relevance.put_query_sets'
       responses:
         '200':
-          $ref: '#/components/responses/query_set_creation@200'
+          $ref: '#/components/responses/search_relevance.put_query_sets@200'
   _plugins/search_relevance/query_sets/{query_set_id}:
     get:
       operationId: search_relevance.get_query_sets.1
       x-operation-group: search_relevance.get_query_sets
       x-version-added: '3.1'
-      description: Gets a specified query set.
+      description: Lists the current query sets available.
       parameters:
-        - $ref: '#/components/parameters/query_set_id'
+        - $ref: '#/components/parameters/search_relevance.get_query_sets::path.query_set_id'
       responses:
         '200':
-          $ref: '#/components/responses/query_set@200'
+          $ref: '#/components/responses/search_relevance.get_query_sets@200'
     delete:
       operationId: search_relevance.delete_query_sets.0
       x-operation-group: search_relevance.delete_query_sets
       x-version-added: '3.1'
       description: Deletes a query set.
       parameters:
-        - $ref: '#/components/parameters/query_set_id'
+        - $ref: '#/components/parameters/search_relevance.delete_query_sets::path.query_set_id'
       responses:
         '200':
-          $ref: '#/components/responses/query_set_deletion@200'
+          $ref: '#/components/responses/search_relevance.delete_query_sets@200'
   _plugins/search_relevance/judgments:
     get:
       operationId: search_relevance.get_judgments.0
       x-operation-group: search_relevance.get_judgments
       x-version-added: '3.1'
-      description: Gets the list of judgments.
+      description: Gets judgments.
       responses:
         '200':
-          $ref: '#/components/responses/judgment_list@200'
+          $ref: '#/components/responses/search_relevance.get_judgments@200'
     put:
       operationId: search_relevance.put_judgments.0
       x-operation-group: search_relevance.put_judgments
@@ -70,208 +70,109 @@ paths:
       description: Creates a judgment.
       requestBody:
         description: The request body of the judgment to be created.
-        #This part is not working at the moment because the oneOf is not being processed properly. 
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  properties:
-                    name:
-                      type: string
-                    description:
-                      type: string
-                    type:
-                      type: string
-                    querySetId:
-                      type: string
-                    clickModel:
-                      type: string
-                    maxRank:
-                      type: integer
-                - type: object
-                  properties:
-                    name:
-                      type: string
-                    description:
-                      type: string
-                    type:
-                      type: string
-                    querySetId:
-                      type: string
-                    modelId:
-                      type: string
-                    size:
-                      type: integer
-                    searchConfigurationList:
-                      type: array
-                      items:
-                        type: string
-              #- $ref: '#/components/schemas/put_judgment_ubi'
-              #- $ref: '#/components/schemas/put_judgment_llm'
+        $ref: '#/components/requestBodies/search_relevance.put_judgments' 
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: 
-                  object
-                properties:
-                  judgment_id:
-                    type: string
+          $ref: '#/components/responses/search_relevance.put_judgments@200'
   _plugins/search_relevance/judgments/{judgment_id}:
     get:
       operationId: search_relevance.get_judgments.1
       x-operation-group: search_relevance.get_judgments
       x-version-added: '3.1'
-      description: Gets a specified judgment.
+      description: Gets judgments.
       parameters:
-        - $ref: '#/components/parameters/judgment_id'
+        - $ref: '#/components/parameters/search_relevance.get_judgments::path.judgment_id'
       responses:
         '200':
-          $ref: '#/components/responses/judgment@200'
+          $ref: '#/components/responses/search_relevance.get_judgments@200'
     delete:
       operationId: search_relevance.delete_judgments.0
       x-operation-group: search_relevance.delete_judgments
       x-version-added: '3.1'
       description: Deletes a specified judgment.
       parameters:
-        - $ref: '#/components/parameters/judgment_id'
+        - $ref: '#/components/parameters/search_relevance.delete_judgments::path.judgment_id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                #properties:
-                #  id: 
-                #    type: string
-                #  result:
-                #    type: string
+          $ref: '#/components/responses/search_relevance.delete_judgments@200'
   _plugins/search_relevance/search_configurations:
     get:
       operationId: search_relevance.get_search_configurations.0
       x-operation-group: search_relevance.get_search_configurations
       x-version-added: '3.1'
-      description: Gets the list of search configurations.
+      description: Gets the search configurations.
       responses:
         '200':
-          $ref: '#/components/responses/search_configurations_list@200'
+          $ref: '#/components/responses/search_relevance.get_search_configurations@200'
     put:
       operationId: search_relevance.put_search_configurations.0
       x-operation-group: search_relevance.put_search_configurations
       x-version-added: '3.1'
       description: Creates a search configuration.
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                query:
-                  type: string
-                index:
-                  type: string
+        $ref: '#/components/requestBodies/search_relevance.put_search_configurations' 
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  search_configuration_id:
-                    type: string
-                  search_configuration_result:
-                    type: string
+          $ref: '#/components/responses/search_relevance.put_search_configurations@200'
   _plugins/search_relevance/search_configurations/{search_configuration_id}:
     get:
       operationId: search_relevance.get_search_configurations.1
       x-operation-group: search_relevance.get_search_configurations
       x-version-added: '3.1'
-      description: Gets a specified search configuration.
+      description: Gets the search configurations.
       parameters:
-        - $ref: '#/components/parameters/search_configuration_id'
+        - $ref: '#/components/parameters/search_relevance.get_search_configurations::path.search_configuration_id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
+          $ref: '#/components/responses/search_relevance.get_search_configurations@200'
+          #content:
+          #  application/json:
+          #    schema:
+          #      $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
     delete:
       operationId: search_relevance.delete_search_configurations.0
       x-operation-group: search_relevance.delete_search_configurations
       x-version-added: '3.1'
       description: Deletes a specified search configuration.
       parameters:
-        - $ref: '#/components/parameters/search_configuration_id'
+        - $ref: '#/components/parameters/search_relevance.delete_search_configurations::path.search_configuration_id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                #properties:
-                #  id: 
-                #    type: string
-                #  result:
-                #    type: string
+          $ref: '#/components/responses/search_relevance.delete_search_configurations@200'
   _plugins/search_relevance/experiments:
     get:
       operationId: search_relevance.get_experiments.0
       x-operation-group: search_relevance.get_experiments
       x-version-added: '3.1'
-      description: Gets the list of experiments.
+      description: Gets experiments.
       responses:
         '200':
-          $ref: '#/components/responses/experiments_list@200'
+          $ref: '#/components/responses/search_relevance.get_experiments@200'
     put:
       operationId: search_relevance.put_experiments.0
       x-operation-group: search_relevance.put_experiments
       x-version-added: '3.1'
       description: Creates an experiment.
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                querySetId:
-                  type: string
-                searchConfigurationList:
-                  type: array
-                  items:
-                    type: string
-                size:
-                  type: integer
-                type:
-                  type: string
+        $ref: '#/components/requestBodies/search_relevance.put_experiments'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                #properties:
-                #  experiments_id:
-                #    type: string
-                #  experiments_result:
-                #    type: string
+          $ref: '#/components/responses/search_relevance.put_experiments@200'
   _plugins/search_relevance/experiments/{experiment_id}:
     get:
       operationId: search_relevance.get_experiments.1
       x-operation-group: search_relevance.get_experiments
       x-version-added: '3.1'
-      description: Gets a specified experiment.
+      description: Gets experiments.
       parameters:
-        - $ref: '#/components/parameters/experiment_id'
+        - $ref: '#/components/parameters/search_relevance.get_experiments::path.experiment_id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: object
+          $ref: '#/components/responses/search_relevance.get_experiments@200'
+          #content:
+          #  application/json:
+          #    schema:
+          #      type: object
                 #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
     delete:
       operationId: search_relevance.delete_experiments.0
@@ -279,84 +180,69 @@ paths:
       x-version-added: '3.1'
       description: Deletes a specified experiment.
       parameters:
-        - $ref: '#/components/parameters/experiment_id'
+        - $ref: '#/components/parameters/search_relevance.delete_experiments::path.experiment_id'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                #properties:
-                #  id: 
-                #    type: string
-                #  result:
-                #    type: string
+          $ref: '#/components/responses/search_relevance.delete_experiments@200'
+          
 components:
   parameters:
-    query_set_id: 
+    search_relevance.get_query_sets::path.query_set_id: 
       name: query_set_id
       in: path
       description: The query set id
       schema:
         type: string
-    judgment_id:
+    search_relevance.delete_query_sets::path.query_set_id: 
+      name: query_set_id
+      in: path
+      description: The query set id
+      schema:
+        type: string
+    search_relevance.get_judgments::path.judgment_id:
       name: judgment_id
       in: path
       description: The judgment id
       schema:
         type:
           string
-    search_configuration_id:
+    search_relevance.delete_judgments::path.judgment_id:
+      name: judgment_id
+      in: path
+      description: The judgment id
+      schema:
+        type:
+          string
+    search_relevance.get_search_configurations::path.search_configuration_id:
       name: search_configuration_id
       in: path
       description: The search configuration id
       schema:
         type:
           string
-    experiment_id:
+    search_relevance.delete_search_configurations::path.search_configuration_id:
+      name: search_configuration_id
+      in: path
+      description: The search configuration id
+      schema:
+        type:
+          string
+    search_relevance.get_experiments::path.experiment_id:
       name: experiment_id
       in: path
       description: The experiment id
       schema:
         type:
           string
-  schemas:
-    put_judgment_ubi:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
+    search_relevance.delete_experiments::path.experiment_id:
+      name: experiment_id
+      in: path
+      description: The experiment id
+      schema:
         type:
-          type: string
-        querySetId:
-          type: string
-        clickModel:
-          type: string
-        maxRank:
-          type: integer
-    put_judgment_llm:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-        querySetId:
-          type: string
-        modelId:
-          type: string
-        maxRank:
-          type: integer
-        searchConfigurationList:
-          type: array
-          items:
-            type: string
+          string
   requestBodies:
-    create_query:
+    search_relevance.post_query_sets:
       content:
         application/json:
           schema:
@@ -370,7 +256,7 @@ components:
                 type: string
               querySetSize:
                 type: integer
-    put_query:
+    search_relevance.put_query_sets:
       content:
         application/json:
           schema:
@@ -386,55 +272,85 @@ components:
                 type: array
                 items:
                   type: object
-    put_judgment_ubi:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-        querySetId:
-          type: string
-        clickModel:
-          type: string
-        maxRank:
-          type: integer
-    put_judgment_llm:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-        querySetId:
-          type: string
-        modelId:
-          type: string
-        size:
-          type: integer
-        searchConfigurationList:
-          type: array
-          items:
-            type: string
+    search_relevance.put_judgments:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  type:
+                    type: string
+                  querySetId:
+                    type: string
+                  clickModel:
+                    type: string
+                  maxRank:
+                    type: integer
+              - type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  type:
+                    type: string
+                  querySetId:
+                    type: string
+                  modelId:
+                    type: string
+                  size:
+                    type: integer
+                  searchConfigurationList:
+                    type: array
+                    items:
+                      type: string
+            #- $ref: '#/components/schemas/put_judgment_ubi'
+            #- $ref: '#/components/schemas/put_judgment_llm'
+    search_relevance.put_search_configurations:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              query:
+                type: string
+              index:
+                type: string
+    search_relevance.put_experiments:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              querySetId:
+                type: string
+              searchConfigurationList:
+                type: array
+                items:
+                  type: string
+              size:
+                type: integer
+              type:
+                type: string
   responses:
-    query_set@200:
+    search_relevance.get_query_sets@200:
       content:
         application/json:
           schema:
-            type: object
-            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
-    query_sets_list@200:
-      content:
-        application/json:
-          schema:
-            type: object
+            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            oneOf:
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
             #items: 
             #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
-    query_set_creation@200:
+    search_relevance.post_query_sets@200:
       content:
         application/json:
           schema:
@@ -444,7 +360,17 @@ components:
                 type: string
               query_set_result:
                 type: string
-    query_set_deletion@200:
+    search_relevance.put_query_sets@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query_set_id: 
+                type: string
+              query_set_result:
+                type: string
+    search_relevance.delete_query_sets@200:
       content:
         application/json:
           schema:
@@ -454,32 +380,94 @@ components:
             #    type: string
             #  result:
             #    type: string
-    judgment_list@200:
+    search_relevance.get_judgments@200:
+      content:
+        application/json:
+          schema:
+            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            oneOf:
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            #items:
+            #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
+    search_relevance.put_judgments@200:
+      content:
+        application/json:
+          schema:
+            type: 
+              object
+            properties:
+              judgment_id:
+                type: string
+    search_relevance.delete_judgments@200:
       content:
         application/json:
           schema:
             type: object
-            #items:
-            #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
-    search_configurations_list@200:
+            #properties:
+            #  id: 
+            #    type: string
+            #  result:
+            #    type: string
+    search_relevance.get_search_configurations@200:
       content:
         application/json:
           schema:
-          type: object
+            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            oneOf:
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
             #type: array
             #items:
             #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
-    judgment@200:
+    search_relevance.put_search_configurations@200:
       content:
         application/json:
           schema:
             type: object
-            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
-    experiments_list@200:
+            properties:
+              search_configuration_id:
+                type: string
+              search_configuration_result:
+                type: string
+    search_relevance.delete_search_configurations@200:
       content:
         application/json:
           schema:
             type: object
+            #properties:
+            #  id: 
+            #    type: string
+            #  result:
+            #    type: string
+    search_relevance.get_experiments@200:
+      content:
+        application/json:
+          schema:
+            #$ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            oneOf:
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
             #type: array
             #items:
             #  $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
+    search_relevance.put_experiments@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            #properties:
+            #  experiments_id:
+            #    type: string
+            #  experiments_result:
+            #    type: string
+    search_relevance.delete_experiments@200:
+      content:
+          application/json:
+            schema:
+              type: object
+              #properties:
+              #  id: 
+              #    type: string
+              #  result:
+              #    type: string
