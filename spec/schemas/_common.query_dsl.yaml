@@ -316,16 +316,6 @@ components:
           format: float
         _name:
           type: string
-    ValueType:
-      type: object
-      properties:
-        value_type:
-          description: |-
-            Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
-          type: string
-          enum:
-            - bitmap
-            - default
     BoostingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -2121,14 +2111,22 @@ components:
                   type: boolean
               required:
                 - value
+    TermsQueryValueType:
+      type: string
+      enum:
+        - bitmap
+        - default
     TermsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
-        - $ref: '#/components/schemas/ValueType'
         - type: object
           properties:
             _name: {}
             boost: {}
+            value_type:
+              description: |-
+                Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
+              $ref: '#/components/schemas/TermsQueryValueType'
           propertyNames:
             title: field
             type: string
