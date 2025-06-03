@@ -39,15 +39,7 @@ prologues:
         description: this is a test
     response:
       status: 201
-
-epilogues:
-  - path: /sample_index
-    method: DELETE
-    status: [200, 404]
-
-chapters:
-  - synopsis: Creating a query set with sampling.
-    id: query_set_sampling
+  - id: query_set_sampling
     path: _plugins/search_relevance/query_sets
     method: POST
     request: 
@@ -60,8 +52,7 @@ chapters:
       status: 200
     output: # Save the query id for later use.
       query_set_id: "payload.query_set_id"
-  - synopsis: Creating a search configuration.
-    id: search_configuration1
+  - id: search_configuration1
     path: _plugins/search_relevance/search_configurations
     method: PUT
     request: 
@@ -73,8 +64,7 @@ chapters:
       status: 200
     output: # Save the search configuration id for later use.
       search_configuration_id: "payload.search_configuration_id"
-  - synopsis: Creating another search configuration.
-    id: search_configuration2
+  - id: search_configuration2
     path: _plugins/search_relevance/search_configurations
     method: PUT
     request: 
@@ -86,6 +76,31 @@ chapters:
       status: 200
     output: # Save the search configuration id for later use.
       search_configuration_id: "payload.search_configuration_id"
+
+epilogues:
+  - path: _plugins/search_relevance/search_configurations/{search_configuration_id}
+    method: DELETE
+    parameters:
+      search_configuration_id: ${search_configuration1.search_configuration_id}
+    response:
+      status: 200
+  - path: _plugins/search_relevance/search_configurations/{search_configuration_id}
+    method: DELETE
+    parameters:
+      search_configuration_id: ${search_configuration2.search_configuration_id}
+    response:
+      status: 200
+  - path: _plugins/search_relevance/query_sets/{query_set_id}
+    method: DELETE
+    parameters:
+      query_set_id: ${query_set_sampling.query_set_id}
+    response:
+      status: 200
+  - path: /sample_index
+    method: DELETE
+    status: [200, 404]
+
+chapters:
   - synopsis: Creating an experiment.
     id: experiment
     path: _plugins/search_relevance/experiments
@@ -119,26 +134,5 @@ chapters:
     method: DELETE
     parameters:
       experiment_id: ${experiment.experiment_id}
-    response:
-      status: 200
-  - synopsis: Delete one search configuration. 
-    path: _plugins/search_relevance/search_configurations/{search_configuration_id}
-    method: DELETE
-    parameters:
-      search_configuration_id: ${search_configuration1.search_configuration_id}
-    response:
-      status: 200
-  - synopsis: Delete the other search configuration. 
-    path: _plugins/search_relevance/search_configurations/{search_configuration_id}
-    method: DELETE
-    parameters:
-      search_configuration_id: ${search_configuration2.search_configuration_id}
-    response:
-      status: 200
-  - synopsis: Delete the query set created with sampling. 
-    path: _plugins/search_relevance/query_sets/{query_set_id}
-    method: DELETE
-    parameters:
-      query_set_id: ${query_set_sampling.query_set_id}
     response:
       status: 200
