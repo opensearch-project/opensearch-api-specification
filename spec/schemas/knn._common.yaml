@@ -7,22 +7,22 @@ paths: {}
 components:
   schemas:
     Stats:
-      type: object
-      properties:
-        _nodes:
-          $ref: '_common.yaml#/components/schemas/NodeStatistics'
-        cluster_name:
-          $ref: '_common.yaml#/components/schemas/Name'
-        circuit_breaker_triggered:
-          type: boolean
-        model_index_status:
-          oneOf:
-            - $ref: '_common.yaml#/components/schemas/HealthStatus'
-            - type: 'null'
-        nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/NodeStats'
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            circuit_breaker_triggered:
+              type: boolean
+            model_index_status:
+              oneOf:
+                - $ref: '_common.yaml#/components/schemas/HealthStatus'
+                - type: 'null'
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodeStats'
     NodeStats:
       type: object
       properties:
