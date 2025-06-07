@@ -12,35 +12,35 @@ components:
         - $ref: '#/components/schemas/FlatNeuralStats'
     # Separate schemas for flattened vs unflattened
     NestedNeuralStats:
-      type: object
-      properties:
-        _nodes:
-          $ref: '#/components/schemas/NodesInfo'
-        cluster_name:
-          type: string
-        info:
-          $ref: '#/components/schemas/NestedNeuralInfoStats'
-        all_nodes:
-          $ref: '#/components/schemas/NestedNeuralNodeStats'
-        nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/NestedNeuralNodeStats'
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              type: string
+            info:
+              $ref: '#/components/schemas/NestedNeuralInfoStats'
+            all_nodes:
+              $ref: '#/components/schemas/NestedNeuralNodeStats'
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NestedNeuralNodeStats'
     FlatNeuralStats:
-      type: object
-      properties:
-        _nodes:
-          $ref: '#/components/schemas/NodesInfo'
-        cluster_name:
-          type: string
-        info:
-          $ref: '#/components/schemas/FlatNeuralInfoStats'
-        all_nodes:
-          $ref: '#/components/schemas/FlatNeuralNodeStats'
-        nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/FlatNeuralNodeStats'
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              type: string
+            info:
+              $ref: '#/components/schemas/FlatNeuralInfoStats'
+            all_nodes:
+              $ref: '#/components/schemas/FlatNeuralNodeStats'
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/FlatNeuralNodeStats'
     FlatNeuralInfoStats:
       type: object
       properties:
@@ -91,15 +91,6 @@ components:
         text_embedding_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.0'
-    NodesInfo:
-      type: object
-      properties:
-        total:
-          type: integer
-        successful:
-          type: integer
-        failed:
-          type: integer
     StatMetadata:
       type: object
       required:
