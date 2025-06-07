@@ -40,7 +40,7 @@ prologues:
     response:
       status: 201
   - id: query_set_sampling
-    path: _plugins/search_relevance/query_sets
+    path: /_plugins/search_relevance/query_sets
     method: POST
     request: 
       payload:
@@ -51,9 +51,9 @@ prologues:
     response:
       status: 200
     output: # Save the query id for later use.
-      query_set_id: "payload.query_set_id"
+      query_set_id: payload.query_set_id
   - id: search_configuration1
-    path: _plugins/search_relevance/search_configurations
+    path: /_plugins/search_relevance/search_configurations
     method: PUT
     request: 
       payload:
@@ -63,34 +63,34 @@ prologues:
     response:
       status: 200
     output: # Save the search configuration id for later use.
-      search_configuration_id: "payload.search_configuration_id"
+      search_configuration_id: payload.search_configuration_id
   - id: search_configuration2
-    path: _plugins/search_relevance/search_configurations
+    path: /_plugins/search_relevance/search_configurations
     method: PUT
     request: 
       payload:
         name: multimatch
-        query: "{\"query\":{\"multi_match\":{\"query\":\"%SearchText%\",\"fields\":[\"id\",\"title\",\"category\",\"bullets\",\"description\",\"attrs.Brand\",\"attrs.Color\"]}}}"
+        query: '{"query":{"multi_match":{"query":"%SearchText%","fields":["id","title","category","bullets","description","attrs.Brand","attrs.Color"]}}}'
         index: sample_index
     response:
       status: 200
     output: # Save the search configuration id for later use.
-      search_configuration_id: "payload.search_configuration_id"
+      search_configuration_id: payload.search_configuration_id
 
 epilogues:
-  - path: _plugins/search_relevance/search_configurations/{search_configuration_id}
+  - path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
     method: DELETE
     parameters:
       search_configuration_id: ${search_configuration1.search_configuration_id}
     response:
       status: 200
-  - path: _plugins/search_relevance/search_configurations/{search_configuration_id}
+  - path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
     method: DELETE
     parameters:
       search_configuration_id: ${search_configuration2.search_configuration_id}
     response:
       status: 200
-  - path: _plugins/search_relevance/query_sets/{query_set_id}
+  - path: /_plugins/search_relevance/query_sets/{query_set_id}
     method: DELETE
     parameters:
       query_set_id: ${query_set_sampling.query_set_id}
@@ -103,7 +103,7 @@ epilogues:
 chapters:
   - synopsis: Creating an experiment.
     id: experiment
-    path: _plugins/search_relevance/experiments
+    path: /_plugins/search_relevance/experiments
     method: PUT
     request: 
       payload:
@@ -116,21 +116,21 @@ chapters:
     response:
       status: 200
     output: # Save the search experiment_id id for later use.
-      experiment_id: "payload.experiment_id"
+      experiment_id: payload.experiment_id
   - synopsis: List all the experiments created.
-    path: _plugins/search_relevance/experiments
+    path: /_plugins/search_relevance/experiments
     method: GET
     response:
       status: 200 
   - synopsis: Retrieve a specific experiment.
-    path: _plugins/search_relevance/experiments/{experiment_id}
+    path: /_plugins/search_relevance/experiments/{experiment_id}
     method: GET
     parameters:
       experiment_id: ${experiment.experiment_id}
     response:
       status: 200
   - synopsis: Delete the experiment. 
-    path: _plugins/search_relevance/experiments/{experiment_id}
+    path: /_plugins/search_relevance/experiments/{experiment_id}
     method: DELETE
     parameters:
       experiment_id: ${experiment.experiment_id}
