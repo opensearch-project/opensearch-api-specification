@@ -34,7 +34,7 @@ chapters:
           enabled: true
           description: Rollup books.
           schedule:
-            interval: 
+            interval:
               period: 1
               unit: Minutes
           source_index: books
@@ -76,3 +76,73 @@ chapters:
     method: DELETE
     parameters:
       id: books
+  - synopsis: Create an index rollup job with target_index_settings.
+    version: '>= 3.0'
+    path: /_plugins/_rollup/jobs/{id}
+    method: PUT
+    parameters:
+      id: books_with_settings
+    request:
+      payload:
+        rollup:
+          enabled: true
+          description: Rollup books.
+          schedule:
+            interval: 
+              period: 1
+              unit: Minutes
+          source_index: books
+          target_index: books_by_order_date
+          target_index_settings:
+            index.number_of_shards: 2
+            index.number_of_replicas: 0
+            index.codec: zlib
+          page_size: 1
+          delay: 0
+          continuous: false
+          dimensions:
+            - date_histogram:
+                source_field: order_date
+                fixed_interval: 1h
+            - terms:
+                source_field: title
+          metrics:
+            - source_field: pages
+              metrics:
+                - sum: {}
+                - avg: {}
+    response:
+      status: 201
+      payload:
+        _id: books_with_settings
+        rollup:
+          rollup_id: books_with_settings
+          enabled: true
+          target_index_settings:
+            index:
+              number_of_shards: '2'
+              number_of_replicas: '0'
+              codec: zlib
+  - synopsis: Get an index rollup job with target_index_settings.
+    version: '>= 3.0'
+    path: /_plugins/_rollup/jobs/{id}
+    method: GET
+    parameters:
+      id: books_with_settings
+    response:
+      status: 200
+      payload:
+        _id: books_with_settings
+        rollup:
+          rollup_id: books_with_settings
+          target_index_settings:
+            index:
+              number_of_shards: '2'
+              number_of_replicas: '0'
+              codec: zlib
+  - synopsis: Delete an index rollup job with target_index_settings.
+    version: '>= 3.0'
+    path: /_plugins/_rollup/jobs/{id}
+    method: DELETE
+    parameters:
+      id: books_with_settings
