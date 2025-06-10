@@ -1,0 +1,80 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Tests the creation and deletion of search configurations.
+
+prologues:
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 1
+    request:
+      payload:
+        name: banana
+        price: 1.99
+        description: this is a banana
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 2
+    request:
+      payload:
+        name: apple
+        price: 3.99
+        description: this is an apple
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 3
+    request:
+      payload:
+        name: test
+        price: 19.99
+        description: this is a test
+    response:
+      status: 201
+
+epilogues:
+  - path: /sample_index
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Creating a search configuration.
+    id: search_configuration
+    path: /_plugins/search_relevance/search_configurations
+    method: PUT
+    request: 
+      payload:
+        name: simple
+        query: "{\"query\": {\n\"match_all\": {}}}"
+        index: sample_index
+    response:
+      status: 200
+    output: # Save the search configuration id for later use.
+      search_configuration_id: payload.search_configuration_id
+  - synopsis: List all the search configurations created.
+    path: /_plugins/search_relevance/search_configurations
+    method: GET
+    response:
+      status: 200
+  - synopsis: Retrieve a specific search configuration.
+    path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
+    method: GET
+    parameters:
+      search_configuration_id: ${search_configuration.search_configuration_id}
+    response:
+      status: 200
+  - synopsis: Delete the search configuration. 
+    path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
+    method: DELETE
+    parameters:
+      search_configuration_id: ${search_configuration.search_configuration_id}
+    response:
+      status: 200
