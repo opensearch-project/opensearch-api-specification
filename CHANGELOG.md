@@ -5,6 +5,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Added
+
+- Added remaining APIs for LTR including store element operations, model management, feature set operations, routing support, and POST support for update operations ([#906](https://github.com/opensearch-project/opensearch-api-specification/pull/906))
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
 
 ### Removed
@@ -92,7 +94,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `ToolAttributes` to `ml._common.yaml` ([#878](https://github.com/opensearch-project/opensearch-api-specification/pull/878))
 - Added `GET _plugins/geospatial/_upload/stats`, `PUT`, `POST _plugins/geospatial/geojson/_upload`, `GET _plugins/geospatial/ip2geo/datasource`, `GET`, `PUT`, `DELETE _plugins/geospatial/ip2geo/datasource/{name}` and `PUT _plugins/geospatial/ip2geo/datasource/{name}/_settings` ([#893](https://github.com/opensearch-project/opensearch-api-specification/pull/893))
 - Added schemas for the score ranker search processor ([#899](https://github.com/opensearch-project/opensearch-api-specification/pull/899))
-- Added remaining APIs for LTR including store element operations, model management, feature set operations, routing support, and POST support for update operations ([#906](https://github.com/opensearch-project/opensearch-api-specification/pull/906))
 
 ### Removed
 
