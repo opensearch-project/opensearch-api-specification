@@ -65,6 +65,10 @@ components:
         requests:
           type: object
           description: An object with APIs as key and array of HTTP methods as values.
+          additionalProperties:
+            type: array
+            items:
+              type: string
 
     AuditConfig:
       type: object
@@ -159,6 +163,8 @@ components:
         tenants:
           type: object
           description: The tenants the user has access to with `read-write` or `read-only` access indicators.
+          additionalProperties:
+            type: boolean
         principal:
           type: ['null', string]
           description: The user's principal.
@@ -177,19 +183,6 @@ components:
         size_of_backendroles:
           type: string
           description: The size of the user's backend roles in bytes.
-
-    CertificateCountPerNode:
-      type: object
-      properties:
-        total:
-          type: number
-          description: The total number of nodes.
-        successful:
-          type: number
-          description: The number of nodes for which certificates can be fetched.
-        failed:
-          type: number
-          description: The number of nodes for which certificates could not be fetched.
 
     CertificatesDetail:
       type: object
@@ -245,19 +238,17 @@ components:
             $ref: '#/components/schemas/CertificatesDetail'
       
     GetCertificatesNew:
-      type: object
-      properties:
-        _nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/CertificateCountPerNode'
-        cluster_name:
-          type: string
-          description: Name of this cluster.
-        nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/CertificatesPerNode'
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              type: string
+              description: Name of this cluster.
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/CertificatesPerNode'
             
 
     ChangePasswordRequestContent:
@@ -522,7 +513,7 @@ components:
           type: [number, string]
         message:
           type: string
-          description: The nessage returned as part of an `OK` response.
+          description: The message returned as part of an `OK` response.
     
     Created:
       type: object
@@ -532,11 +523,6 @@ components:
         message:
           type: string
           description: The message returned as part of a `CREATED` response.
-
-    PatchOperations:
-      type: array
-      items:
-        $ref: '#/components/schemas/PatchOperation'
 
     PatchOperation:
       type: object
@@ -565,6 +551,10 @@ components:
         disabled_endpoints:
           type: object
           description: An object with disabled APIs as keys and an array of HTTP methods as values.
+          additionalProperties:
+            type: array
+            items:
+              type: string
 
     Role:
       type: object
@@ -737,6 +727,12 @@ components:
           type: boolean
         upgradeActions:
           type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
 
     UpgradePerform:
       type: object
@@ -745,6 +741,12 @@ components:
           type: string
         upgrades:
           type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
 
     User:
       type: object
