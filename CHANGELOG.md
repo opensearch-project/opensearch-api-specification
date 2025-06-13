@@ -17,6 +17,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added specs for Search Relevance Workbench plugin for stats endpoints ([#920](https://github.com/opensearch-project/opensearch-api-specification/pull/920))
 - Added specs for LTR plugin for store endpoints ([#861](https://github.com/opensearch-project/opensearch-api-specification/pull/861))
 - Added specs for Search Relevance Workbench plugin for judgment endpoints ([#897](https://github.com/opensearch-project/opensearch-api-specification/pull/897))
 - Added specs for Search Relevance Workbench plugin for experiment endpoints ([#897](https://github.com/opensearch-project/opensearch-api-specification/pull/897))
