@@ -1,0 +1,42 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test nodes stats.
+
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
+
+chapters:
+  - synopsis: Get stats for all nodes.
+    path: /_plugins/_search_relevance/stats
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get stats for a node.
+    path: /_plugins/_search_relevance/{node_id}/stats
+    method: GET
+    parameters:
+      node_id: _all
+    response:
+      status: 200
+  - synopsis: Get specific stat for all nodes.
+    path: /_plugins/_search_relevance/stats/{stat}
+    parameters:
+      stat: experiment_hybrid_optimizer_executions
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get specific stat for a node.
+    path: /_plugins/_search_relevance/{node_id}/stats/{stat}
+    parameters:
+      node_id: _all
+      stat: experiment_hybrid_optimizer_executions
+    method: GET
+    response:
+      status: 200

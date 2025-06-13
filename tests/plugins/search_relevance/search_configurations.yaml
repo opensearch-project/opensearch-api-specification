@@ -3,6 +3,14 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 description: Tests the creation and deletion of search configurations.
 
 prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
   - path: /{index}/_doc/{doc_id}
     method: POST
     parameters:
@@ -48,7 +56,7 @@ epilogues:
 chapters:
   - synopsis: Creating a search configuration.
     id: search_configuration
-    path: /_plugins/search_relevance/search_configurations
+    path: /_plugins/_search_relevance/search_configurations
     method: PUT
     request: 
       payload:
@@ -61,19 +69,19 @@ chapters:
     output: # Save the search configuration id for later use.
       search_configuration_id: payload.search_configuration_id
   - synopsis: List all the search configurations created.
-    path: /_plugins/search_relevance/search_configurations
+    path: /_plugins/_search_relevance/search_configurations
     method: GET
     response:
       status: 200
   - synopsis: Retrieve a specific search configuration.
-    path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
+    path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
     method: GET
     parameters:
       search_configuration_id: ${search_configuration.search_configuration_id}
     response:
       status: 200
   - synopsis: Delete the search configuration. 
-    path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
+    path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
     method: DELETE
     parameters:
       search_configuration_id: ${search_configuration.search_configuration_id}

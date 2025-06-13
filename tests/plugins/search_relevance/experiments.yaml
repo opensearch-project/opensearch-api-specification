@@ -3,6 +3,14 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 description: Tests the creation and deletion of experiments.
 
 prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
   - path: /{index}/_doc/{doc_id}
     method: POST
     parameters:
@@ -40,7 +48,7 @@ prologues:
     response:
       status: 201
   - id: query_set_sampling
-    path: /_plugins/search_relevance/query_sets
+    path: /_plugins/_search_relevance/query_sets
     method: POST
     request: 
       payload:
@@ -53,7 +61,7 @@ prologues:
     output: # Save the query id for later use.
       query_set_id: payload.query_set_id
   - id: search_configuration1
-    path: /_plugins/search_relevance/search_configurations
+    path: /_plugins/_search_relevance/search_configurations
     method: PUT
     request: 
       payload:
@@ -66,7 +74,7 @@ prologues:
     output: # Save the search configuration id for later use.
       search_configuration_id: payload.search_configuration_id
   - id: search_configuration2
-    path: /_plugins/search_relevance/search_configurations
+    path: /_plugins/_search_relevance/search_configurations
     method: PUT
     request: 
       payload:
@@ -78,21 +86,41 @@ prologues:
       status: 200
     output: # Save the search configuration id for later use.
       search_configuration_id: payload.search_configuration_id
+  - id: judgment1
+    path: /_plugins/_search_relevance/judgments
+    method: PUT
+    request: 
+      payload:
+        name: UBIbaseline
+        description: UBI judgment
+        type: UBI_JUDGMENT
+        clickModel: coec
+        maxRank: 10
+    response:
+      status: 200
+    output: # Save the judgment id for later use.
+      judgment_id: payload.judgment_id
 
 epilogues:
-  - path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
+  - path: /_plugins/_search_relevance/judgments/{judgment_id}
+    method: DELETE
+    parameters:
+      judgment_id: ${judgment1.judgment_id}
+    response:
+      status: 200
+  - path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
     method: DELETE
     parameters:
       search_configuration_id: ${search_configuration1.search_configuration_id}
     response:
       status: 200
-  - path: /_plugins/search_relevance/search_configurations/{search_configuration_id}
+  - path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
     method: DELETE
     parameters:
       search_configuration_id: ${search_configuration2.search_configuration_id}
     response:
       status: 200
-  - path: /_plugins/search_relevance/query_sets/{query_set_id}
+  - path: /_plugins/_search_relevance/query_sets/{query_set_id}
     method: DELETE
     parameters:
       query_set_id: ${query_set_sampling.query_set_id}
@@ -103,9 +131,9 @@ epilogues:
     status: [200, 404]
 
 chapters:
-  - synopsis: Creating an experiment.
-    id: experiment
-    path: /_plugins/search_relevance/experiments
+  - synopsis: Creating a pairwise experiment.
+    id: pairwise_experiment
+    path: /_plugins/_search_relevance/experiments
     method: PUT
     request: 
       payload:
@@ -119,22 +147,70 @@ chapters:
       status: 200
     output: # Save the search experiment_id id for later use.
       experiment_id: payload.experiment_id
+  - synopsis: Creating a pointwise experiment.
+    id: pointwise_experiment
+    path: /_plugins/_search_relevance/experiments
+    method: PUT
+    request: 
+      payload:
+        querySetId: ${query_set_sampling.query_set_id}
+        searchConfigurationList: 
+          - ${search_configuration1.search_configuration_id}
+        judgmentList:
+          - ${judgment1.judgment_id}
+        size: 10
+        type: POINTWISE_EVALUATION
+    response:
+      status: 200
+    output: # Save the search experiment_id id for later use.
+      experiment_id: payload.experiment_id
+  - synopsis: Creating a hybrid optimizer experiment.
+    id: hybrid_experiment
+    path: /_plugins/_search_relevance/experiments
+    method: PUT
+    request: 
+      payload:
+        querySetId: ${query_set_sampling.query_set_id}
+        searchConfigurationList: 
+          - ${search_configuration1.search_configuration_id}
+        judgmentList:
+          - ${judgment1.judgment_id}
+        size: 10
+        type: HYBRID_OPTIMIZER
+    response:
+      status: 200
+    output: # Save the search experiment_id id for later use.
+      experiment_id: payload.experiment_id
   - synopsis: List all the experiments created.
-    path: /_plugins/search_relevance/experiments
+    path: /_plugins/_search_relevance/experiments
     method: GET
     response:
       status: 200 
   - synopsis: Retrieve a specific experiment.
-    path: /_plugins/search_relevance/experiments/{experiment_id}
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
     method: GET
     parameters:
-      experiment_id: ${experiment.experiment_id}
+      experiment_id: ${pairwise_experiment.experiment_id}
     response:
       status: 200
-  - synopsis: Delete the experiment. 
-    path: /_plugins/search_relevance/experiments/{experiment_id}
+  - synopsis: Delete the pairwise experiment. 
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
     method: DELETE
     parameters:
-      experiment_id: ${experiment.experiment_id}
+      experiment_id: ${pairwise_experiment.experiment_id}
+    response:
+      status: 200
+  - synopsis: Delete the pointwise experiment. 
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
+    method: DELETE
+    parameters:
+      experiment_id: ${pointwise_experiment.experiment_id}
+    response:
+      status: 200
+  - synopsis: Delete the hybrid experiment. 
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
+    method: DELETE
+    parameters:
+      experiment_id: ${hybrid_experiment.experiment_id}
     response:
       status: 200
