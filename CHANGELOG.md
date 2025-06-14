@@ -6,6 +6,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
+- Added `target_index_settings` to `Index Rollups API` from `index-management` plugin ([#822](https://github.com/opensearch-project/opensearch-api-specification/pull/822))
 
 ### Removed
 
