@@ -3,6 +3,14 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 description: Tests the creation and deletion of query sets.
 
 prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
   - path: /{index}/_doc/{doc_id}
     method: POST
     parameters:
@@ -48,7 +56,7 @@ epilogues:
 chapters:
   - synopsis: Creating a query set with sampling.
     id: query_set_sampling
-    path: /_plugins/search_relevance/query_sets
+    path: /_plugins/_search_relevance/query_sets
     method: POST
     request: 
       payload:
@@ -62,7 +70,7 @@ chapters:
       query_set_id: payload.query_set_id
   - synopsis: Creating a query set with manual input.
     id: query_set_manual_input
-    path: /_plugins/search_relevance/query_sets
+    path: /_plugins/_search_relevance/query_sets
     method: PUT
     request: 
       payload:
@@ -75,26 +83,26 @@ chapters:
     output: # Save the query id for later use.
       query_set_id: payload.query_set_id
   - synopsis: List all the query sets created.
-    path: /_plugins/search_relevance/query_sets
+    path: /_plugins/_search_relevance/query_sets
     method: GET
     response:
       status: 200
   - synopsis: Retrieve a specific query set.
-    path: /_plugins/search_relevance/query_sets/{query_set_id}
+    path: /_plugins/_search_relevance/query_sets/{query_set_id}
     method: GET
     parameters:
       query_set_id: ${query_set_manual_input.query_set_id}
     response:
       status: 200
   - synopsis: Delete the query set created with sampling. 
-    path: /_plugins/search_relevance/query_sets/{query_set_id}
+    path: /_plugins/_search_relevance/query_sets/{query_set_id}
     method: DELETE
     parameters:
       query_set_id: ${query_set_sampling.query_set_id}
     response:
       status: 200
   - synopsis: Delete the query set created with manual input. 
-    path: /_plugins/search_relevance/query_sets/{query_set_id}
+    path: /_plugins/_search_relevance/query_sets/{query_set_id}
     method: DELETE
     parameters:
       query_set_id: ${query_set_manual_input.query_set_id}
