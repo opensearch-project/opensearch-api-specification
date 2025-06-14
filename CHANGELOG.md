@@ -6,12 +6,15 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
+- Added `time_in_execution` and `time_in_execution_millis` to `PendingTask` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
+- Added `phase_results_processor` to `NodeInfoSearchPipelines` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 
 ### Removed
 
 ### Fixed
 
 ### Changed
+- Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 
 ## [0.2.0] - 2025-05-25
 
