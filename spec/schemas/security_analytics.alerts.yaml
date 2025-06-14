@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `security_analytics.alerts` Category
+  description: Schemas of `security_analytics.alerts` Category
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    GetAlertsResponse:
+      type: object
+      properties:
+        alerts:
+          $ref: '#/components/schemas/Alerts'
+        total_alerts:
+          type: integer
+          format: int64
+      required:
+        - alerts
+        - total_alerts
+
+    Alerts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Alert'
+
+    Alert:
+      type: object
+      properties:
+        detector_id:
+          type: string
+        id:
+          type: string
+        version:
+          type: integer
+          format: int64
+        schema_version:
+          type: integer
+          format: int64
+        trigger_id:
+          type: string
+        trigger_name:
+          type: string
+        finding_ids:
+          type: array
+          items:
+            type: string
+        related_doc_ids:
+          type: array
+          items:
+            type: string
+        state:
+          $ref: '#/components/schemas/AlertState'
+        error_message:
+          type: ['null', string]
+        alert_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertError'
+        severity:
+          type: string
+        action_execution_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionExecutionResult'
+        start_time:
+          type: string
+        last_notification_time:
+          type: string
+        end_time:
+          type: ['null', string]
+        acknowledged_time:
+          type: ['null', string]
+
+    AlertError:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        message:
+          type: string
+
+    ActionExecutionResult:
+      type: object
+      properties: 
+        action_id:
+          type: string
+        last_execution_time:
+          type: string
+        throttled_count:
+          type: integer
+          format: int64
+
+    AlertState:
+      type: string
+      enum: [ACKNOWLEDGED, ACTIVE, COMPLETED, DELETED, ERROR]
+
+    AlertSeverityLevel:
+      type: string
+      description: Severity level with 1 the highest and 5 the lowest. `ALL` designates no particular severity.
+      enum: ['1', '2', '3', '4', '5', ALL]

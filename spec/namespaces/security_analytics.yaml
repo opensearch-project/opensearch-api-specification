@@ -1,0 +1,312 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Security Analytics API
+  description: OpenSearch Security Analytics API.
+  version: 1.0.0
+paths:
+  /_plugins/_security_analytics/alerts:
+    get:
+      operationId: security_analytics.get_alerts.0
+      x-operation-group: security_analytics.get_alerts
+      x-version-added: '2.4'
+      description: Retrieve alerts related to a specific detector type or detector ID.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/security-analytics/api-tools/alert-finding-api/#get-alerts
+      parameters:
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.alertState'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.detectorType'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.detector_id'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.endTime'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.missing'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.searchString'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.severityLevel'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.size'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.sortOrder'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.sortString'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.startIndex'
+        - $ref: '#/components/parameters/security_analytics.get_alerts::query.startTime'
+      responses:
+        '200':
+          $ref: '#/components/responses/security_analytics.get_alerts@200'
+  
+  /_plugins/_security_analytics/findings/_search:
+    get:
+      operationId: security_analytics.get_findings.0
+      x-operation-group: security_analytics.get_findings
+      x-version-added: '2.4'
+      description: Retrieve findings related to a specific detector type or detector ID.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/security-analytics/api-tools/alert-finding-api/#get-findings
+      parameters:
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.detectionType'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.detectorType'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.detector_id'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.endTime'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.findingIds'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.missing'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.searchString'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.severity'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.size'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.sortOrder'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.sortString'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.startIndex'
+        - $ref: '#/components/parameters/security_analytics.get_findings::query.startTime'
+      responses:
+        '200':
+          $ref: '#/components/responses/security_analytics.get_findings@200'
+
+  /_plugins/_security_analytics/findings/correlate:
+    get:
+      operationId: security_analytics.search_finding_correlations.0
+      x-operation-group: security_analytics.search_finding_correlations
+      x-version-added: '2.7'
+      description: List correlations for a finding.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/security-analytics/api-tools/correlation-eng/#list-correlations-for-a-finding-belonging-to-a-log-type
+      parameters:
+        - $ref: '#/components/parameters/security_analytics.search_finding_correlations::query.detector_type'
+        - $ref: '#/components/parameters/security_analytics.search_finding_correlations::query.finding'
+        - $ref: '#/components/parameters/security_analytics.search_finding_correlations::query.nearby_findings'
+        - $ref: '#/components/parameters/security_analytics.search_finding_correlations::query.time_window'
+      responses:
+        '200':
+          $ref: '#/components/responses/security_analytics.search_finding_correlations@200'
+
+components:
+  responses:
+    security_analytics.get_alerts@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security_analytics.alerts.yaml#/components/schemas/GetAlertsResponse'
+    security_analytics.get_findings@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security_analytics.findings.yaml#/components/schemas/GetFindingsResponse'
+    security_analytics.search_finding_correlations@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security_analytics.findings.yaml#/components/schemas/SearchFindingCorrelationsResponse'
+
+  parameters:
+    security_analytics.get_alerts::query.detector_id:
+      name: detector_id
+      in: query
+      description: The ID of the detector used to fetch alerts. Optional when `detectorType` is specified. Otherwise required.
+      schema:
+        type: string
+    security_analytics.get_alerts::query.detectorType:
+      name: detectorType
+      in: query
+      description: The type of detector used to fetch alerts. Optional when `detector_id` is specified. Otherwise required.
+      schema:
+        type: string
+    security_analytics.get_alerts::query.endTime:
+      name: endTime
+      in: query
+      description: The end timestamp (in ms) of the time window in which you want to retrieve alerts. Optional.
+      schema:
+        type: integer
+        format: int64
+      required: false
+    security_analytics.get_alerts::query.severityLevel:
+      name: severityLevel
+      in: query
+      description: Used to filter by alert severity level. Optional.
+      schema:
+        $ref: '../schemas/security_analytics.alerts.yaml#/components/schemas/AlertSeverityLevel'
+      required: false
+    security_analytics.get_alerts::query.alertState:
+      name: alertState
+      in: query
+      description: Used to filter by alert state. Optional.
+      schema:
+        $ref: '../schemas/security_analytics.alerts.yaml#/components/schemas/AlertState'
+      required: false
+    security_analytics.get_alerts::query.sortString:
+      name: sortString
+      in: query
+      description: The string used by Security Analytics to sort the alerts. Optional.
+      schema:
+        type: string
+        default: start_time
+      required: false
+    security_analytics.get_alerts::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The order used to sort the list of findings. Possible values are `asc` or `desc`. Optional.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+        default: asc
+      required: false
+    security_analytics.get_alerts::query.missing:
+      name: missing
+      in: query
+      description: Used to sort by whether the field `missing` exists or not in the documents associated with the alert. Optional.
+      schema:
+        type: string
+      required: false
+    security_analytics.get_alerts::query.size:
+      name: size
+      in: query
+      description: The maximum number of results returned in the response. Optional.
+      schema:
+        type: integer
+        format: int64
+        default: 20
+      required: false
+    security_analytics.get_alerts::query.startIndex:
+      name: startIndex
+      in: query
+      description: The pagination index. Optional.
+      schema:
+        type: integer
+        format: int64
+        default: 0
+      required: false
+    security_analytics.get_alerts::query.searchString:
+      name: searchString
+      in: query
+      description: The alert attribute you want returned in the search. Optional.
+      schema:
+        type: string
+      required: false
+    security_analytics.get_alerts::query.startTime:
+      name: startTime
+      in: query
+      description: The beginning timestamp (in ms) of the time window in which you want to retrieve alerts. Optional.
+      schema:
+        type: integer
+        format: int64
+      required: false
+    security_analytics.get_findings::query.detector_id:
+      name: detector_id
+      in: query
+      description: The ID of the detector used to fetch alerts. Optional when the `detectorType` is specified. Otherwise required.
+      schema:
+        type: string
+    security_analytics.get_findings::query.detectorType:
+      name: detectorType
+      in: query
+      description: The type of detector used to fetch alerts. Optional when the `detector_id` is specified. Otherwise required.
+      schema:
+        type: string
+    security_analytics.get_findings::query.endTime:
+      name: endTime
+      in: query
+      description: The end timestamp (in ms) of the time window in which you want to retrieve findings. Optional.
+      schema:
+        type: string
+      required: false
+    security_analytics.get_findings::query.findingIds:
+      name: findingIds
+      in: query
+      description: The comma-separated id list of findings for which you want retrieve details. Optional.
+      schema:
+        type: string
+      required: false
+    security_analytics.get_findings::query.missing:
+      name: missing
+      in: query
+      description: Used to sort by whether the field `missing` exists or not in the documents associated with the finding. Optional.
+      schema:
+        type: string
+      required: false
+    security_analytics.get_findings::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The order used to sort the list of findings. Possible values are `asc` or `desc`. Optional.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+        default: asc
+      required: false
+    security_analytics.get_findings::query.size:
+      name: size
+      in: query
+      description: The maximum number of results returned in the response. Optional.
+      schema:
+        type: integer
+        format: int64
+        default: 20
+      required: false
+    security_analytics.get_findings::query.searchString:
+      name: searchString
+      in: query
+      description: The finding attribute you want returned in the search. To search in a specific index, specify the index name in the request path. For example, to search findings in the indexABC index, use `searchString=indexABC’. Optional.
+      schema:
+        type: string
+      required: false
+    security_analytics.get_findings::query.sortString:
+      name: sortString
+      in: query
+      description: The string used by the Alerting plugin to sort the findings. Optional.
+      schema:
+        type: string
+        default: timestamp
+      required: false
+    security_analytics.get_findings::query.startIndex:
+      name: startIndex
+      in: query
+      description: The pagination index. Optional.
+      schema:
+        type: integer
+        format: int64
+        default: 0
+      required: false
+    security_analytics.get_findings::query.startTime:
+      name: startTime
+      in: query
+      description: The beginning timestamp (in ms) of the time window in which you want to retrieve findings. Optional.
+      schema:
+        type: integer
+        format: int64
+      required: false
+    security_analytics.get_findings::query.detectionType:
+      name: detectionType
+      in: query
+      description: The detection type that dictates the retrieval type for the findings. When the detection type is `threat`, it fetches threat intelligence feeds. When the detection type is `rule`, findings are fetched based on the detector’s rule. Optional.
+      schema:
+        $ref: '../schemas/security_analytics.findings.yaml#/components/schemas/DetectionType'
+        default: rule
+      required: false
+    security_analytics.get_findings::query.severity:
+      name: severity
+      in: query
+      description: The rule severity for which retrieve findings. Severity can be `critical`, `high`, `medium`, or `low`. Optional.
+      schema:
+        $ref: '../schemas/security_analytics.findings.yaml#/components/schemas/RuleSeverity'
+      required: false
+    security_analytics.search_finding_correlations::query.finding:
+      name: finding
+      in: query
+      description: The finding ID for which you want to find other findings that are correlated. Required.
+      schema:
+        type: string
+      required: true
+    security_analytics.search_finding_correlations::query.detector_type:
+      name: detector_type
+      in: query
+      description: The log type of findings you want to correlate with the specified finding. Required.
+      schema:
+        type: string
+      required: true
+    security_analytics.search_finding_correlations::query.nearby_findings:
+      name: nearby_findings
+      in: query
+      description: The number of nearby findings you want to return. Optional.
+      schema:
+        type: integer
+        format: int64
+        default: 10
+      required: false
+    security_analytics.search_finding_correlations::query.time_window:
+      name: time_window
+      in: query
+      description: The time window (in ms) in which all of the correlations must have occurred together. Optional.
+      schema:
+        type: integer
+        format: int64
+        default: 300000
+      required: false
