@@ -6,6 +6,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
+- Added specs for Search Relevance Workbench plugin for stats endpoints ([#920](https://github.com/opensearch-project/opensearch-api-specification/pull/920))
 - Added `time_in_execution` and `time_in_execution_millis` to `PendingTask` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Added `phase_results_processor` to `NodeInfoSearchPipelines` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Added new neural search stats and response filtering parameters (`include_individual_nodes`, `include_all_nodes`, `include_info`) to neural stats API ([#921](https://github.com/opensearch-project/opensearch-api-specification/pull/921))
