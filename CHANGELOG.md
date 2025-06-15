@@ -6,6 +6,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
+- Added specs for Search Relevance Workbench plugin for stats endpoints ([#920](https://github.com/opensearch-project/opensearch-api-specification/pull/920))
 
 ### Removed
 
