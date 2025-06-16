@@ -1,0 +1,421 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: LTR featureset operations including search and CRUD.
+version: '>= 2.19'
+prologues:
+  - path: /_ltr
+    method: PUT
+    status: [200]
+  - path: /_ltr/{store}
+    method: PUT
+    parameters:
+      store: test_store
+    status: [200]
+
+epilogues:
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+  - path: /_ltr/{store}
+    method: DELETE
+    parameters:
+      store: test_store
+    status: [200, 404]
+
+chapters:
+  # Search operations
+  - synopsis: Search for featuresets in the default store.
+    method: GET
+    path: /_ltr/_featureset
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in the default store with prefix filter.
+    method: GET
+    path: /_ltr/_featureset
+    parameters:
+      prefix: test
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in the default store with pagination.
+    method: GET
+    path: /_ltr/_featureset
+    parameters:
+      from: 0
+      size: 10
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in a specific store.
+    method: GET
+    path: /_ltr/{store}/_featureset
+    parameters:
+      store: test_store
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in a specific store with prefix filter.
+    method: GET
+    path: /_ltr/{store}/_featureset
+    parameters:
+      store: test_store
+      prefix: test
+    response:
+      status: 200
+
+  - synopsis: Search for featuresets in a specific store with pagination.
+    method: GET
+    path: /_ltr/{store}/_featureset
+    parameters:
+      store: test_store
+      from: 0
+      size: 5
+    response:
+      status: 200
+
+  # Individual featureset CRUD operations (default store)
+  - synopsis: Create a featureset in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    request:
+      payload:
+        featureset:
+          name: test_featureset
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+            - name: feature2
+              params: [keywords]
+              template:
+                match:
+                  description: '{{keywords}}'
+    response:
+      status: [200, 201]
+
+  - synopsis: Create a featureset with routing parameter in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_routing
+      routing: test_routing_value
+    request:
+      payload:
+        featureset:
+          name: test_featureset_routing
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a featureset from the default store.
+    method: GET
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    response:
+      status: 200
+
+  - synopsis: Try to update a featureset in the default store (should fail).
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    request:
+      payload:
+        featureset:
+          name: test_featureset
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+            - name: feature2
+              params: [keywords]
+              template:
+                match:
+                  description: '{{keywords}}'
+            - name: feature3
+              params: [keywords]
+              template:
+                match:
+                  content: '{{keywords}}'
+    response:
+      status: [409]
+
+  # POST update operations (default store)
+  - synopsis: Create a featureset for POST update testing in the default store.
+    method: PUT
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_post
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+    response:
+      status: [200, 201]
+
+  - synopsis: Update a featureset using POST in the default store.
+    method: POST
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_post
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  description: '{{keywords}}'
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Update a featureset using POST with routing in the default store.
+    method: POST
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+      routing: test_routing
+    request:
+      payload:
+        featureset:
+          name: test_featureset_post
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  content: '{{keywords}}'
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Delete a featureset from the default store.
+    method: DELETE
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the POST test featureset from the default store.
+    method: DELETE
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_post
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted featureset from the default store.
+    method: GET
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset
+    response:
+      status: 404
+
+  # Individual featureset CRUD operations (named store)
+  - synopsis: Create a featureset in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+            - name: feature2
+              params: [keywords]
+              template:
+                match:
+                  description: '{{keywords}}'
+    response:
+      status: [200, 201]
+
+  - synopsis: Create a featureset with routing parameter in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_routing
+      routing: test_routing_value
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_routing
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+    response:
+      status: [200, 201]
+
+  - synopsis: Get a featureset from a specific store.
+    method: GET
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    response:
+      status: 200
+
+  - synopsis: Try to update a featureset in a specific store (should fail).
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+            - name: feature2
+              params: [keywords]
+              template:
+                match:
+                  description: '{{keywords}}'
+            - name: feature3
+              params: [keywords]
+              template:
+                match:
+                  content: '{{keywords}}'
+    response:
+      status: [409]
+
+  # POST update operations (named store)
+  - synopsis: Create a featureset for POST update testing in a specific store.
+    method: PUT
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_post
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  title: '{{keywords}}'
+    response:
+      status: [200, 201]
+
+  - synopsis: Update a featureset using POST in a specific store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_post
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  description: '{{keywords}}'
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Update a featureset using POST with routing in a specific store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+      routing: test_routing
+    request:
+      payload:
+        featureset:
+          name: test_featureset_store_post
+          features:
+            - name: feature1
+              params: [keywords]
+              template:
+                match:
+                  content: '{{keywords}}'
+    response:
+      status: [200, 404, 409]
+
+  - synopsis: Delete a featureset from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the POST test featureset from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_post
+    response:
+      status: [200, 404]
+
+  # Cleanup routing test featuresets
+  - synopsis: Delete the routing test featureset from the default store.
+    method: DELETE
+    path: /_ltr/_featureset/{id}
+    parameters:
+      id: test_featureset_routing
+    response:
+      status: [200, 404]
+
+  - synopsis: Delete the routing test featureset from a specific store.
+    method: DELETE
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store_routing
+    response:
+      status: [200, 404]
+
+  - synopsis: Try to get a deleted featureset from a specific store.
+    method: GET
+    path: /_ltr/{store}/_featureset/{id}
+    parameters:
+      store: test_store
+      id: test_featureset_store
+    response:
+      status: 404

@@ -5,6 +5,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Added
+
+- Added remaining APIs for LTR including store element operations, model management, feature set operations, routing support, and POST support for update operations ([#906](https://github.com/opensearch-project/opensearch-api-specification/pull/906))
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
 - Added specs for Search Relevance Workbench plugin for stats endpoints ([#920](https://github.com/opensearch-project/opensearch-api-specification/pull/920))
 - Added `time_in_execution` and `time_in_execution_millis` to `PendingTask` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
