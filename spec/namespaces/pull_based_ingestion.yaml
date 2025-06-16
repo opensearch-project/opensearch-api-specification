@@ -1,0 +1,114 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Pull-based Ingestion Management API
+  description: OpenSearch Pull-based Ingestion Management API.
+  version: 1.0.0
+paths:
+  /{index}/ingestion/_pause:
+    post:
+      summary: Pause streaming ingestion for the given index
+      operationId: pull_ingestion.pause
+      x-operation-group: pull_ingestion.pause
+      x-version-added: '3.1'
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/index'
+        - $ref: '#/components/parameters/cluster_manager_timeout'
+        - $ref: '#/components/parameters/timeout'
+      responses:
+        '200':
+          description: Ingestion pause request acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/pull_based_ingestion.yaml#/components/schemas/PauseIngestionResponse'
+
+  /{index}/ingestion/_resume:
+    post:
+      summary: Resume streaming ingestion for the given index
+      operationId: pull_ingestion.resume
+      x-operation-group: pull_ingestion.resume
+      x-version-added: '3.1'
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/index'
+        - $ref: '#/components/parameters/cluster_manager_timeout'
+        - $ref: '#/components/parameters/timeout'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/pull_based_ingestion.yaml#/components/schemas/ResumeIngestionRequest'
+      responses:
+        '200':
+          description: Ingestion resume request acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/pull_based_ingestion.yaml#/components/schemas/ResumeIngestionResponse'
+
+  /{index}/ingestion/_state:
+    get:
+      summary: Get the current ingestion state for a given index
+      operationId: pull_ingestion.get_state
+      x-operation-group: pull_ingestion.get_state
+      x-version-added: '3.1'
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/index'
+        - $ref: '#/components/parameters/timeout'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/next_token'
+      responses:
+        '200':
+          description: Ingestion state retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/pull_based_ingestion.yaml#/components/schemas/GetIngestionStateResponse'
+
+components:
+  parameters:
+    index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion is being managed
+
+    cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: The amount of time to wait for a connection to the cluster manager node. Default is 30s.
+
+    timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: The amount of time to wait for a response from the cluster. Default is 30s.
+
+    size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The number of results to return per page.
+
+    next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: string
+      description: The token to retrieve the next page of results.

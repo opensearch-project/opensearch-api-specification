@@ -1,0 +1,78 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test pull-based ingestion management APIs.
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: test-index
+    request:
+      payload:
+        settings:
+          ingestion_source:
+            type: kafka
+            pointer.init.reset: earliest
+            param:
+              topic: test-topic
+              bootstrap_servers: localhost:50909
+          index:
+            number_of_shards: 1
+            number_of_replicas: 0
+            replication.type: SEGMENT
+        mappings:
+          properties:
+            name:
+              type: text
+epilogues:
+  - path: /test-index
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Pause ingestion for test-index.
+    path: /test-index/ingestion/_pause
+    method: POST
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        shards_acknowledged: true
+
+  - synopsis: Check ingestion state after pausing ingestion.
+    id: ingestion_state_after_pause
+    path: /test-index/ingestion/_state
+    method: GET
+    response:
+      status: 200
+      payload:
+        ingestion_state:
+          test-index:
+            - shard: 0
+              poller_paused: true
+
+  - synopsis: Resume ingestion with reset settings.
+    path: /test-index/ingestion/_resume
+    method: POST
+    request:
+      payload:
+        reset_settings:
+          - shard: 0
+            mode: OFFSET
+            value: "0"
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        shards_acknowledged: true
+
+  - synopsis: Check ingestion state after resuming ingestion.
+    id: ingestion_state_after_resume
+    path: /test-index/ingestion/_state
+    method: GET
+    response:
+      status: 200
+      payload:
+        ingestion_state:
+          test-index:
+            - shard: 0
+              poller_paused: false
+
