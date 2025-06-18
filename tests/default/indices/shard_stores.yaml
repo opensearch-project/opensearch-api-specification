@@ -1,6 +1,7 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test _shard_stores API.
+
 prologues:
   - path: /_bulk
     method: POST
@@ -13,6 +14,7 @@ prologues:
         - {director: Quentin Tarantino, title: Pulp Fiction, year: 1994}
         - {create: {_index: movies, _id: movie2}}
         - {director: Christopher Nolan, title: Inception, year: 2010}
+
 epilogues:
   - path: /movies
     method: DELETE
@@ -21,8 +23,12 @@ epilogues:
 chapters:
   - synopsis: Verify shard store information for a specific index.
     path: /{index}/_shard_stores
+    method: GET
     parameters:
       index: movies
-    method: GET
+      allow_no_indices: false
+      expand_wildcards: open
+      ignore_unavailable: false
+      status: all
     response:
       status: 200
