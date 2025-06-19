@@ -978,11 +978,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -1004,11 +1006,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -1961,11 +1965,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -1988,11 +1994,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -2565,8 +2573,7 @@ components:
               ext:
                 description: Configuration of search extensions defined by OpenSearch plugins.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               from:
                 description: |-
                   Starting document offset.
@@ -2594,8 +2601,6 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
-              rank:
-                $ref: '../schemas/_common.yaml#/components/schemas/RankContainer'
               min_score:
                 description: |-
                   Minimum `_score` for matching documents.
@@ -2704,8 +2709,7 @@ components:
                   The key is the variable name.
                   The value is the variable value.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               profile:
                 description: If `true`, the query execution is profiled.
                 type: boolean
@@ -2978,7 +2982,12 @@ components:
               explanation:
                 $ref: '../schemas/_core.explain.yaml#/components/schemas/Explanation'
               get:
-                $ref: '../schemas/_common.yaml#/components/schemas/InlineGet'
+                allOf:
+                  - $ref: '../schemas/_common.yaml#/components/schemas/InlineGet'
+                  - type: object
+                    properties:
+                      _source:
+                        $ref: '../schemas/_common.yaml#/components/schemas/TDocument'
             required:
               - _id
               - _index
@@ -3004,7 +3013,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.get.yaml#/components/schemas/GetResult'
+            allOf:
+              - $ref: '../schemas/_core.get.yaml#/components/schemas/GetResultBase'
+              - type: object
+                properties:
+                  _source:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TDocument'
     get@404:
       content:
         application/json:
@@ -3068,7 +3082,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
+            $ref: '../schemas/_common.yaml#/components/schemas/TDocument'
     get_source@404:
       content:
         application/json:
@@ -3210,22 +3224,19 @@ components:
             type: object
             properties:
               result:
-                oneOf:
-                  - type: number
-                  - type: string
-                  - type: boolean
+                $ref: '../schemas/_common.yaml#/components/schemas/TResult'
             required:
               - result
     scroll@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResponse'
     search@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResponse'
     search@400:
       content:
         application/json:
@@ -3264,54 +3275,14 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              took:
-                type: integer
-                format: int64
-              timed_out:
-                type: boolean
-              _shards:
-                $ref: '../schemas/_common.yaml#/components/schemas/ShardStatistics'
-              hits:
-                $ref: '../schemas/_core.search.yaml#/components/schemas/HitsMetadata'
-              aggregations:
-                type: object
-                additionalProperties:
-                  $ref: '../schemas/_common.aggregations.yaml#/components/schemas/Aggregate'
-              _clusters:
-                $ref: '../schemas/_common.yaml#/components/schemas/ClusterStatistics'
-              fields:
-                type: object
-                additionalProperties:
-                  type: object
-              max_score:
-                type: number
-                format: float
-              num_reduce_phases:
-                type: integer
-                format: int32
-              profile:
-                $ref: '../schemas/_core.search.yaml#/components/schemas/Profile'
-              pit_id:
-                $ref: '../schemas/_common.yaml#/components/schemas/Id'
-              _scroll_id:
-                $ref: '../schemas/_common.yaml#/components/schemas/ScrollId'
-              suggest:
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    $ref: '../schemas/_core.search.yaml#/components/schemas/Suggest'
-              terminated_early:
-                type: boolean
-              status:
-                type: number
-            required:
-              - _shards
-              - hits
-              - timed_out
-              - took
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    format: int32
+                    x-version-added: '2.18'
     termvectors@200:
       content:
         application/json:
@@ -5983,6 +5954,14 @@ components:
       schema:
         type: boolean
       style: form
+    search_template::query.phase_took:
+      name: phase_took
+      in: query
+      description: Indicates whether to return phase-level `took` time values in the response.
+      schema:
+        type: boolean
+        default: false
+      style: form
     search_template::query.preference:
       in: query
       name: preference
@@ -6024,6 +6003,13 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
+    search_template::query.search_pipeline:
+      name: search_pipeline
+      in: query
+      description: Customizable sequence of processing stages applied to search queries.
+      schema:
+        type: string
+        description: Customizable sequence of processing stages applied to search queries.
     search_template::query.search_type:
       in: query
       name: search_type

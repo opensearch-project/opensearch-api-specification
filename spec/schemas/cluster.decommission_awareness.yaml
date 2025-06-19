@@ -6,16 +6,21 @@ info:
 paths: {}
 components:
   schemas:
-    DecommissionStatusResponse:
+    DecommissionStatus:
+      description: An enumeration of the states during decommissioning.
       oneOf:
-        - $ref: '#/components/schemas/ZoneDecommissionStatusResponse'
-    ZoneDecommissionStatusResponse:
-      type: object
-      additionalProperties:
-        type: string
-        enum:
-          - DRAINING
-          - FAILED
-          - INIT
-          - IN_PROGRESS
-          - SUCCESSFUL
+        - type: string
+          const: INIT
+          description: Decommission process is initiated, and to-be-decommissioned leader is excluded from voting config.
+        - type: string
+          const: DRAINING
+          description: Decommission process is initiated, and the zone is being drained.
+        - type: string
+          const: IN_PROGRESS
+          description: Decommission process has started, decommissioned nodes should be removed.
+        - type: string
+          const: SUCCESSFUL
+          description: Decommission action completed.
+        - type: string
+          const: FAILED
+          description: Decommission request failed.
