@@ -10737,11 +10737,13 @@ paths:
         - $ref: '#/components/parameters/search_template___query.explain'
         - $ref: '#/components/parameters/search_template___query.ignore_throttled'
         - $ref: '#/components/parameters/search_template___query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template___query.phase_took'
         - $ref: '#/components/parameters/search_template___query.preference'
         - $ref: '#/components/parameters/search_template___query.profile'
         - $ref: '#/components/parameters/search_template___query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template___query.routing'
         - $ref: '#/components/parameters/search_template___query.scroll'
+        - $ref: '#/components/parameters/search_template___query.search_pipeline'
         - $ref: '#/components/parameters/search_template___query.search_type'
         - $ref: '#/components/parameters/search_template___query.typed_keys'
         - $ref: '#/components/parameters/_global___query.pretty'
@@ -10768,11 +10770,13 @@ paths:
         - $ref: '#/components/parameters/search_template___query.explain'
         - $ref: '#/components/parameters/search_template___query.ignore_throttled'
         - $ref: '#/components/parameters/search_template___query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template___query.phase_took'
         - $ref: '#/components/parameters/search_template___query.preference'
         - $ref: '#/components/parameters/search_template___query.profile'
         - $ref: '#/components/parameters/search_template___query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template___query.routing'
         - $ref: '#/components/parameters/search_template___query.scroll'
+        - $ref: '#/components/parameters/search_template___query.search_pipeline'
         - $ref: '#/components/parameters/search_template___query.search_type'
         - $ref: '#/components/parameters/search_template___query.typed_keys'
         - $ref: '#/components/parameters/_global___query.pretty'
@@ -13673,11 +13677,13 @@ paths:
         - $ref: '#/components/parameters/search_template___query.explain'
         - $ref: '#/components/parameters/search_template___query.ignore_throttled'
         - $ref: '#/components/parameters/search_template___query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template___query.phase_took'
         - $ref: '#/components/parameters/search_template___query.preference'
         - $ref: '#/components/parameters/search_template___query.profile'
         - $ref: '#/components/parameters/search_template___query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template___query.routing'
         - $ref: '#/components/parameters/search_template___query.scroll'
+        - $ref: '#/components/parameters/search_template___query.search_pipeline'
         - $ref: '#/components/parameters/search_template___query.search_type'
         - $ref: '#/components/parameters/search_template___query.typed_keys'
         - $ref: '#/components/parameters/_global___query.pretty'
@@ -13705,11 +13711,13 @@ paths:
         - $ref: '#/components/parameters/search_template___query.explain'
         - $ref: '#/components/parameters/search_template___query.ignore_throttled'
         - $ref: '#/components/parameters/search_template___query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template___query.phase_took'
         - $ref: '#/components/parameters/search_template___query.preference'
         - $ref: '#/components/parameters/search_template___query.profile'
         - $ref: '#/components/parameters/search_template___query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template___query.routing'
         - $ref: '#/components/parameters/search_template___query.scroll'
+        - $ref: '#/components/parameters/search_template___query.search_pipeline'
         - $ref: '#/components/parameters/search_template___query.search_type'
         - $ref: '#/components/parameters/search_template___query.typed_keys'
         - $ref: '#/components/parameters/_global___query.pretty'
@@ -26711,6 +26719,14 @@ components:
       schema:
         type: boolean
       style: form
+    search_template___query.phase_took:
+      name: phase_took
+      in: query
+      description: Indicates whether to return phase-level `took` time values in the response.
+      schema:
+        type: boolean
+        default: false
+      style: form
     search_template___query.preference:
       in: query
       name: preference
@@ -26752,6 +26768,13 @@ components:
       schema:
         $ref: '#/components/schemas/_common___Duration'
       style: form
+    search_template___query.search_pipeline:
+      name: search_pipeline
+      in: query
+      description: Customizable sequence of processing stages applied to search queries.
+      schema:
+        type: string
+        description: Customizable sequence of processing stages applied to search queries.
     search_template___query.search_type:
       in: query
       name: search_type
@@ -29162,7 +29185,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/cluster.weighted_routing___WeightsBase'
+            type: object
+            properties:
+              _version:
+                $ref: '#/components/schemas/_common___VersionNumber'
     cluster.put_component_template:
       content:
         application/json:
@@ -29203,7 +29229,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/cluster.weighted_routing___Weights'
+            allOf:
+              - $ref: '#/components/schemas/cluster.weighted_routing___WeightsBase'
+              - type: object
+                properties: {}
     cluster.reroute:
       content:
         application/json:
@@ -30823,8 +30852,7 @@ components:
               ext:
                 description: Configuration of search extensions defined by OpenSearch plugins.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               from:
                 description: |-
                   Starting document offset.
@@ -30852,8 +30880,6 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/_common.query_dsl___FieldAndFormat'
-              rank:
-                $ref: '#/components/schemas/_common___RankContainer'
               min_score:
                 description: |-
                   Minimum `_score` for matching documents.
@@ -31112,8 +31138,7 @@ components:
                   The key is the variable name.
                   The value is the variable value.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               profile:
                 description: If `true`, the query execution is profiled.
                 type: boolean
@@ -32133,7 +32158,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/cluster.decommission_awareness___DecommissionStatusResponse'
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/cluster.decommission_awareness___DecommissionStatus'
       description: ''
     cluster.get_settings___200:
       content:
@@ -32158,7 +32185,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/cluster.weighted_routing___WeightsResponse'
+            allOf:
+              - $ref: '#/components/schemas/cluster.weighted_routing___WeightsBase'
+              - type: object
+                properties:
+                  discovered_cluster_manager:
+                    type: boolean
       description: ''
     cluster.health___200:
       content:
@@ -32218,7 +32250,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
+            $ref: '#/components/schemas/_common___AcknowledgedResponseBase'
       description: ''
     cluster.remote_info___200:
       content:
@@ -32438,7 +32470,12 @@ components:
               explanation:
                 $ref: '#/components/schemas/_core.explain___Explanation'
               get:
-                $ref: '#/components/schemas/_common___InlineGet'
+                allOf:
+                  - $ref: '#/components/schemas/_common___InlineGet'
+                  - type: object
+                    properties:
+                      _source:
+                        $ref: '#/components/schemas/_common___TDocument'
             required:
               - _id
               - _index
@@ -32842,7 +32879,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
+            $ref: '#/components/schemas/_common___TDocument'
       description: ''
     get_source___404:
       content:
@@ -32854,7 +32891,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/_core.get___GetResult'
+            allOf:
+              - $ref: '#/components/schemas/_core.get___GetResultBase'
+              - type: object
+                properties:
+                  _source:
+                    $ref: '#/components/schemas/_common___TDocument'
       description: ''
     get___404:
       content:
@@ -33601,7 +33643,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/_core.search___ResponseBody'
+            $ref: '#/components/schemas/_core.search___SearchResponse'
       description: ''
     knn.stats___200:
       content:
@@ -34866,10 +34908,7 @@ components:
             type: object
             properties:
               result:
-                oneOf:
-                  - type: number
-                  - type: string
-                  - type: boolean
+                $ref: '#/components/schemas/_common___TResult'
             required:
               - result
       description: ''
@@ -34877,7 +34916,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/_core.search___ResponseBody'
+            $ref: '#/components/schemas/_core.search___SearchResponse'
       description: ''
     search_pipeline.delete___200:
       content:
@@ -35048,60 +35087,20 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              took:
-                type: integer
-                format: int64
-              timed_out:
-                type: boolean
-              _shards:
-                $ref: '#/components/schemas/_common___ShardStatistics'
-              hits:
-                $ref: '#/components/schemas/_core.search___HitsMetadata'
-              aggregations:
-                type: object
-                additionalProperties:
-                  $ref: '#/components/schemas/_common.aggregations___Aggregate'
-              _clusters:
-                $ref: '#/components/schemas/_common___ClusterStatistics'
-              fields:
-                type: object
-                additionalProperties:
-                  type: object
-              max_score:
-                type: number
-                format: float
-              num_reduce_phases:
-                type: integer
-                format: int32
-              profile:
-                $ref: '#/components/schemas/_core.search___Profile'
-              pit_id:
-                $ref: '#/components/schemas/_common___Id'
-              _scroll_id:
-                $ref: '#/components/schemas/_common___ScrollId'
-              suggest:
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/_core.search___Suggest'
-              terminated_early:
-                type: boolean
-              status:
-                type: number
-            required:
-              - _shards
-              - hits
-              - timed_out
-              - took
+            allOf:
+              - $ref: '#/components/schemas/_core.search___SearchResult'
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    format: int32
+                    x-version-added: '2.18'
       description: ''
     search___200:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/_core.search___ResponseBody'
+            $ref: '#/components/schemas/_core.search___SearchResponse'
       description: ''
     search___400:
       content:
@@ -36588,35 +36587,6 @@ components:
           enum:
             - pb
             - p
-    _common___ClusterDetails:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/_common___ClusterSearchStatus'
-        indices:
-          type: string
-        took:
-          $ref: '#/components/schemas/_common___DurationValueUnitMillis'
-        timed_out:
-          type: boolean
-        _shards:
-          $ref: '#/components/schemas/_common___ShardStatistics'
-        failures:
-          type: array
-          items:
-            $ref: '#/components/schemas/_common___ShardFailure'
-      required:
-        - indices
-        - status
-        - timed_out
-    _common___ClusterSearchStatus:
-      type: string
-      enum:
-        - failed
-        - partial
-        - running
-        - skipped
-        - successful
     _common___ClusterStatistics:
       type: object
       properties:
@@ -36629,23 +36599,7 @@ components:
         total:
           type: integer
           format: int32
-        running:
-          type: integer
-          format: int32
-        partial:
-          type: integer
-          format: int32
-        failed:
-          type: integer
-          format: int32
-        details:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/_common___ClusterDetails'
       required:
-        - failed
-        - partial
-        - running
         - skipped
         - successful
         - total
@@ -37376,21 +37330,22 @@ components:
         fields:
           type: object
           description: The fields retrieved from the document.
-          additionalProperties:
-            type: object
+          additionalProperties: true
         found:
           description: Whether the document was found.
           type: boolean
         _seq_no:
           $ref: '#/components/schemas/_common___SequenceNumber'
         _primary_term:
-          type: number
           description: The primary term of the document.
+          type: integer
+          format: int64
         _routing:
           $ref: '#/components/schemas/_common___Routing'
         _source:
-          type: object
           description: The source of the document.
+          $ref: '#/components/schemas/_common___TDocument'
+      additionalProperties: true
       required:
         - found
     _common___InlineGetDictUserDefined:
@@ -37922,18 +37877,6 @@ components:
         - memory_size_in_bytes
         - miss_count
         - total_count
-    _common___RankBase:
-      type: object
-      description: The base configuration for ranking.
-    _common___RankContainer:
-      type: object
-      description: The container for ranking configuration.
-      properties:
-        rrf:
-          $ref: '#/components/schemas/_common___RrfRank'
-          description: The reciprocal rank fusion configuration.
-      minProperties: 1
-      maxProperties: 1
     _common___RecoveryStats:
       type: object
       description: The statistics about recovery operations.
@@ -38298,18 +38241,6 @@ components:
       description: The routing value for the document.
     _common___RoutingInQueryString:
       $ref: '#/components/schemas/_common___StringOrStringArray'
-    _common___RrfRank:
-      allOf:
-        - $ref: '#/components/schemas/_common___RankBase'
-        - type: object
-          description: The reciprocal rank fusion ranking configuration.
-          properties:
-            rank_constant:
-              description: To what degree documents found in individual result sets per query influence the final ranked result set.
-              type: number
-            window_size:
-              description: The size of the individual result sets per query.
-              type: number
     _common___ScoreSort:
       type: object
       properties:
@@ -38991,6 +38922,8 @@ components:
     _common___TaskId:
       type: string
       description: The unique identifier of a task.
+    _common___TDocument:
+      x-is-generic-type-parameter: true
     _common___TermFrequencyNormalization:
       oneOf:
         - type: string
@@ -39116,6 +39049,8 @@ components:
     _common___TransportAddress:
       type: string
       description: The transport address of a node.
+    _common___TResult:
+      x-is-generic-type-parameter: true
     _common___Type:
       type: string
       description: The type of document or resource.
@@ -48319,6 +48254,13 @@ components:
         - contexts
         - language
     _core.get___GetResult:
+      allOf:
+        - $ref: '#/components/schemas/_core.get___GetResultBase'
+        - type: object
+          properties:
+            _source:
+              $ref: '#/components/schemas/_common___TDocument'
+    _core.get___GetResultBase:
       type: object
       properties:
         _type:
@@ -48327,20 +48269,20 @@ components:
           $ref: '#/components/schemas/_common___IndexName'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         found:
           type: boolean
         _id:
           $ref: '#/components/schemas/_common___Id'
         _primary_term:
-          type: number
+          type: integer
+          format: int64
         _routing:
           type: string
         _seq_no:
           $ref: '#/components/schemas/_common___SequenceNumber'
         _source:
-          type: object
+          $ref: '#/components/schemas/_common___TDocument'
         _version:
           $ref: '#/components/schemas/_common___VersionNumber'
       required:
@@ -48567,7 +48509,7 @@ components:
           type: boolean
     _core.msearch___MultiSearchItem:
       allOf:
-        - $ref: '#/components/schemas/_core.search___ResponseBody'
+        - $ref: '#/components/schemas/_core.search___SearchResult'
         - type: object
           properties:
             status:
@@ -49016,7 +48958,6 @@ components:
       properties:
         document:
           description: A document temporarily indexed in-memory and accessible from the Painless script.
-          type: object
         index:
           $ref: '#/components/schemas/_common___IndexName'
         query:
@@ -49264,10 +49205,20 @@ components:
           properties:
             options:
               oneOf:
-                - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                - allOf:
+                    - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                    - type: object
+                      properties:
+                        _source:
+                          $ref: '#/components/schemas/_core.search___TDocument'
                 - type: array
                   items:
-                    $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                    allOf:
+                      - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/_core.search___TDocument'
           required:
             - options
     _core.search___CompletionSuggester:
@@ -49300,8 +49251,7 @@ components:
               $ref: '#/components/schemas/_core.search___Context'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         _id:
           type: string
         _index:
@@ -49312,7 +49262,7 @@ components:
           type: number
           format: float
         _source:
-          type: object
+          $ref: '#/components/schemas/_core.search___TDocument'
         text:
           type: string
         score:
@@ -49883,18 +49833,8 @@ components:
         duration_millis:
           type: integer
           format: int64
-        input_data:
-          oneOf:
-            - type: object
-            - type: array
-              items:
-                type: object
-        output_data:
-          oneOf:
-            - type: object
-            - type: array
-              items:
-                type: object
+        input_data: {}
+        output_data: {}
         status:
           type: string
         tag:
@@ -50033,58 +49973,6 @@ components:
           $ref: '#/components/schemas/_core.search___ScoreMode'
       required:
         - rescore_query
-    _core.search___ResponseBody:
-      type: object
-      properties:
-        took:
-          type: integer
-          format: int64
-        timed_out:
-          type: boolean
-        _shards:
-          $ref: '#/components/schemas/_common___ShardStatistics'
-        phase_took:
-          x-version-added: '2.12'
-          $ref: '#/components/schemas/_common___PhaseTook'
-        hits:
-          $ref: '#/components/schemas/_core.search___HitsMetadata'
-        processor_results:
-          x-version-added: '3.0'
-          type: array
-          items:
-            $ref: '#/components/schemas/_core.search___ProcessorExecutionDetail'
-        aggregations:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/_common.aggregations___Aggregate'
-        _clusters:
-          $ref: '#/components/schemas/_common___ClusterStatistics'
-        fields:
-          type: object
-          additionalProperties:
-            type: object
-        num_reduce_phases:
-          type: integer
-          format: int32
-        profile:
-          $ref: '#/components/schemas/_core.search___Profile'
-        pit_id:
-          $ref: '#/components/schemas/_common___Id'
-        _scroll_id:
-          $ref: '#/components/schemas/_common___ScrollId'
-        suggest:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/_core.search___Suggest'
-        terminated_early:
-          type: boolean
-      required:
-        - _shards
-        - hits
-        - timed_out
-        - took
     _core.search___ScoreMode:
       type: string
       enum:
@@ -50111,6 +49999,101 @@ components:
         - collector
         - query
         - rewrite_time
+    _core.search___SearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/_core.search___SearchResult'
+        - type: object
+          properties: {}
+    _core.search___SearchResult:
+      type: object
+      properties:
+        took:
+          type: integer
+          format: int64
+        timed_out:
+          type: boolean
+        _shards:
+          $ref: '#/components/schemas/_common___ShardStatistics'
+        phase_took:
+          x-version-added: '2.12'
+          $ref: '#/components/schemas/_common___PhaseTook'
+        hits:
+          allOf:
+            - $ref: '#/components/schemas/_core.search___HitsMetadata'
+            - type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/_core.search___Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/_core.search___TDocument'
+        processor_results:
+          x-version-added: '3.0'
+          type: array
+          items:
+            $ref: '#/components/schemas/_core.search___ProcessorExecutionDetail'
+        aggregations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/_common.aggregations___Aggregate'
+        _clusters:
+          $ref: '#/components/schemas/_common___ClusterStatistics'
+        fields:
+          type: object
+          additionalProperties: true
+        num_reduce_phases:
+          type: integer
+          format: int32
+        profile:
+          $ref: '#/components/schemas/_core.search___Profile'
+        pit_id:
+          $ref: '#/components/schemas/_common___Id'
+        _scroll_id:
+          $ref: '#/components/schemas/_common___ScrollId'
+        suggest:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              allOf:
+                - $ref: '#/components/schemas/_core.search___Suggest'
+                - oneOf:
+                    - title: completion
+                      allOf:
+                        - $ref: '#/components/schemas/_core.search___CompletionSuggest'
+                        - type: object
+                          properties:
+                            options:
+                              oneOf:
+                                - allOf:
+                                    - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                                    - type: object
+                                      properties:
+                                        _source:
+                                          $ref: '#/components/schemas/_core.search___TDocument'
+                                - type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                                      - type: object
+                                        properties:
+                                          _source:
+                                            $ref: '#/components/schemas/_core.search___TDocument'
+                    - title: phrase
+                      $ref: '#/components/schemas/_core.search___PhraseSuggest'
+                    - title: term
+                      $ref: '#/components/schemas/_core.search___TermSuggest'
+        terminated_early:
+          type: boolean
+      required:
+        - _shards
+        - hits
+        - timed_out
+        - took
     _core.search___ShardProfile:
       type: object
       properties:
@@ -50186,11 +50169,31 @@ components:
     _core.search___Suggest:
       oneOf:
         - title: completion
-          $ref: '#/components/schemas/_core.search___CompletionSuggest'
+          allOf:
+            - $ref: '#/components/schemas/_core.search___CompletionSuggest'
+            - type: object
+              properties:
+                options:
+                  oneOf:
+                    - allOf:
+                        - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                        - type: object
+                          properties:
+                            _source:
+                              $ref: '#/components/schemas/_core.search___TDocument'
+                    - type: array
+                      items:
+                        allOf:
+                          - $ref: '#/components/schemas/_core.search___CompletionSuggestOption'
+                          - type: object
+                            properties:
+                              _source:
+                                $ref: '#/components/schemas/_core.search___TDocument'
         - title: phrase
           $ref: '#/components/schemas/_core.search___PhraseSuggest'
         - title: term
           $ref: '#/components/schemas/_core.search___TermSuggest'
+      x-supports-typed-keys: true
     _core.search___SuggestBase:
       type: object
       properties:
@@ -50519,7 +50522,7 @@ components:
         took:
           type: number
         response:
-          $ref: '#/components/schemas/_core.search___ResponseBody'
+          $ref: '#/components/schemas/_core.search___SearchResponse'
     asynchronous_search._common___Search:
       type: object
       properties:
@@ -50563,8 +50566,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/_common.query_dsl___FieldAndFormat'
-        rank:
-          $ref: '#/components/schemas/_common___RankContainer'
         min_score:
           description: |-
             Minimum `_score` for matching documents.
@@ -53002,19 +53003,24 @@ components:
         - REINITIALIZED
         - REPLICA_ADDED
         - REROUTE_CANCELLED
-    cluster.decommission_awareness___DecommissionStatusResponse:
+    cluster.decommission_awareness___DecommissionStatus:
+      description: An enumeration of the states during decommissioning.
       oneOf:
-        - $ref: '#/components/schemas/cluster.decommission_awareness___ZoneDecommissionStatusResponse'
-    cluster.decommission_awareness___ZoneDecommissionStatusResponse:
-      type: object
-      additionalProperties:
-        type: string
-        enum:
-          - DRAINING
-          - FAILED
-          - INIT
-          - IN_PROGRESS
-          - SUCCESSFUL
+        - type: string
+          const: INIT
+          description: Decommission process is initiated, and to-be-decommissioned leader is excluded from voting config.
+        - type: string
+          const: DRAINING
+          description: Decommission process is initiated, and the zone is being drained.
+        - type: string
+          const: IN_PROGRESS
+          description: Decommission process has started, decommissioned nodes should be removed.
+        - type: string
+          const: SUCCESSFUL
+          description: Decommission action completed.
+        - type: string
+          const: FAILED
+          description: Decommission request failed.
     cluster.health___AwarenessAttributeStats:
       type: object
       x-version-added: '2.5'
@@ -54204,25 +54210,15 @@ components:
         - total_in_bytes
         - used_in_bytes
         - used_percent
-    cluster.weighted_routing___Weights:
-      allOf:
-        - $ref: '#/components/schemas/cluster.weighted_routing___WeightsBase'
-        - type: object
-          properties:
-            weights:
-              type: object
     cluster.weighted_routing___WeightsBase:
       type: object
       properties:
         _version:
           $ref: '#/components/schemas/_common___VersionNumber'
-    cluster.weighted_routing___WeightsResponse:
-      allOf:
-        - $ref: '#/components/schemas/cluster.weighted_routing___Weights'
-        - type: object
-          properties:
-            discovered_cluster_manager:
-              type: boolean
+        weights:
+          type: object
+          additionalProperties:
+            type: string
     dangling_indices.list_dangling_indices___DanglingIndex:
       type: object
       properties:
