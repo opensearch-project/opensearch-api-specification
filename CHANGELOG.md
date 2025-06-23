@@ -13,7 +13,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `phase_results_processor` to `NodeInfoSearchPipelines` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Added new neural search stats and response filtering parameters (`include_individual_nodes`, `include_all_nodes`, `include_info`) to neural stats API ([#921](https://github.com/opensearch-project/opensearch-api-specification/pull/921))
 - Added `target_index_settings` to `Index Rollups API` from `index-management` plugin ([#822](https://github.com/opensearch-project/opensearch-api-specification/pull/822))
-- Added `human` query parameter to `data_stream/_stats api` 
+- Added `human` query parameter to `data_stream/_stats api` ([931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
 
 ### Removed
 
