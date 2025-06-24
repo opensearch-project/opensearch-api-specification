@@ -275,55 +275,10 @@ components:
         total:
           type: integer
           format: int32
-        running:
-          type: integer
-          format: int32
-        partial:
-          type: integer
-          format: int32
-        failed:
-          type: integer
-          format: int32
-        details:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/ClusterDetails'
       required:
-        - failed
-        - partial
-        - running
         - skipped
         - successful
         - total
-    ClusterDetails:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ClusterSearchStatus'
-        indices:
-          type: string
-        took:
-          $ref: '#/components/schemas/DurationValueUnitMillis'
-        timed_out:
-          type: boolean
-        _shards:
-          $ref: '#/components/schemas/ShardStatistics'
-        failures:
-          type: array
-          items:
-            $ref: '#/components/schemas/ShardFailure'
-      required:
-        - indices
-        - status
-        - timed_out
-    ClusterSearchStatus:
-      type: string
-      enum:
-        - failed
-        - partial
-        - running
-        - skipped
-        - successful
     DurationValueUnitMillis:
       $ref: '#/components/schemas/UnitMillis'
     ShardStatistics:
@@ -1898,6 +1853,8 @@ components:
         - reason
         - status
         - task_id
+    TDocument:
+      x-is-generic-type-parameter: true
     InlineGet:
       type: object
       description: The result of an inline get operation.
@@ -1905,21 +1862,22 @@ components:
         fields:
           type: object
           description: The fields retrieved from the document.
-          additionalProperties:
-            type: object
+          additionalProperties: true
         found:
           description: Whether the document was found.
           type: boolean
         _seq_no:
           $ref: '#/components/schemas/SequenceNumber'
         _primary_term:
-          type: number
           description: The primary term of the document.
+          type: integer
+          format: int64
         _routing:
           $ref: '#/components/schemas/Routing'
         _source:
-          type: object
           description: The source of the document.
+          $ref: '#/components/schemas/TDocument'
+      additionalProperties: true
       required:
         - found
     IndexAlias:
@@ -2616,30 +2574,6 @@ components:
           $ref: '#/components/schemas/TransportAddress'
       required:
         - name
-    RankContainer:
-      type: object
-      description: The container for ranking configuration.
-      properties:
-        rrf:
-          $ref: '#/components/schemas/RrfRank'
-          description: The reciprocal rank fusion configuration.
-      minProperties: 1
-      maxProperties: 1
-    RrfRank:
-      allOf:
-        - $ref: '#/components/schemas/RankBase'
-        - type: object
-          description: The reciprocal rank fusion ranking configuration.
-          properties:
-            rank_constant:
-              description: To what degree documents found in individual result sets per query influence the final ranked result set.
-              type: number
-            window_size:
-              description: The size of the individual result sets per query.
-              type: number
-    RankBase:
-      type: object
-      description: The base configuration for ranking.
     NodeShard:
       type: object
       description: The information about a shard on a node.
@@ -2942,3 +2876,5 @@ components:
       required:
         - active_threads
         - thread_executions
+    TResult:
+      x-is-generic-type-parameter: true

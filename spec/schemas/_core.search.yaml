@@ -131,18 +131,8 @@ components:
         duration_millis:
           type: integer
           format: int64
-        input_data:
-          oneOf:
-            - type: object 
-            - type: array
-              items: 
-                type: object
-        output_data: 
-          oneOf:
-            - type: object 
-            - type: array
-              items: 
-                type: object
+        input_data: {}
+        output_data: {}
         status: 
           type: string
         tag:
@@ -554,11 +544,31 @@ components:
     Suggest:
       oneOf:
         - title: completion
-          $ref: '#/components/schemas/CompletionSuggest'
+          allOf:
+            - $ref: '#/components/schemas/CompletionSuggest'
+            - type: object
+              properties:
+                options:
+                  oneOf:
+                    - allOf:
+                        - $ref: '#/components/schemas/CompletionSuggestOption'
+                        - type: object
+                          properties:
+                            _source:
+                              $ref: '#/components/schemas/TDocument'
+                    - type: array
+                      items:
+                        allOf:
+                          - $ref: '#/components/schemas/CompletionSuggestOption'
+                          - type: object
+                            properties:
+                              _source:
+                                $ref: '#/components/schemas/TDocument'
         - title: phrase
           $ref: '#/components/schemas/PhraseSuggest'
         - title: term
           $ref: '#/components/schemas/TermSuggest'
+      x-supports-typed-keys: true
     CompletionSuggest:
       allOf:
         - $ref: '#/components/schemas/SuggestBase'
@@ -566,10 +576,20 @@ components:
           properties:
             options:
               oneOf:
-                - $ref: '#/components/schemas/CompletionSuggestOption'
+                - allOf:
+                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                    - type: object
+                      properties:
+                        _source:
+                          $ref: '#/components/schemas/TDocument'
                 - type: array
                   items:
-                    $ref: '#/components/schemas/CompletionSuggestOption'
+                    allOf:
+                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
           required:
             - options
     CompletionSuggestOption:
@@ -585,8 +605,7 @@ components:
               $ref: '#/components/schemas/Context'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         _id:
           type: string
         _index:
@@ -597,7 +616,7 @@ components:
           type: number
           format: float
         _source:
-          type: object
+          $ref: '#/components/schemas/TDocument'
         text:
           type: string
         score:
@@ -1277,7 +1296,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Duration'
       required:
         - id
-    ResponseBody:
+    SearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResult'
+        - type: object
+          properties: {}
+    SearchResult:
       type: object
       properties:
         took:
@@ -1291,7 +1315,19 @@ components:
           x-version-added: '2.12'
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
-          $ref: '#/components/schemas/HitsMetadata'
+          allOf:
+            - $ref: '#/components/schemas/HitsMetadata'
+            - type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
         processor_results: 
           x-version-added: '3.0'
           type: array
@@ -1305,8 +1341,7 @@ components:
           $ref: '_common.yaml#/components/schemas/ClusterStatistics'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         num_reduce_phases:
           type: integer
           format: int32
@@ -1321,7 +1356,34 @@ components:
           additionalProperties:
             type: array
             items:
-              $ref: '#/components/schemas/Suggest'
+              allOf:
+                - $ref: '#/components/schemas/Suggest'
+                - oneOf:
+                    - title: completion
+                      allOf:
+                        - $ref: '#/components/schemas/CompletionSuggest'
+                        - type: object
+                          properties:
+                            options:
+                              oneOf:
+                                - allOf:
+                                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                                    - type: object
+                                      properties:
+                                        _source:
+                                          $ref: '#/components/schemas/TDocument'
+                                - type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                                      - type: object
+                                        properties:
+                                          _source:
+                                            $ref: '#/components/schemas/TDocument'
+                    - title: phrase
+                      $ref: '#/components/schemas/PhraseSuggest'
+                    - title: term
+                      $ref: '#/components/schemas/TermSuggest'
         terminated_early:
           type: boolean
       required:

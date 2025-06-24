@@ -508,12 +508,18 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/Weights'
+            allOf:
+              - $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
+              - type: object
+                properties: {}
     cluster.delete_weighted_routing:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
+            type: object
+            properties:
+              _version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
     cluster.allocation_explain:
       content:
         application/json:
@@ -687,7 +693,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatusResponse'
+            type: object
+            additionalProperties:
+              $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatus'
     cluster.get_settings@200:
       content:
         application/json:
@@ -710,7 +718,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsResponse'
+            allOf:
+              - $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
+              - type: object
+                properties:
+                  discovered_cluster_manager:
+                    type: boolean
     cluster.health@200:
       content:
         application/json:
@@ -763,7 +776,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.remote_info@200:
       content:
         application/json:

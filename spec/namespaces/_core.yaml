@@ -978,11 +978,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -1004,11 +1006,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -1961,11 +1965,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -1988,11 +1994,13 @@ paths:
         - $ref: '#/components/parameters/search_template::query.explain'
         - $ref: '#/components/parameters/search_template::query.ignore_throttled'
         - $ref: '#/components/parameters/search_template::query.ignore_unavailable'
+        - $ref: '#/components/parameters/search_template::query.phase_took'
         - $ref: '#/components/parameters/search_template::query.preference'
         - $ref: '#/components/parameters/search_template::query.profile'
         - $ref: '#/components/parameters/search_template::query.rest_total_hits_as_int'
         - $ref: '#/components/parameters/search_template::query.routing'
         - $ref: '#/components/parameters/search_template::query.scroll'
+        - $ref: '#/components/parameters/search_template::query.search_pipeline'
         - $ref: '#/components/parameters/search_template::query.search_type'
         - $ref: '#/components/parameters/search_template::query.typed_keys'
       requestBody:
@@ -2307,7 +2315,7 @@ components:
             properties:
               scroll_id:
                 $ref: '../schemas/_common.yaml#/components/schemas/ScrollIds'
-            description: Comma-separated list of scroll IDs to clear if none was specified using the `scroll_id` parameter
+            description: A comma-separated list of scroll IDs to clear if none was specified using the `scroll_id` parameter
     count:
       content:
         application/json:
@@ -2565,8 +2573,7 @@ components:
               ext:
                 description: Configuration of search extensions defined by OpenSearch plugins.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               from:
                 description: |-
                   Starting document offset.
@@ -2594,8 +2601,6 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
-              rank:
-                $ref: '../schemas/_common.yaml#/components/schemas/RankContainer'
               min_score:
                 description: |-
                   Minimum `_score` for matching documents.
@@ -2704,8 +2709,7 @@ components:
                   The key is the variable name.
                   The value is the variable value.
                 type: object
-                additionalProperties:
-                  type: object
+                additionalProperties: true
               profile:
                 description: If `true`, the query execution is profiled.
                 type: boolean
@@ -2978,7 +2982,12 @@ components:
               explanation:
                 $ref: '../schemas/_core.explain.yaml#/components/schemas/Explanation'
               get:
-                $ref: '../schemas/_common.yaml#/components/schemas/InlineGet'
+                allOf:
+                  - $ref: '../schemas/_common.yaml#/components/schemas/InlineGet'
+                  - type: object
+                    properties:
+                      _source:
+                        $ref: '../schemas/_common.yaml#/components/schemas/TDocument'
             required:
               - _id
               - _index
@@ -3004,7 +3013,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.get.yaml#/components/schemas/GetResult'
+            allOf:
+              - $ref: '../schemas/_core.get.yaml#/components/schemas/GetResultBase'
+              - type: object
+                properties:
+                  _source:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TDocument'
     get@404:
       content:
         application/json:
@@ -3068,7 +3082,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
+            $ref: '../schemas/_common.yaml#/components/schemas/TDocument'
     get_source@404:
       content:
         application/json:
@@ -3210,22 +3224,19 @@ components:
             type: object
             properties:
               result:
-                oneOf:
-                  - type: number
-                  - type: string
-                  - type: boolean
+                $ref: '../schemas/_common.yaml#/components/schemas/TResult'
             required:
               - result
     scroll@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResponse'
     search@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResponse'
     search@400:
       content:
         application/json:
@@ -3264,54 +3275,14 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              took:
-                type: integer
-                format: int64
-              timed_out:
-                type: boolean
-              _shards:
-                $ref: '../schemas/_common.yaml#/components/schemas/ShardStatistics'
-              hits:
-                $ref: '../schemas/_core.search.yaml#/components/schemas/HitsMetadata'
-              aggregations:
-                type: object
-                additionalProperties:
-                  $ref: '../schemas/_common.aggregations.yaml#/components/schemas/Aggregate'
-              _clusters:
-                $ref: '../schemas/_common.yaml#/components/schemas/ClusterStatistics'
-              fields:
-                type: object
-                additionalProperties:
-                  type: object
-              max_score:
-                type: number
-                format: float
-              num_reduce_phases:
-                type: integer
-                format: int32
-              profile:
-                $ref: '../schemas/_core.search.yaml#/components/schemas/Profile'
-              pit_id:
-                $ref: '../schemas/_common.yaml#/components/schemas/Id'
-              _scroll_id:
-                $ref: '../schemas/_common.yaml#/components/schemas/ScrollId'
-              suggest:
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    $ref: '../schemas/_core.search.yaml#/components/schemas/Suggest'
-              terminated_early:
-                type: boolean
-              status:
-                type: number
-            required:
-              - _shards
-              - hits
-              - timed_out
-              - took
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    format: int32
+                    x-version-added: '2.18'
     termvectors@200:
       content:
         application/json:
@@ -3567,7 +3538,7 @@ components:
       in: path
       name: scroll_id
       description: |-
-        Comma-separated list of scroll IDs to clear.
+        A comma-separated list of scroll IDs to clear.
         To clear all scroll IDs, use `_all`.
       required: true
       deprecated: true
@@ -3578,7 +3549,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases to search.
+        A comma-separated list of data streams, indexes, and aliases to search.
         Supports wildcards (`*`).
         To search all data streams and indexes, omit this parameter or use `*` or `_all`.
       required: true
@@ -3704,7 +3675,7 @@ components:
     create::path.id:
       in: path
       name: id
-      description: Unique identifier for the document.
+      description: The unique identifier for the document.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -3765,7 +3736,7 @@ components:
     create::query.version_type:
       in: query
       name: version_type
-      description: 'Specific version type: `external`, `external_gte`.'
+      description: 'The specific version type: `external`, `external_gte`.'
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
@@ -3782,10 +3753,10 @@ components:
     create_pit::path.index:
       name: index
       in: path
-      description: Comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
+      description: A comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
       schema:
         type: array
-        description: Comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
+        description: A comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
         items:
           type: string
       required: true
@@ -3819,7 +3790,7 @@ components:
     create_pit::query.routing:
       name: routing
       in: query
-      description: Comma-separated list of specific routing values.
+      description: A comma-separated list of specific routing values.
       style: form
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/RoutingInQueryString'
@@ -3827,7 +3798,7 @@ components:
     delete::path.id:
       in: path
       name: id
-      description: Unique identifier for the document.
+      description: The unique identifier for the document.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -3890,7 +3861,7 @@ components:
     delete::query.version_type:
       in: query
       name: version_type
-      description: 'Specific version type: `external`, `external_gte`.'
+      description: 'The specific version type: `external`, `external_gte`.'
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
@@ -3908,7 +3879,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases to search.
+        A comma-separated list of data streams, indexes, and aliases to search.
         Supports wildcards (`*`).
         To search all data streams or indexes, omit this parameter or use `*` or `_all`.
       required: true
@@ -4263,7 +4234,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases.
+        A comma-separated list of data streams, indexes, and aliases.
         Supports wildcards (`*`).
       required: true
       schema:
@@ -4343,7 +4314,7 @@ components:
     exists::query.version_type:
       in: query
       name: version_type
-      description: 'Specific version type: `external`, `external_gte`.'
+      description: 'The specific version type: `external`, `external_gte`.'
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
@@ -4359,7 +4330,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases.
+        A comma-separated list of data streams, indexes, and aliases.
         Supports wildcards (`*`).
       required: true
       schema:
@@ -4429,7 +4400,7 @@ components:
     exists_source::query.version_type:
       in: query
       name: version_type
-      description: 'Specific version type: `external`, `external_gte`.'
+      description: 'The specific version type: `external`, `external_gte`.'
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
@@ -4545,7 +4516,7 @@ components:
     field_caps::path.index:
       in: path
       name: index
-      description: Comma-separated list of data streams, indexes, and aliases used to limit the request. Supports wildcards (*). To target all data streams and indexes, omit this parameter or use * or `_all`.
+      description: A comma-separated list of data streams, indexes, and aliases used to limit the request. Supports wildcards (*). To target all data streams and indexes, omit this parameter or use * or `_all`.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
@@ -4570,7 +4541,7 @@ components:
     field_caps::query.fields:
       in: query
       name: fields
-      description: Comma-separated list of fields to retrieve capabilities for. Wildcard (`*`) expressions are supported.
+      description: A comma-separated list of fields to retrieve capabilities for. Wildcard (`*`) expressions are supported.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Fields'
       style: form
@@ -4675,7 +4646,7 @@ components:
     get::query.version_type:
       in: query
       name: version_type
-      description: 'Specific version type: `internal`, `external`, `external_gte`.'
+      description: 'The specific version type: `internal`, `external`, `external_gte`.'
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
@@ -4780,14 +4751,14 @@ components:
     get_source::query.version_type:
       in: query
       name: version_type
-      description: Specific version type. One of `internal`, `external`, `external_gte`.
+      description: The specific version type. One of `internal`, `external`, `external_gte`.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
     index::path.id:
       in: path
       name: id
-      description: Unique identifier for the document.
+      description: The unique identifier for the document.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -4881,7 +4852,7 @@ components:
     index::query.version_type:
       in: query
       name: version_type
-      description: 'Specific version type: `external`, `external_gte`.'
+      description: 'The specific version type: `external`, `external_gte`.'
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/VersionType'
       style: form
@@ -4898,7 +4869,7 @@ components:
     mget::path.index:
       in: path
       name: index
-      description: Name of the index to retrieve documents from when `ids` are specified, or when a document in the `docs` array does not specify an index.
+      description: The name of the index to retrieve documents from when `ids` are specified, or when a document in the `docs` array does not specify an index.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
@@ -4968,7 +4939,7 @@ components:
     msearch::path.index:
       in: path
       name: index
-      description: Comma-separated list of data streams, indexes, and index aliases to search.
+      description: A comma-separated list of data streams, indexes, and index aliases to search.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
@@ -5032,7 +5003,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases to search.
+        A comma-separated list of data streams, indexes, and aliases to search.
         Supports wildcards (`*`).
         To search all data streams and indexes, omit this parameter or use `*`.
       required: true
@@ -5243,7 +5214,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and index aliases used to limit the request. Wildcard (`*`) expressions are supported.
+        A comma-separated list of data streams, indexes, and index aliases used to limit the request. Wildcard (`*`) expressions are supported.
         To target all data streams and indexes in a cluster, omit this parameter or use `_all` or `*`.
       required: true
       schema:
@@ -5413,7 +5384,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases to search.
+        A comma-separated list of data streams, indexes, and aliases to search.
         Supports wildcards (`*`).
         To search all data streams and indexes, omit this parameter or use `*` or `_all`.
       required: true
@@ -5927,7 +5898,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes,
+        A comma-separated list of data streams, indexes,
         and aliases to search. Supports wildcards (*).
       required: true
       schema:
@@ -5983,6 +5954,14 @@ components:
       schema:
         type: boolean
       style: form
+    search_template::query.phase_took:
+      name: phase_took
+      in: query
+      description: Indicates whether to return phase-level `took` time values in the response.
+      schema:
+        type: boolean
+        default: false
+      style: form
     search_template::query.preference:
       in: query
       name: preference
@@ -6024,6 +6003,13 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
+    search_template::query.search_pipeline:
+      name: search_pipeline
+      in: query
+      description: Customizable sequence of processing stages applied to search queries.
+      schema:
+        type: string
+        description: Customizable sequence of processing stages applied to search queries.
     search_template::query.search_type:
       in: query
       name: search_type
@@ -6260,7 +6246,7 @@ components:
       in: path
       name: index
       description: |-
-        Comma-separated list of data streams, indexes, and aliases to search.
+        A comma-separated list of data streams, indexes, and aliases to search.
         Supports wildcards (`*`).
         To search all data streams or indexes, omit this parameter or use `*` or `_all`.
       required: true
