@@ -156,8 +156,66 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         composite_index.star_tree:
           $ref: '#/components/schemas/IndexSettingsStarTree'
+        ingestion_source:
+          $ref: '#/components/schemas/IngestionSource'
+        replication.type:
+          type: string
+          description: Defines the replication type.
+          enum:
+            - DOCUMENT
+            - SEGMENT
       additionalProperties:
         title: custom_settings
+    IngestionSource:
+      type: object
+      description: The pull-based ingestion settings controlling how data is read from streaming sources.
+      properties:
+        type:
+          type: string
+          description: The streaming source type.
+          enum:
+            - kafka
+            - kinesis
+            - file
+        pointer.init.reset:
+          type: string
+          description: Determines where to start reading from the stream.
+          enum:
+            - earliest
+            - latest
+            - none
+            - reset_by_offset
+            - reset_by_timestamp
+        pointer.init.reset.value:
+          type: string
+          description: Specifies the offset value or timestamp in milliseconds.
+        error_strategy:
+          type: string
+          description: Defines the policy for error handling.
+          enum:
+            - BLOCK
+            - DROP
+        poll.max_batch_size:
+          type: integer
+          format: int64
+          description: The maximum number of records to retrieve in each poll operation.
+        poll.timeout:
+          type: integer
+          format: int32
+          description: Determines the Poll timeout value.
+        num_processor_threads:
+          type: integer
+          format: int32
+          description: Defines the number of processor or writer threads.
+        internal_queue_size:
+          type: integer
+          format: int32
+          description: Defines the size of the internal blocking queue in pull-based ingestion.
+        param:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom parameters for the ingestion source.
     IndexSettingsIndexing:
       type: object
       description: The indexing-related settings for an index.

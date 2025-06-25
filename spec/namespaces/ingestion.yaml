@@ -1,0 +1,157 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Pull-Based Ingestion Management API
+  description: OpenSearch Pull-based Ingestion Management API.
+  version: 1.0.0
+
+paths:
+  /{index}/ingestion/_pause:
+    post:
+      summary: Pause streaming ingestion for the given index.
+      operationId: ingestion.pause.0
+      x-operation-group: ingestion.pause
+      x-version-added: '3.1'
+      description: Use this API to pause ingestion for a given index.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/ingestion.pause::path.index'
+        - $ref: '#/components/parameters/ingestion.pause::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ingestion.pause::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingestion.pause@200'
+  /{index}/ingestion/_resume:
+    post:
+      summary: Resume streaming ingestion for the given index.
+      operationId: ingestion.resume.0
+      x-operation-group: ingestion.resume
+      x-version-added: '3.1'
+      description: Use this API to resume ingestion for the given index.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/ingestion.resume::path.index'
+        - $ref: '#/components/parameters/ingestion.resume::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ingestion.resume::query.timeout'
+      requestBody:
+        $ref: '#/components/requestBodies/ingestion.resume'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingestion.resume@200'
+  /{index}/ingestion/_state:
+    get:
+      summary: Get the current ingestion state for a given index.
+      operationId: ingestion.get_state.0
+      x-operation-group: ingestion.get_state
+      x-version-added: '3.1'
+      description: Use this API to retrieve the ingestion state for a given index.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/ingestion.get_state::path.index'
+        - $ref: '#/components/parameters/ingestion.get_state::query.next_token'
+        - $ref: '#/components/parameters/ingestion.get_state::query.size'
+        - $ref: '#/components/parameters/ingestion.get_state::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingestion.get_state@200'
+
+components:
+  parameters:
+    ingestion.pause::path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion should be paused.
+    ingestion.pause::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: Time to wait for cluster manager connection.
+    ingestion.pause::query.timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: Timeout for the request.
+    ingestion.resume::path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion should be resumed.
+    ingestion.resume::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: Time to wait for cluster manager connection.
+    ingestion.resume::query.timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: Timeout for the request.
+    ingestion.get_state::path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion state should be retrieved.
+    ingestion.get_state::query.timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      description: Timeout for the request.
+    ingestion.get_state::query.size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Number of results to return per page.
+    ingestion.get_state::query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Token to retrieve the next page of results.
+  responses:
+    ingestion.pause@200:
+      description: Ingestion pause request acknowledged.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ingestion._common.yaml#/components/schemas/PauseIngestionResponse'
+    ingestion.resume@200:
+      description: Ingestion resume request acknowledged.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ingestion._common.yaml#/components/schemas/ResumeIngestionResponse'
+    ingestion.get_state@200:
+      description: Ingestion state retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ingestion._common.yaml#/components/schemas/GetIngestionStateResponse'
+  requestBodies:
+    ingestion.resume:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ingestion._common.yaml#/components/schemas/ResumeIngestionRequest'
