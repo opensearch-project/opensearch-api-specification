@@ -21,7 +21,7 @@ components:
         counts:
           type: object
           description: Count statistics for this store.
-      
+
     ListStoresResponse:
       type: object
       properties:
@@ -110,7 +110,7 @@ components:
           type: integer
         hit_count:
           type: integer
-          
+
     CacheItemStats:
       type: object
       properties:
@@ -120,7 +120,7 @@ components:
         count:
           type: integer
           description: Count of cached items.
-          
+
     CacheAllStats:
       type: object
       description: Aggregate cache statistics across all nodes.
@@ -133,7 +133,7 @@ components:
           $ref: '#/components/schemas/CacheItemStats'
         models:
           $ref: '#/components/schemas/CacheItemStats'
-          
+
     NodeStatsDetails:
       type: object
       description: Cache statistics for a node.
@@ -146,7 +146,7 @@ components:
           $ref: '#/components/schemas/CacheItemStats'
         models:
           $ref: '#/components/schemas/CacheItemStats'
-          
+
     NodeDetails:
       type: object
       properties:
@@ -158,7 +158,7 @@ components:
           description: Node hostname.
         stats:
           $ref: '#/components/schemas/NodeStatsDetails'
-    
+
     CacheStatsResponse:
       type: object
       properties:
@@ -176,3 +176,108 @@ components:
           description: Cache statistics per node.
           additionalProperties:
             $ref: '#/components/schemas/NodeDetails'
+
+    SearchResponse:
+      type: object
+      description: OpenSearch search response for LTR store elements.
+      properties:
+        took:
+          type: integer
+          description: Time in milliseconds the search took.
+        timed_out:
+          type: boolean
+          description: Whether the search timed out.
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+        hits:
+          $ref: '#/components/schemas/SearchHits'
+
+    SearchHits:
+      type: object
+      description: Search hits container.
+      properties:
+        total:
+          $ref: '#/components/schemas/SearchHitsTotal'
+        max_score:
+          type: number
+          nullable: true
+          description: Maximum score of the hits.
+        hits:
+          type: array
+          description: Array of hit objects.
+          items:
+            $ref: '#/components/schemas/SearchHit'
+
+    SearchHitsTotal:
+      type: object
+      description: Total hits information.
+      properties:
+        value:
+          type: integer
+          description: Total number of hits.
+        relation:
+          type: string
+          enum: [eq, gte]
+          description: Relation of the total hits count.
+
+    SearchHit:
+      type: object
+      description: Individual search hit.
+      properties:
+        _index:
+          type: string
+          description: Index name.
+        _id:
+          type: string
+          description: Document ID.
+        _score:
+          type: number
+          nullable: true
+          description: Document score.
+        _source:
+          type: object
+          description: Document source.
+          additionalProperties: true
+
+    DocumentResponse:
+      type: object
+      description: Standard OpenSearch document operation response.
+      properties:
+        _index:
+          type: string
+          description: Index name.
+        _id:
+          type: string
+          description: Document ID.
+        _version:
+          type: integer
+          description: Document version.
+        result:
+          type: string
+          description: Operation result (created, updated, deleted).
+        forced_refresh:
+          type: boolean
+          description: Whether a refresh was forced.
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+        _seq_no:
+          type: integer
+          description: Sequence number.
+        _primary_term:
+          type: integer
+          description: Primary term.
+
+    NotFoundResponse:
+      type: object
+      description: Standard OpenSearch not found response.
+      properties:
+        _index:
+          type: string
+          description: Index name.
+        _id:
+          type: string
+          description: Document ID.
+        found:
+          type: boolean
+          description: Whether the document was found.
+          default: false
