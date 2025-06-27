@@ -177,15 +177,11 @@ components:
             - file
             - kafka
             - kinesis
-        pointer.init.reset:
-          type: string
-          description: Determines where to start reading from the stream.
-          enum:
-            - earliest
-            - latest
             - none
-            - reset_by_offset
-            - reset_by_timestamp
+        pointer:
+          $ref: '#/components/schemas/IngestionSourcePointer'
+        pointer.init.reset:
+          $ref: '#/components/schemas/IngestionSourcePointerInitRest'
         pointer.init.reset.value:
           type: string
           description: Specifies the offset value or timestamp in milliseconds.
@@ -195,27 +191,61 @@ components:
           enum:
             - BLOCK
             - DROP
+        poll:
+          $ref: '#/components/schemas/IngestionSourcePoll'
         poll.max_batch_size:
-          type: integer
-          format: int64
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
           description: The maximum number of records to retrieve in each poll operation.
         poll.timeout:
-          type: integer
-          format: int32
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           description: Determines the Poll timeout value.
         num_processor_threads:
-          type: integer
-          format: int32
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           description: Defines the number of processor or writer threads.
         internal_queue_size:
-          type: integer
-          format: int32
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           description: Defines the size of the internal blocking queue in pull-based ingestion.
         param:
           type: object
           additionalProperties:
             type: string
           description: Custom parameters for the ingestion source.
+    IngestionSourcePointer:
+      type: object
+      properties:
+        init:
+          $ref: '#/components/schemas/IngestionSourcePointerInit'
+    IngestionSourcePointerInit:
+      type: object
+      properties:
+        reset:
+          $ref: '#/components/schemas/IngestionSourcePointerInitRest'
+        reset.value:
+          type: string
+          description: Specifies the offset value or timestamp in milliseconds.
+    IngestionSourcePointerInitRest:
+      type: string
+      description: Determines where to start reading from the stream.
+      enum:
+        - EARLIEST
+        - LATEST
+        - NONE
+        - RESET_BY_OFFSET
+        - RESET_BY_TIMESTAMP
+        - earliest
+        - latest
+        - none
+        - reset_by_offset
+        - reset_by_timestamp
+    IngestionSourcePoll:
+      type: object
+      properties:
+        max_batch_size:
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
+          description: The maximum number of records to retrieve in each poll operation.
+        timeout:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+          description: Determines the Poll timeout value.
     IndexSettingsIndexing:
       type: object
       description: The indexing-related settings for an index.
