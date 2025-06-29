@@ -15,6 +15,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added new neural search stats and response filtering parameters (`include_individual_nodes`, `include_all_nodes`, `include_info`) to neural stats API ([#921](https://github.com/opensearch-project/opensearch-api-specification/pull/921))
 - Added `target_index_settings` to `Index Rollups API` from `index-management` plugin ([#822](https://github.com/opensearch-project/opensearch-api-specification/pull/822))
 - Changed the type of the `DocStatus` properties from int32 to int64 ([#933](https://github.com/opensearch-project/opensearch-api-specification/pull/933))
+- Add pull-based ingestion APIs and properties. Also add replication type in index settings ([#926](https://github.com/opensearch-project/opensearch-api-specification/pull/926))
 
 ### Removed
 

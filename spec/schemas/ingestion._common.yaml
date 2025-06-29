@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: Schemas for pull-based ingestion.
+  description: Schemas for pull-based ingestion.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    PauseIngestionResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Indicates if the pause request has been acknowledged.
+        shards_acknowledged:
+          type: boolean
+          description: Indicates if the pause request has been acknowledged by individual shards.
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngestionStateShardFailure'
+        error:
+          type: string
+      required:
+        - acknowledged
+        - shards_acknowledged
+    ResumeIngestionRequest:
+      type: object
+      properties:
+        reset_settings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResetSettings'
+          description: Reset settings to be applied before resuming ingestion on a shard. This is optional.
+    ResumeIngestionResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Indicates if the resume request has been acknowledged.
+        shards_acknowledged:
+          type: boolean
+          description: Indicates if the resume request has been acknowledged by individual shards.
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngestionStateShardFailure'
+        error:
+          type: string
+      required:
+        - acknowledged
+        - shards_acknowledged
+    ResetSettings:
+      type: object
+      properties:
+        shard:
+          type: integer
+          description: The shard ID to reset.
+        mode:
+          type: string
+          enum: [OFFSET, TIMESTAMP]
+          description: Reset mode to be used.
+        value:
+          type: string
+          description: The offset or timestamp value to be used to reset the consumer.
+      required:
+        - mode
+        - shard
+        - value
+    IngestionStateShardFailure:
+      type: object
+      properties:
+        shard:
+          type: integer
+          description: The shard number.
+        error:
+          type: string
+          description: Indicates the shard level error message.
+      required:
+        - error
+        - shard
+    ShardIngestionState:
+      type: object
+      properties:
+        shard:
+          type: integer
+          description: The shard number.
+        poller_state:
+          type: string
+          enum: [CLOSED, NONE, PAUSED, POLLING, PROCESSING]
+          description: Indicates the current state of the poller.
+        error_policy:
+          type: string
+          enum: [BLOCK, DROP]
+          description: Indicates the policy used to handle failed messages.
+        poller_paused:
+          type: boolean
+          description: Indicates if the poller has been paused.
+        write_block_enabled:
+          type: boolean
+          description: Indicates if a write block has been created.
+        batch_start_pointer:
+          type: string
+          description: Indicates the shard pointer from where the poller will resume during shard recovery.
+    GetIngestionStateResponse:
+      type: object
+      properties:
+        ingestion_state:
+          type: object
+          description: Ingestion state for a given index and its shards.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ShardIngestionState'
+        next_page_token:
+          type: string
+          description: Specifies the next page token. Pass this token in the request to retrieve contents of the next page.
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
