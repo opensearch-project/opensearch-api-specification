@@ -15117,6 +15117,72 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.validate_query___200'
+  /{index}/ingestion/_pause:
+    post:
+      summary: Pause streaming ingestion for the given index.
+      operationId: ingestion.pause.0
+      x-operation-group: ingestion.pause
+      x-version-added: '3.1'
+      description: Use this API to pause ingestion for a given index.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/ingestion.pause___path.index'
+        - $ref: '#/components/parameters/ingestion.pause___query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ingestion.pause___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingestion.pause___200'
+  /{index}/ingestion/_resume:
+    post:
+      summary: Resume streaming ingestion for the given index.
+      operationId: ingestion.resume.0
+      x-operation-group: ingestion.resume
+      x-version-added: '3.1'
+      description: Use this API to resume ingestion for the given index.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/ingestion.resume___path.index'
+        - $ref: '#/components/parameters/ingestion.resume___query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ingestion.resume___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/ingestion.resume'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingestion.resume___200'
+  /{index}/ingestion/_state:
+    get:
+      summary: Get the current ingestion state for a given index.
+      operationId: ingestion.get_state.0
+      x-operation-group: ingestion.get_state
+      x-version-added: '3.1'
+      description: Use this API to retrieve the ingestion state for a given index.
+      externalDocs:
+        url: https://docs.opensearch.org/docs/latest/api-reference/document-apis/pull-based-ingestion-management/
+      parameters:
+        - $ref: '#/components/parameters/ingestion.get_state___path.index'
+        - $ref: '#/components/parameters/ingestion.get_state___query.next_token'
+        - $ref: '#/components/parameters/ingestion.get_state___query.size'
+        - $ref: '#/components/parameters/ingestion.get_state___query.timeout'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      responses:
+        '200':
+          $ref: '#/components/responses/ingestion.get_state___200'
   /_opendistro/_asynchronous_search:
     post:
       operationId: asynchronous_search.search.0_superseded
@@ -24521,6 +24587,76 @@ components:
         type: boolean
         default: false
       style: form
+    ingestion.get_state___path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion state should be retrieved.
+    ingestion.get_state___query.next_token:
+      name: next_token
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Token to retrieve the next page of results.
+    ingestion.get_state___query.size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Number of results to return per page.
+    ingestion.get_state___query.timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/_common___Duration'
+      description: Timeout for the request.
+    ingestion.pause___path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion should be paused.
+    ingestion.pause___query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/_common___Duration'
+      description: Time to wait for cluster manager connection.
+    ingestion.pause___query.timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/_common___Duration'
+      description: Timeout for the request.
+    ingestion.resume___path.index:
+      name: index
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Index for which ingestion should be resumed.
+    ingestion.resume___query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/_common___Duration'
+      description: Time to wait for cluster manager connection.
+    ingestion.resume___query.timeout:
+      name: timeout
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/_common___Duration'
+      description: Timeout for the request.
     insights.top_queries___query.type:
       name: type
       in: query
@@ -30869,6 +31005,12 @@ components:
                 $ref: '#/components/schemas/ingest._common___Pipeline'
             description: The simulate definition
       required: true
+    ingestion.resume:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ingestion._common___ResumeIngestionRequest'
     ism.add_policy:
       content:
         application/json:
@@ -34699,6 +34841,24 @@ components:
             required:
               - docs
       description: ''
+    ingestion.get_state___200:
+      description: Ingestion state retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ingestion._common___GetIngestionStateResponse'
+    ingestion.pause___200:
+      description: Ingestion pause request acknowledged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ingestion._common___PauseIngestionResponse'
+    ingestion.resume___200:
+      description: Ingestion resume request acknowledged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ingestion._common___ResumeIngestionResponse'
     insights.top_queries___200:
       content:
         application/json:
@@ -57100,6 +57260,14 @@ components:
           $ref: '#/components/schemas/_common___StringifiedInteger'
         composite_index.star_tree:
           $ref: '#/components/schemas/indices._common___IndexSettingsStarTree'
+        ingestion_source:
+          $ref: '#/components/schemas/indices._common___IngestionSource'
+        replication.type:
+          type: string
+          description: Defines the replication type.
+          enum:
+            - DOCUMENT
+            - SEGMENT
       additionalProperties:
         title: custom_settings
     indices._common___IndexSettingsAnalysis:
@@ -57734,6 +57902,86 @@ components:
         created_string:
           type: string
           description: The string representation of the version when the index was created.
+    indices._common___IngestionSource:
+      type: object
+      description: The pull-based ingestion settings controlling how data is read from streaming sources.
+      properties:
+        type:
+          type: string
+          description: The streaming source type.
+          enum:
+            - file
+            - kafka
+            - kinesis
+            - none
+        pointer:
+          $ref: '#/components/schemas/indices._common___IngestionSourcePointer'
+        pointer.init.reset:
+          $ref: '#/components/schemas/indices._common___IngestionSourcePointerInitReset'
+        pointer.init.reset.value:
+          type: string
+          description: Specifies the offset value or timestamp in milliseconds.
+        error_strategy:
+          type: string
+          description: Defines the policy for error handling.
+          enum:
+            - BLOCK
+            - DROP
+        poll:
+          $ref: '#/components/schemas/indices._common___IngestionSourcePoll'
+        poll.max_batch_size:
+          $ref: '#/components/schemas/_common___StringifiedLong'
+          description: The maximum number of records to retrieve in each poll operation.
+        poll.timeout:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+          description: Determines the Poll timeout value.
+        num_processor_threads:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+          description: Defines the number of processor or writer threads.
+        internal_queue_size:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+          description: Defines the size of the internal blocking queue in pull-based ingestion.
+        param:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom parameters for the ingestion source.
+    indices._common___IngestionSourcePointer:
+      type: object
+      properties:
+        init:
+          $ref: '#/components/schemas/indices._common___IngestionSourcePointerInit'
+    indices._common___IngestionSourcePointerInit:
+      type: object
+      properties:
+        reset:
+          $ref: '#/components/schemas/indices._common___IngestionSourcePointerInitReset'
+        reset.value:
+          type: string
+          description: Specifies the offset value or timestamp in milliseconds.
+    indices._common___IngestionSourcePointerInitReset:
+      type: string
+      description: Determines where to start reading from the stream.
+      enum:
+        - EARLIEST
+        - LATEST
+        - NONE
+        - RESET_BY_OFFSET
+        - RESET_BY_TIMESTAMP
+        - earliest
+        - latest
+        - none
+        - reset_by_offset
+        - reset_by_timestamp
+    indices._common___IngestionSourcePoll:
+      type: object
+      properties:
+        max_batch_size:
+          $ref: '#/components/schemas/_common___StringifiedLong'
+          description: The maximum number of records to retrieve in each poll operation.
+        timeout:
+          $ref: '#/components/schemas/_common___StringifiedInteger'
+          description: Determines the Poll timeout value.
     indices._common___ManagedBy:
       type: string
       description: The component managing the data stream or index.
@@ -59976,6 +60224,126 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/_common___ActionStatusOptions'
+    ingestion._common___GetIngestionStateResponse:
+      type: object
+      properties:
+        ingestion_state:
+          type: object
+          description: Ingestion state for a given index and its shards.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ingestion._common___ShardIngestionState'
+        next_page_token:
+          type: string
+          description: Specifies the next page token. Pass this token in the request to retrieve contents of the next page.
+        _shards:
+          $ref: '#/components/schemas/_common___ShardStatistics'
+    ingestion._common___IngestionStateShardFailure:
+      type: object
+      properties:
+        shard:
+          type: integer
+          description: The shard number.
+        error:
+          type: string
+          description: Indicates the shard level error message.
+      required:
+        - error
+        - shard
+    ingestion._common___PauseIngestionResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Indicates if the pause request has been acknowledged.
+        shards_acknowledged:
+          type: boolean
+          description: Indicates if the pause request has been acknowledged by individual shards.
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ingestion._common___IngestionStateShardFailure'
+        error:
+          type: string
+      required:
+        - acknowledged
+        - shards_acknowledged
+    ingestion._common___ResetSettings:
+      type: object
+      properties:
+        shard:
+          type: integer
+          description: The shard ID to reset.
+        mode:
+          type: string
+          enum:
+            - OFFSET
+            - TIMESTAMP
+          description: Reset mode to be used.
+        value:
+          type: string
+          description: The offset or timestamp value to be used to reset the consumer.
+      required:
+        - mode
+        - shard
+        - value
+    ingestion._common___ResumeIngestionRequest:
+      type: object
+      properties:
+        reset_settings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ingestion._common___ResetSettings'
+          description: Reset settings to be applied before resuming ingestion on a shard. This is optional.
+    ingestion._common___ResumeIngestionResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Indicates if the resume request has been acknowledged.
+        shards_acknowledged:
+          type: boolean
+          description: Indicates if the resume request has been acknowledged by individual shards.
+        failures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ingestion._common___IngestionStateShardFailure'
+        error:
+          type: string
+      required:
+        - acknowledged
+        - shards_acknowledged
+    ingestion._common___ShardIngestionState:
+      type: object
+      properties:
+        shard:
+          type: integer
+          description: The shard number.
+        poller_state:
+          type: string
+          enum:
+            - CLOSED
+            - NONE
+            - PAUSED
+            - POLLING
+            - PROCESSING
+          description: Indicates the current state of the poller.
+        error_policy:
+          type: string
+          enum:
+            - BLOCK
+            - DROP
+          description: Indicates the policy used to handle failed messages.
+        poller_paused:
+          type: boolean
+          description: Indicates if the poller has been paused.
+        write_block_enabled:
+          type: boolean
+          description: Indicates if a write block has been created.
+        batch_start_pointer:
+          type: string
+          description: Indicates the shard pointer from where the poller will resume during shard recovery.
     insights._common___GroupingType:
       type: string
       enum:
