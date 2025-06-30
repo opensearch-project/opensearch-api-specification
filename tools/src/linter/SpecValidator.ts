@@ -16,26 +16,30 @@ import InfoFile from './components/InfoFile'
 import SchemaVisitingValidator from './SchemaVisitingValidator'
 import SchemasValidator from './SchemasValidator'
 import { type Logger } from '../Logger'
+import InlineEnumSchemaValidator from "./InlineEnumSchemaValidator";
+
+interface Validator {
+  validate(): ValidationError[]
+}
 
 export default class SpecValidator {
   logger: Logger
-  superseded_ops_file: SupersededOperationsFile
-  info_file: InfoFile
   namespaces_folder: NamespacesFolder
   schemas_folder: SchemasFolder
-  schemas_validator: SchemasValidator
-  schema_refs_validator: SchemaRefsValidator
-  inline_object_schema_validator: SchemaVisitingValidator
+  validators: Validator[]
 
   constructor (root_folder: string, logger: Logger) {
     this.logger = logger
-    this.superseded_ops_file = new SupersededOperationsFile(`${root_folder}/_superseded_operations.yaml`)
-    this.info_file = new InfoFile(`${root_folder}/_info.yaml`)
     this.namespaces_folder = new NamespacesFolder(`${root_folder}/namespaces`)
     this.schemas_folder = new SchemasFolder(`${root_folder}/schemas`)
-    this.schemas_validator = new SchemasValidator(root_folder, logger)
-    this.schema_refs_validator = new SchemaRefsValidator(this.namespaces_folder, this.schemas_folder)
-    this.inline_object_schema_validator = new SchemaVisitingValidator(this.namespaces_folder, this.schemas_folder)
+    this.validators = [
+      new SchemaRefsValidator(this.namespaces_folder, this.schemas_folder),
+      new SupersededOperationsFile(`${root_folder}/_superseded_operations.yaml`),
+      new InfoFile(`${root_folder}/_info.yaml`),
+      new SchemasValidator(root_folder, logger),
+      new SchemaVisitingValidator(this.namespaces_folder, this.schemas_folder),
+      new InlineEnumSchemaValidator(this.namespaces_folder, this.schemas_folder)
+    ]
   }
 
   validate (): ValidationError[] {
@@ -45,12 +49,6 @@ export default class SpecValidator {
     ]
     if (component_errors.length > 0) return component_errors
 
-    return [
-      ...this.schema_refs_validator.validate(),
-      ...this.superseded_ops_file.validate(),
-      ...this.info_file.validate(),
-      ...this.inline_object_schema_validator.validate(),
-      ...this.schemas_validator.validate()
-    ]
+    return this.validators.flatMap((v) => v.validate())
   }
 }
