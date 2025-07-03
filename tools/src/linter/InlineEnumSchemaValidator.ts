@@ -10,14 +10,11 @@
 import type NamespacesFolder from './components/NamespacesFolder'
 import type SchemasFolder from './components/SchemasFolder'
 import { type ValidationError } from 'types'
-import {SchemaVisitor, SpecificationVisitor} from '../_utils/SpecificationVisitor'
+import { SpecificationVisitor } from '../_utils/SpecificationVisitor'
 import {
   is_enum_schema,
   is_ref, is_string_const_schema,
   type MaybeRef,
-  SCHEMA_INTEGER_FORMATS,
-  SCHEMA_NUMBER_FORMATS,
-  SCHEMA_NUMERIC_TYPES,
   SpecificationContext
 } from '../_utils'
 import { type OpenAPIV3_1 } from 'openapi-types'

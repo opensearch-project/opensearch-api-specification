@@ -227,13 +227,16 @@ components:
           type: integer
           description: The number of time units between executions.
         unit:
-          type: string
+          $ref: '#/components/schemas/IntervalUnit'
           description: The time unit for the interval period (Days, Hours, or Minutes).
-          enum: [Days, Hours, Minutes]
       required:
         - period
         - start_time
         - unit
+
+    IntervalUnit:
+      type: string
+      enum: [Days, Hours, Minutes]
 
     IntervalSchedule:
       type: object
@@ -338,53 +341,3 @@ components:
         count:
           type: integer
           description: The number of retry attempts made.
-
-    ShardsInfo:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: The total number of shards.
-        successful:
-          type: integer
-          description: The number of shards that completed successfully.
-        failed:
-          type: integer
-          description: The number of shards that failed.
-
-    DeletePolicyResponse:
-      type: object
-      properties:
-        _index:
-          type: string
-          description: The index name where the policy was stored.
-        _id:
-          type: string
-          description: The ID of the deleted policy.
-        _version:
-          type: integer
-          description: The version number of the operation.
-        result:
-          type: string
-          description: The result of the delete operation.
-        forced_refresh:
-          type: boolean
-          description: Whether a refresh was forced after the operation.
-        _shards:
-          $ref: '#/components/schemas/ShardsInfo'
-          description: Information about shard operations.
-        _seq_no:
-          type: integer
-          description: The sequence number for optimistic concurrency control.
-        _primary_term:
-          type: integer
-          description: The primary term for optimistic concurrency control.
-      required:
-        - _id
-        - _index
-        - _primary_term
-        - _seq_no
-        - _shards
-        - _version
-        - forced_refresh
-        - result

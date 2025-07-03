@@ -771,13 +771,7 @@ components:
         type: array
         description: A comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
         items:
-          type: string
-          enum:
-            - cache
-            - request_error_count
-            - request_total_count
-            - status
-            - stores
+          $ref: '../schemas/ltr._common.yaml#/components/schemas/LtrStatName'
       required: true
     ltr.stats::path.node_id:
       name: node_id
@@ -1253,21 +1247,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/SearchResponse'
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
+              - type: object
+                properties: {}
 
     ltr.search_featuresets@200:
       description: Returns search results for feature sets.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/SearchResponse'
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
+              - type: object
+                properties: { }
 
     ltr.search_models@200:
       description: Returns search results for models.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/SearchResponse'
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
+              - type: object
+                properties: { }
 
     ltr.get_feature@200:
       description: Successfully retrieved the feature.
@@ -1289,14 +1292,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_feature@201:
       description: Successfully created the feature.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_feature@409:
       description: Feature update failed due to version conflict.
@@ -1310,7 +1313,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.delete_feature@404:
       description: The feature does not exist.
@@ -1339,14 +1342,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_featureset@201:
       description: Successfully created the feature set.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_featureset@409:
       description: Feature set update failed - feature sets cannot be updated.
@@ -1360,7 +1363,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.delete_featureset@404:
       description: The feature set does not exist.
@@ -1389,14 +1392,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_model@201:
       description: Successfully created the model.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_model@409:
       description: Model update failed - models cannot be updated.
@@ -1410,7 +1413,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.delete_model@404:
       description: The model does not exist.
@@ -1424,14 +1427,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_model_from_set@201:
       description: Successfully created the model.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.create_model_from_set@405:
       description: Model update failed - models cannot be updated.
@@ -1445,14 +1448,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.add_features_to_set@201:
       description: Successfully created the feature set with features.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.add_features_to_set@400:
       description: Bad request - invalid feature data or parameters.
@@ -1480,7 +1483,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.update_feature@404:
       description: The feature does not exist.
@@ -1501,7 +1504,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.update_featureset@404:
       description: The feature set does not exist.
@@ -1522,14 +1525,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.add_features_to_set_by_query@201:
       description: Successfully created the feature set with filtered features.
       content:
         application/json:
           schema:
-            $ref: '../schemas/ltr._common.yaml#/components/schemas/DocumentResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
 
     ltr.add_features_to_set_by_query@400:
       description: Bad request - invalid query parameters or feature filtering.
