@@ -30,7 +30,7 @@ test('validate()', () => {
 
   expect(validator.validate()).toEqual([
     { file: 'schema_refs', message: 'schema refs error' },
-    { file: 'inline_file', message: 'inline_object_schema_validator error' },
-    { file: 'schemas/', message: 'schema error' }
+    { file: 'schemas/', message: 'schema error' },
+    { file: 'inline_file', message: 'inline_object_schema_validator error' }
   ])
 })
