@@ -28,6 +28,7 @@ components:
         - $ref: '#/components/schemas/SmartcnAnalyzer'
         - $ref: '#/components/schemas/CjkAnalyzer'
         - $ref: '#/components/schemas/PhoneAnalyzer'
+        - $ref: '#/components/schemas/PhoneSearchAnalyzer'
     CustomAnalyzer:
       type: object
       properties:
@@ -364,17 +365,34 @@ components:
           $ref: '#/components/schemas/StopWords'
         stopwords_path:
           type: string
-    PhoneAnalyzer:
+    PhoneAnalyzerBase:
       type: object
       properties:
-        type:
-          type: string
-          enum:
-            - phone
-            - phone-search
         phone-region:
           type: string
           description: Optional ISO 3166 country code, defaults to "ZZ" (unknown region).
+    PhoneAnalyzer:
+      allOf:
+        - $ref: '#/components/schemas/PhoneAnalyzerBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - phone
+          required:
+            - type
+    PhoneSearchAnalyzer:
+      allOf:
+        - $ref: '#/components/schemas/PhoneAnalyzerBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - phone-search
+          required:
+            - type
     CharFilter:
       oneOf:
         - title: name

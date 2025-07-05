@@ -82,6 +82,17 @@ components:
           description: The sort values.
       required:
         - _score
+    ModelState:
+      type: string
+      description: The model state.
+      enum:
+        - DEPLOYED
+        - DEPLOYING
+        - DEPLOY_FAILED
+        - PARTIALLY_DEPLOYED
+        - REGISTERED
+        - REGISTERING
+        - UNDEPLOYED
     Source:
       type: object
       properties:
@@ -114,16 +125,7 @@ components:
           type: string
           description: The model description.
         model_state:
-          type: string
-          description: The model state.
-          enum:
-            - DEPLOYED
-            - DEPLOYING
-            - DEPLOY_FAILED
-            - PARTIALLY_DEPLOYED
-            - REGISTERED
-            - REGISTERING
-            - UNDEPLOYED
+          $ref: '#/components/schemas/ModelState'
         model_content_size_in_bytes:
           type: integer
           format: int64
@@ -190,21 +192,12 @@ components:
         owner:
           $ref: '#/components/schemas/Owner'
         access:
-          type: string
-          description: The model group access.
-          enum:
-            - private
-            - public
-            - restricted
+          $ref: '#/components/schemas/ModelGroupAccessMode'
         latest_version:
           type: integer
           description: The latest version.
         protocol:
-          type: string
-          description: The connector protocol.
-          enum:
-            - aws_sigv4
-            - http
+          $ref: '#/components/schemas/ConnectorProtocol'
         parameters:
           $ref: '#/components/schemas/Parameters'
         actions:
@@ -251,12 +244,7 @@ components:
           type: ['null', string]
           description: The prompt template.
         type:
-          type: string
-          description: The agent type
-          enum:
-            - conversational
-            - conversational_flow
-            - flow
+          $ref: '#/components/schemas/AgentType'
         tools:
           type: array
           items:
@@ -272,36 +260,40 @@ components:
         function_name:
           $ref: '#/components/schemas/FunctionName'
         input_type:
-          type: string
-          description: The input type.
-          enum:
-            - DATA_FRAME
-            - QUESTION_ANSWERING
-            - REMOTE
-            - SEARCH_QUERY
-            - TEXT_DOCS
-            - TEXT_SIMILARITY
+          $ref: '#/components/schemas/MlInputDataType'
         worker_node:
           type: array
           items:
             $ref: '_common.yaml#/components/schemas/NodeIds'
         task_type:
-          type: string
-          description: Task type.
-          enum:
-            - BATCH_INGEST
-            - BATCH_PREDICTION
-            - DEPLOY_MODEL
-            - EXECUTION
-            - PREDICTION
-            - REGISTER_MODEL
-            - TRAINING
-            - TRAINING_AND_PREDICTION
+          $ref: '#/components/schemas/MlTaskType'
         state:
           $ref: '#/components/schemas/Status'
         error:
           type: string
           description: The error message.
+    MlInputDataType:
+      type: string
+      description: The input type.
+      enum:
+        - DATA_FRAME
+        - QUESTION_ANSWERING
+        - REMOTE
+        - SEARCH_QUERY
+        - TEXT_DOCS
+        - TEXT_SIMILARITY
+    MlTaskType:
+      type: string
+      description: Task type.
+      enum:
+        - BATCH_INGEST
+        - BATCH_PREDICTION
+        - DEPLOY_MODEL
+        - EXECUTION
+        - PREDICTION
+        - REGISTER_MODEL
+        - TRAINING
+        - TRAINING_AND_PREDICTION
     ModelConfig:
       type: object
       properties:
@@ -361,19 +353,7 @@ components:
           type: string
           description: The output name.
         data_type:
-          type: string
-          description: The output data type.
-          enum:
-            - BOOLEAN
-            - FLOAT16
-            - FLOAT32
-            - FLOAT64
-            - INT32
-            - INT64
-            - INT8
-            - STRING
-            - UINT8
-            - UNKNOWN
+          $ref: '#/components/schemas/MlResultDataType'
         shape:
           type: array
           items:
@@ -393,6 +373,11 @@ components:
           description: The output result.
       required:
         - data
+    ByteOrder:
+      type: string
+      enum:
+        - BIG_ENDIAN
+        - LITTLE_ENDIAN
     ByteBuffer:
       type: object
       properties:
@@ -400,11 +385,8 @@ components:
           type: string
           description: The byte buffer array.
         order:
-          type: string
+          $ref: '#/components/schemas/ByteOrder'
           description: The byte buffer order.
-          enum:
-            - BIG_ENDIAN
-            - LITTLE_ENDIAN
     PredictionResult:
       type: object
       properties:
@@ -416,19 +398,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Rows'
+    ColumnType:
+      type: string
+      description: The column type.
+      enum:
+        - BOOLEAN
+        - DOUBLE
+        - INTEGER
+        - STRING
     ColumnMeta:
       type: object
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         column_type:
-          type: string
-          description: The column type.
-          enum:
-            - BOOLEAN
-            - DOUBLE
-            - INTEGER
-            - STRING
+          $ref: '#/components/schemas/ColumnType'
     Rows:
       type: object
       properties:
@@ -440,13 +424,7 @@ components:
       type: object
       properties:
         column_type:
-          type: string
-          description: The column type.
-          enum:
-            - BOOLEAN
-            - DOUBLE
-            - INTEGER
-            - STRING
+          $ref: '#/components/schemas/ColumnType'
         value:
           type: number
           description: The value.
@@ -463,322 +441,57 @@ components:
           format: int64
           description: The size of the query.
         query:
-          $ref: '#/components/schemas/Query'
-    Query:
-      type: object
-      description: The query.
-      properties:
-        bool:
-          $ref: '#/components/schemas/BoolQuery'
-        match:
-          $ref: '#/components/schemas/Match'
-        match_all:
-          $ref: '#/components/schemas/MatchAllQuery'
-        term:
-          $ref: '#/components/schemas/Term'
-      additionalProperties: true
-    MatchAllQuery:
-      type: object
-      description: The match all query.
-      properties: {}
-    BoolQuery:
-      type: object
-      description: The Boolean query.
-      properties:
-        filter:
-          type: array
-          description: Filter query that appears in matching documents.
-          items:
-            $ref: '#/components/schemas/Filter'
-        must:
-          type: array
-          description: Query that must appears in matching documents
-          items:
-            $ref: '#/components/schemas/Filter'
-        must_not:
-          description: Query that must not appears in matching documents.
-          $ref: '#/components/schemas/Filter'
-        should:
-          type: array
-          description: Query that should appear in matching documents.
-          items:
-            $ref: '#/components/schemas/Filter'
-    Filter:
-      type: object
-      description: The filter element.
-      properties:
-        range:
-          $ref: '#/components/schemas/Range'
-        nested:
-          $ref: '#/components/schemas/Nested'
-        exists:
-          $ref: '#/components/schemas/Exists'
-        term:
-          $ref: '#/components/schemas/Term'
-        terms:
-          $ref: '#/components/schemas/Term'
-        match:
-          $ref: '#/components/schemas/Match'
-    Range:
-      type: object
-      description: The filter range.
-      properties:
-        k1:
-          $ref: '#/components/schemas/Key'
-        k2:
-          $ref: '#/components/schemas/Key'
-        k3:
-          $ref: '#/components/schemas/Key'
-    Key:
-      type: object
-      description: The key.
-      properties:
-        gte:
-          type: number
-          description: Greater than or equal to.
-        lte:
-          type: number
-          description: Less than or equal to.
-        gt:
-          type: number
-          description: Greater than.
-        lt:
-          type: number
-          description: Less than.
-    Term:
-      type: object
-      description: Term to match the query.
-      properties:
-        algorithm:
-          $ref: '#/components/schemas/Algorithm'
-        _id:
-          type: array
-          items:
-            $ref: '_common.yaml#/components/schemas/Id'
-        function_name:
-          $ref: '#/components/schemas/FunctionName'
-        model_id:
-          $ref: '_common.yaml#/components/schemas/Name'
-        name:
-          $ref: '#/components/schemas/OwnerNameKeyword'
-        owner.name.keyword:
-          $ref: '#/components/schemas/OwnerNameKeyword'
-        type:
-          $ref: '#/components/schemas/Type'
-    Algorithm:
-      type: object
-      description: The algorithm.
-      properties:
-        value:
-          $ref: '#/components/schemas/FunctionName'
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
     FunctionName:
       type: string
       description: The function name.
       enum:
+        # eslint-disable yml/sort-sequence-values
         - AD_LIBSVM
+        - ad_libsvm
         - AGENT
+        - agent
         - ANOMALY_LOCALIZATION
+        - anomaly_localization
         - BATCH_RCF
+        - batch_rcf
         - CONNECTOR
+        - connector
         - FIT_RCF
+        - fit_rcf
         - KMEANS
+        - kmeans
         - LINEAR_REGRESSION
+        - linear_regression
         - LOCAL_SAMPLE_CALCULATOR
+        - local_sample_calculator
         - LOGISTIC_REGRESSION
+        - logistic_regression
         - METRICS_CORRELATION
+        - metrics_correlation
         - QUESTION_ANSWERING
+        - question_answering
         - RCF_SUMMARIZE
+        - rcf_summarize
         - REMOTE
+        - remote
         - SAMPLE_ALGO
+        - sample_algo
         - SPARSE_ENCODING
+        - sparse_encoding
         - SPARSE_TOKENIZE
+        - sparse_tokenize
         - TEXT_EMBEDDING
+        - text_embedding
         - TEXT_SIMILARITY
-    OwnerNameKeyword:
-      type: object
-      description: The owner name keyword.
-      properties:
-        value:
-          $ref: '_common.yaml#/components/schemas/FieldValue'
-        boost:
-          type: number
-          description: Adjust the relevance score of a match.
-    Type:
-      type: object
-      description: The type.
-      properties:
-        value:
-          type: string
-          description: The agent type.
-          enum:
-            - conversational
-            - conversational_flow
-            - flow
-    Nested:
-      type: object
-      description: The nested filter.
-      properties:
-        query:
-          $ref: '#/components/schemas/Query'
-        path:
-          $ref: '_common.yaml#/components/schemas/Field'
-        ignore_unmapped:
-          type: boolean
-          description: Whether to ignore unmapped fields.
-        score_mode:
-          type: string
-          description: The score mode.
-          enum:
-            - avg
-            - max
-            - min
-            - none
-            - sum
-        boost:
-          type: number
-          description: Adjust the relevance score of a match.
-    Exists:
-      type: object
-      description: The exists filter.
-      properties:
-        field:
-          $ref: '_common.yaml#/components/schemas/Field'
-    Sort:
-      type: object
-      description: Sort query.
-      properties:
-        algorithm:
-          $ref: '#/components/schemas/SortOrder'
-        auto_redeploy_retry_times:
-          $ref: '#/components/schemas/SortOrder'
-        chunk_number:
-          $ref: '#/components/schemas/SortOrder'
-        created_time:
-          $ref: '#/components/schemas/SortOrder'
-        current_worker_node_count:
-          $ref: '#/components/schemas/SortOrder'
-        deploy_to_all_nodes:
-          $ref: '#/components/schemas/SortOrder'
-        is_hidden:
-          $ref: '#/components/schemas/SortOrder'
-        last_registered_time:
-          $ref: '#/components/schemas/SortOrder'
-        last_updated_time:
-          $ref: '#/components/schemas/SortOrder'
-        model_content_hash_value:
-          $ref: '#/components/schemas/SortOrder'
-        model_content_size_in_bytes:
-          $ref: '#/components/schemas/SortOrder'
-        model_format:
-          $ref: '#/components/schemas/SortOrder'
-        model_group_id:
-          $ref: '#/components/schemas/SortOrder'
-        model_state:
-          $ref: '#/components/schemas/SortOrder'
-        model_version:
-          $ref: '#/components/schemas/SortOrder'
-        planning_worker_nodes:
-          $ref: '#/components/schemas/SortOrder'
-        planning_worker_node_count:
-          $ref: '#/components/schemas/SortOrder'
-        total_chunks:
-          $ref: '#/components/schemas/SortOrder'
-        _index:
-          $ref: '#/components/schemas/SortOrder'
-        _id:
-          $ref: '#/components/schemas/SortOrder'
-        _seq_no:
-          $ref: '#/components/schemas/SortOrder'
-        _score:
-          $ref: '#/components/schemas/SortOrder'
-    SortAgent:
-      type: object
-      description: The sort agent query.
-      properties:
-        created_time:
-          $ref: '#/components/schemas/SortOrder'
-        is_hidden:
-          $ref: '#/components/schemas/SortOrder'
-        last_updated_time:
-          $ref: '#/components/schemas/SortOrder'
-        parameters:
-          $ref: '#/components/schemas/SortOrder'
-        tools:
-          $ref: '#/components/schemas/SortOrder'
-        type:
-          $ref: '#/components/schemas/SortOrder'
-        _id:
-          $ref: '#/components/schemas/SortOrder'
-        _index:
-          $ref: '#/components/schemas/SortOrder'
-        _score:
-          $ref: '#/components/schemas/SortOrder'
-        _seq_no:
-          $ref: '#/components/schemas/SortOrder'
-    SortMemory:
-      type: object
-      description: The sort memory query.
-      properties:
-        additional_info:
-          $ref: '#/components/schemas/SortOrder'
-        application_time:
-          $ref: '#/components/schemas/SortOrder'
-        create_time:
-          $ref: '#/components/schemas/SortOrder'
-        updated_time:
-          $ref: '#/components/schemas/SortOrder'
-        user:
-          $ref: '#/components/schemas/SortOrder'
-        _id:
-          $ref: '#/components/schemas/SortOrder'
-        _index:
-          $ref: '#/components/schemas/SortOrder'
-        _score:
-          $ref: '#/components/schemas/SortOrder'
-        _seq_no:
-          $ref: '#/components/schemas/SortOrder'
-    SortMessage:
-      type: object
-      description: The sort message query.
-      properties:
-        additional_info:
-          $ref: '#/components/schemas/SortOrder'
-        create_time:
-          $ref: '#/components/schemas/SortOrder'
-        memory_id:
-          $ref: '#/components/schemas/SortOrder'
-        origin:
-          $ref: '#/components/schemas/SortOrder'
-        parent_message_id:
-          $ref: '#/components/schemas/SortOrder'
-        trace_number:
-          $ref: '#/components/schemas/SortOrder'
-        _id:
-          $ref: '#/components/schemas/SortOrder'
-        _index:
-          $ref: '#/components/schemas/SortOrder'
-        _score:
-          $ref: '#/components/schemas/SortOrder'
-        _seq_no:
-          $ref: '#/components/schemas/SortOrder'
-    SortOrder:
-      type: object
-      description: The order of the sort.
-      properties:
-        order:
-          type: string
-          description: The order.
-          enum:
-            - asc
-            - desc
-    Match:
-      type: object
-      description: Match query.
-      properties:
-        description:
-          type: string
-          description: The description.
-      additionalProperties: true
+        - text_similarity
+        # eslint-enable yml/sort-sequence-values
+    KMeansDistanceType:
+      type: string
+      enum:
+        - COSINE
+        - EUCLIDEAN
+        - L1
     TrainParameters:
       type: object
       properties:
@@ -791,12 +504,8 @@ components:
           format: int64
           description: The iterations.
         distance_type:
-          type: string
           description: The distance type.
-          enum:
-            - COSINE
-            - EUCLIDEAN
-            - L1
+          $ref: '#/components/schemas/KMeansDistanceType'
     TrainResponse:
       type: object
       properties:
@@ -827,6 +536,13 @@ components:
       required:
         - model_group_id
         - status
+    ModelGroupAccessMode:
+      type: string
+      description: The model group access mode.
+      enum:
+        - private
+        - public
+        - restricted
     ModelGroup:
       type: object
       properties:
@@ -842,12 +558,7 @@ components:
         owner:
           $ref: '#/components/schemas/Owner'
         access:
-          type: string
-          description: The model group access.
-          enum:
-            - private
-            - public
-            - restricted
+          $ref: '#/components/schemas/ModelGroupAccessMode'
         created_time:
           type: integer
           format: int64
@@ -910,16 +621,7 @@ components:
         model_format:
           $ref: '#/components/schemas/ModelFormat'
         model_state:
-          type: string
-          description: The model state.
-          enum:
-            - DEPLOYED
-            - DEPLOYING
-            - DEPLOY_FAILED
-            - PARTIALLY_DEPLOYED
-            - REGISTERED
-            - REGISTERING
-            - UNDEPLOYED
+          $ref: '#/components/schemas/ModelState'
         model_content_size_in_bytes:
           type: integer
           format: int64
@@ -950,6 +652,16 @@ components:
           description: Whether the model is hidden.
       required:
         - model_state
+    RateLimiterUnit:
+      type: string
+      enum:
+        - DAYS
+        - HOURS
+        - MICROSECONDS
+        - MILLISECONDS
+        - MINUTES
+        - NANOSECONDS
+        - SECONDS
     RateLimiter:
       type: object
       properties:
@@ -957,28 +669,22 @@ components:
           description: The maximum limit.
           $ref: '_common.yaml#/components/schemas/StringifiedDouble'
         unit:
-          type: string
           description: The unit of time.
-          enum:
-            - DAYS
-            - HOURS
-            - MICROSECONDS
-            - MILLISECONDS
-            - MINUTES
-            - NANOSECONDS
-            - SECONDS
+          $ref: '#/components/schemas/RateLimiterUnit'
       required:
         - limit
         - unit
+    GuardrailsType:
+      type: string
+      description: The guardrails type.
+      enum:
+        - local_regex
+        - model
     Guardrails:
       type: object
       properties:
         type:
-          type: string
-          description: The guardrails type.
-          enum:
-            - local_regex
-            - model
+          $ref: '#/components/schemas/GuardrailsType'
         input_guardrail:
           $ref: '#/components/schemas/GuardrailsInputOutput'
         output_guardrail:
@@ -1018,28 +724,9 @@ components:
         task_id:
           type: string
         state:
-          type: string
-          enum:
-            - CANCELLED
-            - CANCELLING
-            - COMPLETED
-            - COMPLETED_WITH_ERROR
-            - CREATED
-            - EXPIRED
-            - FAILED
-            - RUNNING
+          $ref: '#/components/schemas/TaskState'
         task_type:
-          type: string
-          description: Task type.
-          enum:
-            - BATCH_INGEST
-            - BATCH_PREDICTION
-            - DEPLOY_MODEL
-            - EXECUTION
-            - PREDICTION
-            - REGISTER_MODEL
-            - TRAINING
-            - TRAINING_AND_PREDICTION
+          $ref: '#/components/schemas/MlTaskType'
         function_name:
           $ref: '#/components/schemas/FunctionName'
         worker_node:
@@ -1058,6 +745,17 @@ components:
           type: string
       required:
         - state
+    TaskState:
+      type: string
+      enum:
+        - CANCELLED
+        - CANCELLING
+        - COMPLETED
+        - COMPLETED_WITH_ERROR
+        - CREATED
+        - EXPIRED
+        - FAILED
+        - RUNNING
     UndeployModelResponse:
       type: object
       additionalProperties:
@@ -1098,6 +796,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PredictModelOutput'
+    MlResultDataType:
+      type: string
+      description: The result data type.
+      enum:
+        - BOOLEAN
+        - FLOAT16
+        - FLOAT32
+        - FLOAT64
+        - INT32
+        - INT64
+        - INT8
+        - STRING
+        - UINT8
+        - UNKNOWN
     PredictModelOutput:
       type: object
       properties:
@@ -1105,19 +817,7 @@ components:
           type: string
           description: The output name.
         data_type:
-          type: string
-          description: The output data type.
-          enum:
-            - BOOLEAN
-            - FLOAT16
-            - FLOAT32
-            - FLOAT64
-            - INT32
-            - INT64
-            - INT8
-            - STRING
-            - UINT8
-            - UNKNOWN
+          $ref: '#/components/schemas/MlResultDataType'
         shape:
           type: array
           items:
@@ -1238,6 +938,12 @@ components:
         content_type:
           type: string
       additionalProperties: true
+    ConnectorProtocol:
+      type: string
+      description: The connector protocol.
+      enum:
+        - aws_sigv4
+        - http
     GetConnectorResponse:
       type: object
       properties:
@@ -1249,11 +955,7 @@ components:
           type: string
           description: The connector description.
         protocol:
-          type: string
-          description: The connector protocol.
-          enum:
-            - aws_sigv4
-            - http
+          $ref: '#/components/schemas/ConnectorProtocol'
         parameters:
           $ref: '#/components/schemas/Parameters'
         actions:
@@ -1270,18 +972,20 @@ components:
           description: The last updated time.
     SearchConnectorsResponse:
       $ref: '#/components/schemas/SearchResponse'
+    AgentType:
+      type: string
+      description: The agent type.
+      enum:
+        - conversational
+        - conversational_flow
+        - flow
     GetAgentResponse:
       type: object
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         type:
-          type: string
-          description: The agent type.
-          enum:
-            - conversational
-            - conversational_flow
-            - flow
+          $ref: '#/components/schemas/AgentType'
         description:
           type: string
           description: The agent description.
@@ -1388,16 +1092,7 @@ components:
       type: object
       properties:
         model_state:
-          type: string
-          description: The model state.
-          enum:
-            - DEPLOYED
-            - DEPLOYING
-            - DEPLOY_FAILED
-            - PARTIALLY_DEPLOYED
-            - REGISTERED
-            - REGISTERING
-            - UNDEPLOYED
+          $ref: '#/components/schemas/ModelState'
         predictor:
           type: string
           description: The predictor.
@@ -1468,6 +1163,13 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/Task'
+    MlIndexStatus:
+      type: string
+      enum:
+        - green
+        - non-existent
+        - red
+        - yellow
     GetStatsResponse:
       type: object
       properties:
@@ -1478,27 +1180,15 @@ components:
         ml_connector_index_status:
           type: string
           description: The connector index status.
-          enum:
-            - green
-            - non-existent
-            - red
-            - yellow
+          $ref: '#/components/schemas/MlIndexStatus'
         ml_config_index_status:
           type: string
           description: The config index status.
-          enum:
-            - green
-            - non-existent
-            - red
-            - yellow
+          $ref: '#/components/schemas/MlIndexStatus'
         ml_task_index_status:
           type: string
           description: The task index status.
-          enum:
-            - green
-            - non-existent
-            - red
-            - yellow
+          $ref: '#/components/schemas/MlIndexStatus'
         ml_connector_count:
           type: integer
           format: int64
@@ -1506,19 +1196,11 @@ components:
         ml_model_index_status:
           type: string
           description: The model index status.
-          enum:
-            - green
-            - non-existent
-            - red
-            - yellow
+          $ref: '#/components/schemas/MlIndexStatus'
         ml_controller_index_status:
           type: string
           description: The controller index status.
-          enum:
-            - green
-            - non-existent
-            - red
-            - yellow
+          $ref: '#/components/schemas/MlIndexStatus'
         nodes:
           $ref: '#/components/schemas/NodeStats'
     NodeStats:
@@ -1695,3 +1377,40 @@ components:
           type: boolean
       additionalProperties:
         title: attributes
+    LocalSampleCalculatorOperation:
+      type: string
+      enum:
+        - max
+        - min
+        - sum
+    MlStatName:
+      type: string
+      enum:
+        - ml_config_index_status
+        - ml_connector_count
+        - ml_connector_index_status
+        - ml_controller_index_status
+        - ml_model_count
+        - ml_model_index_status
+        - ml_task_index_status
+    ToolName:
+      type: string
+      enum:
+        - AgentTool
+        - CatIndexTool
+        - ConnectorTool
+        - CreateAnomalyDetectorTool
+        - IndexMappingTool
+        - ListIndexTool
+        - LogPatternTool
+        - MLModelTool
+        - NeuralSparseSearchTool
+        - PPLTool
+        - RAGTool
+        - SearchAlertsTool
+        - SearchAnomalyDetectorsTool
+        - SearchAnomalyResultsTool
+        - SearchIndexTool
+        - SearchMonitorsTool
+        - VectorDBTool
+        - VisualizationTool

@@ -34,6 +34,35 @@ export function is_primitive_schema (schema: OpenAPIV3_1.SchemaObject): boolean 
     schema.type === 'string'
 }
 
+export function is_string_const_schema (schema: OpenAPIV3_1.SchemaObject): boolean {
+  return schema.type === 'string' && (schema.const !== undefined || (schema.enum !== undefined && schema.enum.length === 1))
+}
+
+export function is_enum_schema (schema: OpenAPIV3_1.SchemaObject): boolean {
+  if (schema.oneOf !== undefined && schema.oneOf.length > 0) {
+    let enum_count = 0
+    let boolean_count = 0
+    let total_count = 0
+
+    for (const s of schema.oneOf) {
+      if (!is_ref(s)) {
+        if (s.type === 'null') {
+          continue
+        } else if (s.type === 'boolean') {
+          boolean_count += 1
+        } else if (is_enum_schema(s) || is_string_const_schema(s)) {
+          enum_count += 1
+        }
+      }
+
+      total_count += 1
+    }
+
+    return enum_count === total_count || (boolean_count === 1 && enum_count === total_count - 1)
+  }
+  return schema.type === 'string' && (schema.enum !== undefined && schema.enum.length > 0)
+}
+
 export function determine_possible_schema_types (doc: OpenAPIV3_1.Document, schema: MaybeRef<OpenAPIV3_1.SchemaObject>): Set<SchemaObjectType> {
   while (is_ref(schema)) {
     const key = schema.$ref.split('/').pop()

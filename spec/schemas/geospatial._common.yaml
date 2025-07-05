@@ -102,18 +102,20 @@ components:
             $ref: '#/components/schemas/DataSource'
       required:
         - datasources
+    DataSourceState:
+      type: string
+      enum:
+        - AVAILABLE
+        - CREATE_FAILED
+        - CREATING
+        - DELETING
     DataSource:
       type: object
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         state:
-          type: string
-          enum:
-            - AVAILABLE
-            - CREATE_FAILED
-            - CREATING
-            - DELETING
+          $ref: '#/components/schemas/DataSourceState'
           description: State of the data source.
         endpoint:
           type: string
@@ -170,6 +172,11 @@ components:
           type: integer
           description: Update interval in days.
           default: 3
+    GeospatialFieldType:
+      type: string
+      enum:
+        - geo_point
+        - geo_shape
     GeoJSONRequest:
       type: object
       properties:
@@ -180,11 +187,8 @@ components:
           default: location
           description: Field name for the geospatial data.
         type:
-          type: string
           description: Field type for the geospatial data.
-          enum:
-            - geo_point
-            - geo_shape
+          $ref: '#/components/schemas/GeospatialFieldType'
         data:
           type: array
           maxItems: 10000
@@ -195,14 +199,16 @@ components:
         - data
         - index
         - type
+    GeoJSONDataType:
+      type: string
+      enum:
+        - Feature
+        - FeatureCollection
     GeoJSONData:
       type: object
       properties:
         type:
-          type: string
-          enum:
-            - Feature
-            - FeatureCollection
+          $ref: '#/components/schemas/GeoJSONDataType'
         geometry:
           $ref: '#/components/schemas/Geometry'
         properties:

@@ -50,6 +50,11 @@ components:
       required:
         - acknowledged
         - shards_acknowledged
+    ResetMode:
+      type: string
+      enum:
+        - OFFSET
+        - TIMESTAMP
     ResetSettings:
       type: object
       properties:
@@ -57,8 +62,7 @@ components:
           type: integer
           description: The shard ID to reset.
         mode:
-          type: string
-          enum: [OFFSET, TIMESTAMP]
+          $ref: '#/components/schemas/ResetMode'
           description: Reset mode to be used.
         value:
           type: string
@@ -79,6 +83,19 @@ components:
       required:
         - error
         - shard
+    PollerState:
+      type: string
+      enum:
+        - CLOSED
+        - NONE
+        - PAUSED
+        - POLLING
+        - PROCESSING
+    ErrorPolicy:
+      type: string
+      enum:
+        - BLOCK
+        - DROP
     ShardIngestionState:
       type: object
       properties:
@@ -86,12 +103,10 @@ components:
           type: integer
           description: The shard number.
         poller_state:
-          type: string
-          enum: [CLOSED, NONE, PAUSED, POLLING, PROCESSING]
+          $ref: '#/components/schemas/PollerState'
           description: Indicates the current state of the poller.
         error_policy:
-          type: string
-          enum: [BLOCK, DROP]
+          $ref: '#/components/schemas/ErrorPolicy'
           description: Indicates the policy used to handle failed messages.
         poller_paused:
           type: boolean
