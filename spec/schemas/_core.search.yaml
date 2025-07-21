@@ -33,6 +33,17 @@ components:
               format: float
       required:
         - hits
+    HitsMetadataJsonValue:
+      allOf:
+        - $ref: '#/components/schemas/HitsMetadata'
+        - type: object
+          properties:
+            hits:
+              type: array
+              items:
+                type: object
+                properties:
+                  _source: {}
     TotalHits:
       type: object
       properties:
@@ -1391,3 +1402,40 @@ components:
         - hits
         - timed_out
         - took
+    SearchResultJsonValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchResult'
+        - type: object
+          properties:
+            hits:
+              type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _source: {}
+            suggest:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  oneOf:
+                    - title: completion
+                      type: object
+                      properties:
+                        options:
+                          oneOf:
+                            - type: object
+                              properties:
+                                _source: {}
+                            - type: array
+                              items:
+                                type: object
+                                properties:
+                                  _source: {}
+                    - title: phrase
+                      $ref: '#/components/schemas/PhraseSuggest'
+                    - title: term
+                      $ref: '#/components/schemas/TermSuggest'
