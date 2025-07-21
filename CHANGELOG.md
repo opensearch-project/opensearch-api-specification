@@ -21,7 +21,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Removed
 
 ### Fixed
-- Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
+- Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
+- Fixed the type of `SearchStats`'s `concurrent_avg_slice_count` to be a double ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
