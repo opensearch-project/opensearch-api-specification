@@ -66,7 +66,7 @@ export default class MergedOpenApiSpec {
 
       // Don't apply `unevaluatedProperties` to component schemas as we will apply it at usage points (i.e. $ref's)
       // Also don't apply to sub-schemas of an allOf as it will conflict with other sub-schemas as we'll apply it to the upper level
-      if (ctx.parent().location === '#/components/schemas' || ctx.parent().key === 'allOf') return;
+      if (ctx.parent().location === '#/components/schemas' || ctx.parent().keys.includes('allOf')) return;
 
       const types = determine_possible_schema_types(spec, schema)
 

@@ -59,6 +59,10 @@ export default class SchemaVisitingValidator {
 
     const ancestry = ctx.keys.reverse()
 
+    if (ancestry.includes('allOf')) {
+      return
+    }
+
     if (ancestry[1] === 'properties' ||
         ancestry[0] === 'additionalProperties' ||
         ancestry[0] === 'items' ||
