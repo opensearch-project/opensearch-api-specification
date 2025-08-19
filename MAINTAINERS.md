@@ -10,7 +10,6 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Maintainer           | GitHub ID                                     | Affiliation |
 | -------------------- | --------------------------------------------- | ----------- |
 | Alen Abeshov         | [aabeshov](https://github.com/aabeshov)       |             |
-| Daniel Doubrovkine   | [dblock](https://github.com/dblock)           | Independent |
 | Harsha Vamsi Kalluri | [harshavamsi](https://github.com/harshavamsi) | Amazon      |
 | Sachet Alva          | [sachetalva](https://github.com/sachetalva)   | Amazon      |
 | Theo Truong          | [nhtruong](https://github.com/nhtruong)       | Amazon      |
@@ -18,10 +17,10 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
 | Vacha Shah           | [VachaShah](https://github.com/VachaShah)     | Amazon      |
 
-
 ## Emeritus
 
-| Maintainer  | GitHub ID                               | Affiliation |
-| ----------- | --------------------------------------- | ----------- |
-| Abhi Kalra  | [abhivka7](https://github.com/abhivka7) | Amazon      |
-| Pranav Garg | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
+| Maintainer         | GitHub ID                               | Affiliation |
+| ------------------ | --------------------------------------- | ----------- |
+| Abhi Kalra         | [abhivka7](https://github.com/abhivka7) | Amazon      |
+| Daniel Doubrovkine | [dblock](https://github.com/dblock)     | Independent |
+| Pranav Garg        | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
