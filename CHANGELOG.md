@@ -323,6 +323,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `cluster.reroute`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `indices.stats`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `CleanupRepositoryResults`' properties to be `int64`s ([#587](https://github.com/opensearch-project/opensearch-api-specification/pull/587))
+- Changed `RangeQuery` to unified type with oneOf ([#958](https://github.com/opensearch-project/opensearch-api-specification/pull/958))
 
 ### Deprecated
 
@@ -333,7 +334,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 - Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
 - Removed duplicate hits from SearchResult ([#956](https://github.com/opensearch-project/opensearch-api-specification/pull/956))
-
+- Removed duplicate Suggest from SearchResult ([#957](https://github.com/opensearch-project/opensearch-api-specification/pull/957))
 ### Fixed
 
 - Fixed GitHub pages ([#215](https://github.com/opensearch-project/opensearch-api-specification/pull/215))
