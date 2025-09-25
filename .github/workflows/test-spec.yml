@@ -24,51 +24,58 @@ jobs:
       fail-fast: false
       matrix:
         entry:
+          # default test suite
           - version: 1.3.17
             admin_password: admin
           - version: 2.0.0
             admin_password: admin
-          - version: 2.19.0
-          - version: 2.19.0
+          - version: 2.19.2
+          - version: 3.1.0
+          # TODO: Uncomment when a more complete 3.2.0 staging build is available. At time of writing, several plugins are missing from the distribution.
+          # - version: 3.2.0
+          #   hub: opensearchstaging
+          #   ref: '@sha256:95be442d5ae90490a4dd9fb32f4e5aa3e9bb48288d789d65e33e051f7549592a'
+
+          # test suites for specific plugins
+          - version: 3.1.0
             tests: plugins/index_state_management
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/ml
-          - version: 2.19.0
+          - version: 3.1.0
             tests: routing
-          - version: 2.19.0
+          - version: 3.1.0
             tests: snapshot
-          - version: 2.19.0
+          - version: 3.1.0
             tests: remote_store
-          - version: 2.19.0
+          - version: 3.1.0
             tests: dangling
             url: http://localhost:9200
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/replication
             url: http://localhost:9200
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/streaming
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/notifications
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/query_insights
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/workload-management
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/analysis
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/knn
-          - version: 2.19.0
-            tests: plugins/learning_to_rank
-          - version: 2.19.0
+          - version: 3.1.0
             tests: plugins/security
             cert: tests/plugins/security/.kirk.pem
             key: tests/plugins/security/.kirk-key.pem
-          - version: 2.20.0
+          - version: 3.1.0
+            tests: plugins/search_relevance
+            url: http://localhost:9200
+          - version: 3.2.0
             hub: opensearchstaging
-            ref: '@sha256:037a2eb5a4f48b9a9a29950be5e5fae4ebd82d41de1066e00bb8d8b0ce7871b1'
-          - version: 3.0.0
-            hub: opensearchstaging
-            ref: '@sha256:727643acdfebed77bfdb26362dbcff536b7ea02a0cc4ae2da2521729171333de'
+            ref: '@sha256:95be442d5ae90490a4dd9fb32f4e5aa3e9bb48288d789d65e33e051f7549592a'
+            tests: plugins/ingestion-fs
 
     name: test-opensearch-spec (version=${{ matrix.entry.version }}, hub=${{ matrix.entry.hub || 'opensearchproject' }}, tests=${{ matrix.entry.tests || 'default' }})
     runs-on: ubuntu-latest
@@ -115,7 +122,7 @@ jobs:
       - name: Get Container Logs
         if: failure()
         run: |
-          for container_id in $(docker ps -aqf "ancestor=opensearchproject/opensearch:${{ matrix.entry.version }}"); do \
+          for container_id in $(docker ps -aqf "ancestor=${{ env.OPENSEARCH_DOCKER_HUB_PROJECT }}/opensearch:${{ env.OPENSEARCH_VERSION }}${{ env.OPENSEARCH_DOCKER_REF }}"); do \
             echo Dumping logs from $container_id ... && \
             docker logs $container_id \
           ; done
@@ -178,7 +185,7 @@ jobs:
           jq -sc '
             (map(.operations) | add | unique | length) as $total_operations_count |
             (map(.evaluated_operations) | add | unique | length) as $evaluated_operations_count |
-            { 
+            {
               total_operations_count: $total_operations_count,
               evaluated_operations_count: $evaluated_operations_count,
               evaluated_paths_pct: $evaluated_operations_count | (10000 * . / $total_operations_count | round / 100)

@@ -7,37 +7,41 @@ paths: { }
 components:
   schemas:
     AllowDelete:
-      description: Required when deleting resources involves a high potential for data loss.
+      description: Specifies whether to allow deletion of resources with potential data loss.
       type: string
     WorkflowID:
       type: string
+      description: The ID of the workflow.
     WorkflowIDResponse:
       type: object
       properties:
         workflow_id:
           type: string
-          description: The ID of the workflow
+          description: The ID of the workflow.
     WorkflowStepName:
       type: string
+      description: The name of the workflow step.
     Provision:
-      description: Provision the workflow as part of the request.
+      description: Whether to provision the workflow as part of the request.
       type: boolean
       default: false
     Reprovision:
       type: boolean
       default: false
+      description: Whether to reprovision an existing workflow.
     UseCase:
       type: string
+      description: The workflow template to use.
     Validation:
-      description: Validate the workflow. Valid values are all (validate the template) and none (do not validate the template). Default is all.
+      description: Specifies the validation type. Valid values are `all` (validate the template) and `none` (do not validate the template).
       type: string
       default: all
     UpdateFields:
-      description: Update only the fields included in the request body.
+      description: Whether to update only the fields included in the request body..
       type: boolean
       default: false
     All:
-      description: The all parameter specifies whether the response should return all fields.
+      description: Whether to return all fields in the response.
       type: boolean
       default: false
     FlowFrameworkCreate:
@@ -51,7 +55,7 @@ components:
           description: A description of the workflow.
         use_case:
           type: string
-          description: A use case, which can be used with the Search Workflow API to find related workflows.
+          description: A use case ID, which can be used with the Search Workflow API to find related workflows.
         version:
           $ref: '#/components/schemas/version'
         workflows:
@@ -70,7 +74,7 @@ components:
           description: A description of the workflow.
         use_case:
           type: string
-          description: A use case, which can be used with the Search Workflow API to find related workflows.
+          description: A use case ID, which can be used with the Search Workflow API to find related workflows.
         workflows:
           type: object
         version:
@@ -81,22 +85,28 @@ components:
       properties:
         name:
           type: string
+          description: The name of the workflow.
         version:
           $ref: '#/components/schemas/version'
         description:
           type: string
+          description: The description of the workflow.
         use_case:
           type: string
+          description: A use case ID, which can be used with the Search Workflow API to find related workflows.
         workflows:
           type: object
         user:
           $ref: '#/components/schemas/user'
         created_time:
           type: integer
+          description: When the workflow was created.
         last_updated_time:
           type: integer
+          description: When the workflow was last updated.
         last_provisioned_time:
           type: number
+          description: When the workflow was last provisioned.
     version:
       type: object
       description: A key-value map with two fields, template, which identifies the template version, and compatibility, which identifies a list of minimum required OpenSearch versions.
@@ -129,7 +139,7 @@ components:
       properties:
         value:
           type: integer
-          description: Total number of matching documents.
+          description: The total number of matching documents.
         relation:
           type: string
           description: The relation of the total hits.
@@ -186,47 +196,65 @@ components:
       properties:
         workflow_id:
           type: string
+          description: The ID of the workflow.
         provisioning_progress:
           type: string
+          description: The current progress status of the provisioning operation.
         state:
           type: string
+          description: The current state of the workflow.
         user:
           $ref: '#/components/schemas/user'
         provision_start_time:
           $ref: '_common.yaml#/components/schemas/DateTime'
+          description: When the provisioning operation started.
         provision_end_time:
           $ref: '_common.yaml#/components/schemas/DateTime'
+          description: When the provisioning operation completed.
         resources_created:
-          $ref: '#/components/schemas/ResourcesCreated'
+          oneOf:
+            - $ref: '#/components/schemas/ResourcesCreated'
+            - type: array
+              items:
+                $ref: '#/components/schemas/ResourcesCreated'
     ResourcesCreated:
       type: object
       properties:
         workflow_step_name:
           type: string
+          description: The name of the workflow step.
         workflow_step_id:
           type: string
+          description: The unique identifier for the workflow step.
         resource_type:
           type: string
+          description: The type of resource created.
         resource_id:
           type: string
+          description: The unique identifier for the created resource.
     user:
       type: object
       properties:
         name:
           type: string
+          description: The name of the user.
         backend_roles:
           type: array
+          description: The list of backend roles assigned to the user.
           items:
             type: string
         roles:
           type: array
+          description: The list of roles assigned to the user.
           items:
             type: string
         custom_attribute_names:
+          description: The list of custom attributes associated with the user.
           type: array
           items:
             type: string
         user_requested_tenant:
+          description: The tenant requested by the user.
           type: string
           nullable: true
     hits:
@@ -254,8 +282,9 @@ components:
             - type: 'null'
             - type: number
               format: float
-              description: The maximum score of the search hits.
+              description: The maximum score across all search hits.
         hits:
+          description: The list of search hits.
           type: array
           items:
             $ref: '#/components/schemas/StateItems'
@@ -265,22 +294,23 @@ components:
         $ref: '#/components/schemas/WorkflowStep'
     WorkflowStep:
       type: object
+      description: A map of workflow steps and their configurations.
       properties:
         inputs:
           type: array
           items:
             type: string
-          description: The list of required inputs for the workflow step
+          description: The list of required inputs for the workflow step.
         outputs:
           type: array
           items:
             type: string
-          description: The list of outputs generated by the workflow step
+          description: The list of outputs generated by the workflow step.
         required_plugins:
           type: array
           items:
             type: string
-          description: The list of plugins required for the workflow step
+          description: The list of plugins required for the workflow step.
         timeout:
           $ref: '_common.yaml#/components/schemas/Duration'
     WorkFlowStatusDefaultResponse:
@@ -288,80 +318,84 @@ components:
       properties:
         workflow_id:
           type: string
-          description: The ID of the workflow
+          description: The ID of the workflow.
         error:
           type: string
-          description: Any error state associated with the workflow
+          description: The error message if the workflow failed.
           nullable: true
         state:
           type: string
-          description: The current state of the workflow
+          description: The current state of the workflow.
         resources_created:
           type: array
           items:
             type: string
           description: A list of resources created by the workflow
+    WorkFlowState:
+      type: string
+      enum:
+        - COMPLETED
+        - FAILED
+        - NOT_STARTED
+        - PROVISIONING
     WorkFlowStatusFullResponse:
       type: object
       properties:
         workflow_id:
           type: string
-          description: The ID of the workflow
+          description: The ID of the workflow.
         error:
           type: string
-          description: Any error state associated with the workflow
+          description: The error message if the workflow failed.
           nullable: true
         state:
-          type: string
-          description: The current state of the workflow
-          enum:
-            - COMPLETED
-            - FAILED
-            - NOT_STARTED
-            - PROVISIONING
+          description: The current state of the workflow.
+          $ref: '#/components/schemas/WorkFlowState'
         resources_created:
           type: array
           items:
             type: string
-          description: A list of resources created by the workflow
+          description: A list of resources created by the workflow.
         provisioning_progress:
           type: string
-          description: The progress of the provisioning process
+          description: The current progress of the provisioning process.
           nullable: true
         provision_start_time:
           type: string
           format: date-time
-          description: The start time of the provisioning process
+          description: When the provisioning process started.
         provision_end_time:
           type: string
           format: date-time
-          description: The end time of the provisioning process
+          description: When the provisioning process completed.
         user:
           $ref: '#/components/schemas/user'
         user_outputs:
           type: array
           items:
             type: string
-          description: Outputs generated by the user
+          description: The list of outputs generated by the user.
     UserProvidedSubstitutionExpressions:
       type: object
+      description: A map of user-provided substitution expressions and their values.
       additionalProperties:
         type: string
-        description: The value for the user-provided key. Keys represent substitution expressions.
+        description: The value for the user-provided substitution expression.
     SearchWorkflowRequest:
       type: object
       properties:
         query:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+          description: The query used to search for workflows.
     WorkflowSearchResponse:
       type: object
       properties:
         took:
           type: integer
-          description: Time in milliseconds that the request took to complete.
+          description: The amount of time in milliseconds that the request took to complete.
         timed_out:
           type: boolean
-          description: Indicates if the request timed out.
+          description: Whether the request timed out.
         _shards:
           $ref: '#/components/schemas/shards'
         hits:
@@ -371,10 +405,10 @@ components:
       properties:
         took:
           type: integer
-          description: Time in milliseconds that the request took to complete.
+          description: The amount of time in milliseconds that the request took to complete.
         timed_out:
           type: boolean
-          description: Indicates if the request timed out.
+          description: Whether the request timed out.
         _shards:
           $ref: '#/components/schemas/shards'
         hits:

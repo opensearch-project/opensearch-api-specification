@@ -70,7 +70,7 @@ chapters:
     output:
       model_id: payload.model_id
     retry:
-      count: 3
+      count: 6
       wait: 10000
   - synopsis: Deploy a model.
     id: deploy_model
@@ -95,8 +95,8 @@ chapters:
     output:
       model_id: payload.model_id
     retry:
-      count: 3
-      wait: 10000      
+      count: 6
+      wait: 10000
   - synopsis: Create ingest pipeline for text embedding.
     path: /_ingest/pipeline/{id}
     method: PUT
@@ -107,9 +107,9 @@ chapters:
         description: Extracts text from field and embeds it.
         processors:
           - text_embedding:
-              model_id: text-embedding-model
+              model_id: ${get_completed_register_model_task.model_id}
               field_map:
-                text: passage_embedding
+                title: passage_embedding
     response:
       status: 200
       payload:
@@ -166,23 +166,11 @@ chapters:
         _source:
           excludes: [passage_embedding]
         query:
-          bool:
-            should:
-              - script_score:
-                  query:
-                    neural:
-                      passage_embedding:
-                        query_text: Money
-                        model_id: ${get_completed_register_model_task.model_id}
-                        k: 100
-                  script:
-                    source: _score * 1.5
-              - script_score:
-                  query:
-                    match:
-                      title: Moneyball
-                  script:
-                    source: _score * 1.7
+          neural:
+            passage_embedding:
+              query_text: Money
+              model_id: ${get_completed_register_model_task.model_id}
+              k: 100
   - synopsis: Undeploy a model.
     path: /_plugins/_ml/models/{model_id}/_undeploy
     method: POST

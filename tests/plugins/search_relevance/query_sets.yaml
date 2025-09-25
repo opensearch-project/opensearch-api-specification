@@ -1,0 +1,112 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Tests the creation and deletion of query sets.
+
+prologues:
+  - path: /_plugins/ubi/initialize
+    method: POST
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 1
+    request:
+      payload:
+        name: banana
+        price: 1.99
+        description: this is a banana
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 2
+    request:
+      payload:
+        name: apple
+        price: 3.99
+        description: this is an apple
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 3
+    request:
+      payload:
+        name: test
+        price: 19.99
+        description: this is a test
+    response:
+      status: 201
+
+epilogues:
+  - path: /sample_index
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Creating a query set with sampling.
+    id: query_set_sampling
+    path: /_plugins/_search_relevance/query_sets
+    method: POST
+    request: 
+      payload:
+        name: test03
+        description: test03
+        sampling: random
+        querySetSize: 200
+    response:
+      status: 200
+    output: # Save the query id for later use.
+      query_set_id: payload.query_set_id
+  - synopsis: Creating a query set with manual input.
+    id: query_set_manual_input
+    path: /_plugins/_search_relevance/query_sets
+    method: PUT
+    request: 
+      payload:
+        name: test01
+        description: test01
+        sampling: manual
+        querySetQueries: [{queryText: apple}, {queryText: banana}]
+    response:
+      status: 200
+    output: # Save the query id for later use.
+      query_set_id: payload.query_set_id
+  - synopsis: List all the query sets created.
+    path: /_plugins/_search_relevance/query_sets
+    method: GET
+    response:
+      status: 200
+  - synopsis: Retrieve a specific query set.
+    path: /_plugins/_search_relevance/query_sets/{query_set_id}
+    method: GET
+    parameters:
+      query_set_id: ${query_set_manual_input.query_set_id}
+    response:
+      status: 200
+  - synopsis: Delete the query set created with sampling. 
+    path: /_plugins/_search_relevance/query_sets/{query_set_id}
+    method: DELETE
+    parameters:
+      query_set_id: ${query_set_sampling.query_set_id}
+    response:
+      status: 200
+  - synopsis: Delete the query set created with manual input. 
+    path: /_plugins/_search_relevance/query_sets/{query_set_id}
+    method: DELETE
+    parameters:
+      query_set_id: ${query_set_manual_input.query_set_id}
+    response:
+      status: 200

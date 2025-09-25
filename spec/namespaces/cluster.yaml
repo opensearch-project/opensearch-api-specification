@@ -508,12 +508,18 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/Weights'
+            allOf:
+              - $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
+              - type: object
+                properties: {}
     cluster.delete_weighted_routing:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
+            type: object
+            properties:
+              _version:
+                $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
     cluster.allocation_explain:
       content:
         application/json:
@@ -687,7 +693,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatusResponse'
+            type: object
+            additionalProperties:
+              $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatus'
     cluster.get_settings@200:
       content:
         application/json:
@@ -710,7 +718,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsResponse'
+            allOf:
+              - $ref: '../schemas/cluster.weighted_routing.yaml#/components/schemas/WeightsBase'
+              - type: object
+                properties:
+                  discovered_cluster_manager:
+                    type: boolean
     cluster.health@200:
       content:
         application/json:
@@ -763,7 +776,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     cluster.remote_info@200:
       content:
         application/json:
@@ -907,7 +920,7 @@ components:
       name: local
       description: |-
         When `true`, the request retrieves information from the local node only.
-        When `false, information is retrieved from the cluster manager node.
+        When `false`, information is retrieved from the cluster manager node.
       schema:
         type: boolean
         default: false
@@ -1117,9 +1130,7 @@ components:
       name: wait_for_nodes
       description: Waits until the specified number of nodes (`N`) is available. Accepts `>=N`, `<=N`, `>N`, and `<N`. You can also use `ge(N)`, `le(N)`, `gt(N)`, and `lt(N)` notation.
       schema:
-        oneOf:
-          - type: string
-          - type: number
+        $ref: '../schemas/cluster._common.yaml#/components/schemas/WaitForNodes'
       style: form
     cluster.health::query.wait_for_status:
       in: query

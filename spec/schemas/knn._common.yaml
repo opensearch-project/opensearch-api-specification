@@ -7,92 +7,183 @@ paths: {}
 components:
   schemas:
     Stats:
-      type: object
-      properties:
-        _nodes:
-          $ref: '_common.yaml#/components/schemas/NodeStatistics'
-        cluster_name:
-          $ref: '_common.yaml#/components/schemas/Name'
-        circuit_breaker_triggered:
-          type: boolean
-        model_index_status:
-          oneOf:
-            - $ref: '_common.yaml#/components/schemas/HealthStatus'
-            - type: 'null'
-        nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/NodeStats'
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            circuit_breaker_triggered:
+              type: boolean
+            model_index_status:
+              oneOf:
+                - $ref: '_common.yaml#/components/schemas/HealthStatus'
+                - type: 'null'
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodeStats'
     NodeStats:
       type: object
       properties:
         max_distance_query_with_filter_requests:
-          type: number
+          type: integer
+          format: int64
         graph_memory_usage_percentage:
           $ref: '_common.yaml#/components/schemas/PercentageNumber'
         graph_query_requests:
-          type: number
+          type: integer
+          format: int64
         graph_memory_usage:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         cache_capacity_reached:
           type: boolean
         load_success_count:
-          type: number
+          type: integer
+          format: int64
         training_memory_usage:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         indices_in_cache:
           type: object
           additionalProperties: true
         script_query_errors:
-          type: number
+          type: integer
+          format: int64
         hit_count:
-          type: number
+          type: integer
+          format: int64
         knn_query_requests:
-          type: number
+          type: integer
+          format: int64
         total_load_time:
-          type: number
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitNanos'
         miss_count:
-          type: number
+          type: integer
+          format: int64
         min_score_query_requests:
-          type: number
+          type: integer
+          format: int64
         knn_query_with_filter_requests:
-          type: number
+          type: integer
+          format: int64
         training_memory_usage_percentage:
           $ref: '_common.yaml#/components/schemas/PercentageNumber'
         max_distance_query_requests:
-          type: number
+          type: integer
+          format: int64
         lucene_initialized:
           type: boolean
         graph_index_requests:
-          type: number
+          type: integer
+          format: int64
         faiss_initialized:
           type: boolean
         load_exception_count:
-          type: number
+          type: integer
+          format: int64
         training_errors:
-          type: number
+          type: integer
+          format: int64
         min_score_query_with_filter_requests:
-          type: number
+          type: integer
+          format: int64
         eviction_count:
-          type: number
+          type: integer
+          format: int64
         nmslib_initialized:
           type: boolean
         script_compilations:
-          type: number
+          type: integer
+          format: int64
         script_query_requests:
-          type: number
+          type: integer
+          format: int64
         graph_stats:
           $ref: '#/components/schemas/GraphStats'
         graph_query_errors:
-          type: number
+          type: integer
+          format: int64
         indexing_from_model_degraded:
           type: boolean
         graph_index_errors:
-          type: number
+          type: integer
+          format: int64
         training_requests:
-          type: number
+          type: integer
+          format: int64
         script_compilation_errors:
-          type: number
+          type: integer
+          format: int64
+        remote_vector_index_build_stats:
+          $ref: '#/components/schemas/RemoteVectorIndexBuildStats'
+    RemoteVectorIndexBuildStats:
+      type: object
+      properties:
+        repository_stats:
+          $ref: '#/components/schemas/RemoteVectorIndexRepositoryStats'
+        client_stats:
+          $ref: '#/components/schemas/RemoteVectorIndexClientStats'
+        build_stats:
+          $ref: '#/components/schemas/RemoteVectorIndexBuildStatsDetails'
+    RemoteVectorIndexRepositoryStats:
+      type: object
+      properties:
+        read_success_count:
+          type: integer
+          format: int64
+        read_failure_count:
+          type: integer
+          format: int64
+        successful_read_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        successful_write_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        write_success_count:
+          type: integer
+          format: int64
+        write_failure_count:
+          type: integer
+          format: int64
+    RemoteVectorIndexClientStats:
+      type: object
+      properties:
+        build_request_failure_count:
+          type: integer
+          format: int64
+        build_request_success_count:
+          type: integer
+          format: int64
+        index_build_failure_count:
+          type: integer
+          format: int64
+        index_build_success_count:
+          type: integer
+          format: int64
+        status_request_failure_count:
+          type: integer
+          format: int64
+        status_request_success_count:
+          type: integer
+          format: int64
+        waiting_time_in_ms:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+    RemoteVectorIndexBuildStatsDetails:
+      type: object
+      properties:
+        remote_index_build_current_flush_operations:
+          type: integer
+          format: int64
+        remote_index_build_current_flush_size:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        remote_index_build_current_merge_operations:
+          type: integer
+          format: int64
+        remote_index_build_current_merge_size:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        remote_index_build_flush_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        remote_index_build_merge_time_in_millis:
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
     GraphStats:
       type: object
       properties:
@@ -104,22 +195,27 @@ components:
       type: object
       properties:
         total:
-          type: number
+          type: integer
+          format: int64
         total_time_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
     GraphMergeStats:
       type: object
       properties:
         current:
-          type: number
+          type: integer
+          format: int64
         total:
-          type: number
+          type: integer
+          format: int64
         total_time_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         current_docs:
-          type: number
+          type: integer
+          format: int64
         total_docs:
-          type: number
+          type: integer
+          format: int64
         total_size_in_bytes:
           $ref: '_common.yaml#/components/schemas/ByteCount'
         current_size_in_bytes:
@@ -168,16 +264,56 @@ components:
         - dimension
         - training_field
         - training_index
+    DeletionResult:
+      type: string
+      enum:
+        - deleted
+        - error
     DeletedModel:
       type: object
       properties:
         model_id:
           type: string
         result:
-          type: string
-          enum:
-            - deleted
-            - error
+          $ref: '#/components/schemas/DeletionResult'
       required:
         - model_id
         - result
+    KnnStatName:
+      type: string
+      enum:
+        - cache_capacity_reached
+        - circuit_breaker_triggered
+        - eviction_count
+        - faiss_initialized
+        - graph_index_errors
+        - graph_index_requests
+        - graph_memory_usage
+        - graph_memory_usage_percentage
+        - graph_query_errors
+        - graph_query_requests
+        - graph_stats
+        - hit_count
+        - indexing_from_model_degraded
+        - indices_in_cache
+        - knn_query_requests
+        - knn_query_with_filter_requests
+        - load_exception_count
+        - load_success_count
+        - lucene_initialized
+        - max_distance_query_requests
+        - max_distance_query_with_filter_requests
+        - min_score_query_requests
+        - min_score_query_with_filter_requests
+        - miss_count
+        - model_index_status
+        - nmslib_initialized
+        - script_compilation_errors
+        - script_compilations
+        - script_query_errors
+        - script_query_requests
+        - total_load_time
+        - training_errors
+        - training_memory_usage
+        - training_memory_usage_percentage
+        - training_requests

@@ -19,7 +19,7 @@ import {
   SCHEMA_NUMERIC_TYPES,
   SpecificationContext
 } from '../_utils'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 
 export default class SchemaVisitingValidator {
   private readonly _namespaces_folder: NamespacesFolder
@@ -52,12 +52,16 @@ export default class SchemaVisitingValidator {
     return errors
   }
 
-  #validate_inline_object_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3.SchemaObject>, errors: ValidationError[]): void {
+  #validate_inline_object_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3_1.SchemaObject>, errors: ValidationError[]): void {
     if (is_ref(schema) || schema.type !== 'object' || schema.properties === undefined) {
       return
     }
 
     const ancestry = ctx.keys.reverse()
+
+    if (ancestry.includes('allOf')) {
+      return
+    }
 
     if (ancestry[1] === 'properties' ||
         ancestry[0] === 'additionalProperties' ||
@@ -67,32 +71,32 @@ export default class SchemaVisitingValidator {
     }
   }
 
-  #validate_numeric_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3.SchemaObject>, errors: ValidationError[]): void {
-    if (is_ref(schema) || schema.type === undefined || !SCHEMA_NUMERIC_TYPES.includes(schema.type)) {
+  #validate_numeric_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3_1.SchemaObject>, errors: ValidationError[]): void {
+    if (is_ref(schema) || typeof schema.type !== 'string' || !SCHEMA_NUMERIC_TYPES.has(schema.type)) {
       return
     }
 
     if (schema.type === 'number') {
-      if (schema.format === undefined || SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
+      if (schema.format === undefined || SCHEMA_NUMBER_FORMATS.has(schema.format)) {
         return
       }
 
-      if (SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
+      if (SCHEMA_INTEGER_FORMATS.has(schema.format)) {
         errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' should instead be of type 'integer'`))
       } else {
-        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_NUMBER_FORMATS.join(', ')}`))
+        errors.push(ctx.error(`schema of type 'number' with format '${schema.format}' is invalid, expected one of: ${[...SCHEMA_NUMBER_FORMATS].join(', ')}`))
       }
     }
 
     if (schema.type === 'integer') {
-      if (schema.format === undefined || SCHEMA_INTEGER_FORMATS.includes(schema.format)) {
+      if (schema.format === undefined || SCHEMA_INTEGER_FORMATS.has(schema.format)) {
         return
       }
 
-      if (SCHEMA_NUMBER_FORMATS.includes(schema.format)) {
+      if (SCHEMA_NUMBER_FORMATS.has(schema.format)) {
         errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' should instead be of type 'number'`))
       } else {
-        errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' is invalid, expected one of: ${SCHEMA_INTEGER_FORMATS.join(', ')}`))
+        errors.push(ctx.error(`schema of type 'integer' with format '${schema.format}' is invalid, expected one of: ${[...SCHEMA_INTEGER_FORMATS].join(', ')}`))
       }
     }
   }

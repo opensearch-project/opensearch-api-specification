@@ -7,26 +7,26 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { resolve_ref } from '../helpers'
 import { type ParsedOperation } from './types/spec.types'
 import _ from 'lodash'
 import { ParsedChapter } from './types/parsed_story.types'
 
 export default class OperationLocator {
-  private readonly spec: OpenAPIV3.Document
+  private readonly spec: OpenAPIV3_1.Document
   private cached_operations: Record<string, ParsedOperation> = {}
 
-  constructor (spec: OpenAPIV3.Document) {
+  constructor (spec: OpenAPIV3_1.Document) {
     this.spec = spec
   }
 
   locate_operation (chapter: ParsedChapter): ParsedOperation | undefined {
     const path = chapter.path
-    const method = chapter.method.toLowerCase() as OpenAPIV3.HttpMethods
+    const method = chapter.method.toLowerCase() as OpenAPIV3_1.HttpMethods
     const cache_key = path + method
     if (this.cached_operations[cache_key] != null) return this.cached_operations[cache_key]
-    const operation = this.spec.paths[path]?.[method]
+    const operation = this.spec.paths?.[path]?.[method]
     if (operation == null) return undefined
     this.#deref(operation)
     const parameters = _.keyBy(operation.parameters ?? [], 'name')

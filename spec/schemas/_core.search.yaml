@@ -6,6 +6,8 @@ info:
 paths: {}
 components:
   schemas:
+    T:
+      x-is-generic-type-parameter: true
     HitsMetadata:
       type: object
       properties:
@@ -18,11 +20,30 @@ components:
         hits:
           type: array
           items:
-            $ref: '#/components/schemas/Hit'
+            allOf:
+              - $ref: '#/components/schemas/Hit'
+              - type: object
+                properties:
+                  _source:
+                    $ref: '#/components/schemas/T'
         max_score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: float
       required:
         - hits
+    HitsMetadataJsonValue:
+      allOf:
+        - $ref: '#/components/schemas/HitsMetadata'
+        - type: object
+          properties:
+            hits:
+              type: array
+              items:
+                type: object
+                properties:
+                  _source: {}
     TotalHits:
       type: object
       properties:
@@ -42,6 +63,8 @@ components:
         - type: string
           const: gte
           description: Lower bound, including returned events or sequences.
+    TDocument:
+      x-is-generic-type-parameter: true
     Hit:
       type: object
       properties:
@@ -52,7 +75,10 @@ components:
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
         _score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: double
         _explanation:
           $ref: '_core.explain.yaml#/components/schemas/Explanation'
         fields:
@@ -91,7 +117,7 @@ components:
         _routing:
           type: string
         _source:
-          type: object
+          $ref: '#/components/schemas/TDocument'
         _seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         _primary_term:
@@ -101,9 +127,6 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         sort:
           $ref: '_common.yaml#/components/schemas/SortResults'
-      required:
-        - _id
-        - _index
     InnerHitsResult:
       type: object
       properties:
@@ -111,6 +134,22 @@ components:
           $ref: '#/components/schemas/HitsMetadata'
       required:
         - hits
+    ProcessorExecutionDetail:
+      type: object
+      properties:
+        processor_name:
+          type: string
+        duration_millis:
+          type: integer
+          format: int64
+        input_data: {}
+        output_data: {}
+        status: 
+          type: string
+        tag:
+          type: string 
+        error:
+          type: string
     NestedIdentity:
       type: object
       properties:
@@ -516,11 +555,31 @@ components:
     Suggest:
       oneOf:
         - title: completion
-          $ref: '#/components/schemas/CompletionSuggest'
+          allOf:
+            - $ref: '#/components/schemas/CompletionSuggest'
+            - type: object
+              properties:
+                options:
+                  oneOf:
+                    - allOf:
+                        - $ref: '#/components/schemas/CompletionSuggestOption'
+                        - type: object
+                          properties:
+                            _source:
+                              $ref: '#/components/schemas/TDocument'
+                    - type: array
+                      items:
+                        allOf:
+                          - $ref: '#/components/schemas/CompletionSuggestOption'
+                          - type: object
+                            properties:
+                              _source:
+                                $ref: '#/components/schemas/TDocument'
         - title: phrase
           $ref: '#/components/schemas/PhraseSuggest'
         - title: term
           $ref: '#/components/schemas/TermSuggest'
+      x-supports-typed-keys: true
     CompletionSuggest:
       allOf:
         - $ref: '#/components/schemas/SuggestBase'
@@ -528,10 +587,20 @@ components:
           properties:
             options:
               oneOf:
-                - $ref: '#/components/schemas/CompletionSuggestOption'
+                - allOf:
+                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                    - type: object
+                      properties:
+                        _source:
+                          $ref: '#/components/schemas/TDocument'
                 - type: array
                   items:
-                    $ref: '#/components/schemas/CompletionSuggestOption'
+                    allOf:
+                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
           required:
             - options
     CompletionSuggestOption:
@@ -547,8 +616,7 @@ components:
               $ref: '#/components/schemas/Context'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         _id:
           type: string
         _index:
@@ -559,7 +627,7 @@ components:
           type: number
           format: float
         _source:
-          type: object
+          $ref: '#/components/schemas/TDocument'
         text:
           type: string
         score:
@@ -1239,7 +1307,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Duration'
       required:
         - id
-    ResponseBody:
+    SearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResult'
+        - type: object
+          properties: {}
+    SearchResult:
       type: object
       properties:
         took:
@@ -1253,7 +1326,24 @@ components:
           x-version-added: '2.12'
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
-          $ref: '#/components/schemas/HitsMetadata'
+          allOf:
+            - $ref: '#/components/schemas/HitsMetadata'
+            - type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
+        processor_results: 
+          x-version-added: '3.0'
+          type: array
+          items: 
+            $ref: '#/components/schemas/ProcessorExecutionDetail'
         aggregations:
           type: object
           additionalProperties:
@@ -1262,11 +1352,7 @@ components:
           $ref: '_common.yaml#/components/schemas/ClusterStatistics'
         fields:
           type: object
-          additionalProperties:
-            type: object
-        max_score:
-          type: number
-          format: float
+          additionalProperties: true
         num_reduce_phases:
           type: integer
           format: int32
@@ -1289,3 +1375,40 @@ components:
         - hits
         - timed_out
         - took
+    SearchResultJsonValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchResult'
+        - type: object
+          properties:
+            hits:
+              type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _source: {}
+            suggest:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  oneOf:
+                    - title: completion
+                      type: object
+                      properties:
+                        options:
+                          oneOf:
+                            - type: object
+                              properties:
+                                _source: {}
+                            - type: array
+                              items:
+                                type: object
+                                properties:
+                                  _source: {}
+                    - title: phrase
+                      $ref: '#/components/schemas/PhraseSuggest'
+                    - title: term
+                      $ref: '#/components/schemas/TermSuggest'

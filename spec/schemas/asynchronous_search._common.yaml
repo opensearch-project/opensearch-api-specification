@@ -20,18 +20,18 @@ components:
         took: 
           type: number
         response:
-          $ref: '_core.search.yaml#/components/schemas/ResponseBody'
+          $ref: '_core.search.yaml#/components/schemas/SearchResponse'
     StatsResponse:
-      type: object
-      properties:
-        _nodes:
-          $ref: '_common.yaml#/components/schemas/NodeStatistics'
-        cluster_name:
-          type: string
-        nodes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/NodesStats'
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              type: string
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodesStats'
     NodesStats:
       type: object
       properties:
@@ -80,8 +80,6 @@ components:
           type: array
           items:
             $ref: '_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
-        rank:
-          $ref: '_common.yaml#/components/schemas/RankContainer'
         min_score:
           description: |-
             Minimum `_score` for matching documents.

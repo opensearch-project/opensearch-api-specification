@@ -7,34 +7,63 @@
 * compatible open source license.
 */
 
-import { OpenAPIV3 } from 'openapi-types'
+import { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types'
 import { type ValidationError } from 'types'
-import _ from "lodash";
 import { to_json } from "../helpers";
+import { intersection, union } from "./Sets";
 
-export const HTTP_METHODS: OpenAPIV3.HttpMethods[] = Object.values(OpenAPIV3.HttpMethods)
-export type SchemaObjectType = OpenAPIV3.ArraySchemaObjectType | OpenAPIV3.NonArraySchemaObjectType
-export const SCHEMA_OBJECT_TYPES: SchemaObjectType[] = ['array', 'boolean', 'object', 'number', 'string', 'integer']
-export const SCHEMA_NUMERIC_TYPES: SchemaObjectType[] = ['number', 'integer']
-export const SCHEMA_NUMBER_FORMATS: string[] = ['float', 'double']
-export const SCHEMA_INTEGER_FORMATS: string[] = ['int32', 'int64']
+export const HTTP_METHODS: OpenAPIV3_1.HttpMethods[] = Object.values(OpenAPIV3.HttpMethods)
+export type SchemaObjectType = OpenAPIV3_1.ArraySchemaObjectType | OpenAPIV3_1.NonArraySchemaObjectType
+export const SCHEMA_OBJECT_TYPES: Set<SchemaObjectType> = new Set(['array', 'boolean', 'object', 'number', 'string', 'integer'])
+export const SCHEMA_NUMERIC_TYPES: Set<SchemaObjectType> = new Set(['number', 'integer'])
+export const SCHEMA_NUMBER_FORMATS: Set<string> = new Set(['float', 'double'])
+export const SCHEMA_INTEGER_FORMATS: Set<string> = new Set(['int32', 'int64'])
 
-export function is_ref<O extends object> (o: MaybeRef<O>): o is OpenAPIV3.ReferenceObject {
+export function is_ref<O extends object> (o: MaybeRef<O>): o is OpenAPIV3_1.ReferenceObject {
   return o != null && typeof o === 'object' && '$ref' in o
 }
 
-export function is_array_schema (schema: OpenAPIV3.SchemaObject): schema is OpenAPIV3.ArraySchemaObject {
+export function is_array_schema (schema: OpenAPIV3_1.SchemaObject): schema is OpenAPIV3_1.ArraySchemaObject {
   return schema.type === 'array'
 }
 
-export function is_primitive_schema (schema: OpenAPIV3.SchemaObject): boolean {
+export function is_primitive_schema (schema: OpenAPIV3_1.SchemaObject): boolean {
   return schema.type === 'boolean' ||
     schema.type === 'integer' ||
     schema.type === 'number' ||
     schema.type === 'string'
 }
 
-export function determine_possible_schema_types (doc: OpenAPIV3.Document, schema: MaybeRef<OpenAPIV3.SchemaObject>): SchemaObjectType[] {
+export function is_string_const_schema (schema: OpenAPIV3_1.SchemaObject): boolean {
+  return schema.type === 'string' && (schema.const !== undefined || (schema.enum !== undefined && schema.enum.length === 1))
+}
+
+export function is_enum_schema (schema: OpenAPIV3_1.SchemaObject): boolean {
+  if (schema.oneOf !== undefined && schema.oneOf.length > 0) {
+    let enum_count = 0
+    let boolean_count = 0
+    let total_count = 0
+
+    for (const s of schema.oneOf) {
+      if (!is_ref(s)) {
+        if (s.type === 'null') {
+          continue
+        } else if (s.type === 'boolean') {
+          boolean_count += 1
+        } else if (is_enum_schema(s) || is_string_const_schema(s)) {
+          enum_count += 1
+        }
+      }
+
+      total_count += 1
+    }
+
+    return enum_count === total_count || (boolean_count === 1 && enum_count === total_count - 1)
+  }
+  return schema.type === 'string' && (schema.enum !== undefined && schema.enum.length > 0)
+}
+
+export function determine_possible_schema_types (doc: OpenAPIV3_1.Document, schema: MaybeRef<OpenAPIV3_1.SchemaObject>): Set<SchemaObjectType> {
   while (is_ref(schema)) {
     const key = schema.$ref.split('/').pop()
     if (key === undefined) throw new Error(`Invalid $ref: '${schema.$ref}'`)
@@ -43,20 +72,13 @@ export function determine_possible_schema_types (doc: OpenAPIV3.Document, schema
     schema = resolved
   }
 
-  if (schema?.type !== undefined) return [schema.type]
+  if (schema?.type !== undefined) return new Set(schema.type instanceof Array ? schema.type : [schema.type])
 
-  const collect_all = (schemas: MaybeRef<OpenAPIV3.SchemaObject>[]): SchemaObjectType[] =>
-    _.uniq(schemas.flatMap(s => determine_possible_schema_types(doc, s)))
+  if (schema?.allOf !== undefined) return schema.allOf.map(s => determine_possible_schema_types(doc, s)).reduce(intersection)
+  if (schema?.anyOf !== undefined) return schema.anyOf.map(s => determine_possible_schema_types(doc, s)).reduce(union)
+  if (schema?.oneOf !== undefined) return schema.oneOf.map(s => determine_possible_schema_types(doc, s)).reduce(union)
 
-  if (schema?.allOf !== undefined) {
-    const types = collect_all(schema.allOf)
-    if (types.length > 1) throw new Error(`allOf schema should resolve to a single type, but was: ${types.join(", ")}`)
-    return types
-  }
-  if (schema?.anyOf !== undefined) return collect_all(schema.anyOf)
-  if (schema?.oneOf !== undefined) return collect_all(schema.oneOf)
-
-  if (schema == null || Object.keys(schema).filter(k => k !== 'description' && k !== 'title').length == 0) return SCHEMA_OBJECT_TYPES
+  if (schema == null || Object.keys(schema).filter(k => k !== 'description' && k !== 'title' && !k.startsWith('x-')).length == 0) return SCHEMA_OBJECT_TYPES
 
   throw new Error(`Unable to determine possible types of schema: ${to_json(schema)}`)
 }
@@ -104,7 +126,7 @@ export class SpecificationContext {
   }
 }
 
-export type MaybeRef<O extends object> = O | OpenAPIV3.ReferenceObject
+export type MaybeRef<O extends object> = O | OpenAPIV3_1.ReferenceObject
 
 export type KeysMatching<T extends object, V> = {
   [K in keyof T]-?: T[K] extends V ? K : never

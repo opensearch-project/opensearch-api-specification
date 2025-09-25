@@ -11,7 +11,7 @@ paths:
       x-version-added: '1.0'
       description: Use an OpenSearch query to search for models in the index.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#search-model
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#search-for-a-model
       parameters:
         - $ref: '#/components/parameters/knn.search_models::query._source'
         - $ref: '#/components/parameters/knn.search_models::query._source_excludes'
@@ -66,7 +66,7 @@ paths:
       x-version-added: '1.0'
       description: Use an OpenSearch query to search for models in the index.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#search-model
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#search-for-a-model
       parameters:
         - $ref: '#/components/parameters/knn.search_models::query._source'
         - $ref: '#/components/parameters/knn.search_models::query._source_excludes'
@@ -122,7 +122,7 @@ paths:
       x-version-added: '1.0'
       description: Create and train a model that can be used for initializing k-NN native library indexes during indexing.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#train-model
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#train-a-model
       parameters:
         - $ref: '#/components/parameters/knn.train_model::query.preference'
       requestBody:
@@ -137,7 +137,7 @@ paths:
       x-version-added: '1.0'
       description: Used to retrieve information about models present in the cluster.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#get-model
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#get-a-model
       parameters:
         - $ref: '#/components/parameters/knn.get_model::path.model_id'
       responses:
@@ -149,7 +149,7 @@ paths:
       x-version-added: '1.0'
       description: Used to delete a particular model in the cluster.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#delete-model
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#delete-a-model
       parameters:
         - $ref: '#/components/parameters/knn.delete_model::path.model_id'
       responses:
@@ -162,7 +162,7 @@ paths:
       x-version-added: '1.0'
       description: Create and train a model that can be used for initializing k-NN native library indexes during indexing.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#train-model
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#train-a-model
       parameters:
         - $ref: '#/components/parameters/knn.train_model::path.model_id'
         - $ref: '#/components/parameters/knn.train_model::query.preference'
@@ -178,7 +178,7 @@ paths:
       x-version-added: '1.0'
       description: Provides information about the current status of the k-NN plugin.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#stats
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#stats
       parameters:
         - $ref: '#/components/parameters/knn.stats::query.timeout'
       responses:
@@ -191,7 +191,7 @@ paths:
       x-version-added: '1.0'
       description: Provides information about the current status of the k-NN plugin.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#stats
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#stats
       parameters:
         - $ref: '#/components/parameters/knn.stats::path.stat'
         - $ref: '#/components/parameters/knn.stats::query.timeout'
@@ -205,7 +205,7 @@ paths:
       x-version-added: '1.0'
       description: Preloads native library files into memory, reducing initial search latency for specified indexes.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#warmup-operation
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#warmup-operation
       parameters:
         - $ref: '#/components/parameters/knn.warmup::path.index'
       responses:
@@ -218,7 +218,7 @@ paths:
       x-version-added: '1.0'
       description: Provides information about the current status of the k-NN plugin.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#stats
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#stats
       parameters:
         - $ref: '#/components/parameters/knn.stats::path.node_id'
         - $ref: '#/components/parameters/knn.stats::query.timeout'
@@ -232,7 +232,7 @@ paths:
       x-version-added: '1.0'
       description: Provides information about the current status of the k-NN plugin.
       externalDocs:
-        url: https://opensearch.org/docs/latest/search-plugins/knn/api/#stats
+        url: https://docs.opensearch.org/latest/vector-search/api/knn/#stats
       parameters:
         - $ref: '#/components/parameters/knn.stats::path.node_id'
         - $ref: '#/components/parameters/knn.stats::path.stat'
@@ -267,7 +267,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.search.yaml#/components/schemas/ResponseBody'
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
+              - type: object
+                properties: {}
     knn.stats@200:
       content:
         application/json:
@@ -401,13 +404,13 @@ components:
     knn.search_models::query.docvalue_fields:
       name: docvalue_fields
       in: query
-      description: Comma-separated list of fields to return as the docvalue representation of a field for each hit.
+      description: A comma-separated list of fields to return as the docvalue representation of a field for each hit.
       style: form
       schema:
         type: array
         items:
           type: string
-        description: Comma-separated list of fields to return as the docvalue representation of a field for each hit.
+        description: A comma-separated list of fields to return as the docvalue representation of a field for each hit.
       explode: true
     knn.search_models::query.expand_wildcards:
       name: expand_wildcards
@@ -502,7 +505,7 @@ components:
     knn.search_models::query.routing:
       name: routing
       in: query
-      description: Comma-separated list of specific routing values.
+      description: A comma-separated list of specific routing values.
       style: form
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/RoutingInQueryString'
@@ -538,13 +541,13 @@ components:
     knn.search_models::query.sort:
       name: sort
       in: query
-      description: Comma-separated list of <field>:<direction> pairs.
+      description: A comma-separated list of <field>:<direction> pairs.
       style: form
       schema:
         type: array
         items:
           type: string
-        description: Comma-separated list of <field>:<direction> pairs.
+        description: A comma-separated list of <field>:<direction> pairs.
       explode: true
     knn.search_models::query.stats:
       name: stats
@@ -560,13 +563,13 @@ components:
     knn.search_models::query.stored_fields:
       name: stored_fields
       in: query
-      description: Comma-separated list of stored fields to return.
+      description: A comma-separated list of stored fields to return.
       style: form
       schema:
         type: array
         items:
           type: string
-        description: Comma-separated list of stored fields to return.
+        description: A comma-separated list of stored fields to return.
       explode: true
     knn.search_models::query.suggest_field:
       name: suggest_field
@@ -641,58 +644,24 @@ components:
     knn.stats::path.node_id:
       name: node_id
       in: path
-      description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+      description: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
       schema:
         type: array
-        description: Comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+        description: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
         items:
           type: string
       required: true
     knn.stats::path.stat:
       name: stat
       in: path
-      description: Comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
+      description: A comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
       schema:
-        type: array
-        description: Comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
-        items:
-          type: string
-          enum:
-            - cache_capacity_reached
-            - circuit_breaker_triggered
-            - eviction_count
-            - faiss_initialized
-            - graph_index_errors
-            - graph_index_requests
-            - graph_memory_usage
-            - graph_memory_usage_percentage
-            - graph_query_errors
-            - graph_query_requests
-            - graph_stats
-            - hit_count
-            - indexing_from_model_degraded
-            - indices_in_cache
-            - knn_query_requests
-            - knn_query_with_filter_requests
-            - load_exception_count
-            - load_success_count
-            - lucene_initialized
-            - max_distance_query_requests
-            - max_distance_query_with_filter_requests
-            - min_score_query_requests
-            - min_score_query_with_filter_requests
-            - miss_count
-            - model_index_status
-            - nmslib_initialized
-            - script_compilation_errors
-            - script_compilations
-            - script_query_errors
-            - script_query_requests
-            - total_load_time
-            - training_errors
-            - training_memory_usage
-            - training_memory_usage_percentage
-            - training_requests
+        oneOf:
+          - $ref: '../schemas/knn._common.yaml#/components/schemas/KnnStatName'
+          - type: array
+            description: A comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
+            items:
+              $ref: '../schemas/knn._common.yaml#/components/schemas/KnnStatName'
       required: true
     knn.stats::query.timeout:
       name: timeout
@@ -718,10 +687,10 @@ components:
     knn.warmup::path.index:
       name: index
       in: path
-      description: Comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
+      description: A comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
       schema:
         type: array
-        description: Comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
+        description: A comma-separated list of indexes; use `_all` or empty string to perform the operation on all indexes.
         items:
           type: string
       required: true

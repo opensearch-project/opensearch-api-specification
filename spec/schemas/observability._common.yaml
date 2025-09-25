@@ -1,22 +1,27 @@
 openapi: 3.1.0
 info:
   title: Schemas for OpenSearch Observability Object API
-  description: Schemas for OpenSearch Observability Object API
+  description: This document defines schemas for the OpenSearch Observability Object API.
   version: 1.0.0
 paths: {}
 components:
   schemas:
     ObservabilityObjectList:
       type: object
+      description: A list of observability objects with pagination details.
       properties:
         startIndex:
           type: integer
+          description: The starting index of the returned objects.
         totalHits:
           type: integer
+          description: The total number of matching objects.
         totalHitRelation:
           type: string
+          description: The relationship of total hits to the query.
         observabilityObjectList:
           type: array
+          description: The list of observability objects.
           items:
             $ref: '#/components/schemas/ObservabilityObject'
       required:
@@ -27,15 +32,20 @@ components:
 
     ObservabilityObject:
       type: object
+      description: The core observability object containing visualization and query data.
       properties:
         objectId:
           type: string
+          description: The unique identifier of the observability object.
         lastUpdatedTimeMs:
           type: integer
+          description: When the object was last updated in milliseconds.
         createdTimeMs:
           type: integer
+          description: When the object was created in milliseconds.
         tenant:
           type: string
+          description: The tenant associated with the observability object.
         operationalPanel:
           $ref: '#/components/schemas/OperationalPanel'
         savedVisualization:
@@ -47,11 +57,14 @@ components:
 
     OperationalPanel:
       type: object
+      description: The panel configuration for operational visualizations.
       properties:
         name:
           type: string
+          description: The name of the operational panel.
         visualizations:
           type: array
+          description: The list of visualizations in the panel.
           items:
             $ref: '#/components/schemas/Visualization'
         timeRange:
@@ -60,6 +73,7 @@ components:
           $ref: '#/components/schemas/QueryFilter'
         applicationId:
           type: string
+          description: The identifier of the associated application.
       required:
         - applicationId
         - name
@@ -69,19 +83,26 @@ components:
 
     Visualization:
       type: object
+      description: The configuration for a single visualization.
       properties:
         id:
           type: string
+          description: The unique identifier of the visualization.
         savedVisualizationId:
           type: string
+          description: The identifier of the saved visualization.
         x:
           type: integer
+          description: The x-coordinate position of the visualization.
         y:
           type: integer
+          description: The y-coordinate position of the visualization.
         w:
           type: integer
+          description: The width of the visualization.
         h:
           type: integer
+          description: The height of the visualization.
       required:
         - h
         - id
@@ -92,37 +113,48 @@ components:
 
     TimeRange:
       type: object
+      description: The time range configuration for queries and visualizations.
       properties:
         to:
           type: string
+          description: The end time of the range.
         from:
           type: string
+          description: The start time of the range.
       required:
         - from
         - to
 
     QueryFilter:
       type: object
+      description: The filter configuration for queries.
       properties:
         query:
           type: string
+          description: The query string.
         language:
           type: string
+          description: The query language used.
       required:
         - language
         - query
 
     SavedVisualization:
       type: object
+      description: The configuration for a saved visualization.
       properties:
         name:
           type: string
+          description: The name of the saved visualization.
         description:
           type: string
+          description: The description of the saved visualization.
         query:
           type: string
+          description: The query associated with the visualization.
         type:
           type: string
+          description: The type of visualization.
         selected_date_range:
           $ref: '#/components/schemas/SelectedDateRange'
         selected_timestamp:
@@ -140,13 +172,17 @@ components:
 
     SelectedDateRange:
       type: object
+      description: The date range selection configuration.
       properties:
         start:
           type: string
+          description: The start date of the range.
         end:
           type: string
+          description: The end date of the range.
         text:
           type: string
+          description: The text representation of the date range.
       required:
         - end
         - start
@@ -154,22 +190,28 @@ components:
 
     SelectedTimestamp:
       type: object
+      description: The timestamp field selection configuration.
       properties:
         name:
           type: string
+          description: The name of the selected timestamp field.
         type:
           type: string
+          description: The type of the timestamp field.
       required:
         - name
         - type
 
     SelectedFields:
       type: object
+      description: The field selection configuration.
       properties:
         text:
           type: string
+          description: The text representation of selected fields.
         tokens:
           type: array
+          description: The list of field tokens.
           items:
             $ref: '#/components/schemas/Token'
       required:
@@ -178,24 +220,31 @@ components:
 
     Token:
       type: object
+      description: The configuration for a field token.
       properties:
         name:
           type: string
+          description: The name of the token.
         type:
           type: string
+          description: The type of the token.
       required:
         - name
         - type
 
     SavedQuery:
       type: object
+      description: The configuration for a saved query.
       properties:
         name:
           type: string
+          description: The name of the saved query.
         description:
           type: string
+          description: The description of the saved query.
         query:
           type: string
+          description: The query string.
         selected_date_range:
           $ref: '#/components/schemas/SelectedDateRange'
         selected_timestamp:
@@ -209,46 +258,3 @@ components:
         - selected_date_range
         - selected_fields
         - selected_timestamp
-
-    NotFoundResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/ErrorResponse'
-        status:
-          type: integer
-          # example: 404
-      required:
-        - error
-        - status
-
-    ErrorResponse:
-      type: object
-      properties:
-        root_cause:
-          type: array
-          items:
-            $ref: '#/components/schemas/RootCause'
-        type:
-          type: string
-          # example: status_exception
-        reason:
-          type: string
-          # example: 'ObservabilityObject {objectId} not found'
-      required:
-        - reason
-        - root_cause
-        - type
-
-    RootCause:
-      type: object
-      properties:
-        type:
-          type: string
-          # example: status_exception
-        reason:
-          type: string
-          # example: 'ObservabilityObject {objectId} not found'
-      required:
-        - reason
-        - type

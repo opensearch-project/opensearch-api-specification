@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: OpenSearch Snapshot Management API
-  description: API for automating snapshot management tasks.
+  description: The Snapshot Management API automates snapshot management tasks.
   version: 1.0.0
 
 paths:
@@ -128,73 +128,73 @@ components:
 
   responses:
     sm.get_policies@200:
-      description: Successfully retrieved the list of snapshot management policies.
+      description: The API successfully retrieved the list of snapshot management policies.
       content:
         application/json:
           schema:
             $ref: '../schemas/sm._common.yaml#/components/schemas/GetPoliciesResponse'
 
     sm.create_policy@201:
-      description: Successfully created the snapshot management policy.
+      description: The API successfully created the snapshot management policy.
       content:
         application/json:
           schema:
             $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyResponse'
     sm.create_policy@400:
-      description: Bad request when creating the snapshot management policy.
+      description: The API encountered a bad request when creating the snapshot management policy.
       content:
         application/json:
           schema:
-            $ref: '../schemas/sm._common.yaml#/components/schemas/BadRequestResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
 
     sm.get_policy@200:
-      description: Successfully retrieved the snapshot management policy.
+      description: The API successfully retrieved the snapshot management policy.
       content:
         application/json:
           schema:
             $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyResponse'
     sm.get_policy@404:
-      description: Snapshot management policy not found.
+      description: The API could not find the snapshot management policy.
       content:
         application/json:
           schema:
-            $ref: '../schemas/sm._common.yaml#/components/schemas/NotFoundResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
 
     sm.update_policy@200:
-      description: Successfully updated the snapshot management policy.
+      description: The API successfully updated the snapshot management policy.
       content:
         application/json:
           schema:
             $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyResponse'
     sm.update_policy@404:
-      description: Snapshot management policy not found.
+      description: The API could not find the snapshot management policy.
       content:
         application/json:
           schema:
-            $ref: '../schemas/sm._common.yaml#/components/schemas/NotFoundResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
 
     sm.delete_policy@200:
-      description: Successfully deleted the snapshot management policy.
+      description: The API successfully deleted the snapshot management policy.
       content:
         application/json:
           schema:
-            $ref: '../schemas/sm._common.yaml#/components/schemas/DeletePolicyResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     sm.delete_policy@404:
-      description: Snapshot management policy not found.
+      description: The API could not find the snapshot management policy.
       content:
         application/json:
           schema:
-            $ref: '../schemas/sm._common.yaml#/components/schemas/NotFoundResponse'
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
 
     sm.explain_policy@200:
-      description: Successfully explained the state of the snapshot management policy.
+      description: The API successfully explained the state of the snapshot management policy.
       content:
         application/json:
           schema:
             $ref: '../schemas/sm._common.yaml#/components/schemas/PolicyExplanation'
 
     sm.start_policy@200:
-      description: Successfully started the snapshot management policy.
+      description: The API successfully started the snapshot management policy.
       content:
         application/json:
           schema:
@@ -202,9 +202,10 @@ components:
             properties:
               acknowledged:
                 type: boolean
+                description: Whether the API acknowledged the start operation.
 
     sm.stop_policy@200:
-      description: Successfully stopped the snapshot management policy.
+      description: The API successfully stopped the snapshot management policy.
       content:
         application/json:
           schema:
@@ -212,12 +213,13 @@ components:
             properties:
               acknowledged:
                 type: boolean
+                description: Whether the API acknowledged the stop operation.
 
   parameters:
     sm.create_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management policy name.
+      description: The name of the snapshot management policy to create.
       required: true
       schema:
         type: string
@@ -225,7 +227,7 @@ components:
     sm.get_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management name.
+      description: The name of the snapshot management policy to retrieve.
       required: true
       schema:
         type: string
@@ -233,7 +235,7 @@ components:
     sm.get_policies::query.from:
       name: from
       in: query
-      description: The index to retrieve snapshot management policies from.
+      description: The starting index from which to retrieve snapshot management policies.
       schema:
         default: 0
         type: integer
@@ -241,7 +243,7 @@ components:
     sm.update_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management policy name.
+      description: The name of the snapshot management policy to update.
       required: true
       schema:
         type: string
@@ -265,7 +267,7 @@ components:
     sm.delete_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management policy name.
+      description: The name of the snapshot management policy to delete.
       required: true
       schema:
         type: string
@@ -273,7 +275,7 @@ components:
     sm.explain_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management policy name.
+      description: The name of the snapshot management policy to explain.
       required: true
       schema:
         type: string
@@ -281,7 +283,7 @@ components:
     sm.start_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management policy name.
+      description: The name of the snapshot management policy to start.
       required: true
       schema:
         type: string
@@ -289,7 +291,7 @@ components:
     sm.stop_policy::path.policy_name:
       name: policy_name
       in: path
-      description: The snapshot management policy name.
+      description: The name of the snapshot management policy to stop.
       required: true
       schema:
         type: string
@@ -304,22 +306,21 @@ components:
     sm.get_policies::query.queryString:
       name: queryString
       in: query
-      description: Filters the returned snapshot management policies based on query string.
+      description: The query string to filter the returned snapshot management policies.
       schema:
         type: string
 
     sm.get_policies::query.sortField:
       name: sortField
       in: query
-      description: The name of the query field to sort on.
+      description: The name of the field to sort the snapshot management policies by.
       schema:
         type: string
 
     sm.get_policies::query.sortOrder:
       name: sortOrder
       in: query
-      description: The order to sort the snapshot management policy result.
+      description: The order to sort the snapshot management policies.
       schema:
-        type: string
-        enum: [asc, desc]
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
         default: asc

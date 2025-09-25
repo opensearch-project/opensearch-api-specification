@@ -7,15 +7,23 @@ paths: {}
 components:
   schemas:
     NodesResponseBase:
+      description: Provides base response structure for node-related operations.
       type: object
       properties:
         _nodes:
           description: Contains statistics about the number of nodes selected by the request's node filters.
           $ref: '_common.yaml#/components/schemas/NodeStatistics'
+
     SampleType:
       type: string
-      description: The type to sample.
-      enum:
-        - block
-        - cpu
-        - wait
+      description: The type of resource to sample.
+      oneOf:
+        - description: Samples block I/O operations.
+          const: block
+          type: string
+        - description: Samples CPU utilization.
+          const: cpu
+          type: string
+        - description: Samples process wait times.
+          const: wait
+          type: string

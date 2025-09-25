@@ -1,26 +1,69 @@
 openapi: 3.1.0
 info:
-  title: Schemas of `knn._common` Category
-  description: Schemas of `knn._common` category.
+  title: Schemas of `ltr._common` Category
+  description: Schemas of `ltr._common` category.
   version: 1.0.0
 paths: {}
 components:
   schemas:
-    Stats:
+    StoreDetails:
       type: object
       properties:
-        _nodes:
-          $ref: '_common.yaml#/components/schemas/NodeStatistics'
-        cluster_name:
-          $ref: '_common.yaml#/components/schemas/Name'
-        stores:
-          $ref: '#/components/schemas/StoreStats'
-        status:
+        store:
           type: string
-        nodes:
+          description: The name of the store.
+        index:
+          type: string
+          description: The index name for this store.
+        version:
+          type: integer
+          description: Store version.
+        counts:
           type: object
+          description: Count statistics for this store.
+
+    ListStoresResponse:
+      type: object
+      properties:
+        stores:
+          type: object
+          description: Map of available feature stores.
           additionalProperties:
-            $ref: '#/components/schemas/NodeStats'
+            $ref: '#/components/schemas/StoreDetails'
+      required: [stores]
+    StoreExistsResponse:
+      type: object
+      properties:
+        exists:
+          type: boolean
+          description: Indicates whether the store exists.
+    AcknowledgedResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Indicates whether the request was acknowledged.
+        shards_acknowledged:
+          type: boolean
+          description: Indicates whether the required active shards were acknowledged.
+        index:
+          type: string
+          description: The name of the index.
+    Stats:
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            stores:
+              $ref: '#/components/schemas/StoreStats'
+            status:
+              type: string
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodeStats'
     StoreStats:
       type: object
       additionalProperties:
@@ -67,3 +110,93 @@ components:
           type: integer
         hit_count:
           type: integer
+
+    CacheItemStats:
+      type: object
+      properties:
+        ram:
+          type: integer
+          description: Memory usage in bytes.
+        count:
+          type: integer
+          description: Count of cached items.
+
+    CacheAllStats:
+      type: object
+      description: Aggregate cache statistics across all nodes.
+      properties:
+        total:
+          $ref: '#/components/schemas/CacheItemStats'
+        features:
+          $ref: '#/components/schemas/CacheItemStats'
+        featuresets:
+          $ref: '#/components/schemas/CacheItemStats'
+        models:
+          $ref: '#/components/schemas/CacheItemStats'
+
+    NodeStatsDetails:
+      type: object
+      description: Cache statistics for a node.
+      properties:
+        total:
+          $ref: '#/components/schemas/CacheItemStats'
+        features:
+          $ref: '#/components/schemas/CacheItemStats'
+        featuresets:
+          $ref: '#/components/schemas/CacheItemStats'
+        models:
+          $ref: '#/components/schemas/CacheItemStats'
+
+    NodeDetails:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Node name.
+        hostname:
+          type: string
+          description: Node hostname.
+        stats:
+          $ref: '#/components/schemas/NodeStatsDetails'
+
+    CacheStatsResponse:
+      type: object
+      properties:
+        _nodes:
+          $ref: '_common.yaml#/components/schemas/NodeStatistics'
+        cluster_name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        all:
+          $ref: '#/components/schemas/CacheAllStats'
+        stores:
+          type: object
+          description: Cache statistics by store.
+        nodes:
+          type: object
+          description: Cache statistics per node.
+          additionalProperties:
+            $ref: '#/components/schemas/NodeDetails'
+
+    NotFoundResponse:
+      type: object
+      description: Standard OpenSearch not found response.
+      properties:
+        _index:
+          type: string
+          description: Index name.
+        _id:
+          type: string
+          description: Document ID.
+        found:
+          type: boolean
+          description: Whether the document was found.
+          default: false
+
+    LtrStatName:
+      type: string
+      enum:
+        - cache
+        - request_error_count
+        - request_total_count
+        - status
+        - stores
