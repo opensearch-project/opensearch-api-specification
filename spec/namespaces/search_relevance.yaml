@@ -165,11 +165,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_experiments@200'
-          # content:
-          #  application/json:
-          #    schema:
-          #      type: object
-          # $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
     delete:
       operationId: search_relevance.delete_experiments.0
       x-operation-group: search_relevance.delete_experiments
@@ -244,8 +239,46 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_stats@200'
-
-          
+  /_plugins/_search_relevance/experiments/schedule:
+    get:
+      operationId: search_relevance.get_scheduled_experiments.0
+      x-operation-group: search_relevance.get_scheduled_experiments
+      x-version-added: '3.1'
+      description: Gets the scheduled experiments.
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.get_scheduled_experiments@200'
+    post:
+      operationId: search_relevance.post_scheduled_experiments.0
+      x-operation-group: search_relevance.post_scheduled_experiments
+      x-version-added: '3.1'
+      description: Creates a scheduled experiment.
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.post_scheduled_experiments' 
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.post_scheduled_experiments@200'
+  /_plugins/_search_relevance/experiments/schedule/{experiment_id}:
+    get:
+      operationId: search_relevance.get_scheduled_experiments.1
+      x-operation-group: search_relevance.get_scheduled_experiments
+      x-version-added: '3.1'
+      description: Gets the scheduled experiments.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.get_scheduled_experiments::path.experiment_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.get_scheduled_experiments@200'
+    delete:
+      operationId: search_relevance.delete_scheduled_experiments.0
+      x-operation-group: search_relevance.delete_scheduled_experiments
+      x-version-added: '3.1'
+      description: Deletes a specified scheduled experiment.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.delete_scheduled_experiments::path.experiment_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.delete_scheduled_experiments@200'          
 components:
   parameters:
     search_relevance.get_query_sets::path.query_set_id: 
@@ -303,6 +336,22 @@ components:
         type:
           string
     search_relevance.delete_experiments::path.experiment_id:
+      name: experiment_id
+      in: path
+      required: true
+      description: The experiment id
+      schema:
+        type:
+          string
+    search_relevance.get_scheduled_experiments::path.experiment_id:
+      name: experiment_id
+      in: path
+      required: true
+      description: The experiment id
+      schema:
+        type:
+          string
+    search_relevance.delete_scheduled_experiments::path.experiment_id:
       name: experiment_id
       in: path
       required: true
@@ -419,255 +468,151 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-              sampling:
-                type: string
-              querySetSize:
-                type: integer
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PostQuerySetsRequest'
     search_relevance.put_query_sets:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-              sampling:
-                type: string
-              querySetQueries:
-                type: array
-                items:
-                  type: object
-                  # TODO: Replace the object type with the actual querySet
-                  # schema. 
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutQuerySetsRequest'
     search_relevance.put_judgments:
       content:
         application/json:
           schema:
             oneOf:
-              - type: object
-                description: The schema for a LLM judgment 
-                properties:
-                  name:
-                    type: string
-                  description:
-                    type: string
-                  type:
-                    type: string
-                  modelId:
-                    type: string
-                  querySetId:
-                    type: string
-                  searchConfigurationList:
-                    type: array
-                    items:
-                      type: string
-                  size:
-                    type: integer
-                  ignoreFailure:
-                    type: boolean
-                  contextFields:
-                    type: array
-                    items:
-                      type: string
-              - type: object
-                description: The schema for a UBI judgment 
-                properties:
-                  name:
-                    type: string
-                  description:
-                    type: string
-                  type:
-                    type: string
-                  clickModel:
-                    type: string
-                  maxRank:
-                    type: integer
-              - type: object
-                description: The schema for an import judgment 
-                properties:
-                  name:
-                    type: string
-                  description:
-                    type: string
-                  type:
-                    type: string
-                  judgmentRatings:
-                    type: array
-                    items:
-                      type: object
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutLLMJudgmentsRequest'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutUBIJudgmentsRequest'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutImportJudgmentsRequest'
     search_relevance.put_search_configurations:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-              index:
-                type: string
-              query:
-                type: string
-              searchPipeline:
-                type: string
-
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutSearchConfigurationRequest'
     search_relevance.put_experiments:
       content:
         application/json:
           schema:
             anyOf:
-              - type: object
-                description: The schema for a pointwise and hybrid optimizer experiment 
-                properties:
-                  querySetId:
-                    type: string
-                  searchConfigurationList:
-                    type: array
-                    items:
-                      type: string
-                  judgmentList:
-                    type: array
-                    items:
-                      type: string
-                  size:
-                    type: integer
-                  type:
-                    type: string
-              - type: object
-                description: The schema for a pairwise experiment 
-                properties:
-                  querySetId:
-                    type: string
-                  searchConfigurationList:
-                    type: array
-                    items:
-                      type: string
-                  size:
-                    type: integer
-                  type:
-                    type: string
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutHybridOptimizerExperimentRequest'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutPointwiseExperimentRequest'
+              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutPairwiseExperimentRequest'
+    search_relevance.post_scheduled_experiments:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PostScheduledExperimentsRequest'
   responses:
     search_relevance.get_query_sets@200:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/QuerySet'
-              # TODO: Right Now, the generic object is the response of a get, but this can
-              # be more fleshed out to accomodate the specific return values of different gets. 
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
     search_relevance.post_query_sets@200:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              query_set_id: 
-                type: string
-              query_set_result:
-                type: string
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PostQuerySetsResponse'
     search_relevance.put_query_sets@200:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              query_set_id: 
-                type: string
-              query_set_result:
-                type: string
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutQuerySetsResponse'
     search_relevance.delete_query_sets@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of deletes can be more specific. 
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     search_relevance.get_judgments@200:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Judgment'
-              # TODO: Right Now, the generic object is the response of a get, but this can
-              # be more fleshed out to accomodate the specific return values of different gets. 
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
     search_relevance.put_judgments@200:
       content:
         application/json:
-          schema:
-            type: 
-              object
-            properties:
-              judgment_id:
-                type: string
+          $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutJudgmentsResponse'
     search_relevance.delete_judgments@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of deletes can be more specific. 
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     search_relevance.get_search_configurations@200:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/SearchConfiguration'
-              # TODO: Right Now, the generic object is the response of a get, but this can
-              # be more fleshed out to accomodate the specific return values of different gets. 
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            $ref: '../schemas/_core.search.yaml.yaml#/components/schemas/SearchResult'
     search_relevance.put_search_configurations@200:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              search_configuration_id:
-                type: string
-              search_configuration_result:
-                type: string
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutSearchConfigurationResponse'
     search_relevance.delete_search_configurations@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of deletes can be more specific. 
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     search_relevance.get_experiments@200:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/Experiment'
-              # TODO: Right Now, the generic object is the response of a get, but this can
-              # be more fleshed out to accomodate the specific return values of different gets. 
-              - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/GenericObject'
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
     search_relevance.put_experiments@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of puts can be more specific. 
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutExperimentResponse'
     search_relevance.delete_experiments@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of deletes can be more specific. 
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
     search_relevance.get_node_stats@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of get node stats can be more specific. 
+            allOf:
+              - $ref: '../schemas/nodes._common.yaml#/components/schemas/NodesResponseBase'
+              - type: object
+                properties:
+                  cluster_name:
+                    $ref: '../schemas/_common.yaml#/components/schemas/Name'
+                  info:
+                    type: object
+                  all_nodes:
+                    type: object
+                  nodes:
+                    type: object
+                required:
+                  - nodes
     search_relevance.get_stats@200:
       content:
         application/json:
           schema:
-            type: object
-            # TODO: The return value of get stats should be more specific.
+            allOf:
+              - $ref: '../schemas/nodes._common.yaml#/components/schemas/NodesResponseBase'
+              - type: object
+                properties:
+                  cluster_name:
+                    $ref: '../schemas/_common.yaml#/components/schemas/Name'
+                  info:
+                    type: object
+                  all_nodes:
+                    type: object
+                  nodes:
+                    type: object
+                required:
+                  - nodes
+    search_relevance.get_scheduled_experiments@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResult'
+    search_relevance.post_scheduled_experiments@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PostScheduledExperimentsResponse'
+    search_relevance.delete_scheduled_experiments@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
