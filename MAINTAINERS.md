@@ -16,7 +16,7 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Thomas Farr          | [Xtansia](https://github.com/Xtansia)         | Amazon      |
 | Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
 | Vacha Shah           | [VachaShah](https://github.com/VachaShah)     | Amazon      |
-| Xi Lu                | [lucy66hw](https://github.com/lucy66hw)      | Uber        |
+| Xi Lu                | [lucy66hw](https://github.com/lucy66hw)       | Uber        |
 
 
 ## Emeritus
