@@ -38345,34 +38345,30 @@ components:
       required:
         - size_in_bytes
     _common___FieldSort:
-      oneOf:
-        - title: order
-          description: The sort order direction.
+      type: object
+      description: The detailed field sort options.
+      properties:
+        missing:
+          $ref: '#/components/schemas/_common___FieldValue'
+          description: The value to use when the field is missing.
+        mode:
+          $ref: '#/components/schemas/_common___SortMode'
+          description: The mode for sorting on array fields.
+        nested:
+          $ref: '#/components/schemas/_common___NestedSortValue'
+          description: The nested path sort options.
+        order:
           $ref: '#/components/schemas/_common___SortOrder'
-        - type: object
-          description: The detailed field sort options.
-          properties:
-            missing:
-              $ref: '#/components/schemas/_common___FieldValue'
-              description: The value to use when the field is missing.
-            mode:
-              $ref: '#/components/schemas/_common___SortMode'
-              description: The mode for sorting on array fields.
-            nested:
-              $ref: '#/components/schemas/_common___NestedSortValue'
-              description: The nested path sort options.
-            order:
-              $ref: '#/components/schemas/_common___SortOrder'
-              description: The sort order direction.
-            unmapped_type:
-              $ref: '#/components/schemas/_common.mapping___FieldType'
-              description: The type to use for unmapped fields.
-            numeric_type:
-              $ref: '#/components/schemas/_common___FieldSortNumericType'
-              description: The numeric type to use for sorting.
-            format:
-              type: string
-              description: The format to use for the sort values.
+          description: The sort order direction.
+        unmapped_type:
+          $ref: '#/components/schemas/_common.mapping___FieldType'
+          description: The type to use for unmapped fields.
+        numeric_type:
+          $ref: '#/components/schemas/_common___FieldSortNumericType'
+          description: The numeric type to use for sorting.
+        format:
+          type: string
+          description: The format to use for the sort values.
     _common___FieldSortNumericType:
       oneOf:
         - type: string
@@ -38394,6 +38390,14 @@ components:
         - 'null'
         - number
         - string
+    _common___FieldWithDirection:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/_common___SortOrder'
+    _common___FieldWithOrder:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/_common___FieldSort'
     _common___FlushStats:
       type: object
       description: The statistics about flush operations.
@@ -40121,12 +40125,20 @@ components:
           description: Automatically determine the number of slices.
     _common___Sort:
       oneOf:
-        - $ref: '#/components/schemas/_common___SortOptions'
-          description: The single sort option.
+        - $ref: '#/components/schemas/_common___SortCombinations'
         - type: array
-          description: The list of sort options.
           items:
-            $ref: '#/components/schemas/_common___SortOptions'
+            $ref: '#/components/schemas/_common___SortCombinations'
+    _common___SortCombinations:
+      oneOf:
+        - title: field
+          $ref: '#/components/schemas/_common___Field'
+        - title: field_with_direction
+          $ref: '#/components/schemas/_common___FieldWithDirection'
+        - title: field_with_order
+          $ref: '#/components/schemas/_common___FieldWithOrder'
+        - title: options
+          $ref: '#/components/schemas/_common___SortOptions'
     _common___SortMode:
       oneOf:
         - type: string
@@ -40145,49 +40157,16 @@ components:
           const: sum
           description: Use the sum of all values.
     _common___SortOptions:
-      oneOf:
-        - type: string
-          const: _score
-          description: Sort by document score.
-        - type: string
-          const: _doc
-          description: Sort by document index order.
-        - type: string
-          description: Sort by field name.
-          not:
-            type: string
-            enum:
-              - _doc
-              - _score
-        - type: object
-          description: Sort by score options.
-          properties:
-            _score:
-              $ref: '#/components/schemas/_common___ScoreSort'
-            _doc:
-              $ref: '#/components/schemas/_common___ScoreSort'
-            _geo_distance:
-              $ref: '#/components/schemas/_common___GeoDistanceSort'
-            _script:
-              $ref: '#/components/schemas/_common___ScriptSort'
-          minProperties: 1
-          maxProperties: 1
-        - type: object
-          description: Sort by field options.
-          propertyNames:
-            allOf:
-              - $ref: '#/components/schemas/_common___Field'
-              - not:
-                  type: string
-                  enum:
-                    - _doc
-                    - _geo_distance
-                    - _score
-                    - _script
-          additionalProperties:
-            $ref: '#/components/schemas/_common___FieldSort'
-          minProperties: 1
-          maxProperties: 1
+      type: object
+      properties:
+        _score:
+          $ref: '#/components/schemas/_common___ScoreSort'
+        _geo_distance:
+          $ref: '#/components/schemas/_common___GeoDistanceSort'
+        _script:
+          $ref: '#/components/schemas/_common___ScriptSort'
+      minProperties: 1
+      maxProperties: 1
     _common___SortOrder:
       type: string
       description: The direction of the sort order.
