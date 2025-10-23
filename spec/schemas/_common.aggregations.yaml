@@ -1423,20 +1423,6 @@ components:
       allOf: 
         - type: object
           properties:
-            aggregations:
-              description: |-
-                Sub-aggregations for this aggregation.
-                Only applies to bucket aggregations.
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/AggregationContainer'
-            aggs:
-              description: |-
-                Sub-aggregations for this aggregation.
-                Only applies to bucket aggregations.
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/AggregationContainer'
             meta:
               $ref: '_common.yaml#/components/schemas/Metadata'
         - type: object
@@ -1782,6 +1768,17 @@ components:
       allOf:
         - $ref: '#/components/schemas/Aggregation'
         - type: object
+          properties:
+            aggregations:
+              description: Sub-aggregations for this bucket aggregation
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/AggregationContainer'
+            aggs:
+              description: Sub-aggregations for this bucket aggregation
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/AggregationContainer'
     Aggregation:
       type: object
       properties:
@@ -1840,14 +1837,16 @@ components:
             format:
               type: string
     MetricAggregationBase:
-      type: object
-      properties:
-        field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        missing:
-          $ref: '_common.yaml#/components/schemas/FieldValue'
-        script:
-          $ref: '_common.yaml#/components/schemas/Script'
+      allOf:
+        - $ref: '#/components/schemas/Aggregation'
+        - type: object
+          properties:
+            field:
+              $ref: '_common.yaml#/components/schemas/Field'
+            missing:
+              $ref: '_common.yaml#/components/schemas/FieldValue'
+            script:
+              $ref: '_common.yaml#/components/schemas/Script'
     AverageBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -1946,8 +1945,6 @@ components:
                 This allows to trade memory for accuracy.
               type: integer
               format: int32
-            rehash:
-              type: boolean
             execution_hint:
               $ref: '#/components/schemas/CardinalityExecutionMode'
     CardinalityExecutionMode:
@@ -1955,9 +1952,6 @@ components:
       enum:
         - direct
         - global_ordinals
-        - save_memory_heuristic
-        - save_time_heuristic
-        - segment_ordinals
     ChildrenAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'

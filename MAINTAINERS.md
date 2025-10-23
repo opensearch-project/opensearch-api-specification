@@ -8,14 +8,16 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 ## Current Maintainers
 
 | Maintainer           | GitHub ID                                     | Affiliation |
-| -------------------- | --------------------------------------------- | ----------- |
+|----------------------|-----------------------------------------------|-------------|
 | Alen Abeshov         | [aabeshov](https://github.com/aabeshov)       |             |
 | Harsha Vamsi Kalluri | [harshavamsi](https://github.com/harshavamsi) | Amazon      |
+| Karen Xu             | [karenyrx](https://github.com/karenyrx)       | Uber        |
 | Sachet Alva          | [sachetalva](https://github.com/sachetalva)   | Amazon      |
-| Theo Truong          | [nhtruong](https://github.com/nhtruong)       | Amazon      |
 | Thomas Farr          | [Xtansia](https://github.com/Xtansia)         | Amazon      |
 | Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
 | Vacha Shah           | [VachaShah](https://github.com/VachaShah)     | Amazon      |
+| Xi Lu                | [lucy66hw](https://github.com/lucy66hw)       | Uber        |
+
 
 ## Emeritus
 
@@ -24,3 +26,4 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Abhi Kalra         | [abhivka7](https://github.com/abhivka7) | Amazon      |
 | Daniel Doubrovkine | [dblock](https://github.com/dblock)     | Independent |
 | Pranav Garg        | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
+| Theo Truong        | [nhtruong](https://github.com/nhtruong)       | Independent |
