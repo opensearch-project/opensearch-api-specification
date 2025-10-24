@@ -341,6 +341,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 - Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
+- Removed duplicate hits from SearchResult ([#956](https://github.com/opensearch-project/opensearch-api-specification/pull/956))
 - Removed duplicate Suggest from SearchResult ([#957](https://github.com/opensearch-project/opensearch-api-specification/pull/957))
 ### Fixed
 
