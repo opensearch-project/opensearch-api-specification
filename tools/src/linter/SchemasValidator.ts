@@ -20,7 +20,8 @@ const ADDITIONAL_KEYWORDS = [
   'x-distributions-included',
   'x-distributions-excluded',
   'x-supports-typed-keys',
-  'x-is-generic-type-parameter'
+  'x-is-generic-type-parameter',
+  'x-protobuf-excluded'
 ]
 
 export default class SchemasValidator {
