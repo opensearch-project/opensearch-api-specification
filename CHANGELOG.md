@@ -306,7 +306,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
 - Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
-- Added `search_pipeline`, `verbose_pipeline`, `include_named_queries_score` and `derived` to search_request_body ([#981](https://github.com/opensearch-project/opensearch-api-specification/pull/981))
+- Added `search_pipeline`, `verbose_pipeline`, `include_named_queries_score` and `derived` to search_request_body. `primary` to `ShardFailure`, `header` to `ErrorCause` and Replace InnerHits `fields` from type `Fields` to `FieldAndFormat`([#981](https://github.com/opensearch-project/opensearch-api-specification/pull/981))
 
 ### Changed
 
