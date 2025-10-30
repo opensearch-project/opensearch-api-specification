@@ -332,6 +332,8 @@ components:
           type: integer
         status:
           type: string
+        primary:
+          type: boolean
       required:
         - reason
         - shard
@@ -357,6 +359,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorCause'
+        header:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
       required:
         - type
       additionalProperties:
@@ -560,6 +568,27 @@ components:
           description: Whether to ignore failures during script execution.
       required:
         - script
+    DerivedField:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        script:
+          $ref: '#/components/schemas/Script'
+        prefilter_field:
+          type: string
+        properties:
+          type: object
+        ignore_malformed:
+          type: boolean
+        format:
+          type: string
+      required:
+        - name
+        - script
+        - type
     Sort:
       oneOf:
         - $ref: '#/components/schemas/SortCombinations'
@@ -670,6 +699,7 @@ components:
         validation_method:
           $ref: '_common.query_dsl.yaml#/components/schemas/GeoValidationMethod'
       additionalProperties:
+        title: location
         type: array
         description: The geo points to use for distance calculation.
         items:
