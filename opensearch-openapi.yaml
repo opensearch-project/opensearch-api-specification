@@ -32074,6 +32074,12 @@ components:
                   Set to `true` to return detailed timing information about the execution of individual components in a search request.
                   NOTE: This is a debugging tool and adds significant overhead to search execution.
                 type: boolean
+              search_pipeline:
+                description: Customizable sequence of processing stages applied to search queries.
+                type: string
+              verbose_pipeline:
+                description: Enables or disables verbose mode for the search pipeline.
+                type: boolean
               query:
                 $ref: '#/components/schemas/_common.query_dsl___QueryContainer'
               rescore:
@@ -32133,6 +32139,9 @@ components:
               track_scores:
                 description: If `true`, calculate and return document scores, even if the scores are not used for sorting.
                 type: boolean
+              include_named_queries_score:
+                description: Whether to return scores with named queries. Default is false.
+                type: boolean
               version:
                 description: If `true`, returns document version as part of a hit.
                 type: boolean
@@ -32151,6 +32160,11 @@ components:
                 type: array
                 items:
                   type: string
+              derived:
+                type: object
+                x-version-added: '2.14'
+                additionalProperties:
+                  $ref: '#/components/schemas/_common___DerivedField'
             description: The search definition using the Query DSL
     search_pipeline.put:
       content:
@@ -38100,6 +38114,27 @@ components:
       oneOf:
         - type: string
         - $ref: '#/components/schemas/_common___EpochTimeUnitMillis'
+    _common___DerivedField:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        script:
+          $ref: '#/components/schemas/_common___Script'
+        prefilter_field:
+          type: string
+        properties:
+          type: object
+        ignore_malformed:
+          type: boolean
+        format:
+          type: string
+      required:
+        - name
+        - script
+        - type
     _common___DFIIndependenceMeasure:
       oneOf:
         - type: string
@@ -38261,6 +38296,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/_common___ErrorCause'
+        header:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
       required:
         - type
       additionalProperties:
@@ -38485,6 +38526,7 @@ components:
         validation_method:
           $ref: '#/components/schemas/_common.query_dsl___GeoValidationMethod'
       additionalProperties:
+        title: location
         type: array
         description: The geo points to use for distance calculation.
         items:
@@ -40056,6 +40098,8 @@ components:
           type: integer
         status:
           type: string
+        primary:
+          type: boolean
       required:
         - reason
         - shard
@@ -47440,8 +47484,6 @@ components:
             format:
               description: Format in which the values are returned.
               type: string
-            include_unmapped:
-              type: boolean
           required:
             - field
     _common.query_dsl___FieldLookup:
@@ -48143,7 +48185,7 @@ components:
                   description: If `true`, match phrase queries are automatically created for multi-term synonyms.
                   type: boolean
                 cutoff_frequency:
-                  deprecated: true
+                  x-version-deprecated: '2.0'
                   type: number
                   format: float
                 fuzziness:
@@ -51021,8 +51063,6 @@ components:
           properties:
             matched_fields:
               $ref: '#/components/schemas/_common___Fields'
-            analyzer:
-              $ref: '#/components/schemas/_common.analysis___Analyzer'
     _core.search___Hit:
       type: object
       properties:
@@ -51153,7 +51193,9 @@ components:
         seq_no_primary_term:
           type: boolean
         fields:
-          $ref: '#/components/schemas/_common___Fields'
+          type: array
+          items:
+            $ref: '#/components/schemas/_common.query_dsl___FieldAndFormat'
         sort:
           $ref: '#/components/schemas/_common___Sort'
         _source:
