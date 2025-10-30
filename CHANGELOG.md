@@ -3,6 +3,7 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
+- Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
 
@@ -17,18 +18,23 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed the type of the `DocStatus` properties from int32 to int64 ([#933](https://github.com/opensearch-project/opensearch-api-specification/pull/933))
 - Add pull-based ingestion APIs and properties. Also add replication type in index settings ([#926](https://github.com/opensearch-project/opensearch-api-specification/pull/926))
 - Added `additional_config` to `ModelConfig` ([#936](https://github.com/opensearch-project/opensearch-api-specification/pull/936))
+- Added `all_active` config to the IngestionSource under index settings ([#965](https://github.com/opensearch-project/opensearch-api-specification/pull/965))
 
 ### Removed
+- Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
 - Fixed the type of `SearchStats`'s `concurrent_avg_slice_count` to be a double ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
+- Fixed name and metadata missing from metric aggregations ([#969](https://github.com/opensearch-project/opensearch-api-specification/pull/969))
 - Fixed the type of `param` in pull-based ingestion's `ingestion_source` to take in Object for value instead of string ([#945](https://github.com/opensearch-project/opensearch-api-specification/pull/945))
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Changed knn stats response types to use int64s instead of numbers ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
+- Moved sub aggregations into `BucketAggregationBase` as their usage is only valid here ([#971](https://github.com/opensearch-project/opensearch-api-specification/pull/971))
+- Remove deprecated `rehash` option from `CardinalityAggregation` ([#975](https://github.com/opensearch-project/opensearch-api-specification/pull/975))
 
 ## [0.2.0] - 2025-05-25
 
@@ -300,6 +306,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
+- Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
 
 ### Changed
 
@@ -324,6 +331,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `cluster.reroute`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `indices.stats`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `CleanupRepositoryResults`' properties to be `int64`s ([#587](https://github.com/opensearch-project/opensearch-api-specification/pull/587))
+- Changed `RangeQuery` to unified type with oneOf ([#958](https://github.com/opensearch-project/opensearch-api-specification/pull/958))
+- Changed `FunctionScore` related Schema ([#963](https://github.com/opensearch-project/opensearch-api-specification/pull/963))
+- Changed `sort` from `SortOptions` to `SortCombinations` ([#961](https://github.com/opensearch-project/opensearch-api-specification/pull/961))
 
 ### Deprecated
 
@@ -333,7 +343,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 - Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
-
+- Removed duplicate hits from SearchResult ([#956](https://github.com/opensearch-project/opensearch-api-specification/pull/956))
+- Removed duplicate Suggest from SearchResult ([#957](https://github.com/opensearch-project/opensearch-api-specification/pull/957))
 ### Fixed
 
 - Fixed GitHub pages ([#215](https://github.com/opensearch-project/opensearch-api-specification/pull/215))
@@ -377,6 +388,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `RestStatus` responses in `DELETE /_plugins/_notifications/configs/{config_id}` ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
 - Fixed `GET /_snapshot_/{repository}/{snapshot}` ([#608](https://github.com/opensearch-project/opensearch-api-specification/pull/608))
 - Fixed `POST /_snapshot/{repository}/{snapshot}/_restore` when `wait_for_completion` is `false` and `GET /{index}/_recovery` ([#611](https://github.com/opensearch-project/opensearch-api-specification/pull/611))
+- Fixed BulkResponseBase item with defined property ([#948](https://github.com/opensearch-project/opensearch-api-specification/pull/948))
 
 ### Security
 

@@ -562,85 +562,65 @@ components:
         - script
     Sort:
       oneOf:
-        - $ref: '#/components/schemas/SortOptions'
-          description: The single sort option.
+        - $ref: '#/components/schemas/SortCombinations'
         - type: array
-          description: The list of sort options.
           items:
-            $ref: '#/components/schemas/SortOptions'
+            $ref: '#/components/schemas/SortCombinations'
+
+    SortCombinations:
+      oneOf:
+        - title: field
+          $ref: '#/components/schemas/Field'
+        - title: field_with_direction
+          $ref: '#/components/schemas/FieldWithDirection'
+        - title: field_with_order
+          $ref: '#/components/schemas/FieldWithOrder'
+        - title: options
+          $ref: '#/components/schemas/SortOptions'
+    FieldWithDirection:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/SortOrder'
+    FieldWithOrder:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/FieldSort'
     SortOptions:
-      oneOf:
-        - type: string
-          const: _score
-          description: Sort by document score.
-        - type: string
-          const: _doc
-          description: Sort by document index order.
-        - type: string
-          description: Sort by field name.
-          not:
-            type: string
-            enum:
-              - _doc
-              - _score
-        - type: object
-          description: Sort by score options.
-          properties:
-            _score:
-              $ref: '#/components/schemas/ScoreSort'
-            _doc:
-              $ref: '#/components/schemas/ScoreSort'
-            _geo_distance:
-              $ref: '#/components/schemas/GeoDistanceSort'
-            _script:
-              $ref: '#/components/schemas/ScriptSort'
-          minProperties: 1
-          maxProperties: 1
-        - type: object
-          description: Sort by field options.
-          propertyNames:
-            allOf:
-              - $ref: '#/components/schemas/Field'
-              - not:
-                  type: string
-                  enum:
-                    - _doc
-                    - _geo_distance
-                    - _score
-                    - _script
-          additionalProperties:
-            $ref: '#/components/schemas/FieldSort'
-          minProperties: 1
-          maxProperties: 1
+      type: object
+      properties:
+        _score:
+          $ref: '#/components/schemas/ScoreSort'
+        _geo_distance:
+          $ref: '#/components/schemas/GeoDistanceSort'
+        _script:
+          $ref: '#/components/schemas/ScriptSort'
+      minProperties: 1
+      maxProperties: 1
     FieldSort:
-      oneOf:
-        - title: order
-          description: The sort order direction.
+      type: object
+      description: The detailed field sort options.
+      properties:
+        missing:
+          $ref: '#/components/schemas/FieldValue'
+          description: The value to use when the field is missing.
+        mode:
+          $ref: '#/components/schemas/SortMode'
+          description: The mode for sorting on array fields.
+        nested:
+          $ref: '#/components/schemas/NestedSortValue'
+          description: The nested path sort options.
+        order:
           $ref: '#/components/schemas/SortOrder'
-        - type: object
-          description: The detailed field sort options.
-          properties:
-            missing:
-              $ref: '#/components/schemas/FieldValue'
-              description: The value to use when the field is missing.
-            mode:
-              $ref: '#/components/schemas/SortMode'
-              description: The mode for sorting on array fields.
-            nested:
-              $ref: '#/components/schemas/NestedSortValue'
-              description: The nested path sort options.
-            order:
-              $ref: '#/components/schemas/SortOrder'
-              description: The sort order direction.
-            unmapped_type:
-              $ref: '_common.mapping.yaml#/components/schemas/FieldType'
-              description: The type to use for unmapped fields.
-            numeric_type:
-              $ref: '#/components/schemas/FieldSortNumericType'
-              description: The numeric type to use for sorting.
-            format:
-              type: string
-              description: The format to use for the sort values.
+          description: The sort order direction.
+        unmapped_type:
+          $ref: '_common.mapping.yaml#/components/schemas/FieldType'
+          description: The type to use for unmapped fields.
+        numeric_type:
+          $ref: '#/components/schemas/FieldSortNumericType'
+          description: The numeric type to use for sorting.
+        format:
+          type: string
+          description: The format to use for the sort values.
     FieldSortNumericType:
       oneOf:
         - type: string
@@ -901,7 +881,7 @@ components:
           $ref: '#/components/schemas/SequenceNumber'
         _primary_term:
           type: integer
-          format: int32
+          format: int64
           description: The primary term of the document.
         _routing:
           $ref: '#/components/schemas/Routing'
@@ -1890,7 +1870,8 @@ components:
         error:
           $ref: '#/components/schemas/ErrorCause'
         status:
-          type: number
+          type: integer
+          format: int32
           description: The HTTP status code.
       required:
         - error
@@ -2662,22 +2643,28 @@ components:
       description: The time taken by different phases of the search.
       properties:
         dfs_pre_query:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the distributed frequency search `pre-query` phase.
         query:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `query` phase.
         fetch:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `fetch` phase.
         dfs_query:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the distributed frequency search query phase.
         expand:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `expand` phase.
         can_match:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `can_match` phase.
       required:
         - can_match

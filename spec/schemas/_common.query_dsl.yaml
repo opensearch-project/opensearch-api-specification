@@ -546,7 +546,7 @@ components:
         - min
         - sum
     DecayPlacement:
-      anyOf:
+      oneOf:
         - $ref: '#/components/schemas/DateDecayPlacement'
         - $ref: '#/components/schemas/GeoDecayPlacement'
         - $ref: '#/components/schemas/NumericDecayPlacement'
@@ -562,6 +562,8 @@ components:
           $ref: '_common.yaml#/components/schemas/DateTime'
         scale:
           $ref: '_common.yaml#/components/schemas/Duration'
+      required:
+        - scale
     GeoDecayPlacement:
       type: object
       properties:
@@ -574,6 +576,9 @@ components:
           $ref: '_common.yaml#/components/schemas/GeoLocation'
         scale:
           $ref: '_common.yaml#/components/schemas/Distance'
+      required:
+        - origin
+        - scale
     NumericDecayPlacement:
       type: object
       properties:
@@ -589,6 +594,9 @@ components:
         scale:
           type: number
           format: double
+      required:
+        - origin
+        - scale
     FieldValueFactorScoreFunction:
       type: object
       properties:
@@ -630,6 +638,8 @@ components:
           oneOf:
             - type: integer
               format: int32
+            - type: integer
+              format: int64
             - type: string
     ScriptScoreFunction:
       type: object
@@ -723,6 +733,9 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+            unit:
+              description: The unit of distance measurement.
+              $ref: '_common.yaml#/components/schemas/DistanceUnit'
           propertyNames:
             title: field
             type: string
@@ -1671,66 +1684,78 @@ components:
             - query
     RangeQuery:
       oneOf:
-        - allOf:
-            - $ref: '#/components/schemas/RangeQueryBase'
-            - $ref: '#/components/schemas/NumberRangeQueryParameters'
-        - allOf:
-            - $ref: '#/components/schemas/RangeQueryBase'
-            - $ref: '#/components/schemas/DateRangeQueryParameters'
-    DateRangeQueryParameters:
-      type: object
-      properties:
-        gt:
-          $ref: '_common.yaml#/components/schemas/DateMath'
-        gte:
-          $ref: '_common.yaml#/components/schemas/DateMath'
-        lt:
-          $ref: '_common.yaml#/components/schemas/DateMath'
-        lte:
-          $ref: '_common.yaml#/components/schemas/DateMath'
-        from:
-          oneOf:
-            - $ref: '_common.yaml#/components/schemas/DateMath'
-            - type: 'null'
-        to:
-          oneOf:
-            - $ref: '_common.yaml#/components/schemas/DateMath'
-            - type: 'null'
-        format:
-          $ref: '_common.yaml#/components/schemas/DateFormat'
-        time_zone:
-          $ref: '_common.yaml#/components/schemas/TimeZone'
-    NumberRangeQueryParameters:
-      type: object
-      properties:
-        gt:
-          description: Greater than.
-          type: number
-          format: double
-        gte:
-          description: Greater than or equal to.
-          type: number
-          format: double
-        lt:
-          description: Less than.
-          type: number
-          format: double
-        lte:
-          description: Less than or equal to.
-          type: number
-          format: double
-        from:
-          oneOf:
-            - type: number
+        - $ref: '#/components/schemas/NumberRangeQuery'
+        - $ref: '#/components/schemas/DateRangeQuery'
+    DateRangeQuery:
+      allOf:
+        - $ref: '#/components/schemas/RangeQueryBase'
+        - type: object
+          properties:
+            gt:
+              $ref: '_common.yaml#/components/schemas/DateMath'
+            gte:
+              $ref: '_common.yaml#/components/schemas/DateMath'
+            lt:
+              $ref: '_common.yaml#/components/schemas/DateMath'
+            lte:
+              $ref: '_common.yaml#/components/schemas/DateMath'
+            from:
+              oneOf:
+                - $ref: '_common.yaml#/components/schemas/DateMath'
+                - type: 'null'
+            to:
+              oneOf:
+                - $ref: '_common.yaml#/components/schemas/DateMath'
+                - type: 'null'
+            format:
+              $ref: '_common.yaml#/components/schemas/DateFormat'
+            time_zone:
+              $ref: '_common.yaml#/components/schemas/TimeZone'
+            include_lower:
+              description: Include the lower bound
+              type: boolean
+            include_upper:
+              description: Include the upper bound
+              type: boolean
+    NumberRangeQuery:
+      allOf:
+        - $ref: '#/components/schemas/RangeQueryBase'
+        - type: object
+          properties:
+            gt:
+              description: Greater than.
+              type: number
               format: double
-            - type: string
-            - type: 'null'
-        to:
-          oneOf:
-            - type: number
+            gte:
+              description: Greater than or equal to.
+              type: number
               format: double
-            - type: string
-            - type: 'null'
+            lt:
+              description: Less than.
+              type: number
+              format: double
+            lte:
+              description: Less than or equal to.
+              type: number
+              format: double
+            from:
+              oneOf:
+                - type: number
+                  format: double
+                - type: string
+                - type: 'null'
+            to:
+              oneOf:
+                - type: number
+                  format: double
+                - type: string
+                - type: 'null'
+            include_lower:
+              description: Include the lower bound
+              type: boolean
+            include_upper:
+              description: Include the upper bound
+              type: boolean
     RangeQueryBase:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
