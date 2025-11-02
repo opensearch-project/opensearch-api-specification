@@ -36,3 +36,28 @@ chapters:
       payload:
         query:
           match_all: {}
+  - synopsis: Search across all indices with derived field (POST).
+    version: '>= 2.15'
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        fields:
+          - inlineDerived
+        derived:
+          inlineDerived:
+            type: text
+            script:
+              source: emit('test')
+        query:
+          match_all: {}
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - fields:
+                inlineDerived:
+                  - test
