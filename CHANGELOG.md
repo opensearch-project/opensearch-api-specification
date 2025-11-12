@@ -21,6 +21,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `all_active` config to the IngestionSource under index settings ([#965](https://github.com/opensearch-project/opensearch-api-specification/pull/965))
 - Add `if_seq_no` and `if_primary_term` to `UpdateAction` ([#986](https://github.com/opensearch-project/opensearch-api-specification/pull/986))
 - Add title to `search` and `bulk` requestBody and replace bulk response path from BulkResponseBase to BulkResponse ([#987](https://github.com/opensearch-project/opensearch-api-specification/pull/987))
+- Add `filter` to HybridQuery ([#988](https://github.com/opensearch-project/opensearch-api-specification/pull/988))
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
