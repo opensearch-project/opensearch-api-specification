@@ -24,7 +24,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `if_seq_no` and `if_primary_term` to `UpdateAction` ([#986](https://github.com/opensearch-project/opensearch-api-specification/pull/986))
 - Add title to `search` and `bulk` requestBody and replace bulk response path from BulkResponseBase to BulkResponse ([#987](https://github.com/opensearch-project/opensearch-api-specification/pull/987))
 - Add `filter` to HybridQuery ([#988](https://github.com/opensearch-project/opensearch-api-specification/pull/988))
-- Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters
+- Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters ([#989](https://github.com/opensearch-project/opensearch-api-specification/pull/989))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
