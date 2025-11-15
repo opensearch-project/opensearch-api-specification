@@ -19,9 +19,13 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add pull-based ingestion APIs and properties. Also add replication type in index settings ([#926](https://github.com/opensearch-project/opensearch-api-specification/pull/926))
 - Added `additional_config` to `ModelConfig` ([#936](https://github.com/opensearch-project/opensearch-api-specification/pull/936))
 - Added `all_active` config to the IngestionSource under index settings ([#965](https://github.com/opensearch-project/opensearch-api-specification/pull/965))
+- Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
+- Added `search_pipeline`, `verbose_pipeline`, `include_named_queries_score` and `derived` to search_request_body. `primary` to `ShardFailure`, `header` to `ErrorCause` and Replace InnerHits `fields` from type `Fields` to `FieldAndFormat`([#981](https://github.com/opensearch-project/opensearch-api-specification/pull/981))
 - Add `if_seq_no` and `if_primary_term` to `UpdateAction` ([#986](https://github.com/opensearch-project/opensearch-api-specification/pull/986))
 - Add title to `search` and `bulk` requestBody and replace bulk response path from BulkResponseBase to BulkResponse ([#987](https://github.com/opensearch-project/opensearch-api-specification/pull/987))
 - Add `filter` to HybridQuery ([#988](https://github.com/opensearch-project/opensearch-api-specification/pull/988))
+- Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters ([#989](https://github.com/opensearch-project/opensearch-api-specification/pull/989))
+
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
@@ -310,8 +314,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
-- Added `search_pipeline`, `verbose_pipeline`, `include_named_queries_score` and `derived` to search_request_body. `primary` to `ShardFailure`, `header` to `ErrorCause` and Replace InnerHits `fields` from type `Fields` to `FieldAndFormat`([#981](https://github.com/opensearch-project/opensearch-api-specification/pull/981))
 
 ### Changed
 
