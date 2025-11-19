@@ -28218,6 +28218,7 @@ components:
       schema:
         type: string
         description: Customizable sequence of processing stages applied to search queries.
+      x-protobuf-excluded: true
     search___query.search_type:
       in: query
       name: search_type
@@ -38428,9 +38429,6 @@ components:
         numeric_type:
           $ref: '#/components/schemas/_common___FieldSortNumericType'
           description: The numeric type to use for sorting.
-        format:
-          type: string
-          description: The format to use for the sort values.
     _common___FieldSortNumericType:
       oneOf:
         - type: string
@@ -38447,11 +38445,11 @@ components:
           description: The field contains long integer values.
     _common___FieldValue:
       description: A field value.
-      type:
-        - boolean
-        - 'null'
-        - number
-        - string
+      anyOf:
+        - type: boolean
+        - type: 'null'
+        - type: number
+        - type: string
     _common___FieldWithDirection:
       type: object
       additionalProperties:
@@ -40295,11 +40293,13 @@ components:
       oneOf:
         - type: boolean
         - type: string
+      x-protobuf-type: bool
     _common___StringifiedDouble:
       oneOf:
         - type: number
           format: double
         - type: string
+      x-protobuf-type: double
     _common___StringifiedEpochTimeUnitMillis:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -40331,11 +40331,13 @@ components:
         - type: integer
         - type: string
           pattern: ^[+-]?\d+$
+      x-protobuf-type: int32
     _common___StringifiedLong:
       oneOf:
         - type: integer
           format: int64
         - type: string
+      x-protobuf-type: int64
     _common___StringifiedVersionNumber:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -49589,9 +49591,7 @@ components:
           x-version-removed: '2.0'
         _id:
           description: The document ID associated with the operation.
-          type:
-            - 'null'
-            - string
+          type: string
         _index:
           description: |-
             The name of the index associated with the operation.
@@ -49700,15 +49700,8 @@ components:
           items:
             $ref: '#/components/schemas/_core.explain___Explanation'
         value:
-          anyOf:
-            - type: integer
-              format: int32
-            - type: integer
-              format: int64
-            - type: number
-              format: float
-            - type: number
-              format: double
+          type: number
+          format: float
       required:
         - description
         - value
@@ -51144,6 +51137,9 @@ components:
           $ref: '#/components/schemas/_common___VersionNumber'
         sort:
           $ref: '#/components/schemas/_common___SortResults'
+      additionalProperties:
+        title: meta_fields
+        description: Contains metadata values for the documents.
     _core.search___HitsMetadata:
       type: object
       properties:
