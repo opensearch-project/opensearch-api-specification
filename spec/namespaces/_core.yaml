@@ -41,6 +41,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -64,6 +65,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -720,6 +722,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -784,6 +787,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -1086,6 +1090,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -1110,6 +1115,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -1829,6 +1835,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -1894,6 +1901,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -3328,6 +3336,14 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
+      x-protobuf-excluded: true
+    bulk::query.index:
+      in: query
+      name: index
+      description: Name of the data stream, index, or index alias to perform bulk actions on.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: form
     bulk::query._source:
       in: query
       name: _source
@@ -5088,8 +5104,8 @@ components:
       in: query
       name: preference
       description: |-
-        Specifies the node or shard on which the operation should be performed. 
-        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options. 
+        Specifies the node or shard on which the operation should be performed.
+        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options.
         By default the requests are routed randomly to available shard copies (primary or replica), with no guarantee of consistency across repeated queries.
       schema:
         type: string
@@ -5368,6 +5384,17 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
       style: simple
+      x-protobuf-excluded: true
+    search::query.index:
+      in: query
+      name: index
+      description: |-
+        A comma-separated list of data streams, indexes, and aliases to search.
+        Supports wildcards (`*`).
+        To search all data streams and indexes, omit this parameter or use `*` or `_all`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: form
     search::query._source:
       in: query
       name: _source
@@ -5616,6 +5643,7 @@ components:
         type: boolean
         default: false
       style: form
+      x-protobuf-name: total_hits_as_int
     search::query.routing:
       in: query
       name: routing
@@ -5800,7 +5828,7 @@ components:
       x-version-added: '3.0'
       in: query
       name: verbose_pipeline
-      description: |- 
+      description: |-
         Enables or disables verbose mode for the search pipeline.
         When verbose mode is enabled, detailed information about each processor
         in the search pipeline is included in the search response. This includes
@@ -6076,8 +6104,8 @@ components:
       in: query
       name: preference
       description: |-
-        Specifies the node or shard on which the operation should be performed. 
-        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options. 
+        Specifies the node or shard on which the operation should be performed.
+        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options.
         By default the requests are routed randomly to available shard copies (primary or replica), with no guarantee of consistency across repeated queries.
       schema:
         type: string
