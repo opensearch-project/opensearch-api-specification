@@ -292,6 +292,7 @@ paths:
         - $ref: '#/components/parameters/bulk___query._source'
         - $ref: '#/components/parameters/bulk___query._source_excludes'
         - $ref: '#/components/parameters/bulk___query._source_includes'
+        - $ref: '#/components/parameters/bulk___query.index'
         - $ref: '#/components/parameters/bulk___query.pipeline'
         - $ref: '#/components/parameters/bulk___query.refresh'
         - $ref: '#/components/parameters/bulk___query.require_alias'
@@ -320,6 +321,7 @@ paths:
         - $ref: '#/components/parameters/bulk___query._source'
         - $ref: '#/components/parameters/bulk___query._source_excludes'
         - $ref: '#/components/parameters/bulk___query._source_includes'
+        - $ref: '#/components/parameters/bulk___query.index'
         - $ref: '#/components/parameters/bulk___query.pipeline'
         - $ref: '#/components/parameters/bulk___query.refresh'
         - $ref: '#/components/parameters/bulk___query.require_alias'
@@ -11031,6 +11033,7 @@ paths:
         - $ref: '#/components/parameters/search___query.ignore_throttled'
         - $ref: '#/components/parameters/search___query.ignore_unavailable'
         - $ref: '#/components/parameters/search___query.include_named_queries_score'
+        - $ref: '#/components/parameters/search___query.index'
         - $ref: '#/components/parameters/search___query.lenient'
         - $ref: '#/components/parameters/search___query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search___query.phase_took'
@@ -11100,6 +11103,7 @@ paths:
         - $ref: '#/components/parameters/search___query.ignore_throttled'
         - $ref: '#/components/parameters/search___query.ignore_unavailable'
         - $ref: '#/components/parameters/search___query.include_named_queries_score'
+        - $ref: '#/components/parameters/search___query.index'
         - $ref: '#/components/parameters/search___query.lenient'
         - $ref: '#/components/parameters/search___query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search___query.phase_took'
@@ -12952,6 +12956,7 @@ paths:
         - $ref: '#/components/parameters/bulk___query._source'
         - $ref: '#/components/parameters/bulk___query._source_excludes'
         - $ref: '#/components/parameters/bulk___query._source_includes'
+        - $ref: '#/components/parameters/bulk___query.index'
         - $ref: '#/components/parameters/bulk___query.pipeline'
         - $ref: '#/components/parameters/bulk___query.refresh'
         - $ref: '#/components/parameters/bulk___query.require_alias'
@@ -12981,6 +12986,7 @@ paths:
         - $ref: '#/components/parameters/bulk___query._source'
         - $ref: '#/components/parameters/bulk___query._source_excludes'
         - $ref: '#/components/parameters/bulk___query._source_includes'
+        - $ref: '#/components/parameters/bulk___query.index'
         - $ref: '#/components/parameters/bulk___query.pipeline'
         - $ref: '#/components/parameters/bulk___query.refresh'
         - $ref: '#/components/parameters/bulk___query.require_alias'
@@ -14205,6 +14211,7 @@ paths:
         - $ref: '#/components/parameters/search___query.ignore_throttled'
         - $ref: '#/components/parameters/search___query.ignore_unavailable'
         - $ref: '#/components/parameters/search___query.include_named_queries_score'
+        - $ref: '#/components/parameters/search___query.index'
         - $ref: '#/components/parameters/search___query.lenient'
         - $ref: '#/components/parameters/search___query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search___query.phase_took'
@@ -14275,6 +14282,7 @@ paths:
         - $ref: '#/components/parameters/search___query.ignore_throttled'
         - $ref: '#/components/parameters/search___query.ignore_unavailable'
         - $ref: '#/components/parameters/search___query.include_named_queries_score'
+        - $ref: '#/components/parameters/search___query.index'
         - $ref: '#/components/parameters/search___query.lenient'
         - $ref: '#/components/parameters/search___query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search___query.phase_took'
@@ -17846,6 +17854,7 @@ components:
       schema:
         $ref: '#/components/schemas/_common___IndexName'
       style: simple
+      x-protobuf-excluded: true
     bulk___query._source:
       in: query
       name: _source
@@ -17866,6 +17875,13 @@ components:
       description: A comma-separated list of source fields to include in the response.
       schema:
         $ref: '#/components/schemas/_common___Fields'
+      style: form
+    bulk___query.index:
+      in: query
+      name: index
+      description: Name of the data stream, index, or index alias to perform bulk actions on.
+      schema:
+        $ref: '#/components/schemas/_common___IndexName'
       style: form
     bulk___query.pipeline:
       in: query
@@ -26476,8 +26492,8 @@ components:
       in: query
       name: preference
       description: |-
-        Specifies the node or shard on which the operation should be performed. 
-        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options. 
+        Specifies the node or shard on which the operation should be performed.
+        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options.
         By default the requests are routed randomly to available shard copies (primary or replica), with no guarantee of consistency across repeated queries.
       schema:
         type: string
@@ -27929,6 +27945,7 @@ components:
       schema:
         $ref: '#/components/schemas/_common___Indices'
       style: simple
+      x-protobuf-excluded: true
     search___query._source:
       in: query
       name: _source
@@ -28109,6 +28126,16 @@ components:
         default: false
         description: Indicates whether `hit.matched_queries` should be rendered as a map that includes the name of the matched query associated with its score (true) or as an array containing the name of the matched queries (false)
       x-protobuf-excluded: true
+    search___query.index:
+      in: query
+      name: index
+      description: |-
+        A comma-separated list of data streams, indexes, and aliases to search.
+        Supports wildcards (`*`).
+        To search all data streams and indexes, omit this parameter or use `*` or `_all`.
+      schema:
+        $ref: '#/components/schemas/_common___Indices'
+      style: form
     search___query.lenient:
       in: query
       name: lenient
@@ -28194,6 +28221,7 @@ components:
         type: boolean
         default: false
       style: form
+      x-protobuf-name: total_hits_as_int
     search___query.routing:
       in: query
       name: routing
@@ -29653,8 +29681,8 @@ components:
       in: query
       name: preference
       description: |-
-        Specifies the node or shard on which the operation should be performed. 
-        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options. 
+        Specifies the node or shard on which the operation should be performed.
+        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options.
         By default the requests are routed randomly to available shard copies (primary or replica), with no guarantee of consistency across repeated queries.
       schema:
         type: string
@@ -40105,6 +40133,7 @@ components:
         primary:
           type: boolean
       required:
+        - primary
         - reason
         - shard
     _common___ShardInfo:
@@ -49504,7 +49533,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/_core.bulk___Items'
+            $ref: '#/components/schemas/_core.bulk___Item'
         took:
           type: integer
           format: int64
@@ -49547,7 +49576,7 @@ components:
               $ref: '#/components/schemas/_common___VersionNumber'
             version_type:
               $ref: '#/components/schemas/_common___VersionType'
-    _core.bulk___Items:
+    _core.bulk___Item:
       type: object
       properties:
         index:
