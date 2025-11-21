@@ -1,0 +1,331 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test advanced semantic field type mappings with all configuration options.
+version: '>= 3.1'
+
+prologues:
+  # Register a model for inference
+  - id: register_inference_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/all-MiniLM-L12-v2
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      inference_model_id: payload.model_id
+      inference_task_id: payload.task_id
+
+  # Wait for model registration
+  - path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${register_inference_model.inference_task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    retry:
+      count: 5
+      wait: 3000
+
+  # Deploy the model
+  - id: deploy_inference_model
+    path: /_plugins/_ml/models/{model_id}/_deploy
+    method: POST
+    parameters:
+      model_id: ${register_inference_model.inference_model_id}
+    response:
+      status: 200
+    output:
+      deploy_task_id: payload.task_id
+
+  # Wait for deployment
+  - path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${deploy_inference_model.deploy_task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    retry:
+      count: 5
+      wait: 3000
+
+  # Register a second model for search
+  - id: register_search_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      search_model_id: payload.model_id
+      search_task_id: payload.task_id
+
+  # Wait for search model registration
+  - path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${register_search_model.search_task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    retry:
+      count: 5
+      wait: 3000
+
+epilogues:
+  - path: /semantic_advanced_index
+    method: DELETE
+    status: [200, 404]
+  - path: /semantic_chunking_index
+    method: DELETE
+    status: [200, 404]
+  - path: /semantic_dense_sparse_index
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    parameters:
+      model_id: ${register_inference_model.inference_model_id}
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    parameters:
+      model_id: ${register_search_model.search_model_id}
+    status: [200, 404]
+
+chapters:
+  # Test 1: Create semantic field with all basic properties
+  - synopsis: Create semantic field with model_id and search_model_id.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: semantic_advanced_index
+    request:
+      payload:
+        mappings:
+          properties:
+            advanced_content:
+              type: semantic
+              model_id: ${register_inference_model.inference_model_id}
+              search_model_id: ${register_search_model.search_model_id}
+              raw_field_type: text
+              semantic_info_field_name: _semantic_metadata
+              semantic_field_search_analyzer: standard
+              skip_existing_embedding: true
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  # Test 2: Verify advanced semantic field mapping
+  - synopsis: Get mapping to verify all properties.
+    path: /{index}/_mapping
+    method: GET
+    parameters:
+      index: semantic_advanced_index
+    response:
+      status: 200
+      payload:
+        semantic_advanced_index:
+          mappings:
+            properties:
+              advanced_content:
+                type: semantic
+
+  # Test 3: Create semantic field with boolean chunking
+  - synopsis: Create semantic field with boolean chunking enabled.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: semantic_chunking_index
+    request:
+      payload:
+        mappings:
+          properties:
+            chunked_content:
+              type: semantic
+              model_id: ${register_inference_model.inference_model_id}
+              chunking: true
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  # Test 4: Verify chunking configuration
+  - synopsis: Verify semantic field with chunking.
+    path: /{index}/_mapping
+    method: GET
+    parameters:
+      index: semantic_chunking_index
+    response:
+      status: 200
+      payload:
+        semantic_chunking_index:
+          mappings:
+            properties:
+              chunked_content:
+                type: semantic
+
+  # Test 5: Create semantic field with array chunking strategy
+  - synopsis: Update mapping with array chunking strategy.
+    path: /{index}/_mapping
+    method: PUT
+    parameters:
+      index: semantic_chunking_index
+    request:
+      payload:
+        properties:
+          advanced_chunked:
+            type: semantic
+            model_id: ${register_inference_model.inference_model_id}
+            chunking:
+              - algorithm: fixed
+                parameters:
+                  chunk_size: 256
+                  overlap: 32
+              - algorithm: sentence
+                parameters:
+                  max_chunk_size: 512
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  # Test 6: Create semantic field with dense embedding config
+  - synopsis: Create semantic field with dense embedding configuration.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: semantic_dense_sparse_index
+    request:
+      payload:
+        mappings:
+          properties:
+            dense_semantic:
+              type: semantic
+              model_id: ${register_inference_model.inference_model_id}
+              dense_embedding_config:
+                data_type: float
+                mode: on_disk
+                compression_level: 32x
+                method:
+                  name: hnsw
+                  space_type: l2
+                  engine: faiss
+                  parameters:
+                    ef_construction: 128
+                    m: 16
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  # Test 7: Verify dense embedding configuration
+  - synopsis: Get mapping to verify dense embedding config.
+    path: /{index}/_mapping
+    method: GET
+    parameters:
+      index: semantic_dense_sparse_index
+    response:
+      status: 200
+      payload:
+        semantic_dense_sparse_index:
+          mappings:
+            properties:
+              dense_semantic:
+                type: semantic
+
+  # Test 8: Add semantic field with sparse encoding config
+  - synopsis: Update mapping with sparse encoding configuration.
+    path: /{index}/_mapping
+    method: PUT
+    parameters:
+      index: semantic_dense_sparse_index
+    request:
+      payload:
+        properties:
+          sparse_semantic:
+            type: semantic
+            model_id: ${register_inference_model.inference_model_id}
+            sparse_encoding_config:
+              prune_type: top_k
+              prune_ratio: 0.5
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  # Test 9: Get specific field mappings for multiple semantic fields
+  - synopsis: Get field mappings for multiple semantic fields.
+    path: /{index}/_mapping/field/{fields}
+    method: GET
+    parameters:
+      index: semantic_dense_sparse_index
+      fields: dense_semantic,sparse_semantic
+    response:
+      status: 200
+      payload:
+        semantic_dense_sparse_index:
+          mappings:
+            dense_semantic:
+              full_name: dense_semantic
+              mapping:
+                dense_semantic:
+                  type: semantic
+            sparse_semantic:
+              full_name: sparse_semantic
+              mapping:
+                sparse_semantic:
+                  type: semantic
+
+  # Test 10: Index documents with semantic fields
+  - synopsis: Index documents to test semantic field ingestion.
+    path: /_bulk
+    method: POST
+    parameters:
+      refresh: 'true'
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: semantic_advanced_index, _id: '1'}}
+        - {advanced_content: Artificial intelligence is transforming technology}
+        - {index: {_index: semantic_chunking_index, _id: '2'}}
+        - {chunked_content: Machine learning models can process natural language, advanced_chunked: Deep learning networks are powerful}
+        - {index: {_index: semantic_dense_sparse_index, _id: '3'}}
+        - {dense_semantic: Neural networks enable semantic understanding, sparse_semantic: Vector embeddings capture meaning}
+    response:
+      status: 200
+      payload:
+        errors: false
+
+  # Test 11: Verify documents were indexed successfully
+  - synopsis: Search to verify documents with semantic fields.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: semantic_advanced_index,semantic_chunking_index,semantic_dense_sparse_index
+    request:
+      payload:
+        query:
+          match_all: {}
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 3
+

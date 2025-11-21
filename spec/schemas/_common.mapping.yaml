@@ -148,6 +148,7 @@ components:
         - rank_features
         - scaled_float
         - search_as_you_type
+        - semantic
         - short
         - text
         - token_count
@@ -198,6 +199,7 @@ components:
         - $ref: '#/components/schemas/IntegerNumberProperty'
         - $ref: '#/components/schemas/LongNumberProperty'
         - $ref: '#/components/schemas/ScaledFloatNumberProperty'
+        - $ref: '#/components/schemas/SemanticProperty'
         - $ref: '#/components/schemas/ShortNumberProperty'
         - $ref: '#/components/schemas/UnsignedLongNumberProperty'
         - $ref: '#/components/schemas/DateRangeProperty'
@@ -968,6 +970,40 @@ components:
               format: double
           required:
             - type
+    SemanticProperty:
+      x-version-added: '3.1'
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - semantic
+        raw_field_type:
+          type: string
+        model_id:
+          type: string
+        search_model_id:
+          type: string
+        semantic_info_field_name:
+          type: string
+        chunking:
+          oneOf:
+            - type: boolean
+            - type: array
+              items:
+                $ref: '#/components/schemas/SemanticChunkingStrategy'
+        semantic_field_search_analyzer:
+          type: string
+        dense_embedding_config:
+          $ref: '#/components/schemas/SemanticDenseEmbeddingConfig'
+        sparse_encoding_config:
+          $ref: '#/components/schemas/SemanticSparseEncodingConfig'
+        skip_existing_embedding:
+          type: boolean
+          default: false
+      required:
+        - model_id
+        - type
     ShortNumberProperty:
       allOf:
         - $ref: '#/components/schemas/NumberPropertyBase'
@@ -1222,3 +1258,31 @@ components:
       required:
         - full_name
         - mapping
+    SemanticChunkingStrategy:
+      type: object
+      properties:
+        algorithm:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: {}
+      required:
+        - algorithm
+    SemanticDenseEmbeddingConfig:
+      type: object
+      properties:
+        data_type:
+          type: string
+        mode:
+          type: string
+        compression_level:
+          type: string
+        method:
+          $ref: '#/components/schemas/KnnVectorMethod'
+    SemanticSparseEncodingConfig:
+      type: object
+      properties:
+        prune_type:
+          type: string
+        prune_ratio:
+          type: number
