@@ -90,19 +90,19 @@ npm run test:spec -- --opensearch-insecure \
   --verbose
 ```
 
-### Using the Semantic-Specific Docker Compose Setup
+### Using Docker Compose
 
-For semantic field-specific configuration with optimized settings:
+The ML plugin docker-compose includes all necessary settings for semantic fields:
 
 ```bash
 export OPENSEARCH_PASSWORD=myStrongPassword123!
-cd tests/plugins/ml/semantic
+cd tests/plugins/ml
 docker compose up -d
 
 # Wait for cluster
 sleep 60
 
-# Run tests
+# Run semantic field tests
 npm run test:spec -- --opensearch-insecure \
   --tests tests/plugins/ml/mapping/ \
   --verbose
