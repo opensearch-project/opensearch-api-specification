@@ -26,6 +26,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `filter` to HybridQuery ([#988](https://github.com/opensearch-project/opensearch-api-specification/pull/988))
 - Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters ([#989](https://github.com/opensearch-project/opensearch-api-specification/pull/989))
 - Add `x-protobuf-name` vendor extension and add index parameters to search and bulk API ([#993](https://github.com/opensearch-project/opensearch-api-specification/pull/993))
+- Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#]())
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
