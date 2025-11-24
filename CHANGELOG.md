@@ -7,7 +7,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
-- Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
 - Added remaining APIs for LTR including store element operations, model management, feature set operations, routing support, and POST support for update operations ([#935](https://github.com/opensearch-project/opensearch-api-specification/pull/935))
 - Added specs for alert and finding endpoints of security_analytics plugin ([#907](https://github.com/opensearch-project/opensearch-api-specification/pull/907))
 - Added `template` to `QueryContainer` ([#904](https://github.com/opensearch-project/opensearch-api-specification/pull/904))
@@ -316,6 +315,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
+- Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
 
 ### Changed
 
