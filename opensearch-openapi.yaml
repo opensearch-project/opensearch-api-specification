@@ -12624,6 +12624,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.create___200'
+        '400':
+          $ref: '#/components/responses/indices.create___400'
+        '500':
+          $ref: '#/components/responses/indices.create___500'
   /{index}/_alias:
     get:
       operationId: indices.get_alias.2
@@ -34199,6 +34203,18 @@ components:
               - index
               - shards_acknowledged
       description: ''
+    indices.create___400:
+      description: Bad request error when creating index (for example, invalid mapping, settings, or field configuration).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common___ErrorResponseBase'
+    indices.create___500:
+      description: Internal server error when creating index (for example, plugin error, model not found).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/_common___ErrorResponseBase'
     indices.data_streams_stats___200:
       content:
         application/json:
@@ -46382,6 +46398,7 @@ components:
         - rank_features
         - scaled_float
         - search_as_you_type
+        - semantic
         - short
         - text
         - token_count
@@ -46875,6 +46892,7 @@ components:
         - $ref: '#/components/schemas/_common.mapping___IntegerNumberProperty'
         - $ref: '#/components/schemas/_common.mapping___LongNumberProperty'
         - $ref: '#/components/schemas/_common.mapping___ScaledFloatNumberProperty'
+        - $ref: '#/components/schemas/_common.mapping___SemanticProperty'
         - $ref: '#/components/schemas/_common.mapping___ShortNumberProperty'
         - $ref: '#/components/schemas/_common.mapping___UnsignedLongNumberProperty'
         - $ref: '#/components/schemas/_common.mapping___DateRangeProperty'
@@ -46992,6 +47010,68 @@ components:
                 - search_as_you_type
           required:
             - type
+    _common.mapping___SemanticChunkingStrategy:
+      type: object
+      properties:
+        algorithm:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: {}
+      required:
+        - algorithm
+    _common.mapping___SemanticDenseEmbeddingConfig:
+      type: object
+      properties:
+        data_type:
+          type: string
+        mode:
+          type: string
+        compression_level:
+          type: string
+        method:
+          $ref: '#/components/schemas/_common.mapping___KnnVectorMethod'
+    _common.mapping___SemanticProperty:
+      x-version-added: '3.1'
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - semantic
+        raw_field_type:
+          type: string
+        model_id:
+          type: string
+        search_model_id:
+          type: string
+        semantic_info_field_name:
+          type: string
+        chunking:
+          oneOf:
+            - type: boolean
+            - type: array
+              items:
+                $ref: '#/components/schemas/_common.mapping___SemanticChunkingStrategy'
+        semantic_field_search_analyzer:
+          type: string
+        dense_embedding_config:
+          $ref: '#/components/schemas/_common.mapping___SemanticDenseEmbeddingConfig'
+        sparse_encoding_config:
+          $ref: '#/components/schemas/_common.mapping___SemanticSparseEncodingConfig'
+        skip_existing_embedding:
+          type: boolean
+          default: false
+      required:
+        - model_id
+        - type
+    _common.mapping___SemanticSparseEncodingConfig:
+      type: object
+      properties:
+        prune_type:
+          type: string
+        prune_ratio:
+          type: number
     _common.mapping___ShortNumberProperty:
       allOf:
         - $ref: '#/components/schemas/_common.mapping___NumberPropertyBase'
