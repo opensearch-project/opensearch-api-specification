@@ -150,8 +150,6 @@ components:
           $ref: '#/components/schemas/ParentIdQuery'
         percolate:
           $ref: '#/components/schemas/PercolateQuery'
-        pinned:
-          $ref: '#/components/schemas/PinnedQuery'
         prefix:
           description: Returns documents that contain a specific prefix in a provided field.
           type: object
@@ -1404,7 +1402,7 @@ components:
               description: If `true`, match phrase queries are automatically created for multi-term synonyms.
               type: boolean
             cutoff_frequency:
-              deprecated: true
+              x-version-deprecated: '2.0'
               type: number
               format: float
             fields:
@@ -1541,44 +1539,6 @@ components:
               $ref: '_common.yaml#/components/schemas/VersionNumber'
           required:
             - field
-    PinnedQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - allOf:
-            - type: object
-              properties:
-                organic:
-                  $ref: '#/components/schemas/QueryContainer'
-              required:
-                - organic
-            - type: object
-              properties:
-                ids:
-                  description: |-
-                    Document IDs listed in the order they are to appear in results.
-                    Required if `docs` is not specified.
-                  type: array
-                  items:
-                    $ref: '_common.yaml#/components/schemas/Id'
-                docs:
-                  description: |-
-                    Documents listed in the order they are to appear in results.
-                    Required if `ids` is not specified.
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PinnedDoc'
-              minProperties: 1
-              maxProperties: 1
-    PinnedDoc:
-      type: object
-      properties:
-        _id:
-          $ref: '_common.yaml#/components/schemas/Id'
-        _index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-      required:
-        - _id
-        - _index
     PrefixQuery:
       oneOf:
         - title: value
