@@ -38,6 +38,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed the type of `SearchStats`'s `concurrent_avg_slice_count` to be a double ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
 - Fixed name and metadata missing from metric aggregations ([#969](https://github.com/opensearch-project/opensearch-api-specification/pull/969))
 - Fixed the type of `param` in pull-based ingestion's `ingestion_source` to take in Object for value instead of string ([#945](https://github.com/opensearch-project/opensearch-api-specification/pull/945))
+- Fixed fields in `TermsAggregation`, `CardinalityExecutionMode` ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
 - Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
 
 ### Changed
