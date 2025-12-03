@@ -212,6 +212,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `WaitForActiveShards` to utilize `StringifiedInteger` ([#896](https://github.com/opensearch-project/opensearch-api-specification/pull/896))
 - Changed `NeuralStats` schema validation from `oneOf` to `anyOf` ([#900](https://github.com/opensearch-project/opensearch-api-specification/pull/900))
 - Changed `ErrorCause` schema header type to map ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
+- Changed `force_source` to not be deprecated ([#996](https://github.com/opensearch-project/opensearch-api-specification/pull/996))
 
 ## [0.1.0] - 2024-10-25
 
