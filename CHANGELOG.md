@@ -19,10 +19,19 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add pull-based ingestion APIs and properties. Also add replication type in index settings ([#926](https://github.com/opensearch-project/opensearch-api-specification/pull/926))
 - Added `additional_config` to `ModelConfig` ([#936](https://github.com/opensearch-project/opensearch-api-specification/pull/936))
 - Added `all_active` config to the IngestionSource under index settings ([#965](https://github.com/opensearch-project/opensearch-api-specification/pull/965))
+- Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
+- Added `search_pipeline`, `verbose_pipeline`, `include_named_queries_score` and `derived` to search_request_body. `primary` to `ShardFailure`, `header` to `ErrorCause` and Replace InnerHits `fields` from type `Fields` to `FieldAndFormat`([#981](https://github.com/opensearch-project/opensearch-api-specification/pull/981))
+- Add `if_seq_no` and `if_primary_term` to `UpdateAction` ([#986](https://github.com/opensearch-project/opensearch-api-specification/pull/986))
+- Add title to `search` and `bulk` requestBody and replace bulk response path from BulkResponseBase to BulkResponse ([#987](https://github.com/opensearch-project/opensearch-api-specification/pull/987))
+- Add `filter` to HybridQuery ([#988](https://github.com/opensearch-project/opensearch-api-specification/pull/988))
+- Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters ([#989](https://github.com/opensearch-project/opensearch-api-specification/pull/989))
+- Add `x-protobuf-name` vendor extension and add index parameters to search and bulk API ([#993](https://github.com/opensearch-project/opensearch-api-specification/pull/993))
+- Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
+- Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
@@ -30,12 +39,14 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed name and metadata missing from metric aggregations ([#969](https://github.com/opensearch-project/opensearch-api-specification/pull/969))
 - Fixed the type of `param` in pull-based ingestion's `ingestion_source` to take in Object for value instead of string ([#945](https://github.com/opensearch-project/opensearch-api-specification/pull/945))
 - Fixed fields in `TermsAggregation`, `CardinalityExecutionMode` ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
+- Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Changed knn stats response types to use int64s instead of numbers ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
 - Moved sub aggregations into `BucketAggregationBase` as their usage is only valid here ([#971](https://github.com/opensearch-project/opensearch-api-specification/pull/971))
 - Remove deprecated `rehash` option from `CardinalityAggregation` ([#975](https://github.com/opensearch-project/opensearch-api-specification/pull/975))
+- Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
 
 ## [0.2.0] - 2025-05-25
 
@@ -200,6 +211,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `ScriptedMetricAggregate` value from true to {} ([#892](https://github.com/opensearch-project/opensearch-api-specification/pull/892))
 - Changed `WaitForActiveShards` to utilize `StringifiedInteger` ([#896](https://github.com/opensearch-project/opensearch-api-specification/pull/896))
 - Changed `NeuralStats` schema validation from `oneOf` to `anyOf` ([#900](https://github.com/opensearch-project/opensearch-api-specification/pull/900))
+- Changed `ErrorCause` schema header type to map ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
 
 ## [0.1.0] - 2024-10-25
 
@@ -307,7 +319,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
-- Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
 
 ### Changed
 

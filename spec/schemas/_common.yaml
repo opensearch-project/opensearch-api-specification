@@ -230,11 +230,11 @@ components:
       type: string
     FieldValue:
       description: A field value.
-      type:
-        - boolean
-        - 'null'
-        - number
-        - string
+      anyOf:
+        - type: boolean
+        - type: 'null'
+        - type: number
+        - type: string
     Void:
       description: |-
         The absence of any type. This is commonly used in APIs that don't return a body.
@@ -332,7 +332,10 @@ components:
           type: integer
         status:
           type: string
+        primary:
+          type: boolean
       required:
+        - primary
         - reason
         - shard
     ErrorCause:
@@ -357,6 +360,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorCause'
+        header:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StringOrStringArray'
       required:
         - type
       additionalProperties:
@@ -560,6 +567,27 @@ components:
           description: Whether to ignore failures during script execution.
       required:
         - script
+    DerivedField:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        script:
+          $ref: '#/components/schemas/Script'
+        prefilter_field:
+          type: string
+        properties:
+          type: object
+        ignore_malformed:
+          type: boolean
+        format:
+          type: string
+      required:
+        - name
+        - script
+        - type
     Sort:
       oneOf:
         - $ref: '#/components/schemas/SortCombinations'
@@ -618,9 +646,6 @@ components:
         numeric_type:
           $ref: '#/components/schemas/FieldSortNumericType'
           description: The numeric type to use for sorting.
-        format:
-          type: string
-          description: The format to use for the sort values.
     FieldSortNumericType:
       oneOf:
         - type: string
@@ -670,6 +695,7 @@ components:
         validation_method:
           $ref: '_common.query_dsl.yaml#/components/schemas/GeoValidationMethod'
       additionalProperties:
+        title: location
         type: array
         description: The geo points to use for distance calculation.
         items:
@@ -887,6 +913,7 @@ components:
           $ref: '#/components/schemas/Routing'
         _source:
           type: object
+          x-protobuf-type: bytes
           description: The source of the document.
           additionalProperties: true
       additionalProperties:
@@ -1063,16 +1090,19 @@ components:
         - type: integer
         - type: string
           pattern: '^[+-]?\d+$'
+      x-protobuf-type: int32
     StringifiedLong:
       oneOf:
         - type: integer
           format: int64
         - type: string
+      x-protobuf-type: int64
     StringifiedDouble:
       oneOf:
         - type: number
           format: double
         - type: string
+      x-protobuf-type: double
     StringifiedBoolean:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -1083,6 +1113,7 @@ components:
       oneOf:
         - type: boolean
         - type: string
+      x-protobuf-type: bool
     PipelineName:
       type: string
     StringifiedEpochTimeUnitMillis:

@@ -17,7 +17,7 @@ RUN XQ_VERSION=1.3.0 && \
 RUN PLUGIN_NAME=ingestion-fs && \
     PLUGIN_DIR="${PWD}/plugins/${PLUGIN_NAME}" && \
     SNAPSHOT_VERSION="${OPENSEARCH_VERSION}-SNAPSHOT" && \
-    MAVEN_SNAPSHOT_BASE_URL="https://central.sonatype.com/repository/maven-snapshots/org/opensearch/plugin/${PLUGIN_NAME}/${SNAPSHOT_VERSION}" && \
+    MAVEN_SNAPSHOT_BASE_URL="https://ci.opensearch.org/ci/dbc/snapshots/maven/org/opensearch/plugin/${PLUGIN_NAME}/${SNAPSHOT_VERSION}" && \
     SNAPSHOT_BUILD=$(curl -s "${MAVEN_SNAPSHOT_BASE_URL}/maven-metadata.xml" | ./xq -x 'metadata/versioning/snapshotVersions/snapshotVersion[extension="jar" and not(./classifier)]/value') && \
     mkdir -p ${PLUGIN_DIR} && \
     curl -sSL -o "${PLUGIN_DIR}/${PLUGIN_NAME}-${SNAPSHOT_VERSION}.jar" "${MAVEN_SNAPSHOT_BASE_URL}/${PLUGIN_NAME}-${SNAPSHOT_BUILD}.jar" && \
