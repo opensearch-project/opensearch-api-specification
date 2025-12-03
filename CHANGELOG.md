@@ -45,7 +45,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Moved sub aggregations into `BucketAggregationBase` as their usage is only valid here ([#971](https://github.com/opensearch-project/opensearch-api-specification/pull/971))
 - Remove deprecated `rehash` option from `CardinalityAggregation` ([#975](https://github.com/opensearch-project/opensearch-api-specification/pull/975))
 - Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
-- Changed schema of `aggregationContainer` type from oneof to min/max=1 and change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
+- Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 ## [0.2.0] - 2025-05-25
 
 ### Added
