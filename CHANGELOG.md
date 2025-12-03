@@ -27,7 +27,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters ([#989](https://github.com/opensearch-project/opensearch-api-specification/pull/989))
 - Add `x-protobuf-name` vendor extension and add index parameters to search and bulk API ([#993](https://github.com/opensearch-project/opensearch-api-specification/pull/993))
 - Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
-
+- Add `x-protobuf-required` vendor extension for enforcing required Protobuf fields ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
@@ -46,7 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Moved sub aggregations into `BucketAggregationBase` as their usage is only valid here ([#971](https://github.com/opensearch-project/opensearch-api-specification/pull/971))
 - Remove deprecated `rehash` option from `CardinalityAggregation` ([#975](https://github.com/opensearch-project/opensearch-api-specification/pull/975))
 - Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
-
+- Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 ## [0.2.0] - 2025-05-25
 
 ### Added

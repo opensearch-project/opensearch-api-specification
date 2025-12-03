@@ -23,7 +23,8 @@ const ADDITIONAL_KEYWORDS = [
   'x-is-generic-type-parameter',
   'x-protobuf-excluded',
   'x-protobuf-type',
-  'x-protobuf-name'
+  'x-protobuf-name',
+  'x-protobuf-required'
 ]
 
 export default class SchemasValidator {
