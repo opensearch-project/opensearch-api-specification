@@ -809,11 +809,17 @@ components:
             encoder:
               $ref: '#/components/schemas/HighlighterEncoder'
             fields:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/HighlightField'
+              $ref: '#/components/schemas/HighlightFields'
           required:
             - fields
+    HighlightFields:
+      oneOf:
+        - type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HighlightField'
+        - type: array
+          items:
+            $ref: '#/components/schemas/HighlightField'
     HighlighterEncoder:
       type: string
       enum:
@@ -951,6 +957,7 @@ components:
     HighlighterTagsSchema:
       type: string
       enum:
+        - default
         - styled
     SourceConfig:
       description: Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
