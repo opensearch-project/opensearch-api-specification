@@ -110,7 +110,7 @@ components:
             - $ref: '#/components/schemas/RepositorySettingsCommon'
             - oneOf:
               - $ref: '#/components/schemas/RepositorySettingsFS'
-              - $ref: 'snapshot.s3.yaml#/components/schemas/RepositorySettingsS3'
+              - $ref: 'snapshot.sthree.yaml#/components/schemas/RepositorySettingsS3'
           description: The configuration settings for the repository.
       required:
         - type
@@ -124,16 +124,19 @@ components:
           type: string
           description: When enabled, adds a hashed value of a random seed to the prefix for repository verification.
         shard_path_type:
-          oneOf:
-            - type: string
-              const: FIXED
-              description: Keeps the path structure in the existing hierarchical manner.
-            - type: string
-              const: HASHED_PREFIX
-              description: Prepends a hashed prefix at the start of the path for each unique shard ID.
-            - type: string
-              const: HASHED_INFIX
-              description: Appends a hashed prefix after the base path for each unique shard ID.
+          $ref: '#/components/schemas/ShardPathType'
+
+    ShardPathType:
+      oneOf:
+        - type: string
+          const: FIXED
+          description: Keeps the path structure in the existing hierarchical manner.
+        - type: string
+          const: HASHED_PREFIX
+          description: Prepends a hashed prefix at the start of the path for each unique shard ID.
+        - type: string
+          const: HASHED_INFIX
+          description: Appends a hashed prefix after the base path for each unique shard ID.
 
     RepositorySettingsFS:
       type: object
