@@ -272,6 +272,8 @@ components:
         error:
           type: string
           description: The error message.
+        configuration:
+          $ref: '#/components/schemas/MemoryContainerConfiguration'
     MlInputDataType:
       type: string
       description: The input type.
@@ -371,8 +373,6 @@ components:
         result:
           type: string
           description: The output result.
-      required:
-        - data
     ByteOrder:
       type: string
       enum:
@@ -593,6 +593,9 @@ components:
         user_requested_tenant:
           type: ['null', string]
           description: The user requested tenant.
+        user_requested_tenant_access:
+          type: string
+          description: The user requested tenant access.
       required:
         - name
     UpdateModelGroupResponse:
@@ -1040,6 +1043,21 @@ components:
           type: integer
           format: int64
           description: The trace number.
+        role:
+          type: string
+          description: The role of the message.
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Content'
+    Content:
+      type: object
+      properties:
+        text:
+          type: string
+        type:
+          type: string
+      additionalProperties: true
     SearchMessageResponse:
       $ref: '#/components/schemas/SearchResponse'
     ModelFormat:
@@ -1406,7 +1424,9 @@ components:
         - MLModelTool
         - NeuralSparseSearchTool
         - PPLTool
+        - QueryPlanningTool
         - RAGTool
+        - ReadFromScratchPadTool
         - SearchAlertsTool
         - SearchAnomalyDetectorsTool
         - SearchAnomalyResultsTool
@@ -1414,3 +1434,277 @@ components:
         - SearchMonitorsTool
         - VectorDBTool
         - VisualizationTool
+        - WriteToScratchPadTool
+    ExecuteToolResponse:
+      type: object
+      properties:
+        inference_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InferenceResults'
+    MemoryContainerConfiguration:
+      type: object
+      properties:
+        embedding_model_type:
+          type: string
+          description: The embedding model type.
+        embedding_model_id:
+          type: string
+          description: The embedding model ID.
+        embedding_dimension:
+          type: integer
+          format: int64
+          description: The embedding dimension.
+        llm_id:
+          type: string
+          description: The LLM ID.
+        index_prefix:
+          type: string
+          description: Custom prefix for memory indices.
+        use_system_index:
+          type: boolean
+          description: Whether to use system indices.
+        disable_history:
+          type: boolean
+          description: Whether history will be persisted.
+        disable_session:
+          type: boolean
+          description: Whether session will be persisted.
+        max_infer_size:
+          type: integer
+          format: int64
+          description: The maximum number of similar memories retrieved during consolidation.
+        index_settings:
+          $ref: '#/components/schemas/IndexSettings'
+        strategies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Strategy'
+        parameters:
+          type: object
+          properties:
+            llm_result_path:
+              type: string
+              description: Global JSONPath expression for extracting LLM results from responses.
+    IndexSettings:
+      type: object
+      properties:
+        session_index:
+          $ref: '#/components/schemas/MemoryIndexSettings'
+        short_term_memory_index:
+          $ref: '#/components/schemas/MemoryIndexSettings'
+        long_term_memory_index:
+          $ref: '#/components/schemas/MemoryIndexSettings'
+        long_term_memory_history_index:
+          $ref: '#/components/schemas/MemoryIndexSettings'
+      additionalProperties: true
+    MemoryIndexSettings:
+      type: object
+      properties:
+        index:
+          type: object
+          properties:
+            number_of_shards:
+              type: string
+              description: The number of shards.
+            number_of_replicas:
+              type: string
+              description: The number of replicas.
+          additionalProperties: true
+    Strategy:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The strategy type.
+          enum:
+            - SEMANTIC
+            - SUMMARY
+            - USER_PREFERENCE
+        namespace:
+          type: array
+          items:
+            type: string
+          description: The namespace.
+        configuration:
+          $ref: '#/components/schemas/StrategyConfiguration'
+        enabled:
+          type: boolean
+          description: Whether to enable the strategy.
+        id:
+          type: string
+          description: The strategy ID.
+    StrategyConfiguration:
+      type: object
+      properties:
+        llm_result_path:
+          type: string
+          description: JSONPath expression for extracting LLM results from responses.
+        system_prompt:
+          type: string
+          description: Custom system prompt to override default strategy prompt.
+        llm_id:
+          type: string
+          description: The LLM ID for strategy.
+    GetMemoryContainerResponse:
+      type: object
+      properties:
+        name:
+          $ref: '_common.yaml#/components/schemas/Name'
+        description:
+          type: string
+          description: The memory container description.
+        owner:
+          $ref: '#/components/schemas/Owner'
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
+        configuration:
+          $ref: '#/components/schemas/MemoryContainerConfiguration'
+    Metadata:
+      type: object
+      additionalProperties: true
+    Namespace:
+      type: object
+      additionalProperties: true
+    GetAgenticMemoryResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          description: The type of operation.
+          enum:
+            - ADD
+            - DELETE
+            - UPDATE
+        after:
+          type: object
+          additionalProperties: true
+        before:
+          type: object
+          additionalProperties: true
+        created_time:
+          type: integer
+          format: int64
+          description: The created time.
+        infer:
+          type: boolean
+          description: Whether inference was enabled.
+        last_updated_time:
+          type: integer
+          format: int64
+          description: The last updated time.
+        memory:
+          type: string
+          description: The extracted long-term memory fact.
+        memory_embedding:
+          type: array
+          items:
+            type: number
+            format: double
+            description: The output data.
+        memory_id:
+          type: string
+          description: The ID of the memory.
+        memory_container_id:
+          type: string
+          description: The ID of the memory container.
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        metadata:
+          '#/components/schemas/Metadata'
+        namespace:
+          '#/components/schemas/NameSpace'
+        namespace_size:
+          type: integer
+          format: int64
+          description: The number of namespaces.
+        owner_id:
+          type: string
+          description: The ID of the memory owner.
+        payload_type:
+          type: string
+          description: The type of payload.
+          enum:
+            - conversation
+            - data
+        strategy_id:
+          type: string
+          description: The ID for the strategy instance.
+        strategy_type:
+          type: string
+          description: The type of memory strategy used.
+          enum:
+            - SEMANTIC
+            - SUMMARY
+            - USER_PREFERENCE
+        tags:
+          type: object
+          additionalProperties: true
+    DeleteAgenticMemoryResponse:
+      type: object
+      properties:
+        took:
+          type: integer
+          format: int64
+          description: Time taken to execute the request.
+        timed_out:
+          type: boolean
+          description: Whether the request timed out.
+        total:
+          type: integer
+          format: int64
+          description: Total number of documents processed.
+        updated:
+          type: integer
+          format: int64
+          description: Number of documents updated.
+        created:
+          type: integer
+          format: int64
+          description: Number of documents created.
+        deleted:
+          type: integer
+          format: int64
+          description: Number of documents deleted.
+        batches:
+          type: integer
+          format: int64
+          description: Number of batches processed.
+        version_conflicts:
+          type: integer
+          format: int64
+          description: Number of version conflicts encountered.
+        noops:
+          type: integer
+          format: int64
+          description: Number of no-operation updates.
+        result:
+          type: string
+          description: The result of delete operation.
+        retries:
+          $ref: '_common.yaml#/components/schemas/Retries'
+        throttled_millis:
+          type: integer
+          format: int64
+          description: Time that the request was throttled.
+        requests_per_second:
+          type: number
+          format: float
+          description: Number of requests processed per second.
+        throttled_until_millis:
+          type: integer
+          format: int64
+          description: Time until throttling is lifted.
+        failures:
+          type: array
+          description: Any failures occurred during the operation.
+          items:
+            $ref: '_common.yaml#/components/schemas/BulkByScrollFailure'
