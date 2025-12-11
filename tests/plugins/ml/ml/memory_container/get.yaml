@@ -1,0 +1,45 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test retrieving a memory container.
+warnings:
+  invalid-path-detected: false
+version: '>= 3.3'
+prologues:
+  - path: /_plugins/_ml/memory_containers/_create
+    id: create_mem_container
+    method: POST
+    request:
+      payload:
+        name: Test memory container
+        description: Test memory container
+        configuration:
+          index_prefix: test_mem_container
+          use_system_index: False
+          disable_session: False
+          index_settings:
+            session_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+            working_memory_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+    output:
+      mem_container: payload.memory_container_id
+epilogues:
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+chapters:
+  - synopsis: Get a memory container.
+    path: /_plugins/_ml/memory_containers/{memory_container_id}
+    method: GET
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+    response:
+      status: 200
+      payload:
+        name: Test memory container
