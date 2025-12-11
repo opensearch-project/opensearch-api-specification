@@ -29,6 +29,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
 - Add `x-protobuf-required` vendor extension for enforcing required Protobuf fields ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 - Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#997](https://github.com/opensearch-project/opensearch-api-specification/pull/997))
+- Add all snapshot repository settings for fs repositories
+- Add S3 repository settings for snapshot repositories
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
