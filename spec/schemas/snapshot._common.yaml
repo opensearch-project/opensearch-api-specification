@@ -106,13 +106,40 @@ components:
           $ref: '_common.yaml#/components/schemas/Uuid'
           description: The unique identifier for the repository.
         settings:
-          $ref: '#/components/schemas/RepositorySettings'
+          allOf:
+            - $ref: '#/components/schemas/RepositorySettingsCommon'
+            - $ref: '#/components/schemas/RepositorySettingsFS'
           description: The configuration settings for the repository.
+      required:
+        - type
+        - settings
 
-    RepositorySettings:
+    RepositorySettingsCommon:
       type: object
-      description: The settings for the snapshot repository.
+      description: Common settings for the snapshot repository.
       properties:
+        prefix_mode_verification:
+          type: string
+          description: When enabled, adds a hashed value of a random seed to the prefix for repository verification.
+        shard_path_type:
+          oneOf:
+            - type: string
+              const: FIXED
+              description: Keeps the path structure in the existing hierarchical manner.
+            - type: string
+              const: HASHED_PREFIX
+              description: Prepends a hashed prefix at the start of the path for each unique shard ID.
+            - type: string
+              const: HASHED_INFIX
+              description: Appends a hashed prefix after the base path for each unique shard ID.
+
+    RepositorySettingsFS:
+      type: object
+      description: The settings for the file snapshot repository.
+      properties:
+        location:
+          type: string
+          description: The file system directory for snapshots.
         chunk_size:
           type: string
           description: The chunk size for the repository.
@@ -122,12 +149,23 @@ components:
         concurrent_streams:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           description: The number of concurrent streams for the repository.
-        location:
-          type: string
-          description: The location where snapshots are stored.
-        read_only:
+        max_restore_bytes_per_sec:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+          description: The maximum rate at which snapshots restore.
+        max_snapshot_bytes_per_sec:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+          description: The maximum rate at which snapshots take.
+        remote_store_index_shallow_copy:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+          description: Determines whether the snapshot of the remote store indexes are captured as a shallow copy.
+        shallow_snapshot_v2:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+          description: Determines whether the snapshots of the remote store indexes are captured as a shallow copy v2.
+        readonly:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
           description: Whether the repository is read-only.
+      required:
+        - location
 
     SnapshotStatus:
       type: object
