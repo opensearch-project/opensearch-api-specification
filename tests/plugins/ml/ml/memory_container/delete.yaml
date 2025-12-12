@@ -27,51 +27,11 @@ prologues:
                 auto_expand_replicas: 0-all
     output:
       mem_container: payload.memory_container_id
-  - path: /_plugins/_ml/memory_containers/_create
-    id: create_mem_container2
-    method: POST
-    request:
-      payload:
-        name: Test memory container 2
-        description: Test memory container 2
-        configuration:
-          index_prefix: test_mem_container2
-          use_system_index: False
-          disable_session: False
-          index_settings:
-            session_index:
-              index:
-                number_of_shards: '1'
-                auto_expand_replicas: 0-all
-            working_memory_index:
-              index:
-                number_of_shards: '1'
-                auto_expand_replicas: 0-all
-    output:
-      mem_container: payload.memory_container_id
 chapters:
   - synopsis: Delete a memory container.
     path: /_plugins/_ml/memory_containers/{memory_container_id}
     method: DELETE
     parameters:
       memory_container_id: ${create_mem_container.mem_container}
-    response:
-      status: 200
-  # - synopsis: Delete a memory container and all memory indices.
-  #   path: /_plugins/_ml/memory_containers/{memory_container_id}
-  #   method: DELETE
-  #   parameters:
-  #     memory_container_id: ${create_mem_container2.mem_container}
-  #     delete_all_memories: True
-  #   response:
-  #     status: 200
-  - synopsis: Delete a container and specify memory types.
-    path: /_plugins/_ml/memory_containers/{memory_container_id}
-    method: DELETE
-    parameters:
-      memory_container_id: ${create_mem_container2.mem_container}
-      delete_memories:
-        - sessions
-        - working
     response:
       status: 200

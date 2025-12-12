@@ -274,6 +274,20 @@ components:
           description: The error message.
         configuration:
           $ref: '#/components/schemas/MemoryContainerConfiguration'
+        payload_type:
+          $ref: '#/components/schemas/PayloadType'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        namespace_size:
+          type: integer
+          format: int64
+          description: The number of namespaces.
+        owner_id:
+          type: string
+          description: The ID of the memory owner.
+      additionalProperties: true
     MlInputDataType:
       type: string
       description: The input type.
@@ -1481,11 +1495,7 @@ components:
           items:
             $ref: '#/components/schemas/Strategy'
         parameters:
-          type: object
-          properties:
-            llm_result_path:
-              type: string
-              description: Global JSONPath expression for extracting LLM results from responses.
+          $ref: '#/components/schemas/Parameters'
     IndexSettings:
       type: object
       properties:
@@ -1502,25 +1512,22 @@ components:
       type: object
       properties:
         index:
-          type: object
-          properties:
-            number_of_shards:
-              type: string
-              description: The number of shards.
-            number_of_replicas:
-              type: string
-              description: The number of replicas.
-          additionalProperties: true
+          $ref: '#/components/schemas/Index'
+    Index:
+      type: object
+      properties:
+        number_of_shards:
+          type: string
+          description: The number of shards.
+        number_of_replicas:
+          type: string
+          description: The number of replicas.
+      additionalProperties: true
     Strategy:
       type: object
       properties:
         type:
-          type: string
-          description: The strategy type.
-          enum:
-            - SEMANTIC
-            - SUMMARY
-            - USER_PREFERENCE
+          $ref: '#/components/schemas/StrategyType'
         namespace:
           type: array
           items:
@@ -1534,6 +1541,13 @@ components:
         id:
           type: string
           description: The strategy ID.
+    StrategyType:
+      type: string
+      description: The strategy type.
+      enum:
+        - SEMANTIC
+        - SUMMARY
+        - USER_PREFERENCE
     StrategyConfiguration:
       type: object
       properties:
@@ -1576,12 +1590,7 @@ components:
       type: object
       properties:
         action:
-          type: string
-          description: The type of operation.
-          enum:
-            - ADD
-            - DELETE
-            - UPDATE
+          $ref: '#/components/schemas/ActionType'
         after:
           type: object
           additionalProperties: true
@@ -1619,9 +1628,9 @@ components:
           items:
             $ref: '#/components/schemas/Message'
         metadata:
-          '#/components/schemas/Metadata'
+          $ref: '#/components/schemas/Metadata'
         namespace:
-          '#/components/schemas/NameSpace'
+          $ref: '#/components/schemas/Namespace'
         namespace_size:
           type: integer
           format: int64
@@ -1630,24 +1639,28 @@ components:
           type: string
           description: The ID of the memory owner.
         payload_type:
-          type: string
-          description: The type of payload.
-          enum:
-            - conversation
-            - data
+          $ref: '#/components/schemas/PayloadType'
         strategy_id:
           type: string
           description: The ID for the strategy instance.
         strategy_type:
-          type: string
-          description: The type of memory strategy used.
-          enum:
-            - SEMANTIC
-            - SUMMARY
-            - USER_PREFERENCE
+          $ref: '#/components/schemas/StrategyType'
         tags:
           type: object
           additionalProperties: true
+    ActionType:
+      type: string
+      description: The type of operation.
+      enum:
+        - ADD
+        - DELETE
+        - UPDATE
+    PayloadType:
+      type: string
+      description: The type of payload.
+      enum:
+        - conversational
+        - data
     DeleteAgenticMemoryResponse:
       type: object
       properties:
