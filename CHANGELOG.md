@@ -42,6 +42,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed the type of `param` in pull-based ingestion's `ingestion_source` to take in Object for value instead of string ([#945](https://github.com/opensearch-project/opensearch-api-specification/pull/945))
 - Fixed fields in `TermsAggregation`, `CardinalityExecutionMode` ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
 - Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
+- Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
