@@ -41,4 +41,16 @@ jobs:
         with:
           folder: _site
           branch: gh-pages
-
+      - name: Trigger Proto Convert Workflow
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.PERSONAL_OSPT_PAT }}
+          repository: lucy66hw/opensearch-protobufs
+          event-type: spec-updated
+          client-payload: |
+            {
+              "spec_repository": "lucy66hw/opensearch-api-specification",
+              "spec_tag": "main-latest",
+              "pr_number": "${{ github.event.pull_request.number || '' }}",
+              "ref": "${{ github.ref }}"
+            }
