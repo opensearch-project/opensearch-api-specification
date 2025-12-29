@@ -54,6 +54,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
 - Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 ## [0.2.0] - 2025-05-25
+- Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
 
 ### Added
 
@@ -218,6 +219,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `NeuralStats` schema validation from `oneOf` to `anyOf` ([#900](https://github.com/opensearch-project/opensearch-api-specification/pull/900))
 - Changed `ErrorCause` schema header type to map ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
 - Changed `force_source` to not be deprecated ([#996](https://github.com/opensearch-project/opensearch-api-specification/pull/996))
+- Change unnamed object in SearchResponse to be excluded from protobufs ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 
 ## [0.1.0] - 2024-10-25
 
