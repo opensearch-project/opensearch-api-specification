@@ -31,6 +31,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#997](https://github.com/opensearch-project/opensearch-api-specification/pull/997))
 - Add `x-protobuf-excluded` to SearchResult::hits ([#1012](https://github.com/opensearch-project/opensearch-api-specification/pull/1012))
 - Add `x-protobuf-excluded` to QueryContainer::template ([#1013](https://github.com/opensearch-project/opensearch-api-specification/pull/1013))
+- Add new 3.3 ML APIs ([#1010](https://github.com/opensearch-project/opensearch-api-specification/pull/1010))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
