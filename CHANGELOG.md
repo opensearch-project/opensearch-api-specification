@@ -34,8 +34,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
-- Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
+- Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
