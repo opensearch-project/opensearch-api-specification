@@ -36,6 +36,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
+- Remove `fields` from `SearchResult` ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
@@ -218,7 +219,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `NeuralStats` schema validation from `oneOf` to `anyOf` ([#900](https://github.com/opensearch-project/opensearch-api-specification/pull/900))
 - Changed `ErrorCause` schema header type to map ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
 - Changed `force_source` to not be deprecated ([#996](https://github.com/opensearch-project/opensearch-api-specification/pull/996))
-- Change unnamed object in SearchResponse to be excluded from protobufs ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 
 ## [0.1.0] - 2024-10-25
 
