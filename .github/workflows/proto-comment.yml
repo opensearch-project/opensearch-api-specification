@@ -14,32 +14,28 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     steps:
-      - name: Download Proto Comment Payload
+      - name: Download Proto Report Artifact
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          name: proto-comment-payload
+          name: proto-compatibility-report
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Parse Payload
+      - name: Extract PR Number and Parse Report
         shell: bash -eo pipefail {0}
         run: |
-          PR_NUMBER=$(jq -r '.pr_number' ./proto-comment-payload.json)
-          REPORT=$(jq -r '.report' ./proto-comment-payload.json)
+          # Get PR number from workflow_run event
+          PR_NUMBER="${{ github.event.workflow_run.pull_requests[0].number }}"
 
-          vars=(
-            PR_NUMBER
-          )
+          if [ -z "$PR_NUMBER" ]; then
+            echo "ERROR: Could not extract PR number"
+            exit 1
+          fi
 
-          {
-            for var in "${vars[@]}"
-            do
-              echo "${var}=${!var}"
-            done
-          } | tee "$GITHUB_ENV"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
-          # Save report for next step
-          echo "$REPORT" > report.md
+          # The artifact is already in report.md format (from old workflow)
+          # Just use it as-is
 
       - name: Find Existing Comment
         uses: peter-evans/find-comment@v3
