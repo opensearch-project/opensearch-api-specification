@@ -40,15 +40,24 @@ jobs:
     needs: compatibility-report
     runs-on: ubuntu-latest
     steps:
-      - name: Create Report File
+      - name: Create Report Payload
         run: |
           mkdir -p reports
-          cat > reports/report.md << 'EOF'
-          ${{ needs.compatibility-report.outputs.report }}
-          EOF
 
-      - name: Upload Report Artifact
+          # Get the report content
+          REPORT="${{ needs.compatibility-report.outputs.report }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+
+          # Create JSON payload with PR number and report
+          cat > reports/proto-comment-payload.json << 'PAYLOAD_EOF'
+          {
+            "pr_number": $PR_NUMBER,
+            "report": $REPORT
+          }
+          PAYLOAD_EOF
+
+      - name: Upload Report Payload
         uses: actions/upload-artifact@v4
         with:
-          name: proto-compatibility-report
-          path: reports/report.md
+          name: proto-comment-payload
+          path: reports/proto-comment-payload.json
