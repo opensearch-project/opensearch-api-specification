@@ -6,13 +6,18 @@ on:
       - Proto Compatibility Check
     types:
       - completed
+  # TEMPORARY: For testing in feature branch - remove after testing
+  push:
+    branches:
+      - feature/**
 
 jobs:
   comment:
     runs-on: ubuntu-latest
     if: >
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+      github.event.workflow_run.conclusion == 'success' ||
+      github.event_name == 'push'
     steps:
       - name: Download Proto Report Artifact
         uses: actions/download-artifact@v4
