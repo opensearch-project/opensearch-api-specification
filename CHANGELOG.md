@@ -31,6 +31,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#997](https://github.com/opensearch-project/opensearch-api-specification/pull/997))
 - Add `x-protobuf-excluded` to SearchResult::hits ([#1012](https://github.com/opensearch-project/opensearch-api-specification/pull/1012))
 - Add `x-protobuf-excluded` to QueryContainer::template ([#1013](https://github.com/opensearch-project/opensearch-api-specification/pull/1013))
+- Add proto compatibility check workflow for PRs and post-deployment ([#1020](https://github.com/opensearch-project/opensearch-api-specification/pull/1020))
+- Split proto check and comment into separate workflows ([#1022](https://github.com/opensearch-project/opensearch-api-specification/pull/1022))
+
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
@@ -137,7 +140,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `GET _plugins/geospatial/_upload/stats`, `PUT`, `POST _plugins/geospatial/geojson/_upload`, `GET _plugins/geospatial/ip2geo/datasource`, `GET`, `PUT`, `DELETE _plugins/geospatial/ip2geo/datasource/{name}` and `PUT _plugins/geospatial/ip2geo/datasource/{name}/_settings` ([#893](https://github.com/opensearch-project/opensearch-api-specification/pull/893))
 - Added schemas for the score ranker search processor ([#899](https://github.com/opensearch-project/opensearch-api-specification/pull/899))
 - Added default values for `shard_stores` parameters ([#928](https://github.com/opensearch-project/opensearch-api-specification/pull/928))
-- Added proto compatibility check workflow for PRs and post-deployment ([#1020](https://github.com/opensearch-project/opensearch-api-specification/pull/1020))
 
 ### Removed
 
