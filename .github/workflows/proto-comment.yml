@@ -14,42 +14,48 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     steps:
-      - name: Download Proto Report Artifact
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          sparse-checkout: |
+            .github
+
+      - name: Download Proto Comment Payload
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          name: proto-compatibility-report
+          name: proto-comment-payload
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Extract PR Number and Parse Report
+      - name: Parse Payload
         shell: bash -eo pipefail {0}
         run: |
-          # Get PR number from workflow_run event
-          PR_NUMBER="${{ github.event.workflow_run.pull_requests[0].number }}"
+          PR_NUMBER=$(jq -r '.pr_number' ./proto-comment-payload.json)
+          REPORT=$(jq -r '.report' ./proto-comment-payload.json)
 
-          if [ -z "$PR_NUMBER" ]; then
-            echo "ERROR: Could not extract PR number"
-            exit 1
-          fi
+          vars=(
+            PR_NUMBER
+          )
 
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          {
+            for var in "${vars[@]}"
+            do
+              echo "${var}=${!var}"
+            done
+          } | tee "$GITHUB_ENV"
 
-          # Read report file content and save to environment variable
-          if [ -f "report.md" ]; then
-            REPORT_CONTENT=$(cat report.md)
-            echo "REPORT_CONTENT<<EOF" >> $GITHUB_ENV
-            echo "$REPORT_CONTENT" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-          else
-            echo "WARNING: report.md not found"
-          fi
+          # Save report to environment variable
+          echo "REPORT_CONTENT<<EOF" >> $GITHUB_ENV
+          echo "$REPORT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Find Existing Comment
         uses: peter-evans/find-comment@v3
         id: fc
         with:
           issue-number: ${{ env.PR_NUMBER }}
-          comment-author: github-actions[bot]
+          comment-author: 'github-actions[bot]'
           body-includes: Proto Compatibility Report
 
       - name: Create or Update Comment
