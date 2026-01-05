@@ -33,7 +33,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `x-protobuf-excluded` to QueryContainer::template ([#1013](https://github.com/opensearch-project/opensearch-api-specification/pull/1013))
 - Add proto compatibility check workflow for PRs and post-deployment ([#1020](https://github.com/opensearch-project/opensearch-api-specification/pull/1020))
 - Split proto check and comment into separate workflows and addressing "Not Found" errors for posting proto compatibility reports.([#1023](https://github.com/opensearch-project/opensearch-api-specification/pull/1023)),([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1028](https://github.com/opensearch-project/opensearch-api-specification/pull/1028))
-
+- Add `no_sub_matches` and `no_overlapping_matches` to `HyphenationDecompounderTokenFilter` ([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1029](https://github.com/opensearch-project/opensearch-api-specification/pull/1029))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
