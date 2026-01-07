@@ -3,6 +3,7 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
+- Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
 
@@ -19,18 +20,45 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add pull-based ingestion APIs and properties. Also add replication type in index settings ([#926](https://github.com/opensearch-project/opensearch-api-specification/pull/926))
 - Added `additional_config` to `ModelConfig` ([#936](https://github.com/opensearch-project/opensearch-api-specification/pull/936))
 - Added `all_active` config to the IngestionSource under index settings ([#965](https://github.com/opensearch-project/opensearch-api-specification/pull/965))
+- Added `x-protobuf-excluded` vendor extension ([#980](https://github.com/opensearch-project/opensearch-api-specification/pull/980))
+- Added `search_pipeline`, `verbose_pipeline`, `include_named_queries_score` and `derived` to search_request_body. `primary` to `ShardFailure`, `header` to `ErrorCause` and Replace InnerHits `fields` from type `Fields` to `FieldAndFormat`([#981](https://github.com/opensearch-project/opensearch-api-specification/pull/981))
+- Add `if_seq_no` and `if_primary_term` to `UpdateAction` ([#986](https://github.com/opensearch-project/opensearch-api-specification/pull/986))
+- Add title to `search` and `bulk` requestBody and replace bulk response path from BulkResponseBase to BulkResponse ([#987](https://github.com/opensearch-project/opensearch-api-specification/pull/987))
+- Add `filter` to HybridQuery ([#988](https://github.com/opensearch-project/opensearch-api-specification/pull/988))
+- Add `x-protobuf-type` vendor extension to override type for protobuf and apply `x-protobuf-excluded` to global parameters ([#989](https://github.com/opensearch-project/opensearch-api-specification/pull/989))
+- Add `x-protobuf-name` vendor extension and add index parameters to search and bulk API ([#993](https://github.com/opensearch-project/opensearch-api-specification/pull/993))
+- Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
+- Add `x-protobuf-required` vendor extension for enforcing required Protobuf fields ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
+- Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#997](https://github.com/opensearch-project/opensearch-api-specification/pull/997))
+- Add `x-protobuf-excluded` to SearchResult::hits ([#1012](https://github.com/opensearch-project/opensearch-api-specification/pull/1012))
+- Add `x-protobuf-excluded` to QueryContainer::template ([#1013](https://github.com/opensearch-project/opensearch-api-specification/pull/1013))
+- Add proto compatibility check workflow for PRs and post-deployment ([#1020](https://github.com/opensearch-project/opensearch-api-specification/pull/1020))
+- Split proto check and comment into separate workflows and addressing "Not Found" errors for posting proto compatibility reports.([#1023](https://github.com/opensearch-project/opensearch-api-specification/pull/1023)),([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1028](https://github.com/opensearch-project/opensearch-api-specification/pull/1028))
+- Add new 3.3 ML APIs ([#1010](https://github.com/opensearch-project/opensearch-api-specification/pull/1010))
 
 ### Removed
+- Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
+- Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
+- Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
+- Remove `fields` from `SearchResult` ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
 - Fixed the type of `SearchStats`'s `concurrent_avg_slice_count` to be a double ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
+- Fixed name and metadata missing from metric aggregations ([#969](https://github.com/opensearch-project/opensearch-api-specification/pull/969))
 - Fixed the type of `param` in pull-based ingestion's `ingestion_source` to take in Object for value instead of string ([#945](https://github.com/opensearch-project/opensearch-api-specification/pull/945))
+- Fixed fields in `TermsAggregation`, `CardinalityExecutionMode` ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
+- Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
+- Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
+- Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Changed knn stats response types to use int64s instead of numbers ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
-
+- Moved sub aggregations into `BucketAggregationBase` as their usage is only valid here ([#971](https://github.com/opensearch-project/opensearch-api-specification/pull/971))
+- Remove deprecated `rehash` option from `CardinalityAggregation` ([#975](https://github.com/opensearch-project/opensearch-api-specification/pull/975))
+- Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
+- Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 ## [0.2.0] - 2025-05-25
 
 ### Added
@@ -194,6 +222,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `ScriptedMetricAggregate` value from true to {} ([#892](https://github.com/opensearch-project/opensearch-api-specification/pull/892))
 - Changed `WaitForActiveShards` to utilize `StringifiedInteger` ([#896](https://github.com/opensearch-project/opensearch-api-specification/pull/896))
 - Changed `NeuralStats` schema validation from `oneOf` to `anyOf` ([#900](https://github.com/opensearch-project/opensearch-api-specification/pull/900))
+- Changed `ErrorCause` schema header type to map ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
+- Changed `force_source` to not be deprecated ([#996](https://github.com/opensearch-project/opensearch-api-specification/pull/996))
 
 ## [0.1.0] - 2024-10-25
 
@@ -213,7 +243,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added linter to validate order of spec operations ([#325](https://github.com/opensearch-project/opensearch-api-specification/pull/326)) ([#326](https://github.com/opensearch-project/opensearch-api-specification/pull/326))
 - Added support to read outputs from requests in tests([#324](https://github.com/opensearch-project/opensearch-api-specification/pull/324))
 - Added `eslint-plugin-eslint-comments` ([#333](https://github.com/opensearch-project/opensearch-api-specification/pull/333))
-- Added `distribution` field to `OpenSearchVersionInfo` ([#336](https://github.com/opensearch-project/opensearch-api-specification/pull/336)) 
+- Added `distribution` field to `OpenSearchVersionInfo` ([#336](https://github.com/opensearch-project/opensearch-api-specification/pull/336))
 - Added `created_time` and `last_updated_time` to `ml.get_model_group@200` ([#342](https://github.com/opensearch-project/opensearch-api-specification/pull/342))
 - Added spellcheck linter ([#341](https://github.com/opensearch-project/opensearch-api-specification/pull/341))
 - Added tests for response payload ([#347](https://github.com/opensearch-project/opensearch-api-specification/pull/347))
@@ -243,8 +273,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added tests against OpenSearch 1.3 ([#424](https://github.com/opensearch-project/opensearch-api-specification/pull/424))
 - Added `is_hidden` to `/{index}/_alias/{name}` and `/{index}/_aliases/{name}` ([#429](https://github.com/opensearch-project/opensearch-api-specification/pull/429))
 - Added `ignore_unmapped` to `GeoDistanceQuery` ([#427](https://github.com/opensearch-project/opensearch-api-specification/pull/427))
-- Added missing variants of `indices.put_alias` ([#434](https://github.com/opensearch-project/opensearch-api-specification/pull/434)) 
-- Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442)) 
+- Added missing variants of `indices.put_alias` ([#434](https://github.com/opensearch-project/opensearch-api-specification/pull/434))
+- Added `plugins` to NodeInfoSettings ([#442](https://github.com/opensearch-project/opensearch-api-specification/pull/442))
 - Added test coverage ([#443](https://github.com/opensearch-project/opensearch-api-specification/pull/443))
 - Added `--opensearch-version` to `merger` that excludes schema elements per semver ([#428](https://github.com/opensearch-project/opensearch-api-specification/pull/428))
 - Added `retry` to `tester` to support asynchronous tasks ([#453](https://github.com/opensearch-project/opensearch-api-specification/pull/453))
@@ -301,6 +331,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added API spec for `adjust_pure_negative` for bool queries ([#641](https://github.com/opensearch-project/opensearch-api-specification/pull/641))
 - Added a spec style checker [#620](https://github.com/opensearch-project/opensearch-api-specification/pull/620).
 - Added `remote_store` to node `Stats` ([#643](https://github.com/opensearch-project/opensearch-api-specification/pull/643))
+- Added array type to `fields` in `Highlight` and `default` in `HighlighterTagsSchema` ([#1003](https://github.com/opensearch-project/opensearch-api-specification/pull/1003))
 
 ### Changed
 
@@ -326,6 +357,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed `indices.stats`'s `metric` path param to use an enum of metrics ([#586](https://github.com/opensearch-project/opensearch-api-specification/pull/586))
 - Changed `CleanupRepositoryResults`' properties to be `int64`s ([#587](https://github.com/opensearch-project/opensearch-api-specification/pull/587))
 - Changed `RangeQuery` to unified type with oneOf ([#958](https://github.com/opensearch-project/opensearch-api-specification/pull/958))
+- Changed `FunctionScore` related Schema ([#963](https://github.com/opensearch-project/opensearch-api-specification/pull/963))
+- Changed `sort` from `SortOptions` to `SortCombinations` ([#961](https://github.com/opensearch-project/opensearch-api-specification/pull/961))
 
 ### Deprecated
 
@@ -335,6 +368,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed `shape` query ([#531](https://github.com/opensearch-project/opensearch-api-specification/pull/531))
 - Removed unsupported DataStream Lifecycle types ([#600](https://github.com/opensearch-project/opensearch-api-specification/pull/600))
 - Removed unsupported runtime field types ([#634](https://github.com/opensearch-project/opensearch-api-specification/pull/634))
+- Removed duplicate hits from SearchResult ([#956](https://github.com/opensearch-project/opensearch-api-specification/pull/956))
 - Removed duplicate Suggest from SearchResult ([#957](https://github.com/opensearch-project/opensearch-api-specification/pull/957))
 ### Fixed
 
@@ -352,7 +386,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `/{index}/_dangling` that can return `nodes` and `cluster_name` ([#391](https://github.com/opensearch-project/opensearch-api-specification/pull/391))
 - Fixed `Metadata` schema ([#399](https://github.com/opensearch-project/opensearch-api-specification/pull/399))
 - Fixed `/_data_stream` health status and required fields ([#401](https://github.com/opensearch-project/opensearch-api-specification/pull/401))
-- Fixed query DSL `match` that supports a field name and value ([#405](https://github.com/opensearch-project/opensearch-api-specification/pull/405)) 
+- Fixed query DSL `match` that supports a field name and value ([#405](https://github.com/opensearch-project/opensearch-api-specification/pull/405))
 - Fixed `/_mapping` with `index` in query ([#385](https://github.com/opensearch-project/opensearch-api-specification/pull/385))
 - Fixed duplicate `/_nodes/{node_id}` path ([#416](https://github.com/opensearch-project/opensearch-api-specification/pull/416))
 - Fixed `_source` accepting an array of fields in `/_search` ([#430](https://github.com/opensearch-project/opensearch-api-specification/pull/430))
@@ -379,6 +413,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `RestStatus` responses in `DELETE /_plugins/_notifications/configs/{config_id}` ([#594](https://github.com/opensearch-project/opensearch-api-specification/pull/594))
 - Fixed `GET /_snapshot_/{repository}/{snapshot}` ([#608](https://github.com/opensearch-project/opensearch-api-specification/pull/608))
 - Fixed `POST /_snapshot/{repository}/{snapshot}/_restore` when `wait_for_completion` is `false` and `GET /{index}/_recovery` ([#611](https://github.com/opensearch-project/opensearch-api-specification/pull/611))
+- Fixed BulkResponseBase item with defined property ([#948](https://github.com/opensearch-project/opensearch-api-specification/pull/948))
 
 ### Security
 

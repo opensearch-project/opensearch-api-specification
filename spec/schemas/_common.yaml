@@ -112,7 +112,7 @@ components:
         - bottom_right
         - top_left
     GeoLocation:
-      description: |-  
+      description: |-
         A latitude/longitude as a two-dimensional point. It can be represented in the following ways:
          - As a `{lat, long}` object.
          - As a geohash value.
@@ -230,11 +230,11 @@ components:
       type: string
     FieldValue:
       description: A field value.
-      type: 
-        - boolean
-        - 'null'
-        - number
-        - string
+      anyOf:
+        - type: boolean
+        - type: 'null'
+        - type: number
+        - type: string
     Void:
       description: |-
         The absence of any type. This is commonly used in APIs that don't return a body.
@@ -332,7 +332,10 @@ components:
           type: integer
         status:
           type: string
+        primary:
+          type: boolean
       required:
+        - primary
         - reason
         - shard
     ErrorCause:
@@ -357,6 +360,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorCause'
+        header:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StringOrStringArray'
       required:
         - type
       additionalProperties:
@@ -503,8 +510,8 @@ components:
       properties:
         params:
           description: |-
-            Specifies any named parameters that are passed into the script as variables. 
-            Use parameters instead of hard-coded values to decrease compilation time. 
+            Specifies any named parameters that are passed into the script as variables.
+            Use parameters instead of hard-coded values to decrease compilation time.
           type: object
           additionalProperties: true
     StoredScriptId:
@@ -517,19 +524,7 @@ components:
           required:
             - id
     MultiTermQueryRewrite:
-      oneOf:
-        - type: string
-          const: constant_score
-          description: The constant score rewrite method assigns the same score to all matching documents.
-        - type: string
-          const: constant_score_boolean
-          description: The constant score Boolean rewrite method creates a Boolean query with a constant score.
-        - type: string
-          const: scoring_boolean
-          description: The scoring Boolean rewrite method creates a Boolean query that scores each term separately.
-        - type: string
-          pattern: top_terms(_blended_freqs|_boost)?_\d+
-          description: The top terms query rewrite method with optional parameters.
+      type: string
     Fuzziness:
       oneOf:
         - type: string
@@ -560,87 +555,85 @@ components:
           description: Whether to ignore failures during script execution.
       required:
         - script
+    DerivedField:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        script:
+          $ref: '#/components/schemas/Script'
+        prefilter_field:
+          type: string
+        properties:
+          type: object
+        ignore_malformed:
+          type: boolean
+        format:
+          type: string
+      required:
+        - name
+        - script
+        - type
     Sort:
       oneOf:
-        - $ref: '#/components/schemas/SortOptions'
-          description: The single sort option.
+        - $ref: '#/components/schemas/SortCombinations'
         - type: array
-          description: The list of sort options.
           items:
-            $ref: '#/components/schemas/SortOptions'
+            $ref: '#/components/schemas/SortCombinations'
+
+    SortCombinations:
+      oneOf:
+        - title: field
+          $ref: '#/components/schemas/Field'
+        - title: field_with_direction
+          $ref: '#/components/schemas/FieldWithDirection'
+        - title: field_with_order
+          $ref: '#/components/schemas/FieldWithOrder'
+        - title: options
+          $ref: '#/components/schemas/SortOptions'
+    FieldWithDirection:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/SortOrder'
+    FieldWithOrder:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/FieldSort'
     SortOptions:
-      oneOf:
-        - type: string
-          const: _score
-          description: Sort by document score.
-        - type: string
-          const: _doc
-          description: Sort by document index order.
-        - type: string
-          description: Sort by field name.
-          not:
-            type: string
-            enum:
-              - _doc
-              - _score
-        - type: object
-          description: Sort by score options.
-          properties:
-            _score:
-              $ref: '#/components/schemas/ScoreSort'
-            _doc:
-              $ref: '#/components/schemas/ScoreSort'
-            _geo_distance:
-              $ref: '#/components/schemas/GeoDistanceSort'
-            _script:
-              $ref: '#/components/schemas/ScriptSort'
-          minProperties: 1
-          maxProperties: 1
-        - type: object
-          description: Sort by field options.
-          propertyNames:
-            allOf:
-              - $ref: '#/components/schemas/Field'
-              - not:
-                  type: string
-                  enum:
-                    - _doc
-                    - _geo_distance
-                    - _score
-                    - _script
-          additionalProperties:
-            $ref: '#/components/schemas/FieldSort'
-          minProperties: 1
-          maxProperties: 1
+      type: object
+      properties:
+        _score:
+          $ref: '#/components/schemas/ScoreSort'
+        _geo_distance:
+          $ref: '#/components/schemas/GeoDistanceSort'
+        _script:
+          $ref: '#/components/schemas/ScriptSort'
+      minProperties: 1
+      maxProperties: 1
     FieldSort:
-      oneOf:
-        - title: order
-          description: The sort order direction.
+      type: object
+      description: The detailed field sort options.
+      properties:
+        missing:
+          $ref: '#/components/schemas/FieldValue'
+          description: The value to use when the field is missing.
+        mode:
+          $ref: '#/components/schemas/SortMode'
+          description: The mode for sorting on array fields.
+        nested:
+          $ref: '#/components/schemas/NestedSortValue'
+          description: The nested path sort options.
+        order:
           $ref: '#/components/schemas/SortOrder'
-        - type: object
-          description: The detailed field sort options.
-          properties:
-            missing:
-              $ref: '#/components/schemas/FieldValue'
-              description: The value to use when the field is missing.
-            mode:
-              $ref: '#/components/schemas/SortMode'
-              description: The mode for sorting on array fields.
-            nested:
-              $ref: '#/components/schemas/NestedSortValue'
-              description: The nested path sort options.
-            order:
-              $ref: '#/components/schemas/SortOrder'
-              description: The sort order direction.
-            unmapped_type:
-              $ref: '_common.mapping.yaml#/components/schemas/FieldType'
-              description: The type to use for unmapped fields.
-            numeric_type:
-              $ref: '#/components/schemas/FieldSortNumericType'
-              description: The numeric type to use for sorting.
-            format:
-              type: string
-              description: The format to use for the sort values.
+          description: The sort order direction.
+        unmapped_type:
+          $ref: '_common.mapping.yaml#/components/schemas/FieldType'
+          description: The type to use for unmapped fields.
+        numeric_type:
+          $ref: '#/components/schemas/FieldSortNumericType'
+          description: The numeric type to use for sorting.
     FieldSortNumericType:
       oneOf:
         - type: string
@@ -690,6 +683,7 @@ components:
         validation_method:
           $ref: '_common.query_dsl.yaml#/components/schemas/GeoValidationMethod'
       additionalProperties:
+        title: location
         type: array
         description: The geo points to use for distance calculation.
         items:
@@ -808,9 +802,6 @@ components:
           const: external_gte
           description: The version number must be greater than or equal to the current version.
         - type: string
-          const: force
-          description: The version number is forced to be the given value.
-        - type: string
           const: internal
           description: The version number is managed internally by OpenSearch.
     TimeZone:
@@ -860,6 +851,7 @@ components:
       oneOf:
         - type: boolean
           description: Whether to refresh the affected shards immediately.
+          x-protobuf-excluded: true
         - type: string
           const: 'false'
           description: Do not refresh the affected shards.
@@ -901,17 +893,18 @@ components:
           $ref: '#/components/schemas/SequenceNumber'
         _primary_term:
           type: integer
-          format: int32
+          format: int64
           description: The primary term of the document.
         _routing:
           $ref: '#/components/schemas/Routing'
         _source:
           type: object
+          x-protobuf-type: bytes
           description: The source of the document.
           additionalProperties: true
-      additionalProperties: 
-        type: object 
-        title: metadata_fields 
+      additionalProperties:
+        type: object
+        title: metadata_fields
       required:
         - found
     Names:
@@ -974,7 +967,7 @@ components:
     PercentageNumber:
       type: number
       format: double
-      description: The percentage value as a number.     
+      description: The percentage value as a number.
     PercentageString:
       type: string
       pattern: '\d+(\.\d+)?'
@@ -1083,16 +1076,19 @@ components:
         - type: integer
         - type: string
           pattern: '^[+-]?\d+$'
+      x-protobuf-type: int32
     StringifiedLong:
       oneOf:
         - type: integer
           format: int64
         - type: string
+      x-protobuf-type: int64
     StringifiedDouble:
       oneOf:
         - type: number
           format: double
         - type: string
+      x-protobuf-type: double
     StringifiedBoolean:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -1103,6 +1099,7 @@ components:
       oneOf:
         - type: boolean
         - type: string
+      x-protobuf-type: bool
     PipelineName:
       type: string
     StringifiedEpochTimeUnitMillis:
@@ -1210,7 +1207,7 @@ components:
         - indices
         - shards
     WaitForEvents:
-      description: Waits until all currently queued events with the given priority are processed. 
+      description: Waits until all currently queued events with the given priority are processed.
       oneOf:
         - type: string
           const: immediate
@@ -1361,7 +1358,7 @@ components:
       description: The statistics related to remote segment store operations.
       properties:
         upload:
-          $ref: '#/components/schemas/RemoteStoreUploadStats'     
+          $ref: '#/components/schemas/RemoteStoreUploadStats'
         download:
           $ref: '#/components/schemas/RemoteStoreDownloadStats'
       required:
@@ -1408,7 +1405,7 @@ components:
         - succeeded
     RemoteStoreTranslogUploadTotalUploadSizeStats:
       type: object
-      description: The total amount of data uploaded to the remote translog store. 
+      description: The total amount of data uploaded to the remote translog store.
       properties:
         failed:
           description: The number of bytes that failed to upload to the remote translog store.
@@ -1487,10 +1484,10 @@ components:
         - succeeded_bytes
     RemoteStoreUploadPressureStats:
       type: object
-      description: Statistics related to segment store upload backpressure. 
+      description: Statistics related to segment store upload backpressure.
       properties:
         total_rejections:
-          description: The total number of requests rejected due to segment store upload backpressure. 
+          description: The total number of requests rejected due to segment store upload backpressure.
           type: integer
           format: int64
       required:
@@ -1500,32 +1497,32 @@ components:
       description: The amount of lag during upload between the remote segment store and the local store.
       properties:
         max:
-          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store. 
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/HumanReadableByteCount'
         max_bytes:
-          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store. 
+          description: The maximum amount of lag, in bytes, during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/ByteCount'
         total:
-          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store. 
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/HumanReadableByteCount'
         total_bytes:
-          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store. 
+          description: The total number of bytes that lagged during the upload refresh between the remote segment store and the local store.
           $ref: '#/components/schemas/ByteCount'
       required:
         - max_bytes
         - total_bytes
     RemoteStoreDownloadStats:
       type: object
-      description: Any statistics related to downloads to the remote segment store. 
+      description: Any statistics related to downloads to the remote segment store.
       properties:
         total_download_size:
-          description: The total amount of data downloaded from the remote segment store. 
+          description: The total amount of data downloaded from the remote segment store.
           $ref: '#/components/schemas/RemoteStoreUploadDownloadStats'
         total_time_spent:
           description: The total amount of time spent on downloads from the remote segment store.
           $ref: '#/components/schemas/Duration'
         total_time_spent_in_millis:
-          description: The total duration, in milliseconds, spent on downloads from the remote segment store. 
+          description: The total duration, in milliseconds, spent on downloads from the remote segment store.
           $ref: '#/components/schemas/DurationValueUnitMillis'
       required:
         - total_download_size
@@ -1731,13 +1728,13 @@ components:
           items:
             $ref: '#/components/schemas/ErrorCause'
         total:
-          description: The total number of nodes selected by the request. 
+          description: The total number of nodes selected by the request.
           type: integer
         successful:
-          description: The number of nodes that responded successfully to the request. 
+          description: The number of nodes that responded successfully to the request.
           type: integer
         failed:
-          description: The number of nodes that rejected the request or failed to respond. If this value is not 0, then a reason for the rejection or failure is included in the response. 
+          description: The number of nodes that rejected the request or failed to respond. If this value is not 0, then a reason for the rejection or failure is included in the response.
           type: integer
       required:
         - failed
@@ -1890,7 +1887,8 @@ components:
         error:
           $ref: '#/components/schemas/ErrorCause'
         status:
-          type: number
+          type: integer
+          format: int32
           description: The HTTP status code.
       required:
         - error
@@ -2239,10 +2237,10 @@ components:
           type: integer
           format: int64
         query_time:
-          description: The total amount of time taken to complete all shard query operations. 
+          description: The total amount of time taken to complete all shard query operations.
           $ref: '#/components/schemas/Duration'
         query_time_in_millis:
-          description: The total amount of time taken to complete all shard query operations, in milliseconds. 
+          description: The total amount of time taken to complete all shard query operations, in milliseconds.
           $ref: '#/components/schemas/DurationValueUnitMillis'
         query_total:
           description: The total number of shard query operations.
@@ -2273,7 +2271,7 @@ components:
           description: The total amount of time taken to complete all shard fetch operations.
           $ref: '#/components/schemas/Duration'
         fetch_time_in_millis:
-          description: The total amount of time taken to complete all shard fetch operations, in milliseconds. 
+          description: The total amount of time taken to complete all shard fetch operations, in milliseconds.
           $ref: '#/components/schemas/DurationValueUnitMillis'
         fetch_total:
           description: The total number of shard fetch operations.
@@ -2287,7 +2285,7 @@ components:
           description: The total amount of time taken to complete all shard scroll operations.
           $ref: '#/components/schemas/Duration'
         scroll_time_in_millis:
-          description: The total amount of time taken to complete all shard scroll operations, in milliseconds. 
+          description: The total amount of time taken to complete all shard scroll operations, in milliseconds.
           $ref: '#/components/schemas/DurationValueUnitMillis'
         scroll_total:
           description: The total number of shard scroll operations.
@@ -2300,7 +2298,7 @@ components:
         point_in_time_time:
           $ref: '#/components/schemas/Duration'
         point_in_time_time_in_millis:
-          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds. 
+          description: The amount of time that shard PIT contexts have been held open since the node last restarted, in milliseconds.
           $ref: '#/components/schemas/DurationValueUnitMillis'
         point_in_time_current:
           description: The number of currently open shard PIT contexts.
@@ -2314,7 +2312,7 @@ components:
           description: The total amount of time take to complete all shard suggest operations.
           $ref: '#/components/schemas/Duration'
         suggest_time_in_millis:
-          description: The total amount of time taken to complete all shard suggest operations, in milliseconds. 
+          description: The total amount of time taken to complete all shard suggest operations, in milliseconds.
           $ref: '#/components/schemas/DurationValueUnitMillis'
         suggest_total:
           description: The total number of shard suggest operations.
@@ -2326,7 +2324,7 @@ components:
           description: The total number of idle search reactivations.
         request:
           type: object
-          description: Statistics related to coordinator search operations for the node. 
+          description: Statistics related to coordinator search operations for the node.
           additionalProperties:
             $ref: '#/components/schemas/RequestStats'
         groups:
@@ -2392,7 +2390,7 @@ components:
           description: The total time spent on request operations.
         time_in_millis:
           $ref: '#/components/schemas/DurationValueUnitMillis'
-          description: The total time spent on request operations in milliseconds.    
+          description: The total time spent on request operations in milliseconds.
         current:
           type: integer
           format: int64
@@ -2662,22 +2660,28 @@ components:
       description: The time taken by different phases of the search.
       properties:
         dfs_pre_query:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the distributed frequency search `pre-query` phase.
         query:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `query` phase.
         fetch:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `fetch` phase.
         dfs_query:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the distributed frequency search query phase.
         expand:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `expand` phase.
         can_match:
-          $ref: '#/components/schemas/uint'
+          type: integer
+          format: int64
           description: The time taken for the `can_match` phase.
       required:
         - can_match
@@ -2694,7 +2698,7 @@ components:
           type: integer
           format: int32
         total:
-          description: The number of documents that were successfully processed. 
+          description: The number of documents that were successfully processed.
           type: integer
           format: int64
         updated:
@@ -2702,11 +2706,11 @@ components:
           type: integer
           format: int64
         created:
-          description: The number of documents that were successfully created. 
+          description: The number of documents that were successfully created.
           type: integer
           format: int64
         deleted:
-          description: The number of documents that were successfully deleted. 
+          description: The number of documents that were successfully deleted.
           type: integer
           format: int64
         batches:
@@ -2718,7 +2722,7 @@ components:
           type: integer
           format: int64
         noops:
-          description: The number of documents that were ignored. 
+          description: The number of documents that were ignored.
           type: integer
           format: int64
         retries:

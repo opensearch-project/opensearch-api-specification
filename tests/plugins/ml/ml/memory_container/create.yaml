@@ -1,0 +1,123 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test creating a memory container.
+warnings:
+  invalid-path-detected: false
+version: '>= 3.3'
+prologues:
+  - path: /_plugins/_ml/models/_register
+    id: register_model
+    method: POST
+    request:
+      payload:
+        name: OpenAI Chat model
+        description: LLM model for memory processing
+        function_name: remote
+        connector:
+          name: OpenAI Chat Connector
+          description: The connector to public OpenAI model service for GPT 3.5
+          version: 1
+          protocol: http
+          parameters:
+            endpoint: api.openai.com
+            model: gpt-3.5-turbo
+          credential:
+            openAI_key: test_api_key
+          actions:
+            - action_type: predict
+              method: POST
+              url: https://api.openai.com/v1/chat/completions
+              headers:
+                Authorization: Bearer Key
+              request_body: '{ "model": "model", "messages": "messages" }'
+    output:
+      model_id: payload.model_id
+epilogues:
+  - path: /_plugins/_ml/models/{model_id}/_undeploy
+    method: POST
+    parameters:
+      model_id: ${register_model.model_id}
+  - path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    parameters:
+      model_id: ${register_model.model_id}
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_short_mem_container.short_mem_container}
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_long_mem_container.long_mem_container}
+  - path: /test_long_term*
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a short-term memory container.
+    id: create_short_mem_container
+    path: /_plugins/_ml/memory_containers/_create
+    method: POST
+    request:
+      payload:
+        name: Test short-term memory container
+        description: Test short-term memory container
+        configuration:
+          index_prefix: test_short_term
+          use_system_index: False
+          disable_session: False
+          index_settings:
+            session_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+            working_memory_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+    response:
+      status: 200
+    output:
+      short_mem_container: payload.memory_container_id
+  - synopsis: Create a long-term memory container.
+    id: create_long_mem_container
+    path: /_plugins/_ml/memory_containers/_create
+    method: POST
+    request:
+      payload:
+        name: Test long-term memory container
+        description: Test long-term memory container
+        configuration:
+          index_prefix: test_long_term
+          embedding_model_type: TEXT_EMBEDDING
+          embedding_model_id: ${register_model.model_id}
+          embedding_dimension: 1024
+          llm_id: ${register_model.model_id}
+          use_system_index: False
+          disable_session: False
+          strategies:
+            - enabled: True
+              type: SEMANTIC
+              namespace: [user_id]
+          index_settings:
+            session_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+            working_memory_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+            long_term_memory_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+            long_term_memory_history_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+    response:
+      status: 200
+    output:
+      long_mem_container: payload.memory_container_id
