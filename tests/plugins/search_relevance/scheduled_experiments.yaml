@@ -3,6 +3,8 @@ $schema: ../../../json_schemas/test_story.schema.yaml
 description: Tests the creation and deletion of experiments.
 
 prologues:
+  - path: /_plugins/ubi/initialize
+    method: POST
   - path: /_cluster/settings
     method: PUT
     request:
@@ -118,6 +120,12 @@ prologues:
       experiment_id: payload.experiment_id
 
 epilogues:
+  - path: /_plugins/_search_relevance/experiments/{experiment_id}
+    method: DELETE
+    parameters:
+      experiment_id: ${pointwise_experiment.experiment_id}
+    response:
+      status: 200
   - path: /_plugins/_search_relevance/judgments/{judgment_id}
     method: DELETE
     parameters:
@@ -140,12 +148,6 @@ epilogues:
     method: DELETE
     parameters:
       query_set_id: ${query_set_sampling.query_set_id}
-    response:
-      status: 200
-  - path: /_plugins/_search_relevance/experiments/{experiment_id}
-    method: DELETE
-    parameters:
-      experiment_id: ${pointwise_experiment.experiment_id}
     response:
       status: 200
   - path: /sample_index
