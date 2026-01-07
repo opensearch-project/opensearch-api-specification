@@ -101,9 +101,17 @@ components:
         doc:
           description: A partial update to an existing document.
           type: object
+          x-protobuf-type: bytes
         doc_as_upsert:
           description: When `true`, uses the contents of `doc` as the value of `upsert`.
           type: boolean
+        if_seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+          x-protobuf-excluded: true
+        if_primary_term:
+          type: integer
+          format: int64
+          x-protobuf-excluded: true
         script:
           $ref: '_common.yaml#/components/schemas/Script'
         scripted_upsert:
@@ -116,7 +124,8 @@ components:
             If the document does not already exist, the contents of `upsert` are inserted as a
             new document. If the document exists, the `script` is executed.
           type: object
-    BulkResponseBase:
+          x-protobuf-type: bytes
+    BulkResponse:
       type: object
       properties:
         errors:
@@ -124,11 +133,7 @@ components:
         items:
           type: array
           items:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/ResponseItem'
-            minProperties: 1
-            maxProperties: 1
+            $ref: '#/components/schemas/Item'
         took:
           type: integer
           format: int64
@@ -148,7 +153,7 @@ components:
           x-version-removed: '2.0'
         _id:
           description: The document ID associated with the operation.
-          type: ['null', string]
+          type: string
         _index:
           description: |-
             The name of the index associated with the operation.
@@ -182,3 +187,16 @@ components:
       required:
         - _index
         - status
+    Item:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/ResponseItem'
+        create:
+          $ref: '#/components/schemas/ResponseItem'
+        update:
+          $ref: '#/components/schemas/ResponseItem'
+        delete:
+          $ref: '#/components/schemas/ResponseItem'
+      minProperties: 1
+      maxProperties: 1

@@ -1,0 +1,51 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the tool execution.
+warnings:
+  invalid-path-detected: false
+version: '>= 3.3'
+prologues:
+  - path: /{index}
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            timestamp:
+              type: date
+            attribute:
+              type: keyword
+            value:
+              type: float
+    parameters:
+      index: test-index
+epilogues:
+  - path: /{index}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      index: test-index
+chapters:
+  - synopsis: Execute ListIndexTool.
+    path: /_plugins/_ml/tools/_execute/{tool_name}
+    method: POST
+    parameters:
+      tool_name: ListIndexTool
+    request:
+      payload:
+        parameters:
+          question: How many indices do I have?
+    response:
+      status: 200
+  - synopsis: Execute IndexMappingTool.
+    path: /_plugins/_ml/tools/_execute/{tool_name}
+    method: POST
+    parameters:
+      tool_name: IndexMappingTool
+    request:
+      payload:
+        parameters:
+          index: [test-index]
+          question: What fields are in the test-index index?
+    response:
+      status: 200

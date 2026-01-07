@@ -6,8 +6,6 @@ info:
 paths: {}
 components:
   schemas:
-    T:
-      x-is-generic-type-parameter: true
     HitsMetadata:
       type: object
       properties:
@@ -25,7 +23,7 @@ components:
               - type: object
                 properties:
                   _source:
-                    $ref: '#/components/schemas/T'
+                    $ref: '#/components/schemas/TDocument'
         max_score:
           oneOf:
             - type: 'null'
@@ -65,6 +63,7 @@ components:
           description: Lower bound, including returned events or sequences.
     TDocument:
       x-is-generic-type-parameter: true
+      x-protobuf-type: bytes
     Hit:
       type: object
       properties:
@@ -95,9 +94,19 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/InnerHitsResult'
         matched_queries:
-          type: array
-          items:
-            type: string
+          description: The names of queries that matched the document. When `include_named_queries_score` is false (default), returns an array of query names. When true, returns an object mapping query names to their scores.
+          oneOf:
+            - title: names
+              description: An array of matched query names (default behavior when `include_named_queries_score` is false).
+              type: array
+              items:
+                type: string
+            - title: scores
+              description: A map of matched query names to their scores (when `include_named_queries_score` is true).
+              type: object
+              additionalProperties:
+                type: number
+                format: double
         _nested:
           $ref: '#/components/schemas/NestedIdentity'
         _ignored:
@@ -127,6 +136,9 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         sort:
           $ref: '_common.yaml#/components/schemas/SortResults'
+      additionalProperties:
+        title: meta_fields
+        description: Contains metadata values for the documents.
     InnerHitsResult:
       type: object
       properties:
@@ -144,10 +156,10 @@ components:
           format: int64
         input_data: {}
         output_data: {}
-        status: 
+        status:
           type: string
         tag:
-          type: string 
+          type: string
         error:
           type: string
     NestedIdentity:
@@ -769,7 +781,9 @@ components:
         seq_no_primary_term:
           type: boolean
         fields:
-          $ref: '_common.yaml#/components/schemas/Fields'
+          type: array
+          items:
+            $ref: '_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
         sort:
           $ref: '_common.yaml#/components/schemas/Sort'
         _source:
@@ -805,11 +819,23 @@ components:
             encoder:
               $ref: '#/components/schemas/HighlighterEncoder'
             fields:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/HighlightField'
+              $ref: '#/components/schemas/HighlightFields'
           required:
             - fields
+    HighlightFields:
+      oneOf:
+        - type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HighlightField'
+        - type: array
+          items:
+            type: object
+            additionalProperties:
+              title: key
+              $ref: '#/components/schemas/HighlightField'
+            minProperties: 1
+            maxProperties: 1
+          x-protobuf-excluded: true
     HighlighterEncoder:
       type: string
       enum:
@@ -822,8 +848,6 @@ components:
           properties:
             matched_fields:
               $ref: '_common.yaml#/components/schemas/Fields'
-            analyzer:
-              $ref: '_common.analysis.yaml#/components/schemas/Analyzer'
     HighlightBase:
       type: object
       properties:
@@ -844,7 +868,6 @@ components:
             This parameter takes the form of a language tag, for example, `"en-US"`, `"fr-FR"`, or `"ja-JP"`.
           type: string
         force_source:
-          deprecated: true
           type: boolean
         fragmenter:
           $ref: '#/components/schemas/HighlighterFragmenter'
@@ -950,6 +973,7 @@ components:
     HighlighterTagsSchema:
       type: string
       enum:
+        - default
         - styled
     SourceConfig:
       description: Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
@@ -1329,20 +1353,19 @@ components:
           allOf:
             - $ref: '#/components/schemas/HitsMetadata'
             - type: object
+              x-protobuf-excluded: true
               properties:
                 hits:
                   type: array
                   items:
-                    allOf:
-                      - $ref: '#/components/schemas/Hit'
-                      - type: object
-                        properties:
-                          _source:
-                            $ref: '#/components/schemas/TDocument'
-        processor_results: 
+                    type: object
+                    properties:
+                      _source:
+                        $ref: '#/components/schemas/TDocument'
+        processor_results:
           x-version-added: '3.0'
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/ProcessorExecutionDetail'
         aggregations:
           type: object
@@ -1350,9 +1373,6 @@ components:
             $ref: '_common.aggregations.yaml#/components/schemas/Aggregate'
         _clusters:
           $ref: '_common.yaml#/components/schemas/ClusterStatistics'
-        fields:
-          type: object
-          additionalProperties: true
         num_reduce_phases:
           type: integer
           format: int32

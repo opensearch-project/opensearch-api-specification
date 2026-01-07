@@ -41,6 +41,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -64,6 +65,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -720,6 +722,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -784,6 +787,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -1086,6 +1090,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -1110,6 +1115,7 @@ paths:
         - $ref: '#/components/parameters/bulk::query._source'
         - $ref: '#/components/parameters/bulk::query._source_excludes'
         - $ref: '#/components/parameters/bulk::query._source_includes'
+        - $ref: '#/components/parameters/bulk::query.index'
         - $ref: '#/components/parameters/bulk::query.pipeline'
         - $ref: '#/components/parameters/bulk::query.refresh'
         - $ref: '#/components/parameters/bulk::query.require_alias'
@@ -1829,6 +1835,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -1894,6 +1901,7 @@ paths:
         - $ref: '#/components/parameters/search::query.ignore_throttled'
         - $ref: '#/components/parameters/search::query.ignore_unavailable'
         - $ref: '#/components/parameters/search::query.include_named_queries_score'
+        - $ref: '#/components/parameters/search::query.index'
         - $ref: '#/components/parameters/search::query.lenient'
         - $ref: '#/components/parameters/search::query.max_concurrent_shard_requests'
         - $ref: '#/components/parameters/search::query.phase_took'
@@ -2289,10 +2297,15 @@ components:
           schema:
             type: array
             items:
+              title: BulkRequestBody
               anyOf:
                 - $ref: '../schemas/_core.bulk.yaml#/components/schemas/OperationContainer'
+                  x-protobuf-required: true
                 - $ref: '../schemas/_core.bulk.yaml#/components/schemas/UpdateAction'
                 - type: object
+                  additionalProperties: true
+                  x-protobuf-type: bytes
+                  title: object
             description: The operation definition and data (action-data pairs), separated by newlines
       required: true
     bulk_stream:
@@ -2554,6 +2567,7 @@ components:
         application/json:
           schema:
             type: object
+            title: SearchRequestBody
             properties:
               aggregations:
                 description: Defines the aggregations that are run as part of the search request.
@@ -2614,6 +2628,12 @@ components:
                   Set to `true` to return detailed timing information about the execution of individual components in a search request.
                   NOTE: This is a debugging tool and adds significant overhead to search execution.
                 type: boolean
+              search_pipeline:
+                description: Customizable sequence of processing stages applied to search queries.
+                type: string
+              verbose_pipeline:
+                description: Enables or disables verbose mode for the search pipeline.
+                type: boolean
               query:
                 $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/QueryContainer'
               rescore:
@@ -2673,6 +2693,9 @@ components:
               track_scores:
                 description: If `true`, calculate and return document scores, even if the scores are not used for sorting.
                 type: boolean
+              include_named_queries_score:
+                description: Whether to return scores with named queries. Default is false.
+                type: boolean
               version:
                 description: If `true`, returns document version as part of a hit.
                 type: boolean
@@ -2691,6 +2714,11 @@ components:
                 type: array
                 items:
                   type: string
+              derived:
+                type: object
+                x-version-added: '2.14'
+                additionalProperties:
+                  $ref: '../schemas/_common.yaml#/components/schemas/DerivedField'
             description: The search definition using the Query DSL
     search_template:
       content:
@@ -2793,12 +2821,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.bulk.yaml#/components/schemas/BulkResponseBase'
+            $ref: '../schemas/_core.bulk.yaml#/components/schemas/BulkResponse'
     bulk_stream@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_core.bulk.yaml#/components/schemas/BulkResponseBase'
+            $ref: '../schemas/_core.bulk.yaml#/components/schemas/BulkResponse'
     clear_scroll@200:
       content:
         application/json:
@@ -3309,6 +3337,14 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
       style: simple
+      x-protobuf-excluded: true
+    bulk::query.index:
+      in: query
+      name: index
+      description: Name of the data stream, index, or index alias to perform bulk actions on.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: form
     bulk::query._source:
       in: query
       name: _source
@@ -5069,8 +5105,8 @@ components:
       in: query
       name: preference
       description: |-
-        Specifies the node or shard on which the operation should be performed. 
-        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options. 
+        Specifies the node or shard on which the operation should be performed.
+        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options.
         By default the requests are routed randomly to available shard copies (primary or replica), with no guarantee of consistency across repeated queries.
       schema:
         type: string
@@ -5349,6 +5385,17 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
       style: simple
+      x-protobuf-excluded: true
+    search::query.index:
+      in: query
+      name: index
+      description: |-
+        A comma-separated list of data streams, indexes, and aliases to search.
+        Supports wildcards (`*`).
+        To search all data streams and indexes, omit this parameter or use `*` or `_all`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: form
     search::query._source:
       in: query
       name: _source
@@ -5420,6 +5467,7 @@ components:
       schema:
         type: string
       style: form
+      x-protobuf-excluded: true
     search::query.batched_reduce_size:
       in: query
       name: batched_reduce_size
@@ -5481,6 +5529,7 @@ components:
       schema:
         type: boolean
       style: form
+      x-protobuf-excluded: true
     search::query.from:
       in: query
       name: from
@@ -5494,6 +5543,7 @@ components:
         format: int32
         default: 0
       style: form
+      x-protobuf-excluded: true
     search::query.ignore_throttled:
       in: query
       name: ignore_throttled
@@ -5516,6 +5566,7 @@ components:
         type: boolean
         default: false
         description: Indicates whether `hit.matched_queries` should be rendered as a map that includes the name of the matched query associated with its score (true) or as an array containing the name of the matched queries (false)
+      x-protobuf-excluded: true
     search::query.lenient:
       in: query
       name: lenient
@@ -5525,6 +5576,7 @@ components:
       schema:
         type: boolean
       style: form
+      x-protobuf-excluded: true
     search::query.max_concurrent_shard_requests:
       in: query
       name: max_concurrent_shard_requests
@@ -5592,6 +5644,7 @@ components:
         type: boolean
         default: false
       style: form
+      x-protobuf-name: total_hits_as_int
     search::query.routing:
       in: query
       name: routing
@@ -5625,6 +5678,7 @@ components:
       schema:
         type: string
         description: Customizable sequence of processing stages applied to search queries.
+      x-protobuf-excluded: true
     search::query.search_type:
       in: query
       name: search_type
@@ -5639,6 +5693,7 @@ components:
       schema:
         type: boolean
       style: form
+      x-protobuf-excluded: true
     search::query.size:
       in: query
       name: size
@@ -5651,6 +5706,7 @@ components:
         format: int32
         default: 10
       style: form
+      x-protobuf-excluded: true
     search::query.sort:
       in: query
       name: sort
@@ -5658,6 +5714,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/StringOrStringArray'
       style: form
+      x-protobuf-excluded: true
     search::query.stats:
       in: query
       name: stats
@@ -5667,6 +5724,7 @@ components:
         items:
           type: string
       style: form
+      x-protobuf-excluded: true
     search::query.stored_fields:
       in: query
       name: stored_fields
@@ -5678,6 +5736,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Fields'
       style: form
+      x-protobuf-excluded: true
     search::query.suggest_field:
       in: query
       name: suggest_field
@@ -5729,6 +5788,7 @@ components:
         type: integer
         format: int32
       style: form
+      x-protobuf-excluded: true
     search::query.timeout:
       in: query
       name: timeout
@@ -5738,6 +5798,7 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
+      x-protobuf-excluded: true
     search::query.track_scores:
       in: query
       name: track_scores
@@ -5745,6 +5806,7 @@ components:
       schema:
         type: boolean
       style: form
+      x-protobuf-excluded: true
     search::query.track_total_hits:
       in: query
       name: track_total_hits
@@ -5755,6 +5817,7 @@ components:
       schema:
         $ref: '../schemas/_core.search.yaml#/components/schemas/TrackHits'
       style: form
+      x-protobuf-excluded: true
     search::query.typed_keys:
       in: query
       name: typed_keys
@@ -5766,7 +5829,7 @@ components:
       x-version-added: '3.0'
       in: query
       name: verbose_pipeline
-      description: |- 
+      description: |-
         Enables or disables verbose mode for the search pipeline.
         When verbose mode is enabled, detailed information about each processor
         in the search pipeline is included in the search response. This includes
@@ -5776,6 +5839,7 @@ components:
       schema:
         type: boolean
       style: form
+      x-protobuf-excluded: true
     search::query.version:
       in: query
       name: version
@@ -5783,6 +5847,7 @@ components:
       schema:
         type: boolean
       style: form
+      x-protobuf-excluded: true
     search::query.phase_took:
       name: phase_took
       in: query
@@ -6040,8 +6105,8 @@ components:
       in: query
       name: preference
       description: |-
-        Specifies the node or shard on which the operation should be performed. 
-        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options. 
+        Specifies the node or shard on which the operation should be performed.
+        See [preference query parameter]({{site.url}}{{site.baseurl}}/api-reference/search-apis/search/#the-preference-query-parameter) for a list of available options.
         By default the requests are routed randomly to available shard copies (primary or replica), with no guarantee of consistency across repeated queries.
       schema:
         type: string
