@@ -266,6 +266,19 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.predict_model@200'
+  /_plugins/_ml/models/{model_id}/_predict/stream:
+    post:
+      operationId: ml.predict_model_stream.0
+      x-operation-group: ml.predict_model_stream
+      x-version-added: '3.3'
+      description: Predicts a model in streaming mode.
+      parameters:
+        - $ref: '#/components/parameters/ml.predict_model_stream::path.model_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.predict_model_stream'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.predict_model_stream@200'
   /_plugins/_ml/tasks/{task_id}:
     get:
       operationId: ml.get_task.0
@@ -456,6 +469,19 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.execute_agent@200'
+  /_plugins/_ml/agents/{agent_id}/_execute/stream:
+    post:
+      operationId: ml.execute_agent_stream.0
+      x-operation-group: ml.execute_agent_stream
+      x-version-added: '3.3'
+      description: Execute an agent in streaming mode.
+      parameters:
+        - $ref: '#/components/parameters/ml.execute_agent_stream::path.agent_id'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.execute_agent_stream'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.execute_agent_stream@200'
   /_plugins/_ml/agents/{agent_id}:
     get:
       operationId: ml.get_agent.0
@@ -1327,6 +1353,16 @@ components:
                 description: The text documents.
             required:
               - text_docs
+    ml.predict_model_stream:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
+            required:
+              - parameters
     ml.search_tasks:
       content:
         application/json:
@@ -1518,6 +1554,16 @@ components:
               parameters.verbose:
                 type: boolean
                 description: Whether to provide verbose output.
+            required:
+              - parameters
+    ml.execute_agent_stream:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
             required:
               - parameters
     ml.search_agents:
@@ -2006,6 +2052,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/PredictModelResponse'
+    ml.predict_model_stream@200:
+      content:
+        text/event-stream:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictResponse'
     ml.delete_model@200:
       content:
         application/json:
@@ -2095,6 +2146,11 @@ components:
     ml.execute_agent@200:
       content:
         application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/PredictResponse'
+    ml.execute_agent_stream@200:
+      content:
+        text/event-stream:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/PredictResponse'
     ml.get_agent@200:
@@ -2456,6 +2512,12 @@ components:
       required: true
       schema:
         type: string
+    ml.predict_model_stream::path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.chunk_model::path.chunk_number:
       name: chunk_number
       in: path
@@ -2531,6 +2593,12 @@ components:
       schema:
         type: string
     ml.execute_agent::path.agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.execute_agent_stream::path.agent_id:
       name: agent_id
       in: path
       required: true
