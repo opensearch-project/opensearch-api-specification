@@ -5766,6 +5766,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.execute_agent___200'
+  /_plugins/_ml/agents/{agent_id}/_execute/stream:
+    post:
+      operationId: ml.execute_agent_stream.0
+      x-operation-group: ml.execute_agent_stream
+      x-version-added: '3.3'
+      description: Execute an agent in streaming mode.
+      parameters:
+        - $ref: '#/components/parameters/ml.execute_agent_stream___path.agent_id'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.execute_agent_stream'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.execute_agent_stream___200'
   /_plugins/_ml/connectors/_create:
     post:
       operationId: ml.create_connector.0
@@ -6707,6 +6725,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.predict_model___200'
+  /_plugins/_ml/models/{model_id}/_predict/stream:
+    post:
+      operationId: ml.predict_model_stream.0
+      x-operation-group: ml.predict_model_stream
+      x-version-added: '3.3'
+      description: Predicts a model in streaming mode.
+      parameters:
+        - $ref: '#/components/parameters/ml.predict_model_stream___path.model_id'
+        - $ref: '#/components/parameters/_global___query.pretty'
+        - $ref: '#/components/parameters/_global___query.human'
+        - $ref: '#/components/parameters/_global___query.error_trace'
+        - $ref: '#/components/parameters/_global___query.source'
+        - $ref: '#/components/parameters/_global___query.filter_path'
+      requestBody:
+        $ref: '#/components/requestBodies/ml.predict_model_stream'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.predict_model_stream___200'
   /_plugins/_ml/models/{model_id}/_undeploy:
     post:
       operationId: ml.undeploy_model.0
@@ -26375,6 +26411,12 @@ components:
       required: true
       schema:
         type: string
+    ml.execute_agent_stream___path.agent_id:
+      name: agent_id
+      in: path
+      required: true
+      schema:
+        type: string
     ml.execute_agent___path.agent_id:
       name: agent_id
       in: path
@@ -26556,6 +26598,12 @@ components:
       schema:
         $ref: '#/components/schemas/ml._common___ToolName'
     ml.load_model___path.model_id:
+      name: model_id
+      in: path
+      required: true
+      schema:
+        type: string
+    ml.predict_model_stream___path.model_id:
       name: model_id
       in: path
       required: true
@@ -31639,6 +31687,16 @@ components:
                 description: Whether to provide verbose output.
             required:
               - parameters
+    ml.execute_agent_stream:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '#/components/schemas/ml._common___Parameters'
+            required:
+              - parameters
     ml.execute_algorithm:
       content:
         application/json:
@@ -31756,6 +31814,16 @@ components:
                 description: The text documents.
             required:
               - text_docs
+    ml.predict_model_stream:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              parameters:
+                $ref: '#/components/schemas/ml._common___Parameters'
+            required:
+              - parameters
     ml.register_agents:
       content:
         application/json:
@@ -36060,6 +36128,12 @@ components:
               - status
               - task_id
       description: ''
+    ml.execute_agent_stream___200:
+      content:
+        text/event-stream:
+          schema:
+            $ref: '#/components/schemas/ml._common___PredictResponse'
+      description: ''
     ml.execute_agent___200:
       content:
         application/json:
@@ -36249,6 +36323,12 @@ components:
               - status
               - task_id
               - task_type
+      description: ''
+    ml.predict_model_stream___200:
+      content:
+        text/event-stream:
+          schema:
+            $ref: '#/components/schemas/ml._common___PredictResponse'
       description: ''
     ml.predict_model___200:
       content:
@@ -62440,6 +62520,15 @@ components:
         session_token:
           type: string
       additionalProperties: true
+    ml._common___DataAsMap:
+      type: object
+      properties:
+        content:
+          type: string
+          description: The streaming content chunk.
+        is_last:
+          type: boolean
+          description: Whether this is the last chunk.
     ml._common___DeleteAgenticMemoryResponse:
       type: object
       properties:
@@ -63325,6 +63414,8 @@ components:
         result:
           type: string
           description: The output result.
+        dataAsMap:
+          $ref: '#/components/schemas/ml._common___DataAsMap'
     ml._common___Owner:
       type: object
       properties:
