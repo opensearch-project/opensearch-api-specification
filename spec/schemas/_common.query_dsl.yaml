@@ -150,8 +150,6 @@ components:
           $ref: '#/components/schemas/ParentIdQuery'
         percolate:
           $ref: '#/components/schemas/PercolateQuery'
-        pinned:
-          $ref: '#/components/schemas/PinnedQuery'
         prefix:
           description: Returns documents that contain a specific prefix in a provided field.
           type: object
@@ -218,6 +216,7 @@ components:
           description: Return documents using a template query contains placeholders that are resolved by search request processors during query execution.
           type: object
           additionalProperties: true
+          x-protobuf-excluded: true
         term:
           description: |-
             Returns documents that contain an exact term in a provided field.
@@ -546,7 +545,7 @@ components:
         - min
         - sum
     DecayPlacement:
-      anyOf:
+      oneOf:
         - $ref: '#/components/schemas/DateDecayPlacement'
         - $ref: '#/components/schemas/GeoDecayPlacement'
         - $ref: '#/components/schemas/NumericDecayPlacement'
@@ -562,6 +561,8 @@ components:
           $ref: '_common.yaml#/components/schemas/DateTime'
         scale:
           $ref: '_common.yaml#/components/schemas/Duration'
+      required:
+        - scale
     GeoDecayPlacement:
       type: object
       properties:
@@ -574,6 +575,9 @@ components:
           $ref: '_common.yaml#/components/schemas/GeoLocation'
         scale:
           $ref: '_common.yaml#/components/schemas/Distance'
+      required:
+        - origin
+        - scale
     NumericDecayPlacement:
       type: object
       properties:
@@ -589,6 +593,9 @@ components:
         scale:
           type: number
           format: double
+      required:
+        - origin
+        - scale
     FieldValueFactorScoreFunction:
       type: object
       properties:
@@ -630,6 +637,8 @@ components:
           oneOf:
             - type: integer
               format: int32
+            - type: integer
+              format: int64
             - type: string
     ScriptScoreFunction:
       type: object
@@ -723,6 +732,9 @@ components:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
               $ref: '#/components/schemas/IgnoreUnmapped'
+            unit:
+              description: The unit of distance measurement.
+              $ref: '_common.yaml#/components/schemas/DistanceUnit'
           propertyNames:
             title: field
             type: string
@@ -831,8 +843,6 @@ components:
             format:
               description: Format in which the values are returned.
               type: string
-            include_unmapped:
-              type: boolean
           required:
             - field
     ChildScoreMode:
@@ -877,6 +887,9 @@ components:
             pagination_depth:
               type: integer
               format: int32
+            filter:
+              $ref: '#/components/schemas/QueryContainer'
+              x-version-added: '3.0'
     IdsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1118,7 +1131,7 @@ components:
                   description: If `true`, match phrase queries are automatically created for multi-term synonyms.
                   type: boolean
                 cutoff_frequency:
-                  deprecated: true
+                  x-version-deprecated: '2.0'
                   type: number
                   format: float
                 fuzziness:
@@ -1390,7 +1403,7 @@ components:
               description: If `true`, match phrase queries are automatically created for multi-term synonyms.
               type: boolean
             cutoff_frequency:
-              deprecated: true
+              x-version-deprecated: '2.0'
               type: number
               format: float
             fields:
@@ -1527,44 +1540,6 @@ components:
               $ref: '_common.yaml#/components/schemas/VersionNumber'
           required:
             - field
-    PinnedQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - allOf:
-            - type: object
-              properties:
-                organic:
-                  $ref: '#/components/schemas/QueryContainer'
-              required:
-                - organic
-            - type: object
-              properties:
-                ids:
-                  description: |-
-                    Document IDs listed in the order they are to appear in results.
-                    Required if `docs` is not specified.
-                  type: array
-                  items:
-                    $ref: '_common.yaml#/components/schemas/Id'
-                docs:
-                  description: |-
-                    Documents listed in the order they are to appear in results.
-                    Required if `ids` is not specified.
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PinnedDoc'
-              minProperties: 1
-              maxProperties: 1
-    PinnedDoc:
-      type: object
-      properties:
-        _id:
-          $ref: '_common.yaml#/components/schemas/Id'
-        _index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-      required:
-        - _id
-        - _index
     PrefixQuery:
       oneOf:
         - title: value
@@ -1698,6 +1673,12 @@ components:
               $ref: '_common.yaml#/components/schemas/DateFormat'
             time_zone:
               $ref: '_common.yaml#/components/schemas/TimeZone'
+            include_lower:
+              description: Include the lower bound
+              type: boolean
+            include_upper:
+              description: Include the upper bound
+              type: boolean
     NumberRangeQuery:
       allOf:
         - $ref: '#/components/schemas/RangeQueryBase'
@@ -1731,6 +1712,12 @@ components:
                   format: double
                 - type: string
                 - type: 'null'
+            include_lower:
+              description: Include the lower bound
+              type: boolean
+            include_upper:
+              description: Include the upper bound
+              type: boolean
     RangeQueryBase:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -2121,23 +2108,24 @@ components:
         - bitmap
         - default
     TermsQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            _name: {}
-            boost: {}
-            value_type:
-              description: |-
-                Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
-              $ref: '#/components/schemas/TermsQueryValueType'
-          propertyNames:
-            title: field
-            type: string
-          additionalProperties:
-            title: terms
-            $ref: '#/components/schemas/TermsQueryField'
-          minProperties: 1
+      type: object
+      properties:
+        _name:
+          type: string
+        boost:
+          type: number
+          format: float
+        value_type:
+          description: |-
+            Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
+          $ref: '#/components/schemas/TermsQueryValueType'
+      propertyNames:
+        title: field
+        type: string
+      additionalProperties:
+        title: terms
+        $ref: '#/components/schemas/TermsQueryField'
+      minProperties: 1
     TermsQueryField:
       oneOf:
         - title: value
