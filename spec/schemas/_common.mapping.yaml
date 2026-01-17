@@ -13,6 +13,11 @@ components:
           $ref: '#/components/schemas/AllField'
         date_detection:
           type: boolean
+        derived:
+          x-version-added: '2.15'
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DerivedMapping'
         dynamic:
           $ref: '#/components/schemas/DynamicMapping'
         dynamic_date_formats:
@@ -81,6 +86,48 @@ components:
         - store_term_vector_payloads
         - store_term_vector_positions
         - store_term_vectors
+    DerivedMapping:
+      x-version-added: '2.15'
+      type: object
+      required:
+        - type
+        - script
+      properties:
+        script:
+          $ref: '_common.yaml#/components/schemas/Script'
+        format:
+          $ref: '#/components/schemas/DerivedMappingFormat'
+        type:
+          $ref: '#/components/schemas/DerivedMappingType'
+        ignore_malformed:
+          type: boolean
+        prefilter_field:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: object
+    DerivedMappingFormat:
+      x-version-added: '2.15'
+      type: string
+      enum:
+        - strict_date_time_no_millis
+        - strict_date_optional_time
+        - epoch_millis
+    DerivedMappingType:
+      x-version-added: '2.15'
+      type: string
+      enum:
+        - boolean
+        - date
+        - geo_point
+        - ip
+        - keyword
+        - text
+        - long
+        - double
+        - float
+        - object
     DynamicMapping:
       oneOf:
         - type: string
