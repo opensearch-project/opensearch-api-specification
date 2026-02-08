@@ -34,3 +34,18 @@ chapters:
         - {query: {match: {title: To Kill a Mockingbird}}}
         - {index: books}
         - {query: {match: {title: The Cruise}}}
+  - synopsis: Perform a `_msearch` request to execute multiple search queries in a single call (derived).
+    version: '>= 2.15'
+    path: /{index}/_msearch
+    method:
+      - GET
+      - POST
+    parameters:
+      index: books
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: books}
+        - {query: {match: {title: To Kill a Mockingbird}}, derived: {onex: {type: text, script: {source: "emit('1')"}}, fields: [onex]}}
+        - {index: books}
+        - {query: {match: {title: The Cruise}}}

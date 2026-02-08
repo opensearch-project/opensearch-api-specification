@@ -11,12 +11,43 @@ epilogues:
 chapters:
   - synopsis: Create an index named `books` with mappings and settings.
     path: /{index}
+    version: < 2.15
     method: PUT
     parameters:
       index: books
     request:
       payload:
         mappings:
+          properties:
+            name:
+              type: keyword
+            age:
+              type: integer
+        settings:
+          number_of_shards: 5
+          number_of_replicas: 2
+    response:
+      status: 200
+
+  - synopsis: Create an index named `books` with derived mappings and settings.
+    path: /{index}
+    version: '>= 2.15'
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload:
+        mappings:
+          derived:
+            inlineDerived:
+              type: text
+              script:
+                lang: painless
+                source: emit('one')
+            storedDerived:
+              type: text
+              script:
+                id: script-id
           properties:
             name:
               type: keyword
