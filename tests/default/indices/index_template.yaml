@@ -47,6 +47,30 @@ chapters:
                 type: double
     response:
       status: 200
+  - synopsis: Update index with derived fields.
+    version: '>= 2.15'
+    path: /_index_template/{name}
+    method: PUT
+    parameters:
+      name: daily_logs
+    request:
+      payload:
+        index_patterns:
+          - 'logs*'
+        template:
+          mappings:
+            derived:
+              inlineDerived:
+                type: text
+                script:
+                  lang: painless
+                  source: emit('one')
+              storedDerived:
+                type: text
+                script:
+                  id: script-id
+    response:
+      status: 200
   - synopsis: Retrieve all index templates.
     path: /_index_template
     method: GET
