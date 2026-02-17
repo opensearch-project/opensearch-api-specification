@@ -36,6 +36,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Split proto check and comment into separate workflows and addressing "Not Found" errors for posting proto compatibility reports.([#1023](https://github.com/opensearch-project/opensearch-api-specification/pull/1023)),([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1028](https://github.com/opensearch-project/opensearch-api-specification/pull/1028))
 - Add new 3.3 ML APIs ([#1010](https://github.com/opensearch-project/opensearch-api-specification/pull/1010))
 - Add new ML stream APIs ([#1031](https://github.com/opensearch-project/opensearch-api-specification/pull/1031))
+- Add support of BinaryFieldValues for gRPC non-source primitive array indexing
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
