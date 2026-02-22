@@ -1847,6 +1847,13 @@ components:
               $ref: '_common.yaml#/components/schemas/FieldValue'
             script:
               $ref: '_common.yaml#/components/schemas/Script'
+            time_zone:
+              type: string
+            value_type:
+              $ref: '#/components/schemas/ValueType'
+          anyOf:
+            - required: [field]
+            - required: [script]
     AverageBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2018,17 +2025,25 @@ components:
         - last
     ValueType:
       type: string
+      description: |-
+        The data type for a field. The server's lenientParse accepts multiple representations
+        for the same underlying type (e.g., byte/short/integer/long all map to long).
       enum:
         - boolean
+        - byte
         - date
-        - date_nanos
         - double
+        - float
         - geo_point
+        - integer
         - ip
         - long
         - number
         - numeric
+        - range
+        - short
         - string
+        - unsigned_long
     CompositeHistogramAggregationSource:
       allOf:
         - $ref: '#/components/schemas/CompositeValuesSource'
@@ -3205,7 +3220,7 @@ components:
             min_doc_count:
               description: Only return values that are found in more than `min_doc_count` hits.
               type: integer
-              format: int32
+              format: int64
             missing:
               $ref: '_common.yaml#/components/schemas/FieldValue'
             value_type:
@@ -3224,7 +3239,7 @@ components:
             shard_min_doc_count:
               description: The minimum number of documents in a bucket on each shard for it to be returned.
               type: integer
-              format: int32
+              format: int64
             show_term_doc_count_error:
               description: Set to `true` to return the `doc_count_error_upper_bound`, which is an upper bound to the error on the `doc_count` returned by each shard.
               type: boolean
@@ -3234,6 +3249,9 @@ components:
               format: int32
             format:
               type: string
+          anyOf:
+            - required: [field]
+            - required: [script]
     TopHitsAggregation:
       allOf:
         - $ref: '#/components/schemas/MetricAggregationBase'
