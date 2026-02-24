@@ -1,6 +1,6 @@
 $schema: ../../../../../json_schemas/test_story.schema.yaml
 
-description: Test max aggregation with value_type parameter (ValueType enum).
+description: Test max aggregation with value_type parameter for script outputs.
 warnings:
   invalid-path-detected: false
 prologues:
@@ -12,13 +12,13 @@ prologues:
       content_type: application/x-ndjson
       payload:
         - {create: {_index: products}}
-        - {price: '100.50', category: electronics}
+        - {price: 100.5, category: electronics}
         - {create: {_index: products}}
-        - {price: '50.25', category: books}
+        - {price: 50.25, category: books}
         - {create: {_index: products}}
-        - {price: '75.00', category: electronics}
+        - {price: 75, category: electronics}
 chapters:
-  - synopsis: Aggregate with max using value_type to coerce string field to numeric.
+  - synopsis: Aggregate with max using value_type double on script output.
     path: /{index}/_search
     parameters:
       index: products
@@ -29,16 +29,17 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: double
     response:
       status: 200
       payload:
         aggregations:
           max_price:
-            value: 100.50
+            value: 100.5
 
-  - synopsis: Aggregate with max using value_type long.
+  - synopsis: Aggregate with max using value_type long on script output.
     path: /{index}/_search
     parameters:
       index: products
@@ -49,12 +50,17 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: long
     response:
       status: 200
+      payload:
+        aggregations:
+          max_price:
+            value: 100.5
 
-  - synopsis: Aggregate with max using value_type integer.
+  - synopsis: Aggregate with max using value_type integer on script output.
     path: /{index}/_search
     parameters:
       index: products
@@ -65,12 +71,17 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: integer
     response:
       status: 200
+      payload:
+        aggregations:
+          max_price:
+            value: 100.5
 
-  - synopsis: Aggregate with max using value_type byte (alias that maps to long).
+  - synopsis: Aggregate with max using value_type byte on script output.
     path: /{index}/_search
     parameters:
       index: products
@@ -81,12 +92,17 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: byte
     response:
       status: 200
+      payload:
+        aggregations:
+          max_price:
+            value: 100.5
 
-  - synopsis: Aggregate with max using value_type short (alias that maps to long).
+  - synopsis: Aggregate with max using value_type short on script output.
     path: /{index}/_search
     parameters:
       index: products
@@ -97,12 +113,18 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: short
     response:
       status: 200
+      payload:
+        aggregations:
+          max_price:
+            value: 100.5
 
-  - synopsis: Aggregate with max using value_type unsigned_long.
+  - synopsis: Aggregate with max using value_type unsigned_long on script output.
+    version: '>2.0.0'
     path: /{index}/_search
     parameters:
       index: products
@@ -113,12 +135,17 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: unsigned_long
     response:
       status: 200
+      payload:
+        aggregations:
+          max_price:
+            value: 100.5
 
-  - synopsis: Aggregate with max using value_type float.
+  - synopsis: Aggregate with max using value_type float on script output.
     path: /{index}/_search
     parameters:
       index: products
@@ -129,10 +156,15 @@ chapters:
         aggs:
           max_price:
             max:
-              field: price
+              script:
+                source: doc['price'].value
               value_type: float
     response:
       status: 200
+      payload:
+        aggregations:
+          max_price:
+            value: 100.5
 epilogues:
   - path: /products
     method: DELETE
