@@ -52,7 +52,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
 - Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
 - Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
-- Fixed aggregation specifications: added missing `time_zone` and `value_type` fields to `MinAggregation`, corrected `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`), changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64, and added proper field/script requirements to `MinAggregation` and `TermsAggregation`
+- Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056)) 
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))

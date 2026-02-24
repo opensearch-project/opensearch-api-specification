@@ -1841,19 +1841,17 @@ components:
         - $ref: '#/components/schemas/Aggregation'
         - type: object
           properties:
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
             missing:
               $ref: '_common.yaml#/components/schemas/FieldValue'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            time_zone:
-              type: string
-            value_type:
-              $ref: '#/components/schemas/ValueType'
-          anyOf:
-            - required: [field]
-            - required: [script]
+        - anyOf:
+            - type: object
+              properties:
+                field:
+                  $ref: '_common.yaml#/components/schemas/Field'
+            - type: object
+              properties:
+                script:
+                  $ref: '_common.yaml#/components/schemas/Script'
     AverageBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2026,8 +2024,8 @@ components:
     ValueType:
       type: string
       description: |-
-        The data type for a field. The server's lenientParse accepts multiple representations
-        for the same underlying type (e.g., byte/short/integer/long all map to long).
+        The data type for a field. The server's `lenientParse` accepts multiple representations
+        for the same underlying type (for example, byte/short/integer/long all map to long).
       enum:
         - boolean
         - byte
@@ -2588,6 +2586,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
         - type: object
+          properties:
+            value_type:
+              $ref: '#/components/schemas/ValueType'
     MaxBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2605,6 +2606,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
         - type: object
+          properties:
+            value_type:
+              $ref: '#/components/schemas/ValueType'
     MinBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -3213,8 +3217,6 @@ components:
               $ref: '#/components/schemas/TermsExclude'
             execution_hint:
               $ref: '#/components/schemas/TermsAggregationExecutionHint'
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
             include:
               $ref: '#/components/schemas/TermsInclude'
             min_doc_count:
@@ -3228,8 +3230,6 @@ components:
               type: string
             order:
               $ref: '#/components/schemas/AggregateOrder'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
             shard_size:
               description: |-
                 The number of candidate terms produced by each shard.
@@ -3249,9 +3249,15 @@ components:
               format: int32
             format:
               type: string
-          anyOf:
-            - required: [field]
-            - required: [script]
+        - anyOf:
+            - type: object
+              properties:
+                field:
+                  $ref: '_common.yaml#/components/schemas/Field'
+            - type: object
+              properties:
+                script:
+                  $ref: '_common.yaml#/components/schemas/Script'
     TopHitsAggregation:
       allOf:
         - $ref: '#/components/schemas/MetricAggregationBase'

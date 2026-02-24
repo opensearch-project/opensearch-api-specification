@@ -1,0 +1,171 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test min aggregation with value_type parameter (ValueType enum).
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: products}}
+        - {price: '100.50', category: electronics}
+        - {create: {_index: products}}
+        - {price: '50.25', category: books}
+        - {create: {_index: products}}
+        - {price: '75.00', category: electronics}
+chapters:
+  - synopsis: Aggregate with min using value_type to coerce string field to numeric.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: double
+    response:
+      status: 200
+      payload:
+        aggregations:
+          min_price:
+            value: 50.25
+
+  - synopsis: Aggregate with min using value_type long.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: long
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type float.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: float
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type byte (alias that maps to long).
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: byte
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type short (alias that maps to long).
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: short
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type integer (alias that maps to long).
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: integer
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type unsigned_long.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: unsigned_long
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type number.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: number
+    response:
+      status: 200
+
+  - synopsis: Aggregate with min using value_type numeric.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          min_price:
+            min:
+              field: price
+              value_type: numeric
+    response:
+      status: 200
+epilogues:
+  - path: /products
+    method: DELETE
+    status: [200, 404]
