@@ -1421,10 +1421,7 @@ components:
         - variance
     AggregationContainer:
       allOf:
-        - type: object
-          properties:
-            meta:
-              $ref: '_common.yaml#/components/schemas/Metadata'
+        - $ref: '#/components/schemas/Aggregation'
         - type: object
           oneOf:
             - properties:
@@ -1769,24 +1766,40 @@ components:
       allOf:
         - $ref: '#/components/schemas/Aggregation'
         - type: object
-          properties:
-            aggregations:
-              description: Sub-aggregations for this bucket aggregation
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/AggregationContainer'
-            aggs:
-              description: Sub-aggregations for this bucket aggregation
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/AggregationContainer'
+          oneOf:
+            - properties:
+                aggregations:
+                  description: Sub-aggregations for this bucket aggregation
+                  type: object
+                  propertyNames:
+                    title: aggregation_name
+                    description: Sub-aggregation name
+                    type: string
+                  additionalProperties:
+                    title: aggregation_container
+                    $ref: '#/components/schemas/AggregationContainer'
+                  minProperties: 1
+                  maxProperties: 1
+            - properties:
+                aggs:
+                  description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
+                  type: object
+                  x-protobuf-excluded: true
+                  propertyNames:
+                    title: aggregation_name
+                    description: Sub-aggregation name
+                    type: string
+                  additionalProperties:
+                    title: aggregation_container
+                    $ref: '#/components/schemas/AggregationContainer'
+                  minProperties: 1
+                  maxProperties: 1
     Aggregation:
       type: object
       properties:
         meta:
+          description: Custom metadata to associate with the aggregation (optional)
           $ref: '_common.yaml#/components/schemas/Metadata'
-        name:
-          type: string
     AutoDateHistogramAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -2033,13 +2046,11 @@ components:
         - date
         - double
         - float
-        - geo_point
         - integer
         - ip
         - long
         - number
         - numeric
-        - range
         - short
         - string
         - unsigned_long
