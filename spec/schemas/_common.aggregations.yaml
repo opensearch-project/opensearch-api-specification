@@ -1519,11 +1519,13 @@ components:
                   $ref: '#/components/schemas/ExtendedStatsBucketAggregation'
               required: [extended_stats_bucket]
               unevaluatedProperties: true
-            - properties:
-                filter:
-                  $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-              required: [filter]
-              unevaluatedProperties: true
+            - allOf:
+                - $ref: '#/components/schemas/BucketAggregationBase'
+                - type: object
+                  properties:
+                    filter:
+                      $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+                  required: [filter]
               x-protobuf-excluded: true
             - properties:
                 filters:
@@ -1778,6 +1780,7 @@ components:
                   additionalProperties:
                     title: aggregation_container
                     $ref: '#/components/schemas/AggregationContainer'
+              required: [aggregations]
             - properties:
                 aggs:
                   description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
@@ -1790,6 +1793,11 @@ components:
                   additionalProperties:
                     title: aggregation_container
                     $ref: '#/components/schemas/AggregationContainer'
+              required: [aggs]
+            - not:
+                anyOf:
+                  - required: [aggregations]
+                  - required: [aggs]
     Aggregation:
       type: object
       properties:
