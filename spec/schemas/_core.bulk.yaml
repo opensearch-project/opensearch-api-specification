@@ -125,6 +125,81 @@ components:
             new document. If the document exists, the `script` is executed.
           type: object
           x-protobuf-type: bytes
+    FloatBinaryLE:
+      type: object
+      properties:
+        bytes_le:
+          type: string
+          format: byte
+          x-protobuf-type: bytes
+        dimension:
+          $ref: '_common.yaml#/components/schemas/uint'
+          description: Vector dimension
+      required:
+        - bytes_le
+        - dimension
+    FloatList:
+      type: object
+      properties:
+        values:
+          type: array
+          items:
+            type: number
+            format: float
+      required:
+        - values
+    FloatArrayValue:
+      type: object
+      description: Float array value supporting binary or list representation.
+      oneOf:
+        - type: object
+          title: FloatArrayValueBinary
+          properties:
+            binary_le:
+              $ref: '#/components/schemas/FloatBinaryLE'
+              description: fast path (4 * dimension bytes, little-endian)
+          required:
+            - binary_le
+        - type: object
+          title: FloatArrayValueList
+          properties:
+            values:
+              $ref: '#/components/schemas/FloatList'
+              description: simple path, packed array
+          required:
+            - values
+    BytesValue:
+      type: object
+      title: BytesValue
+      properties:
+        bytes:
+          type: string
+          format: byte
+          x-protobuf-type: bytes
+      required:
+        - bytes
+    BinaryFieldValue:
+      title: BinaryFieldValue
+      description: Typed value (oneof).
+      oneOf:
+        - type: object
+          properties:
+            bytes_value:
+              $ref: '#/components/schemas/BytesValue'
+          required:
+            - bytes_value
+        - type: object
+          properties:
+            float_array_value:
+              $ref: '#/components/schemas/FloatArrayValue'
+          required:
+            - float_array_value
+    BinaryFieldValues:
+      title: field_values
+      description: Map of fully-qualified field path -> typed value.
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/BinaryFieldValue'
     BulkResponse:
       type: object
       properties:
