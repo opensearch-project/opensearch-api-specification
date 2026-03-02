@@ -3,6 +3,7 @@
 Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
+- Added specs for Search Relevance Workbench plugin for scheduling endpoints ([#967](https://github.com/opensearch-project/opensearch-api-specification/pull/967))
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
@@ -31,11 +32,18 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#997](https://github.com/opensearch-project/opensearch-api-specification/pull/997))
 - Add all snapshot repository settings for fs repositories
 - Add S3 repository settings for snapshot repositories
+- Add `x-protobuf-excluded` to SearchResult::hits ([#1012](https://github.com/opensearch-project/opensearch-api-specification/pull/1012))
+- Add `x-protobuf-excluded` to QueryContainer::template ([#1013](https://github.com/opensearch-project/opensearch-api-specification/pull/1013))
+- Add proto compatibility check workflow for PRs and post-deployment ([#1020](https://github.com/opensearch-project/opensearch-api-specification/pull/1020))
+- Split proto check and comment into separate workflows and addressing "Not Found" errors for posting proto compatibility reports.([#1023](https://github.com/opensearch-project/opensearch-api-specification/pull/1023)),([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1028](https://github.com/opensearch-project/opensearch-api-specification/pull/1028))
+- Add new 3.3 ML APIs ([#1010](https://github.com/opensearch-project/opensearch-api-specification/pull/1010))
+- Add new ML stream APIs ([#1031](https://github.com/opensearch-project/opensearch-api-specification/pull/1031))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
-- Remove `force` from `VersionType` ([#949](https://github.com/opensearch-project/opensearch-api-specification/pull/949))
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
+- Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
+- Remove `fields` from `SearchResult` ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
@@ -44,6 +52,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed the type of `param` in pull-based ingestion's `ingestion_source` to take in Object for value instead of string ([#945](https://github.com/opensearch-project/opensearch-api-specification/pull/945))
 - Fixed fields in `TermsAggregation`, `CardinalityExecutionMode` ([#982](https://github.com/opensearch-project/opensearch-api-specification/pull/982))
 - Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
+- Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
+- Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
+- Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056)) 
+- Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
@@ -136,6 +148,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `GET _plugins/geospatial/_upload/stats`, `PUT`, `POST _plugins/geospatial/geojson/_upload`, `GET _plugins/geospatial/ip2geo/datasource`, `GET`, `PUT`, `DELETE _plugins/geospatial/ip2geo/datasource/{name}` and `PUT _plugins/geospatial/ip2geo/datasource/{name}/_settings` ([#893](https://github.com/opensearch-project/opensearch-api-specification/pull/893))
 - Added schemas for the score ranker search processor ([#899](https://github.com/opensearch-project/opensearch-api-specification/pull/899))
 - Added default values for `shard_stores` parameters ([#928](https://github.com/opensearch-project/opensearch-api-specification/pull/928))
+- Added `ShardSearchFailure` for Search API ([#1040](https://github.com/opensearch-project/opensearch-api-specification/pull/1040))
 
 ### Removed
 

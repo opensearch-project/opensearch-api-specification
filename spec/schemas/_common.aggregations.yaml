@@ -1527,6 +1527,7 @@ components:
                   $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
               required: [filter]
               unevaluatedProperties: true
+              x-protobuf-excluded: true
             - properties:
                 filters:
                   $ref: '#/components/schemas/FiltersAggregation'
@@ -1841,12 +1842,17 @@ components:
         - $ref: '#/components/schemas/Aggregation'
         - type: object
           properties:
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
             missing:
               $ref: '_common.yaml#/components/schemas/FieldValue'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
+        - anyOf:
+            - type: object
+              properties:
+                field:
+                  $ref: '_common.yaml#/components/schemas/Field'
+            - type: object
+              properties:
+                script:
+                  $ref: '_common.yaml#/components/schemas/Script'
     AverageBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2018,17 +2024,25 @@ components:
         - last
     ValueType:
       type: string
+      description: |-
+        The data type for a field. The server's `lenientParse` accepts multiple representations
+        for the same underlying type (for example, byte/short/integer/long all map to long).
       enum:
         - boolean
+        - byte
         - date
-        - date_nanos
         - double
+        - float
         - geo_point
+        - integer
         - ip
         - long
         - number
         - numeric
+        - range
+        - short
         - string
+        - unsigned_long
     CompositeHistogramAggregationSource:
       allOf:
         - $ref: '#/components/schemas/CompositeValuesSource'
@@ -2573,6 +2587,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
         - type: object
+          properties:
+            value_type:
+              $ref: '#/components/schemas/ValueType'
     MaxBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -2590,6 +2607,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
         - type: object
+          properties:
+            value_type:
+              $ref: '#/components/schemas/ValueType'
     MinBucketAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
@@ -3198,23 +3218,20 @@ components:
               $ref: '#/components/schemas/TermsExclude'
             execution_hint:
               $ref: '#/components/schemas/TermsAggregationExecutionHint'
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
             include:
               $ref: '#/components/schemas/TermsInclude'
             min_doc_count:
               description: Only return values that are found in more than `min_doc_count` hits.
               type: integer
-              format: int32
+              format: int64
             missing:
               $ref: '_common.yaml#/components/schemas/FieldValue'
             value_type:
               description: Coerced unmapped fields into the specified type.
-              type: string
+              $ref: '#/components/schemas/ValueType'
             order:
               $ref: '#/components/schemas/AggregateOrder'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
+              x-protobuf-excluded: true
             shard_size:
               description: |-
                 The number of candidate terms produced by each shard.
@@ -3224,7 +3241,7 @@ components:
             shard_min_doc_count:
               description: The minimum number of documents in a bucket on each shard for it to be returned.
               type: integer
-              format: int32
+              format: int64
             show_term_doc_count_error:
               description: Set to `true` to return the `doc_count_error_upper_bound`, which is an upper bound to the error on the `doc_count` returned by each shard.
               type: boolean
@@ -3234,6 +3251,15 @@ components:
               format: int32
             format:
               type: string
+        - anyOf:
+            - type: object
+              properties:
+                field:
+                  $ref: '_common.yaml#/components/schemas/Field'
+            - type: object
+              properties:
+                script:
+                  $ref: '_common.yaml#/components/schemas/Script'
     TopHitsAggregation:
       allOf:
         - $ref: '#/components/schemas/MetricAggregationBase'

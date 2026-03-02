@@ -94,9 +94,19 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/InnerHitsResult'
         matched_queries:
-          type: array
-          items:
-            type: string
+          description: The names of queries that matched the document. When `include_named_queries_score` is false (default), returns an array of query names. When true, returns an object mapping query names to their scores.
+          oneOf:
+            - title: names
+              description: An array of matched query names (default behavior when `include_named_queries_score` is false).
+              type: array
+              items:
+                type: string
+            - title: scores
+              description: A map of matched query names to their scores (when `include_named_queries_score` is true).
+              type: object
+              additionalProperties:
+                type: number
+                format: double
         _nested:
           $ref: '#/components/schemas/NestedIdentity'
         _ignored:
@@ -1340,7 +1350,18 @@ components:
           x-version-added: '2.12'
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
-          $ref: '#/components/schemas/HitsMetadata'
+          allOf:
+            - $ref: '#/components/schemas/HitsMetadata'
+            - type: object
+              x-protobuf-excluded: true
+              properties:
+                hits:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _source:
+                        $ref: '#/components/schemas/TDocument'
         processor_results:
           x-version-added: '3.0'
           type: array
@@ -1352,9 +1373,6 @@ components:
             $ref: '_common.aggregations.yaml#/components/schemas/Aggregate'
         _clusters:
           $ref: '_common.yaml#/components/schemas/ClusterStatistics'
-        fields:
-          type: object
-          additionalProperties: true
         num_reduce_phases:
           type: integer
           format: int32
