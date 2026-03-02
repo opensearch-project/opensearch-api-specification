@@ -119,6 +119,8 @@ components:
           $ref: '#/components/schemas/TTestAggregate'
         - title: top_hits
           $ref: '#/components/schemas/TopHitsAggregate'
+        - title: ulterms
+          $ref: '#/components/schemas/UnsignedLongTermsAggregate'
         - title: umrareterms
           $ref: '#/components/schemas/UnmappedRareTermsAggregate'
         - title: umsigterms
@@ -516,6 +518,8 @@ components:
         doc_count:
           type: integer
           format: int64
+      additionalProperties:
+        $ref: '#/components/schemas/Aggregate'
       required:
         - doc_count
     DateHistogramAggregate:
@@ -634,15 +638,11 @@ components:
         - type: object
           properties:
             buckets:
-              allOf:
-                - $ref: '#/components/schemas/Buckets'
-                - oneOf:
-                    - type: object
-                      additionalProperties:
-                        $ref: '#/components/schemas/StringTermsBucket'
-                    - type: array
-                      items:
-                        $ref: '#/components/schemas/StringTermsBucket'
+              type: array
+              items:
+                $ref: '#/components/schemas/StringTermsBucket'
+          required:
+            - buckets
     TermsAggregateBase:
       allOf:
         - $ref: '#/components/schemas/MultiBucketAggregateBase'
@@ -668,9 +668,10 @@ components:
         - $ref: '#/components/schemas/MultiBucketBase'
         - type: object
           properties:
-            doc_count_error:
+            doc_count_error_upper_bound:
               type: integer
               format: int64
+              description: Upper bound of the document count error. Only present when `show_term_doc_count_error` is true.
     LongTermsAggregate:
       description: Result of a `terms` aggregation when the field is some kind of whole number like a integer, long, or a date.
       allOf:
@@ -682,15 +683,11 @@ components:
         - type: object
           properties:
             buckets:
-              allOf:
-                - $ref: '#/components/schemas/Buckets'
-                - oneOf:
-                    - type: object
-                      additionalProperties:
-                        $ref: '#/components/schemas/LongTermsBucket'
-                    - type: array
-                      items:
-                        $ref: '#/components/schemas/LongTermsBucket'
+              type: array
+              items:
+                $ref: '#/components/schemas/LongTermsBucket'
+          required:
+            - buckets
     LongTermsBucket:
       allOf:
         - $ref: '#/components/schemas/TermsBucketBase'
@@ -720,16 +717,40 @@ components:
         - type: object
           properties:
             buckets:
-              allOf:
-                - $ref: '#/components/schemas/Buckets'
-                - oneOf:
-                    - type: object
-                      additionalProperties:
-                        $ref: '#/components/schemas/DoubleTermsBucket'
-                    - type: array
-                      items:
-                        $ref: '#/components/schemas/DoubleTermsBucket'
+              type: array
+              items:
+                $ref: '#/components/schemas/DoubleTermsBucket'
+          required:
+            - buckets
     DoubleTermsBucket:
+      allOf:
+        - $ref: '#/components/schemas/TermsBucketBase'
+        - type: object
+          properties:
+            key:
+              type: number
+              format: double
+            key_as_string:
+              type: string
+          required:
+            - key
+    UnsignedLongTermsAggregate:
+      description: Result of a `terms` aggregation when the field is an unsigned long.
+      allOf:
+        - $ref: '#/components/schemas/TermsAggregateBaseUnsignedLongTermsBucket'
+        - type: object
+    TermsAggregateBaseUnsignedLongTermsBucket:
+      allOf:
+        - $ref: '#/components/schemas/TermsAggregateBase'
+        - type: object
+          properties:
+            buckets:
+              type: array
+              items:
+                $ref: '#/components/schemas/UnsignedLongTermsBucket'
+          required:
+            - buckets
+    UnsignedLongTermsBucket:
       allOf:
         - $ref: '#/components/schemas/TermsBucketBase'
         - type: object
@@ -752,15 +773,11 @@ components:
         - type: object
           properties:
             buckets:
-              allOf:
-                - $ref: '#/components/schemas/Buckets'
-                - oneOf:
-                    - type: object
-                      additionalProperties:
-                        $ref: '_common.yaml#/components/schemas/Void'
-                    - type: array
-                      items:
-                        $ref: '_common.yaml#/components/schemas/Void'
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/Void'
+          required:
+            - buckets
     MultiBucketAggregateBaseVoid:
       allOf:
         - $ref: '#/components/schemas/MultiBucketAggregateBase'

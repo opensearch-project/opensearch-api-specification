@@ -1,0 +1,154 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test Terms aggregate responses for different field types (StringTermsAggregate, LongTermsAggregate, DoubleTermsAggregate) to verify array-only buckets.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /items
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            name:
+              type: keyword
+            count:
+              type: long
+            rating:
+              type: double
+            description:
+              type: text
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: items}}
+        - {name: item_a, count: 100, rating: 4.5, description: First item}
+        - {create: {_index: items}}
+        - {name: item_a, count: 100, rating: 4.5, description: Second item}
+        - {create: {_index: items}}
+        - {name: item_b, count: 200, rating: 3.8, description: Third item}
+        - {create: {_index: items}}
+        - {name: item_b, count: 200, rating: 3.8, description: Fourth item}
+chapters:
+  - synopsis: StringTermsAggregate - Aggregate by keyword field.
+    path: /{index}/_search
+    parameters:
+      index: items
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          by_name:
+            terms:
+              field: name
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_name:
+            buckets:
+              - key: item_a
+                doc_count: 2
+              - key: item_b
+                doc_count: 2
+
+  - synopsis: LongTermsAggregate - Aggregate by long field.
+    path: /{index}/_search
+    parameters:
+      index: items
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          by_count:
+            terms:
+              field: count
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_count:
+            buckets:
+              - key: 100
+                doc_count: 2
+              - key: 200
+                doc_count: 2
+
+  - synopsis: DoubleTermsAggregate - Aggregate by double field.
+    path: /{index}/_search
+    parameters:
+      index: items
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          by_rating:
+            terms:
+              field: rating
+              order:
+                _key: desc
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_rating:
+            buckets:
+              - key: 4.5
+                doc_count: 2
+              - key: 3.8
+                doc_count: 2
+
+  - synopsis: Verify all terms aggregates return array buckets (not keyed objects).
+    path: /{index}/_search
+    parameters:
+      index: items
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          by_name:
+            terms:
+              field: name
+              size: 1
+              order:
+                _key: asc
+          by_count:
+            terms:
+              field: count
+              size: 1
+              order:
+                _key: asc
+          by_rating:
+            terms:
+              field: rating
+              size: 1
+              order:
+                _key: desc
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_name:
+            buckets:
+              - key: item_a
+                doc_count: 2
+          by_count:
+            buckets:
+              - key: 100
+                doc_count: 2
+          by_rating:
+            buckets:
+              - key: 4.5
+                doc_count: 2
+epilogues:
+  - path: /items
+    method: DELETE
+    status: [200, 404]
