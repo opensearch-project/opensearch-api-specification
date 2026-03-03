@@ -1421,10 +1421,7 @@ components:
         - variance
     AggregationContainer:
       allOf:
-        - type: object
-          properties:
-            meta:
-              $ref: '_common.yaml#/components/schemas/Metadata'
+        - $ref: '#/components/schemas/Aggregation'
         - type: object
           oneOf:
             - properties:
@@ -1522,11 +1519,13 @@ components:
                   $ref: '#/components/schemas/ExtendedStatsBucketAggregation'
               required: [extended_stats_bucket]
               unevaluatedProperties: true
-            - properties:
-                filter:
-                  $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
-              required: [filter]
-              unevaluatedProperties: true
+            - allOf:
+                - $ref: '#/components/schemas/BucketAggregationBase'
+                - type: object
+                  properties:
+                    filter:
+                      $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+                  required: [filter]
               x-protobuf-excluded: true
             - properties:
                 filters:
@@ -1769,24 +1768,42 @@ components:
       allOf:
         - $ref: '#/components/schemas/Aggregation'
         - type: object
-          properties:
-            aggregations:
-              description: Sub-aggregations for this bucket aggregation
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/AggregationContainer'
-            aggs:
-              description: Sub-aggregations for this bucket aggregation
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/AggregationContainer'
+          oneOf:
+            - properties:
+                aggregations:
+                  description: Sub-aggregations for this bucket aggregation
+                  type: object
+                  propertyNames:
+                    title: aggregation_name
+                    description: Sub-aggregation name
+                    type: string
+                  additionalProperties:
+                    title: aggregation_container
+                    $ref: '#/components/schemas/AggregationContainer'
+              required: [aggregations]
+            - properties:
+                aggs:
+                  description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
+                  type: object
+                  x-protobuf-excluded: true
+                  propertyNames:
+                    title: aggregation_name
+                    description: Sub-aggregation name
+                    type: string
+                  additionalProperties:
+                    title: aggregation_container
+                    $ref: '#/components/schemas/AggregationContainer'
+              required: [aggs]
+            - not:
+                anyOf:
+                  - required: [aggregations]
+                  - required: [aggs]
     Aggregation:
       type: object
       properties:
         meta:
+          description: Custom metadata to associate with the aggregation (optional)
           $ref: '_common.yaml#/components/schemas/Metadata'
-        name:
-          type: string
     AutoDateHistogramAggregation:
       allOf:
         - $ref: '#/components/schemas/BucketAggregationBase'
@@ -2033,13 +2050,11 @@ components:
         - date
         - double
         - float
-        - geo_point
         - integer
         - ip
         - long
         - number
         - numeric
-        - range
         - short
         - string
         - unsigned_long
