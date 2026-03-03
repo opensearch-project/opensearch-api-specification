@@ -36,6 +36,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Split proto check and comment into separate workflows and addressing "Not Found" errors for posting proto compatibility reports.([#1023](https://github.com/opensearch-project/opensearch-api-specification/pull/1023)),([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1028](https://github.com/opensearch-project/opensearch-api-specification/pull/1028))
 - Add new 3.3 ML APIs ([#1010](https://github.com/opensearch-project/opensearch-api-specification/pull/1010))
 - Add new ML stream APIs ([#1031](https://github.com/opensearch-project/opensearch-api-specification/pull/1031))
+- Add msearch `allow_partial_results` flag ([#1061](https://github.com/opensearch-project/opensearch-api-specification/pull/1061))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
@@ -53,7 +54,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
 - Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
 - Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056))
-- Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum
+- Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum ([#1057](https://github.com/opensearch-project/opensearch-api-specification/pull/1057))
+- Exclude FilterContainer and order in TermsAggregation in spec ([#1059](https://github.com/opensearch-project/opensearch-api-specification/pull/1059))
+- Fix `AggregationContainer` to inherit `Aggregation` type, and remove unnamed field `name` from `Aggregation`. Remove `geo_point` and `range` from `ValueType`. Exclude `aggs` alias from protobufs. ([#1060](https://github.com/opensearch-project/opensearch-api-specification/pull/1060))
 - Fixed Terms aggregation response schemas: corrected field name `doc_count_error` to `doc_count_error_upper_bound`, simplified buckets to array-only, added nested aggregations support, and added missing `UnsignedLongTermsAggregate` ([#1063](https://github.com/opensearch-project/opensearch-api-specification/pull/1063))
 
 ### Changed
