@@ -52,6 +52,8 @@ chapters:
       payload:
         aggregations:
           metric_ids:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
             buckets:
               - key: 9223372036854775808
                 doc_count: 2
@@ -82,13 +84,15 @@ chapters:
       payload:
         aggregations:
           metric_ids:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
             buckets:
               - key: 9223372036854775808
                 doc_count: 2
               - key: 12345678901234567890
                 doc_count: 2
 
-  - synopsis: Aggregate by unsigned_long field with order by count.
+  - synopsis: Aggregate by unsigned_long field with show_term_doc_count_error.
     path: /{index}/_search
     parameters:
       index: metrics
@@ -100,11 +104,47 @@ chapters:
           metric_ids:
             terms:
               field: metric_id
-              size: 1
+              show_term_doc_count_error: true
+    response:
+      status: 200
+      payload:
+        aggregations:
+          metric_ids:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
+            buckets:
+              - key: 9223372036854775808
+                doc_count: 2
+                doc_count_error_upper_bound: 0
+              - key: 12345678901234567890
+                doc_count: 2
+                doc_count_error_upper_bound: 0
+
+  - synopsis: Aggregate by unsigned_long field with order by count and verify max uint64 value.
+    path: /{index}/_search
+    parameters:
+      index: metrics
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          metric_ids:
+            terms:
+              field: metric_id
+              size: 3
               order:
                 _count: desc
     response:
       status: 200
+      payload:
+        aggregations:
+          metric_ids:
+            buckets:
+              - key: 9223372036854775808
+                doc_count: 2
+              - key: 12345678901234567890
+                doc_count: 2
 epilogues:
   - path: /metrics
     method: DELETE
