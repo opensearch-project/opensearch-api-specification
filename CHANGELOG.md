@@ -57,6 +57,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum ([#1057](https://github.com/opensearch-project/opensearch-api-specification/pull/1057))
 - Exclude FilterContainer and order in TermsAggregation in spec ([#1059](https://github.com/opensearch-project/opensearch-api-specification/pull/1059))
 - Fix `AggregationContainer` to inherit `Aggregation` type, and remove unnamed field `name` from `Aggregation`. Remove `geo_point` and `range` from `ValueType`. Exclude `aggs` alias from protobufs. ([#1060](https://github.com/opensearch-project/opensearch-api-specification/pull/1060))
+- Fixed Terms aggregation response schemas: corrected field name `doc_count_error` to `doc_count_error_upper_bound`, simplified buckets to array-only, added nested aggregations support, and added missing `UnsignedLongTermsAggregate` ([#1063](https://github.com/opensearch-project/opensearch-api-specification/pull/1063))
+
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
 - Changed knn stats response types to use int64s instead of numbers ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
