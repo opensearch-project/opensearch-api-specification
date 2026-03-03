@@ -60,7 +60,7 @@ chapters:
               - key: 12345678901234567890
                 doc_count: 2
 
-  - synopsis: Aggregate by unsigned_long field with nested max aggregation.
+  - synopsis: Aggregate by unsigned_long field with nested aggregations to validate additionalProperties.
     path: /{index}/_search
     parameters:
       index: metrics
@@ -79,6 +79,12 @@ chapters:
               max_value:
                 max:
                   field: value
+              min_value:
+                min:
+                  field: value
+              total_quantity:
+                sum:
+                  field: value
     response:
       status: 200
       payload:
@@ -89,8 +95,20 @@ chapters:
             buckets:
               - key: 9223372036854775808
                 doc_count: 2
+                max_value:
+                  value: 200.3
+                min_value:
+                  value: 100.5
+                total_quantity:
+                  value: 300.8
               - key: 12345678901234567890
                 doc_count: 2
+                max_value:
+                  value: 90.2
+                min_value:
+                  value: 75.8
+                total_quantity:
+                  value: 166.0
 
   - synopsis: Aggregate by unsigned_long field with show_term_doc_count_error.
     path: /{index}/_search
@@ -119,6 +137,35 @@ chapters:
               - key: 12345678901234567890
                 doc_count: 2
                 doc_count_error_upper_bound: 0
+
+  - synopsis: Aggregate by unsigned_long field with custom format to populate key_as_string.
+    path: /{index}/_search
+    parameters:
+      index: metrics
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          metric_ids:
+            terms:
+              field: metric_id
+              size: 2
+              format: '0,000'
+    response:
+      status: 200
+      payload:
+        aggregations:
+          metric_ids:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
+            buckets:
+              - key: 9223372036854775808
+                key_as_string: '9,223,372,036,854,775,808'
+                doc_count: 2
+              - key: 12345678901234567890
+                key_as_string: '12,345,678,901,234,567,890'
+                doc_count: 2
 
   - synopsis: Aggregate by unsigned_long field with order by count and verify max uint64 value.
     path: /{index}/_search
