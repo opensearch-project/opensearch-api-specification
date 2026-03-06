@@ -54,6 +54,17 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.delete_query_sets@200'
+  /_plugins/_search_relevance/query_sets/_search:
+    post:
+      operationId: search_relevance.post_query_sets.1
+      x-operation-group: search_relevance.post_query_sets
+      x-version-added: '3.5'
+      description: Searches for queries in the query sets.
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.query_sets_search'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.get_query_sets@200'
   /_plugins/_search_relevance/judgments:
     get:
       operationId: search_relevance.get_judgments.0
@@ -95,6 +106,17 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.delete_judgments@200'
+  /_plugins/_search_relevance/judgments/_search:
+    post:
+      operationId: search_relevance.post_judgments.1
+      x-operation-group: search_relevance.post_judgments
+      x-version-added: '3.5'
+      description: Searches for judgments.
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.judgments_search'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.get_judgments@200'
   /_plugins/_search_relevance/search_configurations:
     get:
       operationId: search_relevance.get_search_configurations.0
@@ -135,6 +157,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.delete_search_configurations@200'
+  /_plugins/_search_relevance/search_configurations/_search:
+    post:
+      operationId: search_relevance.post_search_configurations.1
+      x-operation-group: search_relevance.post_search_configurations
+      x-version-added: '3.5'
+      description: Searches for search configurations.
+
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.search_configurations_search'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.get_search_configurations@200'
   /_plugins/_search_relevance/experiments:
     get:
       operationId: search_relevance.get_experiments.0
@@ -175,6 +209,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.delete_experiments@200'
+  /_plugins/_search_relevance/experiments/_search:
+    post:
+      operationId: search_relevance.post_experiments.1
+      x-operation-group: search_relevance.post_experiments
+      x-version-added: '3.5'
+      description: Searches for experiments.
+
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.experiments_search'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.get_experiments@200'
   /_plugins/_search_relevance/{node_id}/stats:
     get:
       operationId: search_relevance.get_node_stats.0
@@ -474,6 +520,21 @@ components:
         application/json:
           schema:
             $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutQuerySetsRequest'
+    search_relevance.query_sets_search:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/QueryContainer'
+              size:
+                type: integer
+                format: int64
+                description: The number of tasks to return.
+              sort:
+                $ref: '../schemas/_common.yaml#/components/schemas/Sort'
+                description: The sort order.
     search_relevance.put_judgments:
       content:
         application/json:
@@ -482,11 +543,40 @@ components:
               - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutLLMJudgmentsRequest'
               - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutUBIJudgmentsRequest'
               - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutImportJudgmentsRequest'
+    search_relevance.judgments_search:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/QueryContainer'
+              size:
+                type: integer
+                format: int64
+                description: The number of tasks to return.
+              sort:
+                $ref: '../schemas/_common.yaml#/components/schemas/Sort'
+                description: The sort order.
     search_relevance.put_search_configurations:
       content:
         application/json:
           schema:
             $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutSearchConfigurationRequest'
+    search_relevance.search_configurations_search:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/QueryContainer'
+              size:
+                type: integer
+                format: int64
+                description: The number of tasks to return.
+              sort:
+                $ref: '../schemas/_common.yaml#/components/schemas/Sort'
     search_relevance.put_experiments:
       content:
         application/json:
@@ -495,6 +585,20 @@ components:
               - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutHybridOptimizerExperimentRequest'
               - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutPointwiseExperimentRequest'
               - $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PutPairwiseExperimentRequest'
+    search_relevance.experiments_search:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              query:
+                $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/QueryContainer'
+              size:
+                type: integer
+                format: int64
+                description: The number of tasks to return.
+              sort:
+                $ref: '../schemas/_common.yaml#/components/schemas/Sort'
     search_relevance.post_scheduled_experiments:
       content:
         application/json:
