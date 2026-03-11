@@ -22,7 +22,7 @@ const ADDITIONAL_KEYWORDS = [
   'x-supports-typed-keys',
   'x-is-generic-type-parameter',
   'x-protobuf-excluded',
-  'x-protobuf-type',
+  'x-protobuf-data-type',
   'x-protobuf-name',
   'x-protobuf-required'
 ]
