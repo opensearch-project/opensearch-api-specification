@@ -68,6 +68,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
 - Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 - Removed `Aggregation` reference from `BucketAggregationBase`, `MetricAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation`; simplified `BucketAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation` by removing unnecessary `allOf` wrapper ([#1067](https://github.com/opensearch-project/opensearch-api-specification/pull/1067))
+- Replace `x-protobuf-type` to `x-protobuf-data-type` ([#1068](https://github.com/opensearch-project/opensearch-api-specification/pull/1068))
+
 ## [0.2.0] - 2025-05-25
 
 ### Added
