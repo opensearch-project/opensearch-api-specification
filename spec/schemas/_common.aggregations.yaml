@@ -1795,41 +1795,31 @@ components:
               additionalProperties:
                 $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
     BucketAggregationBase:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          oneOf:
-            - properties:
-                aggregations:
-                  description: Sub-aggregations for this bucket aggregation
-                  type: object
-                  propertyNames:
-                    title: aggregation_name
-                    description: Sub-aggregation name
-                    type: string
-                  additionalProperties:
-                    title: aggregation_container
-                    $ref: '#/components/schemas/AggregationContainer'
-              required: [ aggregations ]
-            - properties:
-                aggs:
-                  description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
-                  type: object
-                  x-protobuf-excluded: true
-                  propertyNames:
-                    title: aggregation_name
-                    description: Sub-aggregation name
-                    type: string
-                  additionalProperties:
-                    title: aggregation_container
-                    $ref: '#/components/schemas/AggregationContainer'
-              required: [ aggs ]
-            - not:
-                anyOf:
-                  - type: object
-                    required: [ aggregations ]
-                  - type: object
-                    required: [ aggs ]
+      type: object
+      properties:
+        aggregations:
+          description: Sub-aggregations for this bucket aggregation
+          type: object
+          propertyNames:
+            title: aggregation_name
+            description: Sub-aggregation name
+            type: string
+          additionalProperties:
+            title: aggregation_container
+            $ref: '#/components/schemas/AggregationContainer'
+        aggs:
+          description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
+          type: object
+          x-protobuf-excluded: true
+          propertyNames:
+            title: aggregation_name
+            description: Sub-aggregation name
+            type: string
+          additionalProperties:
+            title: aggregation_container
+            $ref: '#/components/schemas/AggregationContainer'
+      minProperties: 0
+      maxProperties: 1
     Aggregation:
       type: object
       properties:
