@@ -1795,39 +1795,37 @@ components:
               additionalProperties:
                 $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
     BucketAggregationBase:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          oneOf:
-            - properties:
-                aggregations:
-                  description: Sub-aggregations for this bucket aggregation
-                  type: object
-                  propertyNames:
-                    title: aggregation_name
-                    description: Sub-aggregation name
-                    type: string
-                  additionalProperties:
-                    title: aggregation_container
-                    $ref: '#/components/schemas/AggregationContainer'
-              required: [aggregations]
-            - properties:
-                aggs:
-                  description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
-                  type: object
-                  x-protobuf-excluded: true
-                  propertyNames:
-                    title: aggregation_name
-                    description: Sub-aggregation name
-                    type: string
-                  additionalProperties:
-                    title: aggregation_container
-                    $ref: '#/components/schemas/AggregationContainer'
-              required: [aggs]
-            - not:
-                anyOf:
-                  - required: [aggregations]
-                  - required: [aggs]
+      type: object
+      properties:
+        aggregations:
+          description: Sub-aggregations for this bucket aggregation
+          type: object
+          propertyNames:
+            title: aggregation_name
+            description: Sub-aggregation name
+            type: string
+          additionalProperties:
+            title: aggregation_container
+            $ref: '#/components/schemas/AggregationContainer'
+        aggs:
+          description: Sub-aggregations for this bucket aggregation (alias for 'aggregations')
+          type: object
+          x-protobuf-excluded: true
+          propertyNames:
+            title: aggregation_name
+            description: Sub-aggregation name
+            type: string
+          additionalProperties:
+            title: aggregation_container
+            $ref: '#/components/schemas/AggregationContainer'
+      not:
+        type: object
+        properties:
+          aggregations:
+            type: object
+          aggs:
+            type: object
+        required: [aggregations, aggs]
     Aggregation:
       type: object
       properties:
@@ -1886,7 +1884,6 @@ components:
               type: string
     MetricAggregationBase:
       allOf:
-        - $ref: '#/components/schemas/Aggregation'
         - type: object
           properties:
             missing:
@@ -1923,12 +1920,10 @@ components:
         - keep_values
         - skip
     BucketPathAggregation:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          properties:
-            buckets_path:
-              $ref: '#/components/schemas/BucketsPath'
+      type: object
+      properties:
+        buckets_path:
+          $ref: '#/components/schemas/BucketsPath'
     BucketsPath:
       description: |-
         Buckets path can be expressed in different ways, and an aggregation may accept some or all of these
@@ -1969,24 +1964,22 @@ components:
             script:
               $ref: '_common.yaml#/components/schemas/Script'
     BucketSortAggregation:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          properties:
-            from:
-              description: Buckets in positions prior to `from` will be truncated.
-              type: integer
-              format: int32
-            gap_policy:
-              $ref: '#/components/schemas/GapPolicy'
-            size:
-              description: |-
-                The number of buckets to return.
-                Defaults to all buckets of the parent aggregation.
-              type: integer
-              format: int32
-            sort:
-              $ref: '_common.yaml#/components/schemas/Sort'
+      type: object
+      properties:
+        from:
+          description: Buckets in positions prior to `from` will be truncated.
+          type: integer
+          format: int32
+        gap_policy:
+          $ref: '#/components/schemas/GapPolicy'
+        size:
+          description: |-
+            The number of buckets to return.
+            Defaults to all buckets of the parent aggregation.
+          type: integer
+          format: int32
+        sort:
+          $ref: '_common.yaml#/components/schemas/Sort'
     CardinalityAggregation:
       allOf:
         - $ref: '#/components/schemas/MetricAggregationBase'
@@ -2614,20 +2607,18 @@ components:
             mode:
               $ref: '_common.yaml#/components/schemas/SortMode'
     MatrixAggregation:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          properties:
-            fields:
-              $ref: '_common.yaml#/components/schemas/Fields'
-            missing:
-              description: |-
-                The value to apply to documents that do not have a value.
-                By default, documents without a value are ignored.
-              type: object
-              additionalProperties:
-                type: number
-                format: double
+      type: object
+      properties:
+        fields:
+          $ref: '_common.yaml#/components/schemas/Fields'
+        missing:
+          description: |-
+            The value to apply to documents that do not have a value.
+            By default, documents without a value are ignored.
+          type: object
+          additionalProperties:
+            type: number
+            format: double
     MaxAggregation:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
@@ -3345,16 +3336,14 @@ components:
               description: If `true`, returns sequence number and primary term of the last modification of each hit.
               type: boolean
     TTestAggregation:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          properties:
-            a:
-              $ref: '#/components/schemas/TestPopulation'
-            b:
-              $ref: '#/components/schemas/TestPopulation'
-            type:
-              $ref: '#/components/schemas/TTestType'
+      type: object
+      properties:
+        a:
+          $ref: '#/components/schemas/TestPopulation'
+        b:
+          $ref: '#/components/schemas/TestPopulation'
+        type:
+          $ref: '#/components/schemas/TTestType'
     TestPopulation:
       type: object
       properties:
@@ -3384,19 +3373,17 @@ components:
             format:
               type: string
     WeightedAverageAggregation:
-      allOf:
-        - $ref: '#/components/schemas/Aggregation'
-        - type: object
-          properties:
-            format:
-              description: A numeric response formatter.
-              type: string
-            value:
-              $ref: '#/components/schemas/WeightedAverageValue'
-            value_type:
-              $ref: '#/components/schemas/ValueType'
-            weight:
-              $ref: '#/components/schemas/WeightedAverageValue'
+      type: object
+      properties:
+        format:
+          description: A numeric response formatter.
+          type: string
+        value:
+          $ref: '#/components/schemas/WeightedAverageValue'
+        value_type:
+          $ref: '#/components/schemas/ValueType'
+        weight:
+          $ref: '#/components/schemas/WeightedAverageValue'
     WeightedAverageValue:
       type: object
       properties:
