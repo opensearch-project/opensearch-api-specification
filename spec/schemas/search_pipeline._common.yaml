@@ -33,6 +33,13 @@ components:
     RequestProcessor:
       oneOf:
         - type: object
+          title: agentic_query_translator
+          properties:
+            agentic_query_translator:
+              $ref: '#/components/schemas/AgenticQueryTranslatorRequestProcessor'
+          required:
+            - agentic_query_translator
+        - type: object
           title: filter_query
           properties:
             filter_query:
@@ -60,6 +67,20 @@ components:
               $ref: '#/components/schemas/OversampleRequestProcessor'
           required:
             - oversample
+    AgenticQueryTranslatorRequestProcessor:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        agent_id:
+          description: The ID of the agent to use for query translation.
+          type: string
+      required:
+        - agent_id
     FilterQueryRequestProcessor:
       type: object
       properties:
@@ -120,6 +141,13 @@ components:
     ResponseProcessor:
       oneOf:
         - type: object
+          title: agentic_context
+          properties:
+            agentic_context:
+              $ref: '#/components/schemas/AgenticContextResponseProcessor'
+          required:
+            - agentic_context
+        - type: object
           title: personalize_search_ranking
           properties:
             personalize_search_ranking:
@@ -175,6 +203,24 @@ components:
               $ref: '#/components/schemas/SplitResponseProcessor'
           required:
             - split
+    AgenticContextResponseProcessor:
+      x-version-added: '3.3'
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        agent_steps_summary:
+          description: Whether to include the agent's execution step summary in the response. Available for conversational agents only.
+          type: boolean
+          default: false
+        dsl_query:
+          description: Whether to include the generated DSL query in the response. Available for both conversational and flow agents.
+          type: boolean
+          default: false
     PersonalizeSearchRankingResponseProcessor:
       type: object
       properties:
