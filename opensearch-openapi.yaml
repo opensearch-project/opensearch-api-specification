@@ -48126,6 +48126,25 @@ components:
                 - xy_shape
           required:
             - type
+    _common.query_dsl___AgenticQuery:
+      x-version-added: '3.2'
+      allOf:
+        - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The natural language question to be answered by the agent.
+              type: string
+            query_fields:
+              description: A list of index fields that the agent should consider when generating the search query.
+              type: array
+              items:
+                $ref: '#/components/schemas/_common___Field'
+            memory_id:
+              description: The memory ID from a previous response, used to continue a conversation with prior context. Applicable for conversational agents only.
+              type: string
+          required:
+            - query_text
     _common.query_dsl___BoolQuery:
       allOf:
         - $ref: '#/components/schemas/_common.query_dsl___QueryBase'
@@ -49471,6 +49490,8 @@ components:
     _common.query_dsl___QueryContainer:
       type: object
       properties:
+        agentic:
+          $ref: '#/components/schemas/_common.query_dsl___AgenticQuery'
         bool:
           $ref: '#/components/schemas/_common.query_dsl___BoolQuery'
         boosting:
@@ -68400,6 +68421,39 @@ components:
         target_field:
           type: string
           description: The field name to use in the target index for the terms aggregation results.
+    search_pipeline._common___AgenticContextResponseProcessor:
+      x-version-added: '3.3'
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        agent_steps_summary:
+          description: Whether to include the agent's execution step summary in the response. Available for conversational agents only.
+          type: boolean
+          default: false
+        dsl_query:
+          description: Whether to include the generated DSL query in the response. Available for both conversational and flow agents.
+          type: boolean
+          default: false
+    search_pipeline._common___AgenticQueryTranslatorRequestProcessor:
+      x-version-added: '3.2'
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        agent_id:
+          description: The ID of the agent to use for query translation.
+          type: string
+      required:
+        - agent_id
     search_pipeline._common___CollapseResponseProcessor:
       type: object
       properties:
@@ -68535,6 +68589,14 @@ components:
         - target_field
     search_pipeline._common___RequestProcessor:
       oneOf:
+        - x-version-added: '3.2'
+          type: object
+          title: agentic_query_translator
+          properties:
+            agentic_query_translator:
+              $ref: '#/components/schemas/search_pipeline._common___AgenticQueryTranslatorRequestProcessor'
+          required:
+            - agentic_query_translator
         - type: object
           title: filter_query
           properties:
@@ -68587,6 +68649,14 @@ components:
           $ref: '#/components/schemas/search_pipeline._common___RerankContext'
     search_pipeline._common___ResponseProcessor:
       oneOf:
+        - x-version-added: '3.3'
+          type: object
+          title: agentic_context
+          properties:
+            agentic_context:
+              $ref: '#/components/schemas/search_pipeline._common___AgenticContextResponseProcessor'
+          required:
+            - agentic_context
         - type: object
           title: personalize_search_ranking
           properties:
