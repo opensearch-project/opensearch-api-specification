@@ -37,6 +37,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Split proto check and comment into separate workflows and addressing "Not Found" errors for posting proto compatibility reports.([#1023](https://github.com/opensearch-project/opensearch-api-specification/pull/1023)),([#1026](https://github.com/opensearch-project/opensearch-api-specification/pull/1026)),([#1028](https://github.com/opensearch-project/opensearch-api-specification/pull/1028))
 - Add new 3.3 ML APIs ([#1010](https://github.com/opensearch-project/opensearch-api-specification/pull/1010))
 - Add new ML stream APIs ([#1031](https://github.com/opensearch-project/opensearch-api-specification/pull/1031))
+- Add msearch `allow_partial_results` flag ([#1061](https://github.com/opensearch-project/opensearch-api-specification/pull/1061))
+- Add title to `ml.predict_model_stream` and `ml.execute_agent_stream` requestBody ([#1072](https://github.com/opensearch-project/opensearch-api-specification/pull/1072))
+- Added `agentic` query type, `agentic_query_translator` request processor, and `agentic_context` response processor ([#1073](https://github.com/opensearch-project/opensearch-api-specification/pull/1073))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
@@ -53,8 +56,13 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `TermsQuery` `_name` and `boost` type ([#984](https://github.com/opensearch-project/opensearch-api-specification/pull/984))
 - Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
 - Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
-- Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056)) 
-- Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum
+- Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056))
+- Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum ([#1057](https://github.com/opensearch-project/opensearch-api-specification/pull/1057))
+- Exclude FilterContainer and order in TermsAggregation in spec ([#1059](https://github.com/opensearch-project/opensearch-api-specification/pull/1059))
+- Fix `AggregationContainer` to inherit `Aggregation` type, and remove unnamed field `name` from `Aggregation`. Remove `geo_point` and `range` from `ValueType`. Exclude `aggs` alias from protobufs. ([#1060](https://github.com/opensearch-project/opensearch-api-specification/pull/1060))
+- Fixed Terms aggregation response schemas: corrected field name `doc_count_error` to `doc_count_error_upper_bound`, simplified buckets to array-only, added nested aggregations support, and added missing `UnsignedLongTermsAggregate` ([#1063](https://github.com/opensearch-project/opensearch-api-specification/pull/1063))
+- Fixed partition field formats in `TermsPartition` from int64 to int32 and removed `x-protobuf-excluded` from order field in aggregations schema ([#1065](https://github.com/opensearch-project/opensearch-api-specification/pull/1065))
+- Fix `AggregationContainer`  for all bucket aggregations so that `aggs`/`aggregations` are siblings of the aggregation type([#1069](https://github.com/opensearch-project/opensearch-api-specification/pull/1069))
 
 ### Changed
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
@@ -63,6 +71,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Remove deprecated `rehash` option from `CardinalityAggregation` ([#975](https://github.com/opensearch-project/opensearch-api-specification/pull/975))
 - Changed type mappings for Protobuf conversion ([#991](https://github.com/opensearch-project/opensearch-api-specification/pull/991))
 - Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
+- Removed `Aggregation` reference from `BucketAggregationBase`, `MetricAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation`; simplified `BucketAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation` by removing unnecessary `allOf` wrapper ([#1067](https://github.com/opensearch-project/opensearch-api-specification/pull/1067))
+- Replace `x-protobuf-type` to `x-protobuf-data-type` ([#1068](https://github.com/opensearch-project/opensearch-api-specification/pull/1068))
+- Refactored `Aggregate` schema to inherit `AggregateBase` at top level using `allOf`, removing redundant `AggregateBase` references from all intermediate and concrete aggregate types (`PercentilesAggregateBase`, `SingleMetricAggregateBase`, `StatsAggregateBase`, `MultiBucketAggregateBase`, `SingleBucketAggregateBase`, `CardinalityAggregate`, `GeoBoundsAggregate`, `GeoCentroidAggregate`, `ScriptedMetricAggregate`, `TopHitsAggregate`, `BoxPlotAggregate`, `TTestAggregate`, `RateAggregate`, `CumulativeCardinalityAggregate`, `MatrixStatsAggregate`) ([#1070](https://github.com/opensearch-project/opensearch-api-specification/pull/1070))
+
 ## [0.2.0] - 2025-05-25
 
 ### Added

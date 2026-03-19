@@ -1,0 +1,106 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test Terms aggregate response with nested aggregations in buckets.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /sales
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            product:
+              type: keyword
+            price:
+              type: float
+            quantity:
+              type: integer
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: sales}}
+        - {product: laptop, price: 999.99, quantity: 2}
+        - {create: {_index: sales}}
+        - {product: laptop, price: 1299.99, quantity: 1}
+        - {create: {_index: sales}}
+        - {product: laptop, price: 799.99, quantity: 3}
+        - {create: {_index: sales}}
+        - {product: mouse, price: 29.99, quantity: 5}
+        - {create: {_index: sales}}
+        - {product: mouse, price: 39.99, quantity: 2}
+        - {create: {_index: sales}}
+        - {product: keyboard, price: 79.99, quantity: 1}
+chapters:
+  - synopsis: Aggregate products with nested min and max price aggregations.
+    path: /{index}/_search
+    parameters:
+      index: sales
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          products:
+            terms:
+              field: product
+            aggregations:
+              min_price:
+                min:
+                  field: price
+              max_price:
+                max:
+                  field: price
+              total_quantity:
+                sum:
+                  field: quantity
+    response:
+      status: 200
+      payload:
+        aggregations:
+          products:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
+            buckets:
+              - key: laptop
+                doc_count: 3
+              - key: mouse
+                doc_count: 2
+              - key: keyboard
+                doc_count: 1
+
+  - synopsis: Aggregate products with nested max aggregation only.
+    path: /{index}/_search
+    parameters:
+      index: sales
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          products:
+            terms:
+              field: product
+              size: 1
+              order:
+                _count: desc
+            aggregations:
+              max_price:
+                max:
+                  field: price
+    response:
+      status: 200
+      payload:
+        aggregations:
+          products:
+            buckets:
+              - key: laptop
+                doc_count: 3
+epilogues:
+  - path: /sales
+    method: DELETE
+    status: [200, 404]
