@@ -18,6 +18,8 @@ components:
     QueryContainer:
       type: object
       properties:
+        agentic:
+          $ref: '#/components/schemas/AgenticQuery'
         bool:
           $ref: '#/components/schemas/BoolQuery'
         boosting:
@@ -260,6 +262,25 @@ components:
           $ref: '#/components/schemas/XyShapeQuery'
       minProperties: 1
       maxProperties: 1
+    AgenticQuery:
+      x-version-added: '3.2'
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The natural language question to be answered by the agent.
+              type: string
+            query_fields:
+              description: A list of index fields that the agent should consider when generating the search query.
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/Field'
+            memory_id:
+              description: The memory ID from a previous response, used to continue a conversation with prior context. Applicable for conversational agents only.
+              type: string
+          required:
+            - query_text
     BoolQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'

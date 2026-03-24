@@ -1,0 +1,170 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test terms aggregation with partition feature for splitting large bucket aggregations across multiple requests.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            director:
+              type: text
+              fielddata: true
+              fields:
+                raw:
+                  type: keyword
+            year:
+              type: integer
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Moneyball, year: 2011}
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: The Cruise, year: 1998}
+        - {create: {_index: movies}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 2011}
+        - {create: {_index: movies}}
+        - {director: Christopher Nolan, title: Inception, year: 2010}
+        - {create: {_index: movies}}
+        - {director: Christopher Nolan, title: The Dark Knight, year: 2008}
+        - {create: {_index: movies}}
+        - {director: Quentin Tarantino, title: Pulp Fiction, year: 1994}
+        - {create: {_index: movies}}
+        - {director: Quentin Tarantino, title: Kill Bill, year: 2003}
+        - {create: {_index: movies}}
+        - {director: Quentin Tarantino, title: Django Unchained, year: 2012}
+
+chapters:
+  - synopsis: Test terms aggregation with partition 0 of 2 partitions.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              include:
+                num_partitions: 2
+                partition: 0
+    response:
+      status: 200
+      payload:
+        aggregations:
+          directors:
+            buckets: []
+
+  - synopsis: Test terms aggregation with partition 1 of 2 partitions.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              include:
+                num_partitions: 2
+                partition: 1
+    response:
+      status: 200
+      payload:
+        aggregations:
+          directors:
+            buckets: []
+
+  - synopsis: Test terms aggregation with partition 0 of 3 partitions with size limit.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              size: 10
+              include:
+                num_partitions: 3
+                partition: 0
+    response:
+      status: 200
+
+  - synopsis: Test terms aggregation with partition 1 of 3 partitions with size limit.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              size: 10
+              include:
+                num_partitions: 3
+                partition: 1
+    response:
+      status: 200
+
+  - synopsis: Test terms aggregation with partition 2 of 3 partitions with size limit.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              size: 10
+              include:
+                num_partitions: 3
+                partition: 2
+    response:
+      status: 200
+
+  - synopsis: Test terms aggregation combining partition with order.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              order:
+                _count: desc
+              include:
+                num_partitions: 2
+                partition: 0
+    response:
+      status: 200
+
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
