@@ -33,6 +33,35 @@ prologues:
     retry:
       count: 12
       wait: 30000
+  - id: create_connector
+    path: /_plugins/_ml/connectors/_create
+    method: POST
+    request:
+      payload:
+        name: OpenAI Chat Connector
+        description: The connector to public OpenAI model service for GPT 3.5
+        version: 1
+        protocol: http
+        parameters:
+          endpoint: api.openai.com
+          model: gpt-3.5-turbo
+        credential:
+          openAI_key: test_api_key
+        actions:
+          - action_type: predict
+            method: POST
+            url: https://api.openai.com/v1/chat/completions
+            headers:
+              Authorization: Bearer Key
+            request_body: '{ "model": "model", "messages": "messages" }'
+    output:
+      connector_id: payload.connector_id
+epilogues:
+  - path: /_plugins/_ml/connectors/{connector_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      connector_id: ${create_connector.connector_id}
 chapters:
   - synopsis: Search model.
     path: /_plugins/_ml/models/_search
@@ -53,6 +82,37 @@ chapters:
     method: GET
     parameters:
       model_id: ${get_completed_task.model_id}
+    response:
+      status: 200
+  # The prebuilt-model registration path in ml-commons rebuilds the register input from the
+  # downloaded model config and drops provisioned_by, so a remote model is used here instead.
+  # Only registration is asserted: a remote model's GET response also returns description and
+  # connector_id, which the Model schema does not yet declare. Round-trip persistence of
+  # provisioned_by is covered by the connector and agent stories.
+  - synopsis: Register a remote model with the provisioned_by field.
+    version: '>= 3.7'
+    warnings:
+      multiple-paths-detected: false
+    id: register_model_with_provisioned_by
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: OpenAI Chat model with attribution
+        description: Remote model used to verify provisioned_by attribution
+        function_name: remote
+        connector_id: ${create_connector.connector_id}
+        provisioned_by: flow-framework
+    response:
+      status: 200
+    output:
+      provisioned_model_id: payload.model_id
+  - synopsis: Delete the remote model registered with provisioned_by.
+    version: '>= 3.7'
+    path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    parameters:
+      model_id: ${register_model_with_provisioned_by.provisioned_model_id}
     response:
       status: 200
   - synopsis: Update model.
