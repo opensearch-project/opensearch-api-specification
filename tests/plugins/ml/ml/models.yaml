@@ -34,6 +34,57 @@ prologues:
       count: 5
       wait: 30000
 chapters:
+  - synopsis: Register model with created_by field.
+    version: '>= 3.7'
+    warnings:
+      multiple-paths-detected: false
+    id: register_model_with_created_by
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: huggingface/sentence-transformers/msmarco-distilbert-base-tas-b
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+        created_by: flow-framework
+    response:
+      status: 200
+    output:
+      created_by_task_id: payload.task_id
+  - synopsis: Wait for created_by model registration to complete.
+    version: '>= 3.7'
+    id: get_created_by_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${register_model_with_created_by.created_by_task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+    retry:
+      count: 5
+      wait: 30000
+  - synopsis: Get model and verify created_by field.
+    version: '>= 3.7'
+    path: /_plugins/_ml/models/{model_id}
+    method: GET
+    parameters:
+      model_id: ${get_created_by_task.model_id}
+    response:
+      status: 200
+      payload:
+        created_by: flow-framework
+  - synopsis: Delete model registered with created_by.
+    version: '>= 3.7'
+    path: /_plugins/_ml/models/{model_id}
+    method: DELETE
+    parameters:
+      model_id: ${get_created_by_task.model_id}
+    response:
+      status: 200
   - synopsis: Search model.
     path: /_plugins/_ml/models/_search
     method: GET
