@@ -113,8 +113,8 @@ For example, if the `_superseded_operations.yaml` file contains the following en
     - GET
     - POST
 ```
-Then, the merger tool will generate 2 superseded operations: 
-- `GET /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}` 
+Then, the merger tool will generate 2 superseded operations:
+- `GET /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}`
 - `POST /_opendistro/_anomaly_detection/{nodeId}/stats/{stat}`
 
 from their respective superseding operations:
@@ -122,7 +122,7 @@ from their respective superseding operations:
 - `GET /_plugins/_anomaly_detection/{nodeId}/stats/{stat}`
 - `POST /_plugins/_anomaly_detection/{nodeId}/stats/{stat}`
 
-if and only if the superseding operations exist in the spec. A warning will be printed on the console if they do not. 
+if and only if the superseding operations exist in the spec. A warning will be printed on the console if they do not.
 
 Note that the path parameter names do not need to match. So, if the actual superseding operations have path of `/_plugins/_anomaly_detection/{node_id}/stats/{stat_id}`, the merger tool will recognize that it is the same as `/_plugins/_anomaly_detection/{nodeId}/stats/{stat}` and generate the superseded operations accordingly with the correct path parameter names.
 
@@ -145,7 +145,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-distributions-included`: Contains a list of distributions known to include the API.
 - `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
 
-Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless. 
+Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless.
 
 ## Writing Spec Tests
 
@@ -158,7 +158,7 @@ A number of [tools](tools) have been authored using TypeScript to aid in the dev
 ### Setup
 
 To be able to use or develop the tools, some setup is required:
-1. Install [Node.js](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs).
+1. Install [Node.js](https://nodejs.org/en/download).
 2. Run `npm ci` from the repository's root.
 
 ### [Spec Merger](tools/src/merger)
@@ -254,7 +254,7 @@ You can use this repo's [docker image which includes the opensearch-api plugin](
 OPENSEARCH_PASSWORD='My$3cureP@$$w0rd'
 
 docker build ./coverage --tag opensearch-with-api-plugin
-          
+
 docker run \
     --name opensearch \
     --rm -d \
@@ -335,7 +335,7 @@ npm run test
 
 Specify the test path to run tests for one of the tools:
 ```bash
-npm run jest -- tools/tests/linter/lint.test.ts 
+npm run jest -- tools/tests/linter/lint.test.ts
 ```
 
 The test suite contains unit tests and integration tests. Integration tests, such as [these](tools/tests/tester/integ/), require a local instance of OpenSearch and are placed into a folder named `integ`. Unit tests are run in parallel and integration tests are run sequentially using `--runInBand`. You can run unit tests with `npm run test:unit` separately from integration tests with `npm run test:integ`.
