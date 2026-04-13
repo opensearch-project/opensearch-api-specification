@@ -41,6 +41,54 @@ chapters:
       status: 200
     output:
       test_connector_id: payload.connector_id
+  - synopsis: Create connector with created_by field.
+    version: '>= 3.7'
+    warnings:
+      multiple-paths-detected: false
+    id: create_connector_with_created_by
+    path: /_plugins/_ml/connectors/_create
+    method: POST
+    request:
+      payload:
+        name: OpenAI Chat Connector With Attribution
+        description: The connector to public OpenAI model service for GPT 3.5
+        version: 1
+        protocol: http
+        created_by: flow-framework
+        parameters:
+          endpoint: api.openai.com
+          model: gpt-3.5-turbo
+        credential:
+          openAI_key: test_api_key
+        actions:
+          - action_type: predict
+            method: POST
+            url: https://api.openai.com/v1/chat/completions
+            headers:
+              Authorization: Bearer Key
+            request_body: '{ "model": "model", "messages": "messages" }'
+    response:
+      status: 200
+    output:
+      test_connector_with_created_by_id: payload.connector_id
+  - synopsis: Get connector and verify created_by field.
+    version: '>= 3.7'
+    path: /_plugins/_ml/connectors/{connector_id}
+    method: GET
+    parameters:
+      connector_id: ${create_connector_with_created_by.test_connector_with_created_by_id}
+    response:
+      status: 200
+      payload:
+        created_by: flow-framework
+  - synopsis: Delete connector created with created_by.
+    version: '>= 3.7'
+    path: /_plugins/_ml/connectors/{connector_id}
+    method: DELETE
+    parameters:
+      connector_id: ${create_connector_with_created_by.test_connector_with_created_by_id}
+    response:
+      status: 200
   - synopsis: Get connector.
     path: /_plugins/_ml/connectors/{connector_id}
     method: GET

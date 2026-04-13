@@ -41,6 +41,46 @@ chapters:
       status: 200
     output:
       test_agent_id: payload.agent_id
+  - synopsis: Register agent with created_by field.
+    version: '>= 3.7'
+    warnings:
+      multiple-paths-detected: false
+    id: register_agent_with_created_by
+    path: /_plugins/_ml/agents/_register
+    method: POST
+    request:
+      payload:
+        name: Test_Agent_With_Attribution
+        type: flow
+        description: this is a test agent with attribution
+        created_by: flow-framework
+        tools:
+          - type: MLModelTool
+            description: A general tool to answer any question
+            parameters:
+              model_id: YOUR_LLM_MODEL_ID
+    response:
+      status: 200
+    output:
+      test_agent_with_created_by_id: payload.agent_id
+  - synopsis: Get agent and verify created_by field.
+    version: '>= 3.7'
+    path: /_plugins/_ml/agents/{agent_id}
+    method: GET
+    parameters:
+      agent_id: ${register_agent_with_created_by.test_agent_with_created_by_id}
+    response:
+      status: 200
+      payload:
+        created_by: flow-framework
+  - synopsis: Delete agent created with created_by.
+    version: '>= 3.7'
+    path: /_plugins/_ml/agents/{agent_id}
+    method: DELETE
+    parameters:
+      agent_id: ${register_agent_with_created_by.test_agent_with_created_by_id}
+    response:
+      status: 200
   - synopsis: Delete agent.
     path: /_plugins/_ml/agents/{agent_id}
     method: DELETE
