@@ -46,6 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
 - Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
 - Remove `fields` from `SearchResult` ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
+- Remove redundant `type:object` from `*Aggregate` types ([#1083](https://github.com/opensearch-project/opensearch-api-specification/pull/1083))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
@@ -73,7 +74,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 - Removed `Aggregation` reference from `BucketAggregationBase`, `MetricAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation`; simplified `BucketAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation` by removing unnecessary `allOf` wrapper ([#1067](https://github.com/opensearch-project/opensearch-api-specification/pull/1067))
 - Replace `x-protobuf-type` to `x-protobuf-data-type` ([#1068](https://github.com/opensearch-project/opensearch-api-specification/pull/1068))
-- Refactored `Aggregate` schema to inherit `AggregateBase` at top level using `allOf`, removing redundant `AggregateBase` references from all intermediate and concrete aggregate types (`PercentilesAggregateBase`, `SingleMetricAggregateBase`, `StatsAggregateBase`, `MultiBucketAggregateBase`, `SingleBucketAggregateBase`, `CardinalityAggregate`, `GeoBoundsAggregate`, `GeoCentroidAggregate`, `ScriptedMetricAggregate`, `TopHitsAggregate`, `BoxPlotAggregate`, `TTestAggregate`, `RateAggregate`, `CumulativeCardinalityAggregate`, `MatrixStatsAggregate`) ([#1070](https://github.com/opensearch-project/opensearch-api-specification/pull/1070))
 
 ## [0.2.0] - 2025-05-25
 
