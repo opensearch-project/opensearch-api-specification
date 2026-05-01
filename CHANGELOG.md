@@ -48,6 +48,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Remove redundant `type:object` from `*Aggregate` types ([#1083](https://github.com/opensearch-project/opensearch-api-specification/pull/1083))
 
 ### Fixed
+- Fixed ISM index parameters to use `Indices` type instead of `IndexName` for multi-index support ([#1097](https://github.com/opensearch-project/opensearch-api-specification/issues/1097))
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
 - Fixed the type of `SearchStats`'s `concurrent_avg_slice_count` to be a double ([#942](https://github.com/opensearch-project/opensearch-api-specification/pull/942))
 - Fixed name and metadata missing from metric aggregations ([#969](https://github.com/opensearch-project/opensearch-api-specification/pull/969))
