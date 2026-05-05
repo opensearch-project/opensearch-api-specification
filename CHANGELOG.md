@@ -82,6 +82,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `nodes.info` settings schemas: added `http.host`, `http.publish_host`, `http.publish_port`, `transport.host`, and `node.roles`, and changed `network.host` to `StringOrStringArray`, since the server serializes list-valued settings as a string or an array depending on how they were configured ([#1101](https://github.com/opensearch-project/opensearch-api-specification/pull/1101))
 - Fixed `PitDetail` to mark `pit_id` as required ([#1290](https://github.com/opensearch-project/opensearch-api-specification/pull/1290))
 - Fixed `MatchOnlyTextProperty` to include the supported `match_only_text` mapping parameters (`analyzer`, `search_analyzer`, `boost`, `eager_global_ordinals`, `fielddata`, `fielddata_frequency_filter`, `index`, `position_increment_gap`, `term_vector`), which were previously dropped when reading mappings ([#1246](https://github.com/opensearch-project/opensearch-api-specification/pull/1246))
 - Fixed the GitHub Pages publish to serve the per-distribution specs (`opensearch-openapi-{oss,aos,aoss}.yaml`) by adding an `opensearch-openapi-*.yaml` glob to the Jekyll `_config.yml` allowlist ([#1252](https://github.com/opensearch-project/opensearch-api-specification/pull/1252))
