@@ -51,6 +51,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `HitsMetadata` to mark `max_score` as required ([#1103](https://github.com/opensearch-project/opensearch-api-specification/pull/1103))
 - Fixed `create_pit` `keep_alive` query parameter to be required ([#1102](https://github.com/opensearch-project/opensearch-api-specification/pull/1102))
 - Fixed ISM index parameters to use `Indices` type instead of `IndexName` for multi-index support ([#1097](https://github.com/opensearch-project/opensearch-api-specification/issues/1097))
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
