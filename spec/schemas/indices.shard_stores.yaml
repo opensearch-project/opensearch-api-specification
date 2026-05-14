@@ -71,15 +71,21 @@ components:
           const: unused
           type: string
     ShardStoreException:
-      description: The exception information for a shard store.
-      type: object
-      properties:
-        reason:
-          type: string
-          description: The reason for the store exception.
-        type:
-          type: string
-          description: The type of store exception.
-      required:
-        - reason
-        - type
+      description: |-
+        The exception information for a shard store.
+        Serialized by `OpenSearchException.generateThrowableXContent`, so the
+        shape is identical to `ErrorCause` (includes `index`, `index_uuid`,
+        `shard`, `caused_by`, `stack_trace`, etc. when present).
+      allOf:
+        - $ref: '_common.yaml#/components/schemas/ErrorCause'
+        - type: object
+          properties:
+            index:
+              type: string
+              description: The name of the index associated with the exception.
+            index_uuid:
+              type: string
+              description: The UUID of the index associated with the exception.
+            shard:
+              type: string
+              description: The shard number associated with the exception.
