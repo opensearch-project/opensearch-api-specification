@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { toLaxTitleCase } from 'titlecase'
+import { toLaxTitleCase } from '../../utils/titlecase'
 import { type ValidationError } from 'types'
 
 const DESCRIPTION_REGEX = /^\p{Lu}[\s\S]*\.$/u

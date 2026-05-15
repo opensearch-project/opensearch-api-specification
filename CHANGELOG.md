@@ -46,6 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
 - Remove `fields` from `SearchResult` ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 - Remove redundant `type:object` from `*Aggregate` types ([#1083](https://github.com/opensearch-project/opensearch-api-specification/pull/1083))
+- Removed unpublished `titlecase@1.1.3` dependency; replaced with local implementation ([#1111](https://github.com/opensearch-project/opensearch-api-specification/pull/1111))
 
 ### Fixed
 - Fixed the default parameters for `data_stream/_stats` and `shard_stores/status` ([#931](https://github.com/opensearch-project/opensearch-api-specification/pull/931))
