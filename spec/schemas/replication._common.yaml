@@ -49,17 +49,71 @@ components:
           $ref: '_common.yaml#/components/schemas/IndexName'
         syncing_details:
           $ref: '#/components/schemas/SyncingDetails'
+        bootstrap_details:
+          $ref: '#/components/schemas/RestoreDetails'
+        shard_replication_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardInfoResponse'
+          description: Per-shard replication details. Only present in verbose status responses.
     SyncingDetails:
       type: object
       properties:
         leader_checkpoint:
           type: integer
+          format: int64
           description: The checkpoint of the leader index in the replication process.
         follower_checkpoint:
           type: integer
+          format: int64
           description: The checkpoint of the follower index in the replication process.
         seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
+    RestoreDetails:
+      type: object
+      properties:
+        bytes_total:
+          type: integer
+          format: int64
+          description: The total number of bytes to restore.
+        bytes_recovered:
+          type: integer
+          format: int64
+          description: The number of bytes recovered so far.
+        bytes_percent:
+          type: number
+          format: float
+          description: The percentage of bytes recovered.
+        files_total:
+          type: integer
+          format: int32
+          description: The total number of files to restore.
+        files_recovered:
+          type: integer
+          format: int32
+          description: The number of files recovered so far.
+        files_percent:
+          type: number
+          format: float
+          description: The percentage of files recovered.
+        start_time:
+          type: integer
+          format: int64
+          description: When the restore started, in epoch milliseconds.
+        running_time:
+          type: integer
+          format: int64
+          description: The elapsed restore time in milliseconds.
+    ShardInfoResponse:
+      type: object
+      properties:
+        shard_id:
+          type: string
+          description: The shard identifier.
+        syncing_task_details:
+          $ref: '#/components/schemas/SyncingDetails'
+        bootstrap_task_details:
+          $ref: '#/components/schemas/RestoreDetails'
     LeaderStatus:
       type: object
       properties:
