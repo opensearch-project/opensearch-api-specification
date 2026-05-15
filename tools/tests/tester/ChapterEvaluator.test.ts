@@ -14,7 +14,7 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import { Result } from "tester/types/eval.types";
 
 describe('ChapterEvaluator', () => {
-  var mock = new AxiosMockAdapter(axios)
+  const mock = new AxiosMockAdapter(axios)
   const { chapter_evaluator } = construct_tester_components('tools/tests/tester/fixtures/specs/excerpt.yaml')
 
   afterEach(() => {
@@ -105,14 +105,14 @@ describe('ChapterEvaluator', () => {
     })
 
     test('retries', async () => {
-      var count = 0
+      let count = 0
 
       mock.onAny().reply((_config) => {
         count += 1
         return [400, 'Bad Request']
       })
 
-      var result = await chapter_evaluator.evaluate({
+      const result = await chapter_evaluator.evaluate({
         synopsis: 'Perform a PUT /{index}.',
         path: '/{index}',
         method: 'PUT',

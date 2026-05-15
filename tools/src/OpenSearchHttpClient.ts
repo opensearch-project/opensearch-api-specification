@@ -206,9 +206,9 @@ export class OpenSearchHttpClient {
         if (axios.isAxiosError(e)) {
           this._logger.warn(`Error connecting to ${this._opts?.url}: (${e.message})`)
           if (e.response?.status == 401 || e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
-            throw e.message
+            throw new Error(e.message)
           } else if (e.response?.status == 403 || e.code === 'ERR_BAD_REQUEST') {
-            throw e.message
+            throw new Error(e.message)
           }
         } else {
           this._logger.warn(`Error connecting to ${this._opts?.url}: (${typeof (e)})`)

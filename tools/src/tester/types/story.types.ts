@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
 /*
@@ -221,5 +221,5 @@ export interface ActualResponse {
   error?: {};
 }
 
-/* eslint-enable @typescript-eslint/ban-types */
+/* eslint-enable @typescript-eslint/no-empty-object-type */
 /* eslint-enable @typescript-eslint/consistent-indexed-object-style */

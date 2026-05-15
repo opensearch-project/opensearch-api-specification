@@ -78,7 +78,7 @@ export function print_yaml (obj: any): void {
 export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
   const flatten = <T extends Evaluation | undefined>(e: T): T => {
 
-    var result = e
+    const result = e
 
     if (e !== undefined && result !== undefined) {
       if (typeof e.error === 'object' && e.error.message !== undefined) {
@@ -94,7 +94,7 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
   const flatten_chapters = <T extends ChapterEvaluation[] | undefined> (chapters: T): T => {
     if (chapters === undefined) return undefined as T
     return chapters.map((c: ChapterEvaluation): ChapterEvaluation => {
-      var result = {
+      const result = {
         ...c,
         overall: flatten(c.overall),
       }

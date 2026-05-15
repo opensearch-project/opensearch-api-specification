@@ -46,6 +46,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
 - Remove `fields` from `SearchResult` ([#1018](https://github.com/opensearch-project/opensearch-api-specification/pull/1018))
 - Remove redundant `type:object` from `*Aggregate` types ([#1083](https://github.com/opensearch-project/opensearch-api-specification/pull/1083))
+- Removed unpublished `titlecase@1.1.3` dependency; replaced with local implementation ([#1111](https://github.com/opensearch-project/opensearch-api-specification/pull/1111))
+- Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
 - Fixed ISM index parameters to use `Indices` type instead of `IndexName` for multi-index support ([#1097](https://github.com/opensearch-project/opensearch-api-specification/issues/1097))
@@ -58,6 +60,13 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
 - Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
 - Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056))
+
+### Security
+- Upgraded `axios` 1.13.5 → 1.15.2 to fix 12+ CVEs (CVE-2026-42264, CVE-2026-42035, CVE-2026-42033, CVE-2026-42043, CVE-2025-62718, and others)
+- Upgraded `yaml` 2.4.5 → 2.8.3 to fix CVE-2026-33532
+- Upgraded ESLint ecosystem to v9 (`eslint` 9.39.4, `typescript-eslint` 8.59.3, `@stylistic/eslint-plugin` 4.4.0) eliminating vulnerable transitive dependencies
+- Added npm `overrides` for `minimatch`, `picomatch`, `uuid`, `flatted`, and `@babel/helpers` to force patched transitive dependency versions
+- Added explicit `requests>=2.33.0` to `tools/src/validate-spec-py/Pipfile` to fix CVE-2026-25645
 - Fixed `TermsAggregation` value_type type from `string` to `ValueType`, enforce enum ([#1057](https://github.com/opensearch-project/opensearch-api-specification/pull/1057))
 - Exclude FilterContainer and order in TermsAggregation in spec ([#1059](https://github.com/opensearch-project/opensearch-api-specification/pull/1059))
 - Fix `AggregationContainer` to inherit `Aggregation` type, and remove unnamed field `name` from `Aggregation`. Remove `geo_point` and `range` from `ValueType`. Exclude `aggs` alias from protobufs. ([#1060](https://github.com/opensearch-project/opensearch-api-specification/pull/1060))
