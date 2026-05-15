@@ -120,77 +120,23 @@ components:
             type: string
           description: A list of minimum required OpenSearch versions.
     shards:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: The total number of shards involved in the deletion.
-        successful:
-          type: integer
-          description: The number of shards where the deletion was successful.
-        failed:
-          type: integer
-          description: The number of shards where the deletion failed.
-        skipped:
-          type: integer
-          description: The number of shards where the deletion was skipped.
+      $ref: '_common.yaml#/components/schemas/ShardStatistics'
     total:
-      type: object
-      properties:
-        value:
-          type: integer
-          description: The total number of matching documents.
-        relation:
-          type: string
-          description: The relation of the total hits.
+      $ref: '_core.search.yaml#/components/schemas/TotalHits'
     itemsObject:
-      type: object
-      properties:
-        _index:
-          type: string
-          description: The index name where the document resides.
-        _id:
-          type: string
-          description: The document ID.
-        _version:
-          type: integer
-          description: The version of the document.
-        _seq_no:
-          type: integer
-          description: The sequence number of the document.
-        _primary_term:
-          type: integer
-          description: The primary term of the document.
-        _score:
-          type: number
-          format: float
-          description: The score of the search hit.
-        _source:
-          $ref: '#/components/schemas/FlowFrameworkGetResponse'
+      allOf:
+        - $ref: '_core.search.yaml#/components/schemas/Hit'
+        - type: object
+          properties:
+            _source:
+              $ref: '#/components/schemas/FlowFrameworkGetResponse'
     StateItems:
-      type: object
-      properties:
-        _index:
-          type: string
-          description: The index name where the document resides.
-        _id:
-          type: string
-          description: The document ID.
-        _version:
-          type: integer
-          description: The version of the document.
-        _seq_no:
-          type: integer
-          description: The sequence number of the document.
-        _primary_term:
-          type: integer
-          description: The primary term of the document.
-        _score:
-          type: number
-          format: float
-          description: The score of the search hit.
-        _source:
-          $ref: '#/components/schemas/SearchStateResponse'
+      allOf:
+        - $ref: '_core.search.yaml#/components/schemas/Hit'
+        - type: object
+          properties:
+            _source:
+              $ref: '#/components/schemas/SearchStateResponse'
     SearchStateResponse:
       type: object
       properties:
