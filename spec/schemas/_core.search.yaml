@@ -40,9 +40,11 @@ components:
             hits:
               type: array
               items:
-                type: object
-                properties:
-                  _source: {}
+                allOf:
+                  - $ref: '#/components/schemas/Hit'
+                  - type: object
+                    properties:
+                      _source: {}
     TotalHits:
       type: object
       properties:
@@ -1359,10 +1361,12 @@ components:
                 hits:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      _source:
-                        $ref: '#/components/schemas/TDocument'
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
         processor_results:
           x-version-added: '3.0'
           type: array
@@ -1407,9 +1411,11 @@ components:
                 hits:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      _source: {}
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source: {}
             suggest:
               type: object
               additionalProperties:
@@ -1417,18 +1423,24 @@ components:
                 items:
                   oneOf:
                     - title: completion
-                      type: object
-                      properties:
-                        options:
-                          oneOf:
-                            - type: object
-                              properties:
-                                _source: {}
-                            - type: array
-                              items:
-                                type: object
-                                properties:
-                                  _source: {}
+                      allOf:
+                        - $ref: '#/components/schemas/CompletionSuggest'
+                        - type: object
+                          properties:
+                            options:
+                              oneOf:
+                                - allOf:
+                                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                                    - type: object
+                                      properties:
+                                        _source: {}
+                                - type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                                      - type: object
+                                        properties:
+                                          _source: {}
                     - title: phrase
                       $ref: '#/components/schemas/PhraseSuggest'
                     - title: term
