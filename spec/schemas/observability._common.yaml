@@ -12,12 +12,14 @@ components:
       properties:
         startIndex:
           type: integer
+          format: int64
           description: The starting index of the returned objects.
         totalHits:
           type: integer
+          format: int64
           description: The total number of matching objects.
         totalHitRelation:
-          type: string
+          $ref: '#/components/schemas/TotalHitRelation'
           description: The relationship of total hits to the query.
         observabilityObjectList:
           type: array
@@ -30,6 +32,12 @@ components:
         - totalHitRelation
         - totalHits
 
+    TotalHitRelation:
+      type: string
+      enum:
+        - eq
+        - gte
+
     ObservabilityObject:
       type: object
       description: The core observability object containing visualization and query data.
@@ -39,13 +47,21 @@ components:
           description: The unique identifier of the observability object.
         lastUpdatedTimeMs:
           type: integer
+          format: int64
           description: When the object was last updated in milliseconds.
         createdTimeMs:
           type: integer
+          format: int64
           description: When the object was created in milliseconds.
         tenant:
           type: string
           description: The tenant associated with the observability object.
+        access:
+          type: array
+          items:
+            type: string
+          description: The access control list for the observability object.
+          x-version-added: 1.2.0
         operationalPanel:
           $ref: '#/components/schemas/OperationalPanel'
         savedVisualization:
@@ -161,6 +177,29 @@ components:
           $ref: '#/components/schemas/SelectedTimestamp'
         selected_fields:
           $ref: '#/components/schemas/SelectedFields'
+        application_id:
+          type: string
+          description: The identifier of the associated application.
+          x-version-added: 1.3.0
+        user_configs:
+          type: string
+          description: User-specific configuration for the visualization.
+          x-version-added: 1.3.0
+        sub_type:
+          type: string
+          description: The sub-type of the visualization.
+          x-version-added: 1.3.0
+        metric_type:
+          type: string
+          description: The metric type for the visualization.
+          x-version-added: 1.3.0
+        units_of_measure:
+          type: string
+          description: The units of measure for the visualization.
+          x-version-added: 1.3.0
+        selected_labels:
+          $ref: '#/components/schemas/SelectedFields'
+          x-version-added: 1.3.0
       required:
         - description
         - name
