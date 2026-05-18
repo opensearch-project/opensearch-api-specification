@@ -30,6 +30,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `semantic` field type ([#995](https://github.com/opensearch-project/opensearch-api-specification/pull/995))
 - Add `x-protobuf-required` vendor extension for enforcing required Protobuf fields ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 - Add `RepositoryStatsSnapshot` schema to `ShardRepositoriesStats` in nodes.stats API ([#997](https://github.com/opensearch-project/opensearch-api-specification/pull/997))
+- Add all snapshot repository settings for fs repositories
+- Add S3 repository settings for snapshot repositories
 - Add `x-protobuf-excluded` to SearchResult::hits ([#1012](https://github.com/opensearch-project/opensearch-api-specification/pull/1012))
 - Add `x-protobuf-excluded` to QueryContainer::template ([#1013](https://github.com/opensearch-project/opensearch-api-specification/pull/1013))
 - Add proto compatibility check workflow for PRs and post-deployment ([#1020](https://github.com/opensearch-project/opensearch-api-specification/pull/1020))
