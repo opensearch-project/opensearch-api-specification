@@ -1,6 +1,7 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Tests the creation and deletion of search configurations.
+version: '>= 3.5.0'
 
 prologues:
   - path: /_cluster/settings
@@ -73,6 +74,31 @@ chapters:
     method: GET
     response:
       status: 200
+  - synopsis: List all the search configurations created using search api.
+    path: /_plugins/_search_relevance/search_configurations/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    request:
+      payload:
+        query:
+          ids:
+            values:
+              - ${search_configuration.search_configuration_id}
+        size: 1
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+            relation: eq
+          hits:
+            - _id: ${search_configuration.search_configuration_id}
+              _source:
+                name: simple
+                index: sample_index
+                searchPipeline: test_pipeline
   - synopsis: Retrieve a specific search configuration.
     path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
     method: GET
