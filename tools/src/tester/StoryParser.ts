@@ -27,7 +27,7 @@ export default class StoryParser {
     if (chapters === undefined) return []
     return  _.flatMap(_.map(chapters, (chapter) => {
       return _.map(this.#chapter_methods(chapter.method), (method) => {
-        let synopsis = chapter.synopsis && Array.isArray(chapter.method) ?
+        const synopsis = chapter.synopsis && Array.isArray(chapter.method) ?
           `${chapter.synopsis} [${method}]` :
           chapter.synopsis
         return {

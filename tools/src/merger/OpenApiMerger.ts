@@ -145,16 +145,16 @@ export default class OpenApiMerger {
 
   #normalize_fields(obj: any = this._spec): void {
     for (const key in obj) {
-      var item = obj[key]
+      const item = obj[key]
 
       if (item?.$ref !== undefined) {
-        var renamed_ref = this.#normalize_key(item.$ref as string)
+        const renamed_ref = this.#normalize_key(item.$ref as string)
         if (renamed_ref != item.$ref) {
           item.$ref = renamed_ref
         }
       }
 
-      var renamed_key = this.#normalize_key(key)
+      const renamed_key = this.#normalize_key(key)
       if (renamed_key != key) {
         obj[renamed_key] = obj[key]
         delete obj[key]

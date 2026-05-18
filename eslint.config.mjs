@@ -1,21 +1,21 @@
 import globals from 'globals'
-import parserTs from '@typescript-eslint/parser'
 import parserYml from "yaml-eslint-parser"
-import pluginComments from 'eslint-plugin-eslint-comments'
+import pluginComments from '@eslint-community/eslint-plugin-eslint-comments'
 import pluginJs from '@eslint/js'
 import pluginLicenseHeader from 'eslint-plugin-license-header'
-import pluginTs from '@typescript-eslint/eslint-plugin'
 import pluginYml from 'eslint-plugin-yml'
 import pluginCspell from '@cspell/eslint-plugin'
 import pluginStylistic from '@stylistic/eslint-plugin'
 import pluginJest from 'eslint-plugin-jest'
+import tseslint from 'typescript-eslint'
 
-export default [
+export default tseslint.config(
+  { ignores: ['jest.config.js'] },
   pluginJs.configs.recommended,
   {
     files: ['**/*.{js,ts}'],
+    extends: tseslint.configs.recommendedTypeChecked,
     languageOptions: {
-      parser: parserTs,
       parserOptions: {
         project: './tsconfig.json'
       },
@@ -25,17 +25,14 @@ export default [
       },
     },
     plugins: {
-      '@typescript-eslint': pluginTs,
       'license-header': pluginLicenseHeader,
-      'eslint-comments': pluginComments,
+      '@eslint-community/eslint-comments': pluginComments,
       '@cspell': pluginCspell,
       '@stylistic': pluginStylistic,
       'jest': pluginJest
     },
     rules: {
-      ...pluginJs.configs.recommended.rules,
       ...pluginComments.configs.recommended.rules,
-      ...pluginTs.configs["recommended-type-checked"].rules,
       '@stylistic/object-curly-spacing': ["error", "always"],
       '@stylistic/keyword-spacing': ["error", { "before": true, "after": true }],
       '@stylistic/space-unary-ops': ["error", { "words": true, "nonwords": false }],
@@ -124,4 +121,4 @@ export default [
       'yml/sort-sequence-values': ['error', { pathPattern: '.*', order: { type: 'asc' } }]
     }
   }
-]
+)

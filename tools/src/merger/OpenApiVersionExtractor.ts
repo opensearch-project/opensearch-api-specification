@@ -100,7 +100,7 @@ export default class OpenApiVersionExtractor {
     if (this._spec === undefined) return
 
     // remove anything that's not referenced
-    var references = find_refs(this._spec)
+    const references = find_refs(this._spec)
 
     this._spec.components = _.reduce(_.map(['parameters', 'requestBodies', 'responses', 'schemas'], (p) =>
     {
@@ -114,7 +114,7 @@ export default class OpenApiVersionExtractor {
     ), extend)
 
     // collect what's left
-    var remaining = _.flatMap(['schemas', 'parameters', 'responses', 'requestBodies'], (key) =>
+    const remaining = _.flatMap(['schemas', 'parameters', 'responses', 'requestBodies'], (key) =>
       _.keys(this._spec?.components?.[key]).map((ref) => `#/components/${key}/${ref}`)
     )
 

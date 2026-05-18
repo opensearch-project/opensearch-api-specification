@@ -42,10 +42,10 @@ export default class ChapterEvaluator {
     const operation = this._operation_locator.locate_operation(chapter)
     if (operation == null) return { title: chapter.synopsis, overall: { result: Result.FAILED, message: `Operation "${chapter.method.toUpperCase()} ${chapter.path}" not found in the spec.` } }
 
-    var tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
-    var retry = 0
+    let tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
+    let retry = 0
 
-    var result: ChapterEvaluation
+    let result: ChapterEvaluation
 
     do {
       result = await this.#evaluate(chapter, operation, story_outputs, ++retry > 1 ? retry - 1 : undefined)
@@ -83,7 +83,7 @@ export default class ChapterEvaluator {
       output_values_evaluation.evaluation
     ))
 
-    var result: ChapterEvaluation = {
+    const result: ChapterEvaluation = {
       title: chapter.synopsis,
       operation: {
         method: chapter.method,
@@ -139,7 +139,7 @@ export default class ChapterEvaluator {
 
     if (is_status_match && response.error === undefined) return { result: Result.PASSED }
 
-    let result: Evaluation = {
+    const result: Evaluation = {
       result: Result.ERROR,
       message: _.join(_.compact([
         is_status_match ?
