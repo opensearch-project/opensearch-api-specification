@@ -1,7 +1,7 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Tests the creation and deletion of experiments.
-# version: '>= 3.5.0'
+version: '>= 3.5.0'
 
 prologues:
   - path: /_plugins/ubi/initialize
@@ -189,22 +189,34 @@ chapters:
     method: GET
     response:
       status: 200 
-  # - synopsis: List the experiments created using search api.
-  #   path: /_plugins/_search_relevance/experiments/_search
-  #   method: POST
-  #   warnings:
-  #     multiple-paths-detected: false
-  #   request:
-  #     payload:
-  #       query:
-  #         match_all: {}
-  #       size: 1000
-  #   response:
-  #     status: 200
-  #     payload:
-  #       hits:
-  #         hits:
-  #           - _score: 1
+  - synopsis: List the experiments created using search api.
+    path: /_plugins/_search_relevance/experiments/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    request:
+      payload:
+        query:
+          ids:
+            values:
+              - ${pairwise_experiment.experiment_id}
+        size: 1
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+            relation: eq
+          hits:
+            - _id: ${pairwise_experiment.experiment_id}
+              _source:
+                querySetId: ${query_set_sampling.query_set_id}
+                searchConfigurationList:
+                  - ${search_configuration1.search_configuration_id}
+                  - ${search_configuration2.search_configuration_id}
+                size: 10
+                type: PAIRWISE_COMPARISON
   - synopsis: Retrieve a specific experiment.
     path: /_plugins/_search_relevance/experiments/{experiment_id}
     method: GET
