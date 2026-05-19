@@ -5,11 +5,13 @@ on:
     branches: ['**']
     paths:
       - 'spec/**'
+      - 'cmd/osapispec/internal/linter/**'
       - 'tools/src/linter/**'
   pull_request:
     branches: ['**']
     paths:
       - 'spec/**'
+      - 'cmd/osapispec/internal/linter/**'
       - 'tools/src/linter/**'
 
 jobs:
@@ -19,13 +21,46 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
 
-      - name: Install Dependencies
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
+
+      - name: Install Node deps
         run: npm ci
 
-      - name: Lint Spec
-        run: npm run lint:spec
+      - name: Build osapispec binary
+        run: go build -o /tmp/osapispec .
+        working-directory: cmd/osapispec
+
+      - name: Lint Spec (Node — gating)
+        run: |
+          start=$(date +%s)
+          npm run lint:spec 2>&1 | tee /tmp/lint-node.txt
+          echo "::notice::Node lint: $(($(date +%s) - start))s"
+
+      - name: Lint Spec (Go — shadow)
+        id: go-lint
+        continue-on-error: true
+        run: |
+          start=$(date +%s)
+          /tmp/osapispec lint -source spec 2>&1 | tee /tmp/lint-go.txt
+          echo "::notice::Go lint: $(($(date +%s) - start))s"
+
+      - name: Compare Node vs Go lint outputs
+        if: steps.go-lint.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u /tmp/lint-node.txt /tmp/lint-go.txt > /tmp/lint-diff.txt; then
+            echo "::notice::Node and Go lint outputs are identical"
+          else
+            echo "::warning::Node and Go lint outputs differ ($(wc -l < /tmp/lint-diff.txt) diff lines)"
+            head -200 /tmp/lint-diff.txt
+          fi
