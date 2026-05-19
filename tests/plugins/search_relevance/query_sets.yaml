@@ -1,6 +1,7 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Tests the creation and deletion of query sets.
+version: '>= 3.5.0'
 
 prologues:
   - path: /_plugins/ubi/initialize
@@ -89,6 +90,34 @@ chapters:
     method: GET
     response:
       status: 200
+  - synopsis: List all the query sets created using search api.
+    path: /_plugins/_search_relevance/query_sets/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    request:
+      payload:
+        query:
+          ids:
+            values:
+              - ${query_set_manual_input.query_set_id}
+        size: 1
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+            relation: eq
+          hits:
+            - _id: ${query_set_manual_input.query_set_id}
+              _source:
+                name: test01
+                description: test01
+                sampling: manual
+                querySetQueries:
+                  - queryText: apple
+                  - queryText: banana
   - synopsis: Retrieve a specific query set.
     path: /_plugins/_search_relevance/query_sets/{query_set_id}
     method: GET

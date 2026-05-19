@@ -14,9 +14,9 @@ import tmp from 'tmp'
 import path from 'path'
 
 describe('KeepDescriptions', () => {
-  var temp: tmp.DirResult
-  var fixture_path: string = './tools/tests/prepare-for-vale/fixtures'
-  var fixtures = fg.globSync(`${fixture_path}/**/*.{yaml,yml}`, { dot: true })
+  let temp: tmp.DirResult
+  const fixture_path: string = './tools/tests/prepare-for-vale/fixtures'
+  const fixtures = fg.globSync(`${fixture_path}/**/*.{yaml,yml}`, { dot: true })
 
   describe('defaults', () => {
     beforeAll(() => {

@@ -10,7 +10,7 @@
 import { OutputReference } from "tester/OutputReference";
 
 describe('OutputReference', () => {
-  let f = (id: any, k: any): string => `[${id}:${k}]`
+  const f = (id: any, k: any): string => `[${id}:${k}]`
 
   describe('parse', () => {
     it('replaces', () => {

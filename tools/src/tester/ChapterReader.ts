@@ -49,10 +49,11 @@ export default class ChapterReader {
       }
     }).then(r => {
       response.status = r.status
-      response.content_type = r.headers['content-type']?.split(';')[0]
+      const content_type = r.headers['content-type'] as string | undefined
+      response.content_type = content_type?.split(';')[0]
       const payload = this.#deserialize_payload(r.data, response.content_type)
       if (payload !== undefined) response.payload = payload
-      this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(response.payload)}`)
+      this.logger.info(`<= ${r.status} (${content_type ?? ''}) | ${to_json(response.payload)}`)
     }).catch(e => {
       if (e.response == null) {
         this.logger.info(`<= ERROR: ${e}`)

@@ -33,7 +33,7 @@ export default class SchemaRefsValidator {
         const file = ref.split('#')[0].replace('../', '')
         const name = ref.split('/').pop() ?? ''
         if (name === '') throw new Error(`Invalid schema reference: ${ref}`)
-        if (this.referenced_schemas[file] == null) this.referenced_schemas[file] = new Set()
+        this.referenced_schemas[file] ??= new Set()
         this.referenced_schemas[file].add(name)
       }
       for (const key in obj) { if (typeof obj[key] === 'object') search(obj[key]) }
@@ -49,7 +49,7 @@ export default class SchemaRefsValidator {
         const file = ref.startsWith('#') ? ref_file : `schemas/${ref.split('#')[0]}`
         const name = ref.split('/').pop() ?? ''
         if (name === '') throw new Error(`Invalid schema reference: ${ref}`)
-        if (this.referenced_schemas[file] == null) this.referenced_schemas[file] = new Set()
+        this.referenced_schemas[file] ??= new Set()
         this.referenced_schemas[file].add(name)
       }
       for (const key in obj) { if (typeof obj[key] === 'object') search(obj[key], ref_file) }
