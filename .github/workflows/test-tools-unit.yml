@@ -1,24 +1,16 @@
-name: Test Tools (Unit)
+name: Test Tools
 
 on:
   push:
     branches: ['**']
     paths:
       - '.github/workflows/test-tools*.yml'
-      - eslint.config.mjs
-      - jest.config.js
-      - 'package*.json'
-      - 'tools/**'
-      - tsconfig.json
+      - 'cmd/osapispec/**'
   pull_request:
     branches: ['**']
     paths:
       - '.github/workflows/test-tools*.yml'
-      - eslint.config.mjs
-      - jest.config.js
-      - 'package*.json'
-      - 'tools/**'
-      - tsconfig.json
+      - 'cmd/osapispec/**'
 
 jobs:
   test:
@@ -27,19 +19,18 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '20'
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Tests
-        run: |
-          npm run test:unit -- --coverage
+      - name: Test
+        working-directory: cmd/osapispec
+        run: go test -race -coverprofile=coverage.out ./...
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: cmd/osapispec/coverage.out
