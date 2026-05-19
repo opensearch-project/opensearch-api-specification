@@ -144,8 +144,9 @@ jobs:
       - name: Generate API Changes Summary
         shell: bash -eo pipefail {0}
         run: |
-          if ! openapi-changes summary --no-logo --no-color --markdown $BEFORE_SPEC $AFTER_SPEC >output.md ; then
-            if ! grep -q 'breaking changes discovered' output.md ; then
+          if ! openapi-changes summary --no-logo --no-color --markdown $BEFORE_SPEC $AFTER_SPEC >output.md 2>error.log ; then
+            if ! grep -q 'breaking changes discovered' error.log ; then
+              cat error.log >/dev/stderr
               cat output.md >/dev/stderr
               exit 1
             fi
