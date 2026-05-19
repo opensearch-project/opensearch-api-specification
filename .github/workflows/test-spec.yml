@@ -4,19 +4,15 @@ on:
   push:
     paths:
       - .github/workflows/test-spec.yml
-      - package*.json
+      - cmd/osapispec/**
       - spec/**
       - tests/**
-      - tools/src/tester/**
-      - tsconfig.json
   pull_request:
     paths:
       - .github/workflows/test-spec.yml
-      - package*.json
+      - cmd/osapispec/**
       - spec/**
       - tests/**
-      - tools/src/tester/**
-      - tsconfig.json
 
 jobs:
   test-opensearch-spec:
@@ -29,9 +25,10 @@ jobs:
             admin_password: admin
           - version: 2.0.0
             admin_password: admin
+            opts: -XX:-UseContainerSupport
           - version: 2.19.2
           - version: 3.1.0
-          # TODO: Uncomment when a more complete 3.2.0 staging build is available. At time of writing, several plugins are missing from the distribution.
+          # TODO: Uncomment when a more complete 3.2.0 staging build is available.
           # - version: 3.2.0
           #   hub: opensearchstaging
           #   ref: '@sha256:95be442d5ae90490a4dd9fb32f4e5aa3e9bb48288d789d65e33e051f7549592a'
@@ -55,6 +52,7 @@ jobs:
             url: http://localhost:9200
           - version: 3.1.0
             tests: plugins/streaming
+            http1: true
           - version: 3.1.0
             tests: plugins/notifications
           - version: 3.1.0
@@ -91,13 +89,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '20'
-
-      - name: Install Dependencies
-        run: npm ci
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
 
       - name: Run OpenSearch Cluster
         working-directory: tests/${{ matrix.entry.tests || 'default' }}
@@ -109,15 +105,19 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test:spec -- \
-            --opensearch-insecure \
-            --opensearch-version=${{ matrix.entry.version }} \
-            --coverage coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json \
-            --opensearch-url=${{ matrix.entry.url || 'https://localhost:9200'}} \
-            --opensearch-cert=${{ matrix.entry.cert }} \
-            --opensearch-key=${{ matrix.entry.key }} \
-            --tests=tests/${{ matrix.entry.tests || 'default' }} \
-            --log logs/test-spec-${{ steps.tests.outputs.hash }}.log
+          go run . test \
+            -insecure \
+            -version=${{ matrix.entry.version }} \
+            -password=${{ env.OPENSEARCH_PASSWORD }} \
+            -coverage=../../coverage/test-spec-coverage-${{ steps.tests.outputs.hash }}.json \
+            -spec=../../spec \
+            -url=${{ matrix.entry.url || 'https://localhost:9200'}} \
+            ${{ matrix.entry.cert && format('-cert=../../{0}', matrix.entry.cert) || '' }} \
+            ${{ matrix.entry.key && format('-key=../../{0}', matrix.entry.key) || '' }} \
+            ${{ matrix.entry.http1 && '-http1' || '' }} \
+            -tests=../../tests/${{ matrix.entry.tests || 'default' }} \
+            -log=../../logs/test-spec-${{ steps.tests.outputs.hash }}.log
+        working-directory: cmd/osapispec
 
       - name: Get Container Logs
         if: failure()
