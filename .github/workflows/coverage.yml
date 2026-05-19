@@ -4,14 +4,18 @@ on:
   push:
     paths:
       - .github/workflows/coverage.yml
+      - cmd/osapispec/**
       - package*.json
       - spec/**
+      - tools/**
       - tsconfig.json
   pull_request:
     paths:
       - .github/workflows/coverage.yml
+      - cmd/osapispec/**
       - package*.json
       - spec/**
+      - tools/**
       - tsconfig.json
 
 jobs:
@@ -23,7 +27,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Dump OpenSearch Cluster's API
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
+
+      - name: Install Node deps
+        run: npm ci
+
+      - name: Build osapispec binary
+        run: go build -o /tmp/osapispec .
+        working-directory: cmd/osapispec
+
+      - name: Dump OpenSearch Cluster's API (Node — gating)
         shell: bash -eo pipefail {0}
         run: |
           docker build coverage --tag opensearch-with-api-plugin
@@ -36,29 +59,102 @@ jobs:
             -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
             opensearch-with-api-plugin
 
-          npm ci
-
+          mkdir -p build
+          start=$(date +%s)
           npm run dump-cluster-spec -- --opensearch-insecure --output build/opensearch-cluster.yaml
-
-          docker stop opensearch
+          echo "::notice::Node dump: $(($(date +%s) - start))s"
         env:
           OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
 
-      - name: Build Spec
+      - name: Dump OpenSearch Cluster's API (Go — shadow)
+        id: go-dump
+        continue-on-error: true
         shell: bash -eo pipefail {0}
         run: |
-          npm ci
-          npm run merge -- --source ./spec --output build/opensearch-openapi.yaml
+          start=$(date +%s)
+          /tmp/osapispec dump \
+            -insecure \
+            -password=$OPENSEARCH_PASSWORD \
+            -output=/tmp/opensearch-cluster-go.yaml
+          echo "::notice::Go dump: $(($(date +%s) - start))s"
+        env:
+          OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
 
-      - name: Calculate Coverage
+      - name: Stop OpenSearch
+        if: always()
+        run: docker stop opensearch || true
+
+      - name: Compare Node vs Go dump outputs
+        if: steps.go-dump.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u build/opensearch-cluster.yaml /tmp/opensearch-cluster-go.yaml > /tmp/dump-diff.txt; then
+            echo "::notice::Node and Go dump outputs are identical"
+          else
+            echo "::warning::Node and Go dump outputs differ ($(wc -l < /tmp/dump-diff.txt) diff lines)"
+            head -200 /tmp/dump-diff.txt
+          fi
+
+      - name: Build Spec (Node — gating)
         shell: bash -eo pipefail {0}
         run: |
+          start=$(date +%s)
+          npm run merge -- --source ./spec --output build/opensearch-openapi.yaml
+          echo "::notice::Node merge: $(($(date +%s) - start))s"
+
+      - name: Build Spec (Go — shadow)
+        id: go-merge
+        continue-on-error: true
+        run: |
+          start=$(date +%s)
+          /tmp/osapispec merge -source spec -output /tmp/opensearch-openapi-go.yaml
+          echo "::notice::Go merge: $(($(date +%s) - start))s"
+
+      - name: Compare Node vs Go merge outputs
+        if: steps.go-merge.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u build/opensearch-openapi.yaml /tmp/opensearch-openapi-go.yaml > /tmp/merge-diff.txt; then
+            echo "::notice::Node and Go merge outputs are identical"
+          else
+            echo "::warning::Node and Go merge outputs differ ($(wc -l < /tmp/merge-diff.txt) diff lines)"
+            head -200 /tmp/merge-diff.txt
+          fi
+
+      - name: Calculate Coverage (Node — gating)
+        shell: bash -eo pipefail {0}
+        run: |
+          start=$(date +%s)
           npm run coverage:spec -- \
               --cluster build/opensearch-cluster.yaml \
               --specification build/opensearch-openapi.yaml \
               --output build/coverage.yaml
+          echo "::notice::Node coverage: $(($(date +%s) - start))s"
 
           jq . build/coverage.yaml
+
+      - name: Calculate Coverage (Go — shadow)
+        id: go-coverage
+        continue-on-error: true
+        shell: bash -eo pipefail {0}
+        run: |
+          start=$(date +%s)
+          /tmp/osapispec coverage \
+              -cluster=build/opensearch-cluster.yaml \
+              -specification=build/opensearch-openapi.yaml \
+              -output=/tmp/coverage-go.yaml
+          echo "::notice::Go coverage: $(($(date +%s) - start))s"
+
+      - name: Compare Node vs Go coverage outputs
+        if: steps.go-coverage.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u build/coverage.yaml /tmp/coverage-go.yaml > /tmp/coverage-diff.txt; then
+            echo "::notice::Node and Go coverage outputs are identical"
+          else
+            echo "::warning::Node and Go coverage outputs differ ($(wc -l < /tmp/coverage-diff.txt) diff lines)"
+            head -200 /tmp/coverage-diff.txt
+          fi
 
       - name: Display Coverage Checklist
         shell: bash -eo pipefail {0}
