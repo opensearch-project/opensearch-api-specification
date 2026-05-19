@@ -15,13 +15,50 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
 
-      - name: Build
-        run: npm ci && npm run merge
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
+
+      - name: Install Node deps
+        run: npm ci
+
+      - name: Build osapispec binary
+        run: go build -o /tmp/osapispec .
+        working-directory: cmd/osapispec
+
+      - name: Build Spec (Node — gating)
+        run: |
+          mkdir -p build
+          start=$(date +%s)
+          npm run merge -- --source spec --output build/opensearch-openapi.yaml
+          echo "::notice::Node merge: $(($(date +%s) - start))s"
+
+      - name: Build Spec (Go — shadow)
+        id: go-merge
+        continue-on-error: true
+        run: |
+          start=$(date +%s)
+          /tmp/osapispec merge -source spec -output /tmp/opensearch-openapi-go.yaml
+          echo "::notice::Go merge: $(($(date +%s) - start))s"
+
+      - name: Compare Node vs Go merge outputs
+        if: steps.go-merge.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u build/opensearch-openapi.yaml /tmp/opensearch-openapi-go.yaml > /tmp/merge-diff.txt; then
+            echo "::notice::Node and Go merge outputs are identical"
+          else
+            echo "::warning::Node and Go merge outputs differ ($(wc -l < /tmp/merge-diff.txt) diff lines)"
+            head -200 /tmp/merge-diff.txt
+          fi
 
       - name: Extract Branch Name
         id: branch
