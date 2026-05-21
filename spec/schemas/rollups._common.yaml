@@ -208,34 +208,40 @@ components:
         timezone:
           type: string
           description: The timezone for interpreting the cron expression.
+        schedule_delay:
+          type: integer
+          format: int64
+          description: The delay in milliseconds before starting the rollup process.
+          x-version-added: 1.3.0
 
     Schedule:
-      description: Defines the execution schedule for a rollup job.
+      description: Defines the execution schedule for a rollup job. Exactly one of `interval` or `cron` must be specified.
       type: object
       properties:
         interval:
           $ref: '#/components/schemas/Interval'
+        cron:
+          $ref: '#/components/schemas/Cron'
+      minProperties: 1
+      maxProperties: 1
 
     Interval:
       description: Specifies the timing details for rollup job execution.
       type: object
       properties:
         start_time:
-          type: number
+          type: integer
+          format: int64
           description: When the rollup job should start, in epoch milliseconds.
         period:
-          type: number
+          type: integer
+          format: int32
           description: The numerical value for the execution interval.
         unit:
           type: string
           description: The time unit for the execution interval, such as `MINUTES` or `HOURS`.
-        cron:
-          oneOf:
-            - type: array
-              items:
-                $ref: '#/components/schemas/Cron'
-            - $ref: '#/components/schemas/Cron'
-          description: The cron schedule configuration for the rollup job.
         schedule_delay:
-          type: number
+          type: integer
+          format: int64
           description: The delay in milliseconds before starting the rollup process.
+          x-version-added: 1.3.0
