@@ -40,6 +40,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add msearch `allow_partial_results` flag ([#1061](https://github.com/opensearch-project/opensearch-api-specification/pull/1061))
 - Add title to `ml.predict_model_stream` and `ml.execute_agent_stream` requestBody ([#1072](https://github.com/opensearch-project/opensearch-api-specification/pull/1072))
 - Added `agentic` query type, `agentic_query_translator` request processor, and `agentic_context` response processor ([#1073](https://github.com/opensearch-project/opensearch-api-specification/pull/1073))
+- Added exception metadata properties to `ErrorCause` for `failed_node_exception`, `circuit_breaking_exception`, `parsing_exception`, `search_parse_exception`, `response_limit_breached_exception`, `script_exception`, `search_phase_execution_exception`, and `too_many_buckets_exception` ([#1108](https://github.com/opensearch-project/opensearch-api-specification/pull/1108))
 
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
