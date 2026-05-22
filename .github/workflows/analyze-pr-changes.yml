@@ -11,6 +11,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
+
+      - name: Install Node deps
+        run: npm ci
+
+      - name: Build osapispec binary
+        run: go build -o /tmp/osapispec .
+        working-directory: cmd/osapispec
+
       - name: Setup Environment Variables
         shell: bash -eo pipefail {0}
         run: |
@@ -34,7 +53,7 @@ jobs:
             COVERAGE_DIFF
           )
 
-          { 
+          {
             for var in "${vars[@]}"
             do
               echo "${var}=${!var}"
@@ -44,7 +63,7 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
-      - name: Dump OpenSearch Cluster's API
+      - name: Dump OpenSearch Cluster's API (Node — gating)
         shell: bash -eo pipefail {0}
         run: |
           docker build coverage --tag opensearch-with-api-plugin
@@ -57,37 +76,87 @@ jobs:
             -e OPENSEARCH_INITIAL_ADMIN_PASSWORD="$OPENSEARCH_PASSWORD" \
             opensearch-with-api-plugin
 
-          npm ci
-
+          start=$(date +%s)
           npm run dump-cluster-spec -- --opensearch-insecure --output $CLUSTER_SPEC
-
-          docker stop opensearch
+          echo "::notice::Node dump: $(($(date +%s) - start))s"
         env:
           OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
 
-      - name: Checkout BEFORE Spec
-        shell: bash -eo pipefail {0}
-        run: git checkout $BEFORE_SHA
-
-      - name: Build BEFORE Spec
+      - name: Dump OpenSearch Cluster's API (Go — shadow)
+        id: go-dump
+        continue-on-error: true
         shell: bash -eo pipefail {0}
         run: |
-          npm ci
+          start=$(date +%s)
+          /tmp/osapispec dump \
+            -insecure \
+            -password=$OPENSEARCH_PASSWORD \
+            -output=/tmp/cluster-go.yaml
+          echo "::notice::Go dump: $(($(date +%s) - start))s"
+        env:
+          OPENSEARCH_PASSWORD: BobgG7YrtsdKf9M
+
+      - name: Stop OpenSearch
+        if: always()
+        run: docker stop opensearch || true
+
+      - name: Compare Node vs Go dump outputs
+        if: steps.go-dump.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u $CLUSTER_SPEC /tmp/cluster-go.yaml > /tmp/dump-diff.txt; then
+            echo "::notice::Node and Go dump outputs are identical"
+          else
+            echo "::warning::Node and Go dump outputs differ ($(wc -l < /tmp/dump-diff.txt) diff lines)"
+            head -200 /tmp/dump-diff.txt
+          fi
+
+      - name: Checkout BEFORE Spec
+        shell: bash -eo pipefail {0}
+        run: git checkout $BEFORE_SHA -- spec/
+
+      - name: Build BEFORE Spec (Node — gating)
+        shell: bash -eo pipefail {0}
+        run: |
+          start=$(date +%s)
           npm run merge -- --source ./spec --output $BEFORE_SPEC
+          echo "::notice::Node merge (BEFORE): $(($(date +%s) - start))s"
 
       - name: Checkout AFTER Spec
         shell: bash -eo pipefail {0}
-        run: git checkout $AFTER_SHA
+        run: git checkout $AFTER_SHA -- spec/
 
-      - name: Build AFTER Spec
+      - name: Build AFTER Spec (Node — gating)
         shell: bash -eo pipefail {0}
         run: |
-          npm ci
+          start=$(date +%s)
           npm run merge -- --source ./spec --output $AFTER_SPEC
+          echo "::notice::Node merge (AFTER): $(($(date +%s) - start))s"
 
-      - name: Calculate Coverage
+      - name: Build AFTER Spec (Go — shadow)
+        id: go-merge
+        continue-on-error: true
         shell: bash -eo pipefail {0}
         run: |
+          start=$(date +%s)
+          /tmp/osapispec merge -source spec -output /tmp/after-go.yaml
+          echo "::notice::Go merge (AFTER): $(($(date +%s) - start))s"
+
+      - name: Compare Node vs Go merge outputs (AFTER)
+        if: steps.go-merge.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u $AFTER_SPEC /tmp/after-go.yaml > /tmp/merge-diff.txt; then
+            echo "::notice::Node and Go merge outputs are identical"
+          else
+            echo "::warning::Node and Go merge outputs differ ($(wc -l < /tmp/merge-diff.txt) diff lines)"
+            head -200 /tmp/merge-diff.txt
+          fi
+
+      - name: Calculate Coverage (Node — gating)
+        shell: bash -eo pipefail {0}
+        run: |
+          start=$(date +%s)
           npm run coverage:spec -- \
               --cluster $CLUSTER_SPEC \
               --specification $BEFORE_SPEC \
@@ -97,6 +166,7 @@ jobs:
               --cluster $CLUSTER_SPEC \
               --specification $AFTER_SPEC \
               --output $AFTER_COVERAGE
+          echo "::notice::Node coverage: $(($(date +%s) - start))s"
 
           jq . $AFTER_COVERAGE
 
@@ -115,6 +185,29 @@ jobs:
             $BEFORE_COVERAGE \
             $AFTER_COVERAGE \
             | tee $COVERAGE_DIFF
+
+      - name: Calculate Coverage (Go — shadow)
+        id: go-coverage
+        continue-on-error: true
+        shell: bash -eo pipefail {0}
+        run: |
+          start=$(date +%s)
+          /tmp/osapispec coverage \
+              -cluster=$CLUSTER_SPEC \
+              -specification=$AFTER_SPEC \
+              -output=/tmp/coverage-after-go.json
+          echo "::notice::Go coverage: $(($(date +%s) - start))s"
+
+      - name: Compare Node vs Go coverage outputs
+        if: steps.go-coverage.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if diff -u $AFTER_COVERAGE /tmp/coverage-after-go.json > /tmp/coverage-diff.txt; then
+            echo "::notice::Node and Go coverage outputs are identical"
+          else
+            echo "::warning::Node and Go coverage outputs differ ($(wc -l < /tmp/coverage-diff.txt) diff lines)"
+            head -200 /tmp/coverage-diff.txt
+          fi
 
       - name: Upload Coverage Data
         id: upload-coverage
@@ -158,21 +251,21 @@ jobs:
               WAS_BLANK = 0
               HAD_CHANGES = 0
             }
-            
+
             /^starting work/ || /^Building original model/ || /^Date:/ || /^SPEC:/ || /^ERROR:/ || /^DONE:/ {
               next
             }
-              
+
             /^[[:space:]]*$/ {
               WAS_BLANK = 1
               next
             }
-              
+
             WAS_BLANK {
               WAS_BLANK = 0
               print ""
             }
-              
+
             {
               HAD_CHANGES = 1
               print

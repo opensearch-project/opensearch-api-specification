@@ -5,26 +5,18 @@ on:
     branches: ['**']
     paths:
       - '.github/workflows/test-tools*.yml'
-      - eslint.config.mjs
-      - jest.config.js
-      - 'package*.json'
-      - 'tools/**'
-      - tsconfig.json
+      - 'cmd/osapispec/**'
   pull_request:
     branches: ['**']
     paths:
       - '.github/workflows/test-tools*.yml'
-      - eslint.config.mjs
-      - jest.config.js
-      - 'package*.json'
-      - 'tools/**'
-      - tsconfig.json
+      - 'cmd/osapispec/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      OPENSEARCH_VERSION: 2.17.0
+      OPENSEARCH_VERSION: 3.6.0
       OPENSEARCH_PASSWORD: myStrongPassword123!
       OPENSEARCH_URL: https://localhost:9200
     steps:
@@ -37,19 +29,17 @@ jobs:
           docker compose up -d
           sleep 15
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '20'
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Tests
+      - name: Run Integration Tests
         run: |
-          npm run test:integ -- --coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          go run . test \
+            -insecure \
+            -url=${{ env.OPENSEARCH_URL }} \
+            -password=${{ env.OPENSEARCH_PASSWORD }} \
+            -tests=../../tests/default
+        working-directory: cmd/osapispec
