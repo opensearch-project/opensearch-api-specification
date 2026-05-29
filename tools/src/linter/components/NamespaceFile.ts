@@ -71,7 +71,7 @@ export default class NamespaceFile extends FileValidator {
     this._refs = new Set<string>()
     const find_refs = (obj: Record<string, any>): void => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      if (obj.$ref != null) this._refs!.add(obj.$ref as string)
+      if (obj.$ref != null && (obj.$ref as string).startsWith('#/')) this._refs!.add(obj.$ref as string)
       _.values(obj).forEach((value) => { if (typeof value === 'object') find_refs(value as Record<string, any>) })
     }
     find_refs(this.spec().paths ?? {})
