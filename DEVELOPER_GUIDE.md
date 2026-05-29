@@ -144,6 +144,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
 - `x-distributions-included`: Contains a list of distributions known to include the API.
 - `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
+- `x-error-responses`: An array of `$ref` objects on an operation declaring auxiliary partial-failure shapes the response may carry in addition to its primary response schema. Each entry references a wrapper schema in [`spec/schemas/_common.errors.yaml`](spec/schemas/_common.errors.yaml) (e.g. `BulkItems`, `SearchShards`, `TaskFailures`). Wrapper schemas describe the shape of the embedded failure content (arity, grouping, version) using ordinary JSON Schema; client generators walk the array to emit one typed handler per wrapper and wire it into the operation's response post-processor. Operations with no auxiliary partial-failure shapes omit the extension.
 
 Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless.
 
