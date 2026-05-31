@@ -41,6 +41,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add title to `ml.predict_model_stream` and `ml.execute_agent_stream` requestBody ([#1072](https://github.com/opensearch-project/opensearch-api-specification/pull/1072))
 - Added `agentic` query type, `agentic_query_translator` request processor, and `agentic_context` response processor ([#1073](https://github.com/opensearch-project/opensearch-api-specification/pull/1073))
 
+### Deprecated
+- Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
+
 ### Removed
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
