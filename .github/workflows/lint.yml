@@ -4,15 +4,11 @@ on:
   push:
     branches: ['**']
     paths:
-      - '**/*.ts'
-      - '**/*.yaml'
-      - '**/*.yml'
+      - 'cmd/osapispec/**'
   pull_request:
     branches: ['**']
     paths:
-      - '**/*.ts'
-      - '**/*.yaml'
-      - '**/*.yml'
+      - 'cmd/osapispec/**'
 
 jobs:
   lint:
@@ -21,13 +17,14 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '20'
+          go-version-file: cmd/osapispec/go.mod
+          cache-dependency-path: cmd/osapispec/go.sum
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.12
+          working-directory: cmd/osapispec
