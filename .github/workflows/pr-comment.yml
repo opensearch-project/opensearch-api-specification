@@ -16,14 +16,14 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: refs/heads/main
           sparse-checkout: |
             .github
 
       - name: Download PR Comment Payload
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           name: pr-comment
@@ -52,14 +52,14 @@ jobs:
           } | tee "$GITHUB_ENV"
 
       - name: Render Comment Template
-        uses: chuhlomin/render-template@v1
+        uses: chuhlomin/render-template@a7c644e341797d050d1cb24332d83791b9a46dae # v1
         id: render
         with:
           template: .github/pr-comment-templates/${{ env.TEMPLATE_NAME }}.template.md
           vars: ${{ env.TEMPLATE_DATA }}
 
       - name: Find Existing Comment
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         id: fc
         with:
           issue-number: ${{ env.PR_NUMBER }}
@@ -67,7 +67,7 @@ jobs:
           body-includes: ${{ env.COMMENT_IDENTIFIER }}
 
       - name: Create or Update Comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ env.PR_NUMBER }}

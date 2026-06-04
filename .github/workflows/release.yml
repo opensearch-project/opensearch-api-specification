@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Get Current Version
         id: current
@@ -32,7 +32,7 @@ jobs:
           fi
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
           node-version: '20'
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload Artifacts
         id: upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: build
           path: |
@@ -49,14 +49,14 @@ jobs:
 
       - name: Extract Changelog
         id: changelog
-        uses: sean0x42/markdown-extract@v2
+        uses: sean0x42/markdown-extract@4178293dd16a52514b6cb2c01f4d309d264b2736 # v2
         with:
           file: CHANGELOG.md
           pattern: Unreleased
           no-print-matched-heading: true
 
       - name: Draft a release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         id: release
         with:
           draft: true
@@ -72,7 +72,7 @@ jobs:
             build/*
 
       - name: Increment Version
-        uses: nguyenvukhang/semver-increment@v1
+        uses: nguyenvukhang/semver-increment@38a3e3f41cfd66c9b0cef7dac0370bb642371574 # v1
         id: version
         with:
           increment: patch
@@ -80,12 +80,12 @@ jobs:
           version-regex: '^version: (.*)'
 
       - name: Update CHANGELOG to the Next Developer Iteration
-        uses: thomaseizinger/keep-a-changelog-new-release@v3
+        uses: thomaseizinger/keep-a-changelog-new-release@77ac767b2f7f6edf2ee72ab3364ed26667086f96 # v3
         with:
           tag: ${{ github.ref_name }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Preparing for next developer iteration ${{ steps.version.outputs.version }}.'
