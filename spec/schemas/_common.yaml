@@ -359,29 +359,105 @@ components:
     ErrorCause:
       type: object
       properties:
-        type:
-          description: The type of error.
-          type: string
-        reason:
-          description: A human-readable explanation of the error, in English.
-          type: string
-        stack_trace:
-          description: The server stack trace, present only if the `error_trace=true` parameter was sent with the request.
-          type: string
+        bytes_limit:
+          description: The circuit breaker memory limit. Present in `circuit_breaking_exception` responses.
+          type: integer
+          format: int64
+        bytes_wanted:
+          description: The number of bytes that were requested. Present in `circuit_breaking_exception` responses.
+          type: integer
+          format: int64
         caused_by:
           $ref: '#/components/schemas/ErrorCause'
-        root_cause:
+        col:
+          description: The column number of the parsing error. Present in `parsing_exception` and `search_parse_exception` responses.
+          type: integer
+          format: int32
+        durability:
+          description: The circuit breaker durability. Present in `circuit_breaking_exception` responses.
+          type: string
+          enum:
+            - TRANSIENT
+            - PERMANENT
+        failed_shards:
+          description: The shard failures. Present in `search_phase_execution_exception` responses.
           type: array
           items:
-            $ref: '#/components/schemas/ErrorCause'
-        suppressed:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
+            $ref: '#/components/schemas/ShardFailure'
+        grouped:
+          description: Whether shard failures are grouped. Present in `search_phase_execution_exception` responses.
+          type: boolean
         header:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/StringOrStringArray'
+        lang:
+          description: The scripting language. Present in `script_exception` responses.
+          type: string
+        limit_entity:
+          x-version-added: '3.0'
+          description: The type of entity that breached the response limit. Present in `response_limit_breached_exception` responses.
+          type: string
+          enum:
+            - INDICES
+            - SHARDS
+        line:
+          description: The line number of the parsing error. Present in `parsing_exception` and `search_parse_exception` responses.
+          type: integer
+          format: int32
+        max_buckets:
+          description: The maximum number of buckets allowed. Present in `too_many_buckets_exception` responses.
+          type: integer
+          format: int32
+        node_id:
+          $ref: '#/components/schemas/NodeId'
+          description: The node ID where the error occurred. Present in `failed_node_exception` responses.
+        phase:
+          description: The search phase that failed. Present in `search_phase_execution_exception` responses.
+          type: string
+        position:
+          description: The position of the error in the script. Present in `script_exception` responses.
+          type: object
+          properties:
+            offset:
+              type: integer
+              format: int32
+            start:
+              type: integer
+              format: int32
+            end:
+              type: integer
+              format: int32
+        reason:
+          description: A human-readable explanation of the error, in English.
+          type: string
+        response_limit:
+          x-version-added: '3.0'
+          description: The response limit that was breached. Present in `response_limit_breached_exception` responses.
+          type: integer
+          format: int32
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        script:
+          description: The script that caused the error. Present in `script_exception` responses.
+          type: string
+        script_stack:
+          description: The script stack trace. Present in `script_exception` responses.
+          type: array
+          items:
+            type: string
+        stack_trace:
+          description: The server stack trace, present only if the `error_trace=true` parameter was sent with the request.
+          type: string
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        type:
+          description: The type of error.
+          type: string
       required:
         - type
       additionalProperties:
