@@ -1953,8 +1953,11 @@ paths:
         url: https://opensearch.org/docs/latest/search-plugins/point-in-time-api/#create-a-pit
       parameters:
         - $ref: '#/components/parameters/create_pit::path.index'
+        - $ref: '#/components/parameters/create_pit::query.allow_no_indices'
         - $ref: '#/components/parameters/create_pit::query.allow_partial_pit_creation'
         - $ref: '#/components/parameters/create_pit::query.expand_wildcards'
+        - $ref: '#/components/parameters/create_pit::query.ignore_throttled'
+        - $ref: '#/components/parameters/create_pit::query.ignore_unavailable'
         - $ref: '#/components/parameters/create_pit::query.keep_alive'
         - $ref: '#/components/parameters/create_pit::query.preference'
         - $ref: '#/components/parameters/create_pit::query.routing'
@@ -2885,6 +2888,7 @@ components:
       content:
         application/json:
           schema:
+            title: CreatePITResponse
             type: object
             properties:
               pit_id:
@@ -2894,6 +2898,8 @@ components:
               creation_time:
                 type: integer
                 format: int64
+            required:
+              - pit_id
     delete@200:
       content:
         application/json:
@@ -3760,6 +3766,15 @@ components:
           type: string
       required: true
       style: simple
+    create_pit::query.allow_no_indices:
+      in: query
+      name: allow_no_indices
+      description: |-
+        If `false`, the request returns an error if any wildcard expression, index alias, or `_all` value targets only missing or closed indexes.
+        This behavior applies even if the request targets other open indexes.
+      schema:
+        type: boolean
+      style: form
     create_pit::query.allow_partial_pit_creation:
       name: allow_partial_pit_creation
       in: query
@@ -3773,6 +3788,21 @@ components:
       description: Whether to expand wildcard expression to concrete indexes that are open, closed or both.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
+      style: form
+    create_pit::query.ignore_throttled:
+      in: query
+      name: ignore_throttled
+      description: If `true`, concrete, expanded or aliased indexes will be ignored when frozen.
+      schema:
+        type: boolean
+      style: form
+    create_pit::query.ignore_unavailable:
+      in: query
+      name: ignore_unavailable
+      description: If `false`, the request returns an error if it targets a missing or closed index.
+      schema:
+        type: boolean
+      style: form
     create_pit::query.keep_alive:
       name: keep_alive
       in: query
