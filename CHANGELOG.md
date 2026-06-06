@@ -40,7 +40,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add msearch `allow_partial_results` flag ([#1061](https://github.com/opensearch-project/opensearch-api-specification/pull/1061))
 - Add title to `ml.predict_model_stream` and `ml.execute_agent_stream` requestBody ([#1072](https://github.com/opensearch-project/opensearch-api-specification/pull/1072))
 - Added `agentic` query type, `agentic_query_translator` request processor, and `agentic_context` response processor ([#1073](https://github.com/opensearch-project/opensearch-api-specification/pull/1073))
-- Fixed `create_pit` to include the `allow_no_indices`, `ignore_unavailable`, and `ignore_throttled` query parameters, and to mark `pit_id` as required in the create response, matching the core REST handler ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
+- Added `allow_no_indices`, `ignore_unavailable`, and `ignore_throttled` query parameters to `create_pit` ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
@@ -56,6 +56,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 - Fixed `HitsMetadata` to mark `max_score` as required ([#1103](https://github.com/opensearch-project/opensearch-api-specification/pull/1103))
+- Fixed `create_pit` to mark `pit_id` as required in the create response ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
 - Fixed `create_pit` `keep_alive` query parameter to be required ([#1102](https://github.com/opensearch-project/opensearch-api-specification/pull/1102))
 - Fixed ISM index parameters to use `Indices` type instead of `IndexName` for multi-index support ([#1097](https://github.com/opensearch-project/opensearch-api-specification/issues/1097))
 - Fixed `failures` field type in `PauseIngestionResponse` and `ResumeIngestionResponse` from array to map keyed by index name, matching server serialization ([#1107](https://github.com/opensearch-project/opensearch-api-specification/pull/1107))
