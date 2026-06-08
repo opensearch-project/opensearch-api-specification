@@ -56,7 +56,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 - Fixed `HitsMetadata` to mark `max_score` as required ([#1103](https://github.com/opensearch-project/opensearch-api-specification/pull/1103))
-- Fixed `create_pit` to mark `pit_id`, `_shards`, and `creation_time` as required in the create response ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
+- Fixed `create_pit` to mark `pit_id`, `_shards`, and `creation_time` as required in the PIT response ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
 - Fixed `create_pit` `keep_alive` query parameter to be required ([#1102](https://github.com/opensearch-project/opensearch-api-specification/pull/1102))
 - Fixed ISM index parameters to use `Indices` type instead of `IndexName` for multi-index support ([#1097](https://github.com/opensearch-project/opensearch-api-specification/issues/1097))
 - Fixed `failures` field type in `PauseIngestionResponse` and `ResumeIngestionResponse` from array to map keyed by index name, matching server serialization ([#1107](https://github.com/opensearch-project/opensearch-api-specification/pull/1107))
