@@ -88,6 +88,9 @@ components:
                 $ref: '_common.yaml#/components/schemas/Ip'
         jvm:
           $ref: '#/components/schemas/Jvm'
+        native_memory:
+          x-version-added: 3.7.0
+          $ref: '#/components/schemas/NativeMemory'
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         os:
@@ -437,6 +440,9 @@ components:
           $ref: '_common.yaml#/components/schemas/PercentageString'
         memory_utilization_percent:
           $ref: '_common.yaml#/components/schemas/PercentageString'
+        native_memory_utilization_percent:
+          x-version-added: 3.7.0
+          $ref: '_common.yaml#/components/schemas/PercentageString'
         io_usage_stats:
           $ref: '#/components/schemas/ShardResourceUsageStatsIoUsageStats'
     ShardResourceUsageStatsIoUsageStats:
@@ -505,6 +511,9 @@ components:
         global_io_usage:
           $ref: '#/components/schemas/UsageStats'
         global_cpu_usage:
+          $ref: '#/components/schemas/UsageStats'
+        global_native_memory_usage:
+          x-version-added: 3.7.0
           $ref: '#/components/schemas/UsageStats'
     UsageStats:
       type: object
@@ -930,6 +939,40 @@ components:
           description: Highest number of threads used by JVM.
           type: integer
           format: int64
+    NativeMemory:
+      type: object
+      properties:
+        total_estimated_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        analytics_backend:
+          $ref: '#/components/schemas/NativeMemoryAnalyticsBackend'
+        native_allocator:
+          $ref: '#/components/schemas/NativeMemoryAllocator'
+    NativeMemoryAnalyticsBackend:
+      type: object
+      properties:
+        allocated_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        resident_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+    NativeMemoryAllocator:
+      type: object
+      properties:
+        root:
+          $ref: '#/components/schemas/NativeMemoryAllocatorPool'
+        pools:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/NativeMemoryAllocatorPool'
+    NativeMemoryAllocatorPool:
+      type: object
+      properties:
+        allocated_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        peak_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        limit_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
     OperatingSystem:
       type: object
       properties:
@@ -1410,6 +1453,9 @@ components:
           $ref: '#/components/schemas/ShardSearchBackpressureTaskResourceTrackerElapsedTimeTrackerStats'
         cpu_usage_tracker:
           $ref: '#/components/schemas/ShardSearchBackpressureTaskResourceTrackerCpuUsageTrackerStats'
+        native_memory_usage_tracker:
+          x-version-added: 3.7.0
+          $ref: '#/components/schemas/ShardSearchBackpressureTaskResourceTrackerNativeMemoryUsageTrackerStats'
     ShardSearchBackpressureTaskResourceTrackerHeapUsageTrackerStats:
       type: object
       properties:
@@ -1456,6 +1502,20 @@ components:
           $ref: '_common.yaml#/components/schemas/Duration'
         current_avg_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+    ShardSearchBackpressureTaskResourceTrackerNativeMemoryUsageTrackerStats:
+      type: object
+      properties:
+        cancellation_count:
+          type: integer
+          format: int64
+        current_max:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        current_max_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        current_avg:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        current_avg_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
     ShardSearchBackpressureTaskCancellationStats:
       type: object
       properties:

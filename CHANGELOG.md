@@ -41,6 +41,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Add title to `ml.predict_model_stream` and `ml.execute_agent_stream` requestBody ([#1072](https://github.com/opensearch-project/opensearch-api-specification/pull/1072))
 - Added `agentic` query type, `agentic_query_translator` request processor, and `agentic_context` response processor ([#1073](https://github.com/opensearch-project/opensearch-api-specification/pull/1073))
 - Added `allow_no_indices`, `ignore_unavailable`, and `ignore_throttled` query parameters to `create_pit` ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
+- Added `native_memory` and the `native_memory_utilization_percent`, `global_native_memory_usage`, and `native_memory_usage_tracker` fields to `nodes.stats` ([#1145](https://github.com/opensearch-project/opensearch-api-specification/pull/1145))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
