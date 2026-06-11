@@ -55,6 +55,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `ShardProfile`'s `fetch` to be an array of `FetchProfile`, added missing `inbound_network_time_in_millis` and `outbound_network_time_in_millis` fields, and corrected `FetchProfileBreakdown` to match server serialization ([#1147](https://github.com/opensearch-project/opensearch-api-specification/pull/1147))
 - Fixed `DeletedPit` to mark `pit_id` and `successful` as required ([#1146](https://github.com/opensearch-project/opensearch-api-specification/pull/1146))
 - Fixed `HitsMetadata` to mark `max_score` as required ([#1103](https://github.com/opensearch-project/opensearch-api-specification/pull/1103))
 - Fixed `create_pit` to mark `pit_id`, `_shards`, and `creation_time` as required in the PIT response ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
