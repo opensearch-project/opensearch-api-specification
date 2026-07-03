@@ -175,6 +175,13 @@ components:
         - kafka
         - kinesis
         - none
+    IngestionSourceMapperType:
+      type: string
+      description: The type of message mapper used to extract document fields from ingestion messages.
+      enum:
+        - default
+        - raw_payload
+        - field_mapping
     IngestionSource:
       type: object
       description: The pull-based ingestion settings controlling how data is read from streaming sources.
@@ -213,6 +220,14 @@ components:
         all_active:
           description: Indicates if all-active ingestion is enabled for this index.
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        mapper_type:
+          description: The type of message mapper used to extract document fields from ingestion messages.
+          $ref: '#/components/schemas/IngestionSourceMapperType'
+        mapper_settings:
+          type: object
+          description: Configuration settings for the selected mapper type. For `field_mapping`, supports `id_field`, `version_field`, `op_type_field`, `op_type_field.delete_value`, and `op_type_field.create_value`.
+          additionalProperties:
+            type: string
     IngestionSourcePointer:
       type: object
       properties:
