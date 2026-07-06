@@ -2,8 +2,14 @@ $schema: ../../../../json_schemas/test_story.schema.yaml
 
 description: Test pull-based ingestion with mapper_type and mapper_settings.
 version: '>=3.6'
-prologues:
-  - path: /{index}
+prologues: []
+epilogues:
+  - path: /test-mapper-index
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index with mapper_type and mapper_settings.
+    path: /{index}
     method: PUT
     parameters:
       index: test-mapper-index
@@ -34,16 +40,25 @@ prologues:
           properties:
             name:
               type: text
-epilogues:
-  - path: /test-mapper-index
-    method: DELETE
-    status: [200, 404]
-chapters:
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        shards_acknowledged: true
   - synopsis: Verify mapper_type and mapper_settings are returned in index settings.
     path: /{index}
     method: GET
     parameters:
       index: test-mapper-index
-      flat_settings: true
     response:
       status: 200
+      payload:
+        test-mapper-index:
+          settings:
+            index:
+              ingestion_source:
+                type: file
+                mapper_type: field_mapping
+                mapper_settings:
+                  id_field: my_id
+                  version_field: my_version
