@@ -1,0 +1,49 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test pull-based ingestion with mapper_type and mapper_settings.
+version: '>=3.6'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: test-mapper-index
+    request:
+      payload:
+        settings:
+          ingestion_source:
+            type: file
+            mapper_type: field_mapping
+            mapper_settings:
+              id_field: my_id
+              version_field: my_version
+            pointer.init.reset: reset_by_offset
+            pointer.init.reset.value: 0
+            error_strategy: DROP
+            poll.max_batch_size: 10
+            poll.timeout: 100000
+            num_processor_threads: 1
+            internal_queue_size: 100
+            param:
+              stream: test-stream
+              base_directory: ingestion_directory
+          index:
+            number_of_shards: 1
+            number_of_replicas: 0
+            replication.type: SEGMENT
+        mappings:
+          properties:
+            name:
+              type: text
+epilogues:
+  - path: /test-mapper-index
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Verify mapper_type and mapper_settings are returned in index settings.
+    path: /{index}
+    method: GET
+    parameters:
+      index: test-mapper-index
+      flat_settings: true
+    response:
+      status: 200
