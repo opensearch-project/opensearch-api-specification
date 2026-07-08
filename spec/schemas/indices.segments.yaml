@@ -94,6 +94,11 @@ components:
         compound:
           type: boolean
           description: Whether the segment is compound.
+        sort:
+          type: array
+          description: The index sort metadata for the segment.
+          items:
+            $ref: '#/components/schemas/SegmentSort'
         attributes:
           type: object
           description: The attributes of the segment.
@@ -109,3 +114,28 @@ components:
         - search
         - size_in_bytes
         - version
+    SegmentSort:
+      description: The index sort metadata for a segment field.
+      type: object
+      properties:
+        field:
+          type: string
+          description: The sorted field name.
+        mode:
+          $ref: '#/components/schemas/SegmentSortMode'
+        missing:
+          type: string
+          description: The missing-value sort behavior or replacement value.
+        reverse:
+          type: boolean
+          description: Whether the field is sorted in reverse order.
+      required:
+        - field
+        - mode
+        - reverse
+    SegmentSortMode:
+      description: The segment sort selector.
+      type: string
+      enum:
+        - max
+        - min
