@@ -36,6 +36,17 @@ jobs:
           path: |
             build/*
 
+      - name: Trigger Proto Convert Workflow
+        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2
+        with:
+          token: ${{ secrets.OSPT_PAT }}
+          repository: opensearch-project/opensearch-protobufs
+          event-type: spec-updated
+          client-payload: |
+            {
+              "artifact_download_url": "${{ steps.upload.outputs.artifact-url }}"
+            }
+
       - name: Release Specification to GitHub
         id: release
         uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0 # v1.2.1
