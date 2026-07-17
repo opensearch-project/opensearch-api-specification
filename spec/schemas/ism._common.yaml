@@ -226,6 +226,33 @@ components:
         copy_alias:
           type: boolean
           description: Whether to copy the alias to the new index.
+        prevent_empty_rollover:
+          type: boolean
+          description: Whether to prevent rollover of an empty index.
+          x-version-added: '3.4'
+        any_of:
+          type: array
+          description: A list of rollover condition groups; any satisfied group triggers rollover.
+          x-version-added: '3.7'
+          items:
+            $ref: '#/components/schemas/RolloverConditionGroup'
+    RolloverConditionGroup:
+      type: object
+      description: A group of rollover conditions that must all be met to trigger rollover.
+      minProperties: 1
+      properties:
+        min_size:
+          type: string
+          description: The minimum size to trigger rollover.
+        min_index_age:
+          type: string
+          description: The minimum index age to trigger rollover.
+        min_doc_count:
+          type: number
+          description: The minimum document count to trigger rollover.
+        min_primary_shard_size:
+          type: string
+          description: The minimum primary shard size to trigger rollover.
     ActionNotification:
       type: object
       additionalProperties: true
