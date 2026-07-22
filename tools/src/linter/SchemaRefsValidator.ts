@@ -29,7 +29,7 @@ export default class SchemaRefsValidator {
   #find_refs_in_namespaces_folder (): void {
     const search = (obj: any): void => {
       const ref: string = obj?.$ref ?? ''
-      if (ref !== '') {
+      if (ref !== '' && !ref.startsWith('#/')) {
         const file = ref.split('#')[0].replace('../', '')
         const name = ref.split('/').pop() ?? ''
         if (name === '') throw new Error(`Invalid schema reference: ${ref}`)
@@ -39,7 +39,7 @@ export default class SchemaRefsValidator {
       for (const key in obj) { if (typeof obj[key] === 'object') search(obj[key]) }
     }
 
-    this.namespaces_folder.files.forEach((file) => { search(file.spec().components ?? {}) })
+    this.namespaces_folder.files.forEach((file) => { search(file.spec()) })
   }
 
   #find_refs_in_schemas_folder (): void {
