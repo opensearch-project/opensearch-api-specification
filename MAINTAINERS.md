@@ -15,7 +15,6 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Sachet Alva          | [sachetalva](https://github.com/sachetalva)   | Amazon      |
 | Sean Chittenden      | [sean-](https://github.com/sean-)             | CrowdStrike |
 | Thomas Farr          | [Xtansia](https://github.com/Xtansia)         | Independent |
-| Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
 | Vacha Shah           | [VachaShah](https://github.com/VachaShah)     | Amazon      |
 | Xi Lu                | [lucy66hw](https://github.com/lucy66hw)       | Uber        |
 
@@ -28,3 +27,4 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Daniel Doubrovkine | [dblock](https://github.com/dblock)     | Independent |
 | Pranav Garg        | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
 | Theo Truong        | [nhtruong](https://github.com/nhtruong) | Independent |
+| Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
