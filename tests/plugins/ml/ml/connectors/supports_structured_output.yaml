@@ -1,0 +1,49 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test that supports_structured_output is accepted on a connector action and returned in the GET response, using an Amazon Bedrock Converse connector.
+version: '>= 3.7'
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+prologues:
+  - path: /_plugins/_ml/connectors/_create
+    id: create_connector
+    method: POST
+    request:
+      payload:
+        name: Amazon Bedrock Converse Connector with Structured Output
+        description: Connector with supports_structured_output enabled for agentic memory fact extraction
+        version: 1
+        protocol: aws_sigv4
+        parameters:
+          region: us-east-1
+          service_name: bedrock
+          model: anthropic.claude-sonnet-4-5-20251101-v1:0
+        credential:
+          access_key: test_access_key
+          secret_key: test_secret_key
+        actions:
+          - action_type: predict
+            method: POST
+            url: https://bedrock-runtime.${parameters.region}.amazonaws.com/model/${parameters.model}/converse
+            headers:
+              content-type: application/json
+            request_body: '{"system":[{"text":"${parameters.system_prompt}"}],"messages":[{"role":"user","content":[{"type":"text","text":"${parameters.user_prompt}"}]}]}'
+            supports_structured_output: true
+    output:
+      test_connector_id: payload.connector_id
+epilogues:
+  - path: /_plugins/_ml/connectors/{connector_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      connector_id: ${create_connector.test_connector_id}
+chapters:
+  - synopsis: Get connector validates response schema with supports_structured_output action field.
+    path: /_plugins/_ml/connectors/{connector_id}
+    method: GET
+    parameters:
+      connector_id: ${create_connector.test_connector_id}
+    response:
+      status: 200
