@@ -1,0 +1,830 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Alerting API
+  description: The Alerting API lets you programmatically create, update, and manage monitors, alerts, findings, and destinations.
+  version: 1.0.0
+paths:
+  /_plugins/_alerting/monitors:
+    post:
+      operationId: alerting.create_monitor.0
+      x-operation-group: alerting.create_monitor
+      x-version-added: '1.0'
+      description: Creates a monitor with inputs, triggers, and actions.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#create-a-query-level-monitor
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.create_monitor'
+      responses:
+        '201':
+          $ref: '#/components/responses/alerting.create_monitor@201'
+  /_plugins/_alerting/monitors/{monitor_id}:
+    get:
+      operationId: alerting.get_monitor.0
+      x-operation-group: alerting.get_monitor
+      x-version-added: '1.0'
+      description: Retrieves the details of a specific monitor.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_monitor::path.monitor_id'
+        - $ref: '#/components/parameters/alerting.get_monitor::query.version'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_monitor@200'
+    head:
+      operationId: alerting.exists_monitor.0
+      x-operation-group: alerting.exists_monitor
+      x-version-added: '1.0'
+      description: Checks for the existence of a monitor.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.exists_monitor::path.monitor_id'
+        - $ref: '#/components/parameters/alerting.exists_monitor::query.version'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.exists_monitor@200'
+        '404':
+          $ref: '#/components/responses/alerting.exists_monitor@404'
+    put:
+      operationId: alerting.update_monitor.0
+      x-operation-group: alerting.update_monitor
+      x-version-added: '1.0'
+      description: Updates a monitor's inputs, triggers, and actions.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#update-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.update_monitor::path.monitor_id'
+        - $ref: '#/components/parameters/alerting.update_monitor::query.if_primary_term'
+        - $ref: '#/components/parameters/alerting.update_monitor::query.if_seq_no'
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.update_monitor'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.update_monitor@200'
+    delete:
+      operationId: alerting.delete_monitor.0
+      x-operation-group: alerting.delete_monitor
+      x-version-added: '1.0'
+      description: Deletes a monitor.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#delete-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.delete_monitor::path.monitor_id'
+        - $ref: '#/components/parameters/alerting.delete_monitor::query.refresh'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.delete_monitor@200'
+  /_plugins/_alerting/monitors/_search:
+    get:
+      operationId: alerting.search_monitors.0
+      x-operation-group: alerting.search_monitors
+      x-version-added: '1.0'
+      description: Queries and retrieves information about existing monitors.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-monitors
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.search_monitors'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.search_monitors@200'
+    post:
+      operationId: alerting.search_monitors.1
+      x-operation-group: alerting.search_monitors
+      x-version-added: '1.0'
+      description: Queries and retrieves information about existing monitors.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-monitors
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.search_monitors'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.search_monitors@200'
+  /_plugins/_alerting/monitors/{monitor_id}/_execute:
+    post:
+      operationId: alerting.execute_monitor.0
+      x-operation-group: alerting.execute_monitor
+      x-version-added: '1.0'
+      description: Runs a monitor.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#run-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.execute_monitor::path.monitor_id'
+        - $ref: '#/components/parameters/alerting.execute_monitor::query.dryrun'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.execute_monitor@200'
+  /_plugins/_alerting/monitors/_execute:
+    post:
+      operationId: alerting.execute_ad_hoc_monitor.0
+      x-operation-group: alerting.execute_ad_hoc_monitor
+      x-version-added: '1.0'
+      description: Runs an ad hoc monitor definition without creating it.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#run-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.execute_ad_hoc_monitor::query.dryrun'
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.execute_ad_hoc_monitor'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.execute_ad_hoc_monitor@200'
+  /_plugins/_alerting/monitors/alerts:
+    get:
+      operationId: alerting.get_alerts.0
+      x-operation-group: alerting.get_alerts
+      x-version-added: '1.0'
+      description: Returns an array of all alerts.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-alerts
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_alerts::query.alertState'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.missing'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.monitorId'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.searchString'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.severityLevel'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.size'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.sortOrder'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.sortString'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.startIndex'
+        - $ref: '#/components/parameters/alerting.get_alerts::query.workflowIds'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_alerts@200'
+  /_plugins/_alerting/monitors/{monitor_id}/_acknowledge/alerts:
+    post:
+      operationId: alerting.acknowledge_alerts.0
+      x-operation-group: alerting.acknowledge_alerts
+      x-version-added: '1.0'
+      description: Acknowledges one or more active alerts for a monitor.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#acknowledge-alert
+      parameters:
+        - $ref: '#/components/parameters/alerting.acknowledge_alerts::path.monitor_id'
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.acknowledge_alerts'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.acknowledge_alerts@200'
+  /_plugins/_alerting/findings/_search:
+    get:
+      operationId: alerting.get_findings.0
+      x-operation-group: alerting.get_findings
+      x-version-added: '2.0'
+      description: Searches the findings index for document-level monitor findings.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-the-findings-index
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_findings::query.findingId'
+        - $ref: '#/components/parameters/alerting.get_findings::query.searchString'
+        - $ref: '#/components/parameters/alerting.get_findings::query.size'
+        - $ref: '#/components/parameters/alerting.get_findings::query.sortOrder'
+        - $ref: '#/components/parameters/alerting.get_findings::query.sortString'
+        - $ref: '#/components/parameters/alerting.get_findings::query.startIndex'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_findings@200'
+  /_plugins/_alerting/destinations:
+    get:
+      operationId: alerting.get_destinations.0
+      x-operation-group: alerting.get_destinations
+      x-version-added: '1.0'
+      x-version-deprecated: '2.0'
+      x-deprecation-message: Destinations are deprecated in favor of the Notifications plugin's channels. This read API remains for backwards compatibility.
+      description: Retrieves one or all destinations.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-destinations
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_destinations@200'
+  /_plugins/_alerting/destinations/{destination_id}:
+    get:
+      operationId: alerting.get_destinations.1
+      x-operation-group: alerting.get_destinations
+      x-version-added: '1.0'
+      x-version-deprecated: '2.0'
+      x-deprecation-message: Destinations are deprecated in favor of the Notifications plugin's channels. This read API remains for backwards compatibility.
+      description: Retrieves one or all destinations.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-destinations
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_destinations::path.destination_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_destinations@200'
+  /_plugins/_alerting/destinations/email_accounts/{email_account_id}:
+    get:
+      operationId: alerting.get_email_account.0
+      x-operation-group: alerting.get_email_account
+      x-version-added: '1.0'
+      description: Retrieves the details of a specific email account.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-email-account
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_email_account::path.email_account_id'
+        - $ref: '#/components/parameters/alerting.get_email_account::query.version'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_email_account@200'
+    head:
+      operationId: alerting.exists_email_account.0
+      x-operation-group: alerting.exists_email_account
+      x-version-added: '1.0'
+      description: Checks for the existence of a specific email account.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-email-account
+      parameters:
+        - $ref: '#/components/parameters/alerting.exists_email_account::path.email_account_id'
+        - $ref: '#/components/parameters/alerting.exists_email_account::query.version'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.exists_email_account@200'
+        '404':
+          $ref: '#/components/responses/alerting.exists_email_account@404'
+  /_plugins/_alerting/destinations/email_accounts/_search:
+    get:
+      operationId: alerting.search_email_accounts.0
+      x-operation-group: alerting.search_email_accounts
+      x-version-added: '1.0'
+      description: Retrieves information about the configured email accounts used for email-based alerting.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-email-account
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.search_email_accounts'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.search_email_accounts@200'
+    post:
+      operationId: alerting.search_email_accounts.1
+      x-operation-group: alerting.search_email_accounts
+      x-version-added: '1.0'
+      description: Retrieves information about the configured email accounts used for email-based alerting.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-email-account
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.search_email_accounts'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.search_email_accounts@200'
+  /_plugins/_alerting/destinations/email_groups/{email_group_id}:
+    get:
+      operationId: alerting.get_email_group.0
+      x-operation-group: alerting.get_email_group
+      x-version-added: '1.0'
+      description: Retrieves the details of a specific email group destination.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-email-group
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_email_group::path.email_group_id'
+        - $ref: '#/components/parameters/alerting.get_email_group::query.version'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.get_email_group@200'
+    head:
+      operationId: alerting.exists_email_group.0
+      x-operation-group: alerting.exists_email_group
+      x-version-added: '1.0'
+      description: Checks for the existence of a specific email group destination.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-email-group
+      parameters:
+        - $ref: '#/components/parameters/alerting.exists_email_group::path.email_group_id'
+        - $ref: '#/components/parameters/alerting.exists_email_group::query.version'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.exists_email_group@200'
+        '404':
+          $ref: '#/components/responses/alerting.exists_email_group@404'
+  /_plugins/_alerting/destinations/email_groups/_search:
+    get:
+      operationId: alerting.search_email_groups.0
+      x-operation-group: alerting.search_email_groups
+      x-version-added: '1.0'
+      description: Queries and retrieves information about existing email groups used for alerting.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-email-group
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.search_email_groups'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.search_email_groups@200'
+    post:
+      operationId: alerting.search_email_groups.1
+      x-operation-group: alerting.search_email_groups
+      x-version-added: '1.0'
+      description: Queries and retrieves information about existing email groups used for alerting.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-email-group
+      requestBody:
+        $ref: '#/components/requestBodies/alerting.search_email_groups'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.search_email_groups@200'
+  /_plugins/_alerting/stats/:
+    get:
+      operationId: alerting.stats.0
+      x-operation-group: alerting.stats
+      x-version-added: '1.0'
+      description: Returns statistics about the alerting feature's scheduled job sweeper.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.stats@200'
+  /_plugins/_alerting/stats/{stat}:
+    get:
+      operationId: alerting.stats.1
+      x-operation-group: alerting.stats
+      x-version-added: '1.0'
+      description: Returns statistics about the alerting feature's scheduled job sweeper.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
+      parameters:
+        - $ref: '#/components/parameters/alerting.stats::path.stat'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.stats@200'
+  /_plugins/_alerting/{node_id}/stats/:
+    get:
+      operationId: alerting.stats.2
+      x-operation-group: alerting.stats
+      x-version-added: '1.0'
+      description: Returns statistics about the alerting feature's scheduled job sweeper.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
+      parameters:
+        - $ref: '#/components/parameters/alerting.stats::path.node_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.stats@200'
+  /_plugins/_alerting/{node_id}/stats/{stat}:
+    get:
+      operationId: alerting.stats.3
+      x-operation-group: alerting.stats
+      x-version-added: '1.0'
+      description: Returns statistics about the alerting feature's scheduled job sweeper.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
+      parameters:
+        - $ref: '#/components/parameters/alerting.stats::path.node_id'
+        - $ref: '#/components/parameters/alerting.stats::path.stat'
+      responses:
+        '200':
+          $ref: '#/components/responses/alerting.stats@200'
+components:
+  requestBodies:
+    alerting.create_monitor:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/Monitor'
+    alerting.update_monitor:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/Monitor'
+    alerting.execute_ad_hoc_monitor:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/Monitor'
+    alerting.search_monitors:
+      content:
+        application/json:
+          schema:
+            type: object
+            description: An OpenSearch query DSL body used to search the `.opensearch-scheduled-jobs` index.
+            additionalProperties: true
+    alerting.acknowledge_alerts:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/AcknowledgeAlertsRequest'
+    alerting.search_email_accounts:
+      content:
+        application/json:
+          schema:
+            type: object
+            description: An OpenSearch query DSL body used to search email accounts.
+            additionalProperties: true
+    alerting.search_email_groups:
+      content:
+        application/json:
+          schema:
+            type: object
+            description: An OpenSearch query DSL body used to search email groups.
+            additionalProperties: true
+  responses:
+    alerting.create_monitor@201:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/MonitorResponse'
+    alerting.get_monitor@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/GetMonitorResponse'
+    alerting.exists_monitor@200:
+      content:
+        application/json:
+          schema: {}
+    alerting.exists_monitor@404:
+      content:
+        application/json:
+          schema: {}
+    alerting.update_monitor@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/MonitorResponse'
+    alerting.delete_monitor@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    alerting.search_monitors@200:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
+              - type: object
+                properties: {}
+    alerting.execute_monitor@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/ExecuteMonitorResponse'
+    alerting.execute_ad_hoc_monitor@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/ExecuteMonitorResponse'
+    alerting.get_alerts@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/GetAlertsResponse'
+    alerting.acknowledge_alerts@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/AcknowledgeAlertsResponse'
+    alerting.get_findings@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/GetFindingsResponse'
+    alerting.get_destinations@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/GetDestinationsResponse'
+    alerting.get_email_account@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/GetEmailAccountResponse'
+    alerting.exists_email_account@200:
+      content:
+        application/json:
+          schema: {}
+    alerting.exists_email_account@404:
+      content:
+        application/json:
+          schema: {}
+    alerting.search_email_accounts@200:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
+              - type: object
+                properties: {}
+    alerting.get_email_group@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/GetEmailGroupResponse'
+    alerting.exists_email_group@200:
+      content:
+        application/json:
+          schema: {}
+    alerting.exists_email_group@404:
+      content:
+        application/json:
+          schema: {}
+    alerting.search_email_groups@200:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
+              - type: object
+                properties: {}
+    alerting.stats@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/alerting._common.yaml#/components/schemas/Stats'
+  parameters:
+    alerting.get_monitor::path.monitor_id:
+      name: monitor_id
+      in: path
+      description: The ID of the monitor.
+      required: true
+      schema:
+        type: string
+        description: The ID of the monitor.
+    alerting.get_monitor::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+    alerting.exists_monitor::path.monitor_id:
+      name: monitor_id
+      in: path
+      description: The ID of the monitor.
+      required: true
+      schema:
+        type: string
+        description: The ID of the monitor.
+    alerting.exists_monitor::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+    alerting.update_monitor::path.monitor_id:
+      name: monitor_id
+      in: path
+      description: The ID of the monitor.
+      required: true
+      schema:
+        type: string
+        description: The ID of the monitor.
+    alerting.update_monitor::query.if_seq_no:
+      name: if_seq_no
+      in: query
+      description: Only perform the operation if the document has this sequence number.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SequenceNumber'
+    alerting.update_monitor::query.if_primary_term:
+      name: if_primary_term
+      in: query
+      description: Only perform the operation if the document has this primary term.
+      schema:
+        type: integer
+        format: int64
+        description: Only perform the operation if the document has this primary term.
+    alerting.delete_monitor::path.monitor_id:
+      name: monitor_id
+      in: path
+      description: The ID of the monitor.
+      required: true
+      schema:
+        type: string
+        description: The ID of the monitor.
+    alerting.delete_monitor::query.refresh:
+      name: refresh
+      in: query
+      description: If `true`, OpenSearch refreshes the affected shards to make this operation visible to search, if `wait_for` then wait for a refresh to make this operation visible to search, if `false` do nothing with refreshes.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Refresh'
+    alerting.execute_monitor::path.monitor_id:
+      name: monitor_id
+      in: path
+      description: The ID of the monitor to run.
+      required: true
+      schema:
+        type: string
+        description: The ID of the monitor to run.
+    alerting.execute_monitor::query.dryrun:
+      name: dryrun
+      in: query
+      description: If `true`, shows the results of the run without triggering any actions.
+      schema:
+        type: boolean
+        default: false
+        description: If `true`, shows the results of the run without triggering any actions.
+    alerting.execute_ad_hoc_monitor::query.dryrun:
+      name: dryrun
+      in: query
+      description: If `true`, shows the results of the run without triggering any actions.
+      schema:
+        type: boolean
+        default: false
+        description: If `true`, shows the results of the run without triggering any actions.
+    alerting.get_alerts::query.sortString:
+      name: sortString
+      in: query
+      description: The field to sort the results by.
+      schema:
+        type: string
+        default: monitor_name.keyword
+    alerting.get_alerts::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The order to sort the list of alerts.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+        default: asc
+    alerting.get_alerts::query.missing:
+      name: missing
+      in: query
+      description: Specifies whether to include missing data in the response.
+      schema:
+        type: string
+    alerting.get_alerts::query.size:
+      name: size
+      in: query
+      description: The maximum number of results to return.
+      schema:
+        type: integer
+        format: int32
+        default: 20
+    alerting.get_alerts::query.startIndex:
+      name: startIndex
+      in: query
+      description: The pagination index to start returning results from.
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    alerting.get_alerts::query.searchString:
+      name: searchString
+      in: query
+      description: The search string to filter alerts by.
+      schema:
+        type: string
+        default: ''
+    alerting.get_alerts::query.severityLevel:
+      name: severityLevel
+      in: query
+      description: The severity level to filter for.
+      schema:
+        type: string
+        default: ALL
+    alerting.get_alerts::query.alertState:
+      name: alertState
+      in: query
+      description: The alert state to filter for.
+      schema:
+        type: string
+        default: ALL
+    alerting.get_alerts::query.monitorId:
+      name: monitorId
+      in: query
+      description: Filters the results to alerts generated by a specific monitor.
+      schema:
+        type: string
+    alerting.get_alerts::query.workflowIds:
+      name: workflowIds
+      in: query
+      description: Filters the results to alerts generated by specific composite monitor workflows.
+      schema:
+        type: string
+      x-version-added: '2.9'
+    alerting.acknowledge_alerts::path.monitor_id:
+      name: monitor_id
+      in: path
+      description: The ID of the monitor that the alerts belong to.
+      required: true
+      schema:
+        type: string
+        description: The ID of the monitor that the alerts belong to.
+    alerting.get_findings::query.findingId:
+      name: findingId
+      in: query
+      description: The ID of a specific finding to retrieve.
+      schema:
+        type: string
+    alerting.get_findings::query.sortString:
+      name: sortString
+      in: query
+      description: The field to sort the findings by.
+      schema:
+        type: string
+        default: id
+    alerting.get_findings::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The order to sort the list of findings.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+        default: asc
+    alerting.get_findings::query.size:
+      name: size
+      in: query
+      description: The maximum number of results to return.
+      schema:
+        type: integer
+        format: int32
+        default: 20
+    alerting.get_findings::query.startIndex:
+      name: startIndex
+      in: query
+      description: The pagination index to start returning results from.
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    alerting.get_findings::query.searchString:
+      name: searchString
+      in: query
+      description: |-
+        The finding attribute to search for. To search in a specific index, specify the index name, for example
+        `searchString=indexABC`.
+      schema:
+        type: string
+        default: ''
+    alerting.get_destinations::path.destination_id:
+      name: destination_id
+      in: path
+      description: The ID of the destination.
+      required: true
+      schema:
+        type: string
+        description: The ID of the destination.
+    alerting.get_email_account::path.email_account_id:
+      name: email_account_id
+      in: path
+      description: The ID of the email account.
+      required: true
+      schema:
+        type: string
+        description: The ID of the email account.
+    alerting.get_email_account::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+    alerting.exists_email_account::path.email_account_id:
+      name: email_account_id
+      in: path
+      description: The ID of the email account.
+      required: true
+      schema:
+        type: string
+        description: The ID of the email account.
+    alerting.exists_email_account::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+    alerting.get_email_group::path.email_group_id:
+      name: email_group_id
+      in: path
+      description: The ID of the email group.
+      required: true
+      schema:
+        type: string
+        description: The ID of the email group.
+    alerting.get_email_group::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+    alerting.exists_email_group::path.email_group_id:
+      name: email_group_id
+      in: path
+      description: The ID of the email group.
+      required: true
+      schema:
+        type: string
+        description: The ID of the email group.
+    alerting.exists_email_group::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
+    alerting.stats::path.node_id:
+      name: node_id
+      in: path
+      description: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+      required: true
+      schema:
+        type: array
+        description: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
+        items:
+          type: string
+      style: simple
+    alerting.stats::path.stat:
+      name: stat
+      in: path
+      description: A comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
+      required: true
+      schema:
+        oneOf:
+          - $ref: '../schemas/alerting._common.yaml#/components/schemas/AlertingStatName'
+          - type: array
+            description: A comma-separated list of stats to retrieve; use `_all` or empty string to retrieve all stats.
+            items:
+              $ref: '../schemas/alerting._common.yaml#/components/schemas/AlertingStatName'
+      style: simple
