@@ -50,6 +50,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
 
 ### Removed
+- Removed OpenSearch 2.0.0 from CI test matrix; incompatible with modern GitHub Actions runners due to JDK cgroup v2 crash ([#1189](https://github.com/opensearch-project/opensearch-api-specification/pull/1189))
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
 - Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
