@@ -35,14 +35,18 @@ components:
           type: integer
           format: int64
         graph_memory_usage:
-          $ref: '_common.yaml#/components/schemas/ByteCount'
+          type: integer
+          format: int64
+          description: The amount of native memory used by loaded graphs, in kilobytes.
         cache_capacity_reached:
           type: boolean
         load_success_count:
           type: integer
           format: int64
         training_memory_usage:
-          $ref: '_common.yaml#/components/schemas/ByteCount'
+          type: integer
+          format: int64
+          description: The amount of native memory used by training data, in kilobytes.
         indices_in_cache:
           type: object
           additionalProperties: true
@@ -258,8 +262,21 @@ components:
           type: string
         method:
           $ref: '#/components/schemas/KnnMethod'
+        data_type:
+          type: string
+          description: The vector data type.
+          x-version-added: 2.16.0
+        space_type:
+          type: string
+          description: The space type for distance calculation.
+          x-version-added: 2.17.0
+        engine:
+          type: string
+          description: The k-NN engine to use.
+          x-version-added: 2.17.0
         spaceType:
           type: string
+          description: The space type for distance calculation (alias for space_type).
       required:
         - dimension
         - training_field
@@ -279,6 +296,56 @@ components:
       required:
         - model_id
         - result
+    ModelResponse:
+      type: object
+      properties:
+        model_id:
+          type: string
+        model_blob:
+          type: string
+          description: The base64-encoded model data.
+        state:
+          $ref: '#/components/schemas/ModelState'
+        timestamp:
+          type: string
+          description: The timestamp when the model was created.
+        description:
+          type: string
+        error:
+          type: string
+        space_type:
+          type: string
+        dimension:
+          type: integer
+          format: int32
+        engine:
+          type: string
+        training_node_assignment:
+          type: string
+        model_definition:
+          type: object
+          additionalProperties: true
+        data_type:
+          type: string
+          description: The vector data type.
+          x-version-added: 2.17.0
+        mode:
+          type: string
+          x-version-added: 2.17.0
+        compression_level:
+          type: string
+          x-version-added: 2.17.0
+        model_version:
+          type: string
+          x-version-added: 2.17.0
+      required:
+        - model_id
+    ModelState:
+      type: string
+      enum:
+        - created
+        - failed
+        - training
     KnnStatName:
       type: string
       enum:
@@ -308,6 +375,7 @@ components:
         - miss_count
         - model_index_status
         - nmslib_initialized
+        - remote_vector_index_build_stats
         - script_compilation_errors
         - script_compilations
         - script_query_errors

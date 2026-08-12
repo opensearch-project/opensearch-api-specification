@@ -94,6 +94,109 @@ components:
           $ref: '#/components/schemas/ResiliencyMode'
         resource_limits:
           $ref: '#/components/schemas/ResourceLimitsSchema'
+    WorkloadGroupResponse:
+      type: object
+      properties:
+        _id:
+          description: The ID of the workload group, which can be used to associate query requests with the group and enforce the group's resource limits.
+          type: string
+        name:
+          description: The name of the workload group.
+          type: string
+        resiliency_mode:
+          description: The resiliency mode of the workload group.
+          $ref: '#/components/schemas/ResiliencyMode'
+        updated_at:
+          description: The time at which the workload group was last updated.
+          type: integer
+          format: int64
+        resource_limits:
+          description: The resource limits for query requests in the workload group.
+          anyOf:
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - memory
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - cpu
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+          description: The settings for the workload group.
+          x-version-added: 3.7.0
+      required:
+        - _id
+        - name
+        - resiliency_mode
+        - resource_limits
+        - updated_at
+    WorkloadGroupCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        resiliency_mode:
+          $ref: '#/components/schemas/ResiliencyMode'
+        resource_limits:
+          anyOf:
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - memory
+            - type: object
+              properties:
+                memory:
+                  type: number
+                  format: double
+                cpu:
+                  type: number
+                  format: double
+              required:
+                - cpu
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+          description: The settings for the workload group.
+          x-version-added: 3.7.0
+      required:
+        - name
+        - resiliency_mode
+        - resource_limits
+    WorkloadGroupUpdate:
+      type: object
+      properties:
+        resiliency_mode:
+          $ref: '#/components/schemas/ResiliencyMode'
+        resource_limits:
+          $ref: '#/components/schemas/ResourceLimitsSchema'
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+          description: The settings for the workload group.
+          x-version-added: 3.7.0
     ResourceLimitsSchema:
       type: object
       properties:

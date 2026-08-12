@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Workload Management Query Group API
-  description: The Query Group Lifecycle APIs create, update, and delete workload management query groups.
+  title: Workload Management API
+  description: The Workload Group Lifecycle APIs create, update, and delete workload management groups.
   version: 1.0.0
 paths:
   /_wlm/query_group:
@@ -9,6 +9,7 @@ paths:
       operationId: wlm.get_query_group.0
       x-operation-group: wlm.get_query_group
       x-version-added: '2.17'
+      x-version-removed: 3.0.0
       description: Retrieves the specified query group. If no query group is specified, all query groups in the cluster are retrieved.
       responses:
         '200':
@@ -17,6 +18,7 @@ paths:
       operationId: wlm.create_query_group.0
       x-operation-group: wlm.create_query_group
       x-version-added: '2.17'
+      x-version-removed: 3.0.0
       description: Creates a new query group and sets the resource limits for the new query group.
       requestBody:
         $ref: '#/components/requestBodies/wlm.create_query_group'
@@ -28,6 +30,7 @@ paths:
       operationId: wlm.get_query_group.1
       x-operation-group: wlm.get_query_group
       x-version-added: '2.17'
+      x-version-removed: 3.0.0
       description: Retrieves the specified query group. If no query group is specified, all query groups in the cluster are retrieved.
       parameters:
         - $ref: '#/components/parameters/wlm.get_query_group::path.name'
@@ -38,6 +41,7 @@ paths:
       operationId: wlm.update_query_group.0
       x-operation-group: wlm.update_query_group
       x-version-added: '2.17'
+      x-version-removed: 3.0.0
       description: Updates the specified query group.
       parameters:
         - $ref: '#/components/parameters/wlm.update_query_group::path.name'
@@ -50,12 +54,65 @@ paths:
       operationId: wlm.delete_query_group.0
       x-operation-group: wlm.delete_query_group
       x-version-added: '2.17'
+      x-version-removed: 3.0.0
       description: Deletes the specified query group.
       parameters:
         - $ref: '#/components/parameters/wlm.delete_query_group::path.name'
       responses:
         '200':
           $ref: '#/components/responses/wlm.delete_query_group@200'
+  /_wlm/workload_group:
+    get:
+      operationId: wlm.get_workload_group.0
+      x-operation-group: wlm.get_workload_group
+      x-version-added: 3.0.0
+      description: Retrieves the specified workload group. If no workload group is specified, all workload groups in the cluster are retrieved.
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.get_workload_group@200'
+    put:
+      operationId: wlm.create_workload_group.0
+      x-operation-group: wlm.create_workload_group
+      x-version-added: 3.0.0
+      description: Creates a new workload group and sets the resource limits for the new workload group.
+      requestBody:
+        $ref: '#/components/requestBodies/wlm.create_workload_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.create_workload_group@200'
+  /_wlm/workload_group/{name}:
+    get:
+      operationId: wlm.get_workload_group.1
+      x-operation-group: wlm.get_workload_group
+      x-version-added: 3.0.0
+      description: Retrieves the specified workload group. If no workload group is specified, all workload groups in the cluster are retrieved.
+      parameters:
+        - $ref: '#/components/parameters/wlm.get_workload_group::path.name'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.get_workload_group@200'
+    put:
+      operationId: wlm.update_workload_group.0
+      x-operation-group: wlm.update_workload_group
+      x-version-added: 3.0.0
+      description: Updates the specified workload group.
+      parameters:
+        - $ref: '#/components/parameters/wlm.update_workload_group::path.name'
+      requestBody:
+        $ref: '#/components/requestBodies/wlm.update_workload_group'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.update_workload_group@200'
+    delete:
+      operationId: wlm.delete_workload_group.0
+      x-operation-group: wlm.delete_workload_group
+      x-version-added: 3.0.0
+      description: Deletes the specified workload group.
+      parameters:
+        - $ref: '#/components/parameters/wlm.delete_workload_group::path.name'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.delete_workload_group@200'
 components:
   requestBodies:
     wlm.create_query_group:
@@ -69,6 +126,18 @@ components:
         application/json:
           schema:
             $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupUpdate'
+      required: true
+    wlm.create_workload_group:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WorkloadGroupCreate'
+      required: true
+    wlm.update_workload_group:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WorkloadGroupUpdate'
       required: true
   responses:
     wlm.create_query_group@200:
@@ -103,6 +172,38 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupResponse'
+    wlm.create_workload_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WorkloadGroupResponse'
+    wlm.update_workload_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WorkloadGroupResponse'
+    wlm.delete_workload_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              acknowledged:
+                type: boolean
+    wlm.get_workload_group@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              workload_groups:
+                type: array
+                items:
+                  $ref: '../schemas/wlm._common.yaml#/components/schemas/WorkloadGroupResponse'
   parameters:
     wlm.update_query_group::path.name:
       name: name
@@ -122,6 +223,27 @@ components:
       name: name
       in: path
       description: The name of the query group.
+      schema:
+        type: string
+      required: true
+    wlm.update_workload_group::path.name:
+      name: name
+      in: path
+      description: The name of the workload group.
+      schema:
+        type: string
+      required: true
+    wlm.delete_workload_group::path.name:
+      name: name
+      in: path
+      description: The name of the workload group.
+      schema:
+        type: string
+      required: true
+    wlm.get_workload_group::path.name:
+      name: name
+      in: path
+      description: The name of the workload group.
       schema:
         type: string
       required: true

@@ -18,7 +18,6 @@ components:
         top_queries:
           type: array
           items:
-            type: object
             $ref: '#/components/schemas/TopQuery'
       required:
         - top_queries
@@ -31,19 +30,19 @@ components:
           $ref: '#/components/schemas/GroupingType'
         timestamp:
           type: integer
+          format: int64
           description: The timestamp of the query execution.
         total_shards:
           type: integer
+          format: int32
           description: The total number of shards involved in the query.
         task_resource_usages:
           type: array
           items:
-            type: object
             $ref: '#/components/schemas/TaskResourceUsages'
-         
-        query_hashcode:
+        query_group_hashcode:
           type: string
-          description: The hash code of the query.
+          description: The hash code of the query group.
         labels:
           type: object
           description: Additional labels for the query.
@@ -51,7 +50,6 @@ components:
           type: string
           description: The search query type (for example, `query_then_fetch`).
         source:
-          type: object
           $ref: '#/components/schemas/Source'
         node_id:
           type: string
@@ -63,16 +61,52 @@ components:
           description: The indexes involved in the query.
         phase_latency_map:
           type: object
+          additionalProperties:
+            type: integer
+            format: int64
         measurements:
-          type: object
           $ref: '#/components/schemas/Measurements'
+        description:
+          type: string
+          description: A description of the search query.
+          x-version-added: 3.0.0
+        is_cancelled:
+          type: boolean
+          description: Whether the search query was cancelled.
+          x-version-added: 3.1.0
+        wlm_group_id:
+          type: string
+          description: The workload management group ID associated with the query.
+          x-version-added: 3.3.0
+        username:
+          type: string
+          description: The username who initiated the search query.
+          x-version-added: 3.5.0
+        user_roles:
+          type: array
+          items:
+            type: string
+          description: The roles of the user who initiated the search query.
+          x-version-added: 3.5.0
+        backend_roles:
+          type: array
+          items:
+            type: string
+          description: The backend roles of the user who initiated the search query.
+          x-version-added: 3.5.0
+        source_truncated:
+          type: boolean
+          description: Whether the source was truncated due to length limits.
+          x-version-added: 3.5.0
+        failed:
+          type: boolean
+          description: Whether the search request failed during execution.
+          x-version-added: 3.6.0
     GroupingType:
       type: string
       enum:
         - NONE
         - SIMILARITY
-        - none
-        - similarity
     TaskResourceUsages:
       type: object
       properties:
@@ -81,24 +115,27 @@ components:
           description: The action type of the task.
         taskId:
           type: integer
+          format: int64
           description: The task ID.
         parentTaskId:
           type: integer
+          format: int64
           description: The parent task ID.
         nodeId:
           type: string
           description: The node ID where the task was executed.
         taskResourceUsage:
-          type: object
           $ref: '#/components/schemas/TaskResourceUsage'
     TaskResourceUsage:
       type: object
       properties:
         cpu_time_in_nanos:
           type: integer
+          format: int64
           description: The CPU time used in nanoseconds.
         memory_in_bytes:
           type: integer
+          format: int64
           description: The memory usage in bytes.
     Source:
       type: object
@@ -226,20 +263,24 @@ components:
       type: object
       properties:
         number:
-          type: integer
+          type: number
         count:
           type: integer
+          format: int32
         aggregationType:
-          type: string
+          $ref: '#/components/schemas/AggregationType'
+    AggregationType:
+      type: string
+      enum:
+        - AVERAGE
+        - NONE
+        - SUM
     Measurements:
       type: object
       properties:
         latency:
-          type: object
           $ref: '#/components/schemas/Measurement'
         cpu:
-          type: object
           $ref: '#/components/schemas/Measurement'
         memory:
-          type: object
           $ref: '#/components/schemas/Measurement'

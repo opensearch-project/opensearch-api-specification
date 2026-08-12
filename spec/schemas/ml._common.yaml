@@ -11,77 +11,26 @@ components:
     SearchModelsResponse:
       $ref: '#/components/schemas/SearchResponse'
     SearchResponse:
-      type: object
-      properties:
-        took:
-          type: integer
-          description: The time taken to execute the search.
-        timed_out:
-          type: boolean
-          description: Whether the search timed out.
-        _shards:
-          $ref: '_common.yaml#/components/schemas/ShardStatistics'
-        hits:
-          $ref: '#/components/schemas/SearchHits'
-      required:
-        - hits
-    SearchHits:
-      type: object
-      properties:
-        total:
-          $ref: '#/components/schemas/HitsTotal'
-        hits:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchHitsHit'
-        max_score:
-          type: ['null', number]
-          description: The maximum score.
-      required:
-        - hits
-        - total
-    HitsTotal:
-      type: object
-      properties:
-        value:
-          type: integer
-          format: int64
-          description: The total number of hits.
-        relation:
-          type: string
-          description: The relation.
-      required:
-        - relation
-        - value
+      allOf:
+        - $ref: '_core.search.yaml#/components/schemas/SearchResult'
+        - type: object
+          properties:
+            hits:
+              type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SearchHitsHit'
     SearchHitsHit:
-      type: object
-      properties:
-        _version:
-          $ref: '_common.yaml#/components/schemas/VersionNumber'
-        _seq_no:
-          $ref: '_common.yaml#/components/schemas/SequenceNumber'
-        _primary_term:
-          type: integer
-          description: The primary term.
-        _index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-        _id:
-          $ref: '_common.yaml#/components/schemas/Id'
-        _score:
-          type: ['null', number]
-          description: The score.
-        _source:
-          $ref: '#/components/schemas/Source'
-        model_id:
-          $ref: '_common.yaml#/components/schemas/Name'
-        sort:
-          type: array
-          items:
-            type: number
-            format: float
-          description: The sort values.
-      required:
-        - _score
+      allOf:
+        - $ref: '_core.search.yaml#/components/schemas/Hit'
+        - type: object
+          properties:
+            _source:
+              $ref: '#/components/schemas/Source'
+            model_id:
+              $ref: '_common.yaml#/components/schemas/Name'
     ModelState:
       type: string
       description: The model state.
