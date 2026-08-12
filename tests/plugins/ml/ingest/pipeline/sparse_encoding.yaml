@@ -1,0 +1,122 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of an ingest pipeline with sparse_encoding processor.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+warnings:
+  multiple-paths-detected: false
+epilogues:
+  - path: /_ingest/pipeline/sparse_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /sparse_docs
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}/_undeploy
+    method: POST
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    status: [200, 404]
+  - path: /_plugins/_ml/models/{model_id}
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ml/model_groups/{model_group_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+version: '>= 2.11'
+chapters:
+  - synopsis: Create model group.
+    id: create_model_group
+    path: /_plugins/_ml/model_groups/_register
+    method: POST
+    request:
+      payload:
+        name: Sparse_Encoding_Group
+        description: Model group for sparse encoding models.
+    response:
+      status: 200
+    output:
+      test_model_group_id: payload.model_group_id
+  - synopsis: Register sparse encoding model.
+    id: register_model
+    path: /_plugins/_ml/models/_register
+    method: POST
+    request:
+      payload:
+        name: amazon/neural-sparse/opensearch-neural-sparse-encoding-doc-v1
+        version: 1.0.1
+        model_format: TORCH_SCRIPT
+    response:
+      status: 200
+    output:
+      task_id: payload.task_id
+  - synopsis: Wait to get completed task.
+    id: get_completed_register_model_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${register_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+    retry:
+      count: 6
+      wait: 10000
+  - synopsis: Deploy the model.
+    id: deploy_model
+    path: /_plugins/_ml/models/{model_id}/_deploy
+    method: POST
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    output:
+      task_id: payload.task_id
+    response:
+      status: 200
+  - synopsis: Wait for model deployment.
+    id: get_completed_deploy_model_task
+    path: /_plugins/_ml/tasks/{task_id}
+    method: GET
+    parameters:
+      task_id: ${deploy_model.task_id}
+    response:
+      status: 200
+      payload:
+        state: COMPLETED
+    output:
+      model_id: payload.model_id
+    retry:
+      count: 6
+      wait: 10000
+  - synopsis: Create ingest pipeline with sparse_encoding processor.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: sparse_pipeline
+    request:
+      payload:
+        description: A pipeline that generates sparse embeddings.
+        processors:
+          - sparse_encoding:
+              model_id: ${get_completed_register_model_task.model_id}
+              field_map:
+                body: body_sparse
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Undeploy the model.
+    path: /_plugins/_ml/models/{model_id}/_undeploy
+    method: POST
+    parameters:
+      model_id: ${get_completed_register_model_task.model_id}
+    response:
+      status: 200
