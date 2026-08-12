@@ -1,0 +1,51 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _snapshot/{repository}/snapshot endpoints for s3 snapshots.
+epilogues:
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-s3-repository
+chapters:
+  - synopsis: Create and update a snapshot repository.
+    path: /_snapshot/{repository}
+    method:
+      - POST
+      - PUT
+    parameters:
+      repository: my-s3-repository
+      verify: false
+    request:
+
+      payload:
+        type: s3
+        settings:
+          bucket: /bucket
+  - synopsis: Get all snapshot repositories.
+    path: /_snapshot
+    method: GET
+    response:
+      status: 200
+      payload:
+        my-s3-repository:
+          type: s3
+          settings:
+            bucket: /bucket
+  - synopsis: Get information about a repository.
+    path: /_snapshot/{repository}
+    method: GET
+    parameters:
+      repository: my-s3-repository
+    response:
+      status: 200
+      payload:
+        my-s3-repository:
+          type: s3
+          settings:
+            bucket: /bucket
+  - synopsis: Delete a snapshot repository.
+    path: /_snapshot/{repository}
+    method: DELETE
+    parameters:
+      repository: my-s3-repository
