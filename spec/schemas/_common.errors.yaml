@@ -1,0 +1,263 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `_common.errors` Category
+  description: |-
+    Wrapper schemas describing the auxiliary partial-failure shapes that
+    OpenSearch endpoints may include in otherwise-successful responses.
+    Operations reference these wrappers via `x-error-responses` to declare
+    which auxiliary failure types a client may need to handle in addition
+    to the primary response shape. See `DEVELOPER_GUIDE.md` for details.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    BulkItems:
+      description: |-
+        Bulk-style response surfaces failures via an `errors: true` flag plus
+        a per-item `error` object inside each entry of `items[]`.
+        Carried by `_core.bulk` and `_core.bulk_stream`.
+      type: object
+      properties:
+        errors:
+          type: boolean
+          description: True when at least one sub-operation in `items` failed.
+        items:
+          type: array
+          items:
+            $ref: '_core.bulk.yaml#/components/schemas/ResponseItem'
+      x-version-added: '1.0'
+
+    SearchShards:
+      description: |-
+        Search-family response with one or more shards failing while the
+        overall query still returned partial results. Failures appear at
+        `_shards.failures[]` of `ShardSearchFailure`.
+      type: object
+      properties:
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+      x-version-added: '1.0'
+
+    WriteShards:
+      description: |-
+        Single-doc write response where the primary acked but one or more
+        replicas failed. Failures appear at `_shards.failures[]` of
+        `ShardFailure`. Document is durable.
+      type: object
+      properties:
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardInfo'
+      x-version-added: '1.0'
+
+    BroadcastShards:
+      description: |-
+        Index-broadcast response where one or more shards failed the
+        operation while others succeeded. Failures appear at
+        `_shards.failures[]`. The element schema in this spec collapses
+        with the search-family failure type, but the wrapper is kept
+        distinct so clients can opt in to broadcast vs search shard
+        handling independently.
+      type: object
+      properties:
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+      x-version-added: '1.0'
+
+    NodeFailures:
+      description: |-
+        Cluster/nodes operation where one or more nodes failed to respond.
+        Renders the standard `_nodes.failures[]` envelope via
+        `RestActions.buildNodesHeader`.
+      type: object
+      properties:
+        _nodes:
+          $ref: '_common.yaml#/components/schemas/NodeStatistics'
+      x-version-added: '1.0'
+
+    BulkByScrollFailures:
+      description: |-
+        Long-running scroll-bulk operation (reindex, update_by_query,
+        delete_by_query). Top-level `failures[]` mixes bulk-write and
+        shard-search failure element types in one polymorphic array.
+      type: object
+      properties:
+        failures:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/BulkByScrollFailure'
+      x-version-added: '1.0'
+
+    TaskFailures:
+      description: |-
+        Tasks-API response. Two parallel top-level arrays — `task_failures[]`
+        (per-task) and `node_failures[]` (per-node) — both populated
+        independently. Distinct from the `_nodes`-wrapped `NodeFailures`
+        shape: here both arrays sit at the response root.
+      type: object
+      properties:
+        task_failures:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/TaskFailure'
+        node_failures:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/ErrorCause'
+      x-version-added: '1.0'
+
+    MultiSearchItems:
+      description: |-
+        Multi-search-style response (`_msearch`). Each entry in `responses[]`
+        is either a successful search body or an error object with an injected
+        `status`. Per-item search-shard failures may appear inside successful
+        items.
+      type: object
+      properties:
+        responses:
+          type: array
+          items:
+            $ref: '_core.msearch.yaml#/components/schemas/ResponseItem'
+      x-version-added: '1.0'
+
+    MultiDocItems:
+      description: |-
+        Multi-document-style response (`_mget` / `_mtermvectors`). Each entry
+        in `docs[]` is either a doc body or an error object.
+      type: object
+      properties:
+        docs:
+          type: array
+          items:
+            $ref: '_core.mget.yaml#/components/schemas/ResponseItem'
+      x-version-added: '1.0'
+
+    SnapshotCreateShardFailures:
+      description: |-
+        Snapshot-create response (`snapshot.create` with
+        `wait_for_completion=true`) where individual shards failed to
+        snapshot. Failures appear at `snapshot.failures[]`. State `PARTIAL`
+        indicates partial completion.
+      type: object
+      properties:
+        snapshot:
+          $ref: '#/components/schemas/SnapshotCreateFailureContainer'
+      x-version-added: '1.0'
+
+    SnapshotCreateFailureContainer:
+      description: |-
+        Container for `snapshot.create` partial-failure shape: holds the
+        `failures[]` array of per-shard failure entries.
+      type: object
+      properties:
+        failures:
+          type: array
+          items:
+            $ref: 'snapshot._common.yaml#/components/schemas/SnapshotShardFailure'
+      x-version-added: '1.0'
+
+    SnapshotGetShardFailures:
+      description: |-
+        Snapshot-get response (`snapshot.get`) listing snapshots where
+        individual snapshots had shards fail to capture. Failures appear
+        per-snapshot at `snapshots[].failures[]`.
+      type: object
+      properties:
+        snapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/SnapshotGetFailureItem'
+      x-version-added: '1.0'
+
+    SnapshotGetFailureItem:
+      description: |-
+        Per-snapshot entry in the `snapshot.get` partial-failure shape,
+        carrying any `failures[]` collected while reading that snapshot.
+      type: object
+      properties:
+        failures:
+          type: array
+          items:
+            $ref: 'snapshot._common.yaml#/components/schemas/SnapshotShardFailure'
+      x-version-added: '1.0'
+
+    SimulateDocFailures:
+      description: |-
+        Ingest-simulate response (`ingest.simulate`). Failures may appear at
+        two layers: per document at `docs[].error`, and per processor at
+        `docs[].processor_results[].error`.
+      type: object
+      properties:
+        docs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulateDocFailureItem'
+      x-version-added: '1.0'
+
+    SimulateDocFailureItem:
+      description: |-
+        Per-document entry in the `ingest.simulate` partial-failure shape.
+        Carries a top-level `error` and a `processor_results[]` array of
+        per-processor outcomes that may themselves carry an `error`.
+      type: object
+      properties:
+        error:
+          $ref: '_common.yaml#/components/schemas/ErrorCause'
+        processor_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulateProcessorResult'
+      x-version-added: '1.0'
+
+    SimulateProcessorResult:
+      description: |-
+        Per-processor entry in the `ingest.simulate` partial-failure shape,
+        carrying an `error` populated when that processor failed for the
+        enclosing document.
+      type: object
+      properties:
+        error:
+          $ref: '_common.yaml#/components/schemas/ErrorCause'
+      x-version-added: '1.0'
+
+    RankEvalFailures:
+      description: |-
+        Rank-eval response (`_rank_eval`). Returns failures as a top-level
+        object map keyed by queryId rather than as a positional array.
+      type: object
+      properties:
+        failures:
+          type: object
+          additionalProperties:
+            $ref: '_common.yaml#/components/schemas/ErrorCause'
+      x-version-added: '1.0'
+
+    IngestionShardFailures:
+      description: |-
+        Ingestion pause/resume responses (`ingestion.pause` /
+        `ingestion.resume`) surface per-shard failures keyed by index name at
+        the top-level `failures` map. Each value is an array of shard-keyed
+        failure objects.
+      type: object
+      properties:
+        failures:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: 'ingestion._common.yaml#/components/schemas/IngestionStateShardFailure'
+      x-version-added: '2.17'
+
+    PitNodeFailures:
+      description: |-
+        PIT-list response (`_core.get_all_pits`) returns per-node failures at
+        the top level without the standard `_nodes` envelope. This is a
+        server inconsistency relative to other `BaseNodesResponse`-derived
+        endpoints (see `NodeFailures`); kept as its own wrapper until the
+        server convergence is sorted out.
+      type: object
+      properties:
+        failures:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/ErrorCause'
+      x-version-added: '1.0'
