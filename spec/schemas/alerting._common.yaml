@@ -1,0 +1,1144 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `alerting._common` Category
+  description: Schemas of `alerting._common` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    IndexMetadata:
+      type: object
+      description: The document metadata returned after indexing an Alerting resource.
+      properties:
+        _id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        _version:
+          $ref: '_common.yaml#/components/schemas/VersionNumber'
+        _seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        _primary_term:
+          type: integer
+          format: int64
+          description: The primary term of the document.
+
+    AlertingUser:
+      type: object
+      description: The user that created or last modified the resource.
+      properties:
+        name:
+          type: string
+          description: The username.
+        backend_roles:
+          type: array
+          items:
+            type: string
+          description: The backend roles associated with the user.
+        roles:
+          type: array
+          items:
+            type: string
+          description: The roles associated with the user.
+        custom_attribute_names:
+          type: array
+          items:
+            type: string
+          description: The custom attribute names associated with the user.
+        user_requested_tenant:
+          type: ['null', string]
+          description: The tenant requested by the user.
+
+    ChronoUnit:
+      type: string
+      description: A unit of time.
+      enum:
+        - DAYS
+        - HOURS
+        - MINUTES
+        - SECONDS
+
+    ScriptTemplate:
+      type: object
+      description: A Mustache template used to render a notification message or subject.
+      properties:
+        source:
+          type: string
+          description: The Mustache template source.
+        lang:
+          type: string
+          description: The scripting language, always `mustache`.
+      required:
+        - source
+
+    Throttle:
+      type: object
+      description: The amount of time to wait before sending another notification for a trigger that keeps firing.
+      properties:
+        value:
+          type: integer
+          format: int32
+          description: The throttle duration.
+        unit:
+          $ref: '#/components/schemas/ChronoUnit'
+      required:
+        - unit
+        - value
+
+    ActionableAlertCategory:
+      type: string
+      description: A category of alert that an action can run for.
+      enum:
+        - COMPLETED
+        - DEDUPED
+        - NEW
+
+    PerAlertActionScope:
+      type: object
+      description: Runs the action once for each alert in the listed categories.
+      properties:
+        actionable_alerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionableAlertCategory'
+          description: The alert categories for which the action runs.
+
+    PerExecutionActionScope:
+      type: object
+      description: Runs the action once per monitor execution instead of once per alert.
+
+    ActionExecutionScope:
+      type: object
+      description: Whether the action runs once per alert or once per monitor execution.
+      properties:
+        per_alert:
+          $ref: '#/components/schemas/PerAlertActionScope'
+        per_execution:
+          $ref: '#/components/schemas/PerExecutionActionScope'
+
+    ActionExecutionPolicy:
+      type: object
+      description: Defines when an action runs relative to alerts. Used by bucket-level and document-level monitors.
+      properties:
+        action_execution_scope:
+          $ref: '#/components/schemas/ActionExecutionScope'
+
+    Action:
+      type: object
+      description: A notification sent when a trigger's condition evaluates to true.
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the action.
+        name:
+          type: string
+          description: The name of the action.
+        destination_id:
+          type: string
+          description: The ID of the destination that receives the notification.
+        subject_template:
+          oneOf:
+            - $ref: '#/components/schemas/ScriptTemplate'
+            - type: 'null'
+          description: The template for the notification subject. Not used by all destination types.
+        message_template:
+          $ref: '#/components/schemas/ScriptTemplate'
+          description: The template for the notification message body.
+        throttle_enabled:
+          type: boolean
+          description: Whether throttling is enabled for the action.
+        throttle:
+          oneOf:
+            - $ref: '#/components/schemas/Throttle'
+            - type: 'null'
+          description: The throttling configuration. Required when `throttle_enabled` is `true`.
+        action_execution_policy:
+          $ref: '#/components/schemas/ActionExecutionPolicy'
+      required:
+        - destination_id
+        - message_template
+        - name
+
+    PainlessScript:
+      type: object
+      description: An inline Painless script.
+      properties:
+        source:
+          type: string
+          description: The Painless script source.
+        lang:
+          type: string
+          description: The scripting language, always `painless`.
+      required:
+        - source
+
+    ScriptCondition:
+      type: object
+      description: A Painless script that evaluates to `true` or `false` to determine whether to trigger an alert.
+      properties:
+        script:
+          $ref: '#/components/schemas/PainlessScript'
+      required:
+        - script
+
+    GapPolicy:
+      type: string
+      description: How to handle aggregation buckets with missing values.
+      enum:
+        - insert_zeros
+        - skip
+
+    BucketLevelTriggerCondition:
+      type: object
+      description: The condition that determines whether a bucket-level trigger fires for a given aggregation bucket.
+      properties:
+        buckets_path:
+          type: object
+          additionalProperties: true
+          description: A map of variable names to aggregation paths, made available to the script as `params`.
+        parent_bucket_path:
+          type: string
+          description: The path to the parent aggregation that produces the buckets to evaluate.
+        script:
+          $ref: '#/components/schemas/PainlessScript'
+        gap_policy:
+          $ref: '#/components/schemas/GapPolicy'
+      required:
+        - buckets_path
+        - parent_bucket_path
+        - script
+
+    QueryLevelTrigger:
+      type: object
+      description: A trigger for a query-level monitor.
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the trigger.
+        name:
+          type: string
+          description: The name of the trigger.
+        severity:
+          type: string
+          description: The severity level of the trigger, with `1` being the highest.
+        condition:
+          $ref: '#/components/schemas/ScriptCondition'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - actions
+        - condition
+        - name
+        - severity
+
+    BucketLevelTriggerBody:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the trigger.
+        name:
+          type: string
+          description: The name of the trigger.
+        severity:
+          type: string
+          description: The severity level of the trigger, with `1` being the highest.
+        condition:
+          $ref: '#/components/schemas/BucketLevelTriggerCondition'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - actions
+        - condition
+        - name
+        - severity
+
+    BucketLevelTrigger:
+      type: object
+      description: A trigger for a bucket-level monitor.
+      properties:
+        bucket_level_trigger:
+          $ref: '#/components/schemas/BucketLevelTriggerBody'
+      required:
+        - bucket_level_trigger
+
+    DocumentLevelTriggerBody:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the trigger.
+        name:
+          type: string
+          description: The name of the trigger.
+        severity:
+          type: string
+          description: The severity level of the trigger, with `1` being the highest.
+        condition:
+          allOf:
+            - $ref: '#/components/schemas/ScriptCondition'
+          description: A script that combines query names, IDs, or tags, for example `query[name=sigma-123] && query[tag=tag3]`.
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - actions
+        - condition
+        - name
+        - severity
+
+    DocumentLevelTrigger:
+      type: object
+      description: A trigger for a document-level monitor.
+      properties:
+        document_level_trigger:
+          $ref: '#/components/schemas/DocumentLevelTriggerBody'
+      required:
+        - document_level_trigger
+
+    Trigger:
+      description: A condition that determines whether a monitor generates an alert, and the actions to run when it does.
+      oneOf:
+        - title: query_level_trigger
+          $ref: '#/components/schemas/QueryLevelTrigger'
+        - title: bucket_level_trigger
+          $ref: '#/components/schemas/BucketLevelTrigger'
+        - title: document_level_trigger
+          $ref: '#/components/schemas/DocumentLevelTrigger'
+
+    Period:
+      type: object
+      properties:
+        interval:
+          type: integer
+          format: int32
+          description: The interval at which the monitor runs.
+        unit:
+          $ref: '#/components/schemas/ChronoUnit'
+      required:
+        - interval
+        - unit
+
+    IntervalSchedule:
+      type: object
+      description: Runs the monitor on a fixed interval.
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+      required:
+        - period
+
+    Cron:
+      type: object
+      properties:
+        expression:
+          type: string
+          description: A UNIX cron expression.
+        timezone:
+          type: string
+          description: The time zone in which to evaluate the cron expression, for example `America/Los_Angeles`.
+      required:
+        - expression
+        - timezone
+
+    CronSchedule:
+      type: object
+      description: Runs the monitor according to a cron expression.
+      properties:
+        cron:
+          $ref: '#/components/schemas/Cron'
+      required:
+        - cron
+
+    Schedule:
+      description: The schedule on which the monitor runs.
+      oneOf:
+        - title: period
+          $ref: '#/components/schemas/IntervalSchedule'
+        - title: cron
+          $ref: '#/components/schemas/CronSchedule'
+
+    SearchInputBody:
+      type: object
+      properties:
+        indices:
+          type: array
+          items:
+            type: string
+          description: The indexes to search.
+        query:
+          type: object
+          additionalProperties: true
+          description: The OpenSearch query DSL body to run.
+      required:
+        - indices
+        - query
+
+    SearchInput:
+      type: object
+      description: An input that runs an OpenSearch query and passes the results to the monitor's triggers.
+      properties:
+        search:
+          $ref: '#/components/schemas/SearchInputBody'
+      required:
+        - search
+
+    DocLevelQuery:
+      type: object
+      description: A named query that a document-level monitor matches against individual documents.
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the query.
+        name:
+          type: string
+          description: The name of the query, referenced by trigger conditions as `query[name=...]`.
+        query:
+          type: string
+          description: The query, written in Lucene query string syntax.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags that group related queries, referenced by trigger conditions as `query[tag=...]`.
+        fields:
+          type: array
+          items:
+            type: string
+          description: The specific fields the query applies to.
+      required:
+        - query
+
+    DocLevelInputBody:
+      type: object
+      properties:
+        description:
+          type: string
+          description: A description of the input.
+        indices:
+          type: array
+          items:
+            type: string
+          description: The indexes to monitor.
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocLevelQuery'
+      required:
+        - indices
+        - queries
+
+    DocLevelInput:
+      type: object
+      description: An input that matches individual documents against a set of named queries. Used by document-level monitors.
+      properties:
+        doc_level_input:
+          $ref: '#/components/schemas/DocLevelInputBody'
+      required:
+        - doc_level_input
+
+    Input:
+      description: The data the monitor evaluates. The shape depends on the monitor type.
+      oneOf:
+        - title: search
+          $ref: '#/components/schemas/SearchInput'
+        - title: doc_level_input
+          $ref: '#/components/schemas/DocLevelInput'
+
+    MonitorType:
+      type: string
+      description: The type of monitor, which determines the supported inputs and trigger types.
+      enum:
+        - bucket_level_monitor
+        - doc_level_monitor
+        - query_level_monitor
+
+    Monitor:
+      type: object
+      description: A job that runs on a defined schedule and evaluates triggers against its inputs.
+      properties:
+        type:
+          type: string
+          description: The document type, always `monitor`.
+          const: monitor
+        schema_version:
+          type: integer
+          format: int32
+          description: The version of the monitor mapping schema.
+        name:
+          type: string
+          description: The name of the monitor.
+        monitor_type:
+          $ref: '#/components/schemas/MonitorType'
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/AlertingUser'
+            - type: 'null'
+        enabled:
+          type: boolean
+          description: Whether the monitor is enabled.
+        enabled_time:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+            - type: 'null'
+          description: When the monitor was enabled.
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Input'
+        triggers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trigger'
+        last_update_time:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        ui_metadata:
+          type: object
+          additionalProperties: true
+          description: Metadata that OpenSearch Dashboards uses to render the monitor. Not used by the API itself.
+        rbac_roles:
+          type: array
+          items:
+            type: string
+          description: The backend roles allowed to access the monitor. Only accepted on create and update requests.
+      required:
+        - enabled
+        - inputs
+        - monitor_type
+        - name
+        - schedule
+        - triggers
+
+    MonitorResponse:
+      description: The response returned after creating or updating a monitor.
+      allOf:
+        - $ref: '#/components/schemas/IndexMetadata'
+        - type: object
+          properties:
+            monitor:
+              $ref: '#/components/schemas/Monitor'
+
+    AssociatedWorkflow:
+      type: object
+      description: A composite monitor workflow that this monitor is a delegate of.
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the workflow.
+        name:
+          type: string
+          description: The name of the workflow.
+
+    GetMonitorResponse:
+      description: The response returned when retrieving a monitor.
+      allOf:
+        - $ref: '#/components/schemas/IndexMetadata'
+        - type: object
+          properties:
+            monitor:
+              oneOf:
+                - $ref: '#/components/schemas/Monitor'
+                - type: 'null'
+            associated_workflows:
+              type: array
+              items:
+                $ref: '#/components/schemas/AssociatedWorkflow'
+              description: The composite monitor workflows that this monitor is a delegate of.
+
+    TriggerResult:
+      type: object
+      description: The outcome of evaluating a single trigger during a monitor execution.
+      properties:
+        name:
+          type: string
+          description: The name of the trigger.
+        triggered:
+          type: boolean
+          description: Whether the trigger condition evaluated to `true`.
+        error:
+          type: ['null', string]
+          description: The error encountered while evaluating the trigger, if any.
+        action_results:
+          type: object
+          additionalProperties: true
+          description: The results of running the trigger's actions, keyed by action ID.
+
+    ExecuteMonitorResponse:
+      type: object
+      description: The result of manually running a monitor.
+      properties:
+        monitor_name:
+          type: string
+          description: The name of the monitor that ran.
+        period_start:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        period_end:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        error:
+          type: ['null', string]
+          description: The error encountered while running the monitor, if any.
+        trigger_results:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TriggerResult'
+          description: The results of evaluating each trigger, keyed by trigger ID.
+
+    AlertState:
+      type: string
+      description: The current state of an alert.
+      enum:
+        - ACKNOWLEDGED
+        - ACTIVE
+        - AUDIT
+        - COMPLETED
+        - DELETED
+        - ERROR
+
+    AlertErrorEntry:
+      type: object
+      description: An error recorded against an alert.
+      properties:
+        timestamp:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        message:
+          type: string
+          description: The error message.
+
+    AlertActionExecutionResult:
+      type: object
+      description: The outcome of running an action for an alert.
+      properties:
+        action_id:
+          type: string
+          description: The ID of the action.
+        last_execution_time:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        throttled_count:
+          type: integer
+          format: int32
+          description: The number of times the action was throttled.
+
+    Alert:
+      type: object
+      description: A notification generated when a monitor's trigger condition evaluates to true.
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the alert.
+        version:
+          type: integer
+          format: int64
+          description: The version of the alert document.
+        schema_version:
+          type: integer
+          format: int32
+          description: The version of the alert mapping schema.
+        monitor_id:
+          type: string
+          description: The ID of the monitor that generated the alert.
+        monitor_version:
+          type: integer
+          format: int64
+          description: The version of the monitor that generated the alert.
+        monitor_name:
+          type: string
+          description: The name of the monitor that generated the alert.
+        monitor_user:
+          oneOf:
+            - $ref: '#/components/schemas/AlertingUser'
+            - type: 'null'
+        trigger_id:
+          type: string
+          description: The ID of the trigger that generated the alert.
+        trigger_name:
+          type: string
+          description: The name of the trigger that generated the alert.
+        finding_ids:
+          type: array
+          items:
+            type: string
+          description: The IDs of the findings associated with the alert. Only populated for document-level monitors.
+        related_doc_ids:
+          type: array
+          items:
+            type: string
+          description: The IDs of the documents related to the alert. Only populated for document-level monitors.
+        state:
+          $ref: '#/components/schemas/AlertState'
+        error_message:
+          type: ['null', string]
+          description: The error message, present when the alert is in the `ERROR` state.
+        alert_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertErrorEntry'
+        severity:
+          type: string
+          description: The severity level of the alert, with `1` being the highest.
+        action_execution_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertActionExecutionResult'
+        start_time:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        last_notification_time:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+            - type: 'null'
+        end_time:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+            - type: 'null'
+        acknowledged_time:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+            - type: 'null'
+
+    GetAlertsResponse:
+      type: object
+      properties:
+        alerts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alert'
+        totalAlerts:
+          type: [integer, 'null']
+          description: The total number of alerts matching the query, which may be larger than the number of alerts returned.
+
+    AcknowledgeAlertsRequest:
+      type: object
+      properties:
+        alerts:
+          type: array
+          items:
+            type: string
+          description: The IDs of the alerts to acknowledge.
+      required:
+        - alerts
+
+    AcknowledgeAlertsResponse:
+      type: object
+      properties:
+        success:
+          type: array
+          items:
+            type: string
+          description: The IDs of the alerts that were successfully acknowledged.
+        failed:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+          description: The alerts that couldn't be acknowledged, along with the failure reason.
+
+    DestinationType:
+      type: string
+      description: The type of destination.
+      enum:
+        - chime
+        - custom_webhook
+        - email
+        - slack
+
+    SlackDestination:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The Slack webhook URL.
+      required:
+        - url
+
+    ChimeDestination:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The Chime webhook URL.
+      required:
+        - url
+
+    CustomWebhookDestination:
+      type: object
+      description: A generic webhook destination, configurable either with a full `url` or with its individual components.
+      properties:
+        url:
+          type: string
+          description: The full webhook URL. When provided, `scheme`, `host`, `port`, `path`, and `query_params` are ignored.
+        scheme:
+          type: string
+          description: The webhook URL scheme, for example `HTTPS`.
+        host:
+          type: string
+          description: The webhook hostname.
+        port:
+          type: integer
+          format: int32
+          description: The webhook port.
+        path:
+          type: string
+          description: The webhook URL path.
+        query_params:
+          type: object
+          additionalProperties:
+            type: string
+          description: The webhook URL query parameters.
+        header_params:
+          type: object
+          additionalProperties:
+            type: string
+          description: The HTTP headers to send with the webhook request.
+        username:
+          type: string
+          description: The username for basic authentication.
+        password:
+          type: string
+          description: The password for basic authentication.
+
+    EmailDestinationRecipientType:
+      type: string
+      description: The type of recipient.
+      enum:
+        - email
+        - email_group
+
+    EmailDestinationRecipient:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/EmailDestinationRecipientType'
+        email:
+          type: string
+          description: The recipient's email address. Required when `type` is `email`.
+        email_group_id:
+          type: string
+          description: The ID of the recipient email group. Required when `type` is `email_group`.
+      required:
+        - type
+
+    EmailDestination:
+      type: object
+      properties:
+        email_account_id:
+          type: string
+          description: The ID of the email account to send from.
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailDestinationRecipient'
+      required:
+        - email_account_id
+        - recipients
+
+    Destination:
+      type: object
+      description: A configured location that receives alert notifications.
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the destination.
+        type:
+          $ref: '#/components/schemas/DestinationType'
+        name:
+          type: string
+          description: The name of the destination.
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/AlertingUser'
+            - type: 'null'
+        schema_version:
+          type: integer
+          format: int32
+          description: The version of the destination mapping schema.
+        seq_no:
+          type: integer
+          format: int64
+          description: The sequence number of the destination document.
+        primary_term:
+          type: integer
+          format: int64
+          description: The primary term of the destination document.
+        last_update_time:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        slack:
+          $ref: '#/components/schemas/SlackDestination'
+        chime:
+          $ref: '#/components/schemas/ChimeDestination'
+        custom_webhook:
+          $ref: '#/components/schemas/CustomWebhookDestination'
+        email:
+          $ref: '#/components/schemas/EmailDestination'
+      required:
+        - name
+        - type
+
+    GetDestinationsResponse:
+      type: object
+      description: |-
+        The response returned when retrieving one or all destinations. Note that destinations are deprecated in
+        favor of the Notifications plugin's channels; these read APIs remain for backwards compatibility.
+      properties:
+        totalDestinations:
+          type: [integer, 'null']
+          description: The total number of destinations matching the query, which may be larger than the number of destinations returned.
+        destinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Destination'
+
+    EmailMethod:
+      type: string
+      description: The encryption method used to connect to the SMTP server.
+      enum:
+        - none
+        - ssl
+        - start_tls
+
+    EmailAccount:
+      type: object
+      properties:
+        schema_version:
+          type: integer
+          format: int32
+          description: The version of the email account mapping schema.
+        name:
+          type: string
+          description: The name of the email account.
+        email:
+          type: string
+          description: The email address to send from.
+        host:
+          type: string
+          description: The hostname of the SMTP server.
+        port:
+          type: integer
+          format: int32
+          description: The port of the SMTP server.
+        method:
+          $ref: '#/components/schemas/EmailMethod'
+      required:
+        - email
+        - host
+        - method
+        - name
+        - port
+
+    GetEmailAccountResponse:
+      description: The response returned when retrieving an email account.
+      allOf:
+        - $ref: '#/components/schemas/IndexMetadata'
+        - type: object
+          properties:
+            email_account:
+              oneOf:
+                - $ref: '#/components/schemas/EmailAccount'
+                - type: 'null'
+
+    EmailGroupEmail:
+      type: object
+      properties:
+        email:
+          type: string
+          description: An email address that belongs to the group.
+      required:
+        - email
+
+    EmailGroup:
+      type: object
+      properties:
+        schema_version:
+          type: integer
+          format: int32
+          description: The version of the email group mapping schema.
+        name:
+          type: string
+          description: The name of the email group.
+        emails:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailGroupEmail'
+      required:
+        - emails
+        - name
+
+    GetEmailGroupResponse:
+      description: The response returned when retrieving an email group.
+      allOf:
+        - $ref: '#/components/schemas/IndexMetadata'
+        - type: object
+          properties:
+            email_group:
+              oneOf:
+                - $ref: '#/components/schemas/EmailGroup'
+                - type: 'null'
+
+    FindingDocument:
+      type: object
+      description: A document that matched one or more of a document-level monitor's queries.
+      properties:
+        index:
+          type: string
+          description: The index the document belongs to.
+        id:
+          type: string
+          description: The unique identifier of the document.
+        found:
+          type: boolean
+          description: Whether the document was found when the finding was retrieved.
+        document:
+          type: string
+          description: The JSON source of the document, serialized as a string.
+
+    Finding:
+      type: object
+      description: A record of a document that matched a document-level monitor's queries.
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the finding.
+        related_doc_ids:
+          type: array
+          items:
+            type: string
+          description: The IDs of the documents that matched the monitor's queries.
+        correlated_doc_ids:
+          type: array
+          items:
+            type: string
+          description: The IDs of documents correlated with this finding.
+        monitor_id:
+          type: string
+          description: The ID of the monitor that generated the finding.
+        monitor_name:
+          type: string
+          description: The name of the monitor that generated the finding.
+        index:
+          type: string
+          description: The index that was being monitored.
+        queries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocLevelQuery'
+          description: The queries that matched.
+        timestamp:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        execution_id:
+          type: ['null', string]
+          description: The ID of the monitor execution that generated the finding.
+
+    FindingWithDocs:
+      type: object
+      properties:
+        finding:
+          $ref: '#/components/schemas/Finding'
+        document_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/FindingDocument'
+
+    GetFindingsResponse:
+      type: object
+      properties:
+        total_findings:
+          type: [integer, 'null']
+          description: The total number of findings matching the query, which may be larger than the number of findings returned.
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/FindingWithDocs'
+
+    AlertingStatName:
+      type: string
+      description: The name of an alerting scheduled-job stats metric.
+      enum:
+        - job_scheduling_metrics
+        - jobs_info
+
+    JobSchedulingMetrics:
+      type: object
+      description: Metrics about how a node has been sweeping (polling for updates to) scheduled jobs.
+      properties:
+        last_full_sweep_time_millis:
+          type: integer
+          format: int64
+          description: When the node last completed a full sweep of scheduled jobs.
+        full_sweep_on_time:
+          type: boolean
+          description: Whether the last full sweep completed within its expected interval.
+
+    JobInfo:
+      type: object
+      description: Information about a single scheduled job running on a node.
+      properties:
+        last_execution_time:
+          type: integer
+          format: int64
+          description: When the job last ran.
+        running_on_time:
+          type: boolean
+          description: Whether the job is running within its expected schedule.
+
+    NodeScheduleStatus:
+      type: string
+      description: Whether the node's scheduled jobs are running on time.
+      enum:
+        - green
+        - red
+
+    NodeScheduleStats:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the node.
+        schedule_status:
+          $ref: '#/components/schemas/NodeScheduleStatus'
+        roles:
+          type: array
+          items:
+            type: string
+          description: The roles assigned to the node.
+        job_scheduling_metrics:
+          $ref: '#/components/schemas/JobSchedulingMetrics'
+        jobs_info:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/JobInfo'
+          description: The scheduled jobs running on the node, keyed by job ID.
+
+    Stats:
+      description: Statistics about the alerting feature's scheduled job sweeper.
+      allOf:
+        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
+        - type: object
+          properties:
+            cluster_name:
+              $ref: '_common.yaml#/components/schemas/Name'
+            plugins.scheduled_jobs.enabled:
+              type: boolean
+              description: Whether the scheduled job sweeper is enabled.
+            scheduled_job_index_exists:
+              type: boolean
+              description: Whether the scheduled jobs index exists.
+            scheduled_job_index_status:
+              oneOf:
+                - $ref: '_common.yaml#/components/schemas/HealthStatus'
+                - type: 'null'
+            nodes_on_schedule:
+              type: integer
+              format: int32
+              description: The number of nodes whose scheduled jobs are running on time.
+            nodes_not_on_schedule:
+              type: integer
+              format: int32
+              description: The number of nodes whose scheduled jobs are running behind schedule.
+            nodes:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/NodeScheduleStats'
+              description: The per-node scheduling statistics, keyed by node ID.
