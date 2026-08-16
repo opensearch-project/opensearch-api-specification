@@ -42,11 +42,15 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `agentic` query type, `agentic_query_translator` request processor, and `agentic_context` response processor ([#1073](https://github.com/opensearch-project/opensearch-api-specification/pull/1073))
 - Added `allow_no_indices`, `ignore_unavailable`, and `ignore_throttled` query parameters to `create_pit` ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
 - Added `query` to TermsLookup to support terms lookup by query
+- Added `mapper_type` and `mapper_settings` to `IngestionSource` index settings ([#1155](https://github.com/opensearch-project/opensearch-api-specification/pull/1155))
+- Added `search` and `warm` node roles to `NodeRole`, and modeled the pre-3.0 `search` role (renamed to `warm` in 3.0) as a version-scoped branch ([#1006](https://github.com/opensearch-project/opensearch-api-specification/pull/1006))
+- Added `sltr` to query DSL schema  ([#1187](https://github.com/opensearch-project/opensearch-api-specification/pull/1187))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
 
 ### Removed
+- Removed OpenSearch 2.0.0 from CI test matrix; incompatible with modern GitHub Actions runners due to JDK cgroup v2 crash ([#1189](https://github.com/opensearch-project/opensearch-api-specification/pull/1189))
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
 - Remove unsupported `PinnedQuery` and mark x-version-deprecated to field `cutoff_frequency` in `MultiMatchQuery` ([#1000](https://github.com/opensearch-project/opensearch-api-specification/pull/1000))
 - Remove `force` from `VersionType` ([#1017](https://github.com/opensearch-project/opensearch-api-specification/pull/1017))
@@ -56,6 +60,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `ml.predict_model` and `ml.predict_model_stream` request body schemas to match `RemoteInferenceMLInput` parser: corrected `parameters` type to `Map<String,String>`, removed incorrect `required` constraints, added `action_type`, `dlq`, `question`, and `context` fields, and added `PredictionActionType` enum ([#1188](https://github.com/opensearch-project/opensearch-api-specification/pull/1188))
+- Fixed stale and malformed OpenSearch documentation links in spec `externalDocs` and schema descriptions ([#1163](https://github.com/opensearch-project/opensearch-api-specification/pull/1163))
 - Fixed `DeletedPit` to mark `pit_id` and `successful` as required ([#1146](https://github.com/opensearch-project/opensearch-api-specification/pull/1146))
 - Fixed `HitsMetadata` to mark `max_score` as required ([#1103](https://github.com/opensearch-project/opensearch-api-specification/pull/1103))
 - Fixed `create_pit` to mark `pit_id`, `_shards`, and `creation_time` as required in the PIT response ([#1141](https://github.com/opensearch-project/opensearch-api-specification/pull/1141))
