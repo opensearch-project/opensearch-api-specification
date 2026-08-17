@@ -149,6 +149,14 @@ components:
             $ref: '#/components/schemas/NeuralQuery'
           minProperties: 1
           maxProperties: 1
+        neural_sparse:
+          type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
+          additionalProperties:
+            $ref: '#/components/schemas/NeuralSparseQuery'
+          minProperties: 1
+          maxProperties: 1
         parent_id:
           $ref: '#/components/schemas/ParentIdQuery'
         percolate:
@@ -190,6 +198,8 @@ components:
           $ref: '#/components/schemas/ScriptScoreQuery'
         simple_query_string:
           $ref: '#/components/schemas/SimpleQueryStringQuery'
+        sltr:
+          $ref: '#/components/schemas/StoredLtrQuery'
         span_containing:
           $ref: '#/components/schemas/SpanContainingQuery'
         field_masking_span:
@@ -1521,6 +1531,31 @@ components:
               format: float
             filter:
               $ref: '#/components/schemas/QueryContainer'
+    NeuralSparseQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The query text to be encoded into sparse tokens by the model.
+              type: string
+            model_id:
+              description: The ID of the sparse encoding model or tokenizer model at the ML node.
+              type: string
+            query_tokens:
+              description: Pre-computed sparse tokens and their weights. Use instead of query_text+model_id when tokens are already available.
+              type: object
+              additionalProperties:
+                type: number
+                format: float
+            max_token_score:
+              description: The maximum score threshold for sparse tokens. Deprecated since OpenSearch 2.12.
+              type: number
+              format: float
+              deprecated: true
+            analyzer:
+              description: The analyzer to use for tokenization instead of an ML model.
+              type: string
     ParentIdQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1938,6 +1973,31 @@ components:
         - PREFIX
         - SLOP
         - WHITESPACE
+    StoredLtrQuery:
+      type: object
+      properties:
+        _name:
+          type: string
+        active_features:
+          type: array
+          items:
+            type: string
+        boost:
+          type: number
+          format: float
+        cache:
+          type: boolean
+        featureset:
+          type: string
+        model:
+          type: string
+        params:
+          type: object
+          additionalProperties: true
+        store:
+          type: string
+      required:
+        - params
     SpanContainingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
