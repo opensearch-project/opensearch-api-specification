@@ -175,6 +175,13 @@ components:
         - kafka
         - kinesis
         - none
+    IngestionSourceMapperType:
+      type: string
+      description: The type of message mapper used to extract document fields from ingestion messages.
+      enum:
+        - default
+        - field_mapping
+        - raw_payload
     IngestionSource:
       type: object
       description: The pull-based ingestion settings controlling how data is read from streaming sources.
@@ -220,6 +227,13 @@ components:
           type: object
           additionalProperties: true
           description: Settings for the decoder selected by `decoder_type`. Supported keys depend on the decoder implementation.
+        mapper_type:
+          description: The type of message mapper used to extract document fields from ingestion messages.
+          $ref: '#/components/schemas/IngestionSourceMapperType'
+        mapper_settings:
+          type: object
+          description: Configuration settings for the selected mapper type.
+          additionalProperties: true
     IngestionSourcePointer:
       type: object
       properties:
