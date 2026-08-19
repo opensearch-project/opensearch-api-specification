@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Build
         run: npm ci && npm run merge
@@ -36,34 +36,29 @@ jobs:
           path: |
             build/*
 
-      - name: Release Specification to GitHub
-        id: release
-        uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0 # v1.2.1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: ${{ steps.branch.outputs.name }}-latest
-          prerelease: true
-          title: OpenSearch OpenAPI Spec (${{ steps.branch.outputs.name }})
-          files: |
-            LICENSE.txt
-            build/*
+          role-to-assume: ${{ secrets.LUCENE_SNAPSHOTS_SECRET_ROLE }}
+          aws-region: us-east-1
 
-      - name: Extract Changelog
-        id: changelog
-        uses: sean0x42/markdown-extract@4178293dd16a52514b6cb2c01f4d309d264b2736 # v2
+      - name: Get S3 Bucket
+        id: get_s3_bucket
+        run: |
+          lucene_snapshots_bucket=`aws secretsmanager get-secret-value --secret-id jenkins-artifact-bucket-name --query SecretString --output text`
+          echo "::add-mask::$lucene_snapshots_bucket"
+          echo "LUCENE_SNAPSHOTS_BUCKET=$lucene_snapshots_bucket" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6
         with:
-          file: CHANGELOG.md
-          pattern: Unreleased
+          role-to-assume: ${{ secrets.LUCENE_SNAPSHOTS_S3_ROLE }}
+          aws-region: us-east-1
 
-      - name: Update Release Description
-        id: update
-        uses: tubone24/update_release@c04c17054b939144ec8a7cba969d74992f812d66 # v1.3.1
-        env:
-          TAG_NAME: ${{ steps.branch.outputs.name }}-latest
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          body: |
-            ${{ steps.changelog.outputs.markdown }}
-
-            ### Links
-            - [Build Artifact](${{ steps.upload.outputs.artifact-url }})
+      - name: Copy files to S3 with the aws CLI (New)
+        run: |
+          cd build/
+          aws s3 cp ./opensearch-openapi.yaml s3://${{ steps.get_s3_bucket.outputs.LUCENE_SNAPSHOTS_BUCKET }}/snapshots/opensearch-api-specification/opensearch-openapi.yaml  --recursive --no-progress
+          aws s3 cp ./LICENSE.txt s3://${{ steps.get_s3_bucket.outputs.LUCENE_SNAPSHOTS_BUCKET }}/snapshots/opensearch-api-specification/LICENSE.txt  --recursive --no-progress
+          curl -SfL https://github.com/opensearch-project/opensearch-api-specification/archive/refs/heads/main.zip -o main-latest.zip
+          aws s3 cp ./main-latest.zip s3://${{ steps.get_s3_bucket.outputs.LUCENE_SNAPSHOTS_BUCKET }}/snapshots/opensearch-api-specification/main-latest.zip  --recursive --no-progress
