@@ -41,9 +41,9 @@ We have devised our own test framework to test the spec against an OpenSearch cl
 
 #### Prerequisites 
 
-Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and run `npm install`.
+Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/) and run `npm install`.
 
-Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
+Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop/).
 
 #### OpenSearch Cluster 
 
