@@ -5,12 +5,19 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build and Publish
     runs-on: ubuntu-latest
-    permissions: write-all
-
     steps:
       - name: Checkout the repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -23,10 +30,10 @@ jobs:
       - name: Build
         run: npm ci && npm run merge
 
-      - name: Extract Branch Name
-        id: branch
-        shell: bash
-        run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      - name: Stage site files
+        run: |
+          cp build/opensearch-openapi.yaml ./opensearch-openapi.yaml
+          curl -SfL https://github.com/opensearch-project/opensearch-api-specification/archive/refs/heads/main.zip -o main-latest.zip
 
       - name: Upload Artifacts
         id: upload
@@ -36,29 +43,26 @@ jobs:
           path: |
             build/*
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
         with:
-          role-to-assume: ${{ secrets.LUCENE_SNAPSHOTS_SECRET_ROLE }}
-          aws-region: us-east-1
+          source: ./
+          destination: ./_site
 
-      - name: Get S3 Bucket
-        id: get_s3_bucket
-        run: |
-          lucene_snapshots_bucket=`aws secretsmanager get-secret-value --secret-id jenkins-artifact-bucket-name --query SecretString --output text`
-          echo "::add-mask::$lucene_snapshots_bucket"
-          echo "LUCENE_SNAPSHOTS_BUCKET=$lucene_snapshots_bucket" >> $GITHUB_OUTPUT
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
-        with:
-          role-to-assume: ${{ secrets.LUCENE_SNAPSHOTS_S3_ROLE }}
-          aws-region: us-east-1
-
-      - name: Copy files to S3 with the aws CLI (New)
-        run: |
-          cd build/
-          aws s3 cp ./opensearch-openapi.yaml s3://${{ steps.get_s3_bucket.outputs.LUCENE_SNAPSHOTS_BUCKET }}/snapshots/opensearch-api-specification/opensearch-openapi.yaml  --recursive --no-progress
-          aws s3 cp ./LICENSE.txt s3://${{ steps.get_s3_bucket.outputs.LUCENE_SNAPSHOTS_BUCKET }}/snapshots/opensearch-api-specification/LICENSE.txt  --recursive --no-progress
-          curl -SfL https://github.com/opensearch-project/opensearch-api-specification/archive/refs/heads/main.zip -o main-latest.zip
-          aws s3 cp ./main-latest.zip s3://${{ steps.get_s3_bucket.outputs.LUCENE_SNAPSHOTS_BUCKET }}/snapshots/opensearch-api-specification/main-latest.zip  --recursive --no-progress
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

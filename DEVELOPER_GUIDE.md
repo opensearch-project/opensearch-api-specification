@@ -366,11 +366,21 @@ This workflow uses the [coverage](#coverage) tool and [openapi-changes](https://
 
 ### [Build](.github/workflows/build.yml)
 
-This workflow runs on pushes to the `main` branch and will [merge](#merger) the specification and publish it to [GitHub Releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
+This workflow runs on pushes to the `main` branch. It [merges](#merger) the specification and deploys the [Swagger docs](index.html), `opensearch-openapi.yaml`, and `main-latest.zip` to [GitHub Pages](https://api-spec.opensearch.org/).
 
 ### Deploy GitHub Pages
 
-GitHub Pages automatically performs a [Jekyll](https://jekyllrb.com/) build of the `main` branch to generate the [Swagger docs](index.html) and publish it to [GitHub Pages](https://api-spec.opensearch.org/).
+The [Build](#build) workflow uses [Jekyll](https://jekyllrb.com/) to build the [Swagger docs](index.html) and deploys them to [GitHub Pages](https://api-spec.opensearch.org/) on every push to `main`.
+
+To preview the playground locally, merge the spec and copy it next to `index.html` so it is served from the same origin, then start Jekyll:
+
+```
+npm run merge
+cp build/opensearch-openapi.yaml opensearch-openapi.yaml
+bundle exec jekyll serve
+```
+
+Then open http://localhost:4000.
 
 ### [Comment on PR](.github/workflows/pr-comment.yml)
 
