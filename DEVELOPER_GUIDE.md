@@ -217,7 +217,7 @@ The spec test framework validates the OpenSearch spec against a running OpenSear
 
 ### Spec Style
 
-This repo runs [Vale](https://github.com/errata-ai/vale) on the text contents of the spec, such as descriptions.
+This repo runs [Vale](https://github.com/vale-cli/vale) on the text contents of the spec, such as descriptions.
 
 The [Style prepare tool](tools/src/prepare-for-vale/) clears YAML files from all markup and leaves text in-place in the [style workflow](.github/workflows/style.yml), allowing for comments to appear in pull requests on GitHub.
 
@@ -368,9 +368,9 @@ This workflow uses the [coverage](#coverage) tool and [openapi-changes](https://
 
 This workflow runs on pushes to the `main` branch and will [merge](#merger) the specification and publish it to [GitHub Releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
 
-### [Deploy GitHub Pages](.github/workflows/deploy-gh-pages.yml)
+### Deploy GitHub Pages
 
-This workflow performs a [Jekyll](https://jekyllrb.com/) build of the `main` branch to generate the [Swagger docs](index.html) and publish it to [GitHub Pages](https://opensearch-project.github.io/opensearch-api-specification/).
+GitHub Pages automatically performs a [Jekyll](https://jekyllrb.com/) build of the `main` branch to generate the [Swagger docs](index.html) and publish it to [GitHub Pages](https://api-spec.opensearch.org/).
 
 ### [Comment on PR](.github/workflows/pr-comment.yml)
 
