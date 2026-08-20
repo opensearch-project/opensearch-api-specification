@@ -32,7 +32,7 @@ Because of our legacy, the specification is produced by reading the [OpenSearch 
 
 ## Project Resources
 
-* [Current Release](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml)
+* [Current Release](https://ci.opensearch.org/ci/dbc/snapshots/opensearch-api-specification/opensearch-openapi.yaml)
 * [Developer Guide](DEVELOPER_GUIDE.md).
 * [Client Generator Guide](CLIENT_GENERATOR_GUIDE.md).
 * [Spec Publishing Guide](PUBLISHING_GUIDE.md).
