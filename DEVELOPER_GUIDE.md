@@ -144,6 +144,7 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
 - `x-distributions-included`: Contains a list of distributions known to include the API.
 - `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
+- `x-non-exhaustive`: Denotes that a discriminated union (tagged type) is non-exhaustive, meaning plugins can register additional variants at runtime. Code generators should treat these unions as open/extensible.
 
 Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless.
 
