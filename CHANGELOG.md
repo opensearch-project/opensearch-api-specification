@@ -46,6 +46,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `mapper_type` and `mapper_settings` to `IngestionSource` index settings ([#1155](https://github.com/opensearch-project/opensearch-api-specification/pull/1155))
 - Added `search` and `warm` node roles to `NodeRole`, and modeled the pre-3.0 `search` role (renamed to `warm` in 3.0) as a version-scoped branch ([#1006](https://github.com/opensearch-project/opensearch-api-specification/pull/1006))
 - Added `sltr` to query DSL schema  ([#1187](https://github.com/opensearch-project/opensearch-api-specification/pull/1187))
+- Added `POST /_data_stream/_modify` (`indices.modify_data_stream`) and restore snapshot body field `attach_to_data_stream` ([#1213](https://github.com/opensearch-project/opensearch-api-specification/pull/1213))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
