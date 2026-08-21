@@ -1,0 +1,315 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test html_strip, copy, fingerprint, community_id, and remove_by_pattern ingest processors.
+warnings:
+  invalid-path-detected: false
+  multiple-paths-detected: false
+epilogues:
+  - path: /_ingest/pipeline/html_strip_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /_ingest/pipeline/copy_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /_ingest/pipeline/remove_by_pattern_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /_ingest/pipeline/community_id_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /_ingest/pipeline/fingerprint_pipeline
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an ingest pipeline with the html_strip processor.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: html_strip_pipeline
+    request:
+      payload:
+        description: Strip HTML tags from the description field.
+        processors:
+          - html_strip:
+              field: description
+              target_field: cleaned_description
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the html_strip pipeline.
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: html_strip_pipeline
+    response:
+      status: 200
+  - synopsis: Simulate the html_strip processor.
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: html_strip_pipeline
+    request:
+      payload:
+        docs:
+          - _id: '1'
+            _index: products
+            _source:
+              description: This is a <b>test</b> description with <i>some</i> HTML tags.
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                cleaned_description: This is a test description with some HTML tags.
+                description: This is a <b>test</b> description with <i>some</i> HTML tags.
+  - synopsis: Create an ingest pipeline with the copy processor.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: copy_pipeline
+    request:
+      payload:
+        description: Copy a nested object to a top-level field.
+        processors:
+          - copy:
+              ignore_missing: true
+              source_field: message.content
+              target_field: content
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the copy pipeline.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: copy_pipeline
+    response:
+      status: 200
+  - synopsis: Simulate the copy processor.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: copy_pipeline
+    request:
+      payload:
+        docs:
+          - _id: '1'
+            _index: testindex1
+            _source:
+              message:
+                content:
+                  foo: bar
+                  zoo:
+                    - 1
+                    - 2
+                    - 3
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                content:
+                  foo: bar
+                  zoo:
+                    - 1
+                    - 2
+                    - 3
+                message:
+                  content:
+                    foo: bar
+                    zoo:
+                      - 1
+                      - 2
+                      - 3
+  - synopsis: Create an ingest pipeline with the remove_by_pattern processor.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: remove_by_pattern_pipeline
+    request:
+      payload:
+        description: Remove root-level fields matching a wildcard pattern.
+        processors:
+          - remove_by_pattern:
+              field_pattern: foo*
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the remove_by_pattern pipeline.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: remove_by_pattern_pipeline
+    response:
+      status: 200
+  - synopsis: Simulate the remove_by_pattern processor.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: remove_by_pattern_pipeline
+    request:
+      payload:
+        docs:
+          - _id: '1'
+            _index: testindex1
+            _source:
+              bar: bar
+              foo1: foo1
+              foo2: foo2
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                bar: bar
+  - synopsis: Create an ingest pipeline with remove_by_pattern exclude_field_pattern.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: remove_by_pattern_pipeline
+    request:
+      payload:
+        description: Keep only root-level fields matching a wildcard pattern.
+        processors:
+          - remove_by_pattern:
+              exclude_field_pattern: foo*
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Simulate the remove_by_pattern processor with exclude_field_pattern.
+    version: '>= 2.12'
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: remove_by_pattern_pipeline
+    request:
+      payload:
+        docs:
+          - _id: '1'
+            _index: testindex1
+            _source:
+              bar: bar
+              foo1: foo1
+              foo2: foo2
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                foo1: foo1
+                foo2: foo2
+  - synopsis: Create an ingest pipeline with the community_id processor.
+    version: '>= 2.13'
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: community_id_pipeline
+    request:
+      payload:
+        description: Generate a community ID hash for a network flow tuple.
+        processors:
+          - community_id:
+              destination_ip_field: destination_ip
+              destination_port_field: destination_port
+              iana_protocol_number_field: iana_protocol_number
+              source_ip_field: source_ip
+              source_port_field: source_port
+              target_field: community_id
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the community_id pipeline.
+    version: '>= 2.13'
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: community_id_pipeline
+    response:
+      status: 200
+  - synopsis: Simulate the community_id processor.
+    version: '>= 2.13'
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: community_id_pipeline
+    request:
+      payload:
+        docs:
+          - _id: '1'
+            _index: testindex1
+            _source:
+              destination_ip: 128.232.110.120
+              destination_port: 34855
+              iana_protocol_number: 6
+              source_ip: 66.35.250.204
+              source_port: 80
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                community_id: '1:LQU9qZlK+B5F3KDmev6m5PMibrg='
+  - synopsis: Create an ingest pipeline with the fingerprint processor.
+    version: '>= 2.16'
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: fingerprint_pipeline
+    request:
+      payload:
+        description: Generate a hash value for specified fields.
+        processors:
+          - fingerprint:
+              fields:
+                - bar
+                - foo
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the fingerprint pipeline.
+    version: '>= 2.16'
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: fingerprint_pipeline
+    response:
+      status: 200
+  - synopsis: Simulate the fingerprint processor.
+    version: '>= 2.16'
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: fingerprint_pipeline
+    request:
+      payload:
+        docs:
+          - _id: '1'
+            _index: testindex1
+            _source:
+              bar: bar
+              foo: foo
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                fingerprint: 'SHA-1@2.16.0:fYeen7hTJ2zs9lpmUnk6nvH54sM='
