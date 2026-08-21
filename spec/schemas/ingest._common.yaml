@@ -39,6 +39,8 @@ components:
           $ref: '#/components/schemas/CsvProcessor'
         convert:
           $ref: '#/components/schemas/ConvertProcessor'
+        copy:
+          $ref: '#/components/schemas/CopyProcessor'
         date:
           $ref: '#/components/schemas/DateProcessor'
         date_index_name:
@@ -47,6 +49,8 @@ components:
           $ref: '#/components/schemas/DotExpanderProcessor'
         fail:
           $ref: '#/components/schemas/FailProcessor'
+        fingerprint:
+          $ref: '#/components/schemas/FingerprintProcessor'
         foreach:
           $ref: '#/components/schemas/ForeachProcessor'
         json:
@@ -61,12 +65,16 @@ components:
           $ref: '#/components/schemas/GrokProcessor'
         gsub:
           $ref: '#/components/schemas/GsubProcessor'
+        html_strip:
+          $ref: '#/components/schemas/HtmlStripProcessor'
         join:
           $ref: '#/components/schemas/JoinProcessor'
         lowercase:
           $ref: '#/components/schemas/LowercaseProcessor'
         remove:
           $ref: '#/components/schemas/RemoveProcessor'
+        remove_by_pattern:
+          $ref: '#/components/schemas/RemoveByPatternProcessor'
         rename:
           $ref: '#/components/schemas/RenameProcessor'
         script:
@@ -95,6 +103,8 @@ components:
           $ref: '#/components/schemas/DropProcessor'
         circle:
           $ref: '#/components/schemas/CircleProcessor'
+        community_id:
+          $ref: '#/components/schemas/CommunityIdProcessor'
         text_embedding:
           $ref: '#/components/schemas/TextEmbeddingProcessor'
         sparse_encoding:
@@ -892,3 +902,196 @@ components:
         max_chunk_limit:
           type: integer
           format: int32
+    HtmlStripProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            field:
+              $ref: '_common.yaml#/components/schemas/Field'
+            ignore_missing:
+              description: If `true` and `field` does not exist or is `null`, the processor quietly exits without modifying the document.
+              type: boolean
+            target_field:
+              $ref: '_common.yaml#/components/schemas/Field'
+          required:
+            - field
+    CopyProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            source_field:
+              description: The field to copy. Supports template snippets.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            target_field:
+              description: The field to copy to. Supports template snippets.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            ignore_missing:
+              description: If `true` and `source_field` does not exist or is `null`, the processor quietly exits without modifying the document.
+              type: boolean
+            override_target:
+              description: If `true`, the processor overwrites `target_field` when it already exists.
+              type: boolean
+            remove_source:
+              description: If `true`, the processor removes `source_field` after copying it.
+              type: boolean
+          required:
+            - source_field
+            - target_field
+    FingerprintProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            fields:
+              description: |-
+                Fields used to generate the hash value.
+                Mutually exclusive with `exclude_fields`.
+                If both `fields` and `exclude_fields` are empty or omitted, all fields are included.
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/Field'
+            exclude_fields:
+              description: |-
+                Fields to exclude from hash value generation.
+                Mutually exclusive with `fields`.
+                If both `fields` and `exclude_fields` are empty or omitted, all fields are included.
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/Field'
+            hash_method:
+              $ref: '#/components/schemas/FingerprintHashMethod'
+            target_field:
+              $ref: '_common.yaml#/components/schemas/Field'
+            ignore_missing:
+              description: If `true` and a specified field is missing, the processor quietly skips that field.
+              type: boolean
+          not:
+            type: object
+            properties:
+              exclude_fields:
+                type: array
+              fields:
+                type: array
+            required:
+              - exclude_fields
+              - fields
+    FingerprintHashMethod:
+      description: Hashing algorithm used by the fingerprint processor. The version suffix keeps hashes stable across OpenSearch versions. Matching is case-insensitive; use the mixed-case `@2.16.0` spelling.
+      type: string
+      enum:
+        - MD5@2.16.0
+        - SHA-1@2.16.0
+        - SHA-256@2.16.0
+        - SHA3-256@2.16.0
+    CommunityIdProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            source_ip_field:
+              description: The name of the field containing the source IP address.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            destination_ip_field:
+              description: The name of the field containing the destination IP address.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            source_port_field:
+              description: The name of the field containing the source port. Required for `TCP`, `UDP`, and `SCTP`.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            destination_port_field:
+              description: The name of the field containing the destination port. Required for `TCP`, `UDP`, and `SCTP`.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            iana_protocol_number_field:
+              description: The name of the field containing the `IANA` protocol number. Supported values are 1 (`ICMP`), 6 (`TCP`), 17 (`UDP`), 58 (`IPv6-ICMP`), and 132 (`SCTP`).
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            protocol_field:
+              description: The name of the field containing the protocol name. Required when `iana_protocol_number_field` is not set.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            icmp_type_field:
+              description: The name of the field containing the `ICMP` message type. Required when the protocol is `ICMP` or `IPv6-ICMP`.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            icmp_code_field:
+              description: The name of the field containing the `ICMP` message code. Required for `ICMP` message types that include a code.
+              allOf:
+                - $ref: '_common.yaml#/components/schemas/Field'
+            seed:
+              description: The seed for generating the community ID hash. Must be between 0 and 65535.
+              type: integer
+              format: int32
+              minimum: 0
+              maximum: 65535
+            target_field:
+              $ref: '_common.yaml#/components/schemas/Field'
+            ignore_missing:
+              description: If `true` and a required field is missing, the processor quietly exits without modifying the document.
+              type: boolean
+          required:
+            - destination_ip_field
+            - source_ip_field
+    FieldPattern:
+      description: A wildcard pattern, or a list of patterns, matching root-level field names.
+      oneOf:
+        - $ref: '_common.yaml#/components/schemas/Field'
+        - type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/Field'
+    RemoveByPatternProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            field_pattern:
+              description: |-
+                Removes root-level fields that match the specified wildcard pattern or list of patterns.
+                Metadata fields such as `_index`, `_id`, `_version`, and `_version_type` are ignored.
+                Mutually exclusive with `exclude_field_pattern`.
+              allOf:
+                - $ref: '#/components/schemas/FieldPattern'
+            exclude_field_pattern:
+              description: |-
+                Removes root-level fields that do not match the specified wildcard pattern or list of patterns.
+                Metadata fields such as `_index`, `_id`, `_version`, and `_version_type` are ignored.
+                Mutually exclusive with `field_pattern`.
+              allOf:
+                - $ref: '#/components/schemas/FieldPattern'
+          oneOf:
+            - type: object
+              properties:
+                exclude_field_pattern:
+                  $ref: '#/components/schemas/FieldPattern'
+                field_pattern:
+                  $ref: '#/components/schemas/FieldPattern'
+              required:
+                - field_pattern
+              not:
+                type: object
+                properties:
+                  exclude_field_pattern:
+                    $ref: '#/components/schemas/FieldPattern'
+                required:
+                  - exclude_field_pattern
+            - type: object
+              properties:
+                exclude_field_pattern:
+                  $ref: '#/components/schemas/FieldPattern'
+                field_pattern:
+                  $ref: '#/components/schemas/FieldPattern'
+              required:
+                - exclude_field_pattern
+              not:
+                type: object
+                properties:
+                  field_pattern:
+                    $ref: '#/components/schemas/FieldPattern'
+                required:
+                  - field_pattern
