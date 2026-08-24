@@ -5,65 +5,64 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build and Publish
     runs-on: ubuntu-latest
-    permissions: write-all
-
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Build
         run: npm ci && npm run merge
 
-      - name: Extract Branch Name
-        id: branch
-        shell: bash
-        run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      - name: Stage site files
+        run: |
+          cp build/opensearch-openapi.yaml ./opensearch-openapi.yaml
+          curl -SfL https://github.com/opensearch-project/opensearch-api-specification/archive/refs/heads/main.zip -o main-latest.zip
 
       - name: Upload Artifacts
         id: upload
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build
           path: |
             build/*
 
-      - name: Release Specification to GitHub
-        id: release
-        uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0 # v1.2.1
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: ${{ steps.branch.outputs.name }}-latest
-          prerelease: true
-          title: OpenSearch OpenAPI Spec (${{ steps.branch.outputs.name }})
-          files: |
-            LICENSE.txt
-            build/*
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
-      - name: Extract Changelog
-        id: changelog
-        uses: sean0x42/markdown-extract@4178293dd16a52514b6cb2c01f4d309d264b2736 # v2
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
         with:
-          file: CHANGELOG.md
-          pattern: Unreleased
+          source: ./
+          destination: ./_site
 
-      - name: Update Release Description
-        id: update
-        uses: tubone24/update_release@c04c17054b939144ec8a7cba969d74992f812d66 # v1.3.1
-        env:
-          TAG_NAME: ${{ steps.branch.outputs.name }}-latest
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          body: |
-            ${{ steps.changelog.outputs.markdown }}
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
 
-            ### Links
-            - [Build Artifact](${{ steps.upload.outputs.artifact-url }})
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

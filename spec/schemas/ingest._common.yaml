@@ -97,6 +97,12 @@ components:
           $ref: '#/components/schemas/CircleProcessor'
         text_embedding:
           $ref: '#/components/schemas/TextEmbeddingProcessor'
+        sparse_encoding:
+          $ref: '#/components/schemas/SparseEncodingProcessor'
+        text_image_embedding:
+          $ref: '#/components/schemas/TextImageEmbeddingProcessor'
+        text_chunking:
+          $ref: '#/components/schemas/TextChunkingProcessor'
       minProperties: 1
       maxProperties: 1
     AttachmentProcessor:
@@ -797,3 +803,92 @@ components:
           required:
             - field_map
             - model_id
+    SparseEncodingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            model_id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of a text field to a sparse vector field.
+              type: object
+              additionalProperties:
+                type: string
+            batch_size:
+              type: integer
+              format: int32
+          required:
+            - field_map
+            - model_id
+    TextImageEmbeddingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            model_id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of text/image fields to a vector field.
+              type: object
+              additionalProperties:
+                type: string
+          required:
+            - field_map
+            - model_id
+    TextChunkingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            algorithm:
+              $ref: '#/components/schemas/ChunkingAlgorithm'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of a source text field to a target chunked field.
+              type: object
+              additionalProperties:
+                type: string
+            max_chunk_limit:
+              description: |-
+                Maximum number of chunks a document field can be split into. Defaults to 100.
+              type: integer
+              format: int32
+          required:
+            - algorithm
+            - field_map
+    ChunkingAlgorithm:
+      type: object
+      properties:
+        fixed_token_length:
+          $ref: '#/components/schemas/FixedTokenLengthChunkingAlgorithm'
+        delimiter:
+          $ref: '#/components/schemas/DelimiterChunkingAlgorithm'
+    FixedTokenLengthChunkingAlgorithm:
+      type: object
+      properties:
+        token_limit:
+          description: Maximum number of tokens per chunk.
+          type: integer
+          format: int32
+        overlap_rate:
+          description: Fraction of tokens to overlap between consecutive chunks. Value between 0 and 0.5.
+          type: number
+          format: double
+        tokenizer:
+          description: The tokenizer to use, for example "standard".
+          type: string
+        max_chunk_limit:
+          type: integer
+          format: int32
+    DelimiterChunkingAlgorithm:
+      type: object
+      properties:
+        delimiter:
+          description: The string delimiter to split on.
+          type: string
+        max_chunk_limit:
+          type: integer
+          format: int32
