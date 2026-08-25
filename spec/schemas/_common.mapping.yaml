@@ -982,6 +982,9 @@ components:
           type: string
         model_id:
           type: string
+        model_selection:
+          $ref: '#/components/schemas/SemanticModelSelection'
+          x-version-added: '3.9'
         search_model_id:
           type: string
         semantic_info_field_name:
@@ -1002,7 +1005,6 @@ components:
           type: boolean
           default: false
       required:
-        - model_id
         - type
     ShortNumberProperty:
       allOf:
@@ -1286,3 +1288,22 @@ components:
           type: string
         prune_ratio:
           type: number
+    SemanticModelSelection:
+      x-version-added: '3.9'
+      type: object
+      description: |-
+        Resolves the model to use for a semantic field from cluster settings instead of a hard-coded `model_id`.
+        The `model_type` and `language_option` pair maps to the cluster setting
+        `plugins.neural_search.model_selection.model_id.<model_type>.<language_option>` (lower-cased),
+        whose value is the resolved model id.
+      properties:
+        language_option:
+          type: string
+          enum:
+            - ENGLISH
+            - MULTILINGUAL
+        model_type:
+          type: string
+          enum:
+            - SPARSE
+            - DENSE
