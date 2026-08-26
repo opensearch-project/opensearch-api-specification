@@ -1343,27 +1343,52 @@ components:
           schema:
             type: object
             properties:
-              query_text:
-                type: string
-                description: The query text.
+              parameters:
+                type: object
+                additionalProperties:
+                  type: string
+                description: The parameters to pass to the model. Used by remote connector models to fill the connector request_body template variables from this map.
+              action_type:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/PredictionActionType'
+                description: Overrides the action type derived from the request path. Used for remote connector models.
+              dlq:
+                type: object
+                additionalProperties:
+                  type: string
+                description: Dead-letter queue configuration for batch predict on remote connector models (since OpenSearch 2.19).
               text_docs:
                 type: array
                 items:
                   type: string
-                description: The text documents.
-            required:
-              - text_docs
+                description: The text documents. Used by local text-embedding and sparse-encoding models.
+              query_text:
+                type: string
+                description: The query text. Used by local text-similarity models.
+              question:
+                type: string
+                description: The question input. Used by local question-answering models.
+              context:
+                type: string
+                description: The context input. Used by local question-answering models.
     ml.predict_model_stream:
       content:
         application/json:
           schema:
             type: object
-            title: MLPredictModelStreamRequestBody
             properties:
               parameters:
-                $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
-            required:
-              - parameters
+                type: object
+                additionalProperties:
+                  type: string
+                description: The parameters to pass to the remote connector model.
+              action_type:
+                $ref: '../schemas/ml._common.yaml#/components/schemas/PredictionActionType'
+                description: Overrides the action type derived from the request path.
+              dlq:
+                type: object
+                additionalProperties:
+                  type: string
+                description: Dead-letter queue configuration for batch predict on remote connector models.
     ml.search_tasks:
       content:
         application/json:

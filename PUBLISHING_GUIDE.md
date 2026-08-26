@@ -2,5 +2,4 @@
 
 ## Publishing OpenSearch API Specs
 
-* The [build](.github/workflows/build.yml) workflow publishes [a release draft](https://github.com/opensearch-project/opensearch-api-specification/releases) whenever a change is pushed to `main`.
-* The [deploy-gh-pages](.github/workflows/deploy-gh-pages.yml) workflow publishes specs to [GitHub pages](https://opensearch-project.github.io/opensearch-api-specification/).
+* The [build](.github/workflows/build.yml) workflow builds the spec and deploys the API Playground, `opensearch-openapi.yaml`, and `main-latest.zip` to GitHub Pages at [api-spec.opensearch.org](https://api-spec.opensearch.org/) whenever a change is pushed to `main`.
