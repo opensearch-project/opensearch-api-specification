@@ -339,6 +339,45 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.delete_action_group@200'
+  /_plugins/_security/api/apitokens:
+    get:
+      operationId: security.get_api_keys.0
+      x-operation-group: security.get_api_keys
+      x-version-added: '3.7'
+      x-distributions-excluded:
+        - amazon-managed
+        - amazon-serverless
+      description: Returns all API keys, including active, expired, and revoked keys.
+      responses:
+        '200':
+          $ref: '#/components/responses/security.get_api_keys@200'
+    post:
+      operationId: security.create_api_key.0
+      x-operation-group: security.create_api_key
+      x-version-added: '3.7'
+      x-distributions-excluded:
+        - amazon-managed
+        - amazon-serverless
+      description: Creates a new API key with the specified permissions and duration.
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_api_key'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_api_key@200'
+  /_plugins/_security/api/apitokens/{id}:
+    delete:
+      operationId: security.delete_api_key.0
+      x-operation-group: security.delete_api_key
+      x-version-added: '3.7'
+      x-distributions-excluded:
+        - amazon-managed
+        - amazon-serverless
+      description: Revokes an API key, making it immediately unusable for authentication.
+      parameters:
+        - $ref: '#/components/parameters/security.delete_api_key::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.delete_api_key@200'
   /_plugins/_security/api/allowlist:
     get:
       operationId: security.get_allowlist.0
@@ -1367,6 +1406,12 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/ActionGroup'
       required: true
+    security.create_api_key:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/ApiKeyCreateRequest'
+      required: true
     security.create_allowlist:
       content:
         application/json:
@@ -1629,6 +1674,21 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/Created'
+    security.create_api_key@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/ApiKeyCreateResponse'
+    security.get_api_keys@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/ApiKeyListResponse'
+    security.delete_api_key@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/ApiKeyRevokeResponse'
     security.create_allowlist@200:
       content:
         application/json:
@@ -2336,6 +2396,13 @@ components:
       name: action_group
       in: path
       description: The name of the action group to delete.
+      schema:
+        type: string
+      required: true
+    security.delete_api_key::path.id:
+      name: id
+      in: path
+      description: The unique identifier of the API key to revoke.
       schema:
         type: string
       required: true
