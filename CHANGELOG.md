@@ -49,6 +49,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
+- Add `host`, `publish_host`, and `publish_port` to `NodeInfoSettingsHttp`; `host` to `NodeInfoSettingsTransport`; `roles` to `NodeInfoSettingsNode`; and updated `NodeInfoSettingsNetwork.host` to `StringOrStringArray` ([#1101](https://github.com/opensearch-project/opensearch-api-specification/pull/1101))
 
 ### Removed
 - Removed OpenSearch 2.0.0 from CI test matrix; incompatible with modern GitHub Actions runners due to JDK cgroup v2 crash ([#1189](https://github.com/opensearch-project/opensearch-api-specification/pull/1189))
