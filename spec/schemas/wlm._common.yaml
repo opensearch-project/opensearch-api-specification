@@ -103,3 +103,112 @@ components:
         cpu:
           type: number
           format: double
+    WlmStatsSortBy:
+      type: string
+      description: The field used to sort paginated workload management statistics.
+      enum:
+        - node_id
+        - workload_group
+    WlmResourceStats:
+      type: object
+      description: Point-in-time resource usage statistics for a workload group on a node.
+      properties:
+        current_usage:
+          description: The last recorded usage for this resource, updated on the workload management enforcement interval.
+          type: number
+          format: double
+        cancellations:
+          description: The number of cancellations caused by this resource reaching its cancellation threshold.
+          type: integer
+          format: int64
+        rejections:
+          description: The number of rejections caused by this resource reaching its rejection threshold.
+          type: integer
+          format: int64
+    WorkloadGroupStats:
+      type: object
+      description: Workload group statistics collected on a single node.
+      properties:
+        total_completions:
+          description: The total number of completed shard-level and coordinator-level requests for the workload group on the node.
+          type: integer
+          format: int64
+        total_rejections:
+          description: The total number of rejected shard-level and coordinator-level requests for the workload group on the node.
+          type: integer
+          format: int64
+        total_cancellations:
+          description: The total number of cancelled requests for the workload group on the node.
+          type: integer
+          format: int64
+        cpu:
+          description: CPU resource statistics for the workload group.
+          $ref: '#/components/schemas/WlmResourceStats'
+        memory:
+          description: Memory resource statistics for the workload group.
+          $ref: '#/components/schemas/WlmResourceStats'
+    NodeWlmStats:
+      type: object
+      description: Workload management statistics for every workload group on a node.
+      properties:
+        workload_groups:
+          description: A map of workload group ID to statistics for that group.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/WorkloadGroupStats'
+    WlmStatsResponse:
+      type: object
+      description: Cluster-level workload management statistics keyed by node ID.
+      properties:
+        _nodes:
+          description: Contains statistics about the number of nodes selected by the request.
+          $ref: '_common.yaml#/components/schemas/NodeStatistics'
+        cluster_name:
+          description: The name of the cluster.
+          $ref: '_common.yaml#/components/schemas/Name'
+      additionalProperties:
+        $ref: '#/components/schemas/NodeWlmStats'
+    WlmStatsRecord:
+      type: object
+      description: A tabular row of workload management statistics for a node and workload group.
+      properties:
+        NODE_ID:
+          description: The ID of the node that reported the statistics.
+          type: string
+        WORKLOAD_GROUP_ID:
+          description: The ID of the workload group.
+          type: string
+        TOTAL_COMPLETIONS:
+          description: The total number of completed requests as a string.
+          type: string
+        TOTAL_REJECTIONS:
+          description: The total number of rejected requests as a string.
+          type: string
+        TOTAL_CANCELLATIONS:
+          description: The total number of cancelled requests as a string.
+          type: string
+        CPU_USAGE:
+          description: The current CPU usage, or `NA` when CPU statistics are unavailable.
+          type: string
+        MEMORY_USAGE:
+          description: The current memory usage, or `NA` when memory statistics are unavailable.
+          type: string
+        '|':
+          description: A column separator included in the tabular response.
+          type: string
+    WlmStatsListResponse:
+      description: A paginated or complete tabular listing of workload management statistics.
+      anyOf:
+        - type: array
+          items:
+            $ref: '#/components/schemas/WlmStatsRecord'
+        - type: object
+          properties:
+            next_token:
+              description: The token used to retrieve the next page. `null` when there are no more pages.
+              type: ['null', string]
+            wlm_stats:
+              description: The workload management statistics in the current page.
+              type: array
+              items:
+                $ref: '#/components/schemas/WlmStatsRecord'
