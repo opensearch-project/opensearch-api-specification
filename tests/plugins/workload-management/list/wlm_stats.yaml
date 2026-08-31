@@ -1,0 +1,100 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the paginated Workload Management Stats List API.
+version: '>= 3.1'
+warnings:
+  multiple-paths-detected: false
+prologues:
+  - path: /_cat/nodes
+    id: node
+    method: GET
+    parameters:
+      full_id: true
+      format: json
+      h: id
+    output:
+      id: payload[0].id
+  - path: /_wlm/query_group/list_stats_analytics
+    method: DELETE
+    status: [200, 404]
+  - path: /_wlm/query_group
+    id: group
+    method: PUT
+    request:
+      payload:
+        name: list_stats_analytics
+        resource_limits:
+          memory: 0.1
+        resiliency_mode: monitor
+    output:
+      group_id: payload._id
+epilogues:
+  - path: /_wlm/query_group/list_stats_analytics
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: List workload management statistics as plain text.
+    path: /_list/wlm_stats
+    method: GET
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List workload management statistics as JSON.
+    path: /_list/wlm_stats
+    method: GET
+    parameters:
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List workload management statistics with a page size, sort, and order.
+    path: /_list/wlm_stats
+    method: GET
+    parameters:
+      format: json
+      size: 10
+      sort: node_id
+      order: asc
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List workload management statistics with verbose column headers.
+    path: /_list/wlm_stats
+    method: GET
+    parameters:
+      v: true
+    response:
+      status: 200
+      content_type: text/plain
+  - synopsis: List workload management statistics for a specific node.
+    path: /_list/wlm_stats/{node_id}/stats
+    method: GET
+    parameters:
+      node_id: ${node.id}
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List workload management statistics for a specific workload group.
+    path: /_list/wlm_stats/stats/{workload_group_id}
+    method: GET
+    parameters:
+      workload_group_id: ${group.group_id}
+      format: json
+    response:
+      status: 200
+      content_type: application/json
+  - synopsis: List workload management statistics for a specific node and workload group.
+    path: /_list/wlm_stats/{node_id}/stats/{workload_group_id}
+    method: GET
+    parameters:
+      node_id: ${node.id}
+      workload_group_id: ${group.group_id}
+      format: json
+      h:
+        - NODE_ID
+        - TOTAL_COMPLETIONS
+        - WORKLOAD_GROUP_ID
+    response:
+      status: 200
+      content_type: application/json
