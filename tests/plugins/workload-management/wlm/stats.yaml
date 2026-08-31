@@ -14,24 +14,6 @@ prologues:
       h: id
     output:
       id: payload[0].id
-  - path: /_wlm/query_group/stats_analytics
-    method: DELETE
-    status: [200, 404]
-  - path: /_wlm/query_group
-    id: group
-    method: PUT
-    request:
-      payload:
-        name: stats_analytics
-        resource_limits:
-          memory: 0.1
-        resiliency_mode: monitor
-    output:
-      group_id: payload._id
-epilogues:
-  - path: /_wlm/query_group/stats_analytics
-    method: DELETE
-    status: [200, 404]
 chapters:
   - synopsis: Get workload management statistics for all nodes and workload groups.
     path: /_wlm/stats
@@ -45,7 +27,7 @@ chapters:
     path: /_wlm/stats/{workload_group_id}
     method: GET
     parameters:
-      workload_group_id: ${group.group_id}
+      workload_group_id: DEFAULT_WORKLOAD_GROUP
     response:
       status: 200
       payload:
@@ -66,7 +48,7 @@ chapters:
     method: GET
     parameters:
       node_id: ${node.id}
-      workload_group_id: ${group.group_id}
+      workload_group_id: DEFAULT_WORKLOAD_GROUP
     response:
       status: 200
       payload:
