@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Workload Management Query Group API
-  description: The Query Group Lifecycle APIs create, update, and delete workload management query groups.
+  description: The Workload Management APIs create, update, and delete query groups and retrieve per-node workload group statistics.
   version: 1.0.0
 paths:
   /_wlm/query_group:
@@ -56,6 +56,62 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/wlm.delete_query_group@200'
+  /_wlm/stats:
+    get:
+      operationId: wlm.stats.0
+      x-operation-group: wlm.stats
+      x-version-added: '2.18'
+      description: Retrieves workload management statistics for workload groups on one or more nodes.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/workload-management/wlm-feature-overview/
+      parameters:
+        - $ref: '#/components/parameters/wlm.stats::query.breach'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.stats@200'
+  /_wlm/stats/{workload_group_id}:
+    get:
+      operationId: wlm.stats.1
+      x-operation-group: wlm.stats
+      x-version-added: '2.18'
+      description: Retrieves workload management statistics for workload groups on one or more nodes.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/workload-management/wlm-feature-overview/
+      parameters:
+        - $ref: '#/components/parameters/wlm.stats::path.workload_group_id'
+        - $ref: '#/components/parameters/wlm.stats::query.breach'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.stats@200'
+  /_wlm/{node_id}/stats:
+    get:
+      operationId: wlm.stats.2
+      x-operation-group: wlm.stats
+      x-version-added: '2.18'
+      description: Retrieves workload management statistics for workload groups on one or more nodes.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/workload-management/wlm-feature-overview/
+      parameters:
+        - $ref: '#/components/parameters/wlm.stats::path.node_id'
+        - $ref: '#/components/parameters/wlm.stats::query.breach'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.stats@200'
+  /_wlm/{node_id}/stats/{workload_group_id}:
+    get:
+      operationId: wlm.stats.3
+      x-operation-group: wlm.stats
+      x-version-added: '2.18'
+      description: Retrieves workload management statistics for workload groups on one or more nodes.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/tuning-your-cluster/availability-and-recovery/workload-management/wlm-feature-overview/
+      parameters:
+        - $ref: '#/components/parameters/wlm.stats::path.node_id'
+        - $ref: '#/components/parameters/wlm.stats::path.workload_group_id'
+        - $ref: '#/components/parameters/wlm.stats::query.breach'
+      responses:
+        '200':
+          $ref: '#/components/responses/wlm.stats@200'
 components:
   requestBodies:
     wlm.create_query_group:
@@ -103,6 +159,12 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/wlm._common.yaml#/components/schemas/QueryGroupResponse'
+    wlm.stats@200:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WlmStatsResponse'
   parameters:
     wlm.update_query_group::path.name:
       name: name
@@ -125,3 +187,26 @@ components:
       schema:
         type: string
       required: true
+    wlm.stats::path.node_id:
+      name: node_id
+      in: path
+      description: A comma-separated list of node IDs or names used to limit the returned statistics.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
+      style: simple
+    wlm.stats::path.workload_group_id:
+      name: workload_group_id
+      in: path
+      description: A comma-separated list of workload group IDs used to limit the returned statistics. Use `_all` to return statistics for every workload group.
+      required: true
+      schema:
+        type: string
+      style: simple
+    wlm.stats::query.breach:
+      name: breach
+      in: query
+      description: When `true`, returns only workload groups that have breached their resource limits.
+      schema:
+        type: boolean
+      style: form

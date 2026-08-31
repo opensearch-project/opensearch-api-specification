@@ -125,6 +125,78 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/list.shards@200'
+  /_list/wlm_stats:
+    get:
+      operationId: list.wlm_stats.0
+      x-operation-group: list.wlm_stats
+      x-version-added: '3.1'
+      description: Returns paginated workload management statistics in tabular form.
+      parameters:
+        - $ref: '#/components/parameters/list.wlm_stats::query.breach'
+        - $ref: '#/components/parameters/list.wlm_stats::query.format'
+        - $ref: '#/components/parameters/list.wlm_stats::query.next_token'
+        - $ref: '#/components/parameters/list.wlm_stats::query.order'
+        - $ref: '#/components/parameters/list.wlm_stats::query.size'
+        - $ref: '#/components/parameters/list.wlm_stats::query.sort'
+        - $ref: '#/components/parameters/list.wlm_stats::query.v'
+      responses:
+        '200':
+          $ref: '#/components/responses/list.wlm_stats@200'
+  /_list/wlm_stats/stats/{workload_group_id}:
+    get:
+      operationId: list.wlm_stats.1
+      x-operation-group: list.wlm_stats
+      x-version-added: '3.1'
+      description: Returns paginated workload management statistics in tabular form.
+      parameters:
+        - $ref: '#/components/parameters/list.wlm_stats::path.workload_group_id'
+        - $ref: '#/components/parameters/list.wlm_stats::query.breach'
+        - $ref: '#/components/parameters/list.wlm_stats::query.format'
+        - $ref: '#/components/parameters/list.wlm_stats::query.next_token'
+        - $ref: '#/components/parameters/list.wlm_stats::query.order'
+        - $ref: '#/components/parameters/list.wlm_stats::query.size'
+        - $ref: '#/components/parameters/list.wlm_stats::query.sort'
+        - $ref: '#/components/parameters/list.wlm_stats::query.v'
+      responses:
+        '200':
+          $ref: '#/components/responses/list.wlm_stats@200'
+  /_list/wlm_stats/{node_id}/stats:
+    get:
+      operationId: list.wlm_stats.2
+      x-operation-group: list.wlm_stats
+      x-version-added: '3.1'
+      description: Returns paginated workload management statistics in tabular form.
+      parameters:
+        - $ref: '#/components/parameters/list.wlm_stats::path.node_id'
+        - $ref: '#/components/parameters/list.wlm_stats::query.breach'
+        - $ref: '#/components/parameters/list.wlm_stats::query.format'
+        - $ref: '#/components/parameters/list.wlm_stats::query.next_token'
+        - $ref: '#/components/parameters/list.wlm_stats::query.order'
+        - $ref: '#/components/parameters/list.wlm_stats::query.size'
+        - $ref: '#/components/parameters/list.wlm_stats::query.sort'
+        - $ref: '#/components/parameters/list.wlm_stats::query.v'
+      responses:
+        '200':
+          $ref: '#/components/responses/list.wlm_stats@200'
+  /_list/wlm_stats/{node_id}/stats/{workload_group_id}:
+    get:
+      operationId: list.wlm_stats.3
+      x-operation-group: list.wlm_stats
+      x-version-added: '3.1'
+      description: Returns paginated workload management statistics in tabular form.
+      parameters:
+        - $ref: '#/components/parameters/list.wlm_stats::path.node_id'
+        - $ref: '#/components/parameters/list.wlm_stats::path.workload_group_id'
+        - $ref: '#/components/parameters/list.wlm_stats::query.breach'
+        - $ref: '#/components/parameters/list.wlm_stats::query.format'
+        - $ref: '#/components/parameters/list.wlm_stats::query.next_token'
+        - $ref: '#/components/parameters/list.wlm_stats::query.order'
+        - $ref: '#/components/parameters/list.wlm_stats::query.size'
+        - $ref: '#/components/parameters/list.wlm_stats::query.sort'
+        - $ref: '#/components/parameters/list.wlm_stats::query.v'
+      responses:
+        '200':
+          $ref: '#/components/responses/list.wlm_stats@200'
 components:
   responses:
     list.help@200:
@@ -222,6 +294,23 @@ components:
                 type: array
                 items:
                   $ref: '../schemas/cat.shards.yaml#/components/schemas/ShardsRecord'
+    list.wlm_stats@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+        application/json:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WlmStatsListResponse'
+        application/yaml:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WlmStatsListResponse'
+        application/cbor:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WlmStatsListResponse'
+        application/smile:
+          schema:
+            $ref: '../schemas/wlm._common.yaml#/components/schemas/WlmStatsListResponse'
   parameters:
     list.indices::path.index:
       in: path
@@ -477,3 +566,69 @@ components:
       description: Defines order in which shards will be displayed. Accepted values are `asc` and `desc`. If `desc`, most recently created shards would be displayed first.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+    list.wlm_stats::path.node_id:
+      in: path
+      name: node_id
+      description: A comma-separated list of node IDs or names used to limit the returned statistics.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
+      style: simple
+    list.wlm_stats::path.workload_group_id:
+      in: path
+      name: workload_group_id
+      description: A comma-separated list of workload group IDs used to limit the returned statistics. Use `_all` to return statistics for every workload group.
+      required: true
+      schema:
+        type: string
+      style: simple
+    list.wlm_stats::query.breach:
+      name: breach
+      in: query
+      description: When `true`, returns only workload groups that have breached their resource limits.
+      schema:
+        type: boolean
+      style: form
+    list.wlm_stats::query.format:
+      name: format
+      in: query
+      description: A short version of the Accept header, such as `JSON`, `YAML`.
+      schema:
+        $ref: '../schemas/list._common.yaml#/components/schemas/ResponseFormat'
+    list.wlm_stats::query.next_token:
+      name: next_token
+      in: query
+      description: Token used to retrieve the next page of workload management statistics.
+      schema:
+        type: ['null', string]
+        description: Token used to retrieve the next page of workload management statistics.
+    list.wlm_stats::query.order:
+      name: order
+      in: query
+      description: The sort direction of the page. Allowed values are `asc` and `desc`. Defaults to `asc`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+    list.wlm_stats::query.size:
+      name: size
+      in: query
+      description: The maximum number of node and workload group combinations to return in a page. Allowed range is 1 to 100.
+      schema:
+        type: integer
+        format: int32
+        default: 10
+        minimum: 1
+        maximum: 100
+    list.wlm_stats::query.sort:
+      name: sort
+      in: query
+      description: The field used to sort results. Allowed values are `node_id` and `workload_group`. Defaults to `node_id`.
+      schema:
+        $ref: '../schemas/wlm._common.yaml#/components/schemas/WlmStatsSortBy'
+    list.wlm_stats::query.v:
+      name: v
+      in: query
+      description: Verbose mode. Display column headers.
+      schema:
+        type: boolean
+        default: false
+        description: Verbose mode. Display column headers.
