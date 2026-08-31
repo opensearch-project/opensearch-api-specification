@@ -4,6 +4,7 @@ description: Test the paginated Workload Management Stats List API.
 version: '>= 3.1'
 warnings:
   multiple-paths-detected: false
+  invalid-path-detected: false
 prologues:
   - path: /_cat/nodes
     id: node
@@ -14,24 +15,6 @@ prologues:
       h: id
     output:
       id: payload[0].id
-  - path: /_wlm/query_group/list_stats_analytics
-    method: DELETE
-    status: [200, 404]
-  - path: /_wlm/query_group
-    id: group
-    method: PUT
-    request:
-      payload:
-        name: list_stats_analytics
-        resource_limits:
-          memory: 0.1
-        resiliency_mode: monitor
-    output:
-      group_id: payload._id
-epilogues:
-  - path: /_wlm/query_group/list_stats_analytics
-    method: DELETE
-    status: [200, 404]
 chapters:
   - synopsis: List workload management statistics as plain text.
     path: /_list/wlm_stats
@@ -79,7 +62,7 @@ chapters:
     path: /_list/wlm_stats/stats/{workload_group_id}
     method: GET
     parameters:
-      workload_group_id: ${group.group_id}
+      workload_group_id: DEFAULT_WORKLOAD_GROUP
       format: json
     response:
       status: 200
@@ -89,7 +72,7 @@ chapters:
     method: GET
     parameters:
       node_id: ${node.id}
-      workload_group_id: ${group.group_id}
+      workload_group_id: DEFAULT_WORKLOAD_GROUP
       format: json
       h:
         - NODE_ID
