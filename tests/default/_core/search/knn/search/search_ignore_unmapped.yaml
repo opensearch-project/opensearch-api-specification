@@ -1,0 +1,84 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with knn query using the ignore_unmapped parameter.
+warnings:
+  invalid-path-detected: false
+version: '>= 1.2'
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            director:
+              type: text
+            title:
+              type: text
+            year:
+              type: integer
+            embedding:
+              type: knn_vector
+              dimension: 5
+              method:
+                name: hnsw
+                space_type: l2
+                engine: faiss
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        director: Bennett Miller
+        title: Moneyball
+        year: 2011
+        embedding: [1.4, 2.3, 3.5, 4.1, 9.2]
+    status: [201]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search a field that is not present in the mapping, ignoring it.
+    version: '>= 2.11'
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        query:
+          knn:
+            missing_embedding:
+              vector: [1.4, 2.3, 3.5, 4.1, 9.2]
+              k: 1
+              ignore_unmapped: true
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 0
+            relation: eq
+          hits: []
+  - synopsis: Search a field that is not present in the mapping without ignoring it.
+    version: '>= 2.11'
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        query:
+          knn:
+            missing_embedding:
+              vector: [1.4, 2.3, 3.5, 4.1, 9.2]
+              k: 1
+              ignore_unmapped: false
+    response:
+      status: 400
