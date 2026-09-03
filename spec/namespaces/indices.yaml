@@ -244,6 +244,22 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.data_streams_stats@200'
+  /_data_stream/_modify:
+    post:
+      operationId: indices.modify_data_stream.0
+      x-operation-group: indices.modify_data_stream
+      x-version-added: '3.8'
+      description: Adds or removes backing indexes of a data stream. Actions are applied atomically as a metadata-only cluster state update.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/im-plugin/data-streams/
+      parameters:
+        - $ref: '#/components/parameters/indices.modify_data_stream::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.modify_data_stream::query.timeout'
+      requestBody:
+        $ref: '#/components/requestBodies/indices.modify_data_stream'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.modify_data_stream@200'
   /_data_stream/{name}:
     get:
       operationId: indices.get_data_stream.1
@@ -2011,6 +2027,22 @@ components:
           schema:
             type: object
             description: The data stream definition
+    indices.modify_data_stream:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              actions:
+                description: Actions to add or remove backing indexes of a data stream. All actions in a request are applied atomically.
+                type: array
+                minItems: 1
+                items:
+                  $ref: '../schemas/indices.modify_data_stream.yaml#/components/schemas/Action'
+            required:
+              - actions
+            description: The data stream modify actions.
+      required: true
     indices.put_alias:
       content:
         application/json:
@@ -2565,6 +2597,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/indices._common.yaml#/components/schemas/IndexGetUpgradeStatus'
+    indices.modify_data_stream@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     indices.open@200:
       content:
         application/json:
@@ -4207,6 +4244,21 @@ components:
       schema:
         type: boolean
         description: Whether specified concrete indexes should be ignored when unavailable (missing or closed).
+    indices.modify_data_stream::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+    indices.modify_data_stream::query.timeout:
+      in: query
+      name: timeout
+      description: |-
+        Period to wait for a response.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
     indices.open::path.index:
       in: path
       name: index

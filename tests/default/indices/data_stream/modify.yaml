@@ -1,0 +1,93 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test adding and removing data stream backing indexes.
+version: '>= 3.8'
+prologues:
+  - path: /_index_template/logs-template-nginx
+    method: PUT
+    request:
+      payload:
+        index_patterns:
+          - logs-*
+        data_stream:
+          timestamp_field:
+            name: request_time
+        priority: 100
+  - path: /_data_stream/logs-nginx
+    method: PUT
+  - path: /logs-nginx/_doc
+    method: POST
+    request:
+      payload:
+        message: login attempt failed
+        request_time: '2013-03-01T00:00:00'
+  - path: /legacy-logs-nginx
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            request_time:
+              type: date
+epilogues:
+  - path: /_data_stream/logs-nginx
+    method: DELETE
+    status: [200, 404]
+  - path: /legacy-logs-nginx
+    method: DELETE
+    status: [200, 404]
+  - path: /_index_template/logs-template-nginx
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Add a regular index as a data stream backing index.
+    path: /_data_stream/_modify
+    method: POST
+    request:
+      payload:
+        actions:
+          - add_backing_index:
+              data_stream: logs-nginx
+              index: legacy-logs-nginx
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Confirm the added index is a backing index of the data stream.
+    path: /_data_stream/{name}
+    method: GET
+    parameters:
+      name: logs-nginx
+    response:
+      status: 200
+      payload:
+        data_streams:
+          - name: logs-nginx
+            indices:
+              - index_name: legacy-logs-nginx
+              - index_name: .ds-logs-nginx-000001
+  - synopsis: Remove a non-write backing index from the data stream.
+    path: /_data_stream/_modify
+    method: POST
+    request:
+      payload:
+        actions:
+          - remove_backing_index:
+              data_stream: logs-nginx
+              index: legacy-logs-nginx
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Confirm the removed index is no longer a backing index.
+    path: /_data_stream/{name}
+    method: GET
+    parameters:
+      name: logs-nginx
+    response:
+      status: 200
+      payload:
+        data_streams:
+          - name: logs-nginx
+            indices:
+              - index_name: .ds-logs-nginx-000001
