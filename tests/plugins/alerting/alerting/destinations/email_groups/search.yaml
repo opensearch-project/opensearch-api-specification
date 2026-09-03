@@ -1,0 +1,64 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test searching for email groups.
+
+prologues:
+  # Create a monitor to assure that the alerting configuration index that email groups are read from exists.
+  - path: /_plugins/_alerting/monitors
+    id: create_monitor
+    method: POST
+    request:
+      payload:
+        name: search-email-groups-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-email-groups
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: search-email-groups-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value > 10000
+                lang: painless
+            actions: []
+    status: [201]
+    output:
+      monitor_id: payload._id
+
+epilogues:
+  - path: /_plugins/_alerting/monitors/{monitor_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+
+chapters:
+  - synopsis: Search for email groups (GET).
+    path: /_plugins/_alerting/destinations/email_groups/_search
+    method: GET
+    request:
+      payload:
+        query:
+          match_all: {}
+    response:
+      status: 200
+  - synopsis: Search for email groups (POST).
+    path: /_plugins/_alerting/destinations/email_groups/_search
+    method: POST
+    request:
+      payload:
+        query:
+          match_all: {}
+    response:
+      status: 200

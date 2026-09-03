@@ -12,6 +12,10 @@ paths:
       description: Creates a monitor with inputs, triggers, and actions.
       externalDocs:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#create-a-query-level-monitor
+      parameters:
+        - $ref: '#/components/parameters/alerting.create_monitor::query.if_primary_term'
+        - $ref: '#/components/parameters/alerting.create_monitor::query.if_seq_no'
+        - $ref: '#/components/parameters/alerting.create_monitor::query.refresh'
       requestBody:
         $ref: '#/components/requestBodies/alerting.create_monitor'
       responses:
@@ -57,6 +61,7 @@ paths:
         - $ref: '#/components/parameters/alerting.update_monitor::path.monitor_id'
         - $ref: '#/components/parameters/alerting.update_monitor::query.if_primary_term'
         - $ref: '#/components/parameters/alerting.update_monitor::query.if_seq_no'
+        - $ref: '#/components/parameters/alerting.update_monitor::query.refresh'
       requestBody:
         $ref: '#/components/requestBodies/alerting.update_monitor'
       responses:
@@ -111,6 +116,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/alerting.execute_monitor::path.monitor_id'
         - $ref: '#/components/parameters/alerting.execute_monitor::query.dryrun'
+        - $ref: '#/components/parameters/alerting.execute_monitor::query.period_end'
       responses:
         '200':
           $ref: '#/components/responses/alerting.execute_monitor@200'
@@ -119,11 +125,12 @@ paths:
       operationId: alerting.execute_ad_hoc_monitor.0
       x-operation-group: alerting.execute_ad_hoc_monitor
       x-version-added: '1.0'
-      description: Runs an ad hoc monitor definition without creating it.
+      description: Runs a monitor definition inline without creating it.
       externalDocs:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#run-monitor
       parameters:
         - $ref: '#/components/parameters/alerting.execute_ad_hoc_monitor::query.dryrun'
+        - $ref: '#/components/parameters/alerting.execute_ad_hoc_monitor::query.period_end'
       requestBody:
         $ref: '#/components/requestBodies/alerting.execute_ad_hoc_monitor'
       responses:
@@ -176,6 +183,7 @@ paths:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#search-the-findings-index
       parameters:
         - $ref: '#/components/parameters/alerting.get_findings::query.findingId'
+        - $ref: '#/components/parameters/alerting.get_findings::query.missing'
         - $ref: '#/components/parameters/alerting.get_findings::query.searchString'
         - $ref: '#/components/parameters/alerting.get_findings::query.size'
         - $ref: '#/components/parameters/alerting.get_findings::query.sortOrder'
@@ -188,12 +196,22 @@ paths:
     get:
       operationId: alerting.get_destinations.0
       x-operation-group: alerting.get_destinations
+      deprecated: true
       x-version-added: '1.0'
       x-version-deprecated: '2.0'
       x-deprecation-message: Destinations are deprecated in favor of the Notifications plugin's channels. This read API remains for backwards compatibility.
       description: Retrieves one or all destinations.
       externalDocs:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-destinations
+      parameters:
+        - $ref: '#/components/parameters/alerting.get_destinations::query.destinationType'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.missing'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.searchString'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.size'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.sortOrder'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.sortString'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.startIndex'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.version'
       responses:
         '200':
           $ref: '#/components/responses/alerting.get_destinations@200'
@@ -201,6 +219,7 @@ paths:
     get:
       operationId: alerting.get_destinations.1
       x-operation-group: alerting.get_destinations
+      deprecated: true
       x-version-added: '1.0'
       x-version-deprecated: '2.0'
       x-deprecation-message: Destinations are deprecated in favor of the Notifications plugin's channels. This read API remains for backwards compatibility.
@@ -209,6 +228,14 @@ paths:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#get-destinations
       parameters:
         - $ref: '#/components/parameters/alerting.get_destinations::path.destination_id'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.destinationType'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.missing'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.searchString'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.size'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.sortOrder'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.sortString'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.startIndex'
+        - $ref: '#/components/parameters/alerting.get_destinations::query.version'
       responses:
         '200':
           $ref: '#/components/responses/alerting.get_destinations@200'
@@ -328,6 +355,8 @@ paths:
       description: Returns statistics about the alerting feature's scheduled job sweeper.
       externalDocs:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
+      parameters:
+        - $ref: '#/components/parameters/alerting.stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/alerting.stats@200'
@@ -341,6 +370,7 @@ paths:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
       parameters:
         - $ref: '#/components/parameters/alerting.stats::path.stat'
+        - $ref: '#/components/parameters/alerting.stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/alerting.stats@200'
@@ -354,6 +384,7 @@ paths:
         url: https://docs.opensearch.org/latest/observing-your-data/alerting/api/#monitor-stats
       parameters:
         - $ref: '#/components/parameters/alerting.stats::path.node_id'
+        - $ref: '#/components/parameters/alerting.stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/alerting.stats@200'
@@ -368,6 +399,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/alerting.stats::path.node_id'
         - $ref: '#/components/parameters/alerting.stats::path.stat'
+        - $ref: '#/components/parameters/alerting.stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/alerting.stats@200'
@@ -393,7 +425,7 @@ components:
         application/json:
           schema:
             type: object
-            description: An OpenSearch query DSL body used to search the `.opensearch-scheduled-jobs` index.
+            description: An OpenSearch query DSL body used to search the `.opendistro-alerting-config` index.
             additionalProperties: true
     alerting.acknowledge_alerts:
       content:
@@ -427,12 +459,10 @@ components:
             $ref: '../schemas/alerting._common.yaml#/components/schemas/GetMonitorResponse'
     alerting.exists_monitor@200:
       content:
-        application/json:
-          schema: {}
+        application/json: {}
     alerting.exists_monitor@404:
       content:
-        application/json:
-          schema: {}
+        application/json: {}
     alerting.update_monitor@200:
       content:
         application/json:
@@ -447,10 +477,7 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
-              - type: object
-                properties: {}
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
     alerting.execute_monitor@200:
       content:
         application/json:
@@ -488,20 +515,15 @@ components:
             $ref: '../schemas/alerting._common.yaml#/components/schemas/GetEmailAccountResponse'
     alerting.exists_email_account@200:
       content:
-        application/json:
-          schema: {}
+        application/json: {}
     alerting.exists_email_account@404:
       content:
-        application/json:
-          schema: {}
+        application/json: {}
     alerting.search_email_accounts@200:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
-              - type: object
-                properties: {}
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
     alerting.get_email_group@200:
       content:
         application/json:
@@ -509,26 +531,41 @@ components:
             $ref: '../schemas/alerting._common.yaml#/components/schemas/GetEmailGroupResponse'
     alerting.exists_email_group@200:
       content:
-        application/json:
-          schema: {}
+        application/json: {}
     alerting.exists_email_group@404:
       content:
-        application/json:
-          schema: {}
+        application/json: {}
     alerting.search_email_groups@200:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
-              - type: object
-                properties: {}
+            $ref: '../schemas/_core.search.yaml#/components/schemas/SearchResultJsonValue'
     alerting.stats@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/alerting._common.yaml#/components/schemas/Stats'
   parameters:
+    alerting.create_monitor::query.if_primary_term:
+      name: if_primary_term
+      in: query
+      description: Only perform the operation if the document has this primary term.
+      schema:
+        type: integer
+        format: int64
+        description: Only perform the operation if the document has this primary term.
+    alerting.create_monitor::query.if_seq_no:
+      name: if_seq_no
+      in: query
+      description: Only perform the operation if the document has this sequence number.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SequenceNumber'
+    alerting.create_monitor::query.refresh:
+      name: refresh
+      in: query
+      description: If `true`, OpenSearch refreshes the affected shards to make this operation visible to search, if `wait_for` then wait for a refresh to make this operation visible to search, if `false` do nothing with refreshes.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Refresh'
     alerting.get_monitor::path.monitor_id:
       name: monitor_id
       in: path
@@ -579,6 +616,12 @@ components:
         type: integer
         format: int64
         description: Only perform the operation if the document has this primary term.
+    alerting.update_monitor::query.refresh:
+      name: refresh
+      in: query
+      description: If `true`, OpenSearch refreshes the affected shards to make this operation visible to search, if `wait_for` then wait for a refresh to make this operation visible to search, if `false` do nothing with refreshes.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Refresh'
     alerting.delete_monitor::path.monitor_id:
       name: monitor_id
       in: path
@@ -609,6 +652,12 @@ components:
         type: boolean
         default: false
         description: If `true`, shows the results of the run without triggering any actions.
+    alerting.execute_monitor::query.period_end:
+      name: period_end
+      in: query
+      description: The end of the period to evaluate the monitor for, as a time value measured from the epoch. Defaults to the current time.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
     alerting.execute_ad_hoc_monitor::query.dryrun:
       name: dryrun
       in: query
@@ -617,6 +666,12 @@ components:
         type: boolean
         default: false
         description: If `true`, shows the results of the run without triggering any actions.
+    alerting.execute_ad_hoc_monitor::query.period_end:
+      name: period_end
+      in: query
+      description: The end of the period to evaluate the monitor for, as a time value measured from the epoch. Defaults to the current time.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
     alerting.get_alerts::query.sortString:
       name: sortString
       in: query
@@ -701,6 +756,12 @@ components:
       description: The ID of a specific finding to retrieve.
       schema:
         type: string
+    alerting.get_findings::query.missing:
+      name: missing
+      in: query
+      description: Specifies whether to include missing data in the response.
+      schema:
+        type: string
     alerting.get_findings::query.sortString:
       name: sortString
       in: query
@@ -748,6 +809,62 @@ components:
       schema:
         type: string
         description: The ID of the destination.
+    alerting.get_destinations::query.destinationType:
+      name: destinationType
+      in: query
+      description: The type of destination to filter for.
+      schema:
+        type: string
+        default: ALL
+    alerting.get_destinations::query.missing:
+      name: missing
+      in: query
+      description: Specifies whether to include missing data in the response.
+      schema:
+        type: string
+    alerting.get_destinations::query.searchString:
+      name: searchString
+      in: query
+      description: The search string to filter destinations by.
+      schema:
+        type: string
+        default: ''
+    alerting.get_destinations::query.size:
+      name: size
+      in: query
+      description: The maximum number of results to return.
+      schema:
+        type: integer
+        format: int32
+        default: 20
+    alerting.get_destinations::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The order to sort the list of destinations.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+        default: asc
+    alerting.get_destinations::query.sortString:
+      name: sortString
+      in: query
+      description: The field to sort the results by.
+      schema:
+        type: string
+        default: destination.name.keyword
+    alerting.get_destinations::query.startIndex:
+      name: startIndex
+      in: query
+      description: The pagination index to start returning results from.
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    alerting.get_destinations::query.version:
+      name: version
+      in: query
+      description: Explicit version number for concurrency control.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/VersionNumber'
     alerting.get_email_account::path.email_account_id:
       name: email_account_id
       in: path
@@ -810,10 +927,7 @@ components:
       description: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
       required: true
       schema:
-        type: array
-        description: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes.
-        items:
-          type: string
+        $ref: '../schemas/_common.yaml#/components/schemas/NodeIds'
       style: simple
     alerting.stats::path.stat:
       name: stat
@@ -828,3 +942,9 @@ components:
             items:
               $ref: '../schemas/alerting._common.yaml#/components/schemas/AlertingStatName'
       style: simple
+    alerting.stats::query.timeout:
+      name: timeout
+      in: query
+      description: The amount of time to wait for a response. If no response is received before the timeout expires, the request fails and returns an error.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'

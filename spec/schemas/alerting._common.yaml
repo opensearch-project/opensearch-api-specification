@@ -440,6 +440,53 @@ components:
       required:
         - doc_level_input
 
+    ClusterMetricApiType:
+      type: string
+      description: The cluster metrics API that a cluster metrics monitor input calls.
+      enum:
+        - CAT_INDICES
+        - CAT_PENDING_TASKS
+        - CAT_RECOVERY
+        - CAT_SHARDS
+        - CAT_SNAPSHOTS
+        - CAT_TASKS
+        - CLUSTER_HEALTH
+        - CLUSTER_SETTINGS
+        - CLUSTER_STATS
+        - NODES_STATS
+
+    ClusterMetricsInputBody:
+      type: object
+      description: |-
+        The cluster metrics API to call. Specify either `api_type`, `path`, or `url`; the remaining fields are
+        derived from the one provided.
+      properties:
+        api_type:
+          $ref: '#/components/schemas/ClusterMetricApiType'
+        path:
+          type: string
+          description: The path of the API to call, for example `/_cluster/health`.
+        path_params:
+          type: string
+          description: The path parameters to append to the API path, for example an index name for `/_cat/indices`.
+        url:
+          type: string
+          description: The full URL of the API to call. Only `http://localhost:9200` URLs are supported.
+        clusters:
+          type: array
+          items:
+            type: string
+          description: The names of the clusters to call the API on. Used for cross-cluster cluster metrics monitors.
+
+    ClusterMetricsInput:
+      type: object
+      description: An input that calls a supported cluster metrics API. Used by cluster metrics monitors.
+      properties:
+        uri:
+          $ref: '#/components/schemas/ClusterMetricsInputBody'
+      required:
+        - uri
+
     Input:
       description: The data the monitor evaluates. The shape depends on the monitor type.
       oneOf:
@@ -447,12 +494,15 @@ components:
           $ref: '#/components/schemas/SearchInput'
         - title: doc_level_input
           $ref: '#/components/schemas/DocLevelInput'
+        - title: uri
+          $ref: '#/components/schemas/ClusterMetricsInput'
 
     MonitorType:
       type: string
       description: The type of monitor, which determines the supported inputs and trigger types.
       enum:
         - bucket_level_monitor
+        - cluster_metrics_monitor
         - doc_level_monitor
         - query_level_monitor
 
@@ -507,12 +557,8 @@ components:
             type: string
           description: The backend roles allowed to access the monitor. Only accepted on create and update requests.
       required:
-        - enabled
-        - inputs
-        - monitor_type
         - name
         - schedule
-        - triggers
 
     MonitorResponse:
       description: The response returned after creating or updating a monitor.
@@ -550,6 +596,20 @@ components:
                 $ref: '#/components/schemas/AssociatedWorkflow'
               description: The composite monitor workflows that this monitor is a delegate of.
 
+    InputRunResults:
+      type: object
+      description: The results of running the monitor's inputs.
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+          description: The raw result of each input, such as the search response for a search input.
+        error:
+          type: ['null', string]
+          description: The error encountered while running the inputs, if any.
+
     TriggerResult:
       type: object
       description: The outcome of evaluating a single trigger during a monitor execution.
@@ -582,6 +642,8 @@ components:
         error:
           type: ['null', string]
           description: The error encountered while running the monitor, if any.
+        input_results:
+          $ref: '#/components/schemas/InputRunResults'
         trigger_results:
           type: object
           additionalProperties:

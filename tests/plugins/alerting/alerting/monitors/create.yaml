@@ -1,0 +1,48 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of a query-level monitor.
+
+epilogues:
+  - path: /_plugins/_alerting/monitors/{monitor_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+
+chapters:
+  - synopsis: Create a query-level monitor.
+    id: create_monitor
+    path: /_plugins/_alerting/monitors
+    method: POST
+    request:
+      payload:
+        name: create-monitor-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-create
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: create-monitor-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value > 10000
+                lang: painless
+            actions: []
+    response:
+      status: 201
+      payload:
+        monitor:
+          name: create-monitor-test
+    output:
+      monitor_id: payload._id
