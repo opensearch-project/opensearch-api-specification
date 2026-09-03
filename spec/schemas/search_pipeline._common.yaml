@@ -47,6 +47,14 @@ components:
               $ref: '#/components/schemas/FilterQueryRequestProcessor'
           required:
             - filter_query
+        - x-version-added: '2.16'
+          type: object
+          title: ml_inference
+          properties:
+            ml_inference:
+              $ref: '#/components/schemas/MLInferenceSearchRequestProcessor'
+          required:
+            - ml_inference
         - type: object
           title: neural_query_enricher
           properties:
@@ -54,6 +62,14 @@ components:
               $ref: '#/components/schemas/NeuralQueryEnricherRequestProcessor'
           required:
             - neural_query_enricher
+        - x-version-added: '2.15'
+          type: object
+          title: neural_sparse_two_phase_processor
+          properties:
+            neural_sparse_two_phase_processor:
+              $ref: '#/components/schemas/NeuralSparseTwoPhaseRequestProcessor'
+          required:
+            - neural_sparse_two_phase_processor
         - type: object
           title: script
           properties:
@@ -185,6 +201,22 @@ components:
               $ref: '#/components/schemas/CollapseResponseProcessor'
           required:
             - collapse
+        - x-version-added: '2.19'
+          type: object
+          title: hybrid_score_explanation
+          properties:
+            hybrid_score_explanation:
+              $ref: '#/components/schemas/HybridScoreExplanationResponseProcessor'
+          required:
+            - hybrid_score_explanation
+        - x-version-added: '2.16'
+          type: object
+          title: ml_inference
+          properties:
+            ml_inference:
+              $ref: '#/components/schemas/MLInferenceSearchResponseProcessor'
+          required:
+            - ml_inference
         - type: object
           title: truncate_hits
           properties:
@@ -461,3 +493,141 @@ components:
       type: string
       enum:
         - rrf
+    MLInferenceFieldMap:
+      type: object
+      additionalProperties:
+        type: string
+    MLInferenceProcessorBase:
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        model_id:
+          description: The ID of the ML model used by the processor.
+          type: string
+        function_name:
+          description: The function name of the ML model. For local models, valid values are `sparse_encoding`, `sparse_tokenize`, `text_embedding`, and `text_similarity`. For externally hosted models, the valid value is `remote`. Default is `remote`.
+          type: string
+        model_config:
+          description: Custom configuration options for the ML model.
+          type: object
+          additionalProperties: true
+        model_input:
+          description: A template that defines the input field format expected by the model. Required for local models.
+          type: string
+        input_map:
+          description: Maps query or document fields to model input fields. Each element is one model invocation.
+          type: array
+          items:
+            $ref: '#/components/schemas/MLInferenceFieldMap'
+        output_map:
+          description: Maps model output fields to query or document fields.
+          type: array
+          items:
+            $ref: '#/components/schemas/MLInferenceFieldMap'
+        optional_input_map:
+          x-version-added: '2.19'
+          description: Optional mappings from query or document fields to model input fields. Missing fields do not fail the processor.
+          type: array
+          items:
+            $ref: '#/components/schemas/MLInferenceFieldMap'
+        optional_output_map:
+          x-version-added: '2.19'
+          description: Optional mappings from model output fields to query or document fields.
+          type: array
+          items:
+            $ref: '#/components/schemas/MLInferenceFieldMap'
+        full_response_path:
+          description: If `true`, `model_output_field` is treated as a JSON path and the full model output is parsed. Default is `true` for local models and `false` for remotely hosted models.
+          type: boolean
+        ignore_missing:
+          description: If `true`, skip this processor when mapped input or output fields are missing. Default is `false`.
+          type: boolean
+        max_prediction_tasks:
+          description: The maximum number of concurrent model invocations during search. Default is `10`.
+          type: integer
+          format: int32
+      required:
+        - model_id
+    MLInferenceSearchRequestProcessor:
+      x-version-added: '2.16'
+      allOf:
+        - $ref: '#/components/schemas/MLInferenceProcessorBase'
+        - type: object
+          properties:
+            query_template:
+              description: A query string template used to construct a rewritten query from model output.
+              type: string
+    MLInferenceSearchResponseProcessor:
+      x-version-added: '2.16'
+      allOf:
+        - $ref: '#/components/schemas/MLInferenceProcessorBase'
+        - type: object
+          properties:
+            override:
+              description: If `true`, overwrite an existing document field when the output mapping targets that field. Default is `false`.
+              type: boolean
+            one_to_one:
+              description: If `true`, invoke the model once per document. Default is `false`, which invokes the model once for the full search response.
+              type: boolean
+    NeuralSparseTwoPhaseRequestProcessor:
+      x-version-added: '2.15'
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        enabled:
+          description: Controls whether two-phase processing is enabled. Default is `true`.
+          type: boolean
+          default: true
+        two_phase_parameter:
+          $ref: '#/components/schemas/NeuralSparseTwoPhaseParameter'
+    NeuralSparseTwoPhaseParameter:
+      type: object
+      properties:
+        prune_type:
+          $ref: '#/components/schemas/SparseVectorPruneType'
+        prune_ratio:
+          description: Threshold used with `prune_type` to split high-weight and low-weight tokens. Default is `0.4`.
+          type: number
+          format: float
+          default: 0.4
+        expansion_rate:
+          description: Multiplier applied to the query size to determine how many documents are rescored in the second phase. Must be greater than or equal to `1.0`. Default is `5.0`.
+          type: number
+          format: float
+          minimum: 1
+          default: 5
+        max_window_size:
+          description: Maximum number of documents processed by the two-phase processor. Must be greater than or equal to `50`. Default is `10000`.
+          type: integer
+          format: int32
+          minimum: 50
+          default: 10000
+    SparseVectorPruneType:
+      description: The pruning strategy for separating high-weight and low-weight tokens. Default is `max_ratio`.
+      type: string
+      enum:
+        - abs_value
+        - alpha_mass
+        - max_ratio
+        - none
+        - top_k
+    HybridScoreExplanationResponseProcessor:
+      x-version-added: '2.19'
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean

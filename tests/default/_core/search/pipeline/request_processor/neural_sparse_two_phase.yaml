@@ -1,0 +1,40 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of a search pipeline with a neural_sparse_two_phase_processor request processor.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.15'
+epilogues:
+  - path: /_search/pipeline/two-phase-search-pipeline
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create search pipeline with neural_sparse_two_phase_processor.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: two-phase-search-pipeline
+    request:
+      payload:
+        description: Accelerates neural sparse queries with two-phase scoring.
+        request_processors:
+          - neural_sparse_two_phase_processor:
+              tag: neural-sparse
+              description: This processor is making two-phase processor.
+              enabled: true
+              two_phase_parameter:
+                prune_type: max_ratio
+                prune_ratio: 0.4
+                expansion_rate: 5
+                max_window_size: 10000
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the neural sparse two-phase pipeline.
+    path: /_search/pipeline/{id}
+    method: GET
+    parameters:
+      id: two-phase-search-pipeline
+    response:
+      status: 200

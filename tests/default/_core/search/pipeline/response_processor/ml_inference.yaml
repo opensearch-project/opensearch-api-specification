@@ -1,0 +1,46 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of a search pipeline with an ml_inference response processor.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.16'
+epilogues:
+  - path: /_search/pipeline/ml-inference-response-pipeline
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create search pipeline with ml_inference response processor.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: ml-inference-response-pipeline
+    request:
+      payload:
+        description: Adds model output to search hits.
+        response_processors:
+          - ml_inference:
+              tag: ml_res
+              description: Adds embeddings to search hits.
+              ignore_failure: true
+              ignore_missing: true
+              model_id: dummy-model-id
+              function_name: remote
+              full_response_path: false
+              override: false
+              one_to_one: false
+              max_prediction_tasks: 10
+              input_map:
+                - input: title
+              output_map:
+                - title_embedding: data
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the ml_inference response pipeline.
+    path: /_search/pipeline/{id}
+    method: GET
+    parameters:
+      id: ml-inference-response-pipeline
+    response:
+      status: 200
