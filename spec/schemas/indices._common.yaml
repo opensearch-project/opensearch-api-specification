@@ -182,6 +182,11 @@ components:
         - default
         - field_mapping
         - raw_payload
+    IngestionSourceDecoderType:
+      type: string
+      description: The type of decoder used to parse each ingested payload into a document.
+      enum:
+        - xcontent
     IngestionSource:
       type: object
       description: The pull-based ingestion settings controlling how data is read from streaming sources.
@@ -220,6 +225,15 @@ components:
         all_active:
           description: Indicates if all-active ingestion is enabled for this index.
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        decoder_type:
+          description: Selects the decoder used to parse each ingested payload into a document. Defaults to `xcontent`.
+          $ref: '#/components/schemas/IngestionSourceDecoderType'
+          x-version-added: '3.8'
+        decoder_settings:
+          type: object
+          additionalProperties: true
+          description: Settings for the decoder selected by `decoder_type`. Supported keys depend on the decoder implementation.
+          x-version-added: '3.8'
         mapper_type:
           description: The type of message mapper used to extract document fields from ingestion messages.
           $ref: '#/components/schemas/IngestionSourceMapperType'
