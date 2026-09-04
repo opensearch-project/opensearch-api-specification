@@ -206,9 +206,9 @@ components:
         - parent_bucket_path
         - script
 
-    QueryLevelTrigger:
+    QueryLevelTriggerBody:
       type: object
-      description: A trigger for a query-level monitor.
+      description: A trigger for a query-level or cluster metrics monitor.
       properties:
         id:
           type: string
@@ -230,6 +230,15 @@ components:
         - condition
         - name
         - severity
+
+    QueryLevelTrigger:
+      type: object
+      description: A trigger for a query-level or cluster metrics monitor. Responses always use this form; requests may also use the bare trigger object.
+      properties:
+        query_level_trigger:
+          $ref: '#/components/schemas/QueryLevelTriggerBody'
+      required:
+        - query_level_trigger
 
     BucketLevelTriggerBody:
       type: object
@@ -308,6 +317,8 @@ components:
           $ref: '#/components/schemas/BucketLevelTrigger'
         - title: document_level_trigger
           $ref: '#/components/schemas/DocumentLevelTrigger'
+        - title: inline_query_level_trigger
+          $ref: '#/components/schemas/QueryLevelTriggerBody'
 
     Period:
       type: object
@@ -506,6 +517,42 @@ components:
         - doc_level_monitor
         - query_level_monitor
 
+    DataSources:
+      type: object
+      description: The indexes that the monitor reads findings and alerts from and writes them to. Primarily used by monitors created by other plugins, such as Security Analytics.
+      properties:
+        query_index:
+          type: string
+          description: The index that stores the document-level monitor queries.
+        findings_index:
+          type: string
+          description: The index that stores the findings.
+        findings_index_pattern:
+          type: ['null', string]
+          description: The index pattern for the rolled-over findings indexes.
+        alerts_index:
+          type: string
+          description: The index that stores the alerts.
+        alerts_history_index:
+          type: ['null', string]
+          description: The index that stores the alert history.
+        alerts_history_index_pattern:
+          type: ['null', string]
+          description: The index pattern for the rolled-over alert history indexes.
+        comments_index:
+          type: ['null', string]
+          description: The index that stores the alerting comments.
+        comments_index_pattern:
+          type: ['null', string]
+          description: The index pattern for the rolled-over alerting comments indexes.
+        query_index_mappings_by_type:
+          type: object
+          additionalProperties: true
+          description: The mappings for the query index, keyed by field type.
+        findings_enabled:
+          type: ['null', boolean]
+          description: Whether findings are enabled for the monitor.
+
     Monitor:
       type: object
       description: A job that runs on a defined schedule and evaluates triggers against its inputs.
@@ -556,6 +603,17 @@ components:
           items:
             type: string
           description: The backend roles allowed to access the monitor. Only accepted on create and update requests.
+        data_sources:
+          $ref: '#/components/schemas/DataSources'
+        owner:
+          type: ['null', string]
+          description: The plugin that owns the monitor, `alerting` by default.
+        delete_query_index_in_every_run:
+          type: ['null', boolean]
+          description: Whether the document-level monitor query index is deleted after every run.
+        should_create_single_alert_for_findings:
+          type: ['null', boolean]
+          description: Whether the document-level monitor generates one alert for all of its findings.
       required:
         - name
         - schedule
@@ -671,6 +729,23 @@ components:
           type: string
           description: The error message.
 
+    AggregationResultBucket:
+      type: object
+      description: The aggregation bucket that a bucket-level monitor generated the alert for.
+      properties:
+        parent_bucket_path:
+          type: string
+          description: The path to the parent aggregation that produced the bucket.
+        bucket_keys:
+          type: array
+          items:
+            type: string
+          description: The keys of the bucket.
+        bucket:
+          type: object
+          additionalProperties: true
+          description: The content of the aggregation bucket.
+
     AlertActionExecutionResult:
       type: object
       description: The outcome of running an action for an alert.
@@ -714,6 +789,20 @@ components:
           oneOf:
             - $ref: '#/components/schemas/AlertingUser'
             - type: 'null'
+        workflow_id:
+          type: string
+          description: The ID of the composite monitor workflow that generated the alert, or an empty string for standalone monitors.
+        workflow_name:
+          type: string
+          description: The name of the composite monitor workflow that generated the alert, or an empty string for standalone monitors.
+        associated_alert_ids:
+          type: array
+          items:
+            type: string
+          description: The IDs of the delegate monitor alerts associated with a chained alert.
+        execution_id:
+          type: ['null', string]
+          description: The ID of the monitor execution that generated the alert.
         trigger_id:
           type: string
           description: The ID of the trigger that generated the alert.
@@ -760,6 +849,13 @@ components:
           oneOf:
             - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
             - type: 'null'
+        agg_alert_content:
+          $ref: '#/components/schemas/AggregationResultBucket'
+        clusters:
+          type: array
+          items:
+            type: string
+          description: The names of the clusters that the alert applies to. Used by cross-cluster cluster metrics monitors.
 
     GetAlertsResponse:
       type: object
@@ -1181,6 +1277,9 @@ components:
           properties:
             cluster_name:
               $ref: '_common.yaml#/components/schemas/Name'
+            opendistro.scheduled_jobs.enabled:
+              type: boolean
+              description: Whether the scheduled job sweeper is enabled, under its legacy Open Distro setting name.
             plugins.scheduled_jobs.enabled:
               type: boolean
               description: Whether the scheduled job sweeper is enabled.

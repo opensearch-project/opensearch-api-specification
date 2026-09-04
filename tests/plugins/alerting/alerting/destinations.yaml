@@ -3,6 +3,11 @@ $schema: ../../../../json_schemas/test_story.schema.yaml
 description: Test retrieving destinations. Destinations are deprecated in favor of the Notifications plugin's channels, but the read API remains for backwards compatibility.
 
 prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-destinations
+    status: [200]
   # Create a monitor to assure that the alerting configuration index that destinations are read from exists.
   - path: /_plugins/_alerting/monitors
     id: create_monitor
@@ -42,6 +47,9 @@ epilogues:
     status: [200, 404]
     parameters:
       monitor_id: ${create_monitor.monitor_id}
+  - path: /books-alerting-destinations
+    method: DELETE
+    status: [200, 404]
 
 chapters:
   - synopsis: Get all destinations.

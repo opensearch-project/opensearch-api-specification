@@ -2,12 +2,22 @@ $schema: ../../../../../json_schemas/test_story.schema.yaml
 
 description: Test the creation of a query-level monitor.
 
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-create
+    status: [200]
+
 epilogues:
   - path: /_plugins/_alerting/monitors/{monitor_id}
     method: DELETE
     status: [200, 404]
     parameters:
       monitor_id: ${create_monitor.monitor_id}
+  - path: /books-alerting-create
+    method: DELETE
+    status: [200, 404]
 
 chapters:
   - synopsis: Create a query-level monitor.

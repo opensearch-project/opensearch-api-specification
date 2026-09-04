@@ -3,6 +3,11 @@ $schema: ../../../../../json_schemas/test_story.schema.yaml
 description: Test the deletion of a monitor.
 
 prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-delete
+    status: [200]
   - path: /_plugins/_alerting/monitors
     id: create_monitor
     method: POST
@@ -34,6 +39,11 @@ prologues:
     status: [201]
     output:
       monitor_id: payload._id
+
+epilogues:
+  - path: /books-alerting-delete
+    method: DELETE
+    status: [200, 404]
 
 chapters:
   - synopsis: Delete a monitor with the `refresh` parameter.
