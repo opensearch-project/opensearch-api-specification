@@ -106,6 +106,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_judgments@200'
+    put:
+      operationId: search_relevance.update_judgment_ratings.0
+      x-operation-group: search_relevance.update_judgment_ratings
+      x-version-added: '3.9'
+      description: Adjusts one or more ratings on an existing LLM judgment in place. Only the listed (query, docId) pairs are updated; all other ratings are left unchanged.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.update_judgment_ratings::path.judgment_id'
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.update_judgment_ratings'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.update_judgment_ratings@200'
     delete:
       operationId: search_relevance.delete_judgments.0
       x-operation-group: search_relevance.delete_judgments
@@ -116,6 +128,17 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.delete_judgments@200'
+  /_plugins/_search_relevance/judgments/{judgment_id}/_retry:
+    post:
+      operationId: search_relevance.retry_judgments.0
+      x-operation-group: search_relevance.retry_judgments
+      x-version-added: '3.9'
+      description: Retries the failed documents in an existing LLM judgment.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.retry_judgments::path.judgment_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.retry_judgments@200'
   /_plugins/_search_relevance/judgments/_search:
     get:
       operationId: search_relevance.judgments_search.0
@@ -204,6 +227,8 @@ paths:
       x-operation-group: search_relevance.get_experiments
       x-version-added: '3.1'
       description: Gets experiments.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.get_experiments::query.query_text'
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_experiments@200'
@@ -225,9 +250,22 @@ paths:
       description: Gets experiments.
       parameters:
         - $ref: '#/components/parameters/search_relevance.get_experiments::path.experiment_id'
+        - $ref: '#/components/parameters/search_relevance.get_experiments::query.query_text'
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_experiments@200'
+    patch:
+      operationId: search_relevance.patch_experiments.0
+      x-operation-group: search_relevance.patch_experiments
+      x-version-added: '3.6'
+      description: Partially updates an experiment. At least one of `name` or `description` must be provided.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.patch_experiments::path.experiment_id'
+      requestBody:
+        $ref: '#/components/requestBodies/search_relevance.patch_experiments'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.patch_experiments@200'
     delete:
       operationId: search_relevance.delete_experiments.0
       x-operation-group: search_relevance.delete_experiments
@@ -238,6 +276,17 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.delete_experiments@200'
+  /_plugins/_search_relevance/experiments/{experiment_id}/validate:
+    get:
+      operationId: search_relevance.validate_experiments.0
+      x-operation-group: search_relevance.validate_experiments
+      x-version-added: '3.8'
+      description: Validates whether an experiment's inputs have drifted from the fingerprint recorded at execution time.
+      parameters:
+        - $ref: '#/components/parameters/search_relevance.validate_experiments::path.experiment_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/search_relevance.validate_experiments@200'
   /_plugins/_search_relevance/experiments/_search:
     get:
       operationId: search_relevance.experiments_search.0
@@ -272,6 +321,7 @@ paths:
         - $ref: '#/components/parameters/search_relevance.get_node_stats::query.include_individual_nodes'
         - $ref: '#/components/parameters/search_relevance.get_node_stats::query.include_info'
         - $ref: '#/components/parameters/search_relevance.get_node_stats::query.include_metadata'
+        - $ref: '#/components/parameters/search_relevance.get_node_stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_node_stats@200'
@@ -289,6 +339,7 @@ paths:
         - $ref: '#/components/parameters/search_relevance.get_node_stats::query.include_individual_nodes'
         - $ref: '#/components/parameters/search_relevance.get_node_stats::query.include_info'
         - $ref: '#/components/parameters/search_relevance.get_node_stats::query.include_metadata'
+        - $ref: '#/components/parameters/search_relevance.get_node_stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_node_stats@200'
@@ -304,6 +355,7 @@ paths:
         - $ref: '#/components/parameters/search_relevance.get_stats::query.include_individual_nodes'
         - $ref: '#/components/parameters/search_relevance.get_stats::query.include_info'
         - $ref: '#/components/parameters/search_relevance.get_stats::query.include_metadata'
+        - $ref: '#/components/parameters/search_relevance.get_stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_stats@200'
@@ -320,6 +372,7 @@ paths:
         - $ref: '#/components/parameters/search_relevance.get_stats::query.include_individual_nodes'
         - $ref: '#/components/parameters/search_relevance.get_stats::query.include_info'
         - $ref: '#/components/parameters/search_relevance.get_stats::query.include_metadata'
+        - $ref: '#/components/parameters/search_relevance.get_stats::query.timeout'
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.get_stats@200'
@@ -419,6 +472,13 @@ components:
       schema:
         type:
           string
+    search_relevance.get_experiments::query.query_text:
+      name: query_text
+      in: query
+      required: false
+      description: An optional query text used to filter the experiment results for visualization.
+      schema:
+        type: string
     search_relevance.delete_experiments::path.experiment_id:
       name: experiment_id
       in: path
@@ -443,6 +503,34 @@ components:
       schema:
         type:
           string
+    search_relevance.patch_experiments::path.experiment_id:
+      name: experiment_id
+      in: path
+      required: true
+      description: The experiment id
+      schema:
+        type: string
+    search_relevance.validate_experiments::path.experiment_id:
+      name: experiment_id
+      in: path
+      required: true
+      description: The experiment id
+      schema:
+        type: string
+    search_relevance.update_judgment_ratings::path.judgment_id:
+      name: judgment_id
+      in: path
+      required: true
+      description: The judgment id
+      schema:
+        type: string
+    search_relevance.retry_judgments::path.judgment_id:
+      name: judgment_id
+      in: path
+      required: true
+      description: The judgment id
+      schema:
+        type: string
     search_relevance.get_node_stats::path.node_id:
       name: node_id
       in: path
@@ -455,98 +543,102 @@ components:
       name: stat
       in: path
       required: true
-      description: The statistic to return
+      description: |-
+        A comma-separated list of statistics to return. Valid values: `cluster_version`, `import_judgment_rating_generations`, `llm_judgment_rating_generations`, `ubi_judgment_rating_generations`, `experiment_executions`, `experiment_pairwise_comparison_executions`, `experiment_pointwise_evaluation_executions`, `experiment_hybrid_optimizer_executions`.
       schema:
-        type:
-          string
+        type: string
     search_relevance.get_stats::path.stat:
       name: stat
       in: path
       required: true
-      description: The statistic to return
+      description: |-
+        A comma-separated list of statistics to return. Valid values: `cluster_version`, `import_judgment_rating_generations`, `llm_judgment_rating_generations`, `ubi_judgment_rating_generations`, `experiment_executions`, `experiment_pairwise_comparison_executions`, `experiment_pointwise_evaluation_executions`, `experiment_hybrid_optimizer_executions`.
       schema:
-        type:
-          string
+        type: string
     search_relevance.get_node_stats::query.flat_stat_paths:
       name: flat_stat_paths
       in: query
       required: false
       description: Requests flattened stat paths as keys
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_node_stats::query.include_metadata:
       name: include_metadata
       in: query
       required: false
       description: Whether to include metadata
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_node_stats::query.include_individual_nodes:
       name: include_individual_nodes
       in: query
       required: false
       description: Whether to include individual nodes
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_node_stats::query.include_all_nodes:
       name: include_all_nodes
       in: query
       required: false
       description: Whether to include all nodes
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_node_stats::query.include_info:
       name: include_info
       in: query
       required: false
       description: Whether to include info
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_stats::query.flat_stat_paths:
       name: flat_stat_paths
       in: query
       required: false
       description: Requests flattened stat paths as keys
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_stats::query.include_metadata:
       name: include_metadata
       in: query
       required: false
       description: Whether to include metadata
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_stats::query.include_individual_nodes:
       name: include_individual_nodes
       in: query
       required: false
       description: Whether to include individual nodes
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_stats::query.include_all_nodes:
       name: include_all_nodes
       in: query
       required: false
       description: Whether to include all nodes
       schema:
-        type:
-          string
+        type: boolean
     search_relevance.get_stats::query.include_info:
       name: include_info
       in: query
       required: false
       description: Whether to include info
       schema:
-        type:
-          string
+        type: boolean
+    search_relevance.get_node_stats::query.timeout:
+      name: timeout
+      in: query
+      required: false
+      description: The amount of time to wait for a response.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+    search_relevance.get_stats::query.timeout:
+      name: timeout
+      in: query
+      required: false
+      description: The amount of time to wait for a response.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
   requestBodies:
     search_relevance.post_query_sets:
       content:
@@ -604,6 +696,16 @@ components:
         application/json:
           schema:
             $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PostScheduledExperimentsRequest'
+    search_relevance.patch_experiments:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PatchExperimentRequest'
+    search_relevance.update_judgment_ratings:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/UpdateJudgmentRatingsRequest'
   responses:
     search_relevance.get_query_sets@200:
       content:
@@ -741,3 +843,23 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    search_relevance.patch_experiments@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/PatchExperimentResponse'
+    search_relevance.validate_experiments@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/ValidateExperimentResponse'
+    search_relevance.update_judgment_ratings@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/UpdateJudgmentRatingsResponse'
+    search_relevance.retry_judgments@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/search_relevance._common.yaml#/components/schemas/RetryJudgmentsResponse'

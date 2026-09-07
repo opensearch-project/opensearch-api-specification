@@ -1,0 +1,133 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Tests partially updating (PATCH) an experiment and validating its input drift.
+version: '>= 3.8.0'
+
+prologues:
+  - path: /_plugins/ubi/initialize
+    method: POST
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 1
+    request:
+      payload:
+        name: banana
+        price: 1.99
+        description: this is a banana
+    response:
+      status: 201
+  - id: query_set_sampling
+    path: /_plugins/_search_relevance/query_sets
+    method: POST
+    request:
+      payload:
+        name: test03
+        description: test03
+        sampling: random
+        querySetSize: 200
+    response:
+      status: 200
+    output:
+      query_set_id: payload.query_set_id
+  - id: search_configuration1
+    path: /_plugins/_search_relevance/search_configurations
+    method: PUT
+    request:
+      payload:
+        name: simple
+        query: "{\"query\": {\n\"match_all\": {}}}"
+        index: sample_index
+        searchPipeline: test_pipeline
+    response:
+      status: 200
+    output:
+      search_configuration_id: payload.search_configuration_id
+  - id: search_configuration2
+    path: /_plugins/_search_relevance/search_configurations
+    method: PUT
+    request:
+      payload:
+        name: multimatch
+        query: '{"query":{"multi_match":{"query":"%SearchText%","fields":["id","title","category","bullets","description","attrs.Brand","attrs.Color"]}}}'
+        index: sample_index
+        searchPipeline: test_pipeline
+    response:
+      status: 200
+    output:
+      search_configuration_id: payload.search_configuration_id
+
+epilogues:
+  - path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
+    method: DELETE
+    parameters:
+      search_configuration_id: ${search_configuration1.search_configuration_id}
+    response:
+      status: 200
+  - path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
+    method: DELETE
+    parameters:
+      search_configuration_id: ${search_configuration2.search_configuration_id}
+    response:
+      status: 200
+  - path: /_plugins/_search_relevance/query_sets/{query_set_id}
+    method: DELETE
+    parameters:
+      query_set_id: ${query_set_sampling.query_set_id}
+    response:
+      status: 200
+  - path: /sample_index
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Create a pairwise experiment to update.
+    id: pairwise_experiment
+    path: /_plugins/_search_relevance/experiments
+    method: PUT
+    request:
+      payload:
+        querySetId: ${query_set_sampling.query_set_id}
+        searchConfigurationList:
+          - ${search_configuration1.search_configuration_id}
+          - ${search_configuration2.search_configuration_id}
+        size: 10
+        type: PAIRWISE_COMPARISON
+    response:
+      status: 200
+    output:
+      experiment_id: payload.experiment_id
+  - synopsis: Partially update the experiment's name and description.
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
+    method: PATCH
+    parameters:
+      experiment_id: ${pairwise_experiment.experiment_id}
+    request:
+      payload:
+        name: renamed experiment
+        description: updated description
+    response:
+      status: 200
+  - synopsis: Validate the experiment's inputs for drift.
+    path: /_plugins/_search_relevance/experiments/{experiment_id}/validate
+    method: GET
+    parameters:
+      experiment_id: ${pairwise_experiment.experiment_id}
+    response:
+      status: 200
+  - synopsis: Delete the experiment.
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
+    method: DELETE
+    parameters:
+      experiment_id: ${pairwise_experiment.experiment_id}
+    response:
+      status: 200
