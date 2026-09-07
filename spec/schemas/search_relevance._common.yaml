@@ -39,56 +39,48 @@ components:
           type: string
         query_set_result:
           type: string
+    PutExperimentRequestBase:
+      type: object
+      description: The common fields shared by all experiment creation requests.
+      properties:
+        querySetId:
+          type: string
+        searchConfigurationList:
+          type: array
+          items:
+            type: string
+        size:
+          type: integer
+        type:
+          type: string
+      required:
+        - searchConfigurationList
+        - size
+        - type
     PutPairwiseExperimentRequest:
-      type: object
       description: The schema for a pairwise experiment.
-      properties:
-        querySetId:
-          type: string
-        searchConfigurationList:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-        type:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/PutExperimentRequestBase'
     PutHybridOptimizerExperimentRequest:
-      type: object
       description: The schema for a hybrid optimizer experiment.
-      properties:
-        querySetId:
-          type: string
-        searchConfigurationList:
-          type: array
-          items:
-            type: string
-        judgmentList:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-        type:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/PutExperimentRequestBase'
+        - type: object
+          properties:
+            judgmentList:
+              type: array
+              items:
+                type: string
     PutPointwiseExperimentRequest:
-      type: object
       description: The schema for a pointwise experiment.
-      properties:
-        querySetId:
-          type: string
-        searchConfigurationList:
-          type: array
-          items:
-            type: string
-        judgmentList:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-        type:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/PutExperimentRequestBase'
+        - type: object
+          properties:
+            judgmentList:
+              type: array
+              items:
+                type: string
     PostQuerySetsRequest:
       type: object
       description: The schema for creating a query set.
@@ -101,6 +93,12 @@ components:
           type: string
         querySetSize:
           type: integer
+        ubiQueriesIndex:
+          type: string
+          description: The name of the UBI queries index to sample from.
+          x-version-added: '3.5'
+      required:
+        - name
     PutQuerySetsRequest:
       type: object
       description: The schema for updating a query set.
@@ -115,60 +113,109 @@ components:
           type: array
           items:
             type: object
+      required:
+        - name
+    PutJudgmentsRequestBase:
+      type: object
+      description: The common fields shared by all judgment creation requests.
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+      required:
+        - name
+        - type
     PutLLMJudgmentsRequest:
-      type: object
       description: The schema for a LLM judgment.
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-        modelId:
-          type: string
-        querySetId:
-          type: string
-        searchConfigurationList:
-          type: array
-          items:
-            type: string
-        size:
-          type: integer
-        ignoreFailure:
-          type: boolean
-        contextFields:
-          type: array
-          items:
-            type: string
+      allOf:
+        - $ref: '#/components/schemas/PutJudgmentsRequestBase'
+        - type: object
+          properties:
+            modelId:
+              type: string
+            querySetId:
+              type: string
+            searchConfigurationList:
+              type: array
+              items:
+                type: string
+            size:
+              type: integer
+            ignoreFailure:
+              type: boolean
+              description: Whether to continue when individual documents fail to be rated. Defaults to `false`.
+            contextFields:
+              type: array
+              items:
+                type: string
+            tokenLimit:
+              type: integer
+              description: The maximum number of tokens allowed for the LLM prompt. Defaults to 4000.
+            promptTemplate:
+              type: string
+              description: The prompt template to use. Must contain a `{{hits}}` or `{{results}}` placeholder. A default template is used when omitted.
+              x-version-added: '3.5'
+            llmJudgmentRatingType:
+              $ref: '#/components/schemas/LLMJudgmentRatingType'
+            existingJudgments:
+              type: array
+              description: A list of existing judgment ids whose ratings should be reused instead of being re-scored.
+              items:
+                type: string
+              x-version-added: '3.9'
+            overwriteCache:
+              type: boolean
+              deprecated: true
+              description: Deprecated and ignored. The global judgment cache was removed; use `existingJudgments` to reuse ratings or the `_retry` endpoint to re-score failed documents.
+          required:
+            - modelId
+    LLMJudgmentRatingType:
+      type: string
+      description: The rating scale used by the LLM judge. Defaults to `SCORE0_1`.
+      enum:
+        - RELEVANT_IRRELEVANT
+        - SCORE0_1
+      x-version-added: '3.5'
     PutUBIJudgmentsRequest:
-      type: object
       description: The schema for a UBI judgment.
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-        clickModel:
-          type: string
-        maxRank:
-          type: integer
+      allOf:
+        - $ref: '#/components/schemas/PutJudgmentsRequestBase'
+        - type: object
+          properties:
+            clickModel:
+              type: string
+            maxRank:
+              type: integer
+            startDate:
+              type: string
+              description: The start of the UBI events date range (inclusive).
+              x-version-added: '3.2'
+            endDate:
+              type: string
+              description: The end of the UBI events date range (inclusive).
+              x-version-added: '3.2'
+            ubiEventsIndex:
+              type: string
+              description: The name of the UBI events index to source click data from.
+              x-version-added: '3.5'
+          required:
+            - clickModel
+            - maxRank
     PutImportJudgmentsRequest:
-      type: object
       description: The schema for an import judgment.
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-        judgmentRatings:
-          type: array
-          items:
-            type: object
+      allOf:
+        - $ref: '#/components/schemas/PutJudgmentsRequestBase'
+        - type: object
+          properties:
+            judgmentRatings:
+              type: array
+              items:
+                type: object
+          required:
+            - judgmentRatings
     PutSearchConfigurationRequest:
       type: object
       properties:
@@ -183,6 +230,8 @@ components:
           type: string
         searchPipeline:
           type: string
+      required:
+        - name
     PostScheduledExperimentsRequest:
       type: object
       description: The schema for scheduling experiments.
@@ -191,6 +240,9 @@ components:
           type: string
         cronExpression:
           type: string
+      required:
+        - cronExpression
+        - experimentId
     PostScheduledExperimentsResponse:
       type: object
       properties:
@@ -215,3 +267,100 @@ components:
         sort:
           $ref: '_common.yaml#/components/schemas/Sort'
           description: The sort order.
+    PatchExperimentRequest:
+      type: object
+      description: The schema for partially updating an experiment. At least one of `name` or `description` must be provided.
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          description: The new name of the experiment.
+        description:
+          type: string
+          description: The new description of the experiment.
+    PatchExperimentResponse:
+      type: object
+      properties:
+        experiment_id:
+          type: string
+        experiment_result:
+          type: string
+    ValidateExperimentResponse:
+      type: object
+      description: Describes whether an experiment's inputs have drifted from the fingerprint recorded at execution time.
+      properties:
+        status:
+          $ref: '#/components/schemas/ExperimentValidationStatus'
+        drifted_inputs:
+          type: array
+          description: The list of inputs that have drifted.
+          items:
+            type: string
+        message:
+          type: string
+          description: A human-readable message describing the validation result.
+      required:
+        - drifted_inputs
+        - message
+        - status
+    ExperimentValidationStatus:
+      type: string
+      description: The drift status of an experiment's inputs.
+      enum:
+        - DRIFTED
+        - UNAVAILABLE
+        - VALID
+    UpdateJudgmentRatingsRequest:
+      type: object
+      description: The schema for adjusting ratings on an existing LLM judgment in place.
+      properties:
+        judgmentRatings:
+          type: array
+          description: The ratings to update, grouped by query. Only the listed (query, docId) pairs are updated.
+          items:
+            $ref: '#/components/schemas/JudgmentRatingUpdate'
+      required:
+        - judgmentRatings
+    JudgmentRatingUpdate:
+      type: object
+      description: The ratings to update for a single query.
+      properties:
+        query:
+          type: string
+          description: The query text whose ratings are being updated.
+        ratings:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentRatingUpdate'
+      required:
+        - query
+        - ratings
+    DocumentRatingUpdate:
+      type: object
+      description: A single document rating to update.
+      properties:
+        docId:
+          type: string
+          description: The document id whose rating is being updated.
+        rating:
+          type: string
+          description: The new rating value.
+      required:
+        - docId
+        - rating
+    UpdateJudgmentRatingsResponse:
+      type: object
+      properties:
+        judgment_id:
+          type: string
+        result:
+          type: string
+    RetryJudgmentsResponse:
+      type: object
+      properties:
+        judgment_id:
+          type: string
+        status:
+          type: string
+        message:
+          type: string

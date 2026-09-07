@@ -1,0 +1,120 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Tests updating the ratings of an LLM judgment in place and retrying its failed documents.
+version: '>= 3.9.0'
+
+prologues:
+  - path: /_plugins/ubi/initialize
+    method: POST
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          plugins.search_relevance.workbench_enabled: true
+    response:
+      status: 201
+  - path: /{index}/_doc/{doc_id}
+    method: POST
+    parameters:
+      index: sample_index
+      doc_id: 1
+    request:
+      payload:
+        name: banana
+        price: 1.99
+        description: this is a banana
+    response:
+      status: 201
+  - id: query_set_sampling
+    path: /_plugins/_search_relevance/query_sets
+    method: POST
+    request:
+      payload:
+        name: test03
+        description: test03
+        sampling: random
+        querySetSize: 200
+    response:
+      status: 200
+    output:
+      query_set_id: payload.query_set_id
+  - id: search_configuration1
+    path: /_plugins/_search_relevance/search_configurations
+    method: PUT
+    request:
+      payload:
+        name: simple
+        query: "{\"query\": {\n\"match_all\": {}}}"
+        index: sample_index
+        searchPipeline: test_pipeline
+    response:
+      status: 200
+    output:
+      search_configuration_id: payload.search_configuration_id
+
+epilogues:
+  - path: /_plugins/_search_relevance/search_configurations/{search_configuration_id}
+    method: DELETE
+    parameters:
+      search_configuration_id: ${search_configuration1.search_configuration_id}
+    response:
+      status: 200
+  - path: /_plugins/_search_relevance/query_sets/{query_set_id}
+    method: DELETE
+    parameters:
+      query_set_id: ${query_set_sampling.query_set_id}
+    response:
+      status: 200
+  - path: /sample_index
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Create an LLM judgment to update.
+    id: llm_judgment
+    path: /_plugins/_search_relevance/judgments
+    method: PUT
+    request:
+      payload:
+        name: LLMbaseline
+        description: LLM judgment
+        type: LLM_JUDGMENT
+        querySetId: ${query_set_sampling.query_set_id}
+        modelId: '0' # ml model placeholder
+        size: 10
+        existingJudgments: []
+        searchConfigurationList:
+          - ${search_configuration1.search_configuration_id}
+    response:
+      status: 200
+    output:
+      judgment_id: payload.judgment_id
+  - synopsis: Update one rating on the judgment in place.
+    path: /_plugins/_search_relevance/judgments/{judgment_id}
+    method: PUT
+    parameters:
+      judgment_id: ${llm_judgment.judgment_id}
+    request:
+      payload:
+        judgmentRatings:
+          - query: banana
+            ratings:
+              - docId: '1'
+                rating: '1'
+    response:
+      status: 200
+  - synopsis: Retry the failed documents in the judgment.
+    path: /_plugins/_search_relevance/judgments/{judgment_id}/_retry
+    method: POST
+    parameters:
+      judgment_id: ${llm_judgment.judgment_id}
+    response:
+      status: 200
+  - synopsis: Delete the judgment.
+    path: /_plugins/_search_relevance/judgments/{judgment_id}
+    method: DELETE
+    parameters:
+      judgment_id: ${llm_judgment.judgment_id}
+    response:
+      status: 200
