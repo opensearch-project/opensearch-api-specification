@@ -1,0 +1,107 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Views API
+  description: Experimental APIs for creating and managing views.
+  version: 1.0.0
+paths:
+  /views:
+    get:
+      operationId: views.list.0
+      x-operation-group: views.list
+      x-version-added: '3.0'
+      description: Returns the names of all views.
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/views.list@200'
+    post:
+      operationId: views.create.0
+      x-operation-group: views.create
+      x-version-added: '3.0'
+      description: Creates a view.
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/views.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/views.create@200'
+  /views/{view_name}:
+    get:
+      operationId: views.get.0
+      x-operation-group: views.get
+      x-version-added: '3.0'
+      description: Returns a view by name.
+      parameters:
+        - $ref: '#/components/parameters/views.get::path.view_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/views.get@200'
+    put:
+      operationId: views.update.0
+      x-operation-group: views.update
+      x-version-added: '3.0'
+      description: Updates a view.
+      parameters:
+        - $ref: '#/components/parameters/views.update::path.view_name'
+      requestBody:
+        $ref: '#/components/requestBodies/views.update'
+      responses:
+        '200':
+          $ref: '#/components/responses/views.update@200'
+    delete:
+      operationId: views.delete.0
+      x-operation-group: views.delete
+      x-version-added: '3.0'
+      description: Deletes a view.
+      parameters:
+        - $ref: '#/components/parameters/views.delete::path.view_name'
+      responses:
+        '200':
+          $ref: '#/components/responses/views.delete@200'
+components:
+  parameters:
+    views.get::path.view_name: &views_path_view_name
+      in: path
+      name: view_name
+      required: true
+      description: The view name.
+      schema:
+        type: string
+    views.update::path.view_name: *views_path_view_name
+    views.delete::path.view_name: *views_path_view_name
+  requestBodies:
+    views.create:
+      description: The view definition.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/views._common.yaml#/components/schemas/CreateViewRequest'
+    views.update:
+      description: The updated view definition.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/views._common.yaml#/components/schemas/UpdateViewRequest'
+  responses:
+    views.create@200: &views_get_response
+      description: The view.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/views._common.yaml#/components/schemas/GetViewResponse'
+    views.get@200: *views_get_response
+    views.list@200:
+      description: The view names.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/views._common.yaml#/components/schemas/ListViewsResponse'
+    views.delete@200:
+      description: The view deletion result.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    views.update@200: *views_get_response

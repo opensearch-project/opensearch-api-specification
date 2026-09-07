@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Block Cache API
+  description: OpenSearch Block Cache API.
+  version: 1.0.0
+paths:
+  /_blockcache/prune:
+    post:
+      operationId: block_cache.prune.0
+      x-operation-group: block_cache.prune
+      x-version-added: '3.7'
+      description: Clears all registered block caches on warm nodes.
+      parameters:
+        - $ref: '#/components/parameters/block_cache.prune::query.nodes'
+        - $ref: '#/components/parameters/block_cache.prune::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/block_cache.prune@200'
+components:
+  responses:
+    block_cache.prune@200:
+      description: The block cache prune result for the targeted nodes.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/block_cache.prune.yaml#/components/schemas/PruneBlockCacheResponse'
+  parameters:
+    block_cache.prune::query.nodes:
+      in: query
+      name: nodes
+      description: A comma-separated list of node IDs on which to clear registered block caches.
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: false
+    block_cache.prune::query.timeout:
+      in: query
+      name: timeout
+      description: The amount of time to wait for each targeted node to respond.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
