@@ -1,0 +1,68 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Rules API Schemas
+  description: Schemas for automatic tagging rules.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    RuleWriteRequest:
+      type: object
+      description: A rule definition whose attributes and feature-value field are determined by the feature type in the path.
+      properties:
+        description:
+          type: string
+          description: A description of the rule.
+      required:
+        - description
+      additionalProperties:
+        oneOf:
+          - type: string
+            description: A feature value or another scalar value registered by the feature type.
+          - type: array
+            description: Values for an attribute registered by the feature type.
+            items:
+              type: string
+            maxItems: 10
+    Rule:
+      type: object
+      description: An automatic tagging rule. Dynamic properties contain registered attributes and the feature value.
+      properties:
+        id:
+          type: string
+          description: The computed rule ID.
+        description:
+          type: string
+          description: A description of the rule.
+        updated_at:
+          type: string
+          format: date-time
+          description: The time at which the rule was last updated.
+      required:
+        - description
+        - id
+        - updated_at
+      additionalProperties:
+        oneOf:
+          - type: string
+            description: A feature value or another scalar value registered by the feature type.
+          - type: array
+            description: Values for an attribute registered by the feature type.
+            items:
+              type: string
+    GetRulesResponse:
+      type: object
+      properties:
+        rules:
+          type: array
+          description: The matching rules.
+          items:
+            $ref: '#/components/schemas/Rule'
+        search_after:
+          type: array
+          description: The sort value to pass to a subsequent request.
+          items:
+            type: string
+          maxItems: 1
+      required:
+        - rules
