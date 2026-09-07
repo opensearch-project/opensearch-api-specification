@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch File Cache API
+  description: OpenSearch File Cache API.
+  version: 1.0.0
+paths:
+  /_filecache/prune:
+    post:
+      operationId: file_cache.prune.0
+      x-operation-group: file_cache.prune
+      x-version-added: '3.4'
+      description: Prunes the remote file cache on warm nodes.
+      parameters:
+        - $ref: '#/components/parameters/file_cache.prune::query.node'
+        - $ref: '#/components/parameters/file_cache.prune::query.nodes'
+        - $ref: '#/components/parameters/file_cache.prune::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/file_cache.prune@200'
+components:
+  responses:
+    file_cache.prune@200:
+      description: The file cache prune result for the targeted warm nodes.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/file_cache.prune.yaml#/components/schemas/PruneFileCacheResponse'
+  parameters:
+    file_cache.prune::query.node:
+      in: query
+      name: node
+      description: A single node ID or node selector on which to prune the file cache. The `nodes` parameter takes precedence when both are provided.
+      schema:
+        type: string
+      style: form
+    file_cache.prune::query.nodes:
+      in: query
+      name: nodes
+      description: A comma-separated list of node IDs or node selectors on which to prune the file cache.
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: false
+    file_cache.prune::query.timeout:
+      in: query
+      name: timeout
+      description: The amount of time to wait for each targeted node to respond.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form

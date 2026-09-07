@@ -273,6 +273,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/snapshot.status@200'
+  /_snapshot/{repository}/{snapshot}/{index}/_status:
+    get:
+      operationId: snapshot.status.3
+      x-operation-group: snapshot.status
+      x-version-added: '2.17'
+      description: Returns information about the status of a snapshot.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/snapshots/get-snapshot-status/
+      parameters:
+        - $ref: '#/components/parameters/snapshot.status::path.index'
+        - $ref: '#/components/parameters/snapshot.status::path.repository'
+        - $ref: '#/components/parameters/snapshot.status::path.snapshot'
+        - $ref: '#/components/parameters/snapshot.status::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/snapshot.status::query.ignore_unavailable'
+        - $ref: '#/components/parameters/snapshot.status::query.master_timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/snapshot.status@200'
 components:
   requestBodies:
     snapshot.clone:
@@ -874,6 +892,14 @@ components:
         type: boolean
         default: false
       style: form
+    snapshot.status::path.index:
+      in: path
+      name: index
+      description: A comma-separated list of index names for which to return snapshot status information.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
     snapshot.status::path.repository:
       in: path
       name: repository

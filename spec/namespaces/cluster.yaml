@@ -202,6 +202,20 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cluster.put_weighted_routing@200'
+    delete:
+      operationId: cluster.delete_weighted_routing.1
+      x-operation-group: cluster.delete_weighted_routing
+      x-version-added: '2.5'
+      description: Delete weighted shard routing weights.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/cluster-api/cluster-awareness/#example-request-deleting-the-configuration
+      parameters:
+        - $ref: '#/components/parameters/cluster.delete_weighted_routing::path.attribute'
+      requestBody:
+        $ref: '#/components/requestBodies/cluster.delete_weighted_routing'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.delete_weighted_routing@200'
   /_cluster/settings:
     get:
       operationId: cluster.get_settings.0
@@ -391,6 +405,25 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cluster.delete_voting_config_exclusions@200'
+  /_cluster/voting_config_exclusions/{node_name}:
+    post:
+      operationId: cluster.post_voting_config_exclusions.1
+      x-operation-group: cluster.post_voting_config_exclusions
+      x-version-deprecated: '1.0'
+      x-deprecation-message: POST /_cluster/voting_config_exclusions/{node_name} will be removed in a future version. Use node_ids or node_names query parameters instead.
+      deprecated: true
+      x-version-added: '1.0'
+      description: Updates the cluster voting configuration by excluding certain node IDs or names.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/
+      parameters:
+        - $ref: '#/components/parameters/cluster.post_voting_config_exclusions::path.node_name'
+        - $ref: '#/components/parameters/cluster.post_voting_config_exclusions::query.node_ids'
+        - $ref: '#/components/parameters/cluster.post_voting_config_exclusions::query.node_names'
+        - $ref: '#/components/parameters/cluster.post_voting_config_exclusions::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.post_voting_config_exclusions@200'
   /_component_template:
     get:
       operationId: cluster.get_component_template.0
@@ -1165,6 +1198,22 @@ components:
       style: form
       x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
+    cluster.delete_weighted_routing::path.attribute:
+      in: path
+      name: attribute
+      description: The name of the awareness attribute whose weighted routing configuration should be deleted.
+      required: true
+      schema:
+        type: string
+      style: simple
+    cluster.post_voting_config_exclusions::path.node_name:
+      in: path
+      name: node_name
+      description: The name of a node to exclude from the voting configuration.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Name'
+      style: simple
     cluster.post_voting_config_exclusions::query.node_ids:
       in: query
       name: node_ids
