@@ -6,27 +6,47 @@ info:
 paths: {}
 components:
   schemas:
-    RuleWriteRequest:
+    CreateRuleRequest:
       type: object
-      description: A rule definition whose attributes and feature-value field are determined by the feature type in the path.
       properties:
         description:
           type: string
           description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
       required:
         - description
-      additionalProperties:
-        oneOf:
-          - type: string
-            description: A feature value or another scalar value registered by the feature type.
-          - type: array
-            description: Values for an attribute registered by the feature type.
-            items:
-              type: string
-            maxItems: 10
+        - index_pattern
+        - workload_group
+    UpdateRuleRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
     Rule:
       type: object
-      description: An automatic tagging rule. Dynamic properties contain registered attributes and the feature value.
+      description: An automatic tagging rule for a workload group.
       properties:
         id:
           type: string
@@ -34,6 +54,17 @@ components:
         description:
           type: string
           description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
         updated_at:
           type: string
           format: date-time
@@ -41,15 +72,9 @@ components:
       required:
         - description
         - id
+        - index_pattern
         - updated_at
-      additionalProperties:
-        oneOf:
-          - type: string
-            description: A feature value or another scalar value registered by the feature type.
-          - type: array
-            description: Values for an attribute registered by the feature type.
-            items:
-              type: string
+        - workload_group
     GetRulesResponse:
       type: object
       properties:
