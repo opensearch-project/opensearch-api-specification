@@ -1,0 +1,101 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test workload group automatic tagging rule CRUD operations.
+version: '>= 3.1'
+warnings:
+  invalid-path-detected: false
+  multiple-paths-detected: false
+
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          wlm.workload_group.mode: enabled
+  - id: create_workload_group
+    path: /_wlm/workload_group/
+    method: PUT
+    request:
+      payload:
+        name: api-spec-rules
+        resiliency_mode: monitor
+        resource_limits:
+          cpu: 0.1
+          memory: 0.1
+    output:
+      workload_group_id: payload._id
+
+chapters:
+  - id: create_rule
+    synopsis: Create a workload group automatic tagging rule.
+    path: /_rules/{feature_type}/
+    method: PUT
+    parameters:
+      feature_type: workload_group
+    request:
+      payload:
+        description: Route matching indexes to the API specification workload group.
+        index_pattern:
+          - api-spec-rules-*
+        workload_group: ${create_workload_group.workload_group_id}
+    response:
+      status: 200
+    output:
+      rule_id: payload.id
+    retry:
+      count: 5
+      wait: 1000
+  - synopsis: List workload group automatic tagging rules.
+    path: /_rules/{feature_type}/
+    method: GET
+    parameters:
+      feature_type: workload_group
+    response:
+      status: 200
+  - synopsis: Retrieve a workload group automatic tagging rule.
+    path: /_rules/{feature_type}/{id}
+    method: GET
+    parameters:
+      feature_type: workload_group
+      id: ${create_rule.rule_id}
+    response:
+      status: 200
+    retry:
+      count: 5
+      wait: 1000
+  - synopsis: Update a workload group automatic tagging rule.
+    path: /_rules/{feature_type}/{id}
+    method: PUT
+    parameters:
+      feature_type: workload_group
+      id: ${create_rule.rule_id}
+    request:
+      payload:
+        description: Route updated indexes to the API specification workload group.
+        index_pattern:
+          - api-spec-rules-updated-*
+        workload_group: ${create_workload_group.workload_group_id}
+    response:
+      status: 200
+  - synopsis: Delete a workload group automatic tagging rule.
+    path: /_rules/{feature_type}/{id}
+    method: DELETE
+    parameters:
+      feature_type: workload_group
+      id: ${create_rule.rule_id}
+    response:
+      status: 200
+
+epilogues:
+  - path: /_rules/{feature_type}/{id}
+    method: DELETE
+    parameters:
+      feature_type: workload_group
+      id: ${create_rule.rule_id}
+    status: [200, 404]
+  - path: /_wlm/workload_group/{name}
+    method: DELETE
+    parameters:
+      name: api-spec-rules
+    status: [200, 404]
