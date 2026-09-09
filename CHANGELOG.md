@@ -8,7 +8,9 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
 - Added `sparse_encoding`, `text_image_embedding`, and `text_chunking` ingest processor schemas with `ChunkingAlgorithm` (`fixed_token_length`, `delimiter`) support, and `neural_sparse` query DSL ([#1191](https://github.com/opensearch-project/opensearch-api-specification/pull/1191))
+- Added OpenAPI Overlay files for distribution-specific API filtering (`overlays/`) and CI validation workflow ([#1218](https://github.com/opensearch-project/opensearch-api-specification/pull/1218))
 - Added apis for searching within search relevance objects such as search configurations, judgments, query sets, and experiments ([#1064](https://github.com/opensearch-project/opensearch-api-specification/pull/1064))
 - Added remaining APIs for LTR including store element operations, model management, feature set operations, routing support, and POST support for update operations ([#935](https://github.com/opensearch-project/opensearch-api-specification/pull/935))
 - Added specs for alert and finding endpoints of security_analytics plugin ([#907](https://github.com/opensearch-project/opensearch-api-specification/pull/907))
@@ -46,6 +48,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `mapper_type` and `mapper_settings` to `IngestionSource` index settings ([#1155](https://github.com/opensearch-project/opensearch-api-specification/pull/1155))
 - Added `search` and `warm` node roles to `NodeRole`, and modeled the pre-3.0 `search` role (renamed to `warm` in 3.0) as a version-scoped branch ([#1006](https://github.com/opensearch-project/opensearch-api-specification/pull/1006))
 - Added `sltr` to query DSL schema  ([#1187](https://github.com/opensearch-project/opensearch-api-specification/pull/1187))
+- Added spec for the experimental `indices.modify_data_stream` API and the `attach_to_data_stream` restore snapshot body field ([#1176](https://github.com/opensearch-project/opensearch-api-specification/issues/1176))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
