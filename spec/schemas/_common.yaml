@@ -2061,6 +2061,10 @@ components:
           type: integer
           format: int64
           description: The total number of noop update operations.
+        max_last_index_request_timestamp:
+          type: integer
+          format: int64
+          description: The epoch timestamp, in milliseconds, of the most recent indexing request. A value of -9223372036854775808 (`Long.MIN_VALUE`) indicates that no request has been recorded.
         is_throttled:
           type: boolean
           description: Whether indexing is currently throttled.
@@ -2148,6 +2152,8 @@ components:
           type: integer
           format: int64
           description: The number of unreferenced file cleanups performed.
+        warmer:
+          $ref: '#/components/schemas/MergesWarmerStats'
       required:
         - current
         - current_docs
@@ -2242,6 +2248,52 @@ components:
         - hit_count
         - memory_size_in_bytes
         - miss_count
+    MergesWarmerStats:
+      type: object
+      description: The statistics about segment-replication merge warmer operations.
+      properties:
+        ongoing_count:
+          type: integer
+          format: int64
+          description: The number of currently ongoing merge warmer operations.
+        total_invocations_count:
+          type: integer
+          format: int64
+          description: The total number of merge warmer invocations.
+        total_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on merge warmer operations.
+        total_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on merge warmer operations, in milliseconds.
+        total_failure_count:
+          type: integer
+          format: int64
+          description: The total number of failed merge warmer operations.
+        total_sent_size:
+          $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total number of bytes sent during merge warmer operations, in a human-readable format.
+        total_bytes_sent:
+          $ref: '#/components/schemas/ByteCount'
+          description: The total number of bytes sent during merge warmer operations.
+        total_received_size:
+          $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total number of bytes received during merge warmer operations, in a human-readable format.
+        total_bytes_received:
+          $ref: '#/components/schemas/ByteCount'
+          description: The total number of bytes received during merge warmer operations.
+        total_send_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent sending data during merge warmer operations.
+        total_send_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent sending data during merge warmer operations, in milliseconds.
+        total_receive_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent receiving data during merge warmer operations.
+        total_receive_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent receiving data during merge warmer operations, in milliseconds.
     SearchStats:
       type: object
       description: The statistics about search operations.
@@ -2334,6 +2386,28 @@ components:
           $ref: '#/components/schemas/DurationValueUnitMillis'
         suggest_total:
           description: The total number of shard suggest operations.
+          type: integer
+          format: int64
+        query_failed:
+          description: The total number of failed shard query operations.
+          type: integer
+          format: int64
+        startree_query_current:
+          description: The number of currently running shard star-tree query operations.
+          type: integer
+          format: int64
+        startree_query_time:
+          description: The total amount of time taken to complete all shard star-tree query operations.
+          $ref: '#/components/schemas/Duration'
+        startree_query_time_in_millis:
+          description: The total amount of time taken to complete all shard star-tree query operations, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        startree_query_total:
+          description: The total number of shard star-tree query operations.
+          type: integer
+          format: int64
+        startree_query_failed:
+          description: The total number of failed shard star-tree query operations.
           type: integer
           format: int64
         search_idle_reactivate_count_total:

@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
 - Added `sparse_encoding`, `text_image_embedding`, and `text_chunking` ingest processor schemas with `ChunkingAlgorithm` (`fixed_token_length`, `delimiter`) support, and `neural_sparse` query DSL ([#1191](https://github.com/opensearch-project/opensearch-api-specification/pull/1191))
 - Added apis for searching within search relevance objects such as search configurations, judgments, query sets, and experiments ([#1064](https://github.com/opensearch-project/opensearch-api-specification/pull/1064))
@@ -106,6 +107,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 - Removed `Aggregation` reference from `BucketAggregationBase`, `MetricAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation`; simplified `BucketAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation` by removing unnecessary `allOf` wrapper ([#1067](https://github.com/opensearch-project/opensearch-api-specification/pull/1067))
 - Replace `x-protobuf-type` to `x-protobuf-data-type` ([#1068](https://github.com/opensearch-project/opensearch-api-specification/pull/1068))
+- Bump `test-spec.yml` CI OpenSearch test versions to `3.8.0`, `1.3.20`, and `2.19.6` ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 
 ## [0.2.0] - 2025-05-25
 
