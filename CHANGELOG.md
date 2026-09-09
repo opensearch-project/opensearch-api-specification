@@ -49,6 +49,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `search` and `warm` node roles to `NodeRole`, and modeled the pre-3.0 `search` role (renamed to `warm` in 3.0) as a version-scoped branch ([#1006](https://github.com/opensearch-project/opensearch-api-specification/pull/1006))
 - Added `sltr` to query DSL schema  ([#1187](https://github.com/opensearch-project/opensearch-api-specification/pull/1187))
 - Added spec for the experimental `indices.modify_data_stream` API and the `attach_to_data_stream` restore snapshot body field ([#1176](https://github.com/opensearch-project/opensearch-api-specification/issues/1176))
+- Added `x-non-exhaustive` vendor extension to mark plugin-extensible union types (`Property`, `Analyzer`, `TokenizerDefinition`, `TokenFilterDefinition`, `CharFilterDefinition`, `QueryContainer`, `SpanQuery`, `AggregationContainer`, `ProcessorContainer`, `FieldSuggester`)
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
