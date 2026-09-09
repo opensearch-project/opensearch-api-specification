@@ -146,7 +146,9 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
 - `x-non-exhaustive`: Denotes that a discriminated union (tagged type) is non-exhaustive, meaning plugins can register additional variants at runtime. Code generators should treat these unions as open/extensible.
 
-Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless.
+### Distribution-Specific API Filtering
+
+Distribution-specific API surface differences (for example, APIs excluded from Amazon Managed OpenSearch or Amazon OpenSearch Serverless) are managed via [OpenAPI Overlay](https://spec.openapis.org/overlay/latest.html) files in the [`overlays/`](overlays/) directory. The spec source files themselves are vendor-neutral. See [`overlays/README.md`](overlays/README.md) for details.
 
 ## Writing Spec Tests
 
