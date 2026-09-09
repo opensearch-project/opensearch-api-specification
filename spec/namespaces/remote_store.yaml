@@ -20,6 +20,54 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/remote_store.restore@200'
+  /_remotestore/metadata/{index}:
+    get:
+      operationId: remote_store.metadata.0
+      x-operation-group: remote_store.metadata
+      x-version-added: '3.2'
+      description: Returns remote segment and translog metadata for an index or shard.
+      parameters:
+        - $ref: '#/components/parameters/remote_store.metadata::path.index'
+      responses:
+        '200':
+          $ref: '#/components/responses/remote_store.metadata@200'
+  /_remotestore/metadata/{index}/{shard_id}:
+    get:
+      operationId: remote_store.metadata.1
+      x-operation-group: remote_store.metadata
+      x-version-added: '3.2'
+      description: Returns remote segment and translog metadata for an index or shard.
+      parameters:
+        - $ref: '#/components/parameters/remote_store.metadata::path.index'
+        - $ref: '#/components/parameters/remote_store.metadata::path.shard_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/remote_store.metadata@200'
+  /_remotestore/stats/{index}:
+    get:
+      operationId: remote_store.stats.0
+      x-operation-group: remote_store.stats
+      x-version-added: '2.8'
+      description: Returns remote store statistics for an index or shard.
+      parameters:
+        - $ref: '#/components/parameters/remote_store.stats::path.index'
+        - $ref: '#/components/parameters/remote_store.stats::query.local'
+      responses:
+        '200':
+          $ref: '#/components/responses/remote_store.stats@200'
+  /_remotestore/stats/{index}/{shard_id}:
+    get:
+      operationId: remote_store.stats.1
+      x-operation-group: remote_store.stats
+      x-version-added: '2.8'
+      description: Returns remote store statistics for an index or shard.
+      parameters:
+        - $ref: '#/components/parameters/remote_store.stats::path.index'
+        - $ref: '#/components/parameters/remote_store.stats::path.shard_id'
+        - $ref: '#/components/parameters/remote_store.stats::query.local'
+      responses:
+        '200':
+          $ref: '#/components/responses/remote_store.stats@200'
 components:
   requestBodies:
     remote_store.restore:
@@ -43,6 +91,12 @@ components:
                   - books
       required: true
   responses:
+    remote_store.metadata@200:
+      description: Remote segment and translog metadata grouped by index and shard.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/remote_store._common.yaml#/components/schemas/RemoteStoreMetadataResponse'
     remote_store.restore@200:
       content:
         application/json:
@@ -64,7 +118,29 @@ components:
                     total: 1
                     failed: 0
                     successful: 1
+    remote_store.stats@200:
+      description: Remote segment and translog transfer statistics grouped by index and shard.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/remote_store._common.yaml#/components/schemas/RemoteStoreStatsResponse'
   parameters:
+    remote_store.metadata::path.index:
+      in: path
+      name: index
+      description: The index for which to return remote store metadata.
+      required: true
+      schema:
+        type: string
+      style: simple
+    remote_store.metadata::path.shard_id:
+      in: path
+      name: shard_id
+      description: The shard ID for which to return remote store metadata.
+      required: true
+      schema:
+        type: string
+      style: simple
     remote_store.restore::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
@@ -80,3 +156,27 @@ components:
         type: boolean
         default: false
         description: Should this request wait until the operation has completed before returning.
+    remote_store.stats::path.index:
+      in: path
+      name: index
+      description: The index for which to return remote store statistics.
+      required: true
+      schema:
+        type: string
+      style: simple
+    remote_store.stats::path.shard_id:
+      in: path
+      name: shard_id
+      description: The shard ID for which to return remote store statistics.
+      required: true
+      schema:
+        type: string
+      style: simple
+    remote_store.stats::query.local:
+      in: query
+      name: local
+      description: Whether to return statistics only from the local node.
+      schema:
+        type: boolean
+        default: false
+      style: form

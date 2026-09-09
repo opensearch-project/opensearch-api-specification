@@ -1,0 +1,102 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch File Cache Prune API
+  description: OpenSearch File Cache Prune API schemas.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    PruneFileCacheResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Whether the prune request was acknowledged.
+        total_pruned_bytes:
+          type: integer
+          format: int64
+          description: The total number of bytes pruned across all successful nodes.
+        summary:
+          $ref: '#/components/schemas/PruneFileCacheSummary'
+        nodes:
+          type: object
+          description: Successful node responses, keyed by node ID.
+          additionalProperties:
+            $ref: '#/components/schemas/PruneFileCacheNode'
+        failures:
+          type: array
+          description: Nodes on which the prune operation failed. This property is omitted when there are no failures.
+          items:
+            $ref: '#/components/schemas/PruneFileCacheFailure'
+      required:
+        - acknowledged
+        - nodes
+        - summary
+        - total_pruned_bytes
+    PruneFileCacheSummary:
+      type: object
+      properties:
+        total_nodes_targeted:
+          type: integer
+          description: The total number of targeted nodes.
+        successful_nodes:
+          type: integer
+          description: The number of nodes on which the cache was pruned successfully.
+        failed_nodes:
+          type: integer
+          description: The number of nodes on which the cache prune operation failed.
+        total_cache_capacity:
+          type: integer
+          format: int64
+          description: The combined file cache capacity, in bytes, of all successful nodes.
+      required:
+        - failed_nodes
+        - successful_nodes
+        - total_cache_capacity
+        - total_nodes_targeted
+    PruneFileCacheNode:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The node name.
+        transport_address:
+          type: string
+          description: The node transport address.
+        host:
+          type: string
+          description: The node host name.
+        ip:
+          type: string
+          description: The node host address.
+        pruned_bytes:
+          type: integer
+          format: int64
+          description: The number of bytes pruned on the node.
+        cache_capacity:
+          type: integer
+          format: int64
+          description: The file cache capacity of the node, in bytes.
+      required:
+        - cache_capacity
+        - host
+        - ip
+        - name
+        - pruned_bytes
+        - transport_address
+    PruneFileCacheFailure:
+      type: object
+      properties:
+        node_id:
+          type: string
+          description: The ID of the node on which the operation failed.
+        reason:
+          type: string
+          description: The detailed failure message.
+        caused_by:
+          type: ['null', string]
+          description: The simple class name of the underlying cause, or `null` when no cause is available.
+      required:
+        - caused_by
+        - node_id
+        - reason

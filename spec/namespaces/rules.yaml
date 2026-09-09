@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Rules API
+  description: APIs for managing automatic tagging rules.
+  version: 1.0.0
+paths:
+  /_rules/{feature_type}/:
+    get:
+      operationId: rules.list.0
+      x-operation-group: rules.list
+      x-version-added: '3.1'
+      description: Returns rules for a feature type, optionally filtered by registered rule attributes.
+      parameters:
+        - $ref: '#/components/parameters/rules.list::path.feature_type'
+        - $ref: '#/components/parameters/rules.list::query.search_after'
+      responses:
+        '200':
+          $ref: '#/components/responses/rules.list@200'
+    put:
+      operationId: rules.create.0
+      x-operation-group: rules.create
+      x-version-added: '3.1'
+      description: Creates an automatic tagging rule for a feature type.
+      parameters:
+        - $ref: '#/components/parameters/rules.create::path.feature_type'
+      requestBody:
+        $ref: '#/components/requestBodies/rules.create'
+      responses:
+        '200':
+          $ref: '#/components/responses/rules.create@200'
+  /_rules/{feature_type}/{id}:
+    get:
+      operationId: rules.get.0
+      x-operation-group: rules.get
+      x-version-added: '3.1'
+      description: Returns a rule by ID.
+      parameters:
+        - $ref: '#/components/parameters/rules.get::path.feature_type'
+        - $ref: '#/components/parameters/rules.get::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/rules.get@200'
+    put:
+      operationId: rules.update.0
+      x-operation-group: rules.update
+      x-version-added: '3.1'
+      description: Updates an automatic tagging rule.
+      parameters:
+        - $ref: '#/components/parameters/rules.update::path.feature_type'
+        - $ref: '#/components/parameters/rules.update::path.id'
+      requestBody:
+        $ref: '#/components/requestBodies/rules.update'
+      responses:
+        '200':
+          $ref: '#/components/responses/rules.update@200'
+    delete:
+      operationId: rules.delete.0
+      x-operation-group: rules.delete
+      x-version-added: '3.1'
+      description: Deletes an automatic tagging rule.
+      parameters:
+        - $ref: '#/components/parameters/rules.delete::path.feature_type'
+        - $ref: '#/components/parameters/rules.delete::path.id'
+      responses:
+        '200':
+          $ref: '#/components/responses/rules.delete@200'
+components:
+  parameters:
+    rules.list::path.feature_type: &rules_path_feature_type
+      in: path
+      name: feature_type
+      required: true
+      description: The registered feature type whose rules are managed.
+      schema:
+        type: string
+    rules.list::query.search_after:
+      in: query
+      name: search_after
+      description: The sort value returned by a previous request, used to retrieve the next page.
+      schema:
+        type: string
+    rules.get::path.feature_type: *rules_path_feature_type
+    rules.get::path.id: &rules_path_id
+      in: path
+      name: id
+      required: true
+      description: The rule ID.
+      schema:
+        type: string
+    rules.create::path.feature_type: *rules_path_feature_type
+    rules.update::path.feature_type: *rules_path_feature_type
+    rules.update::path.id: *rules_path_id
+    rules.delete::path.feature_type: *rules_path_feature_type
+    rules.delete::path.id: *rules_path_id
+  requestBodies:
+    rules.create:
+      description: The workload group rule definition.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/rules._common.yaml#/components/schemas/CreateRuleRequest'
+    rules.update:
+      description: The workload group rule fields to update.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/rules._common.yaml#/components/schemas/UpdateRuleRequest'
+  responses:
+    rules.list@200: &rules_get_response
+      description: The matching rules.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/rules._common.yaml#/components/schemas/GetRulesResponse'
+    rules.get@200: *rules_get_response
+    rules.create@200: &rules_write_response
+      description: The created or updated rule.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/rules._common.yaml#/components/schemas/Rule'
+    rules.update@200: *rules_write_response
+    rules.delete@200:
+      description: The rule deletion result.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'

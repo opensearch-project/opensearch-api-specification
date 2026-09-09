@@ -103,3 +103,115 @@ components:
         cpu:
           type: number
           format: double
+    WlmStatsResponse:
+      type: object
+      description: Workload management statistics keyed by node ID.
+      properties:
+        _nodes:
+          $ref: '_common.yaml#/components/schemas/NodeStatistics'
+        cluster_name:
+          type: string
+      additionalProperties:
+        $ref: '#/components/schemas/WlmNodeStats'
+      required:
+        - _nodes
+        - cluster_name
+    WlmNodeStats:
+      type: object
+      properties:
+        workload_groups:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/WlmWorkloadGroupStats'
+      required:
+        - workload_groups
+    WlmWorkloadGroupStats:
+      type: object
+      properties:
+        total_completions:
+          type: integer
+          format: int64
+        total_rejections:
+          type: integer
+          format: int64
+        total_cancellations:
+          type: integer
+          format: int64
+        cpu:
+          $ref: '#/components/schemas/WlmResourceStats'
+        memory:
+          $ref: '#/components/schemas/WlmResourceStats'
+      required:
+        - total_cancellations
+        - total_completions
+        - total_rejections
+    WlmResourceStats:
+      type: object
+      properties:
+        current_usage:
+          type: number
+          format: double
+        cancellations:
+          type: integer
+          format: int64
+        rejections:
+          type: integer
+          format: int64
+      required:
+        - cancellations
+        - current_usage
+        - rejections
+    WlmStatsListResponse:
+      oneOf:
+        - type: array
+          items:
+            $ref: '#/components/schemas/WlmStatsListRecord'
+        - type: object
+          properties:
+            next_token:
+              type: string
+            wlm_stats:
+              type: array
+              items:
+                $ref: '#/components/schemas/WlmStatsListRecord'
+          required:
+            - next_token
+            - wlm_stats
+    WlmStatsListRecord:
+      type: object
+      properties:
+        NODE_ID:
+          type: string
+        WORKLOAD_GROUP_ID:
+          type: string
+        TOTAL_COMPLETIONS:
+          type: integer
+          format: int64
+        TOTAL_REJECTIONS:
+          type: integer
+          format: int64
+        TOTAL_CANCELLATIONS:
+          type: integer
+          format: int64
+        CPU_USAGE:
+          oneOf:
+            - type: number
+              format: double
+            - type: string
+              const: NA
+        MEMORY_USAGE:
+          oneOf:
+            - type: number
+              format: double
+            - type: string
+              const: NA
+    WlmStatsSortBy:
+      type: string
+      enum:
+        - node_id
+        - workload_group
+    WlmStatsSortOrder:
+      type: string
+      enum:
+        - asc
+        - desc
