@@ -1,0 +1,63 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test running a monitor by ID.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-execute
+    status: [200]
+  - path: /_plugins/_alerting/monitors
+    id: create_monitor
+    method: POST
+    request:
+      payload:
+        name: execute-monitor-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-execute
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: execute-monitor-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value > 10000
+                lang: painless
+            actions: []
+    status: [201]
+    output:
+      monitor_id: payload._id
+
+epilogues:
+  - path: /_plugins/_alerting/monitors/{monitor_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+  - path: /books-alerting-execute
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Run a monitor as a dry run.
+    path: /_plugins/_alerting/monitors/{monitor_id}/_execute
+    method: POST
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+      dryrun: true
+    response:
+      status: 200
+      payload:
+        monitor_name: execute-monitor-test

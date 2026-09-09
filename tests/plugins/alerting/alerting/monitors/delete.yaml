@@ -1,0 +1,56 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the deletion of a monitor.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-delete
+    status: [200]
+  - path: /_plugins/_alerting/monitors
+    id: create_monitor
+    method: POST
+    request:
+      payload:
+        name: delete-monitor-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-delete
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: delete-monitor-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value > 10000
+                lang: painless
+            actions: []
+    status: [201]
+    output:
+      monitor_id: payload._id
+
+epilogues:
+  - path: /books-alerting-delete
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Delete a monitor with the `refresh` parameter.
+    path: /_plugins/_alerting/monitors/{monitor_id}
+    method: DELETE
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+      refresh: 'true'
+    response:
+      status: 200
