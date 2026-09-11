@@ -161,8 +161,112 @@ components:
         replication.type:
           description: Defines the replication type.
           $ref: '#/components/schemas/ReplicationType'
+        aggregation:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        allocation:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        append_only:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        auto_force_merge:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        bulk:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        check_pending_flush:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        composite_store:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        context:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        context_aware:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        derived_source:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        fielddata:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        history:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        mapper:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        merge_on_flush:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        neural_search:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        opendistro:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        optimize_doc_id_lookup:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        percolator:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        pluggable:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        plugins:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        query:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        recovery:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        remote_store:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        requests:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        searchable_snapshot:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        segment_replication:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        shard:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        tiered:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        tiering:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        unassigned:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        unreferenced_file_cleanup:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        warmer:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        write:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
+        auto_expand_search_replicas:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        composite_index:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        correlation:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        force_memory_term_dictionary:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        optimize_auto_generated_id:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        sparse:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        use_compound_file:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        warm:
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        ltrstore_version:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_adjacency_matrix_filters:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_slices_per_pit:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        number_of_search_replicas:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        number_of_virtual_shards:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        periodic_flush_interval:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        compound_format:
+          type: string
+        data_path:
+          type: string
+        flush_after_merge:
+          type: string
       additionalProperties:
         title: custom_settings
+    IndexSettingsDefaultsObject:
+      type: object
+      description: A nested index-settings defaults block whose leaves are stringified values.
+      additionalProperties: true
     ReplicationType:
       type: string
       enum:
@@ -194,11 +298,16 @@ components:
         pointer.init.reset:
           $ref: '#/components/schemas/IngestionSourcePointerInitReset'
         pointer.init.reset.value:
-          type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
           description: Specifies the offset value or timestamp in milliseconds.
         error_strategy:
           description: Defines the policy for error handling.
           $ref: 'ingestion._common.yaml#/components/schemas/ErrorPolicy'
+        pointer_based_lag_update_interval:
+          description: The interval for pointer-based lag updates.
+          type: string
+        warmup:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
         poll:
           $ref: '#/components/schemas/IngestionSourcePoll'
         poll.max_batch_size:
@@ -377,6 +486,9 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_merge_count:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_force_merge_mb_per_sec:
+          description: The maximum bytes-per-second merge throttle; may be `Infinity`.
+          type: string
     IndexSettingsMergePolicy:
       description: The policy configuration for segment merging.
       oneOf:
@@ -559,6 +671,10 @@ components:
         total_primary_shards_per_node:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           x-version-added: '3.0'
+        total_remote_capable_shards_per_node:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        total_remote_capable_primary_shards_per_node:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexRoutingAllocationOptions:
       description: The options for shard allocation control.
       oneOf:
@@ -678,6 +794,9 @@ components:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         retention:
           $ref: '#/components/schemas/TranslogRetention'
+        read_forward:
+          description: Whether translog read-forward is enabled.
+          type: string
     TranslogDurability:
       description: The durability settings for the translog.
       oneOf:
@@ -892,6 +1011,8 @@ components:
       properties:
         coerce:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        dynamic_properties:
+          $ref: '#/components/schemas/IndexSettingsDefaultsObject'
         total_fields:
           $ref: '#/components/schemas/IndexSettingsMappingLimitTotalFields'
         depth:
@@ -1002,6 +1123,12 @@ components:
       properties:
         type:
           $ref: '#/components/schemas/StorageType'
+        factory:
+          description: The store factory setting.
+          type: string
+        data_locality:
+          description: The store data locality setting.
+          type: string
         allow_mmap:
           description: |-
             Whether memory-mapping is allowed. You can restrict the use of the `mmapfs` and the related `hybridfs` store types with the setting `node.store.allow_mmap`.

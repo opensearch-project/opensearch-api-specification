@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
 - Added `sparse_encoding`, `text_image_embedding`, and `text_chunking` ingest processor schemas with `ChunkingAlgorithm` (`fixed_token_length`, `delimiter`) support, and `neural_sparse` query DSL ([#1191](https://github.com/opensearch-project/opensearch-api-specification/pull/1191))
 - Added OpenAPI Overlay files for distribution-specific API filtering (`overlays/`) and CI validation workflow ([#1218](https://github.com/opensearch-project/opensearch-api-specification/pull/1218))
@@ -98,6 +99,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fix `AggregationContainer`  for all bucket aggregations so that `aggs`/`aggregations` are siblings of the aggregation type([#1069](https://github.com/opensearch-project/opensearch-api-specification/pull/1069))
 
 ### Changed
+- Bumped the `test-tools-integ` workflow OpenSearch version from 2.17.0 to 3.8.0 and updated the tester golden fixtures for the 2.x→3.x version-gate boundary ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Add explicit `style: simple` to 13 path parameters whose schema is an array (or `oneOf` with an array branch) so code generators no longer have to infer the OpenAPI 3 default ([#1134](https://github.com/opensearch-project/opensearch-api-specification/pull/1134))
 - Replace inline `format` query response parameter schemas across cat, list, sql, and ppl operations with typed enums (`CatResponseFormat`, `ListResponseFormat`, `SQLResponseFormat`, `PPLResponseFormat`) in `_common`, including server-truthful `default` values ([#1133](https://github.com/opensearch-project/opensearch-api-specification/pull/1133))
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
@@ -108,6 +110,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Change `MultiTermQueryRewrite` type to string ([#1002](https://github.com/opensearch-project/opensearch-api-specification/pull/1002))
 - Removed `Aggregation` reference from `BucketAggregationBase`, `MetricAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation`; simplified `BucketAggregationBase`, `BucketPathAggregation`, `BucketSortAggregation`, `MatrixAggregation`, `TTestAggregation`, and `WeightedAverageAggregation` by removing unnecessary `allOf` wrapper ([#1067](https://github.com/opensearch-project/opensearch-api-specification/pull/1067))
 - Replace `x-protobuf-type` to `x-protobuf-data-type` ([#1068](https://github.com/opensearch-project/opensearch-api-specification/pull/1068))
+- Bump `test-spec.yml` CI OpenSearch test versions to `3.8.0`, `1.3.20`, and `2.19.6` ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 
 ## [0.2.0] - 2025-05-25
 
