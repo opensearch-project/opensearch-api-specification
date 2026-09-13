@@ -65,6 +65,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `PluginStats` to no longer require `opensearch_version`, which is omitted from `nodes.info` plugin entries in some OpenSearch responses ([#1239](https://github.com/opensearch-project/opensearch-api-specification/pull/1239))
 - Removed incorrect `model_id` from ML `SearchHitsHit`; ML search APIs return a standard search hit and the document ID is `_id` ([#1180](https://github.com/opensearch-project/opensearch-api-specification/issues/1180))
 - Fixed `ml.predict_model` and `ml.predict_model_stream` request body schemas to match `RemoteInferenceMLInput` parser: corrected `parameters` type to `Map<String,String>`, removed incorrect `required` constraints, added `action_type`, `dlq`, `question`, and `context` fields, and added `PredictionActionType` enum ([#1188](https://github.com/opensearch-project/opensearch-api-specification/pull/1188))
 - Fixed stale and malformed OpenSearch documentation links in spec `externalDocs` and schema descriptions ([#1163](https://github.com/opensearch-project/opensearch-api-specification/pull/1163))
