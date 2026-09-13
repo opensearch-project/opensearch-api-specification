@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added `output_format` to the `DateProcessor` ([#1238](https://github.com/opensearch-project/opensearch-api-specification/pull/1238))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
 - Added `sparse_encoding`, `text_image_embedding`, and `text_chunking` ingest processor schemas with `ChunkingAlgorithm` (`fixed_token_length`, `delimiter`) support, and `neural_sparse` query DSL ([#1191](https://github.com/opensearch-project/opensearch-api-specification/pull/1191))
 - Added OpenAPI Overlay files for distribution-specific API filtering (`overlays/`) and CI validation workflow ([#1218](https://github.com/opensearch-project/opensearch-api-specification/pull/1218))
