@@ -1,0 +1,82 @@
+name: Validate Overlays
+
+on:
+  pull_request:
+    paths:
+      - 'overlays/**'
+      - 'spec/**'
+
+jobs:
+  validate:
+    name: Apply and Validate Overlays
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Merge Spec
+        run: npm run merge
+
+      - name: Install speakeasy overlay CLI
+        env:
+          SPEAKEASY_VERSION: v1.796.3
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL \
+            "https://github.com/speakeasy-api/speakeasy/releases/download/${SPEAKEASY_VERSION}/speakeasy_linux_amd64.zip" \
+            -o /tmp/speakeasy.zip
+          unzip -o -q /tmp/speakeasy.zip -d "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/speakeasy"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/speakeasy" --version
+
+      - name: Apply Overlays
+        run: |
+          for overlay in overlays/*.overlay.yaml; do
+            name=$(basename "$overlay" .overlay.yaml)
+            echo "Applying overlay: $name"
+            speakeasy overlay apply \
+              --schema build/opensearch-openapi.yaml \
+              --overlay "$overlay" \
+              > "build/opensearch-openapi-${name}.yaml"
+            echo "  -> build/opensearch-openapi-${name}.yaml"
+          done
+
+      - name: Validate Filtered Specs
+        run: |
+          node -e "
+            const SwaggerParser = require('@apidevtools/swagger-parser');
+            const fs = require('fs');
+            const glob = require('fast-glob');
+
+            async function main() {
+              const files = await glob('build/opensearch-openapi-*.yaml');
+              let failed = false;
+
+              for (const file of files) {
+                process.stdout.write('Validating ' + file + ' ... ');
+                try {
+                  await SwaggerParser.validate(file);
+                  console.log('✅ valid');
+                } catch (err) {
+                  console.log('❌ invalid: ' + err.message);
+                  failed = true;
+                }
+              }
+
+              if (failed) {
+                process.exit(1);
+              }
+            }
+
+            main();
+          "

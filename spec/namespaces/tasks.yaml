@@ -54,6 +54,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/tasks.get@200'
+    delete:
+      operationId: tasks.delete.0
+      x-operation-group: tasks.delete
+      x-version-added: '3.9'
+      description: Deletes a stored completed task result.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/tasks/delete-task/
+      parameters:
+        - $ref: '#/components/parameters/tasks.delete::path.task_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/tasks.delete@200'
   /_tasks/{task_id}/_cancel:
     post:
       operationId: tasks.cancel.1
@@ -79,6 +91,11 @@ components:
         application/json:
           schema:
             $ref: '../schemas/tasks._common.yaml#/components/schemas/TaskListResponseBase'
+    tasks.delete@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     tasks.get@200:
       content:
         application/json:
@@ -141,6 +158,14 @@ components:
         type: boolean
         default: false
       style: form
+    tasks.delete::path.task_id:
+      in: path
+      name: task_id
+      description: The ID of the stored completed task result to delete (`node_id:task_number`).
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
+      style: simple
     tasks.get::path.task_id:
       in: path
       name: task_id
