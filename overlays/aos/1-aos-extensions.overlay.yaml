@@ -1,0 +1,145 @@
+overlay: 1.0.0
+info:
+  title: AOS-only API extensions
+  version: 1.0.0
+extends: ./opensearch-openapi.yaml
+
+# AOS-only endpoints, paired with amazon-managed-block.overlay.yaml (the blocklist).
+# Scope is grounded in the managed-domain boundary allowlist and confirmed against a
+# live domain. Routes the boundary allows but the engine does not implement, verbs the
+# boundary blocks, and paths outside the allowlist are omitted.
+
+actions:
+
+  # --- UltraWarm migration (hot <-> warm <-> cold) ---
+  - target: $.paths
+    description: Add UltraWarm migration endpoints
+    update:
+      /_ultrawarm/migration/_status:
+        get:
+          operationId: ultrawarm.list_status
+          tags: [UltraWarm]
+          description: List all in-progress UltraWarm migrations.
+          responses:
+            '200': {description: Migration status list}
+      '/_ultrawarm/migration/{index}/_status':
+        get:
+          operationId: ultrawarm.get_status
+          tags: [UltraWarm]
+          description: Migration status for a single index.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200': {description: Migration status}
+      '/_ultrawarm/migration/{index}/_warm':
+        post:
+          operationId: ultrawarm.to_warm
+          tags: [UltraWarm]
+          description: Migrate an index from hot to warm storage.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200': {description: Migration accepted}
+      '/_ultrawarm/migration/{index}/_hot':
+        post:
+          operationId: ultrawarm.to_hot
+          tags: [UltraWarm]
+          description: Migrate an index from warm back to hot storage.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200': {description: Migration accepted}
+      '/_ultrawarm/migration/{index}/_cold':
+        post:
+          operationId: ultrawarm.to_cold
+          tags: [UltraWarm]
+          description: >-
+            Migrate a warm index to cold storage. Requires start_time and
+            end_time query parameters bounding the index's data.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+            - {name: start_time, in: query, required: true, schema: {type: string}}
+            - {name: end_time, in: query, required: true, schema: {type: string}}
+          responses:
+            '200': {description: Migration accepted}
+      '/_ultrawarm/migration/_cancel/{index}':
+        post:
+          operationId: ultrawarm.cancel
+          tags: [UltraWarm]
+          description: Cancel an in-progress UltraWarm migration.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200': {description: Cancellation accepted}
+
+  # --- Cold tier read APIs (the two paths the boundary allows) ---
+  - target: $.paths
+    description: Add Cold tier read endpoints
+    update:
+      /_cold/indices/_info:
+        get:
+          operationId: cold.indices_info
+          tags: [Cold Tier]
+          description: >-
+            Information about cold-tier indices. Requires cold storage to be
+            enabled on the domain.
+          responses:
+            '200': {description: Cold indices info}
+      /_cold/stats:
+        get:
+          operationId: cold.stats
+          tags: [Cold Tier]
+          description: >-
+            Cold-tier storage statistics. Requires cold storage to be enabled
+            on the domain.
+          responses:
+            '200': {description: Cold tier stats}
+
+  # --- Security API tokens (live-verified) ---
+  - target: $.paths
+    description: Add security API token endpoints
+    update:
+      /_plugins/_security/api/apitokens:
+        get:
+          operationId: security.list_api_tokens
+          tags: [Security]
+          description: List security API tokens.
+          responses:
+            '200': {description: API token list}
+        post:
+          operationId: security.create_api_token
+          tags: [Security]
+          description: Create a security API token.
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    name: {type: string}
+                    cluster_permissions: {type: array, items: {type: string}}
+                    index_permissions: {type: array, items: {type: object}}
+          responses:
+            '200': {description: API token created}
+      '/_plugins/_security/api/apitokens/{id}':
+        delete:
+          operationId: security.delete_api_token
+          tags: [Security]
+          description: Revoke a security API token.
+          parameters:
+            - {name: id, in: path, required: true, schema: {type: string}}
+          responses:
+            '200': {description: API token revoked}
+
+  # --- PPL grammar (live-verified) ---
+  - target: $.paths
+    description: Add PPL grammar endpoint
+    update:
+      /_plugins/_ppl/_grammar:
+        get:
+          operationId: ppl.grammar
+          tags: [Query DSL]
+          description: Return the PPL grammar definition.
+          responses:
+            '200': {description: PPL grammar definition}
