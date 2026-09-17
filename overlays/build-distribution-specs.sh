@@ -3,8 +3,9 @@
 # Build the per-distribution OpenAPI specs from the merged base + overlays.
 #
 # Produces, under the output dir (default: build/):
-#   opensearch-openapi-oss.yaml   -- the merged base, unmodified
 #   opensearch-openapi-<dist>.yaml for each <overlays>/<dist>/ subfolder
+# The merged base opensearch-openapi.yaml is itself the OSS spec, so no separate
+# OSS copy is produced.
 #
 # Discovers distributions by scanning for immediate subfolders of the overlays
 # directory, so adding a new overlays/<dist>/ folder needs no change here.
@@ -45,10 +46,6 @@ mkdir -p "$OUT_DIR"
 # this run produces (the merged base opensearch-openapi.yaml has no suffix and
 # is left untouched).
 rm -f "$OUT_DIR"/opensearch-openapi-*.yaml
-
-# oss = merged base, unmodified
-cp "$BASE_SPEC" "$OUT_DIR/opensearch-openapi-oss.yaml"
-echo "  -> $OUT_DIR/opensearch-openapi-oss.yaml (base)"
 
 for dist_dir in "$OVERLAYS_DIR"/*/; do
   [ -d "$dist_dir" ] || continue

@@ -27,11 +27,11 @@ overlays/
 
 ## Distribution specs
 
-Applying the overlays produces three specs:
+Applying the overlays produces two per-distribution specs (the merged base
+`build/opensearch-openapi.yaml` is itself the OSS spec):
 
 | Spec | Source |
 |---|---|
-| `build/opensearch-openapi-oss.yaml` | The merged base spec, unmodified. |
 | `build/opensearch-openapi-aos.yaml` | Base + `overlays/aos/` (block, then extensions). |
 | `build/opensearch-openapi-aoss.yaml` | Base + `overlays/aoss/` (block, then extensions). |
 
@@ -40,8 +40,8 @@ Applying the overlays produces three specs:
 The `validate-overlays` workflow runs on every pull request. It:
 
 1. Merges the spec (`npm run merge`).
-2. Runs `overlays/build-distribution-specs.sh`, which copies the merged base to `build/opensearch-openapi-oss.yaml` and, for each `overlays/<dist>/` folder, applies its overlays in filename order (`0-*-block`, then `1-*-extensions`) **one overlay at a time** with the [speakeasy overlay CLI](https://github.com/speakeasy-api/speakeasy), producing `build/opensearch-openapi-<dist>.yaml`.
-3. Validates all three specs are valid OpenAPI documents.
+2. Runs `overlays/build-distribution-specs.sh`, which for each `overlays/<dist>/` folder applies its overlays in filename order (`0-*-block`, then `1-*-extensions`) **one overlay at a time** with the [speakeasy overlay CLI](https://github.com/speakeasy-api/speakeasy), producing `build/opensearch-openapi-<dist>.yaml`.
+3. Validates the specs are valid OpenAPI documents.
 
 This catches overlay targets that reference renamed or removed paths.
 
