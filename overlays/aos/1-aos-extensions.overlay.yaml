@@ -152,7 +152,7 @@ actions:
         get:
           operationId: security.list_api_tokens
           tags: [Security]
-          description: List security API tokens.
+          description: List security API tokens (metadata only; the token secret is never returned here).
           responses:
             '200':
               description: API token list.
@@ -160,11 +160,23 @@ actions:
                 application/json:
                   schema:
                     type: array
-                    items: {type: object}
+                    items:
+                      type: object
+                      properties:
+                        id: {type: string}
+                        name: {type: string}
+                        issued_at: {type: integer, format: int64, description: Creation time in epoch milliseconds.}
+                        expiration: {type: integer, format: int64, description: Expiration time in epoch milliseconds.}
+                        cluster_permissions: {type: array, items: {type: string}}
+                        index_permissions: {type: array, items: {type: object}}
+                        revoked_at: {type: integer, format: int64, description: Revocation time in epoch milliseconds (present only if revoked).}
+                        created_by: {type: string}
         post:
           operationId: security.create_api_token
           tags: [Security]
-          description: Create a security API token.
+          description: >-
+            Create a security API token. The response returns the token secret ONCE at
+            creation; it is not retrievable afterward.
           requestBody:
             required: true
             content:
@@ -175,12 +187,17 @@ actions:
                     name: {type: string}
                     cluster_permissions: {type: array, items: {type: string}}
                     index_permissions: {type: array, items: {type: object}}
+                    duration_seconds: {type: integer, format: int64}
           responses:
             '200':
-              description: API token created.
+              description: API token created. Returns the id and the token secret (shown only once).
               content:
                 application/json:
-                  schema: {type: object}
+                  schema:
+                    type: object
+                    properties:
+                      id: {type: string}
+                      token: {type: string, description: The API token secret. Returned only at creation; store it securely.}
       '/_plugins/_security/api/apitokens/{id}':
         delete:
           operationId: security.delete_api_token
@@ -193,7 +210,10 @@ actions:
               description: API token revoked.
               content:
                 application/json:
-                  schema: {type: object}
+                  schema:
+                    type: object
+                    properties:
+                      message: {type: string}
 
   # --- PPL grammar (live-verified) ---
   - target: $.paths
