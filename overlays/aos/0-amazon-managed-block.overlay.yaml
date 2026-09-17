@@ -1,7 +1,17 @@
 overlay: 1.0.0
 info:
   title: Amazon OpenSearch Service (Managed) - API Surface Overlay
-  version: 2026.09.02
+  version: 2026.09.17
+extends: ./opensearch-openapi.yaml
+
+# The API-surface filter for Amazon OpenSearch Service managed domains: removes the
+# paths/methods a managed domain does not expose. Applied first, before
+# 1-aos-extensions.overlay.yaml.
+#
+# Scope is grounded in the managed-domain boundary allowlist and confirmed against a
+# live managed domain: every removed operation is rejected at the boundary, and the
+# operations left in place are reachable. Where only some methods on a path are
+# removed, the remaining methods stay available (e.g. GET /_plugins/_query/_datasources).
 actions:
   - target: $.paths['/_cache/clear']
     remove: true
@@ -14,6 +24,12 @@ actions:
   - target: $.paths['/_cluster/decommission/awareness/{awareness_attribute_name}/{awareness_attribute_value}']
     remove: true
   - target: $.paths['/_cluster/nodes/hot_threads']
+    remove: true
+  - target: $.paths['/_cluster/nodes/hotthreads']
+    remove: true
+  - target: $.paths['/_cluster/nodes/{node_id}/hot_threads']
+    remove: true
+  - target: $.paths['/_cluster/nodes/{node_id}/hotthreads']
     remove: true
   - target: $.paths['/_cluster/reroute']
     remove: true
@@ -31,6 +47,42 @@ actions:
     remove: true
   - target: $.paths['/_ingest/processor/grok']
     remove: true
+  - target: $.paths['/_opendistro/_security/api/migrate']
+    remove: true
+  - target: $.paths['/_opendistro/_security/api/securityconfig'].patch
+    remove: true
+  - target: $.paths['/_opendistro/_security/api/securityconfig/config']
+    remove: true
+  - target: $.paths['/_opendistro/_security/api/ssl/certs']
+    remove: true
+  - target: $.paths['/_opendistro/_security/api/validate']
+    remove: true
+  - target: $.paths['/_opendistro/_security/tenantinfo']
+    remove: true
+  - target: $.paths['/_plugins/_query/_datasources'].post
+    remove: true
+  - target: $.paths['/_plugins/_query/_datasources'].put
+    remove: true
+  - target: $.paths['/_plugins/_query/_datasources/{datasource_name}'].delete
+    remove: true
+  - target: $.paths['/_plugins/_security/api/migrate']
+    remove: true
+  - target: $.paths['/_plugins/_security/api/securityconfig'].patch
+    remove: true
+  - target: $.paths['/_plugins/_security/api/securityconfig/config']
+    remove: true
+  - target: $.paths['/_plugins/_security/api/ssl/certs']
+    remove: true
+  - target: $.paths['/_plugins/_security/api/validate']
+    remove: true
+  - target: $.paths['/_plugins/_security/tenantinfo']
+    remove: true
+  - target: $.paths['/_plugins/_security/whoami']
+    remove: true
+  - target: $.paths['/_plugins/_security/whoamiprotected']
+    remove: true
+  - target: $.paths['/_plugins/ubi/initialize']
+    remove: true
   - target: $.paths['/_rank_eval']
     remove: true
   - target: $.paths['/_remotestore/_restore']
@@ -39,12 +91,12 @@ actions:
     remove: true
   - target: $.paths['/_script_language']
     remove: true
-  - target: $.paths['/_search_shards']
-    remove: true
   - target: $.paths['/_segments']
     remove: true
   - target: $.paths['/_settings']
     remove: true
-  - target: $.paths['/{index}/_segments']
+  - target: $.paths['/_settings/{name}']
     remove: true
-# Total: 22 remove actions
+  - target: $.paths['/_upgrade']
+    remove: true
+# Total: 43 remove actions (52 operations across 825; 773 remain reachable)
