@@ -45,23 +45,29 @@ actions:
           description: Migration status for a single index.
           parameters:
             - {name: index, in: path, required: true, schema: {type: string}}
-            - {name: v, in: query, schema: {type: boolean}, description: Include column headers in the text response.}
-            - {name: format, in: query, schema: {type: string}, description: 'Response format, e.g. json.'}
           responses:
             '200':
               description: Migration status.
               content:
-                text/plain:
-                  schema: {type: string}
                 application/json:
                   schema:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        index: {type: string}
-                        migration_type: {type: string}
-                        state: {type: string}
+                    type: object
+                    properties:
+                      migration_status:
+                        type: object
+                        properties:
+                          index: {type: string}
+                          state: {type: string}
+                          migration_type: {type: string}
+                          shard_level_status:
+                            type: object
+                            properties:
+                              pending: {type: integer}
+                              running: {type: integer}
+                              succeeded: {type: integer}
+                              failed: {type: integer}
+                              total: {type: integer}
+                          failure_reason: {type: string}
       '/_ultrawarm/migration/{index}/_warm':
         post:
           operationId: ultrawarm.to_warm
@@ -114,6 +120,13 @@ actions:
                     type: object
                     properties:
                       acknowledged: {type: boolean}
+                      failed_indices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            index: {type: string}
+                            error: {type: string}
       '/_ultrawarm/migration/_cancel/{index}':
         post:
           operationId: ultrawarm.cancel
