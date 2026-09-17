@@ -52,9 +52,11 @@ jobs:
       - name: Stage site files
         run: |
           cp build/opensearch-openapi.yaml ./opensearch-openapi.yaml
-          cp build/opensearch-openapi-oss.yaml ./opensearch-openapi-oss.yaml
-          cp build/opensearch-openapi-aos.yaml ./opensearch-openapi-aos.yaml
-          cp build/opensearch-openapi-aoss.yaml ./opensearch-openapi-aoss.yaml
+          # Publish every distribution spec the overlay build produced, so adding a
+          # new overlays/<dist>/ folder needs no change here.
+          for f in build/opensearch-openapi-*.yaml; do
+            cp "$f" "./$(basename "$f")"
+          done
           curl -SfL https://github.com/opensearch-project/opensearch-api-specification/archive/refs/heads/main.zip -o main-latest.zip
 
       - name: Upload Artifacts
