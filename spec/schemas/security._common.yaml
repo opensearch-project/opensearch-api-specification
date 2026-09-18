@@ -815,3 +815,87 @@ components:
       type: object
       additionalProperties:
         type: string
+
+    ApiKeyIndexPermission:
+      type: object
+      properties:
+        index_pattern:
+          type: array
+          items:
+            type: string
+        allowed_actions:
+          type: array
+          items:
+            type: string
+      required:
+        - allowed_actions
+        - index_pattern
+
+    ApiKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        iat:
+          type: integer
+          format: int64
+        expires_at:
+          type: integer
+          format: int64
+        cluster_permissions:
+          type: array
+          items:
+            type: string
+        index_permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKeyIndexPermission'
+        revoked_at:
+          type: integer
+          format: int64
+        created_by:
+          type: string
+
+    ApiKeyCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: A unique name for the API key.
+        cluster_permissions:
+          type: array
+          items:
+            type: string
+        index_permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKeyIndexPermission'
+        duration_seconds:
+          type: integer
+          format: int64
+          description: Duration in seconds until the key expires.
+      required:
+        - name
+
+    ApiKeyCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the key (used for revocation).
+        token:
+          type: string
+          description: The plaintext API key. Only returned once at creation time.
+
+    ApiKeyListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/ApiKey'
+
+    ApiKeyRevokeResponse:
+      type: object
+      properties:
+        message:
+          type: string
