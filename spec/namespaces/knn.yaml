@@ -290,7 +290,23 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
+              - type: object
+                properties:
+                  _shards:
+                    type: object
+                    properties:
+                      skip_reasons:
+                        description: |-
+                          Distinct reasons why the warmup was skipped for at least one shard.
+                          Returned only when at least one shard was skipped. Supported values are
+                          `warm_tier_index` (the shard belongs to a warm-tier index) and
+                          `lucene_engine` (all k-NN fields of the shard use the Lucene engine, for
+                          which warmup is a no-op).
+                        type: array
+                        items:
+                          type: string
   parameters:
     knn.delete_model::path.model_id:
       name: model_id
