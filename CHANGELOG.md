@@ -93,6 +93,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed Terms aggregation response schemas: corrected field name `doc_count_error` to `doc_count_error_upper_bound`, simplified buckets to array-only, added nested aggregations support, and added missing `UnsignedLongTermsAggregate` ([#1063](https://github.com/opensearch-project/opensearch-api-specification/pull/1063))
 - Fixed partition field formats in `TermsPartition` from int64 to int32 and removed `x-protobuf-excluded` from order field in aggregations schema ([#1065](https://github.com/opensearch-project/opensearch-api-specification/pull/1065))
 - Fix `AggregationContainer`  for all bucket aggregations so that `aggs`/`aggregations` are siblings of the aggregation type([#1069](https://github.com/opensearch-project/opensearch-api-specification/pull/1069))
+- Fixed `ExplainAnalyzeToken` schema by removing `termFrequency` from the required array to resolve deserialization errors when using the `_analyze` API with `explain: true` ([#1229](https://github.com/opensearch-project/opensearch-api-specification/pull/1229))
 
 ### Changed
 - Add explicit `style: simple` to 13 path parameters whose schema is an array (or `oneOf` with an array branch) so code generators no longer have to infer the OpenAPI 3 default ([#1134](https://github.com/opensearch-project/opensearch-api-specification/pull/1134))
