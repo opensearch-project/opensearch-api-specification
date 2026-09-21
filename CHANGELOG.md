@@ -9,6 +9,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 
 - Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` and made `model_id` optional so the model id can be resolved from cluster settings ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))
+- Added an OpenAPI `tags` field to every operation, assigned by semantic domain (e.g. `Document`, `Search`, `Reindex`, `Aliases`, `Index Templates`, `Data Streams`, `Snapshot Policies`), plus a top-level `tags` section declaring and describing each of the 44 groups, for documentation-renderer sidebar navigation ([#1242](https://github.com/opensearch-project/opensearch-api-specification/pull/1242))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
 - Added `sparse_encoding`, `text_image_embedding`, and `text_chunking` ingest processor schemas with `ChunkingAlgorithm` (`fixed_token_length`, `delimiter`) support, and `neural_sparse` query DSL ([#1191](https://github.com/opensearch-project/opensearch-api-specification/pull/1191))
 - Added OpenAPI Overlay files for distribution-specific API filtering (`overlays/`) and CI validation workflow ([#1218](https://github.com/opensearch-project/opensearch-api-specification/pull/1218))
