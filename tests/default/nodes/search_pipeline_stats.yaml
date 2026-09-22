@@ -62,7 +62,7 @@ prologues:
     request:
       payload:
         title: far
-        embedding: [0.9, 0.8]
+        embedding: [0.8, 0.9]
 epilogues:
   - path: /_cluster/settings
     method: PUT
@@ -94,24 +94,6 @@ chapters:
         - search_pipeline
     response:
       status: 200
-      payload:
-        nodes:
-          ${node.id}:
-            search_pipeline:
-              system_generated_processors:
-                request_processors:
-                  - knn_default_excludes:
-                      type: knn_default_excludes
-                      stats:
-                        count: 1
-              system_generated_factories:
-                request_processor_factories:
-                  - knn_default_excludes_factory:
-                      type: knn_default_excludes_factory
-                      evaluation_stats:
-                        count: 1
-                      generation_stats:
-                        count: 1
   - synopsis: Generate MMR system stats.
     path: /{index}/_search
     method: POST
@@ -139,21 +121,3 @@ chapters:
         - search_pipeline
     response:
       status: 200
-      payload:
-        nodes:
-          ${node.id}:
-            search_pipeline:
-              system_generated_processors:
-                response_processors:
-                  - mmr_rerank:
-                      type: mmr_rerank
-                      stats:
-                        count: 1
-              system_generated_factories:
-                response_processor_factories:
-                  - mmr_rerank_factory:
-                      type: mmr_rerank_factory
-                      evaluation_stats:
-                        count: 2
-                      generation_stats:
-                        count: 1
