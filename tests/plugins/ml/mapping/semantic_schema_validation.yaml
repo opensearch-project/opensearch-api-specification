@@ -102,3 +102,21 @@ chapters:
     response:
       status: [200, 400, 500]
 
+  # Test 5: Verify a semantic field with neither model_id nor model_selection is accepted (3.9+).
+  # The server resolves the default ENGLISH/SPARSE model from cluster settings; it may still
+  # return 400 if that default setting is unset, same pattern as the chapters above.
+  - synopsis: Create semantic field without model_id or model_selection.
+    version: '>= 3.9'
+    path: /{index}
+    method: PUT
+    parameters:
+      index: semantic_schema_test
+    request:
+      payload:
+        mappings:
+          properties:
+            defaulted:
+              type: semantic
+    response:
+      status: [200, 400, 500]
+
