@@ -1,0 +1,159 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test system-generated search pipeline stats.
+version: '>= 3.3'
+warnings:
+  multiple-paths-detected: false
+  invalid-path-detected: false
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          cluster.search.enabled_system_generated_factories:
+            - knn_default_excludes_factory
+            - mmr_over_sample_factory
+            - mmr_rerank_factory
+  - id: node
+    path: /_cat/nodes
+    method: GET
+    parameters:
+      full_id: true
+      size: 1
+      format: json
+      h: id
+    output:
+      id: payload[0].id
+  - path: /system-generated-stats
+    method: PUT
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            embedding:
+              type: knn_vector
+              dimension: 2
+            title:
+              type: keyword
+  - path: /system-generated-stats/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: example
+        embedding: [0.1, 0.2]
+  - path: /system-generated-stats/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: near
+        embedding: [0.11, 0.21]
+  - path: /system-generated-stats/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: far
+        embedding: [0.9, 0.8]
+epilogues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        transient:
+          cluster.search.enabled_system_generated_factories: []
+  - path: /system-generated-stats
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Generate k-NN vector-exclusion system stats.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: system-generated-stats
+    request:
+      payload:
+        query:
+          match_all: {}
+    response:
+      status: 200
+  - synopsis: Get non-empty k-NN system-generated request stats.
+    path: /_nodes/{node_id}/stats/{metric}
+    method: GET
+    parameters:
+      node_id: ${node.id}
+      metric:
+        - search_pipeline
+    response:
+      status: 200
+      payload:
+        nodes:
+          ${node.id}:
+            search_pipeline:
+              system_generated_processors:
+                request_processors:
+                  - knn_default_excludes:
+                      type: knn_default_excludes
+                      stats:
+                        count: 1
+              system_generated_factories:
+                request_processor_factories:
+                  - knn_default_excludes_factory:
+                      type: knn_default_excludes_factory
+                      evaluation_stats:
+                        count: 1
+                      generation_stats:
+                        count: 1
+  - synopsis: Generate MMR system stats.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: system-generated-stats
+    request:
+      payload:
+        size: 2
+        query:
+          knn:
+            embedding:
+              vector: [0.1, 0.2]
+              k: 3
+        ext:
+          mmr:
+            diversity: 0.5
+    response:
+      status: 200
+  - synopsis: Get non-empty MMR system-generated response stats.
+    path: /_nodes/{node_id}/stats/{metric}
+    method: GET
+    parameters:
+      node_id: ${node.id}
+      metric:
+        - search_pipeline
+    response:
+      status: 200
+      payload:
+        nodes:
+          ${node.id}:
+            search_pipeline:
+              system_generated_processors:
+                response_processors:
+                  - mmr_rerank:
+                      type: mmr_rerank
+                      stats:
+                        count: 1
+              system_generated_factories:
+                response_processor_factories:
+                  - mmr_rerank_factory:
+                      type: mmr_rerank_factory
+                      evaluation_stats:
+                        count: 2
+                      generation_stats:
+                        count: 1
