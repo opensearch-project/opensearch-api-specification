@@ -1006,6 +1006,25 @@ components:
           default: false
       required:
         - type
+      # A semantic field requires at least one of model_id or model_selection.
+      # neural-search rejects a field with neither ("model_id is required"). The anyOf is
+      # wrapped in allOf so the spec tester does not inject unevaluatedProperties into the
+      # branches (which would reject sibling properties like `type`).
+      allOf:
+        - anyOf:
+            - type: object
+              properties:
+                model_id:
+                  type: string
+              required:
+                - model_id
+            - type: object
+              x-version-added: '3.9'
+              properties:
+                model_selection:
+                  $ref: '#/components/schemas/SemanticModelSelection'
+              required:
+                - model_selection
     ShortNumberProperty:
       allOf:
         - $ref: '#/components/schemas/NumberPropertyBase'
