@@ -311,11 +311,32 @@ components:
                     $ref: '#/components/schemas/NodeIndexShardStats'
                   minProperties: 1
                   maxProperties: 1
+            status_counter:
+              $ref: '#/components/schemas/NodeIndicesStatusCounter'
     NodeIndexShardStats:
       allOf:
         - $ref: 'indices.stats.yaml#/components/schemas/IndexShardStatsBase'
         - type: object
           properties: { }
+    NodeIndicesStatusCounter:
+      type: object
+      properties:
+        doc_status:
+          $ref: '#/components/schemas/StatusCounterStats'
+        search_response_status:
+          $ref: '#/components/schemas/StatusCounterStats'
+    StatusCounterStats:
+      type: object
+      properties:
+        success:
+          type: integer
+          format: int64
+        user_error:
+          type: integer
+          format: int64
+        system_failure:
+          type: integer
+          format: int64
     RemoteStoreStats:
       type: object
       properties:
@@ -379,6 +400,10 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/ShardSearchPipelinePerPipelineStats'
+        system_generated_processors:
+          $ref: '#/components/schemas/ShardSearchPipelineSystemGeneratedProcessors'
+        system_generated_factories:
+          $ref: '#/components/schemas/ShardSearchPipelineSystemGeneratedFactories'
     ShardSearchPipelinePerPipelineStats:
       type: object
       properties:
@@ -389,7 +414,14 @@ components:
         request_processors:
           type: array
           items:
-            $ref: '#/components/schemas/ShardSearchPipelinePerPipelineProcessorStats'
+            type: object
+            propertyNames:
+              title: processor_name
+              type: string
+            additionalProperties:
+              $ref: '#/components/schemas/ShardSearchPipelinePerPipelineProcessorStats'
+            minProperties: 1
+            maxProperties: 1
         response_processors:
           type: array
           items:
@@ -408,6 +440,55 @@ components:
           type: string
         stats:
           $ref: '#/components/schemas/ShardSearchPipelineOperationStats'
+    ShardSearchPipelineSystemGeneratedProcessors:
+      type: object
+      properties:
+        request_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardSearchPipelineProcessorStatsByName'
+        response_processors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardSearchPipelineProcessorStatsByName'
+    ShardSearchPipelineProcessorStatsByName:
+      type: object
+      propertyNames:
+        title: processor_name
+        type: string
+      additionalProperties:
+        $ref: '#/components/schemas/ShardSearchPipelinePerPipelineProcessorStats'
+      minProperties: 1
+      maxProperties: 1
+    ShardSearchPipelineSystemGeneratedFactories:
+      type: object
+      properties:
+        request_processor_factories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardSearchPipelineFactoryStatsByType'
+        response_processor_factories:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardSearchPipelineFactoryStatsByType'
+    ShardSearchPipelineFactoryStatsByType:
+      type: object
+      propertyNames:
+        title: factory_type
+        type: string
+      additionalProperties:
+        $ref: '#/components/schemas/ShardSearchPipelineFactoryStats'
+      minProperties: 1
+      maxProperties: 1
+    ShardSearchPipelineFactoryStats:
+      type: object
+      properties:
+        type:
+          type: string
+        evaluation_stats:
+          $ref: '#/components/schemas/ShardSearchPipelineOperationStats'
+        generation_stats:
+          $ref: '#/components/schemas/ShardSearchPipelineOperationStats'
     ShardSearchPipelineOperationStats:
       type: object
       properties:
@@ -418,6 +499,9 @@ components:
           $ref: '_common.yaml#/components/schemas/Duration'
         time_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        time_in_micros:
+          type: integer
+          format: int64
         current:
           type: integer
           format: int64
@@ -436,6 +520,8 @@ components:
         cpu_utilization_percent:
           $ref: '_common.yaml#/components/schemas/PercentageString'
         memory_utilization_percent:
+          $ref: '_common.yaml#/components/schemas/PercentageString'
+        native_memory_utilization_percent:
           $ref: '_common.yaml#/components/schemas/PercentageString'
         io_usage_stats:
           $ref: '#/components/schemas/ShardResourceUsageStatsIoUsageStats'
@@ -505,6 +591,8 @@ components:
         global_io_usage:
           $ref: '#/components/schemas/UsageStats'
         global_cpu_usage:
+          $ref: '#/components/schemas/UsageStats'
+        global_native_memory_usage:
           $ref: '#/components/schemas/UsageStats'
     UsageStats:
       type: object

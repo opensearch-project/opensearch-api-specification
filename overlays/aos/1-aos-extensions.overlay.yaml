@@ -1,0 +1,251 @@
+overlay: 1.0.0
+info:
+  title: AOS-only API extensions
+  version: 1.0.0
+extends: ./opensearch-openapi.yaml
+
+# AOS-only endpoints, paired with amazon-managed-block.overlay.yaml (the blocklist).
+# Scope is grounded in the managed-domain boundary allowlist and confirmed against a
+# live domain. Routes the boundary allows but the engine does not implement, verbs the
+# boundary blocks, and paths outside the allowlist are omitted.
+
+actions:
+
+  # --- UltraWarm migration (hot <-> warm <-> cold) ---
+  - target: $.paths
+    description: Add UltraWarm migration endpoints
+    update:
+      /_ultrawarm/migration/_status:
+        get:
+          operationId: ultrawarm.list_status
+          tags: [UltraWarm]
+          description: List all in-progress UltraWarm migrations.
+          parameters:
+            - {name: v, in: query, schema: {type: boolean}, description: Include column headers in the text response.}
+            - {name: format, in: query, schema: {type: string}, description: 'Response format, e.g. json.'}
+          responses:
+            '200':
+              description: Migration status list.
+              content:
+                text/plain:
+                  schema: {type: string}
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        index: {type: string}
+                        migration_type: {type: string}
+                        state: {type: string}
+      '/_ultrawarm/migration/{index}/_status':
+        get:
+          operationId: ultrawarm.get_status
+          tags: [UltraWarm]
+          description: Migration status for a single index.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration status.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      migration_status:
+                        type: object
+                        properties:
+                          index: {type: string}
+                          state: {type: string}
+                          migration_type: {type: string}
+                          shard_level_status:
+                            type: object
+                            properties:
+                              pending: {type: integer}
+                              running: {type: integer}
+                              succeeded: {type: integer}
+                              failed: {type: integer}
+                              total: {type: integer}
+                          failure_reason: {type: string}
+      '/_ultrawarm/migration/{index}/_warm':
+        post:
+          operationId: ultrawarm.to_warm
+          tags: [UltraWarm]
+          description: Migrate an index from hot to warm storage.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+      '/_ultrawarm/migration/{index}/_hot':
+        post:
+          operationId: ultrawarm.to_hot
+          tags: [UltraWarm]
+          description: Migrate an index from warm back to hot storage.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+      '/_ultrawarm/migration/{index}/_cold':
+        post:
+          operationId: ultrawarm.to_cold
+          tags: [UltraWarm]
+          description: >-
+            Migrate a warm index to cold storage. Requires start_time and
+            end_time query parameters bounding the index's data.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+            - {name: start_time, in: query, required: true, schema: {type: string}}
+            - {name: end_time, in: query, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+                      failed_indices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            index: {type: string}
+                            error: {type: string}
+      '/_ultrawarm/migration/_cancel/{index}':
+        post:
+          operationId: ultrawarm.cancel
+          tags: [UltraWarm]
+          description: Cancel an in-progress UltraWarm migration.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Cancellation accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+
+  # --- Security API tokens (live-verified) ---
+  - target: $.paths
+    description: Add security API token endpoints
+    update:
+      /_plugins/_security/api/apitokens:
+        get:
+          operationId: security.list_api_tokens
+          tags: [Security]
+          description: List security API tokens (metadata only; the token secret is never returned here).
+          responses:
+            '200':
+              description: API token list.
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: {type: string}
+                        name: {type: string}
+                        issued_at: {type: integer, format: int64, description: Creation time in epoch milliseconds.}
+                        expiration: {type: integer, format: int64, description: Expiration time in epoch milliseconds.}
+                        cluster_permissions: {type: array, items: {type: string}}
+                        index_permissions: {type: array, items: {type: object}}
+                        revoked_at: {type: integer, format: int64, description: Revocation time in epoch milliseconds (present only if revoked).}
+                        created_by: {type: string}
+        post:
+          operationId: security.create_api_token
+          tags: [Security]
+          description: >-
+            Create a security API token. The response returns the token secret ONCE at
+            creation; it is not retrievable afterward.
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    name: {type: string}
+                    cluster_permissions: {type: array, items: {type: string}}
+                    index_permissions: {type: array, items: {type: object}}
+                    duration_seconds: {type: integer, format: int64}
+          responses:
+            '200':
+              description: API token created. Returns the id and the token secret (shown only once).
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      id: {type: string}
+                      token: {type: string, description: The API token secret. Returned only at creation; store it securely.}
+      '/_plugins/_security/api/apitokens/{id}':
+        delete:
+          operationId: security.delete_api_token
+          tags: [Security]
+          description: Revoke a security API token.
+          parameters:
+            - {name: id, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: API token revoked.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Token <id> revoked successfully.
+
+  # --- PPL grammar (live-verified) ---
+  - target: $.paths
+    description: Add PPL grammar endpoint
+    update:
+      /_plugins/_ppl/_grammar:
+        get:
+          operationId: ppl.grammar
+          tags: [Query DSL]
+          description: Return the PPL grammar definition.
+          responses:
+            '200':
+              description: PPL grammar definition.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      bundleVersion: {type: string}
+                      antlrVersion: {type: string}
+                      grammarHash: {type: string}
+                      startRuleIndex: {type: integer}
+                      lexerSerializedATN: {type: array, items: {type: integer}}
+                      lexerRuleNames: {type: array, items: {type: string}}
+                      channelNames: {type: array, items: {type: string}}
+                      modeNames: {type: array, items: {type: string}}
+                      parserSerializedATN: {type: array, items: {type: integer}}
+                      parserRuleNames: {type: array, items: {type: string}}
+                      literalNames: {type: array, items: {type: string, nullable: true}}
+                      symbolicNames: {type: array, items: {type: string, nullable: true}}
+                      tokenDictionary: {type: object}
+                      ignoredTokens: {type: array, items: {type: integer}}
+                      rulesToVisit: {type: array, items: {type: integer}}
