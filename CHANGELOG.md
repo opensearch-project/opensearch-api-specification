@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added `skip_existing` to the text embedding ingest processor ([#1254](https://github.com/opensearch-project/opensearch-api-specification/pull/1254))
 - Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Added an OpenAPI `tags` field to every operation, assigned by semantic domain (e.g. `Document`, `Search`, `Reindex`, `Aliases`, `Index Templates`, `Data Streams`, `Snapshot Policies`), plus a top-level `tags` section declaring and describing each of the 44 groups, for documentation-renderer sidebar navigation ([#1242](https://github.com/opensearch-project/opensearch-api-specification/pull/1242))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
