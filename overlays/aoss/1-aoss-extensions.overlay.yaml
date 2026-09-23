@@ -9,6 +9,29 @@ info:
 extends: ./opensearch-openapi.yaml
 
 actions:
+  - target: $.info
+    description: Set the AOSS document title and getting-started overview
+    update:
+      title: Amazon OpenSearch Serverless API Reference
+      description: |-
+        REST API reference for **Amazon OpenSearch Serverless**.
+
+        This surface is limited to the customer-facing data-plane API supported by Serverless collections; cluster- and node-level operations that do not apply to Serverless are removed.
+
+        Code samples use the official OpenSearch client libraries.
+
+        ## Getting started
+
+        1. **Create a collection** — in the AWS Console or with the AWS CLI (`aws opensearchserverless create-collection`); pick a collection type (Search, Time series, or Vector search).
+        2. **Attach policies** — an encryption policy, a network policy, and a data access policy that grants your IAM principal access to the collection.
+        3. **Get the collection endpoint** — your collection's endpoint, e.g. `https://<id>.<region>.aoss.amazonaws.com`.
+        4. **Authenticate** — sign requests with AWS SigV4 (IAM, service name `aoss`); Serverless does not use HTTP basic auth.
+        5. **Call the API** — every operation below includes a ready-to-run SigV4-signed request for curl and each official OpenSearch client.
+
+  # as a distribution doc badge. Scalar renders it as a "v0.3.0" chip otherwise.
+  - target: $.info.version
+    remove: true
+
   # 1. Remove the write-op `refresh` param (AOSS rejects every explicit value).
   - target: '$.paths[*][*].parameters[?(@.$ref =~ /query\.refresh$/)]'
     remove: true
@@ -21,6 +44,66 @@ actions:
   - target: "$.components.schemas['indices._common___IndexSettings'].properties.number_of_shards"
     remove: true
   - target: "$.components.schemas['indices._common___IndexSettings'].properties.number_of_replicas"
+    remove: true
+
+  # 2b. Remove top-level tag groups left empty after the block overlay strips
+  # unsupported APIs (Scalar has no hide-empty-tags option). Keep in sync if the
+  # API surface changes.
+  - target: "$.tags[?(@.name == 'Data Streams')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Reindex')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Script')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Info')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Cluster')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Nodes')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Tasks')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'List')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Snapshot Policies')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Remote Store')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Dangling Indices')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Pull-Based Ingestion')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Cross-Cluster Replication')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Index State Management')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Workload Management')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Query Insights')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Query Data Sources')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Security')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Security Analytics')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Neural Search')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'k-NN')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Search Relevance')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Learning to Rank')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Asynchronous Search')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Geospatial')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Notifications')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Observability')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'User Behavior Insights')]"
     remove: true
 
   # 3. Add V2 data-lifecycle index settings.

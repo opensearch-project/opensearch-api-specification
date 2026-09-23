@@ -10,6 +10,28 @@ extends: ./opensearch-openapi.yaml
 # boundary blocks, and paths outside the allowlist are omitted.
 
 actions:
+  - target: $.info
+    description: Set the AOS document title and getting-started overview
+    update:
+      title: Amazon OpenSearch Service API Reference
+      description: |-
+        REST API reference for **Amazon OpenSearch Service**, the managed OpenSearch offering.
+
+        This surface is the OpenSearch REST API with managed-service restrictions applied — operations unavailable on the managed service are removed, and the **UltraWarm** and **Cold Tier** storage operations are added.
+
+        Code samples use the official OpenSearch client libraries.
+
+        ## Getting started
+
+        1. **Create a domain** — in the AWS Console, with the AWS CLI (`aws opensearch create-domain`), or via CDK / CloudFormation.
+        2. **Get the domain endpoint** — your domain's *Domain endpoint*, e.g. `https://search-<name>-<id>.<region>.es.amazonaws.com`.
+        3. **Authenticate** — sign requests with AWS SigV4 (IAM, service name `es`), or use HTTP basic auth if fine-grained access control is enabled on the domain.
+        4. **Call the API** — every operation below includes a ready-to-run request for curl and each official OpenSearch client, using whichever auth method you configured.
+
+  # Drop info.version (the repo's own spec version, e.g. "0.3.0"): meaningless
+  # as a distribution doc badge. Scalar renders it as a "v0.3.0" chip otherwise.
+  - target: $.info.version
+    remove: true
 
   # --- UltraWarm migration (hot <-> warm <-> cold) ---
   - target: $.paths
