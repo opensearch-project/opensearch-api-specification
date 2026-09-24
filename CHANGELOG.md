@@ -7,6 +7,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for Search Relevance Workbench plugin for scheduling endpoints ([#967](https://github.com/opensearch-project/opensearch-api-specification/pull/967))
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
+### Fixed
+
+- Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
+
 ### Added
 
 - Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
