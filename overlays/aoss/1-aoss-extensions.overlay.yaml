@@ -28,9 +28,11 @@ actions:
         4. **Authenticate** — sign requests with AWS SigV4 (IAM, service name `aoss`); Serverless does not use HTTP basic auth.
         5. **Call the API** — every operation below includes a ready-to-run SigV4-signed request for curl and each official OpenSearch client.
 
-  # as a distribution doc badge. Scalar renders it as a "v0.3.0" chip otherwise.
+  # OpenAPI 3.x requires info.version -- it cannot be removed. Override the
+  # repo's own spec version (e.g. "0.3.0"), which is meaningless as a
+  # distribution doc badge, with a distribution-scoped label instead.
   - target: $.info.version
-    remove: true
+    update: serverless
 
   # 1. Remove the write-op `refresh` param (AOSS rejects every explicit value).
   - target: '$.paths[*][*].parameters[?(@.$ref =~ /query\.refresh$/)]'
