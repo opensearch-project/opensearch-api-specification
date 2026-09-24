@@ -69,7 +69,7 @@ enrich_dist() {
     return
   fi
   local tagged="$OUT_DIR/opensearch-openapi-${dist}-tagged.yaml"
-  npm run --silent docs:enrich -- "$src" "$tagged"
+  (cd "$REPO_ROOT" && npm run --silent docs:enrich -- "$src" "$tagged")
 }
 
 # Remove any prior distribution outputs so a later wildcard picks up only what

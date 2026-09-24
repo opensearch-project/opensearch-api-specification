@@ -108,9 +108,11 @@
         const isDark = () => document.querySelector('.dark-mode') !== null;
         const syncIcon = () => document.body.classList.toggle('banner-dark', isDark());
 
-        // watches childList too: Scalar may insert a node already dark-moded
+        // Watch for class changes anywhere in the tree (Scalar may apply
+        // dark-mode to a nested node), but skip childList mutations -- those
+        // fire on every SPA render and syncIcon only cares about class changes.
         new MutationObserver(syncIcon).observe(document.documentElement, {
-          subtree: true, childList: true, attributes: true, attributeFilter: ['class'],
+          subtree: true, attributes: true, attributeFilter: ['class'],
         });
 
         const scalarToggle = () =>

@@ -256,8 +256,8 @@ const go_sample: Renderer = (method, path, has_body) => {
 
 const go_sample_sigv4: Renderer = (method, path, has_body) => {
   // opensearch-go v2: signer/awsv2 request signer, backed by aws-sdk-go-v2's
-  // default credential chain. NewSigner has no explicit service param -- it
-  // signs for whatever service name the caller configures on the SDK config.
+  // default credential chain. NewSignerWithService sets the SigV4 service name
+  // explicitly ("aoss" for OpenSearch Serverless, "es" for managed domains).
   const imports = ['\t"context"', '\t"net/http"']
   if (has_body) imports.push('\t"strings"')
   imports.push(
@@ -270,7 +270,7 @@ const go_sample_sigv4: Renderer = (method, path, has_body) => {
   return (
     'import (\n' + imports.join('\n') + '\n)\n\n' +
     'cfg, _ := config.LoadDefaultConfig(context.Background(), config.WithRegion("' + AWS_REGION + '"))\n' +
-    `signer, _ := requestsigner.NewSigner(cfg)  // pass cfg with service "${AWS_SERVICE}" via a custom EndpointResolver if not "es"\n\n` +
+    `signer, _ := requestsigner.NewSignerWithService(cfg, "${AWS_SERVICE}")\n\n` +
     'client, _ := opensearch.NewClient(opensearch.Config{\n' +
     `    Addresses: []string{"https://${AWS_ENDPOINT}"},\n` +
     '    Signer:    signer,\n' +
@@ -436,10 +436,10 @@ const rust_sample_sigv4: Renderer = (method, path, has_body) => {
     `let url = Url::parse("https://${AWS_ENDPOINT}")?;\n` +
     'let pool = SingleNodeConnectionPool::new(url);\n' +
     `let aws_config = aws_config::from_env().region("${AWS_REGION}").load().await;\n` +
-    '// aws_config targets the "es" service by default; opensearch-rs derives\n' +
-    `// the SigV4 service name from it, so override it for "${AWS_SERVICE}" per\n` +
-    '// the aws-config SdkConfig builder docs if your crate version requires it.\n' +
+    `// opensearch-rs derives the SigV4 service name from the SDK config;\n` +
+    `// .service_name("${AWS_SERVICE}") overrides the default "es".\n` +
     'let transport = TransportBuilder::new(pool)\n' +
+    `    .service_name("${AWS_SERVICE}")\n` +
     '    .auth(aws_config.clone().try_into()?)\n' +
     '    .cert_validation(CertificateValidation::None)\n' +
     '    .build()?;\n' +

@@ -34,6 +34,14 @@ actions:
   - target: $.info.version
     update: managed
 
+  - target: $.tags
+    description: Declare the UltraWarm tag used by AOS-only migration endpoints
+    update:
+      - name: UltraWarm
+        description: >-
+          UltraWarm is a cost-effective warm-storage tier for Amazon OpenSearch Service.
+          These operations migrate indices between hot, warm, and cold storage tiers.
+
   # --- UltraWarm migration (hot <-> warm <-> cold) ---
   - target: $.paths
     description: Add UltraWarm migration endpoints
@@ -247,7 +255,7 @@ actions:
       /_plugins/_ppl/_grammar:
         get:
           operationId: ppl.grammar
-          tags: [Query DSL]
+          tags: [PPL]
           description: Return the PPL grammar definition.
           responses:
             '200':
@@ -272,3 +280,17 @@ actions:
                       tokenDictionary: {type: object}
                       ignoredTokens: {type: array, items: {type: integer}}
                       rulesToVisit: {type: array, items: {type: integer}}
+
+  # --- Remove tags whose operations are all blocked on AOS ---
+  # The managed-domain allowlist (0-amazon-managed-block.overlay.yaml) removes
+  # paths that are unavailable on AOS, which can leave top-level tag groups
+  # with no operations. Scalar has no hide-empty-tags option, so those groups
+  # render as blank sections. Remove the tags explicitly here.
+  # Recompute when the blocklist changes: build the aos spec and check which
+  # declared tags have no matching operations.
+  - target: "$.tags[?(@.name == 'Dangling Indices')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Remote Store')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'User Behavior Insights')]"
+    remove: true
