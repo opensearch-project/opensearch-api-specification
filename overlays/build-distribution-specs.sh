@@ -58,5 +58,9 @@ for dist_dir in "$OVERLAYS_DIR"/*/; do
     cur="$tmp"
   done
   cp "$cur" "$OUT_DIR/opensearch-openapi-${dist}.yaml"
+  # speakeasy writes into a mktemp file (mode 0600); cp preserves that, leaving
+  # the distribution specs unreadable to other processes (e.g. the Pages tar
+  # step fails with "Cannot open: Permission denied"). Normalize to 0644.
+  chmod 0644 "$OUT_DIR/opensearch-openapi-${dist}.yaml"
   echo "  -> $OUT_DIR/opensearch-openapi-${dist}.yaml"
 done
