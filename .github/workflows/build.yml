@@ -44,30 +44,17 @@ jobs:
           "$HOME/.local/bin/speakeasy" --version
 
       - name: Build distribution specs
-        # Applies overlays/<dist>/ (0-block, then 1-extensions) onto the merged
-        # base and enriches each distribution (incl. oss) into a Scalar render
-        # target build/opensearch-openapi-<dist>-tagged.yaml. Same script the
-        # validate-overlays workflow runs, so build and validation cannot drift.
         run: overlays/build-distribution-specs.sh
 
       - name: Stage site files
         run: |
           cp build/opensearch-openapi.yaml ./opensearch-openapi.yaml
-          # Scalar POC render targets: copy the enriched, tagged specs to the
-          # repo root. Jekyll's exclude:['*'] + directory-level include does
-          # NOT reliably publish files inside build/, so stage them at root
-          # like the plain distribution specs (allowlisted by explicit
-          # filename pattern in _config.yml). index.html loads them from root
-          # (no build/ prefix).
-          for f in build/opensearch-openapi-*-tagged.yaml; do
-            cp "$f" "./$(basename "$f")"
-          done
-          # Publish every PLAIN (non-enriched) distribution spec the overlay
-          # build produced, so adding a new overlays/<dist>/ folder needs no
-          # change here. Excludes *-tagged.yaml (staged above) since both now
-          # share the .yaml extension.
+          # Publish every distribution spec the overlay build produced --
+          # both the plain opensearch-openapi-<dist>.yaml (client generation)
+          # and the enriched opensearch-openapi-<dist>-tagged.yaml (Scalar
+          # render target) -- so adding a new overlays/<dist>/ folder needs
+          # no change here.
           for f in build/opensearch-openapi-*.yaml; do
-            case "$f" in *-tagged.yaml) continue ;; esac
             cp "$f" "./$(basename "$f")"
           done
           curl -SfL https://github.com/opensearch-project/opensearch-api-specification/archive/refs/heads/main.zip -o main-latest.zip
