@@ -18,7 +18,7 @@ OUT_DIR="$3"
 DOCS_DIR="$4"
 
 REPO_ROOT="$(cd "$DOCS_DIR/.." && pwd)"
-TAGGED="$OUT_DIR/opensearch-openapi-${DIST}-tagged.yaml"
+DOCS_TARGET="$OUT_DIR/opensearch-openapi-${DIST}-docs.yaml"
 
 echo "Enriching $DIST with SigV4 client examples (AOSS has no basic-auth surface)"
-(cd "$REPO_ROOT" && npm run --silent docs:enrich -- "$SRC" "$TAGGED" --auth=sigv4)
+(cd "$REPO_ROOT" && npm run --silent docs:enrich -- "$SRC" "$DOCS_TARGET" --auth=sigv4)

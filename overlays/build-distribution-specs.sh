@@ -4,12 +4,12 @@
 #
 # Produces, under the output dir (default: build/):
 #   opensearch-openapi-<dist>.yaml       for each <overlays>/<dist>/ subfolder
-#   opensearch-openapi-<dist>-tagged.yaml  the Scalar render target for every
+#   opensearch-openapi-<dist>-docs.yaml  the Scalar render target for every
 #     distribution incl. oss (YAML/JSON-in + inject client examples via
 #     docs/enrich.ts, output kept as YAML -- Scalar's `sources[].url` loads
 #     either JSON or YAML directly)
 # The merged base opensearch-openapi.yaml is itself the OSS spec, so no separate
-# OSS .yaml copy is produced (but oss IS enriched into a -tagged.yaml).
+# OSS .yaml copy is produced (but oss IS enriched into a -docs.yaml).
 #
 # Discovers distributions by scanning for immediate subfolders of the overlays
 # directory, so adding a new overlays/<dist>/ folder needs no change here.
@@ -51,13 +51,13 @@ mkdir -p "$OUT_DIR"
 DOCS_DIR="$REPO_ROOT/docs"
 
 # Turn a distribution YAML into the Scalar render target
-# ($OUT_DIR/opensearch-openapi-<dist>-tagged.yaml).
+# ($OUT_DIR/opensearch-openapi-<dist>-docs.yaml).
 #
 # Default enrichment: docs/enrich.ts (parses YAML/JSON in, injects
 # x-codeSamples, writes YAML out since the target ends in .yaml).
 # A distribution can OVERRIDE this by providing overlays/<dist>/enrich.sh; when
 # present it is invoked instead with: <dist> <src.yaml> <out_dir> <docs_dir>,
-# and is responsible for writing opensearch-openapi-<dist>-tagged.yaml. Use this
+# and is responsible for writing opensearch-openapi-<dist>-docs.yaml. Use this
 # only when a distribution genuinely needs different processing (e.g. AOSS
 # SigV4 client examples); otherwise the shared default keeps zero duplication.
 enrich_dist() {
@@ -68,8 +68,8 @@ enrich_dist() {
     bash "$override" "$dist" "$src" "$OUT_DIR" "$DOCS_DIR"
     return
   fi
-  local tagged="$OUT_DIR/opensearch-openapi-${dist}-tagged.yaml"
-  (cd "$REPO_ROOT" && npm run --silent docs:enrich -- "$src" "$tagged")
+  local docs_target="$OUT_DIR/opensearch-openapi-${dist}-docs.yaml"
+  (cd "$REPO_ROOT" && npm run --silent docs:enrich -- "$src" "$docs_target")
 }
 
 # Remove any prior distribution outputs so a later wildcard picks up only what
