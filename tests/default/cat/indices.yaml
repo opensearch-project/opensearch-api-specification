@@ -28,6 +28,55 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
+  - synopsis: Filter a non-system index out of system index results.
+    version: '>= 3.9'
+    method: GET
+    path: /_cat/indices/{index}
+    parameters:
+      index: books
+      system: true
+      format: json
+    response:
+      status: 200
+      payload: []
+  - synopsis: Include system columns by default when filtering non-system indexes.
+    version: '>= 3.9'
+    method: GET
+    path: /_cat/indices/{index}
+    parameters:
+      index: books
+      system: false
+      format: json
+    response:
+      status: 200
+      payload:
+        - index: books
+          system: 'false'
+          system.description: null
+  - synopsis: Select system columns without filtering indexes.
+    version: '>= 3.9'
+    method: GET
+    path: /_cat/indices/{index}
+    parameters:
+      index: books
+      format: json
+      h: [index, system, system.description]
+    response:
+      status: 200
+      payload:
+        - index: books
+          system: 'false'
+          system.description: null
+  - synopsis: Filter non-system indexes on the route without an index path parameter.
+    version: '>= 3.9'
+    method: GET
+    path: /_cat/indices
+    parameters:
+      system: false
+      format: json
+      h: [index, system, system.description]
+    response:
+      status: 200
   - synopsis: List information related to indexes (text/plain).
     method: GET
     path: /_cat/indices
