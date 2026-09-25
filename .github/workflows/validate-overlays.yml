@@ -3,8 +3,12 @@ name: Validate Overlays
 on:
   pull_request:
     paths:
-      - 'overlays/**'
-      - 'spec/**'
+      - .github/workflows/validate-overlays.yml
+      - overlays/**
+      - spec/**
+
+permissions:
+  contents: read
 
 jobs:
   validate:
@@ -39,27 +43,24 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/speakeasy" --version
 
-      - name: Apply Overlays
-        run: |
-          for overlay in overlays/*.overlay.yaml; do
-            name=$(basename "$overlay" .overlay.yaml)
-            echo "Applying overlay: $name"
-            speakeasy overlay apply \
-              --schema build/opensearch-openapi.yaml \
-              --overlay "$overlay" \
-              > "build/opensearch-openapi-${name}.yaml"
-            echo "  -> build/opensearch-openapi-${name}.yaml"
-          done
+      - name: Build distribution specs
+        # Reuses overlays/build-distribution-specs.sh so CI and any build/publish
+        # action produce the specs the same way. Applies each overlays/<dist>/
+        # folder's overlays one at a time in filename order (0-block, 1-extensions).
+        run: overlays/build-distribution-specs.sh
 
-      - name: Validate Filtered Specs
+      - name: Validate distribution specs
         run: |
           node -e "
             const SwaggerParser = require('@apidevtools/swagger-parser');
-            const fs = require('fs');
             const glob = require('fast-glob');
 
             async function main() {
               const files = await glob('build/opensearch-openapi-*.yaml');
+              if (files.length === 0) {
+                console.log('❌ no distribution specs were built');
+                process.exit(1);
+              }
               let failed = false;
 
               for (const file of files) {

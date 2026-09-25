@@ -1,0 +1,156 @@
+# Amazon OpenSearch Serverless -- hand-authored overlay (additions + removes).
+# The generated path-block file (amazon-serverless-block.overlay.yaml) is produced
+# by tools/generate-aoss-allowlist.py -- never hand-edit it. Removes come before
+# adds. Requires speakeasy ($ref filter predicates).
+overlay: 1.0.0
+info:
+  title: Amazon OpenSearch Serverless - hand-authored overlay (additions + removes)
+  version: 1.0.0
+extends: ./opensearch-openapi.yaml
+
+actions:
+  - target: $.info
+    description: Set the AOSS document title and getting-started overview
+    update:
+      title: Amazon OpenSearch Serverless API Reference
+      description: |-
+        REST API reference for **Amazon OpenSearch Serverless**.
+
+        This surface is limited to the customer-facing data-plane API supported by Serverless collections; cluster- and node-level operations that do not apply to Serverless are removed.
+
+        Code samples use the official OpenSearch client libraries.
+
+        ## Getting started
+
+        1. **Create a collection** - in the AWS Console or with the AWS CLI (`aws opensearchserverless create-collection`); pick a collection type (Search, Time series, or Vector search).
+        2. **Attach policies** - an encryption policy, a network policy, and a data access policy that grants your IAM principal access to the collection.
+        3. **Get the collection endpoint** - your collection's endpoint, e.g. `https://<id>.<region>.aoss.amazonaws.com`.
+        4. **Authenticate** - sign requests with AWS SigV4 (IAM, service name `aoss`); Serverless does not use HTTP basic auth.
+        5. **Call the API** - every operation below includes a ready-to-run SigV4-signed request for curl and each official OpenSearch client.
+
+  # OpenAPI 3.x requires info.version -- it cannot be removed. Override the
+  # repo's own spec version (e.g. "0.3.0"), which is meaningless as a
+  # distribution doc badge, with a distribution-scoped label instead.
+  - target: $.info.version
+    update: serverless
+
+  # 1. Remove the write-op `refresh` param (AOSS rejects every explicit value).
+  - target: '$.paths[*][*].parameters[?(@.$ref =~ /query\.refresh$/)]'
+    remove: true
+  - target: '$.components.parameters[*][?(@.name == "refresh" && @.in == "query")]'
+    remove: true
+  - target: "$.components.schemas['_common___Refresh']"
+    remove: true
+
+  # 2. Remove number_of_shards/replicas (AOSS owns shard topology).
+  - target: "$.components.schemas['indices._common___IndexSettings'].properties.number_of_shards"
+    remove: true
+  - target: "$.components.schemas['indices._common___IndexSettings'].properties.number_of_replicas"
+    remove: true
+
+  # 2b. Remove top-level tag groups left empty after the block overlay strips
+  # unsupported APIs (Scalar has no hide-empty-tags option). Keep in sync if the
+  # API surface changes.
+  - target: "$.tags[?(@.name == 'Data Streams')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Reindex')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Script')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Info')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Cluster')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Nodes')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Tasks')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'List')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Snapshot Policies')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Remote Store')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Dangling Indices')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Pull-Based Ingestion')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Cross-Cluster Replication')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Index State Management')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Workload Management')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Query Insights')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Query Data Sources')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Security')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Security Analytics')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Neural Search')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'k-NN')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Search Relevance')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Learning to Rank')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Asynchronous Search')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Geospatial')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Notifications')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Observability')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'User Behavior Insights')]"
+    remove: true
+
+  # 3. Add V2 data-lifecycle index settings.
+  - target: "$.components.schemas['indices._common___IndexSettings'].properties"
+    update:
+      data.retention:
+        $ref: '#/components/schemas/_common___Duration'
+        description: 'Data-retention period for a V2 index (duration, e.g. `7d`).'
+      warm.after:
+        $ref: '#/components/schemas/_common___Duration'
+        description: 'Age after which an index migrates hot -> warm (duration, e.g. `30d`).'
+      timestamp_field:
+        $ref: '#/components/schemas/_common___Field'
+        description: Document field holding the event timestamp that drives time-based lifecycle.
+
+  # 4. Add snapshot fields (cross-collection restore).
+  - target: "$.components.requestBodies['snapshot.restore'].content['application/json'].schema.properties"
+    update:
+      sourceCollectionId:
+        type: string
+        pattern: '^[a-z0-9]{3,40}$'
+        description: Source collection to restore from (cross-collection restore); requires the CCR feature flag. Omit to restore from the same collection.
+      allow_regex:
+        type: boolean
+        default: false
+        description: 'When true, rename_pattern/replacement use Java regex with capture groups (e.g. $1); false = plain strings.'
+  - target: "$.paths['/_snapshot/{repository}/{snapshot}'].get"
+    update:
+      requestBody:
+        required: false
+        description: Scopes snapshot listing to a source collection for CCR preflight.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourceCollectionId:
+                  type: string
+                  pattern: '^[a-z0-9]{3,40}$'
+                  description: Source collection whose snapshot repository to list; requires the CCR feature flag.
+
+  # 5. Snapshot repository is fixed (aoss-automated).
+  - target: "$.components.parameters['snapshot.get___path.repository']"
+    update:
+      description: 'On AOSS the snapshot repository is fixed: use `aoss-automated`. Custom repositories and wildcards are not supported.'
+  - target: "$.components.parameters['snapshot.restore___path.repository']"
+    update:
+      description: 'On AOSS the snapshot repository is fixed: use `aoss-automated`. Custom repositories and wildcards are not supported.'
