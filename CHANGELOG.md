@@ -69,6 +69,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `PitDetail` to mark `pit_id` as required ([#1290](https://github.com/opensearch-project/opensearch-api-specification/pull/1290))
 - Fixed `MatchOnlyTextProperty` to include the supported `match_only_text` mapping parameters (`analyzer`, `search_analyzer`, `boost`, `eager_global_ordinals`, `fielddata`, `fielddata_frequency_filter`, `index`, `position_increment_gap`, `term_vector`), which were previously dropped when reading mappings ([#1246](https://github.com/opensearch-project/opensearch-api-specification/pull/1246))
 - Fixed the GitHub Pages publish to serve the per-distribution specs (`opensearch-openapi-{oss,aos,aoss}.yaml`) by adding an `opensearch-openapi-*.yaml` glob to the Jekyll `_config.yml` allowlist ([#1252](https://github.com/opensearch-project/opensearch-api-specification/pull/1252))
 - Removed incorrect `model_id` from ML `SearchHitsHit`; ML search APIs return a standard search hit and the document ID is `_id` ([#1180](https://github.com/opensearch-project/opensearch-api-specification/issues/1180))
@@ -104,6 +105,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fix `AggregationContainer`  for all bucket aggregations so that `aggs`/`aggregations` are siblings of the aggregation type([#1069](https://github.com/opensearch-project/opensearch-api-specification/pull/1069))
 
 ### Changed
+- Use a shared `PitId` schema for every point-in-time ID, so client generators can tell that the ID from create PIT is the one search and delete take, and document PIT `keep_alive` limits and deletes that return `successful: false` ([#1290](https://github.com/opensearch-project/opensearch-api-specification/pull/1290))
 - Bumped the `test-tools-integ` workflow OpenSearch version from 2.17.0 to 3.8.0 and updated the tester golden fixtures for the 2.x→3.x version-gate boundary ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Add explicit `style: simple` to 13 path parameters whose schema is an array (or `oneOf` with an array branch) so code generators no longer have to infer the OpenAPI 3 default ([#1134](https://github.com/opensearch-project/opensearch-api-specification/pull/1134))
 - Replace inline `format` query response parameter schemas across cat, list, sql, and ppl operations with typed enums (`CatResponseFormat`, `ListResponseFormat`, `SQLResponseFormat`, `PPLResponseFormat`) in `_common`, including server-truthful `default` values ([#1133](https://github.com/opensearch-project/opensearch-api-specification/pull/1133))
