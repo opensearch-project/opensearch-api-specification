@@ -1,0 +1,59 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test pull-based ingestion with decoder_type and decoder_settings.
+version: '>=3.8'
+prologues: []
+epilogues:
+  - path: /test-decoder-index
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index with decoder_type and decoder_settings.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: test-decoder-index
+    request:
+      payload:
+        settings:
+          ingestion_source:
+            type: file
+            decoder_type: xcontent
+            decoder_settings: {}
+            pointer.init.reset: reset_by_offset
+            pointer.init.reset.value: 0
+            error_strategy: DROP
+            poll.max_batch_size: 10
+            poll.timeout: 100000
+            num_processor_threads: 1
+            internal_queue_size: 100
+            param:
+              stream: test-stream
+              base_directory: ingestion_directory
+          index:
+            number_of_shards: 1
+            number_of_replicas: 0
+            replication.type: SEGMENT
+        mappings:
+          properties:
+            name:
+              type: text
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        shards_acknowledged: true
+  - synopsis: Verify decoder_type and decoder_settings are returned in index settings.
+    path: /{index}
+    method: GET
+    parameters:
+      index: test-decoder-index
+    response:
+      status: 200
+      payload:
+        test-decoder-index:
+          settings:
+            index:
+              ingestion_source:
+                type: file
+                decoder_type: xcontent
