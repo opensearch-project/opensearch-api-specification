@@ -194,11 +194,16 @@ components:
         pointer.init.reset:
           $ref: '#/components/schemas/IngestionSourcePointerInitReset'
         pointer.init.reset.value:
-          type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
           description: Specifies the offset value or timestamp in milliseconds.
         error_strategy:
           description: Defines the policy for error handling.
           $ref: 'ingestion._common.yaml#/components/schemas/ErrorPolicy'
+        warmup:
+          $ref: '#/components/schemas/IngestionSourceWarmup'
+        pointer_based_lag_update_interval:
+          description: The interval for pointer-based lag updates.
+          type: string
         poll:
           $ref: '#/components/schemas/IngestionSourcePoll'
         poll.max_batch_size:
@@ -227,6 +232,16 @@ components:
           type: object
           description: Configuration settings for the selected mapper type.
           additionalProperties: true
+    IngestionSourceWarmup:
+      type: object
+      description: Warmup settings for pull-based ingestion.
+      properties:
+        timeout:
+          $ref: '_common.yaml#/components/schemas/Duration'
+          description: The warmup timeout; `-1` disables it.
+        lag_threshold:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+          description: The lag threshold that triggers warmup.
     IngestionSourcePointer:
       type: object
       properties:
@@ -377,6 +392,9 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
         max_merge_count:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        max_force_merge_mb_per_sec:
+          description: The maximum bytes-per-second merge throttle; may be `Infinity`.
+          type: string
     IndexSettingsMergePolicy:
       description: The policy configuration for segment merging.
       oneOf:
@@ -559,6 +577,10 @@ components:
         total_primary_shards_per_node:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
           x-version-added: '3.0'
+        total_remote_capable_shards_per_node:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        total_remote_capable_primary_shards_per_node:
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
     IndexRoutingAllocationOptions:
       description: The options for shard allocation control.
       oneOf:
@@ -678,6 +700,9 @@ components:
           $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         retention:
           $ref: '#/components/schemas/TranslogRetention'
+        read_forward:
+          description: Whether translog read-forward is enabled.
+          type: string
     TranslogDurability:
       description: The durability settings for the translog.
       oneOf:
@@ -906,6 +931,21 @@ components:
           $ref: '#/components/schemas/IndexSettingsMappingLimitDimensionFields'
         ignore_malformed:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
+        dynamic_properties:
+          $ref: '#/components/schemas/IndexSettingsMappingDynamicProperties'
+    IndexSettingsMappingDynamicProperties:
+      type: object
+      description: Limits on dynamically created properties.
+      properties:
+        lucene_field:
+          $ref: '#/components/schemas/IndexSettingsMappingDynamicPropertiesLuceneField'
+    IndexSettingsMappingDynamicPropertiesLuceneField:
+      type: object
+      description: Limits applied to dynamically created Lucene fields.
+      properties:
+        limit:
+          description: The maximum number of dynamically created Lucene fields allowed.
+          $ref: '_common.yaml#/components/schemas/StringifiedLong'
     IndexSettingsMappingLimitTotalFields:
       type: object
       properties:
@@ -1002,6 +1042,12 @@ components:
       properties:
         type:
           $ref: '#/components/schemas/StorageType'
+        factory:
+          description: The store factory setting.
+          type: string
+        data_locality:
+          description: The store data locality setting.
+          type: string
         allow_mmap:
           description: |-
             Whether memory-mapping is allowed. You can restrict the use of the `mmapfs` and the related `hybridfs` store types with the setting `node.store.allow_mmap`.
