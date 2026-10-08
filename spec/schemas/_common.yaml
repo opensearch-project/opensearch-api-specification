@@ -242,7 +242,7 @@ components:
         Although "void" is generally used for a unit type that has only one value, this is interpreted as
         the bottom type, which has no value. Most languages have a unit type, but few have a bottom type.
 
-        See https://en.m.wikipedia.org/wiki/Unit_type and https://en.m.wikipedia.org/wiki/Bottom_type.
+        See https://en.wikipedia.org/wiki/Unit_type and https://en.wikipedia.org/wiki/Bottom_type.
       type: object
     GeoTile:
       description: A map tile reference, represented as `{zoom}/{x}/{y}`.
@@ -933,7 +933,7 @@ components:
           items:
             $ref: '#/components/schemas/Name'
     NodeIds:
-      description: A comma-separated list of node IDs used to filter results. Supports [node filters](https://opensearch.org/docs/latest/api-reference/nodes-apis/index/#node-filters).
+      description: A comma-separated list of node IDs used to filter results. Supports [node filters](https://docs.opensearch.org/latest/api-reference/nodes-apis/index/#node-filters).
       oneOf:
         - $ref: '#/components/schemas/NodeId'
         - type: array
@@ -1016,7 +1016,7 @@ components:
       description: Time of day, expressed as HH:MM:SS.
       type: string
     TimeUnit:
-      description: Specifies the time units, for example, `5d` or `7h`. For more information, see [Supported units](https://opensearch.org/docs/latest/api-reference/units/).
+      description: Specifies the time units, for example, `5d` or `7h`. For more information, see [Supported units](https://docs.opensearch.org/latest/api-reference/units/).
       oneOf:
         - title: nanoseconds
           type: string
@@ -2061,6 +2061,10 @@ components:
           type: integer
           format: int64
           description: The total number of noop update operations.
+        max_last_index_request_timestamp:
+          type: integer
+          format: int64
+          description: The epoch timestamp, in milliseconds, of the most recent indexing request. A value of -9223372036854775808 (`Long.MIN_VALUE`) indicates that no request has been recorded.
         is_throttled:
           type: boolean
           description: Whether indexing is currently throttled.
@@ -2148,6 +2152,8 @@ components:
           type: integer
           format: int64
           description: The number of unreferenced file cleanups performed.
+        warmer:
+          $ref: '#/components/schemas/MergesWarmerStats'
       required:
         - current
         - current_docs
@@ -2242,6 +2248,52 @@ components:
         - hit_count
         - memory_size_in_bytes
         - miss_count
+    MergesWarmerStats:
+      type: object
+      description: The statistics about segment-replication merge warmer operations.
+      properties:
+        ongoing_count:
+          type: integer
+          format: int64
+          description: The number of currently ongoing merge warmer operations.
+        total_invocations_count:
+          type: integer
+          format: int64
+          description: The total number of merge warmer invocations.
+        total_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on merge warmer operations.
+        total_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on merge warmer operations, in milliseconds.
+        total_failure_count:
+          type: integer
+          format: int64
+          description: The total number of failed merge warmer operations.
+        total_sent_size:
+          $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total number of bytes sent during merge warmer operations, in a human-readable format.
+        total_bytes_sent:
+          $ref: '#/components/schemas/ByteCount'
+          description: The total number of bytes sent during merge warmer operations.
+        total_received_size:
+          $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total number of bytes received during merge warmer operations, in a human-readable format.
+        total_bytes_received:
+          $ref: '#/components/schemas/ByteCount'
+          description: The total number of bytes received during merge warmer operations.
+        total_send_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent sending data during merge warmer operations.
+        total_send_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent sending data during merge warmer operations, in milliseconds.
+        total_receive_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent receiving data during merge warmer operations.
+        total_receive_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent receiving data during merge warmer operations, in milliseconds.
     SearchStats:
       type: object
       description: The statistics about search operations.
@@ -2336,10 +2388,32 @@ components:
           description: The total number of shard suggest operations.
           type: integer
           format: int64
+        query_failed:
+          description: The total number of failed shard query operations.
+          type: integer
+          format: int64
+        startree_query_current:
+          description: The number of currently running shard star-tree query operations.
+          type: integer
+          format: int64
+        startree_query_time:
+          description: The total amount of time taken to complete all shard star-tree query operations.
+          $ref: '#/components/schemas/Duration'
+        startree_query_time_in_millis:
+          description: The total amount of time taken to complete all shard star-tree query operations, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        startree_query_total:
+          description: The total number of shard star-tree query operations.
+          type: integer
+          format: int64
+        startree_query_failed:
+          description: The total number of failed shard star-tree query operations.
+          type: integer
+          format: int64
         search_idle_reactivate_count_total:
           type: integer
           format: int64
-          description: The total number of idle search reactivations.
+          description: The total number of times an idle search shard was reactivated.
         request:
           type: object
           description: Statistics related to coordinator search operations for the node.
@@ -2558,6 +2632,19 @@ components:
           const: cluster_manager
           description: The node can act as a cluster manager.
           x-version-added: '2.0'
+        - type: string
+          const: search
+          description: The node was dedicated to provide search capability for searchable snapshots. Renamed to `warm` in 3.0.
+          x-version-added: '2.4'
+          x-version-removed: '3.0'
+        - type: string
+          const: search
+          description: The node can host search replicas (search-only shards). This role must not be combined with any other role on a node. Introduced in 3.0; not to be confused with the pre-3.0 `search` role that was renamed to `warm`.
+          x-version-added: '3.0'
+        - type: string
+          const: warm
+          description: The node can hold warm indexes for searchable snapshots. Before 3.0 this role was named `search`.
+          x-version-added: '3.0'
     HttpHeaders:
       type: object
       description: The HTTP headers.

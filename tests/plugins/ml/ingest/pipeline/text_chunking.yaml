@@ -1,0 +1,87 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of an ingest pipeline with text_chunking processor.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+epilogues:
+  - path: /_ingest/pipeline/chunking_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /chunked_docs
+    method: DELETE
+    status: [200, 404]
+version: '>= 2.13'
+chapters:
+  - synopsis: Create ingest pipeline with text_chunking processor using fixed_token_length algorithm.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: chunking_pipeline
+    request:
+      payload:
+        description: A pipeline that chunks text into fixed token length passages.
+        processors:
+          - text_chunking:
+              field_map:
+                body: body_chunk
+              algorithm:
+                fixed_token_length:
+                  token_limit: 384
+                  overlap_rate: 0.2
+                  tokenizer: standard
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get the chunking pipeline.
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: chunking_pipeline
+    response:
+      status: 200
+  - synopsis: Create an index using the chunking pipeline.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: chunked_docs
+    request:
+      payload:
+        settings:
+          default_pipeline: chunking_pipeline
+        mappings:
+          properties:
+            body:
+              type: text
+            body_chunk:
+              type: text
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Ingest a document to test chunking.
+    path: /{index}/_doc
+    method: POST
+    parameters:
+      index: chunked_docs
+      refresh: 'true'
+    request:
+      payload:
+        body: >-
+          OpenSearch is a community-driven open source search and analytics suite.
+          It provides a distributed full-text search engine with an HTTP web interface
+          and schema-free JSON documents. OpenSearch is derived from Elasticsearch 7.10.2
+          and is currently maintained by Amazon Web Services.
+    response:
+      status: 201
+  - synopsis: Delete the chunking pipeline.
+    path: /_ingest/pipeline/{id}
+    method: DELETE
+    parameters:
+      id: chunking_pipeline
+    response:
+      status: 200
+      payload:
+        acknowledged: true

@@ -1,0 +1,122 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Validate the sltr (StoredLtrQuery) search query schema.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.17.1'
+
+prologues:
+  - path: /_ltr
+    method: PUT
+  - path: /test_ltr
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: text
+            overview:
+              type: text
+            popularity:
+              type: float
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: test_ltr, _id: '1'}}
+        - {title: Rambo, overview: John Rambo returns, popularity: 8.5}
+        - {index: {_index: test_ltr, _id: '2'}}
+        - {title: Rocky, overview: A boxer named Rocky, popularity: 7.2}
+        - {index: {_index: test_ltr, _id: '3'}}
+        - {title: First Blood Rambo, overview: Rambo action film, popularity: 9.1}
+  - path: /_ltr/_featureset/{name}
+    method: POST
+    parameters:
+      name: movie_features
+    request:
+      payload:
+        featureset:
+          name: movie_features
+          features:
+            - name: title_match
+              params: [keywords]
+              template_language: mustache
+              template:
+                match:
+                  title: '{{keywords}}'
+            - name: overview_match
+              params: [keywords]
+              template_language: mustache
+              template:
+                match:
+                  overview: '{{keywords}}'
+            - name: popularity
+              params: []
+              template_language: mustache
+              template:
+                function_score:
+                  functions:
+                    - field_value_factor:
+                        field: popularity
+                        missing: 0
+                  query:
+                    match_all: {}
+
+epilogues:
+  - path: /test_ltr
+    method: DELETE
+    status: [200, 404]
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Search with an sltr query in the main query body, referencing a feature set.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: test_ltr
+    request:
+      payload:
+        query:
+          bool:
+            should:
+              - match:
+                  title: rambo
+              - sltr:
+                  _name: logged_featureset
+                  featureset: movie_features
+                  params:
+                    keywords: rambo
+    response:
+      status: 200
+
+  - synopsis: Search with an sltr query in the rescore section with feature logging enabled.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: test_ltr
+    request:
+      payload:
+        query:
+          match:
+            title: rambo
+        rescore:
+          window_size: 10
+          query:
+            rescore_query:
+              sltr:
+                featureset: movie_features
+                params:
+                  keywords: rambo
+        ext:
+          ltr_log:
+            log_specs:
+              - name: log_entry1
+                rescore_index: 0
+    response:
+      status: 200

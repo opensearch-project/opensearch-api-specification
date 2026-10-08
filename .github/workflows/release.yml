@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Get Current Version
         id: current
@@ -32,7 +32,7 @@ jobs:
           fi
 
       - name: Setup Node.js
-        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '20'
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload Artifacts
         id: upload
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build
           path: |
@@ -49,14 +49,14 @@ jobs:
 
       - name: Extract Changelog
         id: changelog
-        uses: sean0x42/markdown-extract@4178293dd16a52514b6cb2c01f4d309d264b2736 # v2
+        uses: sean0x42/markdown-extract@7b185cbe85263116bbf741e739e7198ba86465dc # v2.1.0
         with:
           file: CHANGELOG.md
           pattern: Unreleased
           no-print-matched-heading: true
 
       - name: Draft a release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         id: release
         with:
           draft: true
@@ -72,7 +72,7 @@ jobs:
             build/*
 
       - name: Increment Version
-        uses: nguyenvukhang/semver-increment@38a3e3f41cfd66c9b0cef7dac0370bb642371574 # v1
+        uses: nguyenvukhang/semver-increment@38a3e3f41cfd66c9b0cef7dac0370bb642371574 # v1.0.3
         id: version
         with:
           increment: patch
@@ -80,12 +80,12 @@ jobs:
           version-regex: '^version: (.*)'
 
       - name: Update CHANGELOG to the Next Developer Iteration
-        uses: thomaseizinger/keep-a-changelog-new-release@77ac767b2f7f6edf2ee72ab3364ed26667086f96 # v3
+        uses: thomaseizinger/keep-a-changelog-new-release@f62c3c390716df5af712ba5d94f4f4a8efc1306d # 3.1.0
         with:
           tag: ${{ github.ref_name }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Preparing for next developer iteration ${{ steps.version.outputs.version }}.'

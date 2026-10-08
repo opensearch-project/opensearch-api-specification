@@ -29,9 +29,11 @@ export default class OpenApiMerger {
   constructor (root_folder: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.root_folder = fs.realpathSync(root_folder)
+    const tags_file = `${this.root_folder}/_tags.yaml`
     this._spec = {
       openapi: '3.1.0',
       info: read_yaml(`${this.root_folder}/_info.yaml`, true),
+      ...(fs.existsSync(tags_file) ? { tags: read_yaml(tags_file, true).tags } : {}),
       paths: {},
       components: {
         parameters: {},
