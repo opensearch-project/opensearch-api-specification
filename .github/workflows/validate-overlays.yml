@@ -1,0 +1,83 @@
+name: Validate Overlays
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/validate-overlays.yml
+      - overlays/**
+      - spec/**
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Apply and Validate Overlays
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Merge Spec
+        run: npm run merge
+
+      - name: Install speakeasy overlay CLI
+        env:
+          SPEAKEASY_VERSION: v1.796.3
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL \
+            "https://github.com/speakeasy-api/speakeasy/releases/download/${SPEAKEASY_VERSION}/speakeasy_linux_amd64.zip" \
+            -o /tmp/speakeasy.zip
+          unzip -o -q /tmp/speakeasy.zip -d "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/speakeasy"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/speakeasy" --version
+
+      - name: Build distribution specs
+        # Reuses overlays/build-distribution-specs.sh so CI and any build/publish
+        # action produce the specs the same way. Applies each overlays/<dist>/
+        # folder's overlays one at a time in filename order (0-block, 1-extensions).
+        run: overlays/build-distribution-specs.sh
+
+      - name: Validate distribution specs
+        run: |
+          node -e "
+            const SwaggerParser = require('@apidevtools/swagger-parser');
+            const glob = require('fast-glob');
+
+            async function main() {
+              const files = await glob('build/opensearch-openapi-*.yaml');
+              if (files.length === 0) {
+                console.log('❌ no distribution specs were built');
+                process.exit(1);
+              }
+              let failed = false;
+
+              for (const file of files) {
+                process.stdout.write('Validating ' + file + ' ... ');
+                try {
+                  await SwaggerParser.validate(file);
+                  console.log('✅ valid');
+                } catch (err) {
+                  console.log('❌ invalid: ' + err.message);
+                  failed = true;
+                }
+              }
+
+              if (failed) {
+                process.exit(1);
+              }
+            }
+
+            main();
+          "
