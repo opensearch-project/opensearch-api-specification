@@ -69,6 +69,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `SnapshotShardFailure` to match the server: typed `shard_id` as an integer instead of a string, since the server writes the shard ordinal with `ShardId.id()` and parses it with `declareInt`, and added the missing `index_uuid` property ([#1263](https://github.com/opensearch-project/opensearch-api-specification/issues/1263))
 - Fixed the GitHub Pages publish to serve the per-distribution specs (`opensearch-openapi-{oss,aos,aoss}.yaml`) by adding an `opensearch-openapi-*.yaml` glob to the Jekyll `_config.yml` allowlist ([#1252](https://github.com/opensearch-project/opensearch-api-specification/pull/1252))
 - Removed incorrect `model_id` from ML `SearchHitsHit`; ML search APIs return a standard search hit and the document ID is `_id` ([#1180](https://github.com/opensearch-project/opensearch-api-specification/issues/1180))
 - Fixed `ml.predict_model` and `ml.predict_model_stream` request body schemas to match `RemoteInferenceMLInput` parser: corrected `parameters` type to `Map<String,String>`, removed incorrect `required` constraints, added `action_type`, `dlq`, `question`, and `context` fields, and added `PredictionActionType` enum ([#1188](https://github.com/opensearch-project/opensearch-api-specification/pull/1188))
