@@ -144,5 +144,5 @@ export async function load_actual_evaluation (evaluator: StoryEvaluator, name: s
     full_path,
     display_path: `${name}.yaml`,
     story: read_yaml(full_path)
-  }, process.env.OPENSEARCH_VERSION ?? '3.8.0', process.env.OPENSEARCH_DISTRIBUTION ?? 'opensearch.org'))
+  }, process.env.OPENSEARCH_VERSION ?? '3.9.0', process.env.OPENSEARCH_DISTRIBUTION ?? 'opensearch.org'))
 }
