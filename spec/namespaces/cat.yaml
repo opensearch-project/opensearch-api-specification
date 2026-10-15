@@ -255,6 +255,7 @@ paths:
         - $ref: '#/components/parameters/cat.indices::query.master_timeout'
         - $ref: '#/components/parameters/cat.indices::query.pri'
         - $ref: '#/components/parameters/cat.indices::query.s'
+        - $ref: '#/components/parameters/cat.indices::query.system'
         - $ref: '#/components/parameters/cat.indices::query.time'
         - $ref: '#/components/parameters/cat.indices::query.v'
       responses:
@@ -284,6 +285,7 @@ paths:
         - $ref: '#/components/parameters/cat.indices::query.master_timeout'
         - $ref: '#/components/parameters/cat.indices::query.pri'
         - $ref: '#/components/parameters/cat.indices::query.s'
+        - $ref: '#/components/parameters/cat.indices::query.system'
         - $ref: '#/components/parameters/cat.indices::query.time'
         - $ref: '#/components/parameters/cat.indices::query.v'
       responses:
@@ -1604,6 +1606,10 @@ components:
     cat.indices::query.expand_wildcards:
       in: query
       name: expand_wildcards
+      description: >-
+        The types of indexes that wildcard expressions can match. When omitted, matches open and closed indexes,
+        including hidden indexes if `system=true` (supported from OpenSearch 3.9).
+        An explicit value overrides these defaults.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
       style: form
@@ -1683,6 +1689,19 @@ components:
           type: string
         description: A comma-separated list of column names or column aliases to sort by.
       explode: true
+    cat.indices::query.system:
+      name: system
+      in: query
+      description: >-
+        Filters indexes by the system classification in cluster metadata. When `true`, returns only
+        system indexes. When `false`, returns only non-system indexes. When omitted, returns both,
+        subject to index selection and wildcard expansion. Specifying this parameter includes the
+        `system` and `system.description` columns by default; use `h` to select columns explicitly.
+        This classification is independent of hidden indexes and Security plugin protection and does
+        not grant access to indexes.
+      schema:
+        type: boolean
+      x-version-added: '3.9'
     cat.indices::query.time:
       in: query
       name: time
