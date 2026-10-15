@@ -476,6 +476,84 @@ components:
         last_updated_time:
           type: integer
           description: When the ISM template was last updated.
+    SimulatePolicyRequest:
+      type: object
+      description: Request body for the simulate policy API.
+      properties:
+        policy_id:
+          type: string
+          description: The ID of a stored ISM policy to simulate. Required when `policy` is not provided.
+        policy:
+          $ref: '#/components/schemas/Policy'
+          description: An inline policy definition to simulate. Required when `policy_id` is not provided.
+        indices:
+          type: array
+          description: The index names or wildcard patterns to simulate against.
+          items:
+            type: string
+      required:
+        - indices
+    SimulatePolicyResponse:
+      type: object
+      description: Response from the simulate policy API.
+      properties:
+        simulate_results:
+          type: array
+          description: The simulation result for each index.
+          items:
+            $ref: '#/components/schemas/IndexSimulateResult'
+    IndexSimulateResult:
+      type: object
+      description: The simulation result for a single index.
+      properties:
+        index_name:
+          type: string
+          description: The name of the index.
+        index_uuid:
+          type: ['null', string]
+          description: The UUID of the index. Null when the index was not found.
+        policy_id:
+          type: string
+          description: The ID of the policy used for simulation.
+        is_managed:
+          type: boolean
+          description: Whether the index is currently managed by ISM.
+        current_state:
+          type: [string, 'null']
+          description: The state the index is currently in or would start in. Omitted when error is present.
+        current_action:
+          type: [string, 'null']
+          description: The action that would execute next. Omitted when error is present.
+        transition_evaluation:
+          type: array
+          description: Per-transition condition evaluations. Present only when the index is in the transition phase.
+          items:
+            $ref: '#/components/schemas/TransitionSimulateResult'
+        next_state:
+          type: [string, 'null']
+          description: The state the index would transition to. Null if no condition is met.
+        error:
+          type: [string, 'null']
+          description: An index-level error message. Present when the index was not found or another error occurred.
+    TransitionSimulateResult:
+      type: object
+      description: The condition evaluation result for a single transition.
+      properties:
+        state_name:
+          type: string
+          description: The target state this transition would move the index to.
+        condition_met:
+          type: boolean
+          description: Whether the transition condition is currently satisfied.
+        condition_type:
+          type: string
+          description: The kind of condition evaluated, such as min_index_age or min_doc_count. Set to unconditional for transitions with no conditions.
+        current_value:
+          type: [string, 'null']
+          description: The human-readable current value of the metric being checked.
+        required_value:
+          type: [string, 'null']
+          description: The human-readable threshold required by the condition.
     RetryIndexRequest:
       type: object
       properties:
