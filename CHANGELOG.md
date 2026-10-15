@@ -69,6 +69,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `NodeAttributes` to make `attributes` and `transport_address` optional: managed OpenSearch distributions (e.g. Amazon OpenSearch Service) omit them in `search_shards` and `shard_stores` responses, which made those responses unparseable in generated clients ([#2145](https://github.com/opensearch-project/opensearch-java/issues/2145))
 - Fixed `MatchOnlyTextProperty` to include the supported `match_only_text` mapping parameters (`analyzer`, `search_analyzer`, `boost`, `eager_global_ordinals`, `fielddata`, `fielddata_frequency_filter`, `index`, `position_increment_gap`, `term_vector`), which were previously dropped when reading mappings ([#1246](https://github.com/opensearch-project/opensearch-api-specification/pull/1246))
 - Fixed the GitHub Pages publish to serve the per-distribution specs (`opensearch-openapi-{oss,aos,aoss}.yaml`) by adding an `opensearch-openapi-*.yaml` glob to the Jekyll `_config.yml` allowlist ([#1252](https://github.com/opensearch-project/opensearch-api-specification/pull/1252))
 - Removed incorrect `model_id` from ML `SearchHitsHit`; ML search APIs return a standard search hit and the document ID is `_id` ([#1180](https://github.com/opensearch-project/opensearch-api-specification/issues/1180))
