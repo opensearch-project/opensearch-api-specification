@@ -1,0 +1,91 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test match_only_text field mappings, including analyzer, search_analyzer, and other supported parameters.
+version: '>= 2.12'
+warnings:
+  invalid-path-detected: false
+  multiple-paths-detected: false
+prologues: []
+epilogues:
+  - path: /birds
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index with match_only_text fields that set analyzer, search_analyzer, and other supported parameters.
+    path: /{index}
+    method: PUT
+    parameters:
+      index: birds
+    request:
+      payload:
+        settings:
+          index:
+            number_of_shards: 1
+            number_of_replicas: 0
+        mappings:
+          properties:
+            egg-color:
+              type: text
+              analyzer: standard
+              search_analyzer: whitespace
+            feather-color:
+              type: match_only_text
+              analyzer: standard
+              search_analyzer: whitespace
+            beak-shape:
+              type: match_only_text
+              boost: 2
+              eager_global_ordinals: true
+              index: true
+              fields:
+                raw:
+                  type: keyword
+            wing-span:
+              type: match_only_text
+              fielddata: true
+              fielddata_frequency_filter:
+                min: 0.001
+                max: 0.1
+                min_segment_size: 500
+              position_increment_gap: 50
+              term_vector: with_positions_offsets
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  - synopsis: Get mappings and verify analyzer, search_analyzer, and other parameters are returned for match_only_text.
+    path: /{index}/_mapping
+    method: GET
+    parameters:
+      index: birds
+    response:
+      status: 200
+      payload:
+        birds:
+          mappings:
+            properties:
+              egg-color:
+                type: text
+                analyzer: standard
+                search_analyzer: whitespace
+              feather-color:
+                type: match_only_text
+                analyzer: standard
+                search_analyzer: whitespace
+              beak-shape:
+                type: match_only_text
+                boost: 2
+                eager_global_ordinals: true
+                fields:
+                  raw:
+                    type: keyword
+              wing-span:
+                type: match_only_text
+                fielddata: true
+                fielddata_frequency_filter:
+                  min: 0.001
+                  max: 0.1
+                  min_segment_size: 500
+                position_increment_gap: 50
+                term_vector: with_positions_offsets
