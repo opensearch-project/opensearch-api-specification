@@ -145,6 +145,23 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/notifications.delete_config@200'
+  /_plugins/_notifications/feature/send/{config_id}:
+    post:
+      operationId: notifications.send.0
+      x-operation-group: notifications.send
+      tags:
+        - Notifications
+      x-version-added: '3.10'
+      description: Send a message to an existing notification channel.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/observing-your-data/notifications/api/#send-notification
+      parameters:
+        - $ref: '#/components/parameters/notifications.send::path.config_id'
+      requestBody:
+        $ref: '#/components/requestBodies/notifications.send'
+      responses:
+        '200':
+          $ref: '#/components/responses/notifications.send@200'
   /_plugins/_notifications/feature/test/{config_id}:
     get:
       operationId: notifications.send_test.0
@@ -218,6 +235,20 @@ components:
               max_items:
                 type: integer
                 format: int32
+    notifications.send:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              event_source:
+                $ref: '../schemas/notifications._common.yaml#/components/schemas/EventSource'
+              channel_message:
+                $ref: '../schemas/notifications._common.yaml#/components/schemas/ChannelMessage'
+            required:
+              - channel_message
+              - event_source
+      required: true
     notifications.update_config:
       content:
         application/json:
@@ -283,6 +314,18 @@ components:
                   $ref: '../schemas/notifications._common.yaml#/components/schemas/NotificationConfigType'
               plugin_features:
                 $ref: '../schemas/notifications._common.yaml#/components/schemas/NotificationsPluginFeaturesMap'
+    notifications.send@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              event_source:
+                $ref: '../schemas/notifications._common.yaml#/components/schemas/EventSource'
+              status_list:
+                type: array
+                items:
+                  $ref: '../schemas/notifications._common.yaml#/components/schemas/EventStatus'
     notifications.send_test@200:
       content:
         application/json:
@@ -537,6 +580,12 @@ components:
       in: query
       schema:
         type: string
+    notifications.send::path.config_id:
+      name: config_id
+      in: path
+      schema:
+        type: string
+      required: true
     notifications.send_test::path.config_id:
       name: config_id
       in: path

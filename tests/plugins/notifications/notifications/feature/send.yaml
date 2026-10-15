@@ -1,0 +1,46 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test sending a message to a notification channel.
+version: '>= 3.10'
+prologues:
+  - path: /_plugins/_notifications/configs
+    method: POST
+    request:
+      payload:
+        config_id: send-webhook-configuration
+        config:
+          name: Notifications Channel
+          description: Default notifications channel.
+          config_type: webhook
+          is_enabled: true
+          webhook:
+            url: http://webhook:8080/
+    status: [200]
+chapters:
+  - synopsis: Send a message to a notification channel.
+    path: /_plugins/_notifications/feature/send/{config_id}
+    method: POST
+    parameters:
+      config_id: send-webhook-configuration
+    request:
+      payload:
+        event_source:
+          title: Weekly report
+          reference_id: report-123
+          severity: info
+          tags: []
+        channel_message:
+          text_description: Your report is ready.
+    response:
+      status: 200
+      payload:
+        status_list:
+          - config_id: send-webhook-configuration
+            config_type: webhook
+            delivery_status:
+              status_code: '200'
+              status_text: '{"ok":"true"}'
+epilogues:
+  - path: /_plugins/_notifications/configs/send-webhook-configuration
+    method: DELETE
+    status: [200,404]
