@@ -1,0 +1,70 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the retrieval and existence check of a monitor by ID.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-get
+    status: [200]
+  - path: /_plugins/_alerting/monitors
+    id: create_monitor
+    method: POST
+    request:
+      payload:
+        name: get-monitor-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-get
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: get-monitor-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value > 10000
+                lang: painless
+            actions: []
+    status: [201]
+    output:
+      monitor_id: payload._id
+
+epilogues:
+  - path: /_plugins/_alerting/monitors/{monitor_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+  - path: /books-alerting-get
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Get a monitor by ID.
+    path: /_plugins/_alerting/monitors/{monitor_id}
+    method: GET
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+    response:
+      status: 200
+      payload:
+        monitor:
+          name: get-monitor-test
+  - synopsis: Check that a monitor exists.
+    path: /_plugins/_alerting/monitors/{monitor_id}
+    method: HEAD
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+    response:
+      status: 200
