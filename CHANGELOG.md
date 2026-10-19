@@ -91,6 +91,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056))
 
 ### Security
+- Upgraded `axios` 1.18.1 → 1.20.0 and `qs` 6.16.0 → 6.16.1, and pinned transitive `handlebars` to 4.7.10, to fix newly disclosed CVEs. Added `as R` casts in `OpenSearchHttpClient` for the axios 1.19+ response-type change ([#1282](https://github.com/opensearch-project/opensearch-api-specification/pull/1282))
 - Upgraded `axios` 1.13.5 → 1.15.2 to fix 12+ CVEs (CVE-2026-42264, CVE-2026-42035, CVE-2026-42033, CVE-2026-42043, CVE-2025-62718, and others)
 - Upgraded `yaml` 2.4.5 → 2.8.3 to fix CVE-2026-33532
 - Upgraded ESLint ecosystem to v9 (`eslint` 9.39.4, `typescript-eslint` 8.59.3, `@stylistic/eslint-plugin` 4.4.0) eliminating vulnerable transitive dependencies
