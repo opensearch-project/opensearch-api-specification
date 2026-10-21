@@ -264,6 +264,22 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/cluster.put_settings@200'
+  /_cluster/settings/_describe:
+    get:
+      operationId: cluster.describe_settings.0
+      x-operation-group: cluster.describe_settings
+      tags:
+        - Cluster
+      x-version-added: '3.10'
+      description: Returns definition metadata for cluster settings, including whether each setting is dynamic. Does not return setting values or defaults.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/cluster-api/describe-cluster-settings/
+      parameters:
+        - $ref: '#/components/parameters/cluster.describe_settings::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/cluster.describe_settings::query.settings'
+      responses:
+        '200':
+          $ref: '#/components/responses/cluster.describe_settings@200'
   /_cluster/state:
     get:
       operationId: cluster.state.0
@@ -756,6 +772,21 @@ components:
             type: object
             additionalProperties:
               $ref: '../schemas/cluster.decommission_awareness.yaml#/components/schemas/DecommissionStatus'
+    cluster.describe_settings@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              settings:
+                type: object
+                description: |-
+                  A map of setting names to their definition metadata. Setting names are returned in sorted order.
+                  A requested name is omitted if it is unknown or filtered.
+                additionalProperties:
+                  $ref: '../schemas/cluster._common.yaml#/components/schemas/SettingMetadata'
+            required:
+              - settings
     cluster.get_settings@200:
       content:
         application/json:
@@ -1049,6 +1080,24 @@ components:
         type: string
         description: The name of the awareness attribute.
       required: true
+    cluster.describe_settings::query.settings:
+      name: settings
+      in: query
+      required: true
+      description: |-
+        A comma-separated list of exact setting names to describe. Wildcards are not supported; each name must be an exact, valid setting key. At least one name is required.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/StringOrStringArray'
+      style: form
+      explode: false
+      x-version-added: '3.10'
+    cluster.describe_settings::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://docs.opensearch.org/latest/api-reference/common-parameters/#time-units).
+      in: query
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      x-version-added: '3.10'
     cluster.get_settings::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       description: The amount of time to wait for a response from the cluster manager node. For more information about supported time units, see [Common parameters](https://docs.opensearch.org/latest/api-reference/common-parameters/#time-units).
