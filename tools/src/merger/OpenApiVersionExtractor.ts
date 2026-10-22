@@ -12,6 +12,7 @@ import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
 import { type OpenAPIV3_1 } from 'openapi-types'
 import * as semver from '../_utils/semver'
+import UnionLabeler from './UnionLabeler'
 
 // Extract a versioned API
 export default class OpenApiVersionExtractor {
@@ -46,6 +47,13 @@ export default class OpenApiVersionExtractor {
     this._logger.info(`Extracting version ${this._target_version} ...`)
     this.#remove_keys_not_matching_semver()
     this.#remove_unused()
+    this.#relabel_unions()
+  }
+
+  // Removing version-specific branches can change what kind of union a schema is, so label the unions again.
+  #relabel_unions(): void {
+    if (this._spec === undefined) return
+    new UnionLabeler().label(this._spec)
   }
 
   #exclude_per_semver(obj: any): boolean {
