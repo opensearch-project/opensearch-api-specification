@@ -10,6 +10,7 @@
     - [Normalization](#normalization)
     - [Merging allOf](#merging-allof)
     - [Classifying Unions](#classifying-unions)
+    - [What the Published Spec Does for You](#what-the-published-spec-does-for-you)
     - [Representation per Language](#representation-per-language)
     - [Conformance Levels](#conformance-levels)
     - [Testing a Generator](#testing-a-generator)
@@ -163,6 +164,25 @@ After normalization, classify each `oneOf`/`anyOf` with the first rule that matc
 | **U6, unclassified** | None of the above, typically untitled, untagged unions of objects. | `RangeQuery`, `GeoShapes` |
 
 For U6, the generator MUST report the schema at generation time. It MAY fall back to a raw JSON type, but MUST NOT silently drop the union. Spec authors SHOULD avoid new U6 unions by giving every branch a `title` or adding a `discriminator`. A U3 union whose branches require nothing is equivalent to plain optional fields, so it MAY be emitted as one flat object.
+
+### What the Published Spec Does for You
+The bundled spec (`opensearch-openapi.yaml`, built by `npm run merge`) applies part of these rules once, so that every generator gets the same answers.
+
+- **N1 is already applied.** Properties, `required`, `additionalProperties` and `patternProperties` declared next to `allOf`/`oneOf`/`anyOf` are moved into an `allOf` member, together with any `discriminator` of a moved `oneOf`. The rewrite is lossless. Generators still MUST read `allOf: [object, union, …]` correctly, because that is the canonical form.
+- **Unions are labeled.** Every `oneOf`/`anyOf` that matches one of the classes above carries `x-union-kind`, set to `tagged` (U1), `container` (U2), `presence` (U3), `titled` (U4), `scalar` (U5), `one-or-many` (U5a), `keyed-or-list` (U5b) or `shorthand` (U5c). Branches are resolved before classifying (N3). Unclassified unions (U6) have no label, and the merge reports them.
+- **Containers list their variant keys.** A `container` also carries `x-variant-keys`: the property that selects each branch, in branch order.
+
+```yaml
+# _common.aggregations___AggregationContainer in the bundled spec
+allOf:
+  - $ref: '#/components/schemas/_common.aggregations___Aggregation'
+  - type: object
+    oneOf: [ …65 branches… ]
+    x-union-kind: container
+    x-variant-keys: [adjacency_matrix, auto_date_histogram, avg, …]
+```
+
+Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implementing the classifier. The labels are additive, so a generator that ignores them keeps working. Specs extracted for one OpenSearch version (`--opensearch-version`) are labeled again after branches for other versions are removed.
 
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.
