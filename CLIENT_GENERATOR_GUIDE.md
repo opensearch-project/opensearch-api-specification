@@ -154,12 +154,15 @@ After normalization, classify each `oneOf`/`anyOf` with the first rule that matc
 |---|---|---|
 | **U1, internally tagged** | A `discriminator` is present. | `Property`, `Analyzer` |
 | **U2, externally tagged container** | Every resolved branch has exactly one required property, the names differ across branches, and each value is an object. The non-union members of the surrounding `allOf` are fields shared by every variant. | `AggregationContainer` (shared `meta`, sub-aggregations), `RequestProcessor`, `ResponseProcessor` |
-| **U3, presence constraint** | Every branch only makes properties of the object part required, or adds optional properties. The union constrains which fields are set; it does not define variants. | `TermsLookup` (`id` or `query`), `MetricAggregationBase` (`field` and/or `script`, both optional) |
+| **U3, presence constraint** | The union is a member of an `allOf`, and every branch only makes properties of the `allOf`'s object part required, or adds optional properties. The union constrains which fields are set; it does not define variants. | `TermsLookup` (`id` or `query`), `MetricAggregationBase` (`field` and/or `script`, both optional) |
 | **U4, titled union** | *Every* branch has a `title`, which names the variant. A union where only some branches are titled does not qualify. | `TermsQueryField`, `node_id_or_metric` (see [Duplicate Paths](#duplicate-paths)) |
-| **U5, scalar or array union** | Branches are scalars, enums, arrays of the same item, or `null`, e.g. `T` or `T[]`. | `Fields`, `FieldValue` |
-| **U6, unclassified** | None of the above. | |
+| **U5, scalar union** | Every branch is a scalar, an enum, `null`, an array, or a union of these. | `Fields`, `FieldValue`, `ExpandWildcards` |
+| **U5a, one or many** | Two branches: `T` and an array of the same `T`, where `T` is not a scalar. | `BoolQuery.must` (`QueryContainer` or `QueryContainer[]`), `Sort` |
+| **U5b, keyed or list** | Two branches: a map of `T` (only `additionalProperties`) and an array of the same `T`. | the `buckets` of every multi-bucket aggregate |
+| **U5c, shorthand** | Exactly one branch is not a scalar: a short scalar form and one full object form. | `TermQuery` (a value, or `{ value, boost, … }`), `InlineScript` |
+| **U6, unclassified** | None of the above, typically untitled, untagged unions of objects. | `RangeQuery`, `GeoShapes` |
 
-For U6, the generator MUST report the schema at generation time. It MAY fall back to a raw JSON type, but MUST NOT silently drop the union. A U3 union whose branches require nothing is equivalent to plain optional fields, so it MAY be emitted as one flat object.
+For U6, the generator MUST report the schema at generation time. It MAY fall back to a raw JSON type, but MUST NOT silently drop the union. Spec authors SHOULD avoid new U6 unions by giving every branch a `title` or adding a `discriminator`. A U3 union whose branches require nothing is equivalent to plain optional fields, so it MAY be emitted as one flat object.
 
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.
