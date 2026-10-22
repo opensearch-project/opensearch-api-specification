@@ -1,0 +1,38 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test describing cluster setting definitions.
+version: '>= 3.10'
+chapters:
+  - synopsis: Describes whether a dynamic setting is dynamic.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.max_shards_per_node
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.max_shards_per_node:
+            dynamic: true
+  - synopsis: Describes multiple settings in a single request.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.max_shards_per_node,cluster.blocks.read_only
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.blocks.read_only:
+            dynamic: true
+          cluster.max_shards_per_node:
+            dynamic: true
+  - synopsis: Omits unknown settings from the response.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.this_setting_does_not_exist
+    response:
+      status: 200
+      payload:
+        settings: {}
