@@ -13,6 +13,7 @@ import _ from 'lodash'
 import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
+import CompositionNormalizer from './CompositionNormalizer'
 import { Logger } from '../Logger'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
@@ -58,6 +59,7 @@ export default class OpenApiMerger {
       this.#add_defaults()
       this.#generate_global_params()
       this.#generate_superseded_ops()
+      this.#normalize_compositions()
       this.#normalize_fields()
       this._merged = true
     }
@@ -179,6 +181,12 @@ export default class OpenApiMerger {
   #generate_global_params (): void {
     const gen = new GlobalParamsGenerator(this.root_folder)
     gen.generate(this._spec)
+  }
+
+  // Rewrite properties declared next to allOf/oneOf/anyOf into the canonical allOf form.
+  #normalize_compositions (): void {
+    const rewritten = new CompositionNormalizer().normalize(this._spec)
+    rewritten.forEach(location => { this.logger.info(`Normalized composition at ${location}`) })
   }
 
   // Generate superseded operations from _superseded_operations.yaml file.
