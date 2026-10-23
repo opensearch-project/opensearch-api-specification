@@ -9,6 +9,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` so the model id can be resolved from cluster settings; a semantic field now requires at least one of `model_id` or `model_selection` ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))
+- Added the Describe Cluster Settings API (`GET /_cluster/settings/_describe`) for retrieving setting definition metadata, such as whether a setting is dynamic ([#1287](https://github.com/opensearch-project/opensearch-api-specification/pull/1287))
 - Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Added an OpenAPI `tags` field to every operation, assigned by semantic domain (e.g. `Document`, `Search`, `Reindex`, `Aliases`, `Index Templates`, `Data Streams`, `Snapshot Policies`), plus a top-level `tags` section declaring and describing each of the 44 groups, for documentation-renderer sidebar navigation ([#1242](https://github.com/opensearch-project/opensearch-api-specification/pull/1242))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
@@ -69,6 +70,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `MatchOnlyTextProperty` to include the supported `match_only_text` mapping parameters (`analyzer`, `search_analyzer`, `boost`, `eager_global_ordinals`, `fielddata`, `fielddata_frequency_filter`, `index`, `position_increment_gap`, `term_vector`), which were previously dropped when reading mappings ([#1246](https://github.com/opensearch-project/opensearch-api-specification/pull/1246))
 - Fixed the GitHub Pages publish to serve the per-distribution specs (`opensearch-openapi-{oss,aos,aoss}.yaml`) by adding an `opensearch-openapi-*.yaml` glob to the Jekyll `_config.yml` allowlist ([#1252](https://github.com/opensearch-project/opensearch-api-specification/pull/1252))
 - Removed incorrect `model_id` from ML `SearchHitsHit`; ML search APIs return a standard search hit and the document ID is `_id` ([#1180](https://github.com/opensearch-project/opensearch-api-specification/issues/1180))
 - Fixed `ml.predict_model` and `ml.predict_model_stream` request body schemas to match `RemoteInferenceMLInput` parser: corrected `parameters` type to `Map<String,String>`, removed incorrect `required` constraints, added `action_type`, `dlq`, `question`, and `context` fields, and added `PredictionActionType` enum ([#1188](https://github.com/opensearch-project/opensearch-api-specification/pull/1188))
