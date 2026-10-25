@@ -240,9 +240,15 @@ paths:
       description: Retrieves all action groups.
       externalDocs:
         url: https://docs.opensearch.org/latest/security/access-control/api/#get-action-groups
+      parameters:
+        - $ref: '#/components/parameters/security.get_action_groups::query.next_token'
+        - $ref: '#/components/parameters/security.get_action_groups::query.size'
+        - $ref: '#/components/parameters/security.get_action_groups::query.sort'
       responses:
         '200':
           $ref: '#/components/responses/security.get_action_groups@200'
+        '400':
+          $ref: '#/components/responses/security.get_action_groups@400'
     patch:
       operationId: security.patch_action_groups.1
       x-operation-group: security.patch_action_groups
@@ -536,9 +542,16 @@ paths:
       description: Retrieve all internal users.
       externalDocs:
         url: https://docs.opensearch.org/latest/security/access-control/api/#get-users
+      parameters:
+        - $ref: '#/components/parameters/security.get_users::query.filterBy'
+        - $ref: '#/components/parameters/security.get_users::query.next_token'
+        - $ref: '#/components/parameters/security.get_users::query.size'
+        - $ref: '#/components/parameters/security.get_users::query.sort'
       responses:
         '200':
           $ref: '#/components/responses/security.get_users@200'
+        '400':
+          $ref: '#/components/responses/security.get_users@400'
     patch:
       operationId: security.patch_users.0
       x-operation-group: security.patch_users
@@ -655,7 +668,10 @@ paths:
       externalDocs:
         url: https://docs.opensearch.org/latest/security/access-control/api/#get-distinguished-names
       parameters:
+        - $ref: '#/components/parameters/security.get_distinguished_names::query.next_token'
         - $ref: '#/components/parameters/security.get_distinguished_names::query.show_all'
+        - $ref: '#/components/parameters/security.get_distinguished_names::query.size'
+        - $ref: '#/components/parameters/security.get_distinguished_names::query.sort'
       responses:
         '200':
           $ref: '#/components/responses/security.get_distinguished_names@200'
@@ -782,9 +798,15 @@ paths:
       description: Retrieves all roles.
       externalDocs:
         url: https://docs.opensearch.org/latest/security/access-control/api/#get-roles
+      parameters:
+        - $ref: '#/components/parameters/security.get_roles::query.next_token'
+        - $ref: '#/components/parameters/security.get_roles::query.size'
+        - $ref: '#/components/parameters/security.get_roles::query.sort'
       responses:
         '200':
           $ref: '#/components/responses/security.get_roles@200'
+        '400':
+          $ref: '#/components/responses/security.get_roles@400'
     patch:
       operationId: security.patch_roles.0
       x-operation-group: security.patch_roles
@@ -876,9 +898,15 @@ paths:
       description: Retrieves all role mappings.
       externalDocs:
         url: https://docs.opensearch.org/latest/security/access-control/api/#get-role-mappings
+      parameters:
+        - $ref: '#/components/parameters/security.get_role_mappings::query.next_token'
+        - $ref: '#/components/parameters/security.get_role_mappings::query.size'
+        - $ref: '#/components/parameters/security.get_role_mappings::query.sort'
       responses:
         '200':
           $ref: '#/components/responses/security.get_role_mappings@200'
+        '400':
+          $ref: '#/components/responses/security.get_role_mappings@400'
     patch:
       operationId: security.patch_role_mappings.0
       x-operation-group: security.patch_role_mappings
@@ -1098,6 +1126,10 @@ paths:
       description: Retrieves all tenants.
       externalDocs:
         url: https://docs.opensearch.org/latest/security/access-control/api/#get-tenants
+      parameters:
+        - $ref: '#/components/parameters/security.get_tenants::query.next_token'
+        - $ref: '#/components/parameters/security.get_tenants::query.size'
+        - $ref: '#/components/parameters/security.get_tenants::query.sort'
       responses:
         '200':
           $ref: '#/components/responses/security.get_tenants@200'
@@ -1721,7 +1753,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/ActionGroupsMap'
+            oneOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/ActionGroupsMap'
+              - $ref: '../schemas/security._common.yaml#/components/schemas/PaginatedActionGroups'
+    security.get_action_groups@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.get_allowlist@200:
       content:
         application/json:
@@ -1817,7 +1856,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/DistinguishedNamesMap'
+            oneOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/DistinguishedNamesMap'
+              - $ref: '../schemas/security._common.yaml#/components/schemas/PaginatedDistinguishedNames'
     security.get_distinguished_names@400:
       description: Show `nodesDn` setting for given cluster.
       content:
@@ -1853,12 +1894,26 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/RoleMappings'
+            oneOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/RoleMappings'
+              - $ref: '../schemas/security._common.yaml#/components/schemas/PaginatedRoleMappings'
+    security.get_role_mappings@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.get_roles@200:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/RolesMap'
+            oneOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/RolesMap'
+              - $ref: '../schemas/security._common.yaml#/components/schemas/PaginatedRoles'
+    security.get_roles@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.get_sslinfo@200:
       content:
         application/json:
@@ -1888,7 +1943,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/TenantsMap'
+            oneOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/TenantsMap'
+              - $ref: '../schemas/security._common.yaml#/components/schemas/PaginatedTenants'
     security.get_tenants@400:
       content:
         application/json:
@@ -1908,7 +1965,14 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/security._common.yaml#/components/schemas/UsersMap'
+            oneOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/UsersMap'
+              - $ref: '../schemas/security._common.yaml#/components/schemas/PaginatedUsers'
+    security.get_users@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.get_users_legacy@200:
       content:
         application/json:
@@ -2322,6 +2386,29 @@ components:
       schema:
         type: string
       required: true
+    security.get_action_groups::query.next_token:
+      name: next_token
+      in: query
+      description: The opaque cursor token returned by a previous page request.
+      schema:
+        type: string
+      required: false
+    security.get_action_groups::query.size:
+      name: size
+      in: query
+      description: The maximum number of action groups to return in a single page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+      required: false
+    security.get_action_groups::query.sort:
+      name: sort
+      in: query
+      description: The sort direction by action group name.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      required: false
     security.get_node_certificates::path.node_id:
       name: node_id
       in: path
@@ -2378,6 +2465,29 @@ components:
       schema:
         type: boolean
       required: false
+    security.get_distinguished_names::query.next_token:
+      name: next_token
+      in: query
+      description: The opaque cursor token returned by a previous page request.
+      schema:
+        type: string
+      required: false
+    security.get_distinguished_names::query.size:
+      name: size
+      in: query
+      description: The maximum number of node distinguished names to return in a single page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+      required: false
+    security.get_distinguished_names::query.sort:
+      name: sort
+      in: query
+      description: The sort direction by node distinguished name.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      required: false
     security.get_role::path.role:
       name: role
       in: path
@@ -2385,6 +2495,29 @@ components:
       schema:
         type: string
       required: true
+    security.get_roles::query.next_token:
+      name: next_token
+      in: query
+      description: The opaque cursor token returned by a previous page request.
+      schema:
+        type: string
+      required: false
+    security.get_roles::query.size:
+      name: size
+      in: query
+      description: The maximum number of roles to return in a single page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+      required: false
+    security.get_roles::query.sort:
+      name: sort
+      in: query
+      description: The sort direction by role name.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      required: false
     security.get_role_mapping::path.role:
       name: role
       in: path
@@ -2392,6 +2525,29 @@ components:
       schema:
         type: string
       required: true
+    security.get_role_mappings::query.next_token:
+      name: next_token
+      in: query
+      description: The opaque cursor token returned by a previous page request.
+      schema:
+        type: string
+      required: false
+    security.get_role_mappings::query.size:
+      name: size
+      in: query
+      description: The maximum number of role mappings to return in a single page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+      required: false
+    security.get_role_mappings::query.sort:
+      name: sort
+      in: query
+      description: The sort direction by role mapping name.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      required: false
     security.get_sslinfo::query.show_dn:
       name: show_dn
       in: query
@@ -2406,6 +2562,29 @@ components:
       schema:
         type: string
       required: true
+    security.get_tenants::query.next_token:
+      name: next_token
+      in: query
+      description: The opaque cursor token returned by a previous page request.
+      schema:
+        type: string
+      required: false
+    security.get_tenants::query.size:
+      name: size
+      in: query
+      description: The maximum number of tenants to return in a single page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+      required: false
+    security.get_tenants::query.sort:
+      name: sort
+      in: query
+      description: The sort direction by tenant name.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      required: false
     security.get_user::path.username:
       name: username
       in: path
@@ -2413,6 +2592,36 @@ components:
       schema:
         type: string
       required: true
+    security.get_users::query.filterBy:
+      name: filterBy
+      in: query
+      description: The user type to filter internal users by.
+      schema:
+        $ref: '../schemas/security._common.yaml#/components/schemas/UserFilterType'
+      required: false
+    security.get_users::query.next_token:
+      name: next_token
+      in: query
+      description: The opaque cursor token returned by a previous page request.
+      schema:
+        type: string
+      required: false
+    security.get_users::query.size:
+      name: size
+      in: query
+      description: The maximum number of internal users to return in a single page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+      required: false
+    security.get_users::query.sort:
+      name: sort
+      in: query
+      description: The sort direction by username.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      required: false
     security.get_user_legacy::path.username:
       name: username
       in: path
