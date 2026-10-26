@@ -362,6 +362,23 @@ components:
           type: string
           enum:
             - match_only_text
+        analyzer:
+          type: string
+        boost:
+          type: number
+          format: double
+        eager_global_ordinals:
+          type: boolean
+        fielddata:
+          type: boolean
+        fielddata_frequency_filter:
+          $ref: 'indices._common.yaml#/components/schemas/FielddataFrequencyFilter'
+        position_increment_gap:
+          type: integer
+        search_analyzer:
+          type: string
+        term_vector:
+          $ref: '#/components/schemas/TermVectorOption'
         index:
           type: boolean
         fields:
@@ -984,6 +1001,9 @@ components:
           type: string
         model_id:
           type: string
+        model_selection:
+          $ref: '#/components/schemas/SemanticModelSelection'
+          x-version-added: '3.9'
         search_model_id:
           type: string
         semantic_info_field_name:
@@ -1004,8 +1024,26 @@ components:
           type: boolean
           default: false
       required:
-        - model_id
         - type
+      # A semantic field requires at least one of model_id or model_selection.
+      # neural-search rejects a field with neither ("model_id is required"). The anyOf is
+      # wrapped in allOf so the spec tester does not inject unevaluatedProperties into the
+      # branches (which would reject sibling properties like `type`).
+      allOf:
+        - anyOf:
+            - type: object
+              properties:
+                model_id:
+                  type: string
+              required:
+                - model_id
+            - type: object
+              x-version-added: '3.9'
+              properties:
+                model_selection:
+                  $ref: '#/components/schemas/SemanticModelSelection'
+              required:
+                - model_selection
     ShortNumberProperty:
       allOf:
         - $ref: '#/components/schemas/NumberPropertyBase'
@@ -1288,3 +1326,28 @@ components:
           type: string
         prune_ratio:
           type: number
+    SemanticModelSelection:
+      x-version-added: '3.9'
+      type: object
+      description: |-
+        Resolves the model to use for a semantic field from cluster settings instead of a hard-coded `model_id`.
+        The `model_type` and `language_option` pair maps to the cluster setting
+        `plugins.neural_search.model_selection.model_id.<model_type>.<language_option>` (lower-cased),
+        whose value is the resolved model id.
+      properties:
+        language_option:
+          $ref: '#/components/schemas/SemanticModelLanguageOption'
+        model_type:
+          $ref: '#/components/schemas/SemanticModelType'
+    SemanticModelLanguageOption:
+      x-version-added: '3.9'
+      type: string
+      enum:
+        - ENGLISH
+        - MULTILINGUAL
+    SemanticModelType:
+      x-version-added: '3.9'
+      type: string
+      enum:
+        - DENSE
+        - SPARSE
