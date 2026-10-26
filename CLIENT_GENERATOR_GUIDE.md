@@ -184,6 +184,8 @@ allOf:
 
 Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implementing the classifier. The labels are additive, so a generator that ignores them keeps working. Specs extracted for one OpenSearch version (`--opensearch-version`) are labeled again after branches for other versions are removed.
 
+The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
+
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.
 

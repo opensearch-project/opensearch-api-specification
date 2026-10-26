@@ -26,6 +26,7 @@ export default class OpenApiMerger {
   protected _merged: boolean = false
 
   paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
+  normalized_compositions: string[] = [] // locations of schemas rewritten by CompositionNormalizer
   schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
@@ -188,6 +189,7 @@ export default class OpenApiMerger {
   // Rewrite properties declared next to allOf/oneOf/anyOf into the canonical allOf form.
   #normalize_compositions (): void {
     const rewritten = new CompositionNormalizer().normalize(this._spec)
+    this.normalized_compositions = rewritten
     rewritten.forEach(location => { this.logger.info(`Normalized composition at ${location}`) })
   }
 
