@@ -8,6 +8,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
+
+- Added WKT (Well-Known Text) string support to the `GeoShape` schema for `geo_shape` queries, and constrained the `type` property of its GeoJSON variant to the supported GeoJSON shape types via a new `GeoShapeType` enum ([#2193](https://github.com/opensearch-project/opensearch-java/issues/2193))
 - Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` so the model id can be resolved from cluster settings; a semantic field now requires at least one of `model_id` or `model_selection` ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))
 - Added the Describe Cluster Settings API (`GET /_cluster/settings/_describe`) for retrieving setting definition metadata, such as whether a setting is dynamic ([#1287](https://github.com/opensearch-project/opensearch-api-specification/pull/1287))
 - Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
