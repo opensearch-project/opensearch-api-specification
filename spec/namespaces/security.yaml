@@ -785,6 +785,26 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.get_roles@200'
+    put:
+      operationId: security.create_roles.0
+      x-operation-group: security.create_roles
+      tags:
+        - Security
+      x-version-added: '3.10'
+      description: Creates or replaces multiple roles. Roles omitted from the request are unchanged. All entries are validated before any changes are written.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/security/api/roles/create-roles/
+      parameters:
+        - $ref: '#/components/parameters/security.create_roles::query.wait_for_completion'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_roles'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_roles@200'
+        '400':
+          $ref: '#/components/responses/security.create_roles@400'
+        '403':
+          $ref: '#/components/responses/security.create_roles@403'
     patch:
       operationId: security.patch_roles.0
       x-operation-group: security.patch_roles
@@ -1270,6 +1290,16 @@ paths:
           $ref: '#/components/responses/security.validate@400'
 components:
   requestBodies:
+    security.create_roles:
+      content:
+        application/json:
+          schema:
+            type: object
+            description: A non-empty object mapping role names to complete role definitions.
+            minProperties: 1
+            additionalProperties:
+              $ref: '../schemas/security._common.yaml#/components/schemas/Role'
+      required: true
     security.change_password:
       content:
         application/json:
@@ -1487,6 +1517,28 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/DistinguishedNames'
   responses:
+    security.create_roles@200:
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+              - type: object
+                required:
+                  - task
+                properties:
+                  task:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
+    security.create_roles@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.create_roles@403:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.authinfo@200:
       content:
         application/json:
@@ -2196,6 +2248,13 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/InternalServerError'
   parameters:
+    security.create_roles::query.wait_for_completion:
+      name: wait_for_completion
+      in: query
+      description: If false, returns a task ID after validation and runs the configuration write and reload asynchronously.
+      schema:
+        type: boolean
+        default: true
     security.authinfo::query.auth_type:
       name: auth_type
       in: query
@@ -2483,5 +2542,3 @@ components:
       schema:
         type: boolean
       required: false
-
-

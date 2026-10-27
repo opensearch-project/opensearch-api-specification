@@ -6,7 +6,98 @@ distributions:
     - amazon-managed
     - amazon-serverless
 
+epilogues:
+  - path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_reader
+    status: [200, 404]
+  - path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_observer
+    status: [200, 404]
+
 chapters:
+  - synopsis: Create multiple roles.
+    path: /_plugins/_security/api/roles
+    method: PUT
+    version: '>=3.10'
+    parameters:
+      wait_for_completion: true
+    request:
+      payload:
+        test_bulk_reader:
+          cluster_permissions: []
+          index_permissions:
+            - index_patterns: ['movies*']
+              allowed_actions: [read]
+          tenant_permissions: []
+        test_bulk_observer:
+          cluster_permissions: [cluster_monitor]
+          index_permissions: []
+          tenant_permissions: []
+    response:
+      status: 200
+      payload:
+        status: OK
+        message: Resources updated.
+  - synopsis: Verify a role created in bulk.
+    path: /_plugins/_security/api/roles/{role}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_reader
+    response:
+      status: 200
+      payload:
+        test_bulk_reader:
+          index_permissions:
+            - index_patterns: ['movies*']
+              allowed_actions: [read]
+  - synopsis: Replace a role without changing omitted roles.
+    path: /_plugins/_security/api/roles
+    method: PUT
+    version: '>=3.10'
+    request:
+      payload:
+        test_bulk_reader:
+          cluster_permissions: [cluster_monitor]
+          index_permissions: []
+          tenant_permissions: []
+    response:
+      status: 200
+      payload:
+        status: OK
+        message: Resources updated.
+  - synopsis: Verify the supplied role was replaced.
+    path: /_plugins/_security/api/roles/{role}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_reader
+    response:
+      status: 200
+      payload:
+        test_bulk_reader:
+          cluster_permissions: [cluster_monitor]
+          index_permissions: []
+          tenant_permissions: []
+  - synopsis: Verify the omitted role is unchanged.
+    path: /_plugins/_security/api/roles/{role}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_observer
+    response:
+      status: 200
+      payload:
+        test_bulk_observer:
+          cluster_permissions: [cluster_monitor]
+          index_permissions: []
+          tenant_permissions: []
   - synopsis: Create role.
     path: /_plugins/_security/api/roles/{role}
     method: PUT
