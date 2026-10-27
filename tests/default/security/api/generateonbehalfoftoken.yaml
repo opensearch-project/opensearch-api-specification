@@ -7,6 +7,25 @@ distributions:
     - amazon-managed
     - amazon-serverless
 
+prologues:
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: PUT
+    parameters:
+      username: no_perm_obo
+    request:
+      payload:
+        password: myStrongPassword123!
+        opendistro_security_roles: []
+        backend_roles: []
+        attributes: {}
+    status: [200, 201]
+epilogues:
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: no_perm_obo
+    status: [200, 404]
+
 chapters:
   - synopsis: Create an On-Behalf-Of token.
     # Feature is disabled by default. https://docs.opensearch.org/latest/security/access-control/authentication-tokens/#configuration
@@ -20,3 +39,17 @@ chapters:
     response:
       content_type: text/plain
       status: 400
+  - synopsis: Create an On-Behalf-Of token as a user without the permission.
+    path: /_plugins/_security/api/generateonbehalfoftoken
+    method: POST
+    version: '>= 3.10'
+    request:
+      headers:
+        Authorization: Basic bm9fcGVybV9vYm86bXlTdHJvbmdQYXNzd29yZDEyMyE=
+      payload:
+        description: Auth token for a user without the permission
+        service: ''
+        duration: '60'
+    response:
+      content_type: text/plain
+      status: 403
