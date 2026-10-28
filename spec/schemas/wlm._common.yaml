@@ -112,32 +112,10 @@ components:
           format: int64
         resource_limits:
           description: The resource limits for query requests in the workload group.
-          anyOf:
-            - type: object
-              properties:
-                memory:
-                  type: number
-                  format: double
-                cpu:
-                  type: number
-                  format: double
-              required:
-                - memory
-            - type: object
-              properties:
-                memory:
-                  type: number
-                  format: double
-                cpu:
-                  type: number
-                  format: double
-              required:
-                - cpu
+          $ref: '#/components/schemas/WorkloadGroupResourceLimits'
         settings:
-          type: object
-          additionalProperties:
-            type: string
           description: The settings for the workload group.
+          $ref: '#/components/schemas/WorkloadGroupSettings'
           x-version-added: 3.7.0
       required:
         - _id
@@ -153,32 +131,10 @@ components:
         resiliency_mode:
           $ref: '#/components/schemas/ResiliencyMode'
         resource_limits:
-          anyOf:
-            - type: object
-              properties:
-                memory:
-                  type: number
-                  format: double
-                cpu:
-                  type: number
-                  format: double
-              required:
-                - memory
-            - type: object
-              properties:
-                memory:
-                  type: number
-                  format: double
-                cpu:
-                  type: number
-                  format: double
-              required:
-                - cpu
+          $ref: '#/components/schemas/WorkloadGroupResourceLimits'
         settings:
-          type: object
-          additionalProperties:
-            type: string
           description: The settings for the workload group.
+          $ref: '#/components/schemas/WorkloadGroupSettings'
           x-version-added: 3.7.0
       required:
         - name
@@ -192,11 +148,37 @@ components:
         resource_limits:
           $ref: '#/components/schemas/ResourceLimitsSchema'
         settings:
-          type: object
-          additionalProperties:
-            type: string
           description: The settings for the workload group.
+          $ref: '#/components/schemas/WorkloadGroupSettings'
           x-version-added: 3.7.0
+    WorkloadGroupResourceLimits:
+      description: Resource limits for a workload group. At least one of `memory` or `cpu` is required.
+      anyOf:
+        - type: object
+          properties:
+            memory:
+              type: number
+              format: double
+            cpu:
+              type: number
+              format: double
+          required:
+            - memory
+        - type: object
+          properties:
+            memory:
+              type: number
+              format: double
+            cpu:
+              type: number
+              format: double
+          required:
+            - cpu
+    WorkloadGroupSettings:
+      type: object
+      description: Search settings applied to requests in the workload group.
+      additionalProperties:
+        type: string
     ResourceLimitsSchema:
       type: object
       properties:
