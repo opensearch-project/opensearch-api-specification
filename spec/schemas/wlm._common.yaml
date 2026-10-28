@@ -153,27 +153,15 @@ components:
           x-version-added: 3.7.0
     WorkloadGroupResourceLimits:
       description: Resource limits for a workload group. At least one of `memory` or `cpu` is required.
-      anyOf:
-        - type: object
-          properties:
-            memory:
-              type: number
-              format: double
-            cpu:
-              type: number
-              format: double
-          required:
-            - memory
-        - type: object
-          properties:
-            memory:
-              type: number
-              format: double
-            cpu:
-              type: number
-              format: double
-          required:
-            - cpu
+      allOf:
+        - $ref: '#/components/schemas/ResourceLimitsSchema'
+        - anyOf:
+            - type: object
+              required:
+                - memory
+            - type: object
+              required:
+                - cpu
     WorkloadGroupSettings:
       type: object
       description: Search settings applied to requests in the workload group.
