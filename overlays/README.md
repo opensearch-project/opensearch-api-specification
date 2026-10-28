@@ -40,7 +40,7 @@ Applying the overlays produces two per-distribution specs (the merged base
 The `validate-overlays` workflow runs on every pull request. It:
 
 1. Merges the spec (`npm run merge`).
-2. Runs `overlays/build-distribution-specs.sh`, which for each `overlays/<dist>/` folder applies its overlays in filename order (`0-*-block`, then `1-*-extensions`) **one overlay at a time** with the [speakeasy overlay CLI](https://github.com/speakeasy-api/speakeasy), producing `build/opensearch-openapi-<dist>.yaml`.
+2. Runs `overlays/build-distribution-specs.sh`, which for each `overlays/<dist>/` folder applies its overlays in filename order (`0-*-block`, then `1-*-extensions`) **one overlay at a time** with [openapi-overlaykit](https://www.npmjs.com/package/openapi-overlaykit) (a strict, RFC 9535-compliant overlay applier installed as an npm dependency), producing `build/opensearch-openapi-<dist>.yaml`.
 3. Validates the specs are valid OpenAPI documents.
 
 This catches overlay targets that reference renamed or removed paths.
@@ -61,20 +61,18 @@ calls the same script, so the two cannot drift. It takes optional
 folder's overlays one at a time, e.g. for AOS:
 
 ```bash
-speakeasy overlay apply \
-  --schema build/opensearch-openapi.yaml \
+npx openapi-overlaykit \
+  --openapi build/opensearch-openapi.yaml \
   --overlay overlays/aos/0-amazon-managed-block.overlay.yaml \
-  > build/_aos-blocked.yaml
-speakeasy overlay apply \
-  --schema build/_aos-blocked.yaml \
+  --output build/_aos-blocked.yaml
+npx openapi-overlaykit \
+  --openapi build/_aos-blocked.yaml \
   --overlay overlays/aos/1-aos-extensions.overlay.yaml \
-  > build/opensearch-openapi-aos.yaml
+  --output build/opensearch-openapi-aos.yaml
 ```
 
-Install the speakeasy CLI (prebuilt binary, no Go required) from
-https://github.com/speakeasy-api/speakeasy/releases — download the archive for
-your platform and put the `speakeasy` binary on your `PATH`. CI pins a specific
-release (see `.github/workflows/validate-overlays.yml`).
+`openapi-overlaykit` is a pinned npm dependency, so `npm ci` installs it — no
+separate binary download. Overlay targets use standard RFC 9535 JSONPath.
 
 ## Adding Your Distribution's Overlay
 
