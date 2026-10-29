@@ -1,0 +1,82 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test running monitor definitions inline without creating them.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-ad-hoc
+    status: [200]
+
+epilogues:
+  - path: /books-alerting-ad-hoc
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Run a query-level monitor definition as a dry run.
+    path: /_plugins/_alerting/monitors/_execute
+    method: POST
+    parameters:
+      dryrun: true
+    request:
+      payload:
+        name: ad-hoc-monitor-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-ad-hoc
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: ad-hoc-monitor-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value > 10000
+                lang: painless
+            actions: []
+    response:
+      status: 200
+      payload:
+        monitor_name: ad-hoc-monitor-test
+  - synopsis: Run a cluster metrics monitor definition as a dry run.
+    version: '>= 2.4'
+    path: /_plugins/_alerting/monitors/_execute
+    method: POST
+    parameters:
+      dryrun: true
+    request:
+      payload:
+        name: ad-hoc-cluster-metrics-monitor-test
+        monitor_type: cluster_metrics_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - uri:
+              api_type: CLUSTER_HEALTH
+              path: _cluster/health
+        triggers:
+          - name: ad-hoc-cluster-metrics-monitor-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].number_of_nodes < 1
+                lang: painless
+            actions: []
+    response:
+      status: 200
+      payload:
+        monitor_name: ad-hoc-cluster-metrics-monitor-test

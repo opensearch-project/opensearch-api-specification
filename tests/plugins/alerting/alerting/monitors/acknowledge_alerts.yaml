@@ -1,0 +1,80 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test acknowledging alerts for a monitor.
+
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books-alerting-acknowledge
+    status: [200]
+  - path: /_plugins/_alerting/monitors
+    id: create_monitor
+    method: POST
+    request:
+      payload:
+        name: acknowledge-alerts-test
+        monitor_type: query_level_monitor
+        enabled: true
+        schedule:
+          period:
+            interval: 1
+            unit: MINUTES
+        inputs:
+          - search:
+              indices:
+                - books-alerting-acknowledge
+              query:
+                size: 0
+                query:
+                  match_all: {}
+        triggers:
+          - name: acknowledge-alerts-test-trigger
+            severity: '1'
+            condition:
+              script:
+                source: ctx.results[0].hits.total.value >= 0
+                lang: painless
+            actions: []
+    status: [201]
+    output:
+      monitor_id: payload._id
+  - path: /_plugins/_alerting/monitors/{monitor_id}/_execute
+    method: POST
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+      dryrun: false
+    status: [200]
+  - path: /_plugins/_alerting/monitors/alerts
+    id: get_alerts
+    method: GET
+    parameters:
+      monitorId: ${create_monitor.monitor_id}
+    status: [200]
+    output:
+      alert_id:
+        path: payload.alerts[0].id
+        default: unknown-alert-id
+
+epilogues:
+  - path: /_plugins/_alerting/monitors/{monitor_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+  - path: /books-alerting-acknowledge
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Acknowledge the active alerts of a monitor.
+    path: /_plugins/_alerting/monitors/{monitor_id}/_acknowledge/alerts
+    method: POST
+    parameters:
+      monitor_id: ${create_monitor.monitor_id}
+    request:
+      payload:
+        alerts:
+          - ${get_alerts.alert_id}
+    response:
+      status: 200
