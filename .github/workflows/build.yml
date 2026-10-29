@@ -30,19 +30,6 @@ jobs:
       - name: Build
         run: npm ci && npm run merge
 
-      - name: Install speakeasy overlay CLI
-        env:
-          SPEAKEASY_VERSION: v1.796.3
-        run: |
-          mkdir -p "$HOME/.local/bin"
-          curl -fsSL \
-            "https://github.com/speakeasy-api/speakeasy/releases/download/${SPEAKEASY_VERSION}/speakeasy_linux_amd64.zip" \
-            -o /tmp/speakeasy.zip
-          unzip -o -q /tmp/speakeasy.zip -d "$HOME/.local/bin"
-          chmod +x "$HOME/.local/bin/speakeasy"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          "$HOME/.local/bin/speakeasy" --version
-
       - name: Build distribution specs
         # Applies overlays/<dist>/ (0-block, then 1-extensions) onto the merged base,
         # producing build/opensearch-openapi-{oss,aos,aoss}.yaml. Same script the
