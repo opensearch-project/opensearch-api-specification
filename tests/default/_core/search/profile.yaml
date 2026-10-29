@@ -1,0 +1,33 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with profile API enabled.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        director: Bennett Miller
+        title: Moneyball
+        year: 2011
+    status: [201]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search with profile enabled returns fetch as an array.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        profile: true
+        query:
+          match_all: {}
+    response:
+      status: 200
