@@ -1,0 +1,88 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the ISM simulate policy API.
+prologues:
+  - id: policy
+    path: /_plugins/_ism/policies/simulate-test-policy
+    method: PUT
+    request:
+      payload:
+        policy:
+          description: A simulate test policy.
+          default_state: hot
+          states:
+            - name: hot
+              actions: []
+              transitions:
+                - state_name: warm
+                  conditions:
+                    min_index_age: 7d
+            - name: warm
+              actions: []
+              transitions: []
+    status: [201]
+    output:
+      id: payload._id
+  - path: /simulate-test-index
+    method: PUT
+chapters:
+  - synopsis: Simulate a stored policy against an index.
+    version: '>= 3.7'
+    path: /_plugins/_ism/simulate
+    method: POST
+    request:
+      payload:
+        policy_id: ${policy.id}
+        indices:
+          - simulate-test-index
+    response:
+      status: 200
+      payload:
+        simulate_results:
+          - index_name: simulate-test-index
+            is_managed: false
+            current_state: hot
+  - synopsis: Simulate an inline policy against an index.
+    version: '>= 3.7'
+    path: /_plugins/_ism/simulate
+    method: POST
+    request:
+      payload:
+        policy:
+          description: inline test
+          default_state: warm
+          states:
+            - name: warm
+              actions: []
+              transitions: []
+        indices:
+          - simulate-test-index
+    response:
+      status: 200
+      payload:
+        simulate_results:
+          - index_name: simulate-test-index
+            is_managed: false
+            current_state: warm
+  - synopsis: Simulate returns error result for non-existent index.
+    version: '>= 3.7'
+    path: /_plugins/_ism/simulate
+    method: POST
+    request:
+      payload:
+        policy_id: ${policy.id}
+        indices:
+          - no-such-index
+    response:
+      status: 200
+      payload:
+        simulate_results:
+          - index_name: no-such-index
+            is_managed: false
+epilogues:
+  - path: /_plugins/_ism/policies/simulate-test-policy
+    method: DELETE
+    status: [200, 404]
+  - path: /simulate-test-index
+    method: DELETE
+    status: [200, 404]
