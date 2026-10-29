@@ -7,6 +7,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for Search Relevance Workbench plugin for scheduling endpoints ([#967](https://github.com/opensearch-project/opensearch-api-specification/pull/967))
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
+### Fixed
+
+- Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
+
 ### Added
 - Added the bulk Create or Update Role Mappings API (`PUT /_plugins/_security/api/rolesmapping`), introduced in OpenSearch 3.10 ([#1308](https://github.com/opensearch-project/opensearch-api-specification/pull/1308))
 - Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` so the model id can be resolved from cluster settings; a semantic field now requires at least one of `model_id` or `model_selection` ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))
