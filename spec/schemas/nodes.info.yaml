@@ -449,6 +449,8 @@ components:
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
+        roles:
+          $ref: '_common.yaml#/components/schemas/NodeRoles'
         attr:
           type: object
           description: The custom attributes assigned to the node.
@@ -506,8 +508,13 @@ components:
           type: string
           description: The discovery mechanism type.
         seed_hosts:
-          type: string
+          type: array
+          items:
+            type: string
           description: The configured seed hosts for node discovery.
+        initial_state_timeout:
+          description: A timeout for connection to the cluster manager node.
+          $ref: '_common.yaml#/components/schemas/Duration'
     NodeInfoAction:
       type: object
       description: The action-related configuration settings.
@@ -539,6 +546,9 @@ components:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         port:
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        cors:
+          type: object
+          description: The HTTP CORS settings
       required:
         - type
     NodeInfoSettingsHttpType:
@@ -562,14 +572,19 @@ components:
         memory_lock:
           type: string
           description: The memory lock setting for the bootstrap process.
-      required:
-        - memory_lock
+        serial_filter:
+          type: boolean
+          description: The serial filter setting for the bootstrap process.
+          x-version-added: '3.8'
     NodeInfoSettingsTransport:
       type: object
       description: The transport layer configuration settings.
       properties:
         type:
           $ref: '#/components/schemas/NodeInfoSettingsTransportType'
+        tcp:
+          type: object
+          description: The transport-layer TCP settings.
         type.default:
           type: string
           description: The default transport type.
