@@ -13,6 +13,8 @@ import _ from 'lodash'
 import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
+import CompositionNormalizer from './CompositionNormalizer'
+import UnionLabeler from './UnionLabeler'
 import { Logger } from '../Logger'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
@@ -24,6 +26,7 @@ export default class OpenApiMerger {
   protected _merged: boolean = false
 
   paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
+  normalized_compositions: string[] = [] // locations of schemas rewritten by CompositionNormalizer
   schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
@@ -58,7 +61,9 @@ export default class OpenApiMerger {
       this.#add_defaults()
       this.#generate_global_params()
       this.#generate_superseded_ops()
+      this.#normalize_compositions()
       this.#normalize_fields()
+      this.#label_unions()
       this._merged = true
     }
 
@@ -179,6 +184,21 @@ export default class OpenApiMerger {
   #generate_global_params (): void {
     const gen = new GlobalParamsGenerator(this.root_folder)
     gen.generate(this._spec)
+  }
+
+  // Rewrite properties declared next to allOf/oneOf/anyOf into the canonical allOf form.
+  #normalize_compositions (): void {
+    const rewritten = new CompositionNormalizer().normalize(this._spec)
+    this.normalized_compositions = rewritten
+    rewritten.forEach(location => { this.logger.info(`Normalized composition at ${location}`) })
+  }
+
+  // Label every oneOf/anyOf with its kind (x-union-kind) and, for containers, the key of each variant (x-variant-keys).
+  #label_unions (): void {
+    const { counts, unclassified } = new UnionLabeler().label(this._spec)
+    this.logger.info(`Labeled unions: ${JSON.stringify(counts)}`)
+    unclassified.forEach(location => { this.logger.info(`Unclassified union at ${location}`) })
+    if (unclassified.length > 0) this.logger.warn(`${unclassified.length} unions could not be classified; run with --verbose to list them.`)
   }
 
   // Generate superseded operations from _superseded_operations.yaml file.
