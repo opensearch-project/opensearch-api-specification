@@ -1,0 +1,39 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test API keys CRUD operations.
+epilogues:
+  - path: /_plugins/_security/api/apitokens/{id}
+    method: DELETE
+    parameters:
+      id: ${create_api_token.id}
+    status: [200, 404]
+chapters:
+  - synopsis: Create an API key.
+    id: create_api_token
+    path: /_plugins/_security/api/apitokens
+    method: POST
+    request:
+      payload:
+        name: spec-test-key
+        cluster_permissions:
+          - cluster_monitor
+        duration_seconds: 3600
+    response:
+      status: 200
+    output:
+      id: payload.id
+      token: payload.token
+  - synopsis: List all API keys.
+    path: /_plugins/_security/api/apitokens
+    method: GET
+    response:
+      status: 200
+  - synopsis: Revoke the API key.
+    path: /_plugins/_security/api/apitokens/{id}
+    method: DELETE
+    parameters:
+      id: ${create_api_token.id}
+    response:
+      status: 200
+      payload:
+        message: /revoked successfully/
