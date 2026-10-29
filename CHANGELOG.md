@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
+- Added the bulk Create or Update Action Groups API (`PUT /_plugins/_security/api/actiongroups`), introduced in OpenSearch 3.10 ([#1309](https://github.com/opensearch-project/opensearch-api-specification/pull/1309))
 - Added the bulk Create or Update Role Mappings API (`PUT /_plugins/_security/api/rolesmapping`), introduced in OpenSearch 3.10 ([#1308](https://github.com/opensearch-project/opensearch-api-specification/pull/1308))
 - Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` so the model id can be resolved from cluster settings; a semantic field now requires at least one of `model_id` or `model_selection` ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))
 - Added the Describe Cluster Settings API (`GET /_cluster/settings/_describe`) for retrieving setting definition metadata, such as whether a setting is dynamic ([#1287](https://github.com/opensearch-project/opensearch-api-specification/pull/1287))
