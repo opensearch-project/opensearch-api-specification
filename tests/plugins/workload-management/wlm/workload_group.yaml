@@ -1,0 +1,59 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: This story tests all endpoints relevant to WorkloadGroups, from creation to deletion.
+version: '>= 3.0'
+
+chapters:
+  - synopsis: Create a WorkloadGroup.
+    path: /_wlm/workload_group
+    method: PUT
+    request:
+      payload:
+        name: analytics
+        resource_limits:
+          memory: 0.1
+        resiliency_mode: monitor
+  - synopsis: Update a WorkloadGroup by name.
+    path: /_wlm/workload_group/{name}
+    method: PUT
+    parameters:
+      name: analytics
+    request:
+      payload:
+        resource_limits:
+          memory: 0.2
+        resiliency_mode: soft
+  - synopsis: Get the WorkloadGroup by name.
+    path: /_wlm/workload_group/{name}
+    method: GET
+    parameters:
+      name: analytics
+    response:
+      status: 200
+      payload:
+        workload_groups:
+          - name: analytics
+            resource_limits:
+              memory: 0.2
+            resiliency_mode: soft
+  - synopsis: Get all WorkloadGroups.
+    path: /_wlm/workload_group
+    method: GET
+    response:
+      status: 200
+      payload:
+        workload_groups:
+          - name: analytics
+            resource_limits:
+              memory: 0.2
+            resiliency_mode: soft
+  - synopsis: Delete a WorkloadGroup.
+    path: /_wlm/workload_group/{name}
+    parameters:
+      name: analytics
+    method: DELETE
+
+epilogues:
+  - path: /_wlm/workload_group/analytics
+    method: DELETE
+    status: [200, 404]
