@@ -8,7 +8,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
-
+- Added the bulk Create or Update Action Groups API (`PUT /_plugins/_security/api/actiongroups`), introduced in OpenSearch 3.10 ([#1309](https://github.com/opensearch-project/opensearch-api-specification/pull/1309))
+- Added the bulk Create or Update Role Mappings API (`PUT /_plugins/_security/api/rolesmapping`), introduced in OpenSearch 3.10 ([#1308](https://github.com/opensearch-project/opensearch-api-specification/pull/1308))
+- Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` so the model id can be resolved from cluster settings; a semantic field now requires at least one of `model_id` or `model_selection` ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))
+- Added the Describe Cluster Settings API (`GET /_cluster/settings/_describe`) for retrieving setting definition metadata, such as whether a setting is dynamic ([#1287](https://github.com/opensearch-project/opensearch-api-specification/pull/1287))
 - Added OpenSearch 3.8.0 response fields: star-tree query stats, `merges.warmer` stats, and `max_last_index_request_timestamp` to node/index/cat stats, plus `query_insights` top-query, `ml` message `updated_time`, `ingestion` shard state, `replication` autofollow, `security` dashboards-info, and node transport `ssl` fields ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Added an OpenAPI `tags` field to every operation, assigned by semantic domain (e.g. `Document`, `Search`, `Reindex`, `Aliases`, `Index Templates`, `Data Streams`, `Snapshot Policies`), plus a top-level `tags` section declaring and describing each of the 44 groups, for documentation-renderer sidebar navigation ([#1242](https://github.com/opensearch-project/opensearch-api-specification/pull/1242))
 - Added the Delete Task API for removing stored completed task results ([#1215](https://github.com/opensearch-project/opensearch-api-specification/pull/1215))
@@ -106,6 +109,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Changed
 - Bumped the `test-tools-integ` workflow OpenSearch version from 2.17.0 to 3.8.0 and updated the tester golden fixtures for the 2.x→3.x version-gate boundary ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
+- Replaced the speakeasy overlay CLI with the [openapi-overlaykit](https://www.npmjs.com/package/openapi-overlaykit) npm dependency for building the distribution specs ([#1278](https://github.com/opensearch-project/opensearch-api-specification/pull/1278))
 - Add explicit `style: simple` to 13 path parameters whose schema is an array (or `oneOf` with an array branch) so code generators no longer have to infer the OpenAPI 3 default ([#1134](https://github.com/opensearch-project/opensearch-api-specification/pull/1134))
 - Replace inline `format` query response parameter schemas across cat, list, sql, and ppl operations with typed enums (`CatResponseFormat`, `ListResponseFormat`, `SQLResponseFormat`, `PPLResponseFormat`) in `_common`, including server-truthful `default` values ([#1133](https://github.com/opensearch-project/opensearch-api-specification/pull/1133))
 - Changed schema of `NodeInfoSearchPipelines`'s `response_processors` & `request_processors` to use `NodeInfoSearchPipelineProcessor` instead of `NodeInfoIngestProcessor` ([#922](https://github.com/opensearch-project/opensearch-api-specification/pull/922))
