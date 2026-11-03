@@ -1,0 +1,44 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with a point in time.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.4'
+prologues:
+  - path: /movies/_doc
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Moneyball
+        year: 2011
+    status: [201]
+  - path: /movies/_search/point_in_time
+    id: pit
+    method: POST
+    parameters:
+      keep_alive: 1m
+    output:
+      id: payload.pit_id
+epilogues:
+  - path: /_search/point_in_time/_all
+    method: DELETE
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search a point in time.
+    path: /_search
+    method: POST
+    request:
+      payload:
+        pit:
+          id: ${pit.id}
+          keep_alive: 1m
+        sort:
+          - year: asc
+    response:
+      status: 200
+      payload:
+        pit_id: ${pit.id}

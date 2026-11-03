@@ -910,7 +910,10 @@ paths:
       tags:
         - Search
       x-version-added: '2.4'
-      description: Deletes one or more point in time searches based on the IDs passed.
+      description: |-
+        Deletes one or more point in time searches based on the IDs passed.
+        The response lists each PIT with `successful`. The server can answer 200 while some entries report `successful: false`.
+        Those PITs were not deleted and stay open until their `keep_alive` runs out.
       externalDocs:
         url: https://docs.opensearch.org/latest/api-reference/search-apis/point-in-time-api/#delete-pits
       requestBody:
@@ -937,7 +940,10 @@ paths:
       tags:
         - Search
       x-version-added: '2.4'
-      description: Deletes all active point in time searches.
+      description: |-
+        Deletes all active point in time searches.
+        The response lists each PIT with `successful`. The server can answer 200 while some entries report `successful: false`.
+        Those PITs were not deleted and stay open until their `keep_alive` runs out.
       externalDocs:
         url: https://docs.opensearch.org/latest/api-reference/search-apis/point-in-time-api/#delete-pits
       responses:
@@ -2116,7 +2122,9 @@ paths:
       tags:
         - Search
       x-version-added: '2.4'
-      description: Creates point in time context.
+      description: |-
+        Creates point in time context.
+        Delete the PIT when done. Until then it counts against `search.max_open_pit_context`.
       externalDocs:
         url: https://docs.opensearch.org/latest/api-reference/search-apis/point-in-time-api/#create-a-pit
       parameters:
@@ -2570,7 +2578,7 @@ components:
               pit_id:
                 type: array
                 items:
-                  type: string
+                  $ref: '../schemas/_common.yaml#/components/schemas/PitId'
             required:
               - pit_id
     explain:
@@ -3084,7 +3092,7 @@ components:
             type: object
             properties:
               pit_id:
-                type: string
+                $ref: '../schemas/_common.yaml#/components/schemas/PitId'
               _shards:
                 $ref: '../schemas/_common.yaml#/components/schemas/ShardStatistics'
               creation_time:
@@ -4002,7 +4010,10 @@ components:
       name: keep_alive
       in: query
       required: true
-      description: Specify the keep alive for point in time.
+      description: |-
+        Specify the keep alive for point in time.
+        Each search against the PIT restarts it, and a search cannot shorten it.
+        It cannot exceed the `point_in_time.max_keep_alive` cluster setting (24 hours by default).
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
     create_pit::query.preference:
