@@ -943,6 +943,9 @@ components:
               $ref: '#/components/schemas/IntervalsMatch'
             prefix:
               $ref: '#/components/schemas/IntervalsPrefix'
+            range:
+              $ref: '#/components/schemas/IntervalsRange'
+              x-version-added: '3.10'
             wildcard:
               $ref: '#/components/schemas/IntervalsWildcard'
           minProperties: 1
@@ -981,6 +984,9 @@ components:
           $ref: '#/components/schemas/IntervalsMatch'
         prefix:
           $ref: '#/components/schemas/IntervalsPrefix'
+        range:
+          $ref: '#/components/schemas/IntervalsRange'
+          x-version-added: '3.10'
         wildcard:
           $ref: '#/components/schemas/IntervalsWildcard'
       minProperties: 1
@@ -1079,6 +1085,62 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
       required:
         - prefix
+    IntervalsRange:
+      description: |-
+        Matches terms in a range. A lower bound (`gt` or `gte`) and an upper bound (`lt` or `lte`) are required.
+        The bounds are strings, which are normalized with the analyzer and compared with the terms byte by byte, so quote numbers and use terms of equal width, such as years.
+      type: object
+      properties:
+        analyzer:
+          description: |-
+            Analyzer used to normalize the bounds.
+            Defaults to the top-level field's analyzer, or to the analyzer of the `use_field` field if `use_field` is set.
+          type: string
+        gt:
+          description: The lower bound, exclusive. Cannot be combined with `gte`.
+          type: string
+        gte:
+          description: The lower bound, inclusive. Cannot be combined with `gt`.
+          type: string
+        lt:
+          description: The upper bound, exclusive. Cannot be combined with `lte`.
+          type: string
+        lte:
+          description: The upper bound, inclusive. Cannot be combined with `lt`.
+          type: string
+        max_expansions:
+          description: |-
+            Maximum number of terms that the range can expand to in each segment.
+            A search fails if the range expands to more terms.
+            A value less than `1` means the default. A value greater than the maximum clause count (`indices.query.bool.max_clause_count`) is rejected.
+          type: integer
+          format: int32
+          default: 128
+        use_field:
+          $ref: '_common.yaml#/components/schemas/Field'
+      allOf:
+        - oneOf:
+            - properties:
+                gt: {}
+              required:
+                - gt
+              unevaluatedProperties: true
+            - properties:
+                gte: {}
+              required:
+                - gte
+              unevaluatedProperties: true
+        - oneOf:
+            - properties:
+                lt: {}
+              required:
+                - lt
+              unevaluatedProperties: true
+            - properties:
+                lte: {}
+              required:
+                - lte
+              unevaluatedProperties: true
     IntervalsWildcard:
       type: object
       properties:

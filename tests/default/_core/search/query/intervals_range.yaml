@@ -1,0 +1,126 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test search endpoint with the range rule of the intervals query.
+version: '>= 3.10'
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /filings
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            body:
+              type: text
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: filings, _id: '1'}}
+        - {body: fiscal year 2021 revenue}
+        - {create: {_index: filings, _id: '2'}}
+        - {body: fiscal year 2017 revenue}
+        - {create: {_index: filings, _id: '3'}}
+        - {body: 2021 fiscal year revenue}
+        - {create: {_index: filings, _id: '4'}}
+        - {body: fiscal year 2023}
+        - {create: {_index: filings, _id: '5'}}
+        - {body: fiscal year 2019 outlook}
+epilogues:
+  - path: /filings
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search with the range rule, inclusive bounds.
+    path: /{index}/_search
+    parameters:
+      index: filings
+    method: POST
+    request:
+      payload:
+        query:
+          intervals:
+            body:
+              range:
+                gte: '2020'
+                lte: '2022'
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2
+
+  - synopsis: Search with the range rule, exclusive bounds.
+    path: /{index}/_search
+    parameters:
+      index: filings
+    method: POST
+    request:
+      payload:
+        query:
+          intervals:
+            body:
+              range:
+                gt: '2017'
+                lt: '2021'
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 1
+
+  - synopsis: Search with the range rule, analyzer and max_expansions.
+    path: /{index}/_search
+    parameters:
+      index: filings
+    method: POST
+    request:
+      payload:
+        query:
+          intervals:
+            body:
+              range:
+                gte: '2020'
+                lte: '2022'
+                analyzer: standard
+                max_expansions: 50
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 2
+
+  - synopsis: Search with the range rule inside any_of.
+    path: /{index}/_search
+    parameters:
+      index: filings
+    method: POST
+    request:
+      payload:
+        query:
+          intervals:
+            body:
+              any_of:
+                intervals:
+                  - range:
+                      gte: '2020'
+                      lte: '2022'
+                  - match:
+                      query: revenue
+    response:
+      status: 200
+      payload:
+        timed_out: false
+        hits:
+          total:
+            value: 3
