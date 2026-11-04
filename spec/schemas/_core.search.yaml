@@ -40,28 +40,22 @@ components:
             hits:
               type: array
               items:
-                type: object
-                properties:
-                  _source: {}
+                allOf:
+                  - $ref: '#/components/schemas/Hit'
+                  - type: object
+                    properties:
+                      _source: {}
     TotalHits:
       type: object
       properties:
         relation:
-          $ref: '#/components/schemas/TotalHitsRelation'
+          $ref: '_common.yaml#/components/schemas/TotalHitsRelation'
         value:
           type: integer
           format: int64
       required:
         - relation
         - value
-    TotalHitsRelation:
-      oneOf:
-        - type: string
-          const: eq
-          description: Accurate.
-        - type: string
-          const: gte
-          description: Lower bound, including returned events or sequences.
     TDocument:
       x-is-generic-type-parameter: true
       x-protobuf-data-type: bytes
@@ -78,7 +72,7 @@ components:
           oneOf:
             - type: 'null'
             - type: number
-              format: double
+              format: float
         _explanation:
           $ref: '_core.explain.yaml#/components/schemas/Explanation'
         fields:
@@ -107,7 +101,7 @@ components:
               type: object
               additionalProperties:
                 type: number
-                format: double
+                format: float
         _nested:
           $ref: '#/components/schemas/NestedIdentity'
         _ignored:
@@ -115,6 +109,9 @@ components:
           items:
             type: string
         ignored_field_values:
+          deprecated: true
+          x-version-deprecated: 1.0.0
+          description: 'Elasticsearch-only field: not present in OpenSearch server responses.'
           type: object
           additionalProperties:
             type: array
@@ -690,7 +687,7 @@ components:
           type: string
         score:
           type: number
-          format: double
+          format: float
         highlighted:
           type: string
         collate_match:
@@ -718,10 +715,10 @@ components:
           type: string
         score:
           type: number
-          format: double
+          format: float
         freq:
           type: integer
-          format: int64
+          format: int32
         highlighted:
           type: string
         collate_match:
@@ -1359,10 +1356,12 @@ components:
                 hits:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      _source:
-                        $ref: '#/components/schemas/TDocument'
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
         processor_results:
           x-version-added: '3.0'
           type: array
@@ -1407,9 +1406,11 @@ components:
                 hits:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      _source: {}
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source: {}
             suggest:
               type: object
               additionalProperties:
@@ -1417,18 +1418,24 @@ components:
                 items:
                   oneOf:
                     - title: completion
-                      type: object
-                      properties:
-                        options:
-                          oneOf:
-                            - type: object
-                              properties:
-                                _source: {}
-                            - type: array
-                              items:
-                                type: object
-                                properties:
-                                  _source: {}
+                      allOf:
+                        - $ref: '#/components/schemas/CompletionSuggest'
+                        - type: object
+                          properties:
+                            options:
+                              oneOf:
+                                - allOf:
+                                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                                    - type: object
+                                      properties:
+                                        _source: {}
+                                - type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                                      - type: object
+                                        properties:
+                                          _source: {}
                     - title: phrase
                       $ref: '#/components/schemas/PhraseSuggest'
                     - title: term
