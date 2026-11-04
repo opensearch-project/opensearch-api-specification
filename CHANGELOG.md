@@ -81,6 +81,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed the `boxplot` aggregation to match OpenSearch 3.10: `BoxPlotAggregate` statistics are nullable because a bucket with no values returns `null` for each of them, the aggregate's typed keys name is `boxplot` (was `box_plot`), and `BoxplotAggregation` accepts `format` and documents the `compression` default and bounds ([#1313](https://github.com/opensearch-project/opensearch-api-specification/pull/1313))
 - Fixed `PitDetail` to mark `pit_id` as required ([#1290](https://github.com/opensearch-project/opensearch-api-specification/pull/1290))
 - Fixed `MatchOnlyTextProperty` to include the supported `match_only_text` mapping parameters (`analyzer`, `search_analyzer`, `boost`, `eager_global_ordinals`, `fielddata`, `fielddata_frequency_filter`, `index`, `position_increment_gap`, `term_vector`), which were previously dropped when reading mappings ([#1246](https://github.com/opensearch-project/opensearch-api-specification/pull/1246))
 - Fixed the GitHub Pages publish to serve the per-distribution specs (`opensearch-openapi-{oss,aos,aoss}.yaml`) by adding an `opensearch-openapi-*.yaml` glob to the Jekyll `_config.yml` allowlist ([#1252](https://github.com/opensearch-project/opensearch-api-specification/pull/1252))
