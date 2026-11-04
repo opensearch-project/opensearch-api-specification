@@ -15,8 +15,9 @@ components:
           $ref: '#/components/schemas/AutoDateHistogramAggregate'
         - title: avg
           $ref: '#/components/schemas/AvgAggregate'
-        - title: box_plot
+        - title: boxplot
           $ref: '#/components/schemas/BoxPlotAggregate'
+          x-version-added: '3.10'
         - title: bucket_metric_value
           $ref: '#/components/schemas/BucketMetricValueAggregate'
         - title: cardinality
@@ -1291,26 +1292,47 @@ components:
         - type: object
           properties:
             min:
-              type: number
-              format: double
+              description: The smallest value. `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             max:
-              type: number
-              format: double
+              description: The largest value. `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             q1:
-              type: number
-              format: double
+              description: The approximate first quartile (25th percentile). `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             q2:
-              type: number
-              format: double
+              description: The approximate median (50th percentile). `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             q3:
-              type: number
-              format: double
+              description: The approximate third quartile (75th percentile). `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             lower:
-              type: number
-              format: double
+              description: The approximate lower whisker, the smallest value that is at least `q1 - 1.5 * (q3 - q1)`. `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             upper:
-              type: number
-              format: double
+              description: The approximate upper whisker, the largest value that is at most `q3 + 1.5 * (q3 - q1)`. `null` if the bucket contains no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
             min_as_string:
               type: string
             max_as_string:
@@ -1446,6 +1468,7 @@ components:
                   $ref: '#/components/schemas/BoxplotAggregation'
               required: [boxplot]
               unevaluatedProperties: true
+              x-version-added: '3.10'
             - properties:
                 bucket_script:
                   $ref: '#/components/schemas/BucketScriptAggregation'
@@ -1822,13 +1845,16 @@ components:
             type: string
     BoxplotAggregation:
       allOf:
-        - $ref: '#/components/schemas/MetricAggregationBase'
+        - $ref: '#/components/schemas/FormatMetricAggregationBase'
         - type: object
           properties:
             compression:
-              description: Limits the maximum number of nodes used by the underlying TDigest algorithm to `20 * compression`, enabling control of memory usage and approximation error.
+              description: Limits the maximum number of nodes used by the underlying TDigest algorithm to `20 * compression`, enabling control of memory usage and approximation error. Must be greater than `0` and at most `10000`.
               type: number
               format: double
+              default: 100
+              exclusiveMinimum: 0
+              maximum: 10000
     BucketScriptAggregation:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
