@@ -1031,6 +1031,56 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ml.execute_tool@200'
+  /_plugins/_ml/mcp/tools/_register:
+    post:
+      operationId: ml.register_mcp_tools.0
+      x-operation-group: ml.register_mcp_tools
+      tags:
+        - ML Commons
+      x-version-added: '3.0'
+      description: Register tools on the MCP server.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.register_mcp_tools'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.register_mcp_tools@200'
+  /_plugins/_ml/mcp/tools/_update:
+    post:
+      operationId: ml.update_mcp_tools.0
+      x-operation-group: ml.update_mcp_tools
+      tags:
+        - ML Commons
+      x-version-added: '3.1'
+      description: Update tools on the MCP server.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.update_mcp_tools'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.update_mcp_tools@200'
+  /_plugins/_ml/mcp/tools/_list:
+    get:
+      operationId: ml.list_mcp_tools.0
+      x-operation-group: ml.list_mcp_tools
+      tags:
+        - ML Commons
+      x-version-added: '3.1'
+      description: List the tools registered on the MCP server.
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.list_mcp_tools@200'
+  /_plugins/_ml/mcp/tools/_remove:
+    post:
+      operationId: ml.remove_mcp_tools.0
+      x-operation-group: ml.remove_mcp_tools
+      tags:
+        - ML Commons
+      x-version-added: '3.0'
+      description: Remove tools from the MCP server.
+      requestBody:
+        $ref: '#/components/requestBodies/ml.remove_mcp_tools'
+      responses:
+        '200':
+          $ref: '#/components/responses/ml.remove_mcp_tools@200'
   /_plugins/_ml/memory_containers/_create:
     post:
       operationId: ml.create_memory_container.0
@@ -1969,6 +2019,38 @@ components:
             properties:
               parameters:
                 $ref: '../schemas/ml._common.yaml#/components/schemas/Parameters'
+    ml.register_mcp_tools:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tools:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/McpToolRegisterInput'
+            required:
+              - tools
+    ml.update_mcp_tools:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tools:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/McpToolUpdateInput'
+            required:
+              - tools
+    ml.remove_mcp_tools:
+      content:
+        application/json:
+          schema:
+            type: array
+            description: The names of the tools to remove. The server splits each entry at commas.
+            items:
+              type: string
     ml.create_memory_container:
       content:
         application/json:
@@ -2555,6 +2637,33 @@ components:
         application/json:
           schema:
             $ref: '../schemas/ml._common.yaml#/components/schemas/ExecuteToolResponse'
+    ml.register_mcp_tools@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/McpToolsRegisterResponse'
+    ml.update_mcp_tools@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/McpToolsUpdateResponse'
+    ml.list_mcp_tools@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tools:
+                type: array
+                items:
+                  $ref: '../schemas/ml._common.yaml#/components/schemas/McpTool'
+            required:
+              - tools
+    ml.remove_mcp_tools@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ml._common.yaml#/components/schemas/McpToolsRemoveResponse'
     ml.create_memory_container@200:
       content:
         application/json:
