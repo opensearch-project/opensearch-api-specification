@@ -457,6 +457,7 @@ components:
           type: string
           description: The maximum number of nodes allowed to store data locally
         roles:
+          description: The roles assigned to the node.
           $ref: '_common.yaml#/components/schemas/StringOrStringArray'
       required:
         - name
@@ -508,8 +509,8 @@ components:
           type: string
           description: The discovery mechanism type.
         seed_hosts:
-          type: string
           description: The configured seed hosts for node discovery.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoAction:
       type: object
       description: The action-related configuration settings.
@@ -540,12 +541,19 @@ components:
         compression:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         port:
-          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+          type: string
+          description: The port or port range (for example, `9200-9300`) the HTTP server binds to.
         host:
+          description: The host addresses the HTTP server binds to and publishes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the HTTP server binds to.
           $ref: '_common.yaml#/components/schemas/StringOrStringArray'
         publish_host:
+          description: The host addresses the HTTP server publishes to clients.
           $ref: '_common.yaml#/components/schemas/StringOrStringArray'
         publish_port:
+          description: The port the HTTP server publishes to clients.
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
@@ -585,7 +593,20 @@ components:
           type: object
           description: The transport-layer SSL settings.
         host:
+          description: The host addresses the transport layer binds to and publishes.
           $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the transport layer binds to.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the transport layer publishes to other nodes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        port:
+          type: string
+          description: The port or port range (for example, `9300-9400`) the transport layer binds to.
+        publish_port:
+          description: The port the transport layer publishes to other nodes.
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
     NodeInfoSettingsTransportType:
@@ -607,9 +628,14 @@ components:
       description: The network configuration settings.
       properties:
         host:
+          description: The host addresses the node binds to and publishes for all network services.
           $ref: '_common.yaml#/components/schemas/StringOrStringArray'
-      required:
-        - host
+        bind_host:
+          description: The host addresses the node binds to for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the node publishes for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoScript:
       type: object
       description: The script execution configuration.
