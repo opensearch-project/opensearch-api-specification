@@ -416,7 +416,7 @@ components:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         routing:
-          $ref: 'indices._common.yaml#/components/schemas/IndexRouting'
+          $ref: '#/components/schemas/NodeInfoSettingsClusterRouting'
         election:
           $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
         initial_cluster_manager_nodes:
@@ -427,6 +427,38 @@ components:
           $ref: '#/components/schemas/NodeInfoSettingsDeprecationIndexing'
       required:
         - name
+    NodeInfoSettingsClusterRouting:
+      description: The cluster-level routing configuration.
+      type: object
+      properties:
+        allocation:
+          allOf:
+            - $ref: 'indices._common.yaml#/components/schemas/IndexRoutingAllocation'
+            - type: object
+              properties:
+                awareness:
+                  $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocationAwareness'
+        rebalance:
+          $ref: 'indices._common.yaml#/components/schemas/IndexRoutingRebalance'
+    NodeInfoSettingsClusterRoutingAllocationAwareness:
+      type: object
+      description: The shard allocation awareness configuration.
+      properties:
+        attributes:
+          description: The node attributes used for shard allocation awareness.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        force:
+          type: object
+          description: The forced awareness configuration, keyed by node attribute name.
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocationAwarenessForce'
+    NodeInfoSettingsClusterRoutingAllocationAwarenessForce:
+      type: object
+      description: The forced awareness values for a node attribute.
+      properties:
+        values:
+          description: The attribute values across which shards are forced to be spread.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoSettingsClusterElection:
       type: object
       description: The cluster election strategy configuration.
