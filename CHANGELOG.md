@@ -65,7 +65,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added missing `description` to `PutSearchConfigurationRequest` and `ubiQueriesIndex` to `PostQuerySetsRequest` in search-relevance ([#1113](https://github.com/opensearch-project/opensearch-api-specification/pull/1113))
 - Added the search-relevance `PATCH /_plugins/_search_relevance/experiments/{experiment_id}` operation for partially updating an experiment's name or description ([#1113](https://github.com/opensearch-project/opensearch-api-specification/pull/1113))
 - Added `IndexSettingsReplication` schema and nested `replication` property to `IndexSettings` ([#1104](https://github.com/opensearch-project/opensearch-api-specification/pull/1104))
-- Add `false_allow_templates` dynamic mapping option ([944](https://github.com/opensearch-project/opensearch-api-specification/pull/944))
+- Added `false_allow_templates` as a `dynamic` mapping option ([#944](https://github.com/opensearch-project/opensearch-api-specification/pull/944))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
