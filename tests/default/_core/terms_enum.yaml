@@ -1,0 +1,275 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the terms enum API.
+version: '>= 3.10'
+prologues:
+  - path: /films
+    method: PUT
+    request:
+      payload:
+        settings:
+          number_of_shards: 1
+          number_of_replicas: 0
+        mappings:
+          properties:
+            genre:
+              type: keyword
+            released:
+              type: date
+  - path: /films_archive
+    method: PUT
+    request:
+      payload:
+        settings:
+          number_of_shards: 1
+          number_of_replicas: 0
+        mappings:
+          properties:
+            genre:
+              type: keyword
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: films, _id: '1'}}
+        - {genre: Drama, released: 1994-09-23}
+        - {create: {_index: films, _id: '2'}}
+        - {genre: Documentary, released: 2004-05-07}
+        - {create: {_index: films, _id: '3'}}
+        - {genre: Comedy, released: 1999-02-12}
+        - {create: {_index: films, _id: '4'}}
+        - {genre: documentary, released: 2010-11-19}
+        - {create: {_index: films, _id: '5'}}
+        - {genre: Animation, released: 2001-05-18}
+        - {create: {_index: films_archive, _id: '1'}}
+        - {genre: Western}
+  - path: /films_archive/_close
+    method: POST
+epilogues:
+  - path: /films
+    method: DELETE
+    status: [200, 404]
+  - path: /films_archive
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: List the terms of a field.
+    path: /{index}/_terms_enum
+    method:
+      - GET
+      - POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 0
+          failed: 0
+        terms:
+          - Animation
+          - Comedy
+          - Documentary
+          - Drama
+          - documentary
+        complete: true
+
+  - synopsis: List the terms that start with a prefix.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+        string: D
+    response:
+      status: 200
+      payload:
+        terms:
+          - Documentary
+          - Drama
+        complete: true
+
+  - synopsis: Limit the number of terms.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+        string: D
+        size: 1
+    response:
+      status: 200
+      payload:
+        terms:
+          - Documentary
+        complete: true
+
+  - synopsis: Match the prefix regardless of case.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+        string: doc
+        case_insensitive: true
+    response:
+      status: 200
+      payload:
+        terms:
+          - Documentary
+          - documentary
+        complete: true
+
+  - synopsis: List the next page of terms after a given term.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+        string: D
+        search_after: Documentary
+    response:
+      status: 200
+      payload:
+        terms:
+          - Drama
+        complete: true
+
+  - synopsis: Skip the shards that cannot match the index filter.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+        index_filter:
+          range:
+            released:
+              gte: 2050-01-01
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 1
+          failed: 0
+        terms: []
+        complete: true
+
+  - synopsis: List the terms of all documents on a shard that can match the index filter.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films
+    request:
+      payload:
+        field: genre
+        string: D
+        index_filter:
+          range:
+            released:
+              gte: 2000-01-01
+        timeout: 5s
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 0
+          failed: 0
+        terms:
+          - Documentary
+          - Drama
+        complete: true
+
+  - synopsis: Skip a closed index with `ignore_unavailable`.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films,films_archive
+      ignore_unavailable: true
+    request:
+      payload:
+        field: genre
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 0
+          failed: 0
+        terms:
+          - Animation
+          - Comedy
+          - Documentary
+          - Drama
+          - documentary
+        complete: true
+
+  - synopsis: Accept `closed` in `expand_wildcards` when `ignore_unavailable` skips closed indexes.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: films*
+      expand_wildcards:
+        - closed
+        - open
+      ignore_unavailable: true
+    request:
+      payload:
+        field: genre
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 0
+          failed: 0
+        terms:
+          - Animation
+          - Comedy
+          - Documentary
+          - Drama
+          - documentary
+        complete: true
+
+  - synopsis: List terms from a wildcard that matches no index.
+    path: /{index}/_terms_enum
+    method: POST
+    parameters:
+      index: no_such_films_*
+      allow_no_indices: true
+    request:
+      payload:
+        field: genre
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 0
+          successful: 0
+          skipped: 0
+          failed: 0
+        terms: []
+        complete: true
