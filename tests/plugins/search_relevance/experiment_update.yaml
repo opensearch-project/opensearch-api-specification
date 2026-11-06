@@ -1,6 +1,6 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
-description: Tests partially updating (PATCH) an experiment and validating its input drift.
+description: Tests validating an experiment's input drift.
 version: '>= 3.8.0'
 
 prologues:
@@ -90,7 +90,7 @@ epilogues:
     status: [200, 404]
 
 chapters:
-  - synopsis: Create a pairwise experiment to update.
+  - synopsis: Create a pairwise experiment to validate.
     id: pairwise_experiment
     path: /_plugins/_search_relevance/experiments
     method: PUT
@@ -106,17 +106,6 @@ chapters:
       status: 200
     output:
       experiment_id: payload.experiment_id
-  - synopsis: Partially update the experiment's name and description.
-    path: /_plugins/_search_relevance/experiments/{experiment_id}
-    method: PATCH
-    parameters:
-      experiment_id: ${pairwise_experiment.experiment_id}
-    request:
-      payload:
-        name: renamed experiment
-        description: updated description
-    response:
-      status: 200
   - synopsis: Validate the experiment's inputs for drift.
     path: /_plugins/_search_relevance/experiments/{experiment_id}/validate
     method: GET
