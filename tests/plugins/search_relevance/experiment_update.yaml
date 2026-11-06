@@ -106,6 +106,21 @@ chapters:
       status: 200
     output:
       experiment_id: payload.experiment_id
+  - synopsis: Wait for the experiment to complete.
+    path: /_plugins/_search_relevance/experiments/{experiment_id}
+    method: GET
+    parameters:
+      experiment_id: ${pairwise_experiment.experiment_id}
+    retry:
+      count: 30
+      wait: 1000
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                status: COMPLETED
   - synopsis: Validate the experiment's inputs for drift.
     path: /_plugins/_search_relevance/experiments/{experiment_id}/validate
     method: GET

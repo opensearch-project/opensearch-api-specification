@@ -90,6 +90,21 @@ chapters:
       status: 200
     output:
       judgment_id: payload.judgment_id
+  - synopsis: Wait for the judgment to complete.
+    path: /_plugins/_search_relevance/judgments/{judgment_id}
+    method: GET
+    parameters:
+      judgment_id: ${llm_judgment.judgment_id}
+    retry:
+      count: 30
+      wait: 1000
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _source:
+                status: COMPLETED
   - synopsis: Update one rating on the judgment in place.
     path: /_plugins/_search_relevance/judgments/{judgment_id}
     method: PUT
