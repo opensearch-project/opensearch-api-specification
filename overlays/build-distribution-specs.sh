@@ -18,8 +18,7 @@
 # filter) first, then 1-*-extensions (additions).
 #
 # Prerequisites: the merged base spec must already exist (run `npm run merge`),
-# the `speakeasy` CLI must be on PATH, and node deps installed (ts-node, for
-# docs/enrich.ts enrichment).
+# and node deps installed (`npm ci`).
 #
 # Usage:
 #   overlays/build-distribution-specs.sh [BASE_SPEC] [OUT_DIR] [OVERLAYS_DIR]
@@ -41,8 +40,10 @@ if [ ! -f "$BASE_SPEC" ]; then
   echo "error: base spec not found: $BASE_SPEC (run 'npm run merge' first)" >&2
   exit 1
 fi
-if ! command -v speakeasy >/dev/null 2>&1; then
-  echo "error: speakeasy CLI not found on PATH" >&2
+# Use the openapi-overlaykit CLI from node_modules (no global install needed).
+OVERLAYKIT="$REPO_ROOT/node_modules/.bin/openapi-overlaykit"
+if [ ! -x "$OVERLAYKIT" ]; then
+  echo "error: openapi-overlaykit not found at $OVERLAYKIT (run 'npm ci')" >&2
   exit 1
 fi
 mkdir -p "$OUT_DIR"
@@ -87,13 +88,15 @@ for dist_dir in "$OVERLAYS_DIR"/*/; do
   for ov in $(ls "${dist_dir}"*.overlay.yaml 2>/dev/null | sort); do
     echo "Applying overlay: $ov"
     tmp="$(mktemp)"
-    speakeasy overlay apply --schema "$cur" --overlay "$ov" > "$tmp"
+    # single quotes + no line wrapping keeps the YAML style stable (and close to
+    # the previously published artifacts); content is unaffected either way.
+    "$OVERLAYKIT" --openapi "$cur" --overlay "$ov" --output "$tmp" --format yaml \
+      --yaml-quote single --yaml-line-width 0
     cur="$tmp"
   done
   cp "$cur" "$OUT_DIR/opensearch-openapi-${dist}.yaml"
-  # speakeasy writes into a mktemp file (mode 0600); cp preserves that, leaving
-  # the distribution specs unreadable to other processes (e.g. the Pages tar
-  # step fails with "Cannot open: Permission denied"). Normalize to 0644.
+  # mktemp files are mode 0600 and cp keeps that, which breaks the Pages tar
+  # step ("Permission denied"). Make the published spec world-readable.
   chmod 0644 "$OUT_DIR/opensearch-openapi-${dist}.yaml"
   echo "  -> $OUT_DIR/opensearch-openapi-${dist}.yaml"
   enrich_dist "$dist" "$OUT_DIR/opensearch-openapi-${dist}.yaml"
