@@ -6,6 +6,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replaced Swagger UI with Scalar for the API playground and added per-client code samples (curl, Python, JS/Node, Java, Go, Ruby, PHP, C#, Rust) injected into every operation of each distribution spec ([#1241](https://github.com/opensearch-project/opensearch-api-specification/pull/1241))
 - Added specs for Search Relevance Workbench plugin for scheduling endpoints ([#967](https://github.com/opensearch-project/opensearch-api-specification/pull/967))
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
+- Adding API Ref for ISM Simulate Policy ([#1152](https://github.com/opensearch-project/opensearch-api-specification/pull/1152))
 
 ### Added
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
