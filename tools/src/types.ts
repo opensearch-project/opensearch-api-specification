@@ -16,8 +16,6 @@ export interface OperationSpec extends OpenAPIV3_1.OperationObject {
   'x-version-deprecated'?: string
   'x-deprecation-message'?: string
   'x-ignorable'?: boolean
-  'x-distributions-included'?: string[]
-  'x-distributions-excluded'?: string[]
 
   parameters?: OpenAPIV3_1.ReferenceObject[]
   requestBody?: OpenAPIV3_1.ReferenceObject

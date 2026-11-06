@@ -72,7 +72,7 @@ const command = new Command()
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn, opts.log)
 
-const spec = new MergedOpenApiSpec(opts.specPath, opts.opensearchVersion, opts.opensearchDistribution, new Logger(LogLevel.error))
+const spec = new MergedOpenApiSpec(opts.specPath, opts.opensearchVersion, new Logger(LogLevel.error))
 const http_client = new OpenSearchHttpClient(get_opensearch_opts_from_cli({ responseType: 'arraybuffer', logger, ...opts }))
 const chapter_reader = new ChapterReader(http_client, logger)
 const chapter_evaluator = new ChapterEvaluator(new OperationLocator(spec.spec()), chapter_reader, new SchemaValidator(spec.spec(), logger), logger)

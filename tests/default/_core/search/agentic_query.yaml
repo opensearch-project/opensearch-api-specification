@@ -1,6 +1,12 @@
 $schema: ../../../../json_schemas/test_story.schema.yaml
 
 description: Test agentic query schema validation.
+# A bare agentic query (no `agentic_query_translator` search processor) is rejected by the server
+# on every version since agentic query shipped (3.2+): it returns 400 with "Agentic search query
+# must be used ... with agentic_query_translator search processor". Provisioning that processor
+# requires an ML agent the default test env does not set up, so this story asserts the 400 guard
+# (which exercises agentic-query request-schema validation) rather than a 200 search result.
+# Verified against a live 3.8.0 cluster.
 version: '>=3.2'
 warnings:
   invalid-path-detected: false
@@ -36,7 +42,7 @@ epilogues:
     method: DELETE
     status: [200, 404]
 chapters:
-  - synopsis: Search with agentic query containing query_text and query_fields.
+  - synopsis: A bare agentic query (without an agentic_query_translator processor) is rejected.
     path: /{index}/_search
     method: POST
     parameters:
@@ -50,4 +56,4 @@ chapters:
               - author
               - title
     response:
-      status: 200
+      status: 400
