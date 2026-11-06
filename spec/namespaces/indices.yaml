@@ -1471,6 +1471,26 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.add_block@200'
+    delete:
+      operationId: indices.remove_block.0
+      x-operation-group: indices.remove_block
+      tags:
+        - Index
+      x-version-added: '3.10'
+      description: Removes a block from an index.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/index-apis/blocks/
+      parameters:
+        - $ref: '#/components/parameters/indices.remove_block::path.block'
+        - $ref: '#/components/parameters/indices.remove_block::path.index'
+        - $ref: '#/components/parameters/indices.remove_block::query.allow_no_indices'
+        - $ref: '#/components/parameters/indices.remove_block::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.remove_block::query.expand_wildcards'
+        - $ref: '#/components/parameters/indices.remove_block::query.ignore_unavailable'
+        - $ref: '#/components/parameters/indices.remove_block::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.remove_block@200'
   /{index}/_cache/clear:
     post:
       operationId: indices.clear_cache.1
@@ -2854,6 +2874,23 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
+    indices.remove_block@200:
+      content:
+        application/json:
+          schema:
+            description: |-
+              The result of removing a block, for each index that matched the request.
+              `acknowledged` is `false` if not every node applied the change before `timeout` expired, or if the block could not be removed from at least one index. The HTTP status is `200` in both cases.
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+              - type: object
+                properties:
+                  indices:
+                    type: array
+                    items:
+                      $ref: '../schemas/indices.remove_block.yaml#/components/schemas/IndicesUnblockStatus'
+                required:
+                  - indices
     indices.resolve_index@200:
       content:
         application/json:
@@ -4904,6 +4941,68 @@ components:
       description: If `false`, the request returns an error if it targets a missing or closed index.
       schema:
         type: boolean
+      style: form
+    indices.remove_block::path.block:
+      in: path
+      name: block
+      description: The block to remove (one of `read`, `write`, `read_only` or `metadata`).
+      required: true
+      schema:
+        $ref: '../schemas/indices.add_block.yaml#/components/schemas/IndicesBlockOptions'
+      style: simple
+    indices.remove_block::path.index:
+      in: path
+      name: index
+      description: |-
+        A comma-separated list of indexes to remove the block from.
+        Supports wildcards (`*`), unless `action.destructive_requires_name` is `true`.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
+    indices.remove_block::query.allow_no_indices:
+      in: query
+      name: allow_no_indices
+      description: If `false`, the request returns an error if a wildcard expression, index alias, or `_all` value matches no index.
+      schema:
+        type: boolean
+        default: true
+      style: form
+    indices.remove_block::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: |-
+        Period to wait for a connection to the cluster-manager node.
+        If no response is received before the timeout expires, the request fails and returns an error. Defaults to `30s`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.remove_block::query.expand_wildcards:
+      in: query
+      name: expand_wildcards
+      description: |-
+        Type of index that wildcard patterns can match.
+        Supports comma-separated values, such as `open,hidden`.
+        Valid values are: `all`, `open`, `closed`, `hidden`, `none`. Defaults to `open`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
+      style: form
+    indices.remove_block::query.ignore_unavailable:
+      in: query
+      name: ignore_unavailable
+      description: If `false`, the request returns an error if it targets a missing index.
+      schema:
+        type: boolean
+        default: false
+      style: form
+    indices.remove_block::query.timeout:
+      in: query
+      name: timeout
+      description: |-
+        Period to wait for every node to apply the change.
+        If the timeout expires first, the response has `acknowledged` set to `false`. Defaults to `30s`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
     indices.resolve_index::path.name:
       in: path
