@@ -546,6 +546,9 @@ components:
         seed_hosts:
           description: The configured seed hosts for node discovery.
           $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        initial_state_timeout:
+          description: A timeout for connection to the cluster manager node.
+          $ref: '_common.yaml#/components/schemas/Duration'
     NodeInfoAction:
       type: object
       description: The action-related configuration settings.
@@ -590,6 +593,9 @@ components:
         publish_port:
           description: The port the HTTP server publishes to clients.
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
+        cors:
+          type: object
+          description: The HTTP CORS settings
       required:
         - type
     NodeInfoSettingsHttpType:
@@ -613,14 +619,19 @@ components:
         memory_lock:
           type: string
           description: The memory lock setting for the bootstrap process.
-      required:
-        - memory_lock
+        serial_filter:
+          type: boolean
+          description: The serial filter setting for the bootstrap process.
+          x-version-added: '3.8'
     NodeInfoSettingsTransport:
       type: object
       description: The transport layer configuration settings.
       properties:
         type:
           $ref: '#/components/schemas/NodeInfoSettingsTransportType'
+        tcp:
+          type: object
+          description: The transport-layer TCP settings.
         type.default:
           type: string
           description: The default transport type.
