@@ -1,0 +1,161 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test string_stats aggregation.
+version: '>= 3.10'
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: keyword
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {title: Drive}
+        - {create: {_index: movies}}
+        - {title: Memento}
+        - {create: {_index: movies}}
+        - {title: Moneyball}
+        - {create: {_index: movies}}
+        - {director: Unknown}
+chapters:
+  - synopsis: Aggregate with string_stats.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          title_stats:
+            string_stats:
+              field: title
+    response:
+      status: 200
+      payload:
+        aggregations:
+          title_stats:
+            count: 3
+            min_length: 5
+            max_length: 9
+            avg_length: 7
+
+  - synopsis: Aggregate with string_stats and a missing value.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          title_stats:
+            string_stats:
+              field: title
+              missing: n/a
+    response:
+      status: 200
+      payload:
+        aggregations:
+          title_stats:
+            count: 4
+            min_length: 3
+            max_length: 9
+            avg_length: 7
+
+  - synopsis: Aggregate with string_stats and show_distribution.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        query:
+          term:
+            title: Drive
+        aggs:
+          title_stats:
+            string_stats:
+              field: title
+              show_distribution: true
+    response:
+      status: 200
+      payload:
+        aggregations:
+          title_stats:
+            count: 1
+            min_length: 5
+            max_length: 5
+            avg_length: 5
+            distribution:
+              D: 0.2
+              r: 0.2
+              i: 0.2
+              v: 0.2
+              e: 0.2
+
+  - synopsis: Aggregate with string_stats and typed keys.
+    path: /{index}/_search
+    parameters:
+      index: movies
+      typed_keys: true
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          title_stats:
+            string_stats:
+              field: title
+    response:
+      status: 200
+      payload:
+        aggregations:
+          string_stats#title_stats:
+            count: 3
+            min_length: 5
+            max_length: 9
+
+  - synopsis: Aggregate with string_stats over no values.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        query:
+          term:
+            title: Stanley Kubrick
+        aggs:
+          title_stats:
+            string_stats:
+              field: title
+              show_distribution: true
+    response:
+      status: 200
+      payload:
+        aggregations:
+          title_stats:
+            count: 0
+            min_length: null
+            max_length: null
+            avg_length: null
+            entropy: null
+            distribution: null
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
