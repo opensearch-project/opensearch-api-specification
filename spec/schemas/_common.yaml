@@ -396,6 +396,12 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/StringOrStringArray'
+        index:
+          $ref: '#/components/schemas/IndexName'
+          description: The name of the index associated with the error. Present when the exception is associated with a specific index or shard.
+        index_uuid:
+          $ref: '#/components/schemas/Uuid'
+          description: The UUID of the index associated with the error, or `_na_` when the UUID is unknown. Present when the exception is associated with a specific index or shard.
         lang:
           description: The scripting language. Present in `script_exception` responses.
           type: string
@@ -423,6 +429,12 @@ components:
         reason:
           description: A human-readable explanation of the error, in English.
           type: string
+        resource.id:
+          description: The identifiers of the resources associated with the error, such as the index expression that could not be resolved. A single identifier is returned as a string. Present in `index_not_found_exception` and `aliases_not_found_exception` responses.
+          $ref: '#/components/schemas/StringOrStringArray'
+        resource.type:
+          description: The type of resource identified by `resource.id`, such as `index_or_alias`, `index_expression`, or `aliases`. Present in `index_not_found_exception` and `aliases_not_found_exception` responses.
+          type: string
         response_limit:
           x-version-added: 2.18.0
           description: The response limit that was breached. Present in `response_limit_breached_exception` responses.
@@ -440,6 +452,9 @@ components:
           type: array
           items:
             type: string
+        shard:
+          description: The shard number associated with the error, serialized as a string. Present when the exception is associated with a specific shard.
+          type: string
         stack_trace:
           description: The server stack trace, present only if the `error_trace=true` parameter was sent with the request.
           type: string
