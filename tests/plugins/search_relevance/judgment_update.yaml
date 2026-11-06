@@ -105,7 +105,7 @@ chapters:
           hits:
             - _source:
                 status: COMPLETED
-  - synopsis: Update one rating on the judgment in place.
+  - synopsis: Update a rating for a query that is not in the judgment.
     path: /_plugins/_search_relevance/judgments/{judgment_id}
     method: PUT
     parameters:
@@ -118,14 +118,14 @@ chapters:
               - docId: '1'
                 rating: '1'
     response:
-      status: 200
-  - synopsis: Retry the failed documents in the judgment.
+      status: 404 # Without an ML model the judgment has no ratings to update.
+  - synopsis: Retry a judgment that has no failed documents.
     path: /_plugins/_search_relevance/judgments/{judgment_id}/_retry
     method: POST
     parameters:
       judgment_id: ${llm_judgment.judgment_id}
     response:
-      status: 200
+      status: 400 # Without an ML model the judgment has no ratings to retry.
   - synopsis: Delete the judgment.
     path: /_plugins/_search_relevance/judgments/{judgment_id}
     method: DELETE

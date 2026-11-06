@@ -138,6 +138,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.update_judgment_ratings@200'
+        '404':
+          $ref: '#/components/responses/search_relevance.update_judgment_ratings@404'
     delete:
       operationId: search_relevance.delete_judgments.0
       x-operation-group: search_relevance.delete_judgments
@@ -161,6 +163,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/search_relevance.retry_judgments@200'
+        '400':
+          $ref: '#/components/responses/search_relevance.retry_judgments@400'
   /_plugins/_search_relevance/judgments/_search:
     get:
       operationId: search_relevance.judgments_search.0
@@ -924,8 +928,20 @@ components:
         application/json:
           schema:
             $ref: '../schemas/search_relevance._common.yaml#/components/schemas/UpdateJudgmentRatingsResponse'
+    search_relevance.update_judgment_ratings@404:
+      description: The judgment does not exist, or a listed query is not part of the judgment.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
     search_relevance.retry_judgments@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/search_relevance._common.yaml#/components/schemas/RetryJudgmentsResponse'
+    search_relevance.retry_judgments@400:
+      description: The judgment is not an LLM judgment, or has no failed documents to retry.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
