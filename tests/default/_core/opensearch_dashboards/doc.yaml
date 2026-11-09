@@ -1,0 +1,74 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test document APIs exposed under the OpenSearch Dashboards system index prefix.
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Index a document with an explicit ID (PUT).
+    path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+    request:
+      payload:
+        title: Moneyball
+    response:
+      status: 201
+      payload:
+        result: created
+  - synopsis: Index a document with an explicit ID (POST).
+    path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+    request:
+      payload:
+        title: Moneyball 2
+    response:
+      status: 200
+      payload:
+        result: updated
+  - synopsis: Index a document with an automatically generated ID.
+    path: /_opensearch_dashboards/{index}/_doc
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        title: Drive
+    response:
+      status: 201
+      payload:
+        result: created
+  - synopsis: Get a document.
+    path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: GET
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+    response:
+      status: 200
+      payload:
+        found: true
+        _source:
+          title: Moneyball 2
+  - synopsis: Check whether a document exists.
+    path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: HEAD
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+  - synopsis: Delete a document.
+    path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: DELETE
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+    response:
+      status: 200
+      payload:
+        result: deleted

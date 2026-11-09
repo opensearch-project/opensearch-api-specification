@@ -1,0 +1,33 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the delete by query API exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+      refresh: true
+    request:
+      payload:
+        title: Moneyball
+    status: [201]
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Delete documents matching a query.
+    path: /_opensearch_dashboards/{index}/_delete_by_query
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+      refresh: true
+    request:
+      payload:
+        query:
+          match_all: {}
+    response:
+      status: 200
+      payload:
+        deleted: 1
