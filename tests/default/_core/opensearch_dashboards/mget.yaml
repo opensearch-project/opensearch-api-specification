@@ -1,0 +1,63 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test multi-get APIs exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+      refresh: true
+    request:
+      payload:
+        title: Moneyball
+    status: [201]
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get multiple documents (GET).
+    path: /_opensearch_dashboards/_mget
+    method: GET
+    request:
+      payload:
+        docs:
+          - _index: .kibana_spec_test
+            _id: '1'
+    response:
+      status: 200
+      payload:
+        docs:
+          - _id: '1'
+            found: true
+  - synopsis: Get multiple documents (POST).
+    path: /_opensearch_dashboards/_mget
+    method: POST
+    request:
+      payload:
+        docs:
+          - _index: .kibana_spec_test
+            _id: '1'
+    response:
+      status: 200
+  - synopsis: Get multiple documents from an index (GET).
+    path: /_opensearch_dashboards/{index}/_mget
+    method: GET
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        ids: ['1']
+    response:
+      status: 200
+  - synopsis: Get multiple documents from an index (POST).
+    path: /_opensearch_dashboards/{index}/_mget
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        ids: ['1']
+    response:
+      status: 200

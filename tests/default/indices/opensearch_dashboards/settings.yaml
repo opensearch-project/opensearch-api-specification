@@ -1,0 +1,34 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the update index settings API exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/{index}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Update the settings of an index.
+    path: /_opensearch_dashboards/{index}/_settings
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        index:
+          number_of_replicas: 0
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Update the settings of all indexes.
+    pending: The Security plugin rejects index settings updates that target all indexes, including its own system index, with a 403 error.
+    path: /_opensearch_dashboards/_settings
+    method: PUT
+    request:
+      payload:
+        index:
+          refresh_interval: 1s

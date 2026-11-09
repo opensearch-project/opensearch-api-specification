@@ -1,0 +1,66 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search APIs exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: .kibana_spec_test, _id: '1'}}
+        - {title: Moneyball}
+        - {index: {_index: .kibana_spec_test, _id: '2'}}
+        - {title: Drive}
+        - {index: {_index: .kibana_spec_test, _id: '3'}}
+        - {title: Interstellar}
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search all OpenSearch Dashboards indexes (GET).
+    path: /_opensearch_dashboards/_search
+    method: GET
+    parameters:
+      size: 1
+    response:
+      status: 200
+  - synopsis: Search all OpenSearch Dashboards indexes (POST).
+    path: /_opensearch_dashboards/_search
+    method: POST
+    request:
+      payload:
+        size: 1
+        query:
+          match_all: {}
+    response:
+      status: 200
+  - synopsis: Search an index (GET).
+    path: /_opensearch_dashboards/{index}/_search
+    method: GET
+    parameters:
+      index: .kibana_spec_test
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 3
+  - synopsis: Search an index (POST).
+    path: /_opensearch_dashboards/{index}/_search
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        query:
+          match:
+            title: drive
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1

@@ -1,0 +1,66 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the deprecated plural alias APIs exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/{index}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Add an alias to an index (PUT /{index}/_aliases/{name}).
+    path: /_opensearch_dashboards/{index}/_aliases/{name}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+      name: .kibana_spec_alias_1
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Add an alias to an index (POST /{index}/_aliases/{name}).
+    path: /_opensearch_dashboards/{index}/_aliases/{name}
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+      name: .kibana_spec_alias_2
+    response:
+      status: 200
+  - synopsis: Add an alias to an index (PUT /{index}/_aliases).
+    path: /_opensearch_dashboards/{index}/_aliases
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        alias: .kibana_spec_alias_3
+    response:
+      status: 200
+  - synopsis: Add an alias (PUT /_aliases/{name}).
+    path: /_opensearch_dashboards/_aliases/{name}
+    method: PUT
+    parameters:
+      name: .kibana_spec_alias_4
+    request:
+      payload:
+        index: .kibana_spec_test
+    response:
+      status: 200
+  - synopsis: Add an alias (POST /_aliases/{name}).
+    path: /_opensearch_dashboards/_aliases/{name}
+    method: POST
+    parameters:
+      name: .kibana_spec_alias_5
+    request:
+      payload:
+        index: .kibana_spec_test
+    response:
+      status: 200
+  - synopsis: Get all aliases.
+    path: /_opensearch_dashboards/_aliases
+    method: GET
+    response:
+      status: 200

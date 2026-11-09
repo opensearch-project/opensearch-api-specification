@@ -1,0 +1,47 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the bulk streaming API exposed under the OpenSearch Dashboards system index prefix.
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Stream bulk operations (POST).
+    version: '>= 2.17'
+    path: /_opensearch_dashboards/_bulk/stream
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: .kibana_spec_test, _id: '1'}}
+        - {title: Moneyball}
+  - synopsis: Stream bulk operations (PUT).
+    version: '>= 2.17'
+    path: /_opensearch_dashboards/_bulk/stream
+    method: PUT
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: .kibana_spec_test, _id: '2'}}
+        - {title: Drive}
+  - synopsis: Stream bulk operations into an index (POST).
+    version: '>= 2.17'
+    path: /_opensearch_dashboards/{index}/_bulk/stream
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_id: '3'}}
+        - {title: Interstellar}
+  - synopsis: Stream bulk operations into an index (PUT).
+    version: '>= 2.17'
+    path: /_opensearch_dashboards/{index}/_bulk/stream
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {delete: {_id: '3'}}

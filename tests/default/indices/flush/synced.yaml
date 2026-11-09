@@ -1,0 +1,42 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the deprecated synced flush endpoints.
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: movies
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Perform a synced flush on all indexes (GET).
+    version: '>= 2.0'
+    path: /_flush/synced
+    method: GET
+    response:
+      status: 200
+  - synopsis: Perform a synced flush on all indexes (POST).
+    version: '>= 2.0'
+    path: /_flush/synced
+    method: POST
+    response:
+      status: 200
+  - synopsis: Perform a synced flush on an index (GET).
+    path: /{index}/_flush/synced
+    method: GET
+    parameters:
+      index: movies
+    response:
+      status: 200
+      payload:
+        _shards:
+          failed: 0
+  - synopsis: Perform a synced flush on an index (POST).
+    path: /{index}/_flush/synced
+    method: POST
+    parameters:
+      index: movies
+    response:
+      status: 200
