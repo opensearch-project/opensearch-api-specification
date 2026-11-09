@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `indices.synced_flush` Category
+  description: Schemas of `indices.synced_flush` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    SyncedFlushResponse:
+      description: The result of a synced flush. In OpenSearch 1.x, the response also contains a per-index result keyed by index name. In OpenSearch 2.0 and later, synced flush performs a regular flush and returns only `_shards`.
+      type: object
+      properties:
+        _shards:
+          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+      required:
+        - _shards
+      additionalProperties:
+        $ref: '#/components/schemas/SyncedFlushIndexResult'
+    SyncedFlushIndexResult:
+      description: The synced flush result for a single index.
+      type: object
+      properties:
+        total:
+          description: The total number of shard copies.
+          type: integer
+        successful:
+          description: The number of shard copies that were successfully synced.
+          type: integer
+        failed:
+          description: The number of shard copies that failed to sync.
+          type: integer
+        failures:
+          description: The shard copies that failed to sync.
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncedFlushShardFailure'
+      required:
+        - failed
+        - successful
+        - total
+    SyncedFlushShardFailure:
+      description: A shard copy that failed to sync.
+      type: object
+      properties:
+        shard:
+          description: The shard number.
+          type: integer
+        reason:
+          description: The reason the shard copy failed to sync.
+          type: string
+        routing:
+          description: The routing of the shard copy.
+          type: object
+      required:
+        - reason
+        - shard
