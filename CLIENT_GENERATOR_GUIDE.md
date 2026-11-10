@@ -187,13 +187,15 @@ Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implemen
 The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
 
 ### Client Model (experimental)
-`npm run model` builds a resolved client model (`opensearch-client-model.json`) from the bundled spec. Every `$ref` of an `allOf` is followed, every `allOf` merged and every labeled union turned into a type or a constraint, so a generator reads fields and constraints instead of applying N1–N3, M1–M4 and U1–U6 itself. The format is versioned (`version`, currently `0.1.0`) and may still change.
+`npm run model` builds a resolved client model (`opensearch-client-model.json`) from the bundled spec. Every `$ref` of an `allOf` is followed, every `allOf` merged and every labeled union turned into a type or a constraint, so a generator reads fields and constraints instead of applying N1–N3, M1–M4 and U1–U6 itself. The format is versioned (`version`, currently `0.2.0`) and may still change.
 
 Each named schema becomes one entry in `types`, keyed by its bundled name, with a `type_kind`:
 
 - `object`: `fields` (each with `type` and `required`), optional `additional_fields` (the value type of other keys, e.g. the field-name map of `TermsQuery`) and `constraints`.
 - `union`: `union_kind` (the `x-union-kind` label, or `unclassified`), `exclusive` (`oneOf` rather than `anyOf`), and either `variants` by tag value (`tagged`, with `discriminator` and `default_variant`) or by title (`titled`), or `members`.
-- `alias`: a `type` such as an array, a map or a scalar.
+- `alias`: a `type` such as an array, a map or a scalar. A generic type parameter (`x-is-generic-type-parameter`, e.g. `TDocument`) is an alias of `any` with `generic_parameter: true`.
+
+Unions that aren't keyed by tag or title keep their branch titles in `titles`, by position (`null` where a branch has none). `responses` and `request_bodies` hold the JSON body (`media_type`, `type`) of each response and request body component, so inline bodies don't have to be read from the OpenAPI file.
 
 Types are `{ ref }`, `{ scalar, format? }`, `{ enum }`, `{ array }`, `{ map }`, `{ union, union_kind, exclusive }`, `{ object }` or `{ any }`. Constraints are:
 
@@ -202,7 +204,7 @@ Types are `{ ref }`, `{ scalar, format? }`, `{ enum }`, `{ array }`, `{ map }`, 
 - `not_all`: `keys` that must not all be set together (from `not: { required: [...] }`).
 - Any other union kind inside an `allOf`: `matches` (`one_of`/`any_of`) and `types`; the object must also match those types.
 
-Two rules go beyond JSON Schema validity: a later `allOf` member's declaration of a field replaces an earlier one (a specialization narrows a generic base), and a container variant allows only the fields its branch declares. `diagnostics` lists what the model couldn't resolve, such as two scalar types for one field.
+Some rules go beyond JSON Schema validity. A field declared by several `allOf` members keeps one type: arrays merge their item types, objects merge field by field (a partial redeclaration only adds fields), and any other later declaration replaces the earlier one (a specialization narrows a generic base). An `allOf` made only of unions (`allOf: [ $ref Buckets, { oneOf: [...] } ]`) is the later union, which inherits the earlier branches' titles by position. A container variant allows only the fields its branch declares. `diagnostics` lists what the model couldn't resolve, such as two scalar types for one field.
 
 `npm run model -- --typescript <file>` renders the model as TypeScript, as a reference for generator authors: the renderer has no composition logic, and it turns constraints into checked types (other variant keys become `?: never`), so for example two aggregation variants at once, or `id` together with `query` in `TermsLookup`, don't compile.
 

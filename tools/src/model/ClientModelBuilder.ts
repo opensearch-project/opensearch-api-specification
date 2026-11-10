@@ -9,7 +9,7 @@
 
 import _ from 'lodash'
 import {
-  type ClientModel, type Constraint, type ContainerVariant, type Diagnostic, type Field, MODEL_FORMAT, MODEL_VERSION,
+  type BodyEntry, type ClientModel, type Constraint, type ContainerVariant, type Diagnostic, type Field, MODEL_FORMAT, MODEL_VERSION,
   type ObjectShape, type ScalarType, type TypeEntry, type TypeExpr, type UnionEntry
 } from './types'
 
@@ -19,12 +19,14 @@ const MAX_DEPTH = 32
 // Builds the client model from a bundled spec that has been normalized and labeled by OpenApiMerger
 // (CompositionNormalizer and UnionLabeler), so every union carries its x-union-kind.
 export default class ClientModelBuilder {
+  private readonly _spec: Record<string, any>
   private readonly _schemas: Record<string, any>
   private readonly _diagnostics: Diagnostic[] = []
   private readonly _shapes: Record<string, ObjectShape> = {} // merged object shapes of named schemas
   private _current: string = ''
 
   constructor (spec: Record<string, any>) {
+    this._spec = spec
     this._schemas = (spec.components?.schemas ?? {}) as Record<string, any>
   }
 
@@ -34,13 +36,36 @@ export default class ClientModelBuilder {
       this._current = name
       types[name] = this.entry(this._schemas[name])
     }
-    return { format: MODEL_FORMAT, version: MODEL_VERSION, types, diagnostics: this._diagnostics }
+    const responses = this.bodies('responses')
+    const request_bodies = this.bodies('requestBodies')
+    return { format: MODEL_FORMAT, version: MODEL_VERSION, types, responses, request_bodies, diagnostics: this._diagnostics }
+  }
+
+  // The bodies of response or request body components, for inline schemas as much as for references.
+  bodies (section: 'responses' | 'requestBodies'): Record<string, BodyEntry> {
+    const result: Record<string, BodyEntry> = {}
+    const components = (this._spec.components?.[section] ?? {}) as Record<string, any>
+    for (const name of Object.keys(components).sort()) {
+      const content = (components[name]?.content ?? {}) as Record<string, any>
+      const media_type = content['application/json']?.schema !== undefined ? 'application/json'
+        : Object.keys(content).find((type) => content[type]?.schema !== undefined)
+      if (media_type === undefined) continue
+      const schema = content[media_type].schema
+      this._current = `${section}/${name}`
+      const body: BodyEntry = { media_type, type: this.type_of(schema) }
+      if (typeof schema.description === 'string') body.description = schema.description
+      result[name] = body
+    }
+    return result
   }
 
   entry (schema: any): TypeEntry {
     const description = typeof schema?.description === 'string' ? schema.description as string : undefined
     let entry: TypeEntry
-    if (this.is_union(schema) && !this.is_object(schema)) entry = this.union_entry(schema)
+    const refined = this.refined_union(schema)
+    if (schema?.['x-is-generic-type-parameter'] === true) entry = { type_kind: 'alias', type: { any: true }, generic_parameter: true }
+    else if (refined !== undefined && schema.allOf?.length > 1) entry = this.union_entry(refined)
+    else if (this.is_union(schema) && !this.is_object(schema)) entry = this.union_entry(schema)
     else if (this.is_object(schema) && !this.is_plain_map(schema)) entry = { type_kind: 'object', ...this.shape_of(schema) }
     else entry = { type_kind: 'alias', type: this.type_of(schema) }
     if (description !== undefined) entry.description = description
@@ -70,7 +95,15 @@ export default class ClientModelBuilder {
     } else {
       entry.members = branches.map((b) => this.type_of(b))
     }
+    const titles = this.titles_of(branches)
+    if (entry.members !== undefined && titles !== undefined) entry.titles = titles
     return entry
+  }
+
+  // The branches' titles, by position, when any branch has one.
+  titles_of (branches: any[]): Array<string | null> | undefined {
+    const titles = branches.map((b) => this.title_of(b) ?? null)
+    return titles.some((t) => t !== null) ? titles : undefined
   }
 
   // The discriminator value of each branch: from the mapping, or from the single-value enum of the tag field.
@@ -103,13 +136,15 @@ export default class ClientModelBuilder {
         union_kind: this.union_kind(schema, 'inline union'),
         exclusive: schema.oneOf !== undefined
       }
-      const titles = branches.map((b) => this.title_of(b))
-      if (union.union_kind === 'titled' && titles.every((t) => t !== undefined)) union.titles = titles as string[]
+      const titles = this.titles_of(branches)
+      if (titles !== undefined) union.titles = titles
       return union
     }
     if (Array.isArray(schema.allOf) && schema.allOf.length === 1 && !this.has_object_keywords(schema)) {
       return this.type_of(schema.allOf[0])
     }
+    const refined = this.refined_union(schema)
+    if (refined !== undefined && schema.allOf?.length > 1) return this.type_of(refined)
     if (this.is_object(schema)) {
       if (this.is_plain_map(schema)) return { map: this.type_of(schema.additionalProperties) }
       return { object: this.shape_of(schema) }
@@ -234,11 +269,67 @@ export default class ClientModelBuilder {
     const base = this.json_type(existing.type)
     const next = this.json_type(field.type)
     if (base !== undefined && next !== undefined && base !== next) this.diagnose(`field \`${name}\` is declared as both ${base} and ${next}`)
-    const type = _.isEqual(field.type, { any: true }) ? existing.type : field.type
-    const merged: Field = { type, required: existing.required || field.required }
+    const merged: Field = { type: this.merge_types(existing.type, field.type), required: existing.required || field.required }
     const description = field.description ?? existing.description
     if (description !== undefined) merged.description = description
     fields[name] = merged
+  }
+
+  // The type of a field declared twice: arrays merge their items, objects (named or inline) merge field by field, as
+  // a partial redeclaration only adds fields (`hits` of `SearchResultJsonValue` adds `hits` to `HitsMetadata`'s
+  // `total` and `max_score`), and anything else is replaced by the later declaration.
+  merge_types (a: TypeExpr, b: TypeExpr, depth: number = 0): TypeExpr {
+    if (_.isEqual(a, b) || 'any' in b) return a
+    if ('any' in a || depth > MAX_DEPTH) return b
+    if ('array' in a && 'array' in b) return { array: this.merge_types(a.array, b.array, depth + 1) }
+    const first = this.object_shape_of(a)
+    const second = this.object_shape_of(b)
+    if (first === undefined || second === undefined) return b
+    const fields = _.cloneDeep(first.fields)
+    for (const [name, field] of Object.entries(second.fields)) this.merge_field(fields, name, field)
+    const shape: ObjectShape = { fields, constraints: _.uniqWith([...first.constraints, ...second.constraints], (x, y) => _.isEqual(x, y)) }
+    const additional = second.additional_fields ?? first.additional_fields
+    if (additional !== undefined) shape.additional_fields = additional
+    return { object: shape }
+  }
+
+  // The object shape a type stands for: an inline object, or a reference to an object type.
+  object_shape_of (type: TypeExpr): ObjectShape | undefined {
+    if ('object' in type) return type.object
+    if (!('ref' in type)) return undefined
+    const schema = this._schemas[type.ref]
+    if (schema === undefined || this.refined_union(schema) !== undefined || schema['x-is-generic-type-parameter'] === true) return undefined
+    if (this.is_union(schema) && !this.is_object(schema)) return undefined
+    if (!this.is_object(schema) || this.is_plain_map(schema)) return undefined
+    return this.resolved_shape({ $ref: `#/components/schemas/${type.ref}` })
+  }
+
+  // A generic specialization written only with unions, `allOf: [ $ref GenericUnion, { oneOf: [specialized] } ]`, is
+  // the later union: it refines the earlier one, as a later field declaration does, and inherits the earlier
+  // branches' titles by position. Undefined when a member contributes fields.
+  refined_union (schema: any, depth: number = 0): any {
+    if (depth > MAX_DEPTH || schema === undefined || this.has_object_keywords(schema)) return undefined
+    if (this.is_union(schema)) return schema.allOf === undefined ? schema : undefined
+    if (!Array.isArray(schema.allOf)) return undefined
+    let last: any
+    for (const member of schema.allOf as any[]) {
+      const target = typeof member?.$ref === 'string' ? this._schemas[this.ref_name(member.$ref as string)] : member
+      const union = this.refined_union(target, depth + 1)
+      if (union === undefined) {
+        if (target !== undefined && _.isEmpty(_.omit(target as object, ['type', 'description', 'title']))) continue
+        return undefined
+      }
+      const key = union.oneOf !== undefined ? 'oneOf' : 'anyOf'
+      const previous: any[] | undefined = last?.oneOf ?? last?.anyOf
+      if (previous !== undefined && previous.length === union[key].length) {
+        const branches = (union[key] as any[]).map((branch, index) =>
+          branch.title === undefined && typeof previous[index].title === 'string' ? { ...branch, title: previous[index].title } : branch)
+        last = { ...union, [key]: branches }
+      } else {
+        last = union
+      }
+    }
+    return last
   }
 
   // The JSON type of a scalar or enum type, to detect conflicts; undefined for other types.

@@ -61,7 +61,13 @@ const schemas = (): Record<string, any> => ({
   Conflicting: { allOf: [{ type: 'object', properties: { a: { type: 'string' } } }, { type: 'object', properties: { a: { type: 'integer' } } }] },
   Names: { type: 'array', items: ref('Field') },
   Labels: { type: 'object', additionalProperties: { type: 'string' } },
-  Unlabeled: { oneOf: [ref('Field'), ref('QueryContainer')] }
+  Unlabeled: { oneOf: [ref('Field'), ref('QueryContainer')] },
+  TDocument: { 'x-is-generic-type-parameter': true },
+  GenericBuckets: { oneOf: [{ title: 'keyed', type: 'object', additionalProperties: ref('Id') }, { title: 'list', type: 'array', items: ref('Id') }], 'x-union-kind': 'keyed-or-list' },
+  RefinedBuckets: { allOf: [ref('GenericBuckets'), { oneOf: [{ type: 'object', additionalProperties: ref('Field') }, { type: 'array', items: ref('Field') }], 'x-union-kind': 'keyed-or-list' }] },
+  HitsMetadata: { type: 'object', properties: { total: { type: 'integer' }, hits: { type: 'array', items: ref('Id') } } },
+  SearchResult: { type: 'object', properties: { hits: ref('HitsMetadata') } },
+  SearchResultOfValue: { allOf: [ref('SearchResult'), { type: 'object', properties: { hits: { type: 'object', properties: { hits: { type: 'array', items: ref('Field') } } } } }] }
 })
 
 describe('ClientModelBuilder', () => {
@@ -129,6 +135,51 @@ describe('ClientModelBuilder', () => {
     expect(types.Labels).toEqual({ type_kind: 'alias', type: { map: { scalar: 'string' } } })
     expect(types.Unlabeled).toMatchObject({ type_kind: 'union', union_kind: 'unclassified', members: [{ ref: 'Field' }, { ref: 'QueryContainer' }] })
     expect(model.diagnostics).toContainEqual({ type: 'Unlabeled', message: 'unclassified union (no x-union-kind); modeled as `members` only' })
+  })
+})
+
+describe('ClientModelBuilder: specializations, generics and bodies', () => {
+  const types = build(schemas()).types
+
+  test('a generic type parameter is an `any` alias marked as such', () => {
+    expect(types.TDocument).toEqual({ type_kind: 'alias', type: { any: true }, generic_parameter: true })
+  })
+
+  test('an allOf of unions is the later union, which inherits the earlier titles', () => {
+    expect(types.RefinedBuckets).toEqual({
+      type_kind: 'union',
+      union_kind: 'keyed-or-list',
+      exclusive: true,
+      members: [{ map: { ref: 'Field' } }, { array: { ref: 'Field' } }],
+      titles: ['keyed', 'list']
+    })
+  })
+
+  test('a partial object redeclaration adds fields instead of replacing the object', () => {
+    const hits = (types.SearchResultOfValue as ObjectEntry).fields.hits.type
+    expect(hits).toEqual({ object: { fields: {
+      total: { type: { scalar: 'integer' }, required: false },
+      hits: { type: { array: { ref: 'Field' } }, required: false }
+    }, constraints: [] } })
+  })
+
+  test('response and request bodies are modeled, inline or by reference', () => {
+    const model = new ClientModelBuilder({
+      components: {
+        schemas: schemas(),
+        responses: {
+          get___200: { content: { 'application/json': { schema: ref('TermsLookup') } } },
+          create___200: { content: { 'application/json': { schema: { type: 'object', description: 'Created.', properties: { id: ref('Id') }, required: ['id'] } } } },
+          head___200: { description: 'no body' }
+        },
+        requestBodies: { bulk: { content: { 'application/x-ndjson': { schema: { type: 'array', items: { type: 'object' } } } } } }
+      }
+    }).build()
+    expect(model.responses).toEqual({
+      create___200: { media_type: 'application/json', description: 'Created.', type: { object: { fields: { id: { type: { ref: 'Id' }, required: true } }, constraints: [] } } },
+      get___200: { media_type: 'application/json', type: { ref: 'TermsLookup' } }
+    })
+    expect(model.request_bodies.bulk).toEqual({ media_type: 'application/x-ndjson', type: { array: { map: { any: true } } } })
   })
 })
 

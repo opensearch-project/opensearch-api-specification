@@ -12,7 +12,7 @@
 // JSON Schema composition. See "Client Model" in CLIENT_GENERATOR_GUIDE.md.
 
 export const MODEL_FORMAT = 'opensearch-client-model'
-export const MODEL_VERSION = '0.1.0'
+export const MODEL_VERSION = '0.2.0'
 
 export type ScalarType = 'string' | 'number' | 'integer' | 'boolean' | 'null'
 
@@ -23,7 +23,7 @@ export type TypeExpr =
   | { enum: Array<string | number | boolean | null> }
   | { array: TypeExpr }
   | { map: TypeExpr } // an object keyed by arbitrary names
-  | { union: TypeExpr[], union_kind: string, exclusive: boolean, titles?: string[] } // an inline union
+  | { union: TypeExpr[], union_kind: string, exclusive: boolean, titles?: Array<string | null> } // an inline union; `titles` by member, when any member has one
   | { object: ObjectShape } // an inline object
   | { any: true } // any JSON value
 
@@ -94,13 +94,22 @@ export interface UnionEntry {
   default_variant?: string // tagged unions: the variant used when the discriminator is absent
   variants?: Record<string, TypeExpr> // tagged and titled unions: members by tag value or title
   members?: TypeExpr[] // other unions
+  titles?: Array<string | null> // the members' titles, when any member has one
   description?: string
 }
 
 export interface AliasEntry {
   type_kind: 'alias'
   type: TypeExpr
+  generic_parameter?: true // a generic type parameter (x-is-generic-type-parameter, e.g. TDocument): `type` is `any`
   description?: string
+}
+
+// The JSON body of a response or request body component (components/responses, components/requestBodies).
+export interface BodyEntry {
+  media_type: string
+  type: TypeExpr
+  description?: string // the body schema's description
 }
 
 export interface Diagnostic {
@@ -112,5 +121,7 @@ export interface ClientModel {
   format: typeof MODEL_FORMAT
   version: typeof MODEL_VERSION
   types: Record<string, TypeEntry>
+  responses: Record<string, BodyEntry> // by component name, e.g. `search___200`
+  request_bodies: Record<string, BodyEntry>
   diagnostics: Diagnostic[]
 }
