@@ -9,7 +9,7 @@
 
 import _ from 'lodash'
 import {
-  type BodyEntry, type ClientModel, type Constraint, type ContainerVariant, type Diagnostic, type Field, MODEL_FORMAT, MODEL_VERSION,
+  type BodyEntry, type ClientModel, type Versions, type Constraint, type ContainerVariant, type Diagnostic, type Field, MODEL_FORMAT, MODEL_VERSION,
   type ObjectShape, type ScalarType, type TypeEntry, type TypeExpr, type UnionEntry
 } from './types'
 
@@ -69,7 +69,25 @@ export default class ClientModelBuilder {
     else if (this.is_object(schema) && !this.is_plain_map(schema)) entry = { type_kind: 'object', ...this.shape_of(schema) }
     else entry = { type_kind: 'alias', type: this.type_of(schema) }
     if (description !== undefined) entry.description = description
+    const versions = this.versions_of(schema)
+    if (versions !== undefined) entry.versions = versions
     return entry
+  }
+
+  // The version and deprecation metadata of a schema, if any.
+  versions_of (schema: any): Versions | undefined {
+    const versions: Versions = {}
+    if (schema?.['x-version-added'] !== undefined) versions.added = String(schema['x-version-added'])
+    if (schema?.['x-version-removed'] !== undefined) versions.removed = String(schema['x-version-removed'])
+    if (schema?.['x-version-deprecated'] !== undefined) versions.deprecated = String(schema['x-version-deprecated'])
+    if (typeof schema?.['x-deprecation-message'] === 'string') versions.deprecation_message = schema['x-deprecation-message']
+    return _.isEmpty(versions) ? undefined : versions
+  }
+
+  // The branches' version metadata, by position, when any branch has some.
+  branch_versions_of (branches: any[]): Array<Versions | null> | undefined {
+    const versions = branches.map((b) => this.versions_of(b) ?? null)
+    return versions.some((v) => v !== null) ? versions : undefined
   }
 
   union_entry (schema: any): UnionEntry {
@@ -97,6 +115,8 @@ export default class ClientModelBuilder {
     }
     const titles = this.titles_of(branches)
     if (titles !== undefined) entry.titles = titles
+    const branch_versions = this.branch_versions_of(branches)
+    if (branch_versions !== undefined) entry.branch_versions = branch_versions
     return entry
   }
 
@@ -129,6 +149,11 @@ export default class ClientModelBuilder {
     if (typeof schema.$ref === 'string') return { ref: this.ref_name(schema.$ref as string) }
     if (schema.const !== undefined) return { enum: [schema.const] }
     if (Array.isArray(schema.enum)) return { enum: schema.enum }
+    // A type array (`type: [array, null]`) is a union of one schema per type, each keeping the other keywords.
+    if (Array.isArray(schema.type)) {
+      const members = (schema.type as string[]).map((t): TypeExpr => t === 'null' ? { scalar: 'null' } : this.type_of(_.omit({ ...schema, type: t }, ['description', 'title'])))
+      return { union: members, union_kind: 'scalar', exclusive: true }
+    }
     if (this.is_union(schema) && !this.is_object(schema)) {
       const branches: any[] = schema.oneOf ?? schema.anyOf
       const union: TypeExpr = {
@@ -138,6 +163,8 @@ export default class ClientModelBuilder {
       }
       const titles = this.titles_of(branches)
       if (titles !== undefined) union.titles = titles
+      const branch_versions = this.branch_versions_of(branches)
+      if (branch_versions !== undefined) union.branch_versions = branch_versions
       return union
     }
     if (Array.isArray(schema.allOf) && schema.allOf.length === 1 && !this.has_object_keywords(schema)) {
@@ -147,12 +174,11 @@ export default class ClientModelBuilder {
     if (refined !== undefined && schema.allOf?.length > 1) return this.type_of(refined)
     if (this.is_object(schema)) {
       if (this.is_plain_map(schema)) return { map: this.type_of(schema.additionalProperties) }
-      return { object: this.shape_of(schema) }
+      const object: TypeExpr = { object: this.shape_of(schema) }
+      if (typeof schema.description === 'string') object.description = schema.description
+      return object
     }
     if (schema.type === 'array' || schema.items !== undefined) return { array: this.type_of(schema.items) }
-    if (Array.isArray(schema.type)) {
-      return { union: (schema.type as string[]).map((t) => this.type_of({ ...schema, type: t })), union_kind: 'scalar', exclusive: true }
-    }
     if (SCALARS.has(schema.type as string)) {
       const scalar: TypeExpr = { scalar: schema.type as ScalarType }
       if (typeof schema.format === 'string') scalar.format = schema.format
@@ -182,9 +208,13 @@ export default class ClientModelBuilder {
     for (const member of (schema.allOf ?? []) as any[]) {
       if (this.is_union(member) && !this.is_object(member)) { unions.push(member); continue }
       const part = this.resolved_shape(member, depth + 1)
+      const base = typeof member?.$ref === 'string' ? this.ref_name(member.$ref as string) : undefined
+      if (base !== undefined) shape.bases = [...(shape.bases ?? []), base]
       for (const [name, field] of Object.entries(part.fields)) {
         if (field.required) required.add(name)
-        this.merge_field(shape.fields, name, field)
+        // A field is inherited from the base it comes through; an inline member's field is the type's own.
+        const own: Field = _.omit(field, 'declared_in')
+        this.merge_field(shape.fields, name, base !== undefined ? { ...own, declared_in: base } : own)
       }
       if (part.additional_fields !== undefined) shape.additional_fields ??= part.additional_fields
       shape.constraints.push(...part.constraints)
@@ -257,6 +287,8 @@ export default class ClientModelBuilder {
   field (schema: any): Field {
     const field: Field = { type: this.type_of(schema), required: false }
     if (typeof schema?.description === 'string') field.description = schema.description
+    const versions = this.versions_of(schema)
+    if (versions !== undefined) field.versions = versions
     return field
   }
 
@@ -272,6 +304,9 @@ export default class ClientModelBuilder {
     const merged: Field = { type: this.merge_types(existing.type, field.type), required: existing.required || field.required }
     const description = field.description ?? existing.description
     if (description !== undefined) merged.description = description
+    const versions = field.versions ?? existing.versions
+    if (versions !== undefined) merged.versions = versions
+    if (field.declared_in !== undefined) merged.declared_in = field.declared_in
     fields[name] = merged
   }
 
@@ -285,8 +320,10 @@ export default class ClientModelBuilder {
     const first = this.object_shape_of(a)
     const second = this.object_shape_of(b)
     if (first === undefined || second === undefined) return b
-    const fields = _.cloneDeep(first.fields)
-    for (const [name, field] of Object.entries(second.fields)) this.merge_field(fields, name, field)
+    // An inline overlay has no bases: drop where the merged objects' fields came from.
+    const strip = (from: Record<string, Field>): Record<string, Field> => _.mapValues(from, (field) => _.omit(field, 'declared_in'))
+    const fields = strip(_.cloneDeep(first.fields))
+    for (const [name, field] of Object.entries(strip(second.fields))) this.merge_field(fields, name, field)
     const shape: ObjectShape = { fields, constraints: _.uniqWith([...first.constraints, ...second.constraints], (x, y) => _.isEqual(x, y)) }
     const additional = second.additional_fields ?? first.additional_fields
     if (additional !== undefined) shape.additional_fields = additional
@@ -370,9 +407,11 @@ export default class ClientModelBuilder {
       (schema?.type === 'object' && !this.is_union(schema))
   }
 
-  // An object with no named properties: a map from arbitrary names to one type.
+  // An object with no named properties that declares `additionalProperties`: a map from arbitrary names to one
+  // type. A bare `type: object` is an object without declared fields instead.
   is_plain_map (schema: any): boolean {
-    return _.isEmpty(schema?.properties) && schema?.allOf === undefined && !this.is_union(schema) && schema?.not === undefined &&
+    return schema?.additionalProperties !== undefined && schema.additionalProperties !== false &&
+      _.isEmpty(schema?.properties) && schema?.allOf === undefined && !this.is_union(schema) && schema?.not === undefined &&
       _.isEmpty(schema?.required)
   }
 

@@ -23,17 +23,28 @@ export type TypeExpr =
   | { enum: Array<string | number | boolean | null> }
   | { array: TypeExpr }
   | { map: TypeExpr } // an object keyed by arbitrary names
-  | { union: TypeExpr[], union_kind: string, exclusive: boolean, titles?: Array<string | null> } // an inline union; `titles` by member, when any member has one
-  | { object: ObjectShape } // an inline object
+  | { union: TypeExpr[], union_kind: string, exclusive: boolean, titles?: Array<string | null>, branch_versions?: Array<Versions | null> } // an inline union; `titles` and `branch_versions` by member, when any member has one
+  | { object: ObjectShape, description?: string } // an inline object
   | { any: true } // any JSON value
 
 export interface Field {
   type: TypeExpr
   required: boolean
   description?: string
+  versions?: Versions
+  declared_in?: string // the base (a named allOf member) the field is inherited from; absent for the type's own fields
+}
+
+// Version and deprecation metadata (x-version-added, x-version-removed, x-version-deprecated, x-deprecation-message).
+export interface Versions {
+  added?: string
+  removed?: string
+  deprecated?: string
+  deprecation_message?: string
 }
 
 export interface ObjectShape {
+  bases?: string[] // the named types merged in through allOf, in order; their fields carry `declared_in`
   fields: Record<string, Field>
   additional_fields?: TypeExpr // the type of keys not listed in `fields`
   constraints: Constraint[]
@@ -84,6 +95,7 @@ export type TypeEntry = ObjectEntry | UnionEntry | AliasEntry
 export interface ObjectEntry extends ObjectShape {
   type_kind: 'object'
   description?: string
+  versions?: Versions
 }
 
 export interface UnionEntry {
@@ -92,9 +104,11 @@ export interface UnionEntry {
   exclusive: boolean // oneOf (exactly one member matches) rather than anyOf
   discriminator?: string // tagged unions: the field whose value selects the variant
   default_variant?: string // tagged unions: the variant used when the discriminator is absent
+  versions?: Versions
   variants?: Record<string, TypeExpr> // tagged and titled unions: members by tag value or title
   members?: TypeExpr[] // other unions
   titles?: Array<string | null> // each branch's own title, by position (members or variants), when any branch has one
+  branch_versions?: Array<Versions | null> // each branch's version metadata, by position, when any branch has some
   description?: string
 }
 
@@ -103,6 +117,7 @@ export interface AliasEntry {
   type: TypeExpr
   generic_parameter?: true // a generic type parameter (x-is-generic-type-parameter, e.g. TDocument): `type` is `any`
   description?: string
+  versions?: Versions
 }
 
 // The JSON body of a response or request body component (components/responses, components/requestBodies).

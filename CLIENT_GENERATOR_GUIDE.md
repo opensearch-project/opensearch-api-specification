@@ -195,7 +195,9 @@ Each named schema becomes one entry in `types`, keyed by its bundled name, with 
 - `union`: `union_kind` (the `x-union-kind` label, or `unclassified`), `exclusive` (`oneOf` rather than `anyOf`), and either `variants` by tag value (`tagged`, with `discriminator` and `default_variant`) or by title (`titled`), or `members`.
 - `alias`: a `type` such as an array, a map or a scalar. A generic type parameter (`x-is-generic-type-parameter`, e.g. `TDocument`) is an alias of `any` with `generic_parameter: true`.
 
-Unions that aren't keyed by tag or title keep their branch titles in `titles`, by position (`null` where a branch has none). `responses` and `request_bodies` hold the JSON body (`media_type`, `type`) of each response and request body component, so inline bodies don't have to be read from the OpenAPI file.
+Object entries list the named types merged in through `allOf` in `bases`, and each inherited field names the base it comes through in `declared_in`, so a generator can emit inheritance or embedding instead of flat types. Entries, fields and union branches (`branch_versions`) carry `versions` (`added`, `removed`, `deprecated`, `deprecation_message`) from `x-version-*` and `x-deprecation-message`. A bare `type: object` is an object without declared fields; only `additionalProperties` makes a map.
+
+Unions keep each branch's own title in `titles`, by position (`null` where a branch has none). `responses` and `request_bodies` hold the JSON body (`media_type`, `type`) of each response and request body component, so inline bodies don't have to be read from the OpenAPI file.
 
 Types are `{ ref }`, `{ scalar, format? }`, `{ enum }`, `{ array }`, `{ map }`, `{ union, union_kind, exclusive }`, `{ object }` or `{ any }`. Constraints are:
 

@@ -131,6 +131,38 @@ describe('ClientModelBuilder', () => {
     expect(model.diagnostics).toContainEqual({ type: 'Conflicting', message: 'field `a` is declared as both string and number' })
   })
 
+  test('a type array is a union of one type per entry', () => {
+    const model = build({ Names: { type: ['array', 'null'], description: 'Names.', items: { type: 'string' } } })
+    expect(model.types.Names).toEqual({ type_kind: 'alias', description: 'Names.', type: { union: [{ array: { scalar: 'string' } }, { scalar: 'null' }], union_kind: 'scalar', exclusive: true } })
+  })
+
+  test('version metadata and the bases that fields are inherited from', () => {
+    const model = build({
+      Base: { type: 'object', properties: { a: { type: 'string', 'x-version-added': '2.1' } } },
+      Derived: {
+        'x-version-deprecated': '3.0',
+        'x-deprecation-message': 'Use Other.',
+        allOf: [ref('Base'), { type: 'object', properties: { b: { type: 'string' } } }]
+      },
+      Choice: { oneOf: [{ type: 'string', 'x-version-removed': '3.0' }, { type: 'number' }], 'x-union-kind': 'scalar' }
+    })
+    expect(model.types.Derived).toEqual({
+      type_kind: 'object',
+      bases: ['Base'],
+      fields: {
+        a: { type: { scalar: 'string' }, required: false, versions: { added: '2.1' }, declared_in: 'Base' },
+        b: { type: { scalar: 'string' }, required: false }
+      },
+      constraints: [],
+      versions: { deprecated: '3.0', deprecation_message: 'Use Other.' }
+    })
+    expect((model.types.Choice as UnionEntry).branch_versions).toEqual([{ removed: '3.0' }, null])
+  })
+
+  test('a bare `type: object` is an object without declared fields, not a map', () => {
+    expect(build({ Empty: { type: 'object' } }).types.Empty).toEqual({ type_kind: 'object', fields: {}, constraints: [] })
+  })
+
   test('arrays, maps and unlabeled unions', () => {
     expect(types.Names).toEqual({ type_kind: 'alias', type: { array: { ref: 'Field' } } })
     expect(types.Labels).toEqual({ type_kind: 'alias', type: { map: { scalar: 'string' } } })
@@ -177,10 +209,10 @@ describe('ClientModelBuilder: specializations, generics and bodies', () => {
       }
     }).build()
     expect(model.responses).toEqual({
-      create___200: { media_type: 'application/json', description: 'Created.', type: { object: { fields: { id: { type: { ref: 'Id' }, required: true } }, constraints: [] } } },
+      create___200: { media_type: 'application/json', description: 'Created.', type: { object: { fields: { id: { type: { ref: 'Id' }, required: true } }, constraints: [] }, description: 'Created.' } },
       get___200: { media_type: 'application/json', type: { ref: 'TermsLookup' } }
     })
-    expect(model.request_bodies.bulk).toEqual({ media_type: 'application/x-ndjson', type: { array: { map: { any: true } } } })
+    expect(model.request_bodies.bulk).toEqual({ media_type: 'application/x-ndjson', type: { array: { object: { fields: {}, constraints: [] } } } })
   })
 })
 
