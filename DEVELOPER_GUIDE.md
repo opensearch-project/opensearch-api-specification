@@ -188,6 +188,28 @@ To generate a spec that does not contain any APIs or fields removed in version 2
 npm run merge -- --opensearch-version=2.0
 ```
 
+### [Client Model](tools/src/model)
+
+```bash
+npm run model -- --help
+```
+
+Builds the resolved client model from the bundled spec: every schema as a flat entry with its merged fields, requiredness, union kind and constraints, so that client generators don't interpret `allOf`/`oneOf`/`anyOf` themselves (see [Client Model](CLIENT_GENERATOR_GUIDE.md#client-model-experimental)). Run `npm run merge` first.
+
+**Arguments**
+
+- `--input <path>`: The bundled spec, defaults to `<repository-root>/build/opensearch-openapi.yaml`.
+- `--output <path>`: The model file, defaults to `<repository-root>/build/opensearch-client-model.json`.
+- `--typescript <path>`: Also render the model as TypeScript declarations, a reference renderer that shows how a generator maps the model.
+- `--verbose`: List every diagnostic (for example two scalar types declared for one field).
+
+**Example**
+
+```bash
+npm run merge
+npm run model -- --typescript build/opensearch-client-model.d.ts
+```
+
 ### [Spec Linter](tools/src/linter)
 
 ```bash

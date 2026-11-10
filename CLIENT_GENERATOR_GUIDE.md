@@ -186,6 +186,26 @@ Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implemen
 
 The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
 
+### Client Model (experimental)
+`npm run model` builds a resolved client model (`opensearch-client-model.json`) from the bundled spec. Every `$ref` of an `allOf` is followed, every `allOf` merged and every labeled union turned into a type or a constraint, so a generator reads fields and constraints instead of applying N1–N3, M1–M4 and U1–U6 itself. The format is versioned (`version`, currently `0.1.0`) and may still change.
+
+Each named schema becomes one entry in `types`, keyed by its bundled name, with a `type_kind`:
+
+- `object`: `fields` (each with `type` and `required`), optional `additional_fields` (the value type of other keys, e.g. the field-name map of `TermsQuery`) and `constraints`.
+- `union`: `union_kind` (the `x-union-kind` label, or `unclassified`), `exclusive` (`oneOf` rather than `anyOf`), and either `variants` by tag value (`tagged`, with `discriminator` and `default_variant`) or by title (`titled`), or `members`.
+- `alias`: a `type` such as an array, a map or a scalar.
+
+Types are `{ ref }`, `{ scalar, format? }`, `{ enum }`, `{ array }`, `{ map }`, `{ union, union_kind, exclusive }`, `{ object }` or `{ any }`. Constraints are:
+
+- `presence`: `one_of` or `any_of`, a list of key sets; the object sets exactly one / at least one of them (`TermsLookup`: `one_of: [[id], [query]]`).
+- `container`: `variants` by variant key, each with the key's `value` type, the `extra_fields` allowed only with that variant and its `extra_constraints` (`AggregationContainer`: `aggs`/`aggregations` only on bucket variants).
+- `not_all`: `keys` that must not all be set together (from `not: { required: [...] }`).
+- Any other union kind inside an `allOf`: `matches` (`one_of`/`any_of`) and `types`; the object must also match those types.
+
+Two rules go beyond JSON Schema validity: a later `allOf` member's declaration of a field replaces an earlier one (a specialization narrows a generic base), and a container variant allows only the fields its branch declares. `diagnostics` lists what the model couldn't resolve, such as two scalar types for one field.
+
+`npm run model -- --typescript <file>` renders the model as TypeScript, as a reference for generator authors: the renderer has no composition logic, and it turns constraints into checked types (other variant keys become `?: never`), so for example two aggregation variants at once, or `id` together with `query` in `TermsLookup`, don't compile.
+
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.
 
