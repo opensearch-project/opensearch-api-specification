@@ -46,9 +46,11 @@ export default class UnionClassifier {
     if (union.discriminator !== undefined) return { kind: 'tagged' }
 
     const resolved = branches.map((branch) => this.resolve(branch))
+    // Presence first: a branch that requires a property the object part already declares selects nothing, it only
+    // constrains which declared fields are set (IntervalsRange: `gt` or `gte`), even if it also looks like a container.
+    if (this.is_presence(resolved, object_part)) return { kind: 'presence' }
     const variant_keys = this.container_keys(resolved)
     if (variant_keys !== undefined) return { kind: 'container', variant_keys }
-    if (this.is_presence(resolved, object_part)) return { kind: 'presence' }
     if (branches.every((branch, index) => typeof (branch.title ?? resolved[index].title) === 'string')) return { kind: 'titled' }
     if (resolved.every((branch) => branch.is_scalar)) return { kind: 'scalar' }
     if (this.is_one_or_many(branches)) return { kind: 'one-or-many' }
@@ -64,10 +66,20 @@ export default class UnionClassifier {
       if (branch.is_scalar || branch.has_composition || branch.required.length !== 1) return undefined
       const key = branch.required[0]
       const value = branch.properties[key]
-      if (value === undefined || this.resolve(value).is_scalar) return undefined
+      if (value === undefined || !this.is_object_value(value)) return undefined
       keys.push(key)
     }
     return _.uniq(keys).length === keys.length ? keys : undefined
+  }
+
+  // A container's value must be known to be an object. An empty schema (`gt: {}`, which only marks the key as
+  // required and leaves its type to another member) doesn't say so.
+  is_object_value (schema: any): boolean {
+    const target = this.dereference(schema)
+    const resolved = this.resolve(schema)
+    if (resolved.is_scalar) return false
+    return target?.type === 'object' || !_.isEmpty(resolved.properties) || resolved.has_composition ||
+      target?.additionalProperties !== undefined || (Array.isArray(target?.allOf) && target.allOf.length > 0)
   }
 
   // U3: every branch only requires properties of the surrounding object part, or adds optional properties.
