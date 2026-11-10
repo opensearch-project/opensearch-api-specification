@@ -98,7 +98,8 @@ describe('ClientModelBuilder', () => {
       type_kind: 'union',
       union_kind: 'titled',
       exclusive: true,
-      variants: { value: { array: { ref: 'FieldValue' } }, lookup: { ref: 'TermsLookup' } }
+      variants: { value: { array: { ref: 'FieldValue' } }, lookup: { ref: 'TermsLookup' } },
+      titles: ['value', 'lookup']
     })
   })
 

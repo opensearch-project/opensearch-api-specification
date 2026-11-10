@@ -94,7 +94,7 @@ export interface UnionEntry {
   default_variant?: string // tagged unions: the variant used when the discriminator is absent
   variants?: Record<string, TypeExpr> // tagged and titled unions: members by tag value or title
   members?: TypeExpr[] // other unions
-  titles?: Array<string | null> // the members' titles, when any member has one
+  titles?: Array<string | null> // each branch's own title, by position (members or variants), when any branch has one
   description?: string
 }
 

@@ -96,13 +96,13 @@ export default class ClientModelBuilder {
       entry.members = branches.map((b) => this.type_of(b))
     }
     const titles = this.titles_of(branches)
-    if (entry.members !== undefined && titles !== undefined) entry.titles = titles
+    if (titles !== undefined) entry.titles = titles
     return entry
   }
 
-  // The branches' titles, by position, when any branch has one.
+  // The branches' own titles (not those of the schemas they reference), by position, when any branch has one.
   titles_of (branches: any[]): Array<string | null> | undefined {
-    const titles = branches.map((b) => this.title_of(b) ?? null)
+    const titles = branches.map((b) => typeof b?.title === 'string' ? b.title as string : null)
     return titles.some((t) => t !== null) ? titles : undefined
   }
 
