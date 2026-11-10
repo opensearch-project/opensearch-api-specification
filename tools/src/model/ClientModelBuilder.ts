@@ -50,6 +50,7 @@ export default class ClientModelBuilder {
   union_entry (schema: any): UnionEntry {
     const branches: any[] = schema.oneOf ?? schema.anyOf
     const union_kind = this.union_kind(schema)
+    if (union_kind === 'unclassified') this.diagnose('unclassified union (no x-union-kind); modeled as `members` only')
     const entry: UnionEntry = { type_kind: 'union', union_kind, exclusive: schema.oneOf !== undefined }
     if (union_kind === 'tagged' && schema.discriminator?.propertyName !== undefined) {
       const discriminator: string = schema.discriminator.propertyName
@@ -99,7 +100,7 @@ export default class ClientModelBuilder {
       const branches: any[] = schema.oneOf ?? schema.anyOf
       const union: TypeExpr = {
         union: branches.map((b) => this.type_of(b)),
-        union_kind: this.union_kind(schema),
+        union_kind: this.union_kind(schema, 'inline union'),
         exclusive: schema.oneOf !== undefined
       }
       const titles = branches.map((b) => this.title_of(b))
@@ -214,7 +215,7 @@ export default class ClientModelBuilder {
       })
       return { union_kind: 'container', variants }
     }
-    if (kind === 'unclassified') this.diagnose('an allOf member union is unclassified; modeled as `matches`')
+    if (kind === 'unclassified') this.diagnose('unclassified allOf member union (no x-union-kind); modeled as `matches`')
     return { union_kind: kind, matches: exclusive ? 'one_of' : 'any_of', types: branches.map((b) => this.type_of(b)) }
   }
 
@@ -250,8 +251,11 @@ export default class ClientModelBuilder {
     return undefined
   }
 
-  union_kind (union: any): string {
-    return typeof union['x-union-kind'] === 'string' ? union['x-union-kind'] : 'unclassified'
+  // The x-union-kind label of a union. With `where`, a missing label is reported.
+  union_kind (union: any, where?: string): string {
+    if (typeof union['x-union-kind'] === 'string') return union['x-union-kind']
+    if (where !== undefined) this.diagnose(`unclassified ${where} (no x-union-kind); modeled as \`union\` members only`)
+    return 'unclassified'
   }
 
   title_of (branch: any): string | undefined {

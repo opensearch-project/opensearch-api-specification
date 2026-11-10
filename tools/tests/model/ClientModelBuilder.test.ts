@@ -128,6 +128,7 @@ describe('ClientModelBuilder', () => {
     expect(types.Names).toEqual({ type_kind: 'alias', type: { array: { ref: 'Field' } } })
     expect(types.Labels).toEqual({ type_kind: 'alias', type: { map: { scalar: 'string' } } })
     expect(types.Unlabeled).toMatchObject({ type_kind: 'union', union_kind: 'unclassified', members: [{ ref: 'Field' }, { ref: 'QueryContainer' }] })
+    expect(model.diagnostics).toContainEqual({ type: 'Unlabeled', message: 'unclassified union (no x-union-kind); modeled as `members` only' })
   })
 })
 
@@ -136,9 +137,9 @@ describe('ClientModelBuilder on the bundled spec', () => {
   const model = new ClientModelBuilder(spec).build()
   const types = model.types
 
-  test('models every schema without diagnostics', () => {
+  test('models every schema; the only diagnostics are unclassified unions', () => {
     expect(Object.keys(types)).toHaveLength(Object.keys(spec.components.schemas as object).length)
-    expect(model.diagnostics).toEqual([])
+    expect(model.diagnostics.filter((d) => !d.message.startsWith('unclassified '))).toEqual([])
   })
 
   test('TermsLookup keeps all six fields and its exactly-one constraint', () => {
