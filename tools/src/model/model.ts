@@ -13,11 +13,14 @@ import { Logger, LogLevel } from '../Logger'
 import { read_yaml, write_json, write_text } from '../helpers'
 import ClientModelBuilder from './ClientModelBuilder'
 import TypeScriptRenderer from './TypeScriptRenderer'
+import CompositionNormalizer from '../merger/CompositionNormalizer'
+import UnionLabeler from '../merger/UnionLabeler'
 
 const command = new Command()
   .description('Builds the resolved client model from the bundled spec (run `npm run merge` first).')
   .addOption(new Option('-i, --input <path>', 'bundled spec').default(resolve(__dirname, '../../../build/opensearch-openapi.yaml')))
   .addOption(new Option('-o, --output <path>', 'client model file').default(resolve(__dirname, '../../../build/opensearch-client-model.json')))
+  .addOption(new Option('--label', 'normalize and label the input first, for a bundle built without them (e.g. a client\'s vendored spec)').default(false))
   .addOption(new Option('--typescript <path>', 'also render the model as TypeScript declarations to this file'))
   .addOption(new Option('--verbose', 'list every diagnostic').default(false))
   .allowExcessArguments(false)
@@ -25,7 +28,13 @@ const command = new Command()
 
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
-const model = new ClientModelBuilder(read_yaml(opts.input)).build()
+const spec = read_yaml(opts.input)
+if (opts.label) {
+  const normalized = new CompositionNormalizer().normalize(spec)
+  const { counts, unclassified } = new UnionLabeler().label(spec)
+  logger.log(`Normalized ${normalized.length} schemas; labeled unions ${JSON.stringify(counts)}, ${unclassified.length} unclassified.`)
+}
+const model = new ClientModelBuilder(spec).build()
 write_json(opts.output, model)
 if (opts.typescript !== undefined) write_text(opts.typescript, new TypeScriptRenderer().render(model))
 
