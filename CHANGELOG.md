@@ -66,6 +66,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added the search-relevance `PATCH /_plugins/_search_relevance/experiments/{experiment_id}` operation for partially updating an experiment's name or description ([#1113](https://github.com/opensearch-project/opensearch-api-specification/pull/1113))
 - Added `IndexSettingsReplication` schema and nested `replication` property to `IndexSettings` ([#1104](https://github.com/opensearch-project/opensearch-api-specification/pull/1104))
 - Added `false_allow_templates` as a `dynamic` mapping option ([#944](https://github.com/opensearch-project/opensearch-api-specification/pull/944))
+- Added exception metadata properties to `ErrorCause` for `failed_node_exception`, `circuit_breaking_exception`, `parsing_exception`, `search_parse_exception`, `response_limit_breached_exception`, `script_exception`, `search_phase_execution_exception`, and `too_many_buckets_exception` ([#1108](https://github.com/opensearch-project/opensearch-api-specification/pull/1108))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
@@ -119,8 +120,10 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed SearchResult::hits specification ([#1011](https://github.com/opensearch-project/opensearch-api-specification/pull/1011))
 - Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
 - Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056))
+- Fixed field_caps to exclude 'fields' from request body since those are passed as query parameters ([#1216](https://github.com/opensearch-project/opensearch-api-specification/pull/1216))
 
 ### Security
+- Upgraded `axios` 1.18.1 → 1.20.0 and `qs` 6.16.0 → 6.16.1, and pinned transitive `handlebars` to 4.7.10, to fix newly disclosed CVEs. Added `as R` casts in `OpenSearchHttpClient` for the axios 1.19+ response-type change ([#1282](https://github.com/opensearch-project/opensearch-api-specification/pull/1282))
 - Upgraded `axios` 1.13.5 → 1.15.2 to fix 12+ CVEs (CVE-2026-42264, CVE-2026-42035, CVE-2026-42033, CVE-2026-42043, CVE-2025-62718, and others)
 - Upgraded `yaml` 2.4.5 → 2.8.3 to fix CVE-2026-33532
 - Upgraded ESLint ecosystem to v9 (`eslint` 9.39.4, `typescript-eslint` 8.59.3, `@stylistic/eslint-plugin` 4.4.0) eliminating vulnerable transitive dependencies
