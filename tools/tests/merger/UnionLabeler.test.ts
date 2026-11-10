@@ -47,6 +47,15 @@ const schemas = (): Record<string, any> => ({
       { anyOf: [{ type: 'object', properties: { field: ref('Field') } }, { type: 'object', properties: { script: ref('Script') } }] }
     ]
   },
+  // Two presence unions over properties of the object part; the branch values are empty schemas (`gt: {}`).
+  IntervalsRange: {
+    type: 'object',
+    allOf: [
+      { type: 'object', properties: { gt: { type: 'string' }, gte: { type: 'string' }, lt: { type: 'string' }, lte: { type: 'string' } } },
+      { oneOf: [{ properties: { gt: {} }, required: ['gt'], unevaluatedProperties: true }, { properties: { gte: {} }, required: ['gte'], unevaluatedProperties: true }] },
+      { oneOf: [{ properties: { lt: {} }, required: ['lt'], unevaluatedProperties: true }, { properties: { lte: {} }, required: ['lte'], unevaluatedProperties: true }] }
+    ]
+  },
   Property: { discriminator: { propertyName: 'type' }, oneOf: [ref('Script'), ref('QueryContainer')] },
   TermsQueryField: { oneOf: [{ title: 'value', type: 'array', items: ref('FieldValue') }, { title: 'lookup', ...ref('TermsLookup') }] },
   Fields: { oneOf: [ref('Field'), { type: 'array', items: ref('Field') }] },
@@ -76,6 +85,15 @@ describe('UnionClassifier', () => {
   test('branches that only require properties of the object part make a presence constraint', () => {
     expect(classify('TermsLookup', 1)).toEqual({ kind: 'presence' })
     expect(classify('MetricAggregationBase', 1)).toEqual({ kind: 'presence' })
+  })
+
+  test('branches requiring a property the object part declares are a presence constraint, not a container', () => {
+    expect(classify('IntervalsRange', 1)).toEqual({ kind: 'presence' })
+    expect(classify('IntervalsRange', 2)).toEqual({ kind: 'presence' })
+  })
+
+  test('a container value must be known to be an object', () => {
+    expect(classifier.classify({ oneOf: [{ properties: { a: {} }, required: ['a'] }, { properties: { b: {} }, required: ['b'] }] }).kind).not.toBe('container')
   })
 
   test('a union outside an allOf is never a presence constraint', () => {
