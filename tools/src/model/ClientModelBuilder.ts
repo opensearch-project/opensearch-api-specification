@@ -295,13 +295,13 @@ export default class ClientModelBuilder {
   // Merges a field into `fields`. A later allOf member refines a field of an earlier one (a specialization narrows a
   // generic base, e.g. `buckets` of `TermsAggregateBase` to an array of `StringTermsBucket`), so the later type wins.
   // Two different scalar types for one field can't both hold; that is a conflict (rule M3), which is reported.
-  merge_field (fields: Record<string, Field>, name: string, field: Field): void {
+  merge_field (fields: Record<string, Field>, name: string, field: Field, depth: number = 0): void {
     const existing = fields[name]
     if (existing === undefined) { fields[name] = field; return }
     const base = this.json_type(existing.type)
     const next = this.json_type(field.type)
     if (base !== undefined && next !== undefined && base !== next) this.diagnose(`field \`${name}\` is declared as both ${base} and ${next}`)
-    const merged: Field = { type: this.merge_types(existing.type, field.type), required: existing.required || field.required }
+    const merged: Field = { type: this.merge_types(existing.type, field.type, depth), required: existing.required || field.required }
     const description = field.description ?? existing.description
     if (description !== undefined) merged.description = description
     const versions = field.versions ?? existing.versions
@@ -320,12 +320,19 @@ export default class ClientModelBuilder {
     const first = this.object_shape_of(a)
     const second = this.object_shape_of(b)
     if (first === undefined || second === undefined) return b
-    // An inline overlay has no bases: drop where the merged objects' fields came from.
-    const strip = (from: Record<string, Field>): Record<string, Field> => _.mapValues(from, (field) => _.omit(field, 'declared_in'))
-    const fields = strip(_.cloneDeep(first.fields))
-    for (const [name, field] of Object.entries(strip(second.fields))) this.merge_field(fields, name, field)
-    const shape: ObjectShape = { fields, constraints: _.uniqWith([...first.constraints, ...second.constraints], (x, y) => _.isEqual(x, y)) }
+    // Merged like `allOf: [a, b]`: a named `a` is a base, an inline `a` keeps its own bases; b's fields are own fields.
+    const named = 'ref' in a ? a.ref : undefined
+    const fields: Record<string, Field> = _.mapValues(_.cloneDeep(first.fields),
+      (field) => named !== undefined ? { ...field, declared_in: named } : field)
+    for (const [name, field] of Object.entries(second.fields)) this.merge_field(fields, name, _.omit(field, 'declared_in'), depth + 1)
+    const constraints = _.uniqWith([...first.constraints, ...second.constraints], (x, y) => _.isEqual(x, y))
     const additional = second.additional_fields ?? first.additional_fields
+    // An overlay that adds nothing (`_source: {}` over `_source: TDocument`) leaves the type as it was.
+    const unchanged = _.isEqual(_.mapValues(fields, (f) => _.omit(f, 'declared_in')), _.mapValues(first.fields, (f) => _.omit(f, 'declared_in'))) &&
+      constraints.length === first.constraints.length && _.isEqual(additional, first.additional_fields)
+    if (unchanged) return a
+    const bases = named !== undefined ? [named] : (first.bases ?? [])
+    const shape: ObjectShape = { ...(bases.length > 0 ? { bases } : {}), fields, constraints }
     if (additional !== undefined) shape.additional_fields = additional
     return { object: shape }
   }

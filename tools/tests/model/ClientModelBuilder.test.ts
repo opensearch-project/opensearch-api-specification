@@ -190,10 +190,18 @@ describe('ClientModelBuilder: specializations, generics and bodies', () => {
 
   test('a partial object redeclaration adds fields instead of replacing the object', () => {
     const hits = (types.SearchResultOfValue as ObjectEntry).fields.hits.type
-    expect(hits).toEqual({ object: { fields: {
-      total: { type: { scalar: 'integer' }, required: false },
+    expect(hits).toEqual({ object: { bases: ['HitsMetadata'], fields: {
+      total: { type: { scalar: 'integer' }, required: false, declared_in: 'HitsMetadata' },
       hits: { type: { array: { ref: 'Field' } }, required: false }
     }, constraints: [] } })
+  })
+
+  test('a redeclaration that adds nothing leaves the type unchanged', () => {
+    const model = build({
+      ...schemas(),
+      Overlaid: { allOf: [ref('SearchResult'), { type: 'object', properties: { hits: { type: 'object', properties: { total: {} } } } }] }
+    })
+    expect((model.types.Overlaid as ObjectEntry).fields.hits.type).toEqual({ ref: 'HitsMetadata' })
   })
 
   test('response and request bodies are modeled, inline or by reference', () => {
