@@ -416,7 +416,7 @@ components:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         routing:
-          $ref: 'indices._common.yaml#/components/schemas/IndexRouting'
+          $ref: '#/components/schemas/NodeInfoSettingsClusterRouting'
         election:
           $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
         initial_cluster_manager_nodes:
@@ -427,6 +427,41 @@ components:
           $ref: '#/components/schemas/NodeInfoSettingsDeprecationIndexing'
       required:
         - name
+    NodeInfoSettingsClusterRouting:
+      type: object
+      description: The cluster-level routing configuration.
+      properties:
+        allocation:
+          $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocation'
+        rebalance:
+          $ref: 'indices._common.yaml#/components/schemas/IndexRoutingRebalance'
+    NodeInfoSettingsClusterRoutingAllocation:
+      description: The cluster-level shard allocation configuration.
+      allOf:
+        - $ref: 'indices._common.yaml#/components/schemas/IndexRoutingAllocation'
+        - type: object
+          properties:
+            awareness:
+              $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocationAwareness'
+    NodeInfoSettingsClusterRoutingAllocationAwareness:
+      type: object
+      description: The shard allocation awareness configuration.
+      properties:
+        attributes:
+          description: The node attributes used for shard allocation awareness.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        force:
+          type: object
+          description: The forced awareness configuration, keyed by node attribute name.
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocationAwarenessForce'
+    NodeInfoSettingsClusterRoutingAllocationAwarenessForce:
+      type: object
+      description: The forced awareness values for a node attribute.
+      properties:
+        values:
+          description: The attribute values across which shards are forced to be spread.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoSettingsClusterElection:
       type: object
       description: The cluster election strategy configuration.
@@ -456,6 +491,9 @@ components:
         max_local_storage_nodes:
           type: string
           description: The maximum number of nodes allowed to store data locally
+        roles:
+          description: The roles assigned to the node.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
       required:
         - name
     NodeInfoPath:
@@ -506,8 +544,8 @@ components:
           type: string
           description: The discovery mechanism type.
         seed_hosts:
-          type: string
           description: The configured seed hosts for node discovery.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoAction:
       type: object
       description: The action-related configuration settings.
@@ -538,6 +576,19 @@ components:
         compression:
           $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         port:
+          type: string
+          description: The port or port range (for example, `9200-9300`) the HTTP server binds to.
+        host:
+          description: The host addresses the HTTP server binds to and publishes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the HTTP server binds to.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the HTTP server publishes to clients.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_port:
+          description: The port the HTTP server publishes to clients.
           $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
@@ -576,6 +627,21 @@ components:
         ssl:
           type: object
           description: The transport-layer SSL settings.
+        host:
+          description: The host addresses the transport layer binds to and publishes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the transport layer binds to.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the transport layer publishes to other nodes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        port:
+          type: string
+          description: The port or port range (for example, `9300-9400`) the transport layer binds to.
+        publish_port:
+          description: The port the transport layer publishes to other nodes.
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
     NodeInfoSettingsTransportType:
@@ -597,9 +663,14 @@ components:
       description: The network configuration settings.
       properties:
         host:
-          $ref: '_common.yaml#/components/schemas/Host'
-      required:
-        - host
+          description: The host addresses the node binds to and publishes for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the node binds to for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the node publishes for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoScript:
       type: object
       description: The script execution configuration.
