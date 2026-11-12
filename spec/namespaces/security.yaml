@@ -243,6 +243,24 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.get_action_groups@200'
+    put:
+      operationId: security.create_action_groups.0
+      x-operation-group: security.create_action_groups
+      tags:
+        - Security
+      x-version-added: '3.10'
+      description: Creates or replaces multiple action groups. Action groups omitted from the request are unchanged. All entries are validated before any changes are written.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/security/api/action-groups/create-action-group/
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_action_groups'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_action_groups@200'
+        '400':
+          $ref: '#/components/responses/security.create_action_groups@400'
+        '403':
+          $ref: '#/components/responses/security.create_action_groups@403'
     patch:
       operationId: security.patch_action_groups.1
       x-operation-group: security.patch_action_groups
@@ -879,6 +897,28 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/security.get_role_mappings@200'
+    put:
+      operationId: security.create_role_mappings.0
+      x-operation-group: security.create_role_mappings
+      tags:
+        - Security
+      x-version-added: '3.10'
+      description: Creates or replaces multiple role mappings. Role mappings omitted from the request are unchanged. Every named role must exist, and all entries are validated before any changes are written.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/security/api/role-mappings/create-role-mapping/
+      parameters:
+        - $ref: '#/components/parameters/security.create_role_mappings::query.wait_for_completion'
+      requestBody:
+        $ref: '#/components/requestBodies/security.create_role_mappings'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.create_role_mappings@200'
+        '400':
+          $ref: '#/components/responses/security.create_role_mappings@400'
+        '403':
+          $ref: '#/components/responses/security.create_role_mappings@403'
+        '404':
+          $ref: '#/components/responses/security.create_role_mappings@404'
     patch:
       operationId: security.patch_role_mappings.0
       x-operation-group: security.patch_role_mappings
@@ -1287,6 +1327,16 @@ components:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/ActionGroup'
       required: true
+    security.create_action_groups:
+      content:
+        application/json:
+          schema:
+            type: object
+            description: A non-empty object mapping action group names to complete action group definitions.
+            minProperties: 1
+            additionalProperties:
+              $ref: '../schemas/security._common.yaml#/components/schemas/ActionGroup'
+      required: true
     security.create_allowlist:
       content:
         application/json:
@@ -1304,6 +1354,16 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/RoleMapping'
+      required: true
+    security.create_role_mappings:
+      content:
+        application/json:
+          schema:
+            type: object
+            description: A non-empty object mapping existing role names to complete role mapping definitions.
+            minProperties: 1
+            additionalProperties:
+              $ref: '../schemas/security._common.yaml#/components/schemas/RoleMapping'
       required: true
     security.create_tenant:
       content:
@@ -1549,6 +1609,21 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/Created'
+    security.create_action_groups@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+    security.create_action_groups@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.create_action_groups@403:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.create_allowlist@200:
       content:
         application/json:
@@ -1579,6 +1654,33 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/Created'
+    security.create_role_mappings@200:
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '../schemas/security._common.yaml#/components/schemas/Ok'
+              - type: object
+                required:
+                  - task
+                properties:
+                  task:
+                    $ref: '../schemas/_common.yaml#/components/schemas/TaskId'
+    security.create_role_mappings@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.create_role_mappings@403:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.create_role_mappings@404:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.create_tenant@200:
       content:
         application/json:
@@ -2231,6 +2333,13 @@ components:
       schema:
         type: string
       required: true
+    security.create_role_mappings::query.wait_for_completion:
+      name: wait_for_completion
+      in: query
+      description: If false, returns a task ID after validation and runs the configuration write and reload asynchronously.
+      schema:
+        type: boolean
+        default: true
     security.create_tenant::path.tenant:
       name: tenant
       in: path
