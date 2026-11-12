@@ -8,7 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Added
-- Added the Remove Index Block API (`DELETE /{index}/_block/{block}`), introduced in OpenSearch 3.10, and reworded the description of `IndicesBlockOptions`, which both the add and the remove block operations use ([#1315](https://github.com/opensearch-project/opensearch-api-specification/pull/1315))
+- Added the Remove Index Block API (`DELETE /{index}/_block/{block}`), introduced in OpenSearch 3.11, and reworded the description of `IndicesBlockOptions`, which both the add and the remove block operations use ([#1315](https://github.com/opensearch-project/opensearch-api-specification/pull/1315))
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
 - Added the bulk Create or Update Action Groups API (`PUT /_plugins/_security/api/actiongroups`), introduced in OpenSearch 3.10 ([#1309](https://github.com/opensearch-project/opensearch-api-specification/pull/1309))
 - Added the bulk Create or Update Role Mappings API (`PUT /_plugins/_security/api/rolesmapping`), introduced in OpenSearch 3.10 ([#1308](https://github.com/opensearch-project/opensearch-api-specification/pull/1308))
