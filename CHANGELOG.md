@@ -254,6 +254,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed aggregate schemas ([#840](https://github.com/opensearch-project/opensearch-api-specification/pull/840))
 - Fixed `security.get_sslinfo` response structure inline with v3.0.0 ([#885](https://github.com/opensearch-project/opensearch-api-specification/pull/885))
 - Fixed schema for ScoreCombination in NormalizationPhaseResultsProcessor ([#887](https://github.com/opensearch-project/opensearch-api-specification/pull/887))
+- Fixed `source` query parameter being defined as a global parameter ([#1310](https://github.com/opensearch-project/opensearch-api-specification/pull/1310))
 
 ### Changed
 
