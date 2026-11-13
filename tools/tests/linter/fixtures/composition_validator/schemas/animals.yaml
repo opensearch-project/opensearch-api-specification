@@ -1,0 +1,68 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch API
+  description: OpenSearch API
+  version: 1.0.0
+components:
+  schemas:
+    Dog:
+      type: object
+      properties:
+        bark:
+          type: string
+    Cat:
+      type: object
+      properties:
+        meow:
+          type: string
+    Base:
+      type: object
+      properties:
+        size:
+          type: integer
+    # Untitled, untagged union of objects: can't be classified.
+    Pet:
+      oneOf:
+        - $ref: '#/components/schemas/Dog'
+        - $ref: '#/components/schemas/Cat'
+    # Every branch titled: classified.
+    NamedPet:
+      oneOf:
+        - title: dog
+          $ref: '#/components/schemas/Dog'
+        - title: cat
+          $ref: '#/components/schemas/Cat'
+    # size is an integer in Base and a string here.
+    Sized:
+      allOf:
+        - $ref: '#/components/schemas/Base'
+        - type: object
+          properties:
+            size:
+              type: string
+    # Properties next to allOf: normalized, with a warning.
+    Lookup:
+      type: object
+      properties:
+        index:
+          type: string
+        id:
+          type: string
+        query:
+          type: object
+      required: [index]
+      allOf:
+        - oneOf:
+            - required: [id]
+            - required: [query]
+    Shelter:
+      type: object
+      properties:
+        pet:
+          $ref: '#/components/schemas/Pet'
+        named:
+          $ref: '#/components/schemas/NamedPet'
+        sized:
+          $ref: '#/components/schemas/Sized'
+        lookup:
+          $ref: '#/components/schemas/Lookup'

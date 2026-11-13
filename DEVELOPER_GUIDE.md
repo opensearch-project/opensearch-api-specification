@@ -207,6 +207,15 @@ We can take advantage of the default values and simply lint the specification vi
 npm run lint:spec
 ```
 
+**Schema composition checks**
+
+The linter also checks how schemas combine `allOf`, `oneOf` and `anyOf`, so that shapes client generators can't handle are caught here instead of in a client release (see the Schema Composition section of the [client generator guide](CLIENT_GENERATOR_GUIDE.md#schema-composition)):
+
+- **Error:** a `oneOf`/`anyOf` that can't be classified, typically an untitled, untagged union of objects. Give every branch a `title`, or add a `discriminator`. The unions that already existed when the check was added are listed in [spec/_unclassified_unions.yaml](spec/_unclassified_unions.yaml) and are skipped.
+- **Error:** a union in `spec/_unclassified_unions.yaml` that is now classified. Remove it from the list, so the list only shrinks.
+- **Error:** `allOf` members that declare the same property with different types, e.g. `integer` in one and `string` in another.
+- **Warning:** properties declared next to `allOf`/`oneOf`/`anyOf`. The bundled spec rewrites them into an `allOf` member, but writing them that way in the first place is clearer.
+
 ### Spec Tester
 
 ```bash
