@@ -59,6 +59,131 @@ chapters:
   - synopsis: Get all policies.
     path: /_plugins/_ism/policies
     method: GET
+  - synopsis: Create a policy with an action timeout and an alias action.
+    version: '>= 2.4'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: PUT
+    parameters:
+      policy_id: timeout_alias
+    request:
+      payload:
+        policy:
+          description: A policy with an action timeout and an alias action.
+          default_state: hot
+          states:
+            - name: hot
+              actions:
+                - timeout: 1h
+                  rollover:
+                    min_doc_count: 5
+                - alias:
+                    actions:
+                      - add:
+                          aliases: [logs-read]
+              transitions: []
+    response:
+      status: 201
+  - synopsis: Get a policy with an action timeout and an alias action.
+    version: '>= 2.4'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: GET
+    parameters:
+      policy_id: timeout_alias
+  - synopsis: Get all policies, including one with an action timeout and an alias action.
+    version: '>= 2.4'
+    path: /_plugins/_ism/policies
+    method: GET
+  - synopsis: Create a policy with typed actions, transition conditions and notifications.
+    version: '>= 2.0'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: PUT
+    parameters:
+      policy_id: typed_actions
+    request:
+      payload:
+        policy:
+          description: A policy with typed actions, transition conditions and notifications.
+          default_state: hot
+          states:
+            - name: hot
+              actions:
+                - retry:
+                    count: 3
+                    backoff: constant
+                    delay: 1m
+                  replica_count:
+                    number_of_replicas: 1
+                - index_priority:
+                    priority: 50
+                - force_merge:
+                    max_num_segments: 1
+                - shrink:
+                    num_new_shards: 1
+                    force_unsafe: true
+                - snapshot:
+                    repository: ism-repository
+                    snapshot: ism-snapshot
+                - notification:
+                    destination:
+                      custom_webhook:
+                        url: https://example.com
+                    message_template:
+                      source: The index {{ctx.index}} was shrunk.
+              transitions:
+                - state_name: warm
+                  conditions:
+                    cron:
+                      cron:
+                        expression: 0 0 * * *
+                        timezone: UTC
+            - name: warm
+              actions: []
+              transitions:
+                - state_name: hot
+                  conditions:
+                    min_doc_count: 10
+          error_notification:
+            destination:
+              slack:
+                url: https://example.com
+            message_template:
+              source: The index {{ctx.index}} failed.
+    response:
+      status: 201
+  - synopsis: Get a policy with typed actions, transition conditions and notifications.
+    version: '>= 2.0'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: GET
+    parameters:
+      policy_id: typed_actions
+  - synopsis: Create a policy with the convert index to remote and stop replication actions.
+    version: '>= 3.0'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: PUT
+    parameters:
+      policy_id: remote_actions
+    request:
+      payload:
+        policy:
+          description: A policy with the convert index to remote and stop replication actions.
+          default_state: hot
+          states:
+            - name: hot
+              actions:
+                - stop_replication: {}
+                - convert_index_to_remote:
+                    repository: ism-repository
+                    snapshot: ism-snapshot
+                    include_aliases: true
+              transitions: []
+    response:
+      status: 201
+  - synopsis: Get a policy with the convert index to remote and stop replication actions.
+    version: '>= 3.0'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: GET
+    parameters:
+      policy_id: remote_actions
   - synopsis: Update a policy specified in the query.
     id: updated_policy
     path: /_plugins/_ism/policies
@@ -110,5 +235,14 @@ chapters:
       status: 200
 epilogues:
   - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ism/policies/timeout_alias
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ism/policies/typed_actions
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ism/policies/remote_actions
     method: DELETE
     status: [200, 404]
