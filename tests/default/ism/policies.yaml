@@ -59,6 +59,40 @@ chapters:
   - synopsis: Get all policies.
     path: /_plugins/_ism/policies
     method: GET
+  - synopsis: Create a policy with an action timeout and an alias action.
+    version: '>= 2.4'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: PUT
+    parameters:
+      policy_id: timeout_alias
+    request:
+      payload:
+        policy:
+          description: A policy with an action timeout and an alias action.
+          default_state: hot
+          states:
+            - name: hot
+              actions:
+                - timeout: 1h
+                  rollover:
+                    min_doc_count: 5
+                - alias:
+                    actions:
+                      - add:
+                          aliases: [logs-read]
+              transitions: []
+    response:
+      status: 201
+  - synopsis: Get a policy with an action timeout and an alias action.
+    version: '>= 2.4'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: GET
+    parameters:
+      policy_id: timeout_alias
+  - synopsis: Get all policies, including one with an action timeout and an alias action.
+    version: '>= 2.4'
+    path: /_plugins/_ism/policies
+    method: GET
   - synopsis: Update a policy specified in the query.
     id: updated_policy
     path: /_plugins/_ism/policies
@@ -110,5 +144,8 @@ chapters:
       status: 200
 epilogues:
   - path: /_plugins/_ism/policies/rollover
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ism/policies/timeout_alias
     method: DELETE
     status: [200, 404]
