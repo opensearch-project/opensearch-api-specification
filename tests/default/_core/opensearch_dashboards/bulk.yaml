@@ -1,0 +1,59 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test bulk APIs exposed under the OpenSearch Dashboards system index prefix.
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Bulk index documents (POST).
+    path: /_opensearch_dashboards/_bulk
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: .kibana_spec_test, _id: '1'}}
+        - {title: Moneyball}
+    response:
+      status: 200
+      payload:
+        errors: false
+  - synopsis: Bulk index documents (PUT).
+    path: /_opensearch_dashboards/_bulk
+    method: PUT
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: .kibana_spec_test, _id: '2'}}
+        - {title: Drive}
+    response:
+      status: 200
+      payload:
+        errors: false
+  - synopsis: Bulk index documents into an index (POST).
+    path: /_opensearch_dashboards/{index}/_bulk
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_id: '3'}}
+        - {title: Interstellar}
+    response:
+      status: 200
+      payload:
+        errors: false
+  - synopsis: Bulk delete documents from an index (PUT).
+    path: /_opensearch_dashboards/{index}/_bulk
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {delete: {_id: '3'}}
+    response:
+      status: 200
+      payload:
+        errors: false

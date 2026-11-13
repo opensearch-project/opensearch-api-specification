@@ -1,0 +1,33 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the update document API exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/{index}/_doc/{id}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+      refresh: true
+    request:
+      payload:
+        title: Moneyball
+    status: [201]
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Update a document.
+    path: /_opensearch_dashboards/{index}/_update/{id}
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+      id: '1'
+    request:
+      payload:
+        doc:
+          year: 2011
+    response:
+      status: 200
+      payload:
+        result: updated

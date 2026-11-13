@@ -1,0 +1,37 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the refresh API exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/{index}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Refresh all OpenSearch Dashboards indexes (GET).
+    path: /_opensearch_dashboards/_refresh
+    method: GET
+    response:
+      status: 200
+  - synopsis: Refresh all OpenSearch Dashboards indexes (POST).
+    path: /_opensearch_dashboards/_refresh
+    method: POST
+    response:
+      status: 200
+  - synopsis: Refresh an index (GET).
+    path: /_opensearch_dashboards/{index}/_refresh
+    method: GET
+    parameters:
+      index: .kibana_spec_test
+    response:
+      status: 200
+  - synopsis: Refresh an index (POST).
+    path: /_opensearch_dashboards/{index}/_refresh
+    method: POST
+    parameters:
+      index: .kibana_spec_test
+    response:
+      status: 200

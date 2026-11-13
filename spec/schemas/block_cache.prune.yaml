@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Block Cache Prune API
+  description: OpenSearch Block Cache Prune API schemas.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    PruneBlockCacheResponse:
+      type: object
+      properties:
+        acknowledged:
+          type: boolean
+          description: Whether the prune request was acknowledged.
+        summary:
+          $ref: '#/components/schemas/PruneBlockCacheSummary'
+        nodes:
+          type: object
+          description: Successful node responses, keyed by node ID.
+          additionalProperties:
+            $ref: '#/components/schemas/PruneBlockCacheNode'
+        failures:
+          type: array
+          description: Nodes on which the prune operation failed. This property is omitted when there are no failures.
+          items:
+            $ref: '#/components/schemas/PruneBlockCacheFailure'
+      required:
+        - acknowledged
+        - nodes
+        - summary
+    PruneBlockCacheSummary:
+      type: object
+      properties:
+        total_nodes_targeted:
+          type: integer
+          description: The total number of targeted nodes.
+        successful_nodes:
+          type: integer
+          description: The number of nodes on which the cache was cleared successfully.
+        failed_nodes:
+          type: integer
+          description: The number of nodes on which the cache prune operation failed.
+      required:
+        - failed_nodes
+        - successful_nodes
+        - total_nodes_targeted
+    PruneBlockCacheNode:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The node name.
+        transport_address:
+          type: string
+          description: The node transport address.
+        host:
+          type: string
+          description: The node host name.
+        ip:
+          type: string
+          description: The node host address.
+        cleared:
+          type: boolean
+          description: Whether registered block caches were cleared on the node.
+      required:
+        - cleared
+        - host
+        - ip
+        - name
+        - transport_address
+    PruneBlockCacheFailure:
+      type: object
+      properties:
+        node_id:
+          type: string
+          description: The ID of the node on which the operation failed.
+        reason:
+          type: string
+          description: The detailed failure message.
+      required:
+        - node_id
+        - reason
