@@ -801,12 +801,50 @@ components:
       required:
         - points
     GeoShape:
+      description: |-
+        A shape to use in a geo_shape query. It can be specified in the following ways:
+         - As a GeoJSON object with `type` and `coordinates` properties.
+         - As a Well Known Text (WKT) string.
+      oneOf:
+        - title: geoJson
+          description: The shape specified using a GeoJSON object.
+          $ref: '#/components/schemas/GeoJsonGeoShape'
+        - title: wkt
+          description: |-
+            The shape specified using Well-Known Text (WKT) format. The WKT is a bare string
+            value rather than a `{"wkt": "..."}` wrapper object because the server parses a
+            WKT shape from a bare string, unlike `geo_bounding_box`, which requires the
+            wrapper object.
+          type: string
+    GeoJsonGeoShape:
       type: object
+      description: The shape specified using a GeoJSON object.
       properties:
         type:
-          type: string
+          $ref: '#/components/schemas/GeoShapeType'
         coordinates:
           type: array
+          description: The coordinates of the shape.
+      required:
+        - type
+        - coordinates
+    GeoShapeType:
+      type: string
+      description: |-
+        The type of the GeoJSON shape. The values are the shape types the server accepts in the
+        `type` field of a `geo_shape` query shape. `Circle` and `GeometryCollection` are not
+        included because their additional required fields (`radius` and `geometries`
+        respectively) are not modeled by `GeoJsonGeoShape`. The server is case-insensitive
+        when parsing these values; the casing listed here is the canonical form the server
+        emits.
+      enum:
+        - Point
+        - MultiPoint
+        - LineString
+        - MultiLineString
+        - Polygon
+        - MultiPolygon
+        - Envelope
     GeoShapeQueryField:
       type: object
       properties:
