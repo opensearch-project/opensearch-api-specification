@@ -386,6 +386,141 @@ components:
         enabled:
           type: [boolean, 'null']
           description: Whether the policy is enabled for the index.
+        index:
+          type: string
+          description: The name of the managed index.
+        index_uuid:
+          type: string
+          description: The UUID of the managed index.
+        policy_id:
+          type: string
+          description: The ID of the policy applied to the index.
+        policy_seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+        policy_primary_term:
+          type: integer
+          format: int64
+          description: The primary term of the policy applied to the index.
+        rolled_over:
+          type: [boolean, 'null']
+          description: Whether the index has been rolled over.
+        rolled_over_index_name:
+          type: string
+          description: The name of the index the managed index was rolled over to.
+        index_creation_date:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        policy_completed:
+          type: boolean
+          description: Whether the policy has completed for the index.
+        transition_to:
+          type: string
+          description: The state the index is transitioning to.
+        state:
+          $ref: '#/components/schemas/ExplainStateMetadata'
+        action:
+          $ref: '#/components/schemas/ExplainActionMetadata'
+        step:
+          $ref: '#/components/schemas/ExplainStepMetadata'
+        retry_info:
+          $ref: '#/components/schemas/ExplainRetryInfo'
+        info:
+          type: object
+          description: Additional information about the current status of the managed index.
+          additionalProperties: true
+        policy:
+          $ref: '#/components/schemas/Policy'
+          x-version-added: '1.3'
+        validate:
+          $ref: '#/components/schemas/ExplainValidationResult'
+          x-version-added: '2.4'
+    ExplainStateMetadata:
+      type: object
+      description: The current state of the managed index.
+      properties:
+        name:
+          type: string
+          description: The name of the state.
+        start_time:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+    ExplainActionMetadata:
+      type: object
+      description: The current action of the managed index.
+      properties:
+        name:
+          type: string
+          description: The name of the action.
+        start_time:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+            - type: 'null'
+        index:
+          type: integer
+          description: The position of the action in the state.
+        failed:
+          type: boolean
+          description: Whether the action has failed.
+        consumed_retries:
+          type: integer
+          description: The number of retries the action has consumed.
+        last_retry_time:
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+            - type: 'null'
+        action_properties:
+          type: object
+          description: The properties of the action.
+          additionalProperties: true
+    ExplainStepMetadata:
+      type: object
+      description: The current step of the managed index.
+      properties:
+        name:
+          type: string
+          description: The name of the step.
+        start_time:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        step_status:
+          $ref: '#/components/schemas/StepStatus'
+    ExplainRetryInfo:
+      type: object
+      description: The retry information of the managed index.
+      properties:
+        failed:
+          type: boolean
+          description: Whether the policy has failed.
+        consumed_retries:
+          type: integer
+          description: The number of retries the policy has consumed.
+    ExplainValidationResult:
+      type: object
+      description: The validation result of the current action of the managed index.
+      properties:
+        validation_message:
+          type: string
+          description: The validation message.
+        validation_status:
+          $ref: '#/components/schemas/ValidationStatus'
+    ExplainPolicyRequest:
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/ExplainFilter'
+    ExplainFilter:
+      type: object
+      description: Filters the managed indexes.
+      properties:
+        policy_id:
+          type: string
+          description: Only returns indexes managed by this policy.
+        state:
+          type: string
+          description: Only returns indexes in this state.
+        action_type:
+          type: string
+          description: Only returns indexes running this action.
+        failed:
+          type: boolean
+          description: Only returns indexes whose policy failed or did not fail.
     ErrorNotification:
       type: object
       properties:
@@ -507,3 +642,19 @@ components:
           items:
             type: string
           description: The list of refreshed analyzers.
+    StepStatus:
+      type: string
+      description: The status of the step.
+      enum:
+        - completed
+        - condition_not_met
+        - failed
+        - starting
+        - timed_out
+    ValidationStatus:
+      type: string
+      description: The validation status.
+      enum:
+        - failed
+        - passed
+        - re_validating

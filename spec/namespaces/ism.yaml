@@ -198,6 +198,18 @@ paths:
       description: Retrieves the currently applied policy on the specified indexes.
       externalDocs:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#explain-index
+      parameters:
+        - $ref: '#/components/parameters/ism.explain_policy::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.from'
+        - $ref: '#/components/parameters/ism.explain_policy::query.local'
+        - $ref: '#/components/parameters/ism.explain_policy::query.master_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.queryString'
+        - $ref: '#/components/parameters/ism.explain_policy::query.show_policy'
+        - $ref: '#/components/parameters/ism.explain_policy::query.size'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortField'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortOrder'
+        - $ref: '#/components/parameters/ism.explain_policy::query.type'
+        - $ref: '#/components/parameters/ism.explain_policy::query.validate_action'
       requestBody:
         $ref: '#/components/requestBodies/ism.explain_policy'
       responses:
@@ -206,11 +218,24 @@ paths:
     post:
       operationId: ism.explain_policy.1
       x-operation-group: ism.explain_policy
+      x-version-added: '2.12'
       tags:
         - Index State Management
       description: Retrieves the currently applied policy on the specified indexes.
       externalDocs:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#explain-index
+      parameters:
+        - $ref: '#/components/parameters/ism.explain_policy::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.from'
+        - $ref: '#/components/parameters/ism.explain_policy::query.local'
+        - $ref: '#/components/parameters/ism.explain_policy::query.master_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.queryString'
+        - $ref: '#/components/parameters/ism.explain_policy::query.show_policy'
+        - $ref: '#/components/parameters/ism.explain_policy::query.size'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortField'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortOrder'
+        - $ref: '#/components/parameters/ism.explain_policy::query.type'
+        - $ref: '#/components/parameters/ism.explain_policy::query.validate_action'
       requestBody:
         $ref: '#/components/requestBodies/ism.explain_policy'
       responses:
@@ -227,6 +252,17 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#explain-index
       parameters:
         - $ref: '#/components/parameters/ism.explain_policy::path.index'
+        - $ref: '#/components/parameters/ism.explain_policy::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.from'
+        - $ref: '#/components/parameters/ism.explain_policy::query.local'
+        - $ref: '#/components/parameters/ism.explain_policy::query.master_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.queryString'
+        - $ref: '#/components/parameters/ism.explain_policy::query.show_policy'
+        - $ref: '#/components/parameters/ism.explain_policy::query.size'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortField'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortOrder'
+        - $ref: '#/components/parameters/ism.explain_policy::query.type'
+        - $ref: '#/components/parameters/ism.explain_policy::query.validate_action'
       requestBody:
         $ref: '#/components/requestBodies/ism.explain_policy'
       responses:
@@ -235,6 +271,7 @@ paths:
     post:
       operationId: ism.explain_policy.4
       x-operation-group: ism.explain_policy
+      x-version-added: '2.12'
       tags:
         - Index State Management
       description: Retrieves the currently applied policy on the specified indexes.
@@ -242,6 +279,17 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#explain-index
       parameters:
         - $ref: '#/components/parameters/ism.explain_policy::path.index'
+        - $ref: '#/components/parameters/ism.explain_policy::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.from'
+        - $ref: '#/components/parameters/ism.explain_policy::query.local'
+        - $ref: '#/components/parameters/ism.explain_policy::query.master_timeout'
+        - $ref: '#/components/parameters/ism.explain_policy::query.queryString'
+        - $ref: '#/components/parameters/ism.explain_policy::query.show_policy'
+        - $ref: '#/components/parameters/ism.explain_policy::query.size'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortField'
+        - $ref: '#/components/parameters/ism.explain_policy::query.sortOrder'
+        - $ref: '#/components/parameters/ism.explain_policy::query.type'
+        - $ref: '#/components/parameters/ism.explain_policy::query.validate_action'
       requestBody:
         $ref: '#/components/requestBodies/ism.explain_policy'
       responses:
@@ -322,9 +370,11 @@ components:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/RetryIndexRequest'
     ism.explain_policy:
+      description: The filter for the managed indexes. Only read by `POST` requests, which require a body.
       content:
         application/json:
-          schema: {}
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/ExplainPolicyRequest'
   responses:
     ism.exists_policy@200:
       content:
@@ -499,6 +549,98 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
       style: simple
+    ism.explain_policy::query.size:
+      name: size
+      in: query
+      description: The number of managed indexes to return.
+      schema:
+        type: integer
+        default: 20
+      style: form
+    ism.explain_policy::query.from:
+      name: from
+      in: query
+      description: The starting index of the managed indexes to return.
+      schema:
+        type: integer
+        default: 0
+      style: form
+    ism.explain_policy::query.sortField:
+      name: sortField
+      in: query
+      description: The field to sort the managed indexes by.
+      schema:
+        type: string
+        default: managed_index.index
+      style: form
+    ism.explain_policy::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The sort order of the managed indexes.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      style: form
+    ism.explain_policy::query.queryString:
+      name: queryString
+      in: query
+      description: A query string that filters the managed indexes.
+      schema:
+        type: string
+        default: '*'
+      style: form
+    ism.explain_policy::query.local:
+      name: local
+      in: query
+      description: Whether to return information from the local node only instead of from the cluster manager node.
+      schema:
+        type: boolean
+        default: false
+      style: form
+    ism.explain_policy::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-added: '2.3'
+    ism.explain_policy::query.master_timeout:
+      name: master_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      deprecated: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-deprecated: '2.3'
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
+    ism.explain_policy::query.show_policy:
+      name: show_policy
+      in: query
+      description: Whether to include the policy of each managed index in the response.
+      schema:
+        type: boolean
+        default: false
+      style: form
+      x-version-added: '1.3'
+    ism.explain_policy::query.validate_action:
+      name: validate_action
+      in: query
+      description: Whether to include the validation result of the current action of each managed index in the response.
+      schema:
+        type: boolean
+        default: false
+      style: form
+      x-version-added: '2.4'
+    ism.explain_policy::query.type:
+      name: type
+      in: query
+      description: The type of the index metadata provider.
+      schema:
+        type: string
+        default: _default
+      style: form
+      x-version-added: '1.3'
     ism.put_policies::query.policyID:
       name: policyID
       in: query
