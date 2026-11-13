@@ -13,6 +13,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
+- Added the `uri_parts` ingest processor (`UriPartsProcessor`), introduced in OpenSearch 3.11 ([#1317](https://github.com/opensearch-project/opensearch-api-specification/pull/1317))
 - Added the bulk Create or Update Action Groups API (`PUT /_plugins/_security/api/actiongroups`), introduced in OpenSearch 3.10 ([#1309](https://github.com/opensearch-project/opensearch-api-specification/pull/1309))
 - Added the bulk Create or Update Role Mappings API (`PUT /_plugins/_security/api/rolesmapping`), introduced in OpenSearch 3.10 ([#1308](https://github.com/opensearch-project/opensearch-api-specification/pull/1308))
 - Added `model_selection` (`language_option`, `model_type`) to `SemanticProperty` so the model id can be resolved from cluster settings; a semantic field now requires at least one of `model_id` or `model_selection` ([#1214](https://github.com/opensearch-project/opensearch-api-specification/pull/1214))

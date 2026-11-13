@@ -83,6 +83,9 @@ components:
           $ref: '#/components/schemas/UppercaseProcessor'
         urldecode:
           $ref: '#/components/schemas/UrlDecodeProcessor'
+        uri_parts:
+          $ref: '#/components/schemas/UriPartsProcessor'
+          x-version-added: '3.11'
         bytes:
           $ref: '#/components/schemas/BytesProcessor'
         dissect:
@@ -692,6 +695,37 @@ components:
               type: boolean
             target_field:
               $ref: '_common.yaml#/components/schemas/Field'
+          required:
+            - field
+    UriPartsProcessor:
+      description: |-
+        Parses a URI and writes its parts to `target_field`: `original`, `scheme`, `domain`, `port`, `path`, `extension`, `query`, `fragment`, `user_info`, `username` and `password`.
+        A part that is absent or empty is omitted. `path`, `query`, `fragment`, `user_info`, `username` and `password` are not percent-decoded.
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            field:
+              description: The field that contains the URI. The processor fails if the value is empty, is not a valid URI, or is an opaque URI such as `mailto:`.
+              $ref: '_common.yaml#/components/schemas/Field'
+            ignore_missing:
+              description: If `true` and `field` does not exist or is `null`, the processor quietly exits without modifying the document.
+              type: boolean
+              default: false
+            keep_original:
+              description: If `true`, the processor copies the URI as it was given to `<target_field>.original`.
+              type: boolean
+              default: true
+            remove_if_successful:
+              description: |-
+                If `true`, the processor removes `field` after it parses the URI.
+                The pipeline cannot be created if `field` is the same as `target_field` or is nested in it.
+              type: boolean
+              default: false
+            target_field:
+              description: The field that receives the parts of the URI. The processor replaces an existing value of this field.
+              $ref: '_common.yaml#/components/schemas/Field'
+              default: url
           required:
             - field
     BytesProcessor:
