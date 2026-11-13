@@ -188,6 +188,28 @@ To generate a spec that does not contain any APIs or fields removed in version 2
 npm run merge -- --opensearch-version=2.0
 ```
 
+### [Client Model](tools/src/model)
+
+```bash
+npm run model -- --help
+```
+
+Builds the resolved client model from the bundled spec: every schema as a flat entry with its merged fields, requiredness, union kind and constraints, so that client generators don't interpret `allOf`/`oneOf`/`anyOf` themselves (see [Client Model](CLIENT_GENERATOR_GUIDE.md#client-model-experimental)). Run `npm run merge` first.
+
+**Arguments**
+
+- `--input <path>`: The bundled spec, defaults to `<repository-root>/build/opensearch-openapi.yaml`.
+- `--output <path>`: The model file, defaults to `<repository-root>/build/opensearch-client-model.json`.
+- `--typescript <path>`: Also render the model as TypeScript declarations, a reference renderer that shows how a generator maps the model.
+- `--verbose`: List every diagnostic (for example two scalar types declared for one field).
+
+**Example**
+
+```bash
+npm run merge
+npm run model -- --typescript build/opensearch-client-model.d.ts
+```
+
 ### [Spec Linter](tools/src/linter)
 
 ```bash
@@ -206,6 +228,15 @@ We can take advantage of the default values and simply lint the specification vi
 ```bash
 npm run lint:spec
 ```
+
+**Schema composition checks**
+
+The linter also checks how schemas combine `allOf`, `oneOf` and `anyOf`, so that shapes client generators can't handle are caught here instead of in a client release (see the Schema Composition section of the [client generator guide](CLIENT_GENERATOR_GUIDE.md#schema-composition)):
+
+- **Error:** a `oneOf`/`anyOf` that can't be classified, typically an untitled, untagged union of objects. Give every branch a `title`, or add a `discriminator`. The unions that already existed when the check was added are listed in [spec/_unclassified_unions.yaml](spec/_unclassified_unions.yaml) and are skipped.
+- **Error:** a union in `spec/_unclassified_unions.yaml` that is now classified. Remove it from the list, so the list only shrinks.
+- **Error:** `allOf` members that declare the same property with different types, e.g. `integer` in one and `string` in another.
+- **Warning:** properties declared next to `allOf`/`oneOf`/`anyOf`. The bundled spec rewrites them into an `allOf` member, but writing them that way in the first place is clearer.
 
 ### Spec Tester
 
