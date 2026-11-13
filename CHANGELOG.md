@@ -77,6 +77,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Deprecated `Hit.ignored_field_values` as an Elasticsearch-only field not present in OpenSearch server responses ([#1113](https://github.com/opensearch-project/opensearch-api-specification/pull/1113))
 
 ### Removed
+- Removed rollover conditions that OpenSearch rejects (`min_age`, `max_age_millis`, `min_docs`, `max_size_bytes`, `min_size`, `min_size_bytes`, `max_primary_shard_size_bytes`, `min_primary_shard_size`, `min_primary_shard_size_bytes`, `min_primary_shard_docs`) from `RolloverConditions` ([#1338](https://github.com/opensearch-project/opensearch-api-specification/pull/1338))
 - Removed `x-distributions-excluded` annotations from spec YAML files and distribution filtering from `OpenApiVersionExtractor`; distribution-specific filtering is now handled by OpenAPI Overlays ([#1219](https://github.com/opensearch-project/opensearch-api-specification/pull/1219))
 - Removed OpenSearch 2.0.0 from CI test matrix; incompatible with modern GitHub Actions runners due to JDK cgroup v2 crash ([#1189](https://github.com/opensearch-project/opensearch-api-specification/pull/1189))
 - Remove unused cardinality aggregation execution hints - save_memory_heuristic/save_time_heuristic/segment_ordinals ([#970](https://github.com/opensearch-project/opensearch-api-specification/pull/970))
