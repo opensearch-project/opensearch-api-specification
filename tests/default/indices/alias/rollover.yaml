@@ -14,6 +14,29 @@ prologues:
   - path: /games/_alias/jeux
     method: POST
 chapters:
+  - synopsis: Evaluate primary shard rollover conditions without rolling over.
+    version: '>= 3.11'
+    path: /{alias}/_rollover/{new_index}
+    method: POST
+    parameters:
+      alias: jeux
+      new_index: rollover
+      dry_run: true
+    request:
+      payload:
+        conditions:
+          max_primary_shard_size: 100gb
+          max_primary_shard_docs: 1000000
+    response:
+      status: 200
+      payload:
+        old_index: games
+        new_index: rollover
+        dry_run: true
+        rolled_over: false
+        conditions:
+          '[max_primary_shard_size: 100gb]': false
+          '[max_primary_shard_docs: 1000000]': false
   - synopsis: Manually roll over an index.
     path: /{alias}/_rollover/{new_index}
     method: POST
