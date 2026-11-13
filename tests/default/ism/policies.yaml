@@ -56,6 +56,32 @@ chapters:
     method: GET
     parameters:
       policy_id: rollover
+  - synopsis: Create a policy specified in the query.
+    path: /_plugins/_ism/policies
+    method: PUT
+    parameters:
+      policyID: created_in_query
+      refresh: wait_for
+    request:
+      payload:
+        policy:
+          description: A policy created with the policy ID in the query.
+          default_state: ingest
+          states:
+            - name: ingest
+              actions: []
+              transitions: []
+    response:
+      status: 201
+  - synopsis: Get all policies with pagination, sorting and a query string.
+    path: /_plugins/_ism/policies
+    method: GET
+    parameters:
+      size: 1
+      from: 0
+      sortField: policy.policy_id.keyword
+      sortOrder: desc
+      queryString: '*'
   - synopsis: Get all policies.
     path: /_plugins/_ism/policies
     method: GET
@@ -106,9 +132,13 @@ chapters:
     method: DELETE
     parameters:
       policy_id: rollover
+      refresh: true
     response:
       status: 200
 epilogues:
+  - path: /_plugins/_ism/policies/created_in_query
+    method: DELETE
+    status: [200, 404]
   - path: /_plugins/_ism/policies/rollover
     method: DELETE
     status: [200, 404]

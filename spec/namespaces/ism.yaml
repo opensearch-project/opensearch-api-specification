@@ -13,6 +13,12 @@ paths:
       description: Retrieves the policies.
       externalDocs:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#get-policy
+      parameters:
+        - $ref: '#/components/parameters/ism.get_policies::query.from'
+        - $ref: '#/components/parameters/ism.get_policies::query.queryString'
+        - $ref: '#/components/parameters/ism.get_policies::query.size'
+        - $ref: '#/components/parameters/ism.get_policies::query.sortField'
+        - $ref: '#/components/parameters/ism.get_policies::query.sortOrder'
       responses:
         '200':
           $ref: '#/components/responses/ism.get_policies@200'
@@ -30,7 +36,10 @@ paths:
         - $ref: '#/components/parameters/ism.put_policies::query.if_primary_term'
         - $ref: '#/components/parameters/ism.put_policies::query.if_seq_no'
         - $ref: '#/components/parameters/ism.put_policies::query.policyID'
+        - $ref: '#/components/parameters/ism.put_policies::query.refresh'
       responses:
+        '201':
+          $ref: '#/components/responses/ism.put_policies@201'
         '200':
           $ref: '#/components/responses/ism.put_policies@200'
   /_plugins/_ism/policies/{policy_id}:
@@ -74,6 +83,7 @@ paths:
         - $ref: '#/components/parameters/ism.put_policy::path.policy_id'
         - $ref: '#/components/parameters/ism.put_policy::query.if_primary_term'
         - $ref: '#/components/parameters/ism.put_policy::query.if_seq_no'
+        - $ref: '#/components/parameters/ism.put_policy::query.refresh'
       requestBody:
         $ref: '#/components/requestBodies/ism.put_policy'
       responses:
@@ -91,6 +101,7 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#delete-policy
       parameters:
         - $ref: '#/components/parameters/ism.delete_policy::path.policy_id'
+        - $ref: '#/components/parameters/ism.delete_policy::query.refresh'
       responses:
         '200':
           $ref: '#/components/responses/ism.delete_policy@200'
@@ -105,6 +116,7 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#add-policy
       parameters:
         - $ref: '#/components/parameters/ism.add_policy::query.index'
+        - $ref: '#/components/parameters/ism.add_policy::query.type'
       requestBody:
         $ref: '#/components/requestBodies/ism.add_policy'
       responses:
@@ -122,6 +134,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ism.add_policy::path.index'
         - $ref: '#/components/parameters/ism.add_policy::query.index'
+        - $ref: '#/components/parameters/ism.add_policy::query.type'
       requestBody:
         $ref: '#/components/requestBodies/ism.add_policy'
       responses:
@@ -138,6 +151,7 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#remove-policy-from-index
       parameters:
         - $ref: '#/components/parameters/ism.remove_policy::query.index'
+        - $ref: '#/components/parameters/ism.remove_policy::query.type'
       responses:
         '200':
           $ref: '#/components/responses/ism.remove_policy@200'
@@ -153,6 +167,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ism.remove_policy::path.index'
         - $ref: '#/components/parameters/ism.remove_policy::query.index'
+        - $ref: '#/components/parameters/ism.remove_policy::query.type'
       responses:
         '200':
           $ref: '#/components/responses/ism.remove_policy@200'
@@ -167,6 +182,7 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#update-managed-index-policy
       parameters:
         - $ref: '#/components/parameters/ism.change_policy::query.index'
+        - $ref: '#/components/parameters/ism.change_policy::query.type'
       requestBody:
         $ref: '#/components/requestBodies/ism.change_policy'
       responses:
@@ -184,6 +200,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ism.change_policy::path.index'
         - $ref: '#/components/parameters/ism.change_policy::query.index'
+        - $ref: '#/components/parameters/ism.change_policy::query.type'
       requestBody:
         $ref: '#/components/requestBodies/ism.change_policy'
       responses:
@@ -257,7 +274,10 @@ paths:
       externalDocs:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#retry-failed-index
       parameters:
+        - $ref: '#/components/parameters/ism.retry_index::query.cluster_manager_timeout'
         - $ref: '#/components/parameters/ism.retry_index::query.index'
+        - $ref: '#/components/parameters/ism.retry_index::query.master_timeout'
+        - $ref: '#/components/parameters/ism.retry_index::query.type'
       requestBody:
         $ref: '#/components/requestBodies/ism.retry_index'
       responses:
@@ -274,7 +294,10 @@ paths:
         url: https://docs.opensearch.org/latest/im-plugin/ism/api/#retry-failed-index
       parameters:
         - $ref: '#/components/parameters/ism.retry_index::path.index'
+        - $ref: '#/components/parameters/ism.retry_index::query.cluster_manager_timeout'
         - $ref: '#/components/parameters/ism.retry_index::query.index'
+        - $ref: '#/components/parameters/ism.retry_index::query.master_timeout'
+        - $ref: '#/components/parameters/ism.retry_index::query.type'
       requestBody:
         $ref: '#/components/requestBodies/ism.retry_index'
       responses:
@@ -345,6 +368,11 @@ components:
           schema:
             $ref: '../schemas/ism._common.yaml#/components/schemas/GetPolicyResponse'
     ism.put_policy@201:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/ism._common.yaml#/components/schemas/PutPolicyResponse'
+    ism.put_policies@201:
       content:
         application/json:
           schema:
@@ -436,7 +464,7 @@ components:
     ism.add_policy::query.index:
       name: index
       in: query
-      required: true
+      description: Comma-separated list of indexes. Required when no index is given in the path.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
     ism.add_policy::path.index:
@@ -449,13 +477,13 @@ components:
     ism.change_policy::query.index:
       name: index
       in: query
-      required: true
+      description: Comma-separated list of indexes. Required when no index is given in the path.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
     ism.remove_policy::query.index:
       name: index
       in: query
-      required: true
+      description: Comma-separated list of indexes. Required when no index is given in the path.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
     ism.remove_policy::path.index:
@@ -482,7 +510,7 @@ components:
     ism.retry_index::query.index:
       name: index
       in: query
-      required: true
+      description: Comma-separated list of indexes. Required when no index is given in the path.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Indices'
     ism.retry_index::path.index:
@@ -519,4 +547,118 @@ components:
       description: Only perform the operation if the document has this sequence number.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/SequenceNumber'
-      style: form 
+      style: form
+    ism.get_policies::query.size:
+      name: size
+      in: query
+      description: The number of policies to return.
+      schema:
+        type: integer
+        default: 20
+      style: form
+    ism.get_policies::query.from:
+      name: from
+      in: query
+      description: The starting index of the policies to return.
+      schema:
+        type: integer
+        default: 0
+      style: form
+    ism.get_policies::query.sortField:
+      name: sortField
+      in: query
+      description: The field to sort the policies by.
+      schema:
+        type: string
+        default: policy.policy_id.keyword
+      style: form
+    ism.get_policies::query.sortOrder:
+      name: sortOrder
+      in: query
+      description: The sort order of the policies.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/SortOrder'
+      style: form
+    ism.get_policies::query.queryString:
+      name: queryString
+      in: query
+      description: A query string that filters the policies.
+      schema:
+        type: string
+        default: '*'
+      style: form
+    ism.put_policy::query.refresh:
+      name: refresh
+      in: query
+      description: Whether to refresh the affected shards to make this operation visible to search. Default is `true`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Refresh'
+      style: form
+    ism.put_policies::query.refresh:
+      name: refresh
+      in: query
+      description: Whether to refresh the affected shards to make this operation visible to search. Default is `true`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Refresh'
+      style: form
+    ism.delete_policy::query.refresh:
+      name: refresh
+      in: query
+      description: Whether to refresh the affected shards to make this operation visible to search. Default is `true`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Refresh'
+      style: form
+    ism.add_policy::query.type:
+      name: type
+      in: query
+      description: The type of the index metadata provider.
+      schema:
+        type: string
+        default: _default
+      style: form
+      x-version-added: '1.3'
+    ism.remove_policy::query.type:
+      name: type
+      in: query
+      description: The type of the index metadata provider.
+      schema:
+        type: string
+        default: _default
+      style: form
+      x-version-added: '1.3'
+    ism.change_policy::query.type:
+      name: type
+      in: query
+      description: The type of the index metadata provider.
+      schema:
+        type: string
+        default: _default
+      style: form
+      x-version-added: '1.3'
+    ism.retry_index::query.type:
+      name: type
+      in: query
+      description: The type of the index metadata provider.
+      schema:
+        type: string
+        default: _default
+      style: form
+      x-version-added: '1.3'
+    ism.retry_index::query.cluster_manager_timeout:
+      name: cluster_manager_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-added: '2.3'
+    ism.retry_index::query.master_timeout:
+      name: master_timeout
+      in: query
+      description: Operation timeout for connection to cluster-manager node.
+      deprecated: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+      x-version-deprecated: '2.3'
+      x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
