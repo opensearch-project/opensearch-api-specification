@@ -107,6 +107,9 @@ components:
           $ref: '#/components/schemas/StatsBucketAggregate'
         - title: srareterms
           $ref: '#/components/schemas/StringRareTermsAggregate'
+        - title: string_stats
+          $ref: '#/components/schemas/StringStatsAggregate'
+          x-version-added: '3.11'
         - title: sterms
           $ref: '#/components/schemas/StringTermsAggregate'
         - title: sum
@@ -313,6 +316,57 @@ components:
     StatsBucketAggregate:
       allOf:
         - $ref: '#/components/schemas/StatsAggregateBase'
+    StringStatsAggregate:
+      description: Result of a `string_stats` aggregation, the statistics of the string values of the matching documents.
+      allOf:
+        - $ref: '#/components/schemas/AggregateBase'
+        - type: object
+          properties:
+            count:
+              description: The number of values, which is not the number of documents if a document has several values. `0` if the bucket has no values.
+              type: integer
+              format: int64
+            min_length:
+              description: The length of the shortest value, in characters. `null` if the bucket has no values.
+              oneOf:
+                - type: integer
+                  format: int32
+                - type: 'null'
+            max_length:
+              description: The length of the longest value, in characters. `null` if the bucket has no values.
+              oneOf:
+                - type: integer
+                  format: int32
+                - type: 'null'
+            avg_length:
+              description: The average length of the values, in characters. `null` if the bucket has no values.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
+            entropy:
+              description: The Shannon entropy of the characters of all the values, in bits. `null` if the bucket has no values, and `0` if the values have at most one distinct character.
+              oneOf:
+                - type: number
+                  format: double
+                - type: 'null'
+            distribution:
+              description: |-
+                The relative frequency of every character of the values, from the most frequent to the least frequent character.
+                Each key is a single character. Only present if `show_distribution` is `true`.
+                `null` if the bucket has no values, and empty if all the values are empty strings.
+              oneOf:
+                - type: object
+                  additionalProperties:
+                    type: number
+                    format: double
+                - type: 'null'
+          required:
+            - avg_length
+            - count
+            - entropy
+            - max_length
+            - min_length
     ExtendedStatsAggregate:
       allOf:
         - $ref: '#/components/schemas/ExtendedStatsAggregateBase'
@@ -1614,6 +1668,12 @@ components:
                   $ref: '#/components/schemas/StatsBucketAggregation'
               required: [stats_bucket]
               unevaluatedProperties: true
+            - properties:
+                string_stats:
+                  $ref: '#/components/schemas/StringStatsAggregation'
+              required: [string_stats]
+              unevaluatedProperties: true
+              x-version-added: '3.11'
             - properties:
                 sum:
                   $ref: '#/components/schemas/SumAggregation'
@@ -3259,6 +3319,15 @@ components:
       allOf:
         - $ref: '#/components/schemas/PipelineAggregationBase'
         - type: object
+    StringStatsAggregation:
+      allOf:
+        - $ref: '#/components/schemas/MetricAggregationBase'
+        - type: object
+          properties:
+            show_distribution:
+              description: Whether the response has the relative frequency of every character, which makes the response as large as the number of distinct characters of the values.
+              type: boolean
+              default: false
     SumAggregation:
       allOf:
         - $ref: '#/components/schemas/FormatMetricAggregationBase'
