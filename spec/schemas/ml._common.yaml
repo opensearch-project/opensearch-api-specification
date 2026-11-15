@@ -1433,6 +1433,118 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/InferenceResults'
+    McpToolAttributes:
+      type: object
+      properties:
+        input_schema:
+          description: The JSON schema of the tool input, as an object or as a JSON string.
+          oneOf:
+            - type: object
+            - type: string
+        strict:
+          type: boolean
+      additionalProperties: true
+    McpToolRegisterInput:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The tool type.
+        name:
+          type: string
+          description: The unique tool name.
+        description:
+          type: string
+          description: The tool description.
+        parameters:
+          type: object
+          description: The tool parameters.
+          additionalProperties: true
+        attributes:
+          $ref: '#/components/schemas/McpToolAttributes'
+      required:
+        - type
+    McpToolUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the tool to update.
+        description:
+          type: string
+          description: The tool description.
+        parameters:
+          type: object
+          description: The tool parameters.
+          additionalProperties: true
+        attributes:
+          $ref: '#/components/schemas/McpToolAttributes'
+      required:
+        - name
+    McpTool:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The tool type.
+        name:
+          type: string
+          description: The unique tool name.
+        description:
+          type: string
+          description: The tool description.
+        parameters:
+          type: object
+          description: The tool parameters.
+          additionalProperties: true
+        attributes:
+          $ref: '#/components/schemas/McpToolAttributes'
+        create_time:
+          type: integer
+          format: int64
+          description: The time the tool was registered, in epoch milliseconds.
+        last_update_time:
+          type: integer
+          format: int64
+          description: The time the tool was last updated, in epoch milliseconds.
+      required:
+        - type
+    McpToolsRegisterResponse:
+      type: object
+      additionalProperties:
+        title: nodes
+        $ref: '#/components/schemas/McpToolsRegisterNode'
+    McpToolsRegisterNode:
+      type: object
+      properties:
+        created:
+          type: boolean
+        error:
+          type: string
+    McpToolsUpdateResponse:
+      type: object
+      additionalProperties:
+        title: nodes
+        $ref: '#/components/schemas/McpToolsUpdateNode'
+    McpToolsUpdateNode:
+      type: object
+      properties:
+        updated:
+          type: boolean
+        error:
+          type: string
+    McpToolsRemoveResponse:
+      type: object
+      additionalProperties:
+        title: nodes
+        $ref: '#/components/schemas/McpToolsRemoveNode'
+    McpToolsRemoveNode:
+      type: object
+      properties:
+        removed:
+          type: boolean
+        not_found_exception:
+          type: string
     MemoryContainerConfiguration:
       type: object
       properties:

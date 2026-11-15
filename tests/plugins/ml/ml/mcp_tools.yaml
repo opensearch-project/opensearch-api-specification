@@ -1,0 +1,68 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the MCP server tools API.
+version: '>= 3.1'
+prologues:
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.mcp_server_enabled: true
+epilogues:
+  - path: /_plugins/_ml/mcp/tools/_remove
+    method: POST
+    request:
+      payload:
+        - SpecTestListIndexTool
+    status: [200, 400, 404, 500]
+  - path: /_cluster/settings
+    method: PUT
+    request:
+      payload:
+        persistent:
+          plugins.ml_commons.mcp_server_enabled: null
+chapters:
+  - synopsis: Register an MCP tool.
+    path: /_plugins/_ml/mcp/tools/_register
+    method: POST
+    request:
+      payload:
+        tools:
+          - name: SpecTestListIndexTool
+            type: ListIndexTool
+            description: Lists the indices in the cluster.
+            attributes:
+              input_schema:
+                type: object
+                properties:
+                  indices:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties: false
+    response:
+      status: 200
+  - synopsis: List the MCP tools.
+    path: /_plugins/_ml/mcp/tools/_list
+    method: GET
+    response:
+      status: 200
+  - synopsis: Update an MCP tool.
+    path: /_plugins/_ml/mcp/tools/_update
+    method: POST
+    request:
+      payload:
+        tools:
+          - name: SpecTestListIndexTool
+            description: Lists the indices in the cluster and their health.
+    response:
+      status: 200
+  - synopsis: Remove an MCP tool.
+    path: /_plugins/_ml/mcp/tools/_remove
+    method: POST
+    request:
+      payload:
+        - SpecTestListIndexTool
+    response:
+      status: 200
