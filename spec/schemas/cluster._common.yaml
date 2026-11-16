@@ -52,3 +52,45 @@ components:
           type: object
           additionalProperties:
             $ref: 'indices._common.yaml#/components/schemas/AliasDefinition'
+    SettingMetadata:
+      type: object
+      properties:
+        dynamic:
+          type: boolean
+          description: Whether the setting is dynamic. A dynamic setting can be updated on a running cluster; a static setting requires a node restart to change.
+        default:
+          type: string
+          description: The default value declared in the setting definition, in the string form that the Cluster Settings API accepts. Omitted for secure (keystore) settings and for settings that declare an empty default. Some defaults are computed by the node that responds to the request.
+        validation:
+          $ref: '#/components/schemas/SettingValidation'
+        description:
+          type: string
+          description: The description declared in the setting definition. Omitted when the definition does not include a description.
+      required:
+        - dynamic
+    SettingValidation:
+      type: object
+      description: The declared value type and bounds of a setting. Present only for settings defined with a typed parser; string, list, and enumerated settings have no validation object.
+      properties:
+        type:
+          $ref: '#/components/schemas/SettingValueType'
+        min:
+          type: string
+          description: The smallest accepted value, in the same string form as `default`. Omitted when the definition places no lower bound on the value.
+        max:
+          type: string
+          description: The largest accepted value, in the same string form as `default`. Omitted when the definition places no upper bound on the value.
+      required:
+        - type
+    SettingValueType:
+      type: string
+      description: The value type of a setting.
+      enum:
+        - boolean
+        - byte_size
+        - double
+        - float
+        - integer
+        - long
+        - memory_size
+        - time

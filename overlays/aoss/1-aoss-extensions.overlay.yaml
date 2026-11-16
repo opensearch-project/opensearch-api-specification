@@ -1,7 +1,7 @@
 # Amazon OpenSearch Serverless -- hand-authored overlay (additions + removes).
 # The generated path-block file (amazon-serverless-block.overlay.yaml) is produced
 # by tools/generate-aoss-allowlist.py -- never hand-edit it. Removes come before
-# adds. Requires speakeasy ($ref filter predicates).
+# adds. Targets use standard RFC 9535 JSONPath.
 overlay: 1.0.0
 info:
   title: Amazon OpenSearch Serverless - hand-authored overlay (additions + removes)
@@ -35,9 +35,9 @@ actions:
     update: serverless
 
   # 1. Remove the write-op `refresh` param (AOSS rejects every explicit value).
-  - target: '$.paths[*][*].parameters[?(@.$ref =~ /query\.refresh$/)]'
+  - target: '$.paths[*][*].parameters[?match(@["$ref"], ".*query\\.refresh$")]'
     remove: true
-  - target: '$.components.parameters[*][?(@.name == "refresh" && @.in == "query")]'
+  - target: '$.components.parameters[?(@.name == "refresh" && @.in == "query")]'
     remove: true
   - target: "$.components.schemas['_common___Refresh']"
     remove: true
