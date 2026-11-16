@@ -404,6 +404,7 @@ paths:
         - $ref: '#/components/parameters/indices.forcemerge::query.max_num_segments'
         - $ref: '#/components/parameters/indices.forcemerge::query.only_expunge_deletes'
         - $ref: '#/components/parameters/indices.forcemerge::query.primary_only'
+        - $ref: '#/components/parameters/indices.forcemerge::query.upgrade'
         - $ref: '#/components/parameters/indices.forcemerge::query.wait_for_completion'
       responses:
         '200':
@@ -1622,6 +1623,7 @@ paths:
         - $ref: '#/components/parameters/indices.forcemerge::query.max_num_segments'
         - $ref: '#/components/parameters/indices.forcemerge::query.only_expunge_deletes'
         - $ref: '#/components/parameters/indices.forcemerge::query.primary_only'
+        - $ref: '#/components/parameters/indices.forcemerge::query.upgrade'
         - $ref: '#/components/parameters/indices.forcemerge::query.wait_for_completion'
       responses:
         '200':
@@ -3935,6 +3937,19 @@ components:
         type: boolean
         default: false
         description: Specify whether the operation should only perform on primary shards. Defaults to false.
+    indices.forcemerge::query.upgrade:
+      x-version-added: '3.11'
+      in: query
+      name: upgrade
+      description: |-
+        Whether to rewrite segments written by an older Lucene version using the current Lucene version.
+        When `max_num_segments` is not set, each older segment is rewritten individually and no segments are merged together.
+        When `max_num_segments` is set, segments are upgraded and merged into at most that number of segments.
+        Cannot be combined with `only_expunge_deletes`.
+      schema:
+        type: boolean
+        default: false
+      style: form
     indices.forcemerge::query.wait_for_completion:
       x-version-added: '2.7'
       in: query
