@@ -190,9 +190,69 @@ components:
       properties:
         actions:
           type: array
+          minItems: 1
           items:
-            $ref: 'indices.update_aliases.yaml#/components/schemas/Action'
+            $ref: '#/components/schemas/ActionAliasAction'
           description: The alias actions to perform.
+      required:
+        - actions
+    ActionAliasAction:
+      type: object
+      description: An alias action on the managed index. Only `add` and `remove` are supported.
+      properties:
+        add:
+          $ref: '#/components/schemas/ActionAliasAdd'
+        remove:
+          $ref: '#/components/schemas/ActionAliasRemove'
+      minProperties: 1
+      maxProperties: 1
+    ActionAliasAdd:
+      type: object
+      description: Adds aliases to the managed index. Requires exactly one of `alias` or `aliases`.
+      properties:
+        alias:
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
+        aliases:
+          $ref: '#/components/schemas/ActionAliasNames'
+        filter:
+          $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
+        index_routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+        is_hidden:
+          type: boolean
+          description: Whether the alias is hidden.
+        is_write_index:
+          type: boolean
+          description: Whether the managed index is the write index for the alias.
+        routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+        search_routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+      oneOf:
+        - required: [alias]
+        - required: [aliases]
+    ActionAliasRemove:
+      type: object
+      description: Removes aliases from the managed index. Requires exactly one of `alias` or `aliases`.
+      properties:
+        alias:
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
+        aliases:
+          $ref: '#/components/schemas/ActionAliasNames'
+        must_exist:
+          type: boolean
+          description: Whether the alias must exist to perform the action.
+      oneOf:
+        - required: [alias]
+        - required: [aliases]
+    ActionAliasNames:
+      description: The aliases. Index alias names support date math.
+      oneOf:
+        - $ref: '_common.yaml#/components/schemas/IndexAlias'
+        - type: array
+          minItems: 1
+          items:
+            $ref: '_common.yaml#/components/schemas/IndexAlias'
     ActionDelete:
       type: object
       description: The delete action configuration.
@@ -275,6 +335,9 @@ components:
           $ref: '_common.yaml#/components/schemas/Script'
       required:
         - message_template
+      oneOf:
+        - required: [destination]
+        - required: [channel]
     ActionAllocation:
       type: object
       properties:
@@ -346,6 +409,10 @@ components:
         force_unsafe:
           type: boolean
           description: Whether to shrink the index even if it has no replicas.
+      oneOf:
+        - required: [num_new_shards]
+        - required: [max_shard_size]
+        - required: [percentage_of_source_shards]
     ActionConvertIndexToRemote:
       type: object
       description: The convert index to remote action configuration.
@@ -360,21 +427,26 @@ components:
           type: boolean
           default: false
           description: Whether to restore the aliases of the index.
+          x-version-added: '3.7'
         ignore_index_settings:
           type: string
           default: ''
           description: Comma-separated list of index settings to ignore when restoring.
+          x-version-added: '3.7'
         number_of_replicas:
           type: integer
           description: The number of replicas of the restored index.
+          x-version-added: '3.7'
         delete_original_index:
           type: boolean
           default: false
           description: Whether to delete the original index after the restore.
+          x-version-added: '3.7'
         rename_pattern:
           type: string
           default: $1_remote
           description: The pattern for the name of the restored index.
+          x-version-added: '3.5'
       required:
         - repository
         - snapshot
@@ -403,11 +475,15 @@ components:
           type: string
           description: The name of the field.
         type:
-          type: string
-          description: The type of the field domain calculator.
+          $ref: '#/components/schemas/FieldDomainType'
       required:
         - field
         - type
+    FieldDomainType:
+      type: string
+      description: The type of the field domain calculator.
+      enum:
+        - date_range
     ActionCustom:
       type: object
       additionalProperties: true
@@ -718,6 +794,9 @@ components:
           $ref: '_common.yaml#/components/schemas/Script'
       required:
         - message_template
+      oneOf:
+        - required: [destination]
+        - required: [channel]
     Channel:
       type: object
       properties:
