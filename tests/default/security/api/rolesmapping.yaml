@@ -16,6 +16,24 @@ prologues:
         cluster_permissions: 
           - cluster_composite_ops
     status: [201]
+  - path: /_plugins/_security/api/roles/{role}
+    method: PUT
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_reader
+    request:
+      payload:
+        cluster_permissions: [cluster_monitor]
+    status: [200, 201]
+  - path: /_plugins/_security/api/roles/{role}
+    method: PUT
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_observer
+    request:
+      payload:
+        cluster_permissions: [cluster_monitor]
+    status: [200, 201]
 chapters:
   - synopsis: Get rolesmapping bulk.
     path: /_plugins/_security/api/rolesmapping
@@ -73,9 +91,111 @@ chapters:
       role: test
     response:
       status: 200
+  - synopsis: Create multiple role mappings.
+    path: /_plugins/_security/api/rolesmapping
+    method: PUT
+    version: '>=3.10'
+    parameters:
+      wait_for_completion: true
+    request:
+      payload:
+        test_bulk_mapping_reader:
+          backend_roles: [analysts]
+          users: [jdoe]
+        test_bulk_mapping_observer:
+          backend_roles: [ops]
+          hosts: ['*.monitoring.example.com']
+    response:
+      status: 200
+      payload:
+        status: OK
+        message: Resources updated.
+  - synopsis: Verify a role mapping created in bulk.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_reader
+    response:
+      status: 200
+      payload:
+        test_bulk_mapping_reader:
+          backend_roles: [analysts]
+          users: [jdoe]
+  - synopsis: Replace a role mapping without changing omitted mappings.
+    path: /_plugins/_security/api/rolesmapping
+    method: PUT
+    version: '>=3.10'
+    request:
+      payload:
+        test_bulk_mapping_reader:
+          backend_roles: [auditors]
+    response:
+      status: 200
+      payload:
+        status: OK
+        message: Resources updated.
+  - synopsis: Verify the supplied role mapping was replaced.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_reader
+    response:
+      status: 200
+      payload:
+        test_bulk_mapping_reader:
+          backend_roles: [auditors]
+          users: []
+  - synopsis: Verify the omitted role mapping is unchanged.
+    path: /_plugins/_security/api/rolesmapping/{role}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_observer
+    response:
+      status: 200
+      payload:
+        test_bulk_mapping_observer:
+          backend_roles: [ops]
+          hosts: ['*.monitoring.example.com']
+  - synopsis: Reject a mapping for a role that does not exist.
+    path: /_plugins/_security/api/rolesmapping
+    method: PUT
+    version: '>=3.10'
+    request:
+      payload:
+        test_bulk_mapping_missing_role:
+          backend_roles: [nobody]
+    response:
+      status: 404
 epilogues:
   - path: /_plugins/_security/api/roles/{role}
     method: DELETE
     parameters:
       role: test
     status: [200]
+  - path: /_plugins/_security/api/rolesmapping/{role}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_reader
+    status: [200, 404]
+  - path: /_plugins/_security/api/rolesmapping/{role}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_observer
+    status: [200, 404]
+  - path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_reader
+    status: [200, 404]
+  - path: /_plugins/_security/api/roles/{role}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      role: test_bulk_mapping_observer
+    status: [200, 404]

@@ -1,7 +1,28 @@
 $schema: ../../../json_schemas/test_story.schema.yaml
 
 description: Test _snapshot/{repository}/snapshot endpoints.
+prologues:
+  # An index whose only primary shard can never be allocated. A partial snapshot skips that shard
+  # and records it in `failures`, so the snapshot responses carry a populated `failures` array.
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unallocatable-index
+    request:
+      payload:
+        settings:
+          index:
+            number_of_shards: 1
+            number_of_replicas: 0
+            routing:
+              allocation:
+                enable: none
 epilogues:
+  - path: /{index}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      index: unallocatable-index
   - path: /_snapshot/{repository}/{snapshot}
     method: DELETE
     status: [200, 404]
@@ -72,6 +93,11 @@ chapters:
       payload:
         snapshot:
           snapshot: my-test-snapshot
+  - synopsis: Delete the index with the unassigned primary shard so that later snapshots are not partial.
+    path: /{index}
+    method: DELETE
+    parameters:
+      index: unallocatable-index
   - synopsis: Create a second snapshot.
     path: /_snapshot/{repository}/{snapshot}
     method: POST
@@ -98,6 +124,10 @@ chapters:
       payload:
         snapshots:
           - snapshot: my-test-snapshot
+            failures:
+              - index: unallocatable-index
+                index_uuid: unallocatable-index
+                shard_id: 0
   - synopsis: Get information about a snapshot with human-readable parameter.
     path: /_snapshot/{repository}/{snapshot}
     method: GET
