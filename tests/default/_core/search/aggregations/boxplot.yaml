@@ -1,0 +1,119 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test boxplot aggregation.
+version: '>= 3.11'
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Moneyball, duration: 100}
+        - {create: {_index: movies}}
+        - {director: Nicolas Winding Refn, title: Drive, duration: 200}
+        - {create: {_index: movies}}
+        - {director: Christopher Nolan, title: Oppenheimer, duration: 300}
+chapters:
+  - synopsis: Aggregate with boxplot.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          duration_box:
+            boxplot:
+              field: duration
+              compression: 200
+    response:
+      status: 200
+      payload:
+        aggregations:
+          duration_box:
+            min: 100
+            max: 300
+            lower: 100
+            upper: 300
+
+  - synopsis: Aggregate with boxplot and format.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          duration_box:
+            boxplot:
+              field: duration
+              format: '0.0'
+    response:
+      status: 200
+      payload:
+        aggregations:
+          duration_box:
+            min: 100
+            max: 300
+            min_as_string: '100.0'
+            max_as_string: '300.0'
+
+  - synopsis: Aggregate with boxplot and typed keys.
+    path: /{index}/_search
+    parameters:
+      index: movies
+      typed_keys: true
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          duration_box:
+            boxplot:
+              field: duration
+    response:
+      status: 200
+      payload:
+        aggregations:
+          boxplot#duration_box:
+            min: 100
+            max: 300
+
+  - synopsis: Aggregate with boxplot over no values.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        query:
+          term:
+            director: Stanley Kubrick
+        aggs:
+          duration_box:
+            boxplot:
+              field: duration
+    response:
+      status: 200
+      payload:
+        aggregations:
+          duration_box:
+            min: null
+            max: null
+            q1: null
+            q2: null
+            q3: null
+            lower: null
+            upper: null
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
