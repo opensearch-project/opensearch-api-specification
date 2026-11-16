@@ -69,37 +69,54 @@ components:
             type: string
         size:
           type: integer
-        type:
-          type: string
       required:
         - querySetId
         - searchConfigurationList
         - size
-        - type
     PutPairwiseExperimentRequest:
       description: The schema for a pairwise experiment.
       allOf:
         - $ref: '#/components/schemas/PutExperimentRequestBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - PAIRWISE_COMPARISON
+          required:
+            - type
     PutHybridOptimizerExperimentRequest:
       description: The schema for a hybrid optimizer experiment.
       allOf:
         - $ref: '#/components/schemas/PutExperimentRequestBase'
         - type: object
           properties:
+            type:
+              type: string
+              enum:
+                - HYBRID_OPTIMIZER
             judgmentList:
               type: array
               items:
                 type: string
+          required:
+            - type
     PutPointwiseExperimentRequest:
       description: The schema for a pointwise experiment.
       allOf:
         - $ref: '#/components/schemas/PutExperimentRequestBase'
         - type: object
           properties:
+            type:
+              type: string
+              enum:
+                - POINTWISE_EVALUATION
             judgmentList:
               type: array
               items:
                 type: string
+          required:
+            - type
     PostQuerySetsRequest:
       type: object
       description: The schema for creating a query set.
@@ -142,17 +159,18 @@ components:
           type: string
         description:
           type: string
-        type:
-          type: string
       required:
         - name
-        - type
     PutLLMJudgmentsRequest:
       description: The schema for a LLM judgment.
       allOf:
         - $ref: '#/components/schemas/PutJudgmentsRequestBase'
         - type: object
           properties:
+            type:
+              type: string
+              enum:
+                - LLM_JUDGMENT
             modelId:
               type: string
             querySetId:
@@ -194,6 +212,7 @@ components:
           required:
             - modelId
             - querySetId
+            - type
     LLMJudgmentRatingType:
       type: string
       description: The rating scale used by the LLM judge. Defaults to `SCORE0_1`.
@@ -207,6 +226,10 @@ components:
         - $ref: '#/components/schemas/PutJudgmentsRequestBase'
         - type: object
           properties:
+            type:
+              type: string
+              enum:
+                - UBI_JUDGMENT
             clickModel:
               type: string
             maxRank:
@@ -226,18 +249,24 @@ components:
           required:
             - clickModel
             - maxRank
+            - type
     PutImportJudgmentsRequest:
       description: The schema for an import judgment.
       allOf:
         - $ref: '#/components/schemas/PutJudgmentsRequestBase'
         - type: object
           properties:
+            type:
+              type: string
+              enum:
+                - IMPORT_JUDGMENT
             judgmentRatings:
               type: array
               items:
                 type: object
           required:
             - judgmentRatings
+            - type
     PutSearchConfigurationRequest:
       type: object
       properties:
