@@ -806,7 +806,7 @@ components:
          - As a GeoJSON object with `type` and `coordinates` properties.
          - As a Well Known Text (WKT) string.
       oneOf:
-        - title: geoJson
+        - title: geo_json
           description: The shape specified using a GeoJSON object.
           $ref: '#/components/schemas/GeoJsonGeoShape'
         - title: wkt
@@ -824,19 +824,25 @@ components:
           $ref: '#/components/schemas/GeoShapeType'
         coordinates:
           type: array
-          description: The coordinates of the shape.
+          description: The coordinates of the shape. Required for every type except `GeometryCollection`.
+        radius:
+          $ref: '_common.yaml#/components/schemas/Distance'
+          description: The radius of a `Circle` shape.
+        geometries:
+          type: array
+          description: The shapes that make up a `GeometryCollection`.
+          items:
+            $ref: '#/components/schemas/GeoJsonGeoShape'
+        orientation:
+          $ref: '_common.mapping.yaml#/components/schemas/GeoOrientation'
+          description: The vertex order of a `Polygon` or `MultiPolygon` shape.
       required:
         - type
-        - coordinates
     GeoShapeType:
       type: string
       description: |-
-        The type of the GeoJSON shape. The values are the shape types the server accepts in the
-        `type` field of a `geo_shape` query shape. `Circle` and `GeometryCollection` are not
-        included because their additional required fields (`radius` and `geometries`
-        respectively) are not modeled by `GeoJsonGeoShape`. The server is case-insensitive
-        when parsing these values; the casing listed here is the canonical form the server
-        emits.
+        The type of the GeoJSON shape. The server is case-insensitive when parsing these values;
+        the casing listed here is the canonical form the server emits.
       enum:
         - Point
         - MultiPoint
@@ -844,7 +850,9 @@ components:
         - MultiLineString
         - Polygon
         - MultiPolygon
+        - GeometryCollection
         - Envelope
+        - Circle
     GeoShapeQueryField:
       type: object
       properties:
