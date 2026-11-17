@@ -1,0 +1,85 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test removing a block from an index.
+version: '>= 3.11'
+prologues:
+  - path: /movies
+    method: PUT
+  - path: /movies/_block/write
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Remove the write block from an index.
+    path: /{index}/_block/{block}
+    method: DELETE
+    parameters:
+      index: movies
+      block: write
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        indices:
+          - name: movies
+            unblocked: true
+
+  - synopsis: Remove a block that is not set (the index is still unblocked).
+    path: /{index}/_block/{block}
+    method: DELETE
+    parameters:
+      index: movies
+      block: write
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        indices:
+          - name: movies
+            unblocked: true
+
+  - synopsis: Remove a block with timeouts and index options.
+    path: /{index}/_block/{block}
+    method: DELETE
+    parameters:
+      index: movies
+      block: read_only
+      timeout: 10s
+      cluster_manager_timeout: 10s
+      expand_wildcards: open
+      ignore_unavailable: false
+      allow_no_indices: true
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        indices:
+          - name: movies
+            unblocked: true
+
+  - synopsis: Remove a block from an index that does not exist, ignoring it.
+    path: /{index}/_block/{block}
+    method: DELETE
+    parameters:
+      index: missing_movies
+      block: write
+      ignore_unavailable: true
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        indices: []
+
+  - synopsis: Remove a block from the indexes that match a wildcard, when none does.
+    path: /{index}/_block/{block}
+    method: DELETE
+    parameters:
+      index: no_such_prefix_*
+      block: write
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        indices: []
