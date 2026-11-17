@@ -139,3 +139,50 @@ describe('UnionLabeler', () => {
     expect(spec.components.schemas.RangeQuery['x-union-kind']).toBeUndefined()
   })
 })
+
+describe('UnionLabeler: nested and branch-owned presence constraints', () => {
+  const ref = (name: string): Record<string, string> => ({ $ref: `#/components/schemas/${name}` })
+  const label = (sort_source: any): any => {
+    const spec: Record<string, any> = { components: { schemas: { Script: { type: 'object', properties: { source: { type: 'string' } } }, SortSource: sort_source } } }
+    new UnionLabeler().label(spec)
+    return spec.components.schemas.SortSource
+  }
+
+  test('a union nested in a branch, over properties the branch declares, is presence, and so is the outer union', () => {
+    const sort = label({
+      allOf: [
+        { type: 'object', properties: { order: { type: 'string' } } },
+        {
+          oneOf: [
+            { type: 'object', properties: { field: { type: 'string' } }, required: ['field'] },
+            {
+              allOf: [
+                { type: 'object', properties: { script: ref('Script') }, required: ['script'] },
+                { anyOf: [{ properties: { type: { type: 'string' } }, required: ['type'] }, { properties: { lang: { type: 'string' } }, required: ['lang'] }] }
+              ]
+            }
+          ]
+        }
+      ]
+    })
+    expect(sort.allOf[1]['x-union-kind']).toBe('presence')
+    expect(sort.allOf[1].oneOf[1].allOf[1]['x-union-kind']).toBe('presence')
+  })
+
+  test('with every property declared on the object, both unions are presence', () => {
+    const sort = label({
+      allOf: [
+        { type: 'object', properties: { order: { type: 'string' }, field: { type: 'string' }, script: ref('Script'), type: { type: 'string' }, lang: { type: 'string' } } },
+        { oneOf: [{ required: ['field'] }, { allOf: [{ required: ['script'] }, { anyOf: [{ required: ['type'] }, { required: ['lang'] }] }] }] }
+      ]
+    })
+    expect(sort.allOf[1]['x-union-kind']).toBe('presence')
+    expect(sort.allOf[1].oneOf[1].allOf[1]['x-union-kind']).toBe('presence')
+  })
+
+  test('a top-level union of objects is not presence: it has no object to constrain', () => {
+    const spec: Record<string, any> = { components: { schemas: { U: { oneOf: [{ properties: { a: { type: 'string' } }, required: ['a'] }, { properties: { b: { type: 'number' } }, required: ['b'] }] } } } }
+    new UnionLabeler().label(spec)
+    expect(spec.components.schemas.U['x-union-kind']).not.toBe('presence')
+  })
+})
