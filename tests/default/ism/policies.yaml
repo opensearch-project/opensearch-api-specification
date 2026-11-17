@@ -236,7 +236,6 @@ chapters:
                 - convert_index_to_remote:
                     repository: ism-repository
                     snapshot: ism-snapshot
-                    include_aliases: true
               transitions: []
     response:
       status: 201
@@ -246,6 +245,48 @@ chapters:
     method: GET
     parameters:
       policy_id: remote_actions
+  - synopsis: Create a policy with the convert index to remote restore options.
+    version: '>= 3.7'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: PUT
+    parameters:
+      policy_id: remote_restore_options
+    request:
+      payload:
+        policy:
+          description: A policy with the convert index to remote restore options.
+          default_state: hot
+          states:
+            - name: hot
+              actions:
+                - convert_index_to_remote:
+                    repository: ism-repository
+                    snapshot: ism-snapshot
+                    include_aliases: true
+                    ignore_index_settings: index.refresh_interval
+                    number_of_replicas: 0
+                    delete_original_index: true
+                    rename_pattern: $1_restored
+              transitions: []
+    response:
+      status: 201
+  - synopsis: Get a policy with the convert index to remote restore options.
+    version: '>= 3.7'
+    path: /_plugins/_ism/policies/{policy_id}
+    method: GET
+    parameters:
+      policy_id: remote_restore_options
+    response:
+      status: 200
+      payload:
+        policy:
+          states:
+            - actions:
+                - convert_index_to_remote:
+                    include_aliases: true
+                    number_of_replicas: 0
+                    delete_original_index: true
+                    rename_pattern: $1_restored
   - synopsis: Update a policy specified in the query.
     id: updated_policy
     path: /_plugins/_ism/policies
@@ -313,5 +354,8 @@ epilogues:
     method: DELETE
     status: [200, 404]
   - path: /_plugins/_ism/policies/remote_actions
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ism/policies/remote_restore_options
     method: DELETE
     status: [200, 404]
