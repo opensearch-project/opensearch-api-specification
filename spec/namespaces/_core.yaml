@@ -2301,6 +2301,51 @@ paths:
           $ref: '#/components/responses/exists_source@200'
         '404':
           $ref: '#/components/responses/exists_source@404'
+  /{index}/_terms_enum:
+    get:
+      operationId: terms_enum.0
+      x-operation-group: terms_enum
+      tags:
+        - Search
+      x-version-added: '3.11'
+      description: |-
+        Returns up to `size` distinct indexed terms of a `keyword`, `constant_keyword`, or `_index` field that start with a prefix, merged across shards in UTF-8 byte order.
+        Each shard reads its terms dictionary instead of running an aggregation, so the API suits autocomplete and filter value suggestions.
+        This is an experimental API.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/search-apis/terms-enum/
+      parameters:
+        - $ref: '#/components/parameters/terms_enum::path.index'
+        - $ref: '#/components/parameters/terms_enum::query.allow_no_indices'
+        - $ref: '#/components/parameters/terms_enum::query.expand_wildcards'
+        - $ref: '#/components/parameters/terms_enum::query.ignore_unavailable'
+      requestBody:
+        $ref: '#/components/requestBodies/terms_enum'
+      responses:
+        '200':
+          $ref: '#/components/responses/terms_enum@200'
+    post:
+      operationId: terms_enum.1
+      x-operation-group: terms_enum
+      tags:
+        - Search
+      x-version-added: '3.11'
+      description: |-
+        Returns up to `size` distinct indexed terms of a `keyword`, `constant_keyword`, or `_index` field that start with a prefix, merged across shards in UTF-8 byte order.
+        Each shard reads its terms dictionary instead of running an aggregation, so the API suits autocomplete and filter value suggestions.
+        This is an experimental API.
+      externalDocs:
+        url: https://docs.opensearch.org/latest/api-reference/search-apis/terms-enum/
+      parameters:
+        - $ref: '#/components/parameters/terms_enum::path.index'
+        - $ref: '#/components/parameters/terms_enum::query.allow_no_indices'
+        - $ref: '#/components/parameters/terms_enum::query.expand_wildcards'
+        - $ref: '#/components/parameters/terms_enum::query.ignore_unavailable'
+      requestBody:
+        $ref: '#/components/requestBodies/terms_enum'
+      responses:
+        '200':
+          $ref: '#/components/responses/terms_enum@200'
   /{index}/_termvectors:
     get:
       operationId: termvectors.0
@@ -2955,6 +3000,58 @@ components:
                 type: string
             description: The search definition template and its parameters.
       required: true
+    terms_enum:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              field:
+                description: |-
+                  The field whose terms are returned: a `keyword`, `constant_keyword`, or `_index` field, a multi-field, or an alias of one.
+                  Wildcards are not supported.
+                $ref: '../schemas/_common.yaml#/components/schemas/Field'
+              string:
+                description: |-
+                  The prefix that every returned term starts with. It is matched literally, so `*`, `?`, and `.` are not wildcards.
+                  On a `keyword` field with a `normalizer`, the prefix is normalized first. An empty string matches every term.
+                  The server limits it to 1000 UTF-16 code units, so a character outside the Basic Multilingual Plane, such as an emoji, counts as two.
+                type: string
+                maxLength: 1000
+                default: ''
+              size:
+                description: |-
+                  The maximum number of terms to return.
+                  Must be at most the value of the `search.terms_enum.max_size` cluster setting, which defaults to `1000`.
+                type: integer
+                format: int32
+                minimum: 1
+                default: 10
+              case_insensitive:
+                description: Whether the prefix match ignores case. Only ASCII letters are folded.
+                type: boolean
+                default: false
+              timeout:
+                description: |-
+                  The time limit for the whole request. Must be at least `1ms`.
+                  When it expires, the response contains the terms found so far and `complete` is `false`.
+                $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+                default: 1s
+              index_filter:
+                description: |-
+                  A query used only to skip shards that cannot match it, with the same check that search uses.
+                  On a shard that can match, the terms of all documents are returned, not only the terms of the documents that match the query.
+                $ref: '../schemas/_common.query_dsl.yaml#/components/schemas/QueryContainer'
+              search_after:
+                description: |-
+                  Returns only the terms that come after this term in UTF-8 byte order.
+                  The term is compared as given, without a normalizer or case folding, so pass the last term of the previous page.
+                  Do not page from a response in which `complete` is `false`.
+                type: string
+            required:
+              - field
+            description: The field whose terms are listed and the options that select and limit the terms.
+      required: true
     termvectors:
       content:
         application/json:
@@ -3481,6 +3578,32 @@ components:
                     type: integer
                     format: int32
                     x-version-added: '2.18'
+    terms_enum@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _shards:
+                description: |-
+                  The shards the request targeted. `skipped` counts the shards that `index_filter` ruled out, which are also counted in `successful`.
+                  A shard that failed or did not answer in time is counted in `failed`.
+                $ref: '../schemas/_common.yaml#/components/schemas/ShardStatistics'
+              terms:
+                description: The distinct terms, sorted in UTF-8 byte order.
+                type: array
+                items:
+                  type: string
+              complete:
+                description: |-
+                  Whether every target shard answered in full.
+                  It is `false` if a shard timed out, failed, or could not be reached. The terms can then be missing anywhere in the range, not only at the end.
+                  It does not say whether more terms match after the last one returned.
+                type: boolean
+            required:
+              - _shards
+              - complete
+              - terms
     termvectors@200:
       content:
         application/json:
@@ -6295,6 +6418,45 @@ components:
       description: If `true`, the response prefixes aggregation and suggester names with their respective types.
       schema:
         type: boolean
+      style: form
+    terms_enum::path.index:
+      in: path
+      name: index
+      description: |-
+        A comma-separated list of data streams, indexes, and aliases to return terms from. Supports wildcards (`*`).
+        Indexes in remote clusters, and indexes targeted only through an alias with a filter, cause an error.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
+    terms_enum::query.allow_no_indices:
+      in: query
+      name: allow_no_indices
+      description: If `false`, the request returns an error if a wildcard expression, index alias, or `_all` value matches no index.
+      schema:
+        type: boolean
+        default: true
+      style: form
+    terms_enum::query.expand_wildcards:
+      in: query
+      name: expand_wildcards
+      description: |-
+        The type of index that wildcard patterns can match.
+        Supports comma-separated values, such as `open,hidden`.
+        A closed index that a pattern matches causes an error, unless `ignore_unavailable` is `true`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
+        default: open
+      style: form
+    terms_enum::query.ignore_unavailable:
+      in: query
+      name: ignore_unavailable
+      description: |-
+        If `false`, the request returns an error if it targets a missing or closed index.
+        If `true`, missing and closed indexes are skipped.
+      schema:
+        type: boolean
+        default: false
       style: form
     termvectors::path.id:
       in: path
