@@ -1,0 +1,83 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the limit query parameter of the cat endpoints.
+version: '>= 3.10'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: cat-limit-a
+    request:
+      payload: {}
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: cat-limit-b
+    request:
+      payload: {}
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: cat-limit-c
+    request:
+      payload: {}
+epilogues:
+  - path: /cat-limit-a
+    method: DELETE
+    status: [200, 404]
+  - path: /cat-limit-b
+    method: DELETE
+    status: [200, 404]
+  - path: /cat-limit-c
+    method: DELETE
+    status: [200, 404]
+# The response is compared as plain text because a JSON payload comparison does not fail on extra array items,
+# so only an exact text match proves that the response was truncated to the requested number of rows.
+# Invalid values (0, negative and non-numeric) are rejected by the server with a 400, but they cannot be tested
+# here because the tester validates every parameter against the spec first, which requires limit >= 1.
+chapters:
+  - synopsis: Return only the top 2 indexes by name when sorting in descending order.
+    path: /_cat/indices/{index}
+    method: GET
+    parameters:
+      index:
+        - cat-limit-*
+      h:
+        - index
+      s:
+        - index:desc
+      limit: 2
+    response:
+      status: 200
+      content_type: text/plain
+      payload: "cat-limit-c\ncat-limit-b\n"
+  - synopsis: Return only the first index by name when sorting in ascending order.
+    path: /_cat/indices/{index}
+    method: GET
+    parameters:
+      index:
+        - cat-limit-*
+      h:
+        - index
+      s:
+        - index
+      limit: 1
+    response:
+      status: 200
+      content_type: text/plain
+      payload: "cat-limit-a\n"
+  - synopsis: Return all indexes when the limit is greater than the number of rows.
+    path: /_cat/indices/{index}
+    method: GET
+    parameters:
+      index:
+        - cat-limit-*
+      h:
+        - index
+      s:
+        - index
+      limit: 10
+    response:
+      status: 200
+      content_type: text/plain
+      payload: "cat-limit-a\ncat-limit-b\ncat-limit-c\n"
