@@ -48,7 +48,7 @@ export default class UnionClassifier {
     const resolved = branches.map((branch) => this.resolve(branch))
     // Presence first: a branch that requires a property the object part already declares selects nothing, it only
     // constrains which declared fields are set (IntervalsRange: `gt` or `gte`), even if it also looks like a container.
-    if (this.is_presence(resolved, object_part)) return { kind: 'presence' }
+    if (this.is_presence(branches, resolved, object_part, false)) return { kind: 'presence' }
     const variant_keys = this.container_keys(resolved)
     if (variant_keys !== undefined) return { kind: 'container', variant_keys }
     if (branches.every((branch, index) => typeof (branch.title ?? resolved[index].title) === 'string')) return { kind: 'titled' }
@@ -56,6 +56,9 @@ export default class UnionClassifier {
     if (this.is_one_or_many(branches)) return { kind: 'one-or-many' }
     if (this.is_keyed_or_list(branches)) return { kind: 'keyed-or-list' }
     if (resolved.filter((branch) => !branch.is_scalar).length === 1) return { kind: 'shorthand' }
+    // Last, so that it never takes a union another rule classifies: branches that each require properties they
+    // declare themselves (SortSource: exactly one of `field` / `script`) also only constrain which fields are set.
+    if (this.is_presence(branches, resolved, object_part, true)) return { kind: 'presence' }
     return { kind: undefined }
   }
 
@@ -82,12 +85,32 @@ export default class UnionClassifier {
       target?.additionalProperties !== undefined || (Array.isArray(target?.allOf) && target.allOf.length > 0)
   }
 
-  // U3: every branch only requires properties of the surrounding object part, or adds optional properties.
-  is_presence (branches: ResolvedBranch[], object_part?: { properties: Record<string, any> }): boolean {
+  // U3: every branch only requires properties of the surrounding object part, or adds optional properties. A branch may
+  // itself contain unions if they are presence constraints too (a script sort needs `type` or `lang`).
+  // `branch_owned`: a branch may also require properties it declares itself, as long as every branch requires one.
+  is_presence (raw: any[], branches: ResolvedBranch[], object_part: { properties: Record<string, any> } | undefined,
+    branch_owned: boolean): boolean {
     if (object_part === undefined) return false
     const own = object_part.properties
-    return branches.every((branch) => !branch.is_scalar && !branch.has_composition &&
-      branch.required.every((key) => own[key] !== undefined))
+    return branches.every((branch, index) => {
+      if (branch.is_scalar) return false
+      const declared = (key: string): boolean => own[key] !== undefined || (branch_owned && branch.properties[key] !== undefined)
+      if (!branch.required.every(declared)) return false
+      if (branch_owned && branch.required.length === 0) return false
+      if (!branch.has_composition) return true
+      const scope = { properties: { ...own, ...branch.properties } }
+      const nested = this.unions_in(raw[index])
+      return nested.length > 0 && nested.every((union) => this.classify(union, scope).kind === 'presence')
+    })
+  }
+
+  // The unions a branch contains: its own oneOf/anyOf and those of its allOf members, following $refs.
+  unions_in (schema: any, depth: number = 0): Array<Record<string, any>> {
+    if (depth > MAX_DEPTH) return []
+    const target = this.dereference(schema)
+    const unions: Array<Record<string, any>> = target?.oneOf !== undefined || target?.anyOf !== undefined ? [target as Record<string, any>] : []
+    for (const member of (target?.allOf ?? []) as any[]) unions.push(...this.unions_in(member, depth + 1))
+    return unions
   }
 
   // `T | T[]`: one branch is an array of the other.

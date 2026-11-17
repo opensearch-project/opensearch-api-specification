@@ -27,7 +27,9 @@ export default class UnionLabeler {
     // Classify everything first, then write the labels, so that labels never change the input of a classification.
     const labels: Array<{ node: Record<string, any>, kind: string, variant_keys?: string[] }> = []
 
-    const visit = (node: any, location: string, all_of_siblings?: any[]): void => {
+    // `siblings`: the allOf a union is a member of. `scope`: the properties of the object the node is part of, from
+    // enclosing allOf members and union branches (a union nested in a branch constrains the same object).
+    const visit = (node: any, location: string, all_of_siblings?: any[], scope?: Record<string, any>): void => {
       if (Array.isArray(node)) {
         node.forEach((item, index) => { visit(item, `${location}/${index}`) })
         return
@@ -38,7 +40,8 @@ export default class UnionLabeler {
         // Labels from an earlier run may be stale (e.g. after the version extractor removed branches).
         delete node['x-union-kind']
         delete node['x-variant-keys']
-        const object_part = all_of_siblings === undefined ? undefined : this.object_part(classifier, node, all_of_siblings)
+        const object_part = all_of_siblings === undefined && scope === undefined ? undefined
+          : { properties: { ...scope, ...(all_of_siblings === undefined ? {} : this.object_part(classifier, node, all_of_siblings).properties) } }
         const { kind, variant_keys } = classifier.classify(node as Record<string, any>, object_part)
         if (kind === undefined) {
           result.unclassified.push(location)
@@ -50,8 +53,14 @@ export default class UnionLabeler {
 
       for (const [key, value] of Object.entries(node as Record<string, any>)) {
         const child = `${location}/${key.replaceAll('~', '~0').replaceAll('/', '~1')}`
-        if (key === 'allOf' && Array.isArray(value)) value.forEach((member, index) => { visit(member, `${child}/${index}`, value) })
-        else visit(value, child)
+        if (key === 'allOf' && Array.isArray(value)) {
+          value.forEach((member, index) => { visit(member, `${child}/${index}`, value, scope) })
+        } else if ((key === 'oneOf' || key === 'anyOf') && Array.isArray(value)) {
+          const branch_scope = { ...scope, ...(all_of_siblings === undefined ? {} : this.object_part(classifier, node, all_of_siblings).properties) }
+          value.forEach((branch, index) => { visit(branch, `${child}/${index}`, undefined, { ...branch_scope, ...classifier.resolve(branch).properties }) })
+        } else {
+          visit(value, child)
+        }
       }
     }
 
