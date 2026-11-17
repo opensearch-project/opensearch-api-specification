@@ -201,7 +201,7 @@ Unions keep each branch's own title in `titles`, by position (`null` where a bra
 
 Types are `{ ref }`, `{ scalar, format? }`, `{ enum }`, `{ array }`, `{ map }`, `{ union, union_kind, exclusive }`, `{ object }` or `{ any }`. Constraints are:
 
-- `presence`: `one_of` or `any_of`, a list of key sets; the object sets exactly one / at least one of them (`TermsLookup`: `one_of: [[id], [query]]`).
+- `presence`: `one_of` or `any_of`, a list of key sets; the object sets exactly one / at least one of them (`TermsLookup`: `one_of: [[id], [query]]`). `nested`, by position, holds the constraints a key set brings along (a sort on `script` also needs `type` or `lang`: `one_of: [[field], [script]]`, `nested: [null, [{ any_of: [[type], [lang]] }]]`); the fields of every branch are optional fields of the object.
 - `container`: `variants` by variant key, each with the key's `value` type, the `extra_fields` allowed only with that variant and its `extra_constraints` (`AggregationContainer`: `aggs`/`aggregations` only on bucket variants).
 - `not_all`: `keys` that must not all be set together (from `not: { required: [...] }`).
 - Any other union kind inside an `allOf`: `matches` (`one_of`/`any_of`) and `types`; the object must also match those types.

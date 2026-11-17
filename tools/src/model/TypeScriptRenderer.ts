@@ -73,11 +73,13 @@ export default class TypeScriptRenderer {
       const sets = ('one_of' in constraint ? constraint.one_of : constraint.any_of) as string[][]
       const exclusive = 'one_of' in constraint
       const all = _.uniq(sets.flat())
-      return sets.map((keys) => {
+      const nested = 'nested' in constraint ? constraint.nested : undefined
+      return sets.map((keys, index) => {
         const present = keys.map((k) => `${JSON.stringify(k)}: ${this.expr(fields[k]?.type ?? { any: true })}`)
         const others = exclusive ? _.difference(all, keys) : []
         const absent = others.length > 0 ? ` & __Never<${others.map((k) => JSON.stringify(k)).join(' | ')}>` : ''
-        return `{ ${present.join('; ')} }${absent}`
+        const inner = (nested?.[index] ?? []).map((c) => ` & (${this.constraint(c, fields)})`).join('')
+        return `({ ${present.join('; ')} }${absent}${inner})`
       }).join(' | ')
     }
     if (constraint.union_kind === 'container' && 'variants' in constraint) {

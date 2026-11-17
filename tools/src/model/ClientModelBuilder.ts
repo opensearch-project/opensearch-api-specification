@@ -259,14 +259,19 @@ export default class ClientModelBuilder {
     const exclusive = union.oneOf !== undefined
     if (kind === 'presence') {
       const key_sets: string[][] = []
+      const nested: Array<Constraint[] | null> = []
       for (const branch of branches) {
         const part = this.resolved_shape(branch, depth + 1)
         // Fields a branch adds are optional fields of the object; the branch only decides which must be present.
         for (const [name, field] of Object.entries(part.fields)) this.merge_field(shape.fields, name, { ...field, required: false })
         key_sets.push(Object.keys(part.fields).filter((name) => part.fields[name].required))
+        // Constraints inside a branch (a script sort needs `type` or `lang`) hold when that branch is the one set.
+        nested.push(part.constraints.length > 0 ? part.constraints : null)
       }
-      if (key_sets.every((keys) => keys.length === 0)) return undefined // only adds optional fields
-      return exclusive ? { union_kind: 'presence', one_of: key_sets } : { union_kind: 'presence', any_of: key_sets }
+      if (key_sets.every((keys) => keys.length === 0) && nested.every((n) => n === null)) return undefined // only optional fields
+      const constraint: Constraint = exclusive ? { union_kind: 'presence', one_of: key_sets } : { union_kind: 'presence', any_of: key_sets }
+      if (nested.some((n) => n !== null)) constraint.nested = nested
+      return constraint
     }
     if (kind === 'container' && Array.isArray(union['x-variant-keys'])) {
       const keys = union['x-variant-keys'] as string[]

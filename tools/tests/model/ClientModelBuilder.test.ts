@@ -159,6 +159,37 @@ describe('ClientModelBuilder', () => {
     expect((model.types.Choice as UnionEntry).branch_versions).toEqual([{ removed: '3.0' }, null])
   })
 
+  test('a presence constraint nested in a branch comes along with that branch; branch fields are optional fields', () => {
+    const model = build({
+      Script: { type: 'object', properties: { source: { type: 'string' } } },
+      SortSource: {
+        type: 'object',
+        allOf: [
+          { type: 'object', properties: { order: { type: 'string' } } },
+          {
+            oneOf: [
+              { type: 'object', properties: { field: { type: 'string' } }, required: ['field'] },
+              {
+                allOf: [
+                  { type: 'object', properties: { script: ref('Script') }, required: ['script'] },
+                  { anyOf: [{ properties: { type: { type: 'string' } }, required: ['type'] }, { properties: { lang: { type: 'string' } }, required: ['lang'] }], 'x-union-kind': 'presence' }
+                ]
+              }
+            ],
+            'x-union-kind': 'presence'
+          }
+        ]
+      }
+    })
+    const entry = model.types.SortSource as ObjectEntry
+    expect(Object.keys(entry.fields)).toEqual(['order', 'field', 'script', 'type', 'lang'])
+    expect(entry.constraints).toEqual([{
+      union_kind: 'presence',
+      one_of: [['field'], ['script']],
+      nested: [null, [{ union_kind: 'presence', any_of: [['type'], ['lang']] }]]
+    }])
+  })
+
   test('a bare `type: object` is an object without declared fields, not a map', () => {
     expect(build({ Empty: { type: 'object' } }).types.Empty).toEqual({ type_kind: 'object', fields: {}, constraints: [] })
   })

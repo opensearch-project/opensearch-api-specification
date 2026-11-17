@@ -57,11 +57,13 @@ export type Constraint =
   | NotAllConstraint
   | MatchesConstraint
 
-// The object must set the fields of exactly one (`one_of`) or at least one (`any_of`) of the key sets.
+// The object must set the fields of exactly one (`one_of`) or at least one (`any_of`) of the key sets. `nested`, by
+// position: the constraints a key set brings along, which hold when its fields are set (null where none).
 export interface PresenceConstraint {
   union_kind: 'presence'
   one_of?: string[][]
   any_of?: string[][]
+  nested?: Array<Constraint[] | null>
 }
 
 // The object must set exactly one of the variant keys. A variant may allow further fields and constraints.
