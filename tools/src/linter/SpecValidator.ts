@@ -17,6 +17,7 @@ import SchemaVisitingValidator from './SchemaVisitingValidator'
 import SchemasValidator from './SchemasValidator'
 import { type Logger } from '../Logger'
 import InlineEnumSchemaValidator from "./InlineEnumSchemaValidator";
+import CompositionValidator from './CompositionValidator'
 
 interface Validator {
   validate(): ValidationError[]
@@ -38,7 +39,8 @@ export default class SpecValidator {
       new InfoFile(`${root_folder}/_info.yaml`),
       new SchemasValidator(root_folder, logger),
       new SchemaVisitingValidator(this.namespaces_folder, this.schemas_folder),
-      new InlineEnumSchemaValidator(this.namespaces_folder, this.schemas_folder)
+      new InlineEnumSchemaValidator(this.namespaces_folder, this.schemas_folder),
+      new CompositionValidator(root_folder, logger, `${root_folder}/_unclassified_unions.yaml`)
     ]
   }
 
