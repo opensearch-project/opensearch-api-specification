@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Schemas of _core.bulk category
-  description: Schemas of _core.bulk category
+  title: Schemas of `_core.bulk` Category
+  description: Schemas of `_core.bulk` category.
   version: 1.0.0
 paths: {}
 components:
@@ -23,28 +23,31 @@ components:
       allOf:
         - $ref: '#/components/schemas/WriteOperation'
         - type: object
+          properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '_common.yaml#/components/schemas/SequenceNumber'
+            op_type:
+              $ref: '_common.yaml#/components/schemas/OpType'
+            version:
+              $ref: '_common.yaml#/components/schemas/VersionNumber'
+            version_type:
+              $ref: '_common.yaml#/components/schemas/VersionType'
     WriteOperation:
       allOf:
         - $ref: '#/components/schemas/OperationBase'
         - type: object
           properties:
-            dynamic_templates:
-              description: |-
-                A map from the full name of fields to the name of dynamic templates.
-                Defaults to an empty map.
-                If a name matches a dynamic template, then that template will be applied regardless of other match predicates defined in the template.
-                If a field is already defined in the mapping, then this parameter won't be used.
-              type: object
-              additionalProperties:
-                type: string
             pipeline:
               description: |-
-                ID of the pipeline to use to preprocess incoming documents.
-                If the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request.
-                If a final pipeline is configured it will always run, regardless of the value of this parameter.
+                The pipeline ID for preprocessing documents.
+                When the index has a default ingest pipeline specified, then setting the value to `_none` disables the default ingest pipeline for this request.
+                When a final pipeline is configured, that pipeline will always run, regardless of the value of this parameter.
               type: string
             require_alias:
-              description: If `true`, the request's actions must target an index alias.
+              description: When `true`, require that all actions target an index alias rather than an index. Default is `false`.
               type: boolean
     OperationBase:
       type: object
@@ -55,58 +58,92 @@ components:
           $ref: '_common.yaml#/components/schemas/IndexName'
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
-        if_primary_term:
-          type: number
-        if_seq_no:
-          $ref: '_common.yaml#/components/schemas/SequenceNumber'
-        version:
-          $ref: '_common.yaml#/components/schemas/VersionNumber'
-        version_type:
-          $ref: '_common.yaml#/components/schemas/VersionType'
     CreateOperation:
-      allOf:
-        - $ref: '#/components/schemas/WriteOperation'
-        - type: object
+      $ref: '#/components/schemas/WriteOperation'
     UpdateOperation:
       allOf:
         - $ref: '#/components/schemas/OperationBase'
         - type: object
           properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '_common.yaml#/components/schemas/SequenceNumber'
             require_alias:
-              description: If `true`, the request's actions must target an index alias.
+              description: When `true`, the request's actions must target an index alias.
               type: boolean
             retry_on_conflict:
-              type: number
+              type: integer
+              format: int32
     DeleteOperation:
       allOf:
         - $ref: '#/components/schemas/OperationBase'
         - type: object
+          properties:
+            if_primary_term:
+              type: integer
+              format: int64
+            if_seq_no:
+              $ref: '_common.yaml#/components/schemas/SequenceNumber'
+            version:
+              $ref: '_common.yaml#/components/schemas/VersionNumber'
+            version_type:
+              $ref: '_common.yaml#/components/schemas/VersionType'
     UpdateAction:
       type: object
       properties:
         detect_noop:
           description: |-
-            Set to false to disable setting 'result' in the response
-            to 'noop' if no change to the document occurred.
+            When `false` disables the setting `result` in the response
+            to `noop` if no change to the document occurred.
           type: boolean
         doc:
           description: A partial update to an existing document.
           type: object
+          x-protobuf-data-type: bytes
         doc_as_upsert:
-          description: Set to true to use the contents of 'doc' as the value of 'upsert'
+          description: When `true`, uses the contents of `doc` as the value of `upsert`.
           type: boolean
+        if_seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+          x-protobuf-excluded: true
+        if_primary_term:
+          type: integer
+          format: int64
+          x-protobuf-excluded: true
         script:
           $ref: '_common.yaml#/components/schemas/Script'
         scripted_upsert:
-          description: Set to true to execute the script whether or not the document exists.
+          description: When `true`, executes the script whether or not the document exists.
           type: boolean
         _source:
           $ref: '_core.search.yaml#/components/schemas/SourceConfig'
         upsert:
           description: |-
-            If the document does not already exist, the contents of 'upsert' are inserted as a
-            new document. If the document exists, the 'script' is executed.
+            If the document does not already exist, the contents of `upsert` are inserted as a
+            new document. If the document exists, the `script` is executed.
           type: object
+          x-protobuf-data-type: bytes
+    BulkResponse:
+      type: object
+      properties:
+        errors:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        took:
+          type: integer
+          format: int64
+        ingest_took:
+          type: integer
+          format: int64
+      required:
+        - errors
+        - items
+        - took
     ResponseItem:
       type: object
       properties:
@@ -116,20 +153,22 @@ components:
           x-version-removed: '2.0'
         _id:
           description: The document ID associated with the operation.
-          type: ['null', string]
+          type: string
         _index:
           description: |-
-            Name of the index associated with the operation.
-            If the operation targeted a data stream, this is the backing index into which the document was written.
+            The name of the index associated with the operation.
+            If the operation targets a data stream, this is the backing index into which the document was written.
           type: string
         status:
           description: HTTP status code returned for the operation.
-          type: number
+          type: integer
+          format: int32
         error:
           $ref: '_common.yaml#/components/schemas/ErrorCause'
         _primary_term:
           description: The primary term assigned to the document for the operation.
-          type: number
+          type: integer
+          format: int64
         result:
           description: |-
             Result of the operation.
@@ -138,7 +177,7 @@ components:
         _seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         _shards:
-          $ref: '_common.yaml#/components/schemas/ShardStatistics'
+          $ref: '_common.yaml#/components/schemas/ShardInfo'
         _version:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         forced_refresh:
@@ -148,3 +187,16 @@ components:
       required:
         - _index
         - status
+    Item:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/ResponseItem'
+        create:
+          $ref: '#/components/schemas/ResponseItem'
+        update:
+          $ref: '#/components/schemas/ResponseItem'
+        delete:
+          $ref: '#/components/schemas/ResponseItem'
+      minProperties: 1
+      maxProperties: 1

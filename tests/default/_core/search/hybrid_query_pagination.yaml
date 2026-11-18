@@ -1,0 +1,62 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test hybrid query with pagination_depth property.
+version: '>=2.19'
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /books
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            title:
+              type: text
+              fields:
+                keyword:
+                  type: keyword
+            author:
+              type: text
+            year:
+              type: integer
+
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: books, _id: book1}}
+        - {title: To Kill a Mockingbird, author: Harper Lee, year: 1960}
+        - {index: {_index: books, _id: book2}}
+        - {title: '1984', author: George Orwell, year: 1949}
+        - {index: {_index: books, _id: book3}}
+        - {title: The Great Gatsby, author: F. Scott Fitzgerald, year: 1925}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search with hybrid query including pagination_depth property.
+    path: /{index}/_search
+    method: POST
+    parameters:
+      index: books
+    request:
+      payload:
+        query:
+          hybrid:
+            queries:
+              - match:
+                  title: Kill
+              - match:
+                  title: Gatsby
+            pagination_depth: 10
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            relation: eq 

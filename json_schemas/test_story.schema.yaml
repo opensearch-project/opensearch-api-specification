@@ -21,6 +21,10 @@ properties:
       $ref: '#/definitions/Chapter'
   version:
     $ref: '#/definitions/Version'
+  distributions:
+    $ref: '#/definitions/Distributions'
+  warnings:
+    $ref: '#/definitions/Warnings'
 required: [chapters,description]
 additionalProperties: false
 
@@ -30,10 +34,19 @@ definitions:
     allOf:
       - $ref: '#/definitions/ChapterRequest'
       - properties:
+          method:
+            oneOf:
+              - type: array
+                items:
+                  $ref: '#/definitions/HttpMethod'
+              - $ref: '#/definitions/HttpMethod'
           synopsis:
             type: string
             description: A brief description of the chapter.
-            pattern: ^\p{Lu}[\s\S]*\.$
+            pattern: ^\p{Lu}[\s\S]*\.$|^\p{Lu}[\s\S]*\. \[(GET|PUT|POST|DELETE|PATCH|HEAD|OPTIONS)\]$
+          pending:
+            type: string
+            description: An explanation is provided to clarify why it has been skipped.
           response:
             $ref: '#/definitions/ExpectedResponse'
           warnings:
@@ -63,18 +76,21 @@ definitions:
             items:
               type: integer
 
+  HttpMethod:
+    type: string
+    # eslint-disable-next-line yml/sort-sequence-values
+    enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
+
   ChapterRequest:
     type: object
     properties:
-      id: 
+      id:
         type: string
         description: A unique identifier for the chapter, useful for accessing outputs.
       path:
         type: string
       method:
-        type: string
-        # eslint-disable-next-line yml/sort-sequence-values
-        enum: [GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS]
+        $ref: '#/definitions/HttpMethod'
       parameters:
         type: object
         additionalProperties:
@@ -85,8 +101,12 @@ definitions:
         $ref: '#/definitions/Output'
       version:
         $ref: '#/definitions/Version'
+      distributions:
+        $ref: '#/definitions/Distributions'
       retry:
         $ref: '#/definitions/Retry'
+      response:
+        $ref: '#/definitions/ExpectedResponse'
     required: [method, path]
 
   Output:
@@ -99,27 +119,58 @@ definitions:
       - `headers.<header-name>` for the headers.
     type: object
     additionalProperties:
-      type: string
+      anyOf:
+        - type: string
+        - $ref: '#/definitions/DetailedOutput'
 
+  DetailedOutput:
+    properties:
+      path:
+        type: string
+      default:
+        type:
+          - boolean
+          - number
+          - string
+    required:
+      - path
+    
   Version:
     description: |
       The semver range to execute the story or chapter against.
     type: string
 
+  Distributions:
+    description: |
+      The list of distributions that support this API.
+    type: object
+    properties:
+      included:
+        $ref: '#/definitions/DistributionsList'
+      excluded:
+        $ref: '#/definitions/DistributionsList'
+        
+  DistributionsList:
+    description: |
+      The list of distributions that support this API.
+    type: array
+    items:
+      type: string
+
   Retry:
     description: |
       Number of times to retry on error.
-    oneOf:
-      - type: object
-        properties:
-          count: 
-            type: integer
-            description: Number of retries.
-          wait:
-            type: integer
-            description: Number of milliseconds to wait before retrying.
-        required:
-          - count
+    type: object
+    properties:
+      count: 
+        type: integer
+        description: Number of retries.
+      wait:
+        type: integer
+        description: Number of milliseconds to wait before retrying.
+    required:
+      - count
+    additionalProperties: false
 
   Request:
     type: object
@@ -139,15 +190,21 @@ definitions:
     type: object
     properties:
       status:
-        type: integer
-        description: The expected HTTP status code. Default to 200.
-        default: 200
+        oneOf:
+          - type: integer
+            description: The expected HTTP status code. Default to 200.
+            default: 200
+          - type: array
+            items:
+              type: integer
+            description: Array of success HTTP status codes.
       content_type:
         type: string
         default: application/json
       payload:
         $ref: '#/definitions/Payload'
-    required: [status]
+    required:
+      - status
     additionalProperties: false
 
   ActualResponse:
@@ -201,4 +258,8 @@ definitions:
         type: boolean
         default: true
         description: Enable/disable warnings about multiple paths being tested in the same story.
+      invalid-path-detected:
+        type: boolean
+        default: true
+        description: Enable/disable warnings about file paths that do not match paths tested in the story.
     additionalProperties: false

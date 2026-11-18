@@ -12,11 +12,11 @@ import fs from 'fs'
 import tmp from 'tmp'
 
 describe('OpenApiMerger', () => {
-  var merger: OpenApiMerger
+  let merger: OpenApiMerger
 
   describe('defaults', () => {
     beforeEach(() => {
-      merger = new OpenApiMerger('./tools/tests/merger/fixtures/spec/')
+      merger = new OpenApiMerger('./tools/tests/merger/fixtures/specs/animals')
     })
 
     describe('merge()', () => {
@@ -30,8 +30,8 @@ describe('OpenApiMerger', () => {
     })
 
     describe('write_to()', () => {
-      var temp: tmp.DirResult
-      var filename: string
+      let temp: tmp.DirResult
+      let filename: string
 
       beforeEach(() => {
         temp = tmp.dirSync()
@@ -45,7 +45,7 @@ describe('OpenApiMerger', () => {
 
       test('writes a spec', () => {
         merger.write_to(filename)
-        expect(fs.readFileSync('./tools/tests/merger/fixtures/merger/expected.yaml', 'utf8'))
+        expect(fs.readFileSync('./tools/tests/merger/fixtures/merger/animals/expected.yaml', 'utf8'))
           .toEqual(fs.readFileSync(filename, 'utf8'))
       })
     })

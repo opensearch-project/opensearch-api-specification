@@ -1,0 +1,196 @@
+overlay: 1.0.0
+info:
+  title: AOS-only API extensions
+  version: 1.0.0
+extends: ./opensearch-openapi.yaml
+
+# AOS-only endpoints, paired with amazon-managed-block.overlay.yaml (the blocklist).
+# Scope is grounded in the managed-domain boundary allowlist and confirmed against a
+# live domain. Routes the boundary allows but the engine does not implement, verbs the
+# boundary blocks, and paths outside the allowlist are omitted.
+
+actions:
+  - target: $.info
+    description: Set the AOS document title and getting-started overview
+    update:
+      title: Amazon OpenSearch Service API Reference
+      description: |-
+        REST API reference for **Amazon OpenSearch Service**, the managed OpenSearch offering.
+
+        This surface is the OpenSearch REST API with managed-service restrictions applied - operations unavailable on the managed service are removed, and the **UltraWarm** and **Cold Tier** storage operations are added.
+
+        Code samples use the official OpenSearch client libraries.
+
+        ## Getting started
+
+        1. **Create a domain** - in the AWS Console, with the AWS CLI (`aws opensearch create-domain`), or via CDK / CloudFormation.
+        2. **Get the domain endpoint** - your domain's *Domain endpoint*, e.g. `https://<domain-name>-<domain-id>.<region>.es.amazonaws.com`.
+        3. **Authenticate** - sign requests with AWS SigV4 (IAM, service name `es`), or use HTTP basic auth if fine-grained access control is enabled on the domain.
+        4. **Call the API** - every operation below includes a ready-to-run request for curl and each official OpenSearch client, using whichever auth method you configured.
+
+  # OpenAPI 3.x requires info.version -- it cannot be removed. Override the
+  # repo's own spec version (e.g. "0.3.0"), which is meaningless as a
+  # distribution doc badge, with a distribution-scoped label instead.
+  - target: $.info.version
+    update: managed
+
+  - target: $.tags
+    description: Declare the UltraWarm tag used by AOS-only migration endpoints
+    update:
+      - name: UltraWarm
+        description: >-
+          UltraWarm is a cost-effective warm-storage tier for Amazon OpenSearch Service.
+          These operations migrate indices between hot, warm, and cold storage tiers.
+
+  # --- UltraWarm migration (hot <-> warm <-> cold) ---
+  - target: $.paths
+    description: Add UltraWarm migration endpoints
+    update:
+      /_ultrawarm/migration/_status:
+        get:
+          operationId: ultrawarm.list_status
+          x-operation-group: ultrawarm.list_status
+          tags: [UltraWarm]
+          description: List all in-progress UltraWarm migrations.
+          parameters:
+            - {name: v, in: query, schema: {type: boolean}, description: Include column headers in the text response.}
+            - {name: format, in: query, schema: {type: string}, description: 'Response format, e.g. json.'}
+          responses:
+            '200':
+              description: Migration status list.
+              content:
+                text/plain:
+                  schema: {type: string}
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        index: {type: string}
+                        migration_type: {type: string}
+                        state: {type: string}
+      '/_ultrawarm/migration/{index}/_status':
+        get:
+          operationId: ultrawarm.get_status
+          x-operation-group: ultrawarm.get_status
+          tags: [UltraWarm]
+          description: Migration status for a single index.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration status.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      migration_status:
+                        type: object
+                        properties:
+                          index: {type: string}
+                          state: {type: string}
+                          migration_type: {type: string}
+                          shard_level_status:
+                            type: object
+                            properties:
+                              pending: {type: integer}
+                              running: {type: integer}
+                              succeeded: {type: integer}
+                              failed: {type: integer}
+                              total: {type: integer}
+                          failure_reason: {type: string}
+      '/_ultrawarm/migration/{index}/_warm':
+        post:
+          operationId: ultrawarm.to_warm
+          x-operation-group: ultrawarm.to_warm
+          tags: [UltraWarm]
+          description: Migrate an index from hot to warm storage.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+      '/_ultrawarm/migration/{index}/_hot':
+        post:
+          operationId: ultrawarm.to_hot
+          x-operation-group: ultrawarm.to_hot
+          tags: [UltraWarm]
+          description: Migrate an index from warm back to hot storage.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+      '/_ultrawarm/migration/{index}/_cold':
+        post:
+          operationId: ultrawarm.to_cold
+          x-operation-group: ultrawarm.to_cold
+          tags: [UltraWarm]
+          description: >-
+            Migrate a warm index to cold storage. Requires start_time and
+            end_time query parameters bounding the index's data.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+            - {name: start_time, in: query, required: true, schema: {type: string}}
+            - {name: end_time, in: query, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Migration accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+                      failed_indices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            index: {type: string}
+                            error: {type: string}
+      '/_ultrawarm/migration/_cancel/{index}':
+        post:
+          operationId: ultrawarm.cancel
+          x-operation-group: ultrawarm.cancel
+          tags: [UltraWarm]
+          description: Cancel an in-progress UltraWarm migration.
+          parameters:
+            - {name: index, in: path, required: true, schema: {type: string}}
+          responses:
+            '200':
+              description: Cancellation accepted.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      acknowledged: {type: boolean}
+
+  # --- Remove tags whose operations are all blocked on AOS ---
+  # The managed-domain allowlist (0-amazon-managed-block.overlay.yaml) removes
+  # paths that are unavailable on AOS, which can leave top-level tag groups
+  # with no operations. Scalar has no hide-empty-tags option, so those groups
+  # render as blank sections. Remove the tags explicitly here.
+  # Recompute when the blocklist changes: build the aos spec and check which
+  # declared tags have no matching operations.
+  - target: "$.tags[?(@.name == 'Dangling Indices')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'Remote Store')]"
+    remove: true
+  - target: "$.tags[?(@.name == 'User Behavior Insights')]"
+    remove: true

@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
 /*
@@ -27,6 +27,11 @@ export type SupplementalChapter = ChapterRequest & {
    */
   status?: number[];
 };
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "HttpMethod".
+ */
+export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
 /**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Parameter".
@@ -51,31 +56,27 @@ export type Payload = {} | any[] | string | number | boolean;
  */
 export type Version = string;
 /**
- * Number of times to retry on error.
+ * The list of distributions that support this API.
  *
  *
  * This interface was referenced by `Story`'s JSON-Schema
- * via the `definition` "Retry".
+ * via the `definition` "DistributionsList".
  */
-export type Retry = {
-  /**
-   * Number of retries.
-   */
-  count: number;
-  /**
-   * Number of milliseconds to wait before retrying.
-   */
-  wait?: number;
-};
+export type DistributionsList = string[];
 /**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Chapter".
  */
 export type Chapter = ChapterRequest & {
+  method?: HttpMethod[] | HttpMethod;
   /**
    * A brief description of the chapter.
    */
   synopsis: string;
+  /**
+   * An explanation is provided to clarify why it has been skipped.
+   */
+  pending?: string;
   response?: ExpectedResponse;
   warnings?: Warnings;
 };
@@ -88,12 +89,13 @@ export type ReadChapter = Chapter & {
 };
 
 export interface Story {
-  $schema?: string;
   description: string;
   prologues?: SupplementalChapter[];
   epilogues?: SupplementalChapter[];
   chapters: Chapter[];
   version?: Version;
+  distributions?: Distributions;
+  warnings?: Warnings;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -105,14 +107,16 @@ export interface ChapterRequest {
    */
   id?: string;
   path: string;
-  method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+  method: HttpMethod;
   parameters?: {
     [k: string]: Parameter;
   };
   request?: Request;
   output?: Output;
   version?: Version;
+  distributions?: Distributions;
   retry?: Retry;
+  response?: ExpectedResponse;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -131,24 +135,57 @@ export interface Request {
  * The values are paths to the values in the response.
  * The values should be in the form:
  * - `payload.<payload-path>` for the payload
- * - `headers.<header-name>` for the headers
+ * - `headers.<header-name>` for the headers.
  *
  *
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "Output".
  */
 export interface Output {
-  [k: string]: string;
+  [k: string]: string | DetailedOutput;
+}
+/**
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "DetailedOutput".
+ */
+export interface DetailedOutput {
+  path: string;
+  default?: boolean | number | string;
+}
+/**
+ * The list of distributions that support this API.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Distributions".
+ */
+export interface Distributions {
+  included?: DistributionsList;
+  excluded?: DistributionsList;
+}
+/**
+ * Number of times to retry on error.
+ *
+ *
+ * This interface was referenced by `Story`'s JSON-Schema
+ * via the `definition` "Retry".
+ */
+export interface Retry {
+  /**
+   * Number of retries.
+   */
+  count: number;
+  /**
+   * Number of milliseconds to wait before retrying.
+   */
+  wait?: number;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
  * via the `definition` "ExpectedResponse".
  */
 export interface ExpectedResponse {
-  /**
-   * The expected HTTP status code. Default to 200.
-   */
-  status: number;
+  status: number | number[];
   content_type?: string;
   payload?: Payload;
 }
@@ -157,7 +194,14 @@ export interface ExpectedResponse {
  * via the `definition` "Warnings".
  */
 export interface Warnings {
+  /**
+   * Enable/disable warnings about multiple paths being tested in the same story.
+   */
   'multiple-paths-detected'?: boolean;
+  /**
+   * Enable/disable warnings about file paths that do not match paths tested in the story.
+   */
+  'invalid-path-detected'?: boolean;
 }
 /**
  * This interface was referenced by `Story`'s JSON-Schema
@@ -177,5 +221,5 @@ export interface ActualResponse {
   error?: {};
 }
 
-/* eslint-enable @typescript-eslint/ban-types */
+/* eslint-enable @typescript-eslint/no-empty-object-type */
 /* eslint-enable @typescript-eslint/consistent-indexed-object-style */

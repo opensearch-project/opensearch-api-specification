@@ -1,0 +1,27 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test _remote/info.
+
+prologues:
+  - method: PUT
+    path: /_cluster/settings
+    request:
+      payload:
+        transient: 
+          cluster.remote:
+            cluster2:
+              seeds:
+                - localhost:4242
+chapters:
+  - synopsis: Retrieve information about remote clusters.
+    path: /_remote/info
+    method: GET
+    response:
+      status: 200
+epilogues:
+  - method: PUT
+    path: /_cluster/settings
+    request:
+      payload:
+        transient: 
+          cluster.remote.cluster2.seeds: []

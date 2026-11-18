@@ -1,0 +1,78 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test filter aggregation with metadata and nested terms aggregation.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: cities}}
+        - {city: São Paulo, country: Brazil, population: 12000000}
+        - {create: {_index: cities}}
+        - {city: Rio de Janeiro, country: Brazil, population: 6500000}
+        - {create: {_index: cities}}
+        - {city: New York, country: USA, population: 8500000}
+chapters:
+  - synopsis: Filter aggregation with metadata and nested terms.
+    path: /{index}/_search
+    parameters:
+      index: cities
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          by_city_filtered:
+            meta:
+              description: Cities in Brazil only
+            filter:
+              term:
+                country.keyword: Brazil
+            aggs:
+              cities:
+                terms:
+                  field: city.keyword
+          by_city_terms:
+            meta:
+              owner: search-team
+              description: City distribution
+            terms:
+              field: city.keyword
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_city_filtered:
+            meta:
+              description: Cities in Brazil only
+            doc_count: 2
+            cities:
+              doc_count_error_upper_bound: 0
+              sum_other_doc_count: 0
+              buckets:
+                - key: Rio de Janeiro
+                  doc_count: 1
+                - key: São Paulo
+                  doc_count: 1
+          by_city_terms:
+            meta:
+              owner: search-team
+              description: City distribution
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
+            buckets:
+              - key: New York
+                doc_count: 1
+              - key: Rio de Janeiro
+                doc_count: 1
+              - key: São Paulo
+                doc_count: 1
+epilogues:
+  - path: /cities
+    method: DELETE
+    status: [200, 404]

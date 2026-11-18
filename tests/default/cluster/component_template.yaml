@@ -1,0 +1,103 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test component templates.
+epilogues:
+  - path: /_component_template/template1
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a component template.
+    path: /_component_template/{name}
+    method: POST
+    parameters:
+      name: template1
+    request:
+      payload:
+        template:
+          settings:
+            number_of_shards: 1
+          mappings:
+            _source:
+              enabled: false
+            properties:
+              name:
+                type: keyword
+              age:
+                type: integer
+    response:
+      status: 200
+  - synopsis: Update a component template.
+    path: /_component_template/{name}
+    method: PUT
+    parameters:
+      name: template1
+    request:
+      payload:
+        template:
+          settings:
+            number_of_shards: 2
+          mappings:
+            _source:
+              enabled: false
+            properties:
+              name:
+                type: keyword
+              age:
+                type: integer
+          aliases:
+            alias1: {}
+    response:
+      status: 200
+  - synopsis: Check if the component template exists.
+    path: /_component_template/{name}
+    method: HEAD
+    parameters:
+      name: template1
+      local: false
+    response:
+      status: 200
+  - synopsis: Check if the component template exists (cluster_manager_timeout).
+    path: /_component_template/{name}
+    method: HEAD
+    version: '>= 2.0'
+    parameters:
+      name: template1
+      cluster_manager_timeout: 10s
+    response:
+      status: 200
+  - synopsis: Get all component templates.
+    path: /_component_template
+    method: GET
+    parameters:
+      local: false
+    response:
+      status: 200
+  - synopsis: Get all component templates (cluster_manager_timeout).
+    path: /_component_template
+    method: GET
+    version: '>= 2.0'
+    parameters:
+      cluster_manager_timeout: 10s
+      local: false
+    response:
+      status: 200
+  - synopsis: Get a component template.
+    path: /_component_template/{name}
+    method: GET
+    parameters:
+      name: template1
+    response:
+      status: 200
+      payload:
+        component_templates:
+          - name: template1
+            component_template:
+              template:
+                settings:
+                  index:
+                    number_of_shards: '2'
+  - synopsis: Delete the component template.
+    path: /_component_template/{name}
+    method: DELETE
+    parameters:
+      name: template1

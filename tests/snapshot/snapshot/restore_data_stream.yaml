@@ -1,0 +1,92 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test restoring a data stream backing index with `attach_to_data_stream`.
+version: '>= 3.8'
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /_index_template/logs-template-attach
+    method: PUT
+    request:
+      payload:
+        index_patterns:
+          - logs-attach*
+        data_stream:
+          timestamp_field:
+            name: request_time
+        priority: 200
+  - path: /_data_stream/logs-attach
+    method: PUT
+  - path: /logs-attach/_doc
+    method: POST
+    request:
+      payload:
+        message: login attempt failed
+        request_time: '2013-03-01T00:00:00'
+  - path: /_snapshot/{repository}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+  - path: /_snapshot/{repository}/{snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-attach-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices:
+          - logs-attach
+        include_global_state: false
+  - path: /logs-attach/_rollover
+    method: POST
+  - path: /_data_stream/_modify
+    method: POST
+    request:
+      payload:
+        actions:
+          - remove_backing_index:
+              data_stream: logs-attach
+              index: .ds-logs-attach-000001
+  - path: /.ds-logs-attach-000001
+    method: DELETE
+epilogues:
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-attach-snapshot
+  - path: /_data_stream/logs-attach
+    method: DELETE
+    status: [200, 404]
+  - path: /_index_template/logs-template-attach
+    method: DELETE
+    status: [200, 404]
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+chapters:
+  - synopsis: Restore a backing index and attach it to its data stream.
+    path: /_snapshot/{repository}/{snapshot}/_restore
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-attach-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: .ds-logs-attach-000001
+        attach_to_data_stream: true
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-attach-snapshot

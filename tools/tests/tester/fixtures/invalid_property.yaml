@@ -1,0 +1,20 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: This story has invalid property for retry configuration when validated against test_story.schema.yaml.
+prologues:
+  - path: /{index}
+    method: GET
+    retry:
+      count: 5
+      wait: 30000
+      until: # invalid property
+        - path: payload.state
+          equal: COMPLETED
+epilogues:
+  - path: /{index}
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Delete index.
+    path: /{index}
+    method: DELETE

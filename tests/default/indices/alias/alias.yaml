@@ -1,0 +1,107 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test alias endpoints.
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: games
+chapters:
+  - synopsis: Create an alias.
+    path: /{index}/_alias/{name}
+    method: POST
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Update an alias.
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Get all aliases from an index.
+    method: GET
+    path: /{index}/_alias
+    parameters:
+      index: games
+    response:
+      status: 200
+      payload:
+        games:
+          aliases:
+            jeux: {}
+  - synopsis: Get an alias from index.
+    method: GET
+    path: /{index}/_alias/{name}
+    parameters:
+      index: games
+      name: jeux
+    response:
+      status: 200
+      payload:
+        games:
+          aliases:
+            jeux: {}
+  - synopsis: Delete an alias.
+    path: /{index}/_alias/{name}
+    method: DELETE
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Create an alias.
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Update an alias.
+    path: /{index}/_alias
+    method: PUT
+    parameters:
+      index: games
+    request:
+      payload:
+        alias: jeux
+        is_write_index: false
+  - synopsis: Check if alias exists.
+    path: /{index}/_alias/{name}
+    method: HEAD
+    parameters:
+      index: games
+      name: jeux
+  - synopsis: Check if alias exists.
+    path: /{index}/_alias/{name}
+    method: HEAD
+    parameters:
+      index: games
+      name: invalid
+    response:
+      status: 404
+  - synopsis: Create an alias with custom settings.
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+    request:
+      payload:
+        index_routing: test1
+        search_routing: test2
+        routing: test
+        is_write_index: true
+        filter:
+          match_all: {}
+  - synopsis: Create an alias with is_hidden.
+    version: '>= 2.16'
+    path: /{index}/_alias/{name}
+    method: PUT
+    parameters:
+      index: games
+      name: jeux
+    request:
+      payload:
+        is_hidden: true

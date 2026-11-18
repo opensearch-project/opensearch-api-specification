@@ -1,0 +1,37 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test _msearch/template APIs.
+prologues:  
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book1}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book2}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+        - {create: {_index: books, _id: book3}}
+        - {author: George Orwell, title: '1984', year: 1949}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Perform a multi-search template query using a GET request.
+    path: /{index}/_msearch/template
+    parameters:
+      index: books
+    method:
+      - GET
+      - POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: books}
+        - {source: '{"query": {"match": {"title": "{{title}}"}}}', params: {title: Mockingbird}}
+        - {index: books}
+        - {source: '{"query": {"match": {"title": "{{title}}"}}}', params: {title: Beast}}

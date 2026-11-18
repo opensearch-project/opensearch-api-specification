@@ -1,0 +1,45 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _mtermvectors APIs.
+prologues:
+  - path: /books
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            author:
+              type: text
+            title:
+              term_vector: yes
+              type: text
+            year:
+              type: integer     
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book1}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book2}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Retrieve term vectors for specific documents in an index.
+    path: /{index}/_mtermvectors
+    parameters:
+      index: books
+    method:
+      - GET
+      - POST
+    request:
+      payload:
+        docs:
+          - _id: book1

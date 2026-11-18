@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Schemas of ingest._common category
-  description: Schemas of ingest._common category
+  title: Schemas of `ingest._common` Category
+  description: Schemas of `ingest._common` category.
   version: 1.0.0
 paths: {}
 components:
@@ -45,8 +45,6 @@ components:
           $ref: '#/components/schemas/DateIndexNameProcessor'
         dot_expander:
           $ref: '#/components/schemas/DotExpanderProcessor'
-        enrich:
-          $ref: '#/components/schemas/EnrichProcessor'
         fail:
           $ref: '#/components/schemas/FailProcessor'
         foreach:
@@ -97,10 +95,14 @@ components:
           $ref: '#/components/schemas/DropProcessor'
         circle:
           $ref: '#/components/schemas/CircleProcessor'
-        inference:
-          $ref: '#/components/schemas/InferenceProcessor'
         text_embedding:
           $ref: '#/components/schemas/TextEmbeddingProcessor'
+        sparse_encoding:
+          $ref: '#/components/schemas/SparseEncodingProcessor'
+        text_image_embedding:
+          $ref: '#/components/schemas/TextImageEmbeddingProcessor'
+        text_chunking:
+          $ref: '#/components/schemas/TextChunkingProcessor'
       minProperties: 1
       maxProperties: 1
     AttachmentProcessor:
@@ -117,7 +119,8 @@ components:
               description: |-
                 The number of chars being used for extraction to prevent huge fields.
                 Use `-1` for no limit.
-              type: number
+              type: integer
+              format: int64
             indexed_chars_field:
               $ref: '_common.yaml#/components/schemas/Field'
             properties:
@@ -170,8 +173,7 @@ components:
             value:
               description: The value to be appended. Supports template snippets.
               type: array
-              items:
-                type: object
+              items: {}
             allow_duplicates:
               description: If `false`, the processor does not append values already present in the field.
               type: boolean
@@ -188,7 +190,6 @@ components:
                 Value used to fill empty fields.
                 Empty fields are skipped if this is not provided.
                 An empty field is one with no value (2 consecutive separators) or empty quotes (`""`).
-              type: object
             field:
               $ref: '_common.yaml#/components/schemas/Field'
             ignore_missing:
@@ -203,7 +204,7 @@ components:
             target_fields:
               $ref: '_common.yaml#/components/schemas/Fields'
             trim:
-              description: Trim whitespaces in unquoted fields.
+              description: Trim white spaces in unquoted fields.
               type: boolean
           required:
             - field
@@ -258,7 +259,7 @@ components:
               $ref: '_common.yaml#/components/schemas/Field'
             timezone:
               description: |-
-                The timezone to use when parsing the date.
+                The time zone to use when parsing the date.
                 Supports template snippets.
               type: string
           required:
@@ -271,8 +272,8 @@ components:
           properties:
             date_formats:
               description: |-
-                An array of the expected date formats for parsing dates / timestamps in the document being preprocessed.
-                Can be a java time pattern or one of the following formats: ISO8601, UNIX, UNIX_MS, or TAI64N.
+                An array of the expected date formats for parsing dates/timestamps in the document being preprocessed.
+                Can be a java time pattern or one of the following formats: `ISO8601`, `UNIX`, `UNIX_MS`, or `TAI64N`.
               type: array
               items:
                 type: string
@@ -299,7 +300,7 @@ components:
               description: The locale to use when parsing the date from the document being preprocessed, relevant when parsing month names or week days.
               type: string
             timezone:
-              description: The timezone to use when parsing the date and when date math index supports resolves expressions into concrete index names.
+              description: The time zone to use when parsing the date and when date math index supports resolves expressions into concrete index names.
               type: string
           required:
             - date_formats
@@ -319,38 +320,6 @@ components:
               type: string
           required:
             - field
-    EnrichProcessor:
-      allOf:
-        - $ref: '#/components/schemas/ProcessorBase'
-        - type: object
-          properties:
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-            ignore_missing:
-              description: If `true` and `field` does not exist, the processor quietly exits without modifying the document.
-              type: boolean
-            max_matches:
-              description: |-
-                The maximum number of matched documents to include under the configured target field.
-                The `target_field` will be turned into a json array if `max_matches` is higher than 1, otherwise `target_field` will become a json object.
-                In order to avoid documents getting too large, the maximum allowed value is 128.
-              type: number
-            override:
-              description: |-
-                If processor will update fields with pre-existing non-null-valued field.
-                When set to `false`, such fields will not be touched.
-              type: boolean
-            policy_name:
-              description: The name of the enrich policy to use.
-              type: string
-            shape_relation:
-              $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
-            target_field:
-              $ref: '_common.yaml#/components/schemas/Field'
-          required:
-            - field
-            - policy_name
-            - target_field
     FailProcessor:
       allOf:
         - $ref: '#/components/schemas/ProcessorBase'
@@ -492,7 +461,7 @@ components:
         - type: object
           properties:
             database_file:
-              description: The database filename referring to a database the module ships with (GeoLite2-City.mmdb, GeoLite2-Country.mmdb, or GeoLite2-ASN.mmdb) or a custom database in the ingest-geoip config directory.
+              description: The database filename referring to a database the module ships with (`GeoLite2-City.mmdb`, `GeoLite2-Country.mmdb`, or `GeoLite2-ASN.mmdb`) or a custom database in the `ingest-geoip` config directory.
               type: string
             field:
               $ref: '_common.yaml#/components/schemas/Field'
@@ -647,7 +616,6 @@ components:
                 The value to be set for the field.
                 Supports template snippets.
                 May specify only one of `value` or `copy_from`.
-              type: object
           required:
             - field
     SortProcessor:
@@ -797,6 +765,7 @@ components:
             error_distance:
               description: The difference between the resulting inscribed distance from center to side and the circle's radius (measured in meters for `geo_shape`, unit-less for `shape`).
               type: number
+              format: double
             field:
               $ref: '_common.yaml#/components/schemas/Field'
             ignore_missing:
@@ -814,62 +783,7 @@ components:
       type: string
       enum:
         - geo_shape
-        - shape
-    InferenceProcessor:
-      allOf:
-        - $ref: '#/components/schemas/ProcessorBase'
-        - type: object
-          properties:
-            model_id:
-              $ref: '_common.yaml#/components/schemas/Id'
-            target_field:
-              $ref: '_common.yaml#/components/schemas/Field'
-            field_map:
-              description: |-
-                Maps the document field names to the known field names of the model.
-                This mapping takes precedence over any default mappings provided in the model configuration.
-              type: object
-              additionalProperties:
-                type: object
-            inference_config:
-              $ref: '#/components/schemas/InferenceConfig'
-          required:
-            - model_id
-    InferenceConfig:
-      type: object
-      properties:
-        regression:
-          $ref: '#/components/schemas/InferenceConfigRegression'
-        classification:
-          $ref: '#/components/schemas/InferenceConfigClassification'
-      minProperties: 1
-      maxProperties: 1
-    InferenceConfigRegression:
-      type: object
-      properties:
-        results_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        num_top_feature_importance_values:
-          description: Specifies the maximum number of feature importance values per document.
-          type: number
-    InferenceConfigClassification:
-      type: object
-      properties:
-        num_top_classes:
-          description: Specifies the number of top class predictions to return.
-          type: number
-        num_top_feature_importance_values:
-          description: Specifies the maximum number of feature importance values per document.
-          type: number
-        results_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        top_classes_results_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        prediction_field_type:
-          description: |-
-            Specifies the type of the predicted field to write.
-            Valid values are: `string`, `number`, `boolean`.
-          type: string
+        - xy_shape
     TextEmbeddingProcessor:
       allOf:
         - $ref: '#/components/schemas/ProcessorBase'
@@ -883,9 +797,98 @@ components:
               type: object
               additionalProperties:
                 type: string
-            description:
-              type: string
-              description: A brief description of the processor.
+            batch_size:
+              type: integer
+              format: int32
           required:
             - field_map
             - model_id
+    SparseEncodingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            model_id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of a text field to a sparse vector field.
+              type: object
+              additionalProperties:
+                type: string
+            batch_size:
+              type: integer
+              format: int32
+          required:
+            - field_map
+            - model_id
+    TextImageEmbeddingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            model_id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of text/image fields to a vector field.
+              type: object
+              additionalProperties:
+                type: string
+          required:
+            - field_map
+            - model_id
+    TextChunkingProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+          properties:
+            algorithm:
+              $ref: '#/components/schemas/ChunkingAlgorithm'
+            field_map:
+              description: |-
+                Contains key-value pairs that specify the mapping of a source text field to a target chunked field.
+              type: object
+              additionalProperties:
+                type: string
+            max_chunk_limit:
+              description: |-
+                Maximum number of chunks a document field can be split into. Defaults to 100.
+              type: integer
+              format: int32
+          required:
+            - algorithm
+            - field_map
+    ChunkingAlgorithm:
+      type: object
+      properties:
+        fixed_token_length:
+          $ref: '#/components/schemas/FixedTokenLengthChunkingAlgorithm'
+        delimiter:
+          $ref: '#/components/schemas/DelimiterChunkingAlgorithm'
+    FixedTokenLengthChunkingAlgorithm:
+      type: object
+      properties:
+        token_limit:
+          description: Maximum number of tokens per chunk.
+          type: integer
+          format: int32
+        overlap_rate:
+          description: Fraction of tokens to overlap between consecutive chunks. Value between 0 and 0.5.
+          type: number
+          format: double
+        tokenizer:
+          description: The tokenizer to use, for example "standard".
+          type: string
+        max_chunk_limit:
+          type: integer
+          format: int32
+    DelimiterChunkingAlgorithm:
+      type: object
+      properties:
+        delimiter:
+          description: The string delimiter to split on.
+          type: string
+        max_chunk_limit:
+          type: integer
+          format: int32

@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { OpenAPIV3 } from 'openapi-types'
+import { OpenAPIV3_1 } from 'openapi-types'
 import { Logger } from '../Logger'
 import { determine_possible_schema_types, HTTP_METHODS, SpecificationContext } from '../_utils';
 import { SchemaVisitor } from '../_utils/SpecificationVisitor';
@@ -21,7 +21,7 @@ export default class MergedOpenApiSpec {
   file_path: string
   target_version?: string
 
-  protected _spec: OpenAPIV3.Document | undefined
+  protected _spec: OpenAPIV3_1.Document | undefined
 
   constructor (spec_path: string, target_version?: string, logger: Logger = new Logger()) {
     this.logger = logger
@@ -29,10 +29,10 @@ export default class MergedOpenApiSpec {
     this.target_version = target_version
   }
 
-  spec (): OpenAPIV3.Document {
+  spec (): OpenAPIV3_1.Document {
     if (this._spec) return this._spec
     const merger = new OpenApiMerger(this.file_path, this.logger)
-    var spec = merger.spec()
+    let spec = merger.spec()
     if (this.target_version !== undefined) {
       const version_extractor = new OpenApiVersionExtractor(spec, this.target_version)
       spec = version_extractor.extract()
@@ -48,7 +48,7 @@ export default class MergedOpenApiSpec {
   }
 
   paths(): Record<string, string[]> {
-    var obj: Record<string, string[]> = {}
+    const obj: Record<string, string[]> = {}
     _.entries(this.spec().paths).forEach(([path, ops]) => {
       obj[path] = _.entries(_.pick(ops, HTTP_METHODS)).map(([verb, _]) => {
         return verb
@@ -57,19 +57,19 @@ export default class MergedOpenApiSpec {
     return obj
   }
 
-  private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3.Document): void {
+  private inject_additional_properties(ctx: SpecificationContext, spec: OpenAPIV3_1.Document): void {
     const visitor = new SchemaVisitor((ctx, schema) => {
       // If already has unevaluatedProperties then don't set
       if ((schema as any).unevaluatedProperties !== undefined) return;
 
       // Don't apply `unevaluatedProperties` to component schemas as we will apply it at usage points (i.e. $ref's)
       // Also don't apply to sub-schemas of an allOf as it will conflict with other sub-schemas as we'll apply it to the upper level
-      if (ctx.parent().location === '#/components/schemas' || ctx.parent().key === 'allOf') return;
+      if (ctx.parent().location === '#/components/schemas' || ctx.parent().keys.includes('allOf')) return;
 
       const types = determine_possible_schema_types(spec, schema)
 
       // Don't apply to multi-type or non-object schemas
-      if (types.length > 1 || types[0] !== 'object') return;
+      if (types.size > 1 || !types.has('object')) return;
 
       // Don't apply to basic { type: object } schemas
       if (Object.keys(schema).filter(k => k !== 'type' && k !== 'description').length === 0) return;

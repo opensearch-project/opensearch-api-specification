@@ -1,0 +1,146 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: Test adding an agentic memory to a memory container.
+warnings:
+  invalid-path-detected: false
+version: '>= 3.3'
+prologues:
+  - path: /_plugins/_ml/memory_containers/_create
+    id: create_mem_container
+    method: POST
+    request:
+      payload:
+        name: Test memory container
+        description: Test memory container
+        configuration:
+          index_prefix: test_mem_container
+          use_system_index: False
+          disable_session: False
+          index_settings:
+            session_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+            working_memory_index:
+              index:
+                number_of_shards: '1'
+                auto_expand_replicas: 0-all
+    output:
+      mem_container: payload.memory_container_id
+epilogues:
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}/memories/{type}/{id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+      type: working
+      id: ${add_conversational_payload.working_memory_id}
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}/memories/{type}/{id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+      type: working
+      id: ${add_data_payload.working_memory_id}
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}/memories/{type}/{id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+      type: working
+      id: ${add_tool_payload.working_memory_id}
+  - path: /_plugins/_ml/memory_containers/{memory_container_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+chapters:
+  - synopsis: Add conversational payload to a memory container.
+    id: add_conversational_payload
+    path: /_plugins/_ml/memory_containers/{memory_container_id}/memories
+    method: POST
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+    request:
+      payload:
+        messages: 
+          - role: user
+            content:
+              - text: I'm Bob, I like swimming
+                type: text
+          - role: assistant
+            content:
+              - text: Nice, hope you enjoy your life
+                type: text
+        namespace:
+          user_id: bob
+        metadata:
+          status: checkpoint
+          branch:
+            branch_name: high
+            root_event_id: event123
+        tags:
+          topic: personal info
+        payload_type: conversational
+    response:
+      status: 200
+    output:
+      working_memory_id: payload.working_memory_id
+  - synopsis: Add data payload to a memory container.
+    id: add_data_payload
+    path: /_plugins/_ml/memory_containers/{memory_container_id}/memories
+    method: POST
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+    request:
+      payload:
+        structured_data:
+          time_range:
+            start: 2025-09-11
+            end: 2025-09-15
+        namespace:
+          agent_id: testAgent1
+        metadata:
+          status: checkpoint
+          anyobject: abc
+        tags:
+          topic: agent_state
+        infer: false
+        payload_type: data
+    response:
+      status: 200
+    output:
+      working_memory_id: payload.working_memory_id
+  - synopsis: Add tool invocation data to a memory container.
+    id: add_tool_payload
+    path: /_plugins/_ml/memory_containers/{memory_container_id}/memories
+    method: POST
+    parameters:
+      memory_container_id: ${create_mem_container.mem_container}
+    request:
+      payload:
+        structured_data:
+          tool_invocations:
+            - tool_name: ListIndexTool
+              tool_input:
+                filter: '*,-.plugins*'
+              tool_output: green  open security-auditlog-2025.09.17
+        namespace:
+          user_id: bob
+          agent_id: testAgent1
+          session_id: 123
+        metadata:
+          status: checkpoint
+          branch:
+            branch_name: high
+            root_event_id: event123
+          anyobject: abc
+        tags:
+          topic: personal info
+          parent_memory_id: memory123
+          data_type: trace
+        payload_type: data
+    response:
+      status: 200
+    output:
+      working_memory_id: payload.working_memory_id

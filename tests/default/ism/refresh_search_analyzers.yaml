@@ -1,0 +1,43 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Refresh search analyzers. 
+prologues:
+  - path: /books
+    method: PUT
+    request:
+      payload:
+        settings:
+          analysis:
+            analyzer:
+              movie_titles:
+                tokenizer: whitespace
+                filter:
+                  - movie_titles
+            filter:
+              movie_titles:
+                type: synonym_graph
+                synonyms_path: opensearch.yml # synonyms.txt
+                updateable: true
+        mappings:
+          properties:
+            title:
+              type: text
+              analyzer: simple
+              search_analyzer: movie_titles
+chapters:
+  - synopsis: Refresh search analyzers for an index.
+    path: /_plugins/_refresh_search_analyzers/{index}
+    method: POST
+    parameters:
+      index: books
+    response:
+      status: 200
+      payload:
+        successful_refresh_details:
+          - index: books
+            refreshed_analyzers:
+              - movie_titles
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]

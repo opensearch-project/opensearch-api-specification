@@ -1,0 +1,56 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test the search of agents.
+version: '>= 2.13'
+prologues:
+  - path: /_plugins/_ml/agents/_register
+    id: register_agent
+    method: POST
+    request:
+      payload:
+        name: Test_Agent_For_RAG
+        type: flow
+        description: this is a test agent
+        tools:
+          - type: VectorDBTool
+            parameters:
+              model_id: YOUR_TEXT_EMBEDDING_MODEL_ID
+              index: my_test_data
+              embedding_field: embedding
+              source_field:
+                - text
+              input: test_question
+          - type: MLModelTool
+            description: A general tool to answer any question
+            parameters:
+              model_id: YOUR_LLM_MODEL_ID
+    output:
+      test_agent_id: payload.agent_id
+epilogues:
+  - path: /_plugins/_ml/agents/{agent_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      agent_id: ${register_agent.test_agent_id}
+chapters:
+  - synopsis: Search agent.
+    path: /_plugins/_ml/agents/_search
+    method: GET
+    request:
+      payload:
+        query:
+          match_all: {}
+        size: 1000
+    response:
+      status: 200
+  - synopsis: Search agent by type.
+    path: /_plugins/_ml/agents/_search
+    method: POST
+    request:
+      payload:
+        query:
+          term:
+            type:
+              value: flow
+    response:
+      status: 200

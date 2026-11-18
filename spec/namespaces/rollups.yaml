@@ -8,10 +8,12 @@ paths:
     get:
       operationId: rollups.get.0
       x-operation-group: rollups.get
+      tags:
+        - Index State Management
       x-version-added: '1.0'
-      description: Get an index rollup.
+      description: Retrieves an index rollup job configuration by ID.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#get-an-index-rollup-job
+        url: https://docs.opensearch.org/latest/im-plugin/index-rollups/rollup-api/#get-an-index-rollup-job
       parameters:
         - $ref: '#/components/parameters/rollups.get::path.id'
       responses:
@@ -20,13 +22,15 @@ paths:
     put:
       operationId: rollups.put.0
       x-operation-group: rollups.put
+      tags:
+        - Index State Management
       x-version-added: '1.0'
-      description: Create or update index rollup.
+      description: Creates or updates an index rollup job configuration.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#create-or-update-an-index-rollup-job
+        url: https://docs.opensearch.org/latest/im-plugin/index-rollups/rollup-api/#create-or-update-an-index-rollup-job
       responses:
-        '200':
-          $ref: '#/components/responses/rollups.put@200'
+        '201':
+          $ref: '#/components/responses/rollups.put@201'
       parameters:
         - $ref: '#/components/parameters/rollups.put::path.id'
         - $ref: '#/components/parameters/rollups.put::query.if_primary_term'
@@ -36,10 +40,12 @@ paths:
     delete:
       operationId: rollups.delete.0
       x-operation-group: rollups.delete
+      tags:
+        - Index State Management
       x-version-added: '1.0'
-      description: Delete index rollup.
+      description: Deletes an index rollup job configuration.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#delete-an-index-rollup-job
+        url: https://docs.opensearch.org/latest/im-plugin/index-rollups/rollup-api/#delete-an-index-rollup-job
       responses:
         '200':
           $ref: '#/components/responses/rollups.delete@200'
@@ -49,10 +55,12 @@ paths:
     post:
       operationId: rollups.start.0
       x-operation-group: rollups.start
+      tags:
+        - Index State Management
       x-version-added: '1.0'
-      description: Start rollup.
+      description: Starts the execution of an index rollup job.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#start-or-stop-an-index-rollup-job
+        url: https://docs.opensearch.org/latest/im-plugin/index-rollups/rollup-api/#start-or-stop-an-index-rollup-job
       parameters:
         - $ref: '#/components/parameters/rollups.start::path.id'
       responses:
@@ -62,10 +70,12 @@ paths:
     post:
       operationId: rollups.stop.0
       x-operation-group: rollups.stop
+      tags:
+        - Index State Management
       x-version-added: '1.0'
-      description: Stop rollup.
+      description: Stops the execution of an index rollup job.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#start-or-stop-an-index-rollup-job
+        url: https://docs.opensearch.org/latest/im-plugin/index-rollups/rollup-api/#start-or-stop-an-index-rollup-job
       parameters:
         - $ref: '#/components/parameters/rollups.stop::path.id'
       responses:
@@ -75,10 +85,12 @@ paths:
     get:
       operationId: rollups.explain.0
       x-operation-group: rollups.explain
+      tags:
+        - Index State Management
       x-version-added: '1.0'
-      description: Get a rollup's current status.
+      description: Retrieves the execution status information for an index rollup job.
       externalDocs:
-        url: https://opensearch.org/docs/latest/im-plugin/index-rollups/rollup-api/#explain-an-index-rollup-job
+        url: https://docs.opensearch.org/latest/im-plugin/index-rollups/rollup-api/#explain-an-index-rollup-job
       parameters:
         - $ref: '#/components/parameters/rollups.explain::path.id'
       responses:
@@ -87,25 +99,44 @@ paths:
 components:
   requestBodies:
     rollups.put:
+      description: Updates the rollup job configuration.
       content:
         application/json:
           schema:
             $ref: '../schemas/rollups._common.yaml#/components/schemas/RollupEntity'
   responses:
     rollups.get@200:
+      description: Returns the requested rollup job configuration.
       content:
         application/json:
           schema:
             $ref: '../schemas/rollups._common.yaml#/components/schemas/RollupEntity'
-    rollups.put@200:
+    rollups.put@201:
+      description: Returns the created or updated rollup job configuration.
       content:
         application/json:
           schema:
             $ref: '../schemas/rollups._common.yaml#/components/schemas/RollupEntity'
-    rollups.delete@200: {}
-    rollups.start@200: {}
-    rollups.stop@200: {}
+    rollups.delete@200:
+      description: Confirms the successful deletion of the rollup job.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/WriteResponseBase'
+    rollups.start@200:
+      description: Confirms the successful start of the rollup job.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    rollups.stop@200:
+      description: Confirms the successful stop of the rollup job.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
     rollups.explain@200:
+      description: Returns any status information about the rollup job.
       content:
         application/json:
           schema:
@@ -114,7 +145,7 @@ components:
     rollups.get::path.id:
       name: id
       in: path
-      description: Rollup to access
+      description: The ID of the rollup job.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -122,7 +153,7 @@ components:
     rollups.put::path.id:
       name: id
       in: path
-      description: Rollup to access
+      description: The ID of the rollup job.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -130,7 +161,7 @@ components:
     rollups.delete::path.id:
       name: id
       in: path
-      description: Rollup to access
+      description: The ID of the rollup job.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -138,7 +169,7 @@ components:
     rollups.start::path.id:
       name: id
       in: path
-      description: Rollup to access
+      description: The ID of the rollup job.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -146,7 +177,7 @@ components:
     rollups.stop::path.id:
       name: id
       in: path
-      description: Rollup to access
+      description: The ID of the rollup job.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -154,7 +185,7 @@ components:
     rollups.explain::path.id:
       name: id
       in: path
-      description: Rollup to access
+      description: The ID of the rollup job.
       required: true
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Id'
@@ -162,14 +193,14 @@ components:
     rollups.put::query.if_seq_no:
       name: if_seq_no
       in: query
-      description: Only perform the operation if the document has this sequence number.
+      description: Only performs the operation if the document has the specified sequence number.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/SequenceNumber'
       style: form
     rollups.put::query.if_primary_term:
       name: if_primary_term
       in: query
-      description: Only perform the operation if the document has this primary term.
+      description: Only performs the operation if the document has the specified primary term.
       schema:
         type: number
       style: form

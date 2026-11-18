@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
+import { ChapterRequest, type ActualResponse, type Parameter } from './types/story.types'
 import { type OpenSearchHttpClient } from '../OpenSearchHttpClient'
 import { type StoryOutputs } from './StoryOutputs'
 import { Logger } from 'Logger'
@@ -49,23 +49,23 @@ export default class ChapterReader {
       }
     }).then(r => {
       response.status = r.status
-      response.content_type = r.headers['content-type']?.split(';')[0]
+      const content_type = r.headers['content-type'] as string | undefined
+      response.content_type = content_type?.split(';')[0]
       const payload = this.#deserialize_payload(r.data, response.content_type)
       if (payload !== undefined) response.payload = payload
-      this.logger.info(`<= ${r.status} (${r.headers['content-type']}) | ${to_json(response.payload)}`)
+      this.logger.info(`<= ${r.status} (${content_type ?? ''}) | ${to_json(response.payload)}`)
     }).catch(e => {
       if (e.response == null) {
         this.logger.info(`<= ERROR: ${e}`)
-        throw e
+        response.message = e.message
+        response.error = e
+      } else {
+        response.status = e.response.status
+        response.content_type = e.response.headers['content-type']?.split(';')[0]
+        response.payload = this.#deserialize_payload(e.response.data, response.content_type)
+        response.message = response.payload?.error?.reason ?? e.response.statusText
+        this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
       }
-      response.status = e.response.status
-      response.content_type = e.response.headers['content-type']?.split(';')[0]
-      const payload = this.#deserialize_payload(e.response.data, response.content_type)
-      if (payload !== undefined) response.payload = payload.error
-      response.message = payload.error?.reason ?? e.response.statusText
-      response.error = e
-
-      this.logger.info(`<= ${response.status} (${response.content_type}) | ${response.payload !== undefined ? to_json(response.payload) : response.message}`)
     })
     return response as ActualResponse
   }

@@ -1,0 +1,40 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test cloning a snapshot.
+prologues:
+  - path: /_snapshot/my-fs-repository
+    method: POST
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+  - path: /_snapshot/my-fs-repository/my-test-snapshot
+    method: PUT
+    parameters:
+      wait_for_completion: true
+    request:
+      payload:
+        indices: '*'
+        partial: true
+epilogues:
+  - path: /_snapshot/my-fs-repository/my-test-snapshot
+    method: DELETE
+    status: [200, 404]
+  - path: /_snapshot/my-fs-repository/my-cloned-snapshot
+    method: DELETE
+    status: [200, 404]
+  - path: /_snapshot/my-fs-repository
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Clone a snapshot.
+    path: /_snapshot/{repository}/{snapshot}/_clone/{target_snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      target_snapshot: my-cloned-snapshot
+    request:
+      payload:
+        indices: '*'

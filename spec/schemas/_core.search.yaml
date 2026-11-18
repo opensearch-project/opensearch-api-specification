@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Schemas of _core.search category
-  description: Schemas of _core.search category
+  title: Schemas of `_core.search` Category
+  description: Schemas of `_core.search` category.
   version: 1.0.0
 paths: {}
 components:
@@ -10,33 +10,55 @@ components:
       type: object
       properties:
         total:
-          description: Total hit count information, present only if `track_total_hits` wasn't `false` in the search request.
+          description: The total number of hits, present only if `track_total_hits` is not set to `false` in the search request.
           oneOf:
             - $ref: '#/components/schemas/TotalHits'
-            - type: number
+            - type: integer
+              format: int64
         hits:
           type: array
           items:
-            $ref: '#/components/schemas/Hit'
+            allOf:
+              - $ref: '#/components/schemas/Hit'
+              - type: object
+                properties:
+                  _source:
+                    $ref: '#/components/schemas/TDocument'
         max_score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: float
       required:
         - hits
+        - max_score
+    HitsMetadataJsonValue:
+      allOf:
+        - $ref: '#/components/schemas/HitsMetadata'
+        - type: object
+          properties:
+            hits:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Hit'
+                  - type: object
+                    properties:
+                      _source: {}
     TotalHits:
       type: object
       properties:
         relation:
-          $ref: '#/components/schemas/TotalHitsRelation'
+          $ref: '_common.yaml#/components/schemas/TotalHitsRelation'
         value:
-          type: number
+          type: integer
+          format: int64
       required:
         - relation
         - value
-    TotalHitsRelation:
-      type: string
-      enum:
-        - eq
-        - gte
+    TDocument:
+      x-is-generic-type-parameter: true
+      x-protobuf-data-type: bytes
     Hit:
       type: object
       properties:
@@ -47,13 +69,15 @@ components:
         _id:
           $ref: '_common.yaml#/components/schemas/Id'
         _score:
-          type: ['null', number, string]
+          oneOf:
+            - type: 'null'
+            - type: number
+              format: float
         _explanation:
           $ref: '_core.explain.yaml#/components/schemas/Explanation'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         highlight:
           type: object
           additionalProperties:
@@ -65,9 +89,19 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/InnerHitsResult'
         matched_queries:
-          type: array
-          items:
-            type: string
+          description: The names of queries that matched the document. When `include_named_queries_score` is false (default), returns an array of query names. When true, returns an object mapping query names to their scores.
+          oneOf:
+            - title: names
+              description: An array of matched query names (default behavior when `include_named_queries_score` is false).
+              type: array
+              items:
+                type: string
+            - title: scores
+              description: A map of matched query names to their scores (when `include_named_queries_score` is true).
+              type: object
+              additionalProperties:
+                type: number
+                format: float
         _nested:
           $ref: '#/components/schemas/NestedIdentity'
         _ignored:
@@ -75,6 +109,9 @@ components:
           items:
             type: string
         ignored_field_values:
+          deprecated: true
+          x-version-deprecated: 1.0.0
+          description: 'Elasticsearch-only field: not present in OpenSearch server responses.'
           type: object
           additionalProperties:
             type: array
@@ -87,18 +124,19 @@ components:
         _routing:
           type: string
         _source:
-          type: object
+          $ref: '#/components/schemas/TDocument'
         _seq_no:
           $ref: '_common.yaml#/components/schemas/SequenceNumber'
         _primary_term:
-          type: number
+          type: integer
+          format: int64
         _version:
           $ref: '_common.yaml#/components/schemas/VersionNumber'
         sort:
           $ref: '_common.yaml#/components/schemas/SortResults'
-      required:
-        - _id
-        - _index
+      additionalProperties:
+        title: meta_fields
+        description: Contains metadata values for the documents.
     InnerHitsResult:
       type: object
       properties:
@@ -106,13 +144,30 @@ components:
           $ref: '#/components/schemas/HitsMetadata'
       required:
         - hits
+    ProcessorExecutionDetail:
+      type: object
+      properties:
+        processor_name:
+          type: string
+        duration_millis:
+          type: integer
+          format: int64
+        input_data: {}
+        output_data: {}
+        status:
+          type: string
+        tag:
+          type: string
+        error:
+          type: string
     NestedIdentity:
       type: object
       properties:
         field:
           $ref: '_common.yaml#/components/schemas/Field'
         offset:
-          type: number
+          type: integer
+          format: int32
         _nested:
           $ref: '#/components/schemas/NestedIdentity'
       required:
@@ -136,12 +191,21 @@ components:
             $ref: '#/components/schemas/AggregationProfile'
         id:
           type: string
+        inbound_network_time_in_millis:
+          x-version-added: '2.0'
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        outbound_network_time_in_millis:
+          x-version-added: '2.0'
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         searches:
           type: array
           items:
             $ref: '#/components/schemas/SearchProfile'
         fetch:
-          $ref: '#/components/schemas/FetchProfile'
+          x-version-added: '3.2'
+          type: array
+          items:
+            $ref: '#/components/schemas/FetchProfile'
       required:
         - aggregations
         - id
@@ -172,29 +236,41 @@ components:
       type: object
       properties:
         build_aggregation:
-          type: number
+          type: integer
+          format: int64
         build_aggregation_count:
-          type: number
+          type: integer
+          format: int64
         build_leaf_collector:
-          type: number
+          type: integer
+          format: int64
         build_leaf_collector_count:
-          type: number
+          type: integer
+          format: int64
         collect:
-          type: number
+          type: integer
+          format: int64
         collect_count:
-          type: number
+          type: integer
+          format: int64
         initialize:
-          type: number
+          type: integer
+          format: int64
         initialize_count:
-          type: number
+          type: integer
+          format: int64
         post_collection:
-          type: number
+          type: integer
+          format: int64
         post_collection_count:
-          type: number
+          type: integer
+          format: int64
         reduce:
-          type: number
+          type: integer
+          format: int64
         reduce_count:
-          type: number
+          type: integer
+          format: int64
       required:
         - build_aggregation
         - build_aggregation_count
@@ -210,15 +286,19 @@ components:
       type: object
       properties:
         segments_with_multi_valued_ords:
-          type: number
+          type: integer
+          format: int32
         collection_strategy:
           type: string
         segments_with_single_valued_ords:
-          type: number
+          type: integer
+          format: int32
         total_buckets:
-          type: number
+          type: integer
+          format: int32
         built_buckets:
-          type: number
+          type: integer
+          format: int32
         result_strategy:
           type: string
         has_filter:
@@ -226,60 +306,81 @@ components:
         delegate:
           type: string
         delegate_debug:
-          $ref: '#/components/schemas/AggregationProfileDebug'
+          $ref: '#/components/schemas/AggregationProfileDelegateDebug'
         chars_fetched:
-          type: number
+          type: integer
+          format: int32
         extract_count:
-          type: number
+          type: integer
+          format: int32
         extract_ns:
-          type: number
+          type: integer
+          format: int32
         values_fetched:
-          type: number
+          type: integer
+          format: int32
         collect_analyzed_ns:
-          type: number
+          type: integer
+          format: int32
         collect_analyzed_count:
-          type: number
+          type: integer
+          format: int32
         surviving_buckets:
-          type: number
+          type: integer
+          format: int32
         ordinals_collectors_used:
-          type: number
+          type: integer
+          format: int32
         ordinals_collectors_overhead_too_high:
-          type: number
+          type: integer
+          format: int32
         string_hashing_collectors_used:
-          type: number
+          type: integer
+          format: int32
         numeric_collectors_used:
-          type: number
+          type: integer
+          format: int32
         empty_collectors_used:
-          type: number
+          type: integer
+          format: int32
         deferred_aggregators:
           type: array
           items:
             type: string
+        map_reducer:
+          type: string
+    AggregationProfileDelegateDebug:
+      type: object
+      properties:
         segments_with_doc_count_field:
-          type: number
+          type: integer
+          format: int32
         segments_with_deleted_docs:
-          type: number
+          type: integer
+          format: int32
         filters:
           type: array
           items:
             $ref: '#/components/schemas/AggregationProfileDelegateDebugFilter'
         segments_counted:
-          type: number
+          type: integer
+          format: int32
         segments_collected:
-          type: number
-        map_reducer:
-          type: string
+          type: integer
+          format: int32
     AggregationProfileDelegateDebugFilter:
       type: object
       properties:
         results_from_metadata:
-          type: number
+          type: integer
+          format: int32
         query:
           type: string
         specialized_for:
           type: string
         segments_counted_in_constant_time:
-          type: number
+          type: integer
+          format: int32
     SearchProfile:
       type: object
       properties:
@@ -292,7 +393,8 @@ components:
           items:
             $ref: '#/components/schemas/QueryProfile'
         rewrite_time:
-          type: number
+          type: integer
+          format: int64
       required:
         - collector
         - query
@@ -338,41 +440,59 @@ components:
       type: object
       properties:
         advance:
-          type: number
+          type: integer
+          format: int64
         advance_count:
-          type: number
+          type: integer
+          format: int64
         build_scorer:
-          type: number
+          type: integer
+          format: int64
         build_scorer_count:
-          type: number
+          type: integer
+          format: int64
         create_weight:
-          type: number
+          type: integer
+          format: int64
         create_weight_count:
-          type: number
+          type: integer
+          format: int64
         match:
-          type: number
+          type: integer
+          format: int64
         match_count:
-          type: number
+          type: integer
+          format: int64
         shallow_advance:
-          type: number
+          type: integer
+          format: int64
         shallow_advance_count:
-          type: number
+          type: integer
+          format: int64
         next_doc:
-          type: number
+          type: integer
+          format: int64
         next_doc_count:
-          type: number
+          type: integer
+          format: int64
         score:
-          type: number
+          type: integer
+          format: int64
         score_count:
-          type: number
+          type: integer
+          format: int64
         compute_max_score:
-          type: number
+          type: integer
+          format: int64
         compute_max_score_count:
-          type: number
+          type: integer
+          format: int64
         set_min_competitive_score:
-          type: number
+          type: integer
+          format: int64
         set_min_competitive_score_count:
-          type: number
+          type: integer
+          format: int64
       required:
         - advance
         - advance_count
@@ -417,22 +537,48 @@ components:
     FetchProfileBreakdown:
       type: object
       properties:
+        build_sub_phase_processors:
+          type: integer
+          format: int64
+        build_sub_phase_processors_count:
+          type: integer
+          format: int64
+        create_stored_fields_visitor:
+          type: integer
+          format: int64
+        create_stored_fields_visitor_count:
+          type: integer
+          format: int64
+        get_next_reader:
+          type: integer
+          format: int64
+        get_next_reader_count:
+          type: integer
+          format: int64
         load_source:
-          type: number
+          type: integer
+          format: int64
         load_source_count:
-          type: number
+          type: integer
+          format: int64
         load_stored_fields:
-          type: number
+          type: integer
+          format: int64
         load_stored_fields_count:
-          type: number
-        next_reader:
-          type: number
-        next_reader_count:
-          type: number
-        process_count:
-          type: number
+          type: integer
+          format: int64
         process:
-          type: number
+          type: integer
+          format: int64
+        process_count:
+          type: integer
+          format: int64
+        set_next_reader:
+          type: integer
+          format: int64
+        set_next_reader_count:
+          type: integer
+          format: int64
     FetchProfileDebug:
       type: object
       properties:
@@ -441,12 +587,36 @@ components:
           items:
             type: string
         fast_path:
-          type: number
+          type: integer
+          format: int32
     Suggest:
       oneOf:
-        - $ref: '#/components/schemas/CompletionSuggest'
-        - $ref: '#/components/schemas/PhraseSuggest'
-        - $ref: '#/components/schemas/TermSuggest'
+        - title: completion
+          allOf:
+            - $ref: '#/components/schemas/CompletionSuggest'
+            - type: object
+              properties:
+                options:
+                  oneOf:
+                    - allOf:
+                        - $ref: '#/components/schemas/CompletionSuggestOption'
+                        - type: object
+                          properties:
+                            _source:
+                              $ref: '#/components/schemas/TDocument'
+                    - type: array
+                      items:
+                        allOf:
+                          - $ref: '#/components/schemas/CompletionSuggestOption'
+                          - type: object
+                            properties:
+                              _source:
+                                $ref: '#/components/schemas/TDocument'
+        - title: phrase
+          $ref: '#/components/schemas/PhraseSuggest'
+        - title: term
+          $ref: '#/components/schemas/TermSuggest'
+      x-supports-typed-keys: true
     CompletionSuggest:
       allOf:
         - $ref: '#/components/schemas/SuggestBase'
@@ -454,10 +624,20 @@ components:
           properties:
             options:
               oneOf:
-                - $ref: '#/components/schemas/CompletionSuggestOption'
+                - allOf:
+                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                    - type: object
+                      properties:
+                        _source:
+                          $ref: '#/components/schemas/TDocument'
                 - type: array
                   items:
-                    $ref: '#/components/schemas/CompletionSuggestOption'
+                    allOf:
+                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
           required:
             - options
     CompletionSuggestOption:
@@ -473,8 +653,7 @@ components:
               $ref: '#/components/schemas/Context'
         fields:
           type: object
-          additionalProperties:
-            type: object
+          additionalProperties: true
         _id:
           type: string
         _index:
@@ -483,26 +662,32 @@ components:
           $ref: '_common.yaml#/components/schemas/Routing'
         _score:
           type: number
+          format: float
         _source:
-          type: object
+          $ref: '#/components/schemas/TDocument'
         text:
           type: string
         score:
           type: number
+          format: float
       required:
         - text
     Context:
       description: Text or location that we want similar documents for or a lookup to a document's field for the text.
       oneOf:
-        - type: string
-        - $ref: '_common.yaml#/components/schemas/GeoLocation'
+        - title: category
+          type: string
+        - title: location
+          $ref: '_common.yaml#/components/schemas/GeoLocation'
     SuggestBase:
       type: object
       properties:
         length:
-          type: number
+          type: integer
+          format: int32
         offset:
-          type: number
+          type: integer
+          format: int32
         text:
           type: string
       required:
@@ -529,6 +714,7 @@ components:
           type: string
         score:
           type: number
+          format: float
         highlighted:
           type: string
         collate_match:
@@ -556,32 +742,38 @@ components:
           type: string
         score:
           type: number
+          format: float
         freq:
-          type: number
+          type: integer
+          format: int32
         highlighted:
           type: string
         collate_match:
           type: boolean
       required:
-        - freq
         - score
         - text
     TrackHits:
       description: |-
-        Number of hits matching the query to count accurately. If true, the exact
-        number of hits is returned at the cost of some performance. If false, the
+        The number of hits matching the query. When `true`, the exact
+        number of hits is returned at the cost of some performance. When `false`, the
         response does not include the total number of hits matching the query.
-        Defaults to 10,000 hits.
+        Default is `10,000` hits.
       oneOf:
-        - type: boolean
-        - type: number
+        - title: enabled
+          type: boolean
+        - title: count
+          type: integer
+          format: int32
     SourceConfigParam:
       description: |-
         Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
-        Used as a query parameter along with the `_source_includes` and `_source_excludes` parameters.
+        Use this setting with the `_source_includes` and `_source_excludes` parameters.
       oneOf:
-        - type: boolean
-        - $ref: '_common.yaml#/components/schemas/Fields'
+        - title: fetch
+          type: boolean
+        - title: fields
+          $ref: '_common.yaml#/components/schemas/Fields'
     InnerHits:
       type: object
       properties:
@@ -589,10 +781,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
         size:
           description: The maximum number of hits to return per `inner_hits`.
-          type: number
+          type: integer
+          format: int32
         from:
-          description: Inner hit starting document offset.
-          type: number
+          description: The inner hit that initiates document offset.
+          type: integer
+          format: int32
         collapse:
           $ref: '#/components/schemas/FieldCollapse'
         docvalue_fields:
@@ -612,12 +806,14 @@ components:
         seq_no_primary_term:
           type: boolean
         fields:
-          $ref: '_common.yaml#/components/schemas/Fields'
+          type: array
+          items:
+            $ref: '_common.query_dsl.yaml#/components/schemas/FieldAndFormat'
         sort:
           $ref: '_common.yaml#/components/schemas/Sort'
         _source:
           $ref: '#/components/schemas/SourceConfig'
-        stored_field:
+        stored_fields:
           $ref: '_common.yaml#/components/schemas/Fields'
         track_scores:
           type: boolean
@@ -629,17 +825,15 @@ components:
         field:
           $ref: '_common.yaml#/components/schemas/Field'
         inner_hits:
-          description: The number of inner hits and their sort order
+          description: The number of inner hits and their sort order.
           oneOf:
             - $ref: '#/components/schemas/InnerHits'
             - type: array
               items:
                 $ref: '#/components/schemas/InnerHits'
         max_concurrent_group_searches:
-          description: The number of concurrent requests allowed to retrieve the inner_hits per group
-          type: number
-        collapse:
-          $ref: '#/components/schemas/FieldCollapse'
+          description: The number of concurrent requests that are allowed to be retrieved by the `inner_hits` parameter per group.
+          type: integer
       required:
         - field
     Highlight:
@@ -650,11 +844,23 @@ components:
             encoder:
               $ref: '#/components/schemas/HighlighterEncoder'
             fields:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/HighlightField'
+              $ref: '#/components/schemas/HighlightFields'
           required:
             - fields
+    HighlightFields:
+      oneOf:
+        - type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HighlightField'
+        - type: array
+          items:
+            type: object
+            additionalProperties:
+              title: key
+              $ref: '#/components/schemas/HighlightField'
+            minProperties: 1
+            maxProperties: 1
+          x-protobuf-excluded: true
     HighlighterEncoder:
       type: string
       enum:
@@ -665,12 +871,8 @@ components:
         - $ref: '#/components/schemas/HighlightBase'
         - type: object
           properties:
-            fragment_offset:
-              type: number
             matched_fields:
               $ref: '_common.yaml#/components/schemas/Fields'
-            analyzer:
-              $ref: '_common.analysis.yaml#/components/schemas/Analyzer'
     HighlightBase:
       type: object
       properties:
@@ -681,45 +883,53 @@ components:
           type: string
         boundary_max_scan:
           description: How far to scan for boundary characters.
-          type: number
+          type: integer
+          format: int32
         boundary_scanner:
           $ref: '#/components/schemas/BoundaryScanner'
         boundary_scanner_locale:
           description: |-
             Controls which locale is used to search for sentence and word boundaries.
-            This parameter takes a form of a language tag, for example: `"en-US"`, `"fr-FR"`, `"ja-JP"`.
+            This parameter takes the form of a language tag, for example, `"en-US"`, `"fr-FR"`, or `"ja-JP"`.
           type: string
         force_source:
-          deprecated: true
           type: boolean
         fragmenter:
           $ref: '#/components/schemas/HighlighterFragmenter'
+        fragment_offset:
+          type: integer
+          format: int32
         fragment_size:
           description: The size of the highlighted fragment in characters.
-          type: number
+          type: integer
+          format: int32
         highlight_filter:
           type: boolean
         highlight_query:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         max_fragment_length:
-          type: number
-        max_analyzed_offset:
+          type: integer
+          format: int32
+        max_analyzer_offset:
           description: |-
             If set to a non-negative value, highlighting stops at this defined maximum limit.
-            The rest of the text is not processed, thus not highlighted and no error is returned
-            The `max_analyzed_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which prevails when it's set to lower value than the query setting.
-          type: number
+            The rest of the text is not processed or highlighted, and no error is returned.
+            The `max_analyzer_offset` query setting does not override the `index.highlight.max_analyzed_offset` setting, which takes precedence when it is set to a lower value than the query setting.
+          type: integer
+          format: int32
         no_match_size:
           description: The amount of text you want to return from the beginning of the field if there are no matching fragments to highlight.
-          type: number
+          type: integer
+          format: int32
         number_of_fragments:
           description: |-
             The maximum number of fragments to return.
-            If the number of fragments is set to `0`, no fragments are returned.
-            Instead, the entire field contents are highlighted and returned.
-            This can be handy when you need to highlight short texts such as a title or address, but fragmentation is not required.
-            If `number_of_fragments` is `0`, `fragment_size` is ignored.
-          type: number
+            When the number of fragments is set to `0`, no fragments are returned.
+            Instead, the entirety of a field's contents are highlighted and returned.
+            This is useful when you need to highlight short texts, such as a title or address, in which fragmentation is not required.
+            If `number_of_fragments` is set to `0`, the `fragment_size` is ignored.
+          type: integer
+          format: int32
         options:
           type: object
           additionalProperties:
@@ -729,20 +939,21 @@ components:
         phrase_limit:
           description: |-
             Controls the number of matching phrases in a document that are considered.
-            Prevents the `fvh` highlighter from analyzing too many phrases and consuming too much memory.
-            When using `matched_fields`, `phrase_limit` phrases per matched field are considered. Raising the limit increases query time and consumes more memory.
-            Only supported by the `fvh` highlighter.
-          type: number
+            This prevents the `fvh` highlighter from analyzing too many phrases and consuming too much memory.
+            When using `matched_fields`, phrase-limited phrases per matched field are considered. Raising the limit increases the query time and consumes more memory.
+            This setting is only supported by the `fvh` highlighter.
+          type: integer
+          format: int32
         post_tags:
           description: |-
-            Use in conjunction with `pre_tags` to define the HTML tags to use for the highlighted text.
+            When used in conjunction with `pre_tags`, defines the HTML tags to use for the highlighted text.
             By default, highlighted text is wrapped in `<em>` and `</em>` tags.
           type: array
           items:
             type: string
         pre_tags:
           description: |-
-            Use in conjunction with `post_tags` to define the HTML tags to use for the highlighted text.
+            When used in conjunction with `post_tags`, defines the HTML tags to use for the highlighted text.
             By default, highlighted text is wrapped in `<em>` and `</em>` tags.
           type: array
           items:
@@ -755,11 +966,20 @@ components:
         tags_schema:
           $ref: '#/components/schemas/HighlighterTagsSchema'
     HighlighterType:
-      type: string
-      enum:
-        - fvh
-        - plain
-        - unified
+      oneOf:
+        - title: builtin
+          $ref: '#/components/schemas/BuiltinHighlighterType'
+        - title: custom
+          type: string
+    BuiltinHighlighterType:
+      oneOf:
+        - type: string
+          const: plain
+        - title: fast_vector
+          type: string
+          const: fvh
+        - type: string
+          const: unified
     BoundaryScanner:
       type: string
       enum:
@@ -778,29 +998,33 @@ components:
     HighlighterTagsSchema:
       type: string
       enum:
+        - default
         - styled
     SourceConfig:
       description: Defines how to fetch a source. Fetching can be disabled entirely, or the source can be filtered.
       oneOf:
-        - type: boolean
-        - type: array
-          items:
-            $ref: '_common.yaml#/components/schemas/Field' 
-        - $ref: '#/components/schemas/SourceFilter'
+        - title: fetch
+          type: boolean
+        - title: filter
+          $ref: '#/components/schemas/SourceFilter'
     SourceFilter:
-      type: object
-      properties:
-        excludes:
+      oneOf:
+        - title: includes
           $ref: '_common.yaml#/components/schemas/Fields'
-        includes:
-          $ref: '_common.yaml#/components/schemas/Fields'
+        - type: object
+          properties:
+            excludes:
+              $ref: '_common.yaml#/components/schemas/Fields'
+            includes:
+              $ref: '_common.yaml#/components/schemas/Fields'
     Rescore:
       type: object
       properties:
         query:
           $ref: '#/components/schemas/RescoreQuery'
         window_size:
-          type: number
+          type: integer
+          format: int32
       required:
         - query
     RescoreQuery:
@@ -809,11 +1033,13 @@ components:
         rescore_query:
           $ref: '_common.query_dsl.yaml#/components/schemas/QueryContainer'
         query_weight:
-          description: Relative importance of the original query versus the rescore query.
+          description: The relative importance of the original query as compared to the rescore query.
           type: number
+          format: float
         rescore_query_weight:
-          description: Relative importance of the rescore query versus the original query.
+          description: The relative importance of the rescore query as compared to the original query.
           type: number
+          format: float
         score_mode:
           $ref: '#/components/schemas/ScoreMode'
       required:
@@ -830,22 +1056,317 @@ components:
       type: object
       properties:
         text:
-          description: Global suggest text, to avoid repetition when the same text is used in several suggesters
+          description: The global suggest text, which avoids repetition when the same text is used in several suggesters.
           type: string
+      additionalProperties:
+        title: suggesters
+        description: The named suggesters.
+        $ref: '#/components/schemas/FieldSuggester'
+    FieldSuggester:
+      allOf:
+        - type: object
+          properties:
+            prefix:
+              type: string
+            regex:
+              type: string
+            text:
+              type: string
+        - type: object
+          properties:
+            completion:
+              $ref: '#/components/schemas/CompletionSuggester'
+            phrase:
+              $ref: '#/components/schemas/PhraseSuggester'
+            term:
+              $ref: '#/components/schemas/TermSuggester'
+          minProperties: 1
+          maxProperties: 1
+    CompletionSuggester:
+      allOf:
+        - $ref: '#/components/schemas/SuggesterBase'
+        - type: object
+          properties:
+            contexts:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompletionContext'
+            fuzzy:
+              $ref: '#/components/schemas/SuggestFuzziness'
+            regex:
+              type: string
+            skip_duplicates:
+              type: boolean
+    PhraseSuggester:
+      allOf:
+        - $ref: '#/components/schemas/SuggesterBase'
+        - type: object
+          properties:
+            collate:
+              $ref: '#/components/schemas/PhraseSuggestCollate'
+            confidence:
+              type: number
+              format: double
+            direct_generator:
+              type: array
+              items:
+                $ref: '#/components/schemas/DirectGenerator'
+            force_unigrams:
+              type: boolean
+            gram_size:
+              type: integer
+              format: int32
+            highlight:
+              $ref: '#/components/schemas/PhraseSuggestHighlight'
+            max_errors:
+              type: number
+              format: double
+            real_word_error_likelihood:
+              type: number
+              format: double
+            separator:
+              type: string
+            shard_size:
+              type: integer
+              format: int32
+            smoothing:
+              $ref: '#/components/schemas/SmoothingModel'
+            text:
+              type: string
+            token_limit:
+              type: integer
+              format: int32
+    SuggesterBase:
+      type: object
+      properties:
+        analyzer:
+          type: string
+        field:
+          type: string
+        size:
+          type: integer
+          format: int32
+      required:
+        - field
+    CompletionContext:
+      oneOf:
+        - title: context
+          $ref: '#/components/schemas/Context'
+        - type: object
+          properties:
+            boost:
+              type: number
+              format: double
+            context:
+              $ref: '#/components/schemas/Context'
+            neighbours:
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/GeoHashPrecision'
+            precision:
+              $ref: '_common.yaml#/components/schemas/GeoHashPrecision'
+            prefix:
+              type: boolean
+          required:
+            - context
+    SuggestFuzziness:
+      type: object
+      properties:
+        fuzziness:
+          type: string
+        min_length:
+          type: integer
+          format: int32
+        prefix_length:
+          type: integer
+          format: int32
+        transpositions:
+          type: boolean
+        unicode_aware:
+          type: boolean
+      required:
+        - fuzziness
+        - min_length
+        - prefix_length
+        - transpositions
+        - unicode_aware
+    PhraseSuggestCollate:
+      type: object
+      properties:
+        params:
+          type: object
+          additionalProperties: true
+        prune:
+          type: boolean
+        query:
+          $ref: '#/components/schemas/PhraseSuggestCollateQuery'
+      required:
+        - query
+    PhraseSuggestCollateQuery:
+      type: object
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+    DirectGenerator:
+      type: object
+      properties:
+        field:
+          type: string
+        max_edits:
+          type: integer
+          format: int32
+        max_inspections:
+          type: number
+          format: float
+        max_term_freq:
+          type: number
+          format: float
+        min_doc_freq:
+          type: number
+          format: float
+        min_word_length:
+          type: integer
+          format: int32
+        post_filter:
+          type: string
+        pre_filter:
+          type: string
+        prefix_length:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        suggest_mode:
+          $ref: '_common.yaml#/components/schemas/SuggestMode'
+      required:
+        - field
+    PhraseSuggestHighlight:
+      type: object
+      properties:
+        post_tag:
+          type: string
+        pre_tag:
+          type: string
+      required:
+        - post_tag
+        - pre_tag
+    SmoothingModel:
+      type: object
+      properties:
+        laplace:
+          $ref: '#/components/schemas/LaplaceSmoothingModel'
+        linear_interpolation:
+          $ref: '#/components/schemas/LinearInterpolationSmoothingModel'
+        stupid_backoff:
+          $ref: '#/components/schemas/StupidBackoffSmoothingModel'
+      minProperties: 1
+      maxProperties: 1
+    LaplaceSmoothingModel:
+      type: object
+      properties:
+        alpha:
+          type: number
+          format: double
+      required:
+        - alpha
+    LinearInterpolationSmoothingModel:
+      type: object
+      properties:
+        bigram_lambda:
+          type: number
+          format: double
+        trigram_lambda:
+          type: number
+          format: double
+        unigram_lambda:
+          type: number
+          format: double
+      required:
+        - bigram_lambda
+        - trigram_lambda
+        - unigram_lambda
+    StupidBackoffSmoothingModel:
+      type: object
+      properties:
+        discount:
+          type: number
+          format: double
+      required:
+        - discount
+    TermSuggester:
+      allOf:
+        - $ref: '#/components/schemas/SuggesterBase'
+        - type: object
+          properties:
+            lowercase_terms:
+              type: boolean
+            max_edits:
+              type: integer
+              format: int32
+            max_inspections:
+              type: integer
+              format: int32
+            max_term_freq:
+              type: number
+              format: float
+            min_doc_freq:
+              type: number
+              format: float
+            min_word_length:
+              type: integer
+              format: int32
+            prefix_length:
+              type: integer
+              format: int32
+            shard_size:
+              type: integer
+              format: int32
+            sort:
+              $ref: '#/components/schemas/SuggestSort'
+            string_distance:
+              $ref: '#/components/schemas/StringDistance'
+            suggest_mode:
+              $ref: '_common.yaml#/components/schemas/SuggestMode'
+            text:
+              type: string
+    SuggestSort:
+      type: string
+      enum:
+        - frequency
+        - score
+    StringDistance:
+      type: string
+      enum:
+        - damerau_levenshtein
+        - internal
+        - jaro_winkler
+        - levenshtein
+        - ngram
     PointInTimeReference:
       type: object
       properties:
         id:
-          $ref: '_common.yaml#/components/schemas/Id'
+          $ref: '_common.yaml#/components/schemas/PitId'
         keep_alive:
           $ref: '_common.yaml#/components/schemas/Duration'
       required:
         - id
-    ResponseBody:
+    SearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/SearchResult'
+        - type: object
+          properties: {}
+    SearchResult:
       type: object
       properties:
         took:
-          type: number
+          type: integer
+          format: int64
         timed_out:
           type: boolean
         _shards:
@@ -854,25 +1375,38 @@ components:
           x-version-added: '2.12'
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
-          $ref: '#/components/schemas/HitsMetadata'
+          allOf:
+            - $ref: '#/components/schemas/HitsMetadata'
+            - type: object
+              x-protobuf-excluded: true
+              properties:
+                hits:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
+        processor_results:
+          x-version-added: '3.0'
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessorExecutionDetail'
         aggregations:
           type: object
           additionalProperties:
             $ref: '_common.aggregations.yaml#/components/schemas/Aggregate'
         _clusters:
           $ref: '_common.yaml#/components/schemas/ClusterStatistics'
-        fields:
-          type: object
-          additionalProperties:
-            type: object
-        max_score:
-          type: number
         num_reduce_phases:
-          type: number
+          type: integer
+          format: int32
         profile:
           $ref: '#/components/schemas/Profile'
         pit_id:
-          $ref: '_common.yaml#/components/schemas/Id'
+          $ref: '_common.yaml#/components/schemas/PitId'
         _scroll_id:
           $ref: '_common.yaml#/components/schemas/ScrollId'
         suggest:
@@ -888,3 +1422,48 @@ components:
         - hits
         - timed_out
         - took
+    SearchResultJsonValue:
+      allOf:
+        - $ref: '#/components/schemas/SearchResult'
+        - type: object
+          properties:
+            hits:
+              type: object
+              properties:
+                hits:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source: {}
+            suggest:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  oneOf:
+                    - title: completion
+                      allOf:
+                        - $ref: '#/components/schemas/CompletionSuggest'
+                        - type: object
+                          properties:
+                            options:
+                              oneOf:
+                                - allOf:
+                                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                                    - type: object
+                                      properties:
+                                        _source: {}
+                                - type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                                      - type: object
+                                        properties:
+                                          _source: {}
+                    - title: phrase
+                      $ref: '#/components/schemas/PhraseSuggest'
+                    - title: term
+                      $ref: '#/components/schemas/TermSuggest'

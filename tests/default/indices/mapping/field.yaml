@@ -1,0 +1,40 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test specific field mappings endpoints.
+prologues:
+  - path: movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            director:
+              type: text
+            year:
+              type: integer
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get specific field mappings for an index.
+    path: /{index}/_mapping/field/{fields}
+    method: GET
+    parameters:
+      index: movies
+      fields: director,year
+    response:
+      status: 200
+      payload:
+        movies:
+          mappings:
+            year:
+              full_name: year
+              mapping:
+                year:
+                  type: integer
+            director:
+              full_name: director
+              mapping:
+                director:
+                  type: text

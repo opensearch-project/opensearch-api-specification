@@ -7,13 +7,13 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { read_yaml, write_json } from '../helpers'
 import { HTTP_METHODS } from "../_utils";
 
 export default class CoverageCalculator {
-  private readonly _cluster_spec: OpenAPIV3.Document
-  private readonly _input_spec: OpenAPIV3.Document
+  private readonly _cluster_spec: OpenAPIV3_1.Document
+  private readonly _input_spec: OpenAPIV3_1.Document
   private readonly _output_path: string
 
   constructor (cluster_spec_path: string, input_spec_path: string, output_path: string) {
@@ -23,11 +23,11 @@ export default class CoverageCalculator {
   }
 
   calculate (): void {
-    type Endpoints = Record<string, Set<OpenAPIV3.HttpMethods>>
-    const collect = (document: OpenAPIV3.Document): Endpoints =>
+    type Endpoints = Record<string, Set<OpenAPIV3_1.HttpMethods>>
+    const collect = (document: OpenAPIV3_1.Document): Endpoints =>
       Object.fromEntries(
-        Object.entries(document.paths)
-          .map(([path, path_item]): [string, Set<OpenAPIV3.HttpMethods>] => {
+        Object.entries(document.paths ?? {})
+          .map(([path, path_item]): [string, Set<OpenAPIV3_1.HttpMethods>] => {
             // Sanitize path params to ignore naming of params in route templates
             path = path.replaceAll(/\{[^}]+}/g, '{}')
             if (path_item == null) return [path, new Set()]
@@ -49,7 +49,7 @@ export default class CoverageCalculator {
       for (const method of [...methods]) {
         if (!specified_but_not_provided[path].delete(method)) continue
 
-        if (covered[path] === undefined) covered[path] = new Set()
+        covered[path] ??= new Set()
         covered[path].add(method)
         uncovered[path].delete(method)
       }

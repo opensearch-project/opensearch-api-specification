@@ -16,7 +16,13 @@ const ADDITIONAL_KEYWORDS = [
   'x-version-added',
   'x-version-deprecated',
   'x-version-removed',
-  'x-deprecation-message'
+  'x-deprecation-message',
+  'x-supports-typed-keys',
+  'x-is-generic-type-parameter',
+  'x-protobuf-excluded',
+  'x-protobuf-data-type',
+  'x-protobuf-name',
+  'x-protobuf-required'
 ]
 
 export default class SchemasValidator {
@@ -48,8 +54,8 @@ export default class SchemasValidator {
       const message = this.json_validator.validate_schema(_schema)
       if (message == null) return
 
-      const file = `schemas/${key.split(':')[0]}.yaml`
-      const location = `#/components/schemas/${key.split(':')[1]}`
+      const file = `schemas/${key.split('___')[0]}.yaml`
+      const location = `#/components/schemas/${key.split('___')[1]}`
       return this.error(file, location, message)
     }).filter((error) => error != null) as ValidationError[]
   }
@@ -59,9 +65,9 @@ export default class SchemasValidator {
       const message = this.json_validator.validate_schema(param.schema)
       if (message == null) return
 
-      const namespace = this.group_to_namespace(key.split('::')[0])
+      const namespace = this.group_to_namespace(key.split('___')[0])
       const file = namespace === '_global' ? '_global_parameters.yaml' : `namespaces/${namespace}.yaml`
-      const location = namespace === '_global' ? param.name as string : `#/components/parameters/${key}`
+      const location = namespace === '_global' ? param.name as string : `#/components/parameters/${key}`.replace('___', '::')
       return this.error(file, location, message)
     }).filter((error) => error != null) as ValidationError[]
   }
@@ -76,9 +82,9 @@ export default class SchemasValidator {
 
   validate_response_schemas (): ValidationError[] {
     return Object.entries(this.spec.responses as Record<string, any>).flatMap(([key, response]) => {
-      const namespace = this.group_to_namespace(key.split('@')[0])
+      const namespace = this.group_to_namespace(key.split('___')[0])
       const file = `namespaces/${namespace}.yaml`
-      const location = `#/components/responses/${key}`
+      const location = `#/components/responses/${key}`.replace('___', '@')
       const content = response.content as Record<string, any>
       return this.validate_content_schemas(file, location, content)
     })

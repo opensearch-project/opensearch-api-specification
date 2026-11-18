@@ -8,7 +8,7 @@
 */
 
 import _ from 'lodash'
-import { delete_matching_keys, find_refs, sort_array_by_keys, to_json, to_ndjson } from '../src/helpers'
+import { delete_matching_keys, find_refs, sort_array_by_keys, to_json, to_ndjson, split } from '../src/helpers'
 
 describe('helpers', () => {
   describe('sort_array_by_keys', () => {
@@ -40,13 +40,13 @@ describe('helpers', () => {
 
   describe('delete_matching_keys', () => {
     test('empty collection', () => {
-      var obj = {}
+      const obj = {}
       delete_matching_keys(obj, (_obj) => false)
       expect(obj).toEqual({})
     })
 
     describe('an object', () => {
-      var obj: object
+      let obj: object
 
       beforeEach(() => {
         obj = {
@@ -86,7 +86,7 @@ describe('helpers', () => {
     })
 
     describe('an object with arrays', () => {
-      var obj: object
+      let obj: object
 
       beforeEach(() => {
         obj = {
@@ -120,6 +120,25 @@ describe('helpers', () => {
       test('removes multiple values from a key', () => {
         delete_matching_keys(obj, (_item: any) => _item.x == 1 || _item.y == 2)
         expect(obj).toStrictEqual({ foo: [{}] })
+      })
+    })
+
+    describe('an object with an array where some items are removed', () => {
+      let obj: object
+
+      beforeEach(() => {
+        obj = {
+          foo: [
+            { value: 1 },
+            { value: 1 },
+            { value: 2 }
+          ]
+        }
+      })
+
+      test('removes matching values', () => {
+        delete_matching_keys(obj, (_item: any) => _item.value == 1)
+        expect(obj).toStrictEqual({ foo: [{ value: 2 }] })
       })
     })
   })
@@ -174,6 +193,29 @@ describe('helpers', () => {
         '#3': {},
         '#dup': {}
       })).toEqual(new Set(['#1', '#2', '#3', '#dup', '#/schemas/schema1', '#/schemas/schema2']))
+    })
+  })
+
+  describe('split', () => {
+    test('undefined', () => {
+      expect(split(undefined, '.')).toEqual([])
+    })
+
+    test('one element', () => {
+      expect(split('str', '.')).toEqual(['str'])
+      expect(split('str', '.', -1)).toEqual(['str'])
+      expect(split('str', '.', 0)).toEqual(['str'])
+      expect(split('str', '.', 10)).toEqual(['str'])
+    })
+
+    test('multiple elements', () => {
+      expect(split('x.y.z', '.')).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', -1)).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', 0)).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', 1)).toEqual(['x.y.z'])
+      expect(split('x.y.z', '.', 2)).toEqual(['x', 'y.z'])
+      expect(split('x.y.z', '.', 3)).toEqual(['x', 'y', 'z'])
+      expect(split('x.y.z', '.', 4)).toEqual(['x', 'y', 'z'])
     })
   })
 })

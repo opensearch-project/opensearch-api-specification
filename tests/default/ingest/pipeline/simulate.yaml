@@ -1,0 +1,86 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the simulation of an ingest pipeline.
+version: '>= 2.11'
+epilogues:
+  - path: /_ingest/pipeline/movies_pipeline
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_ingest/pipeline/movies_pipeline
+    method: PUT
+    request:
+      payload:
+        description: A movies pipeline that does nothing.
+        processors: []
+chapters:
+  - synopsis: Simulate an existing ingest pipeline (GET).
+    path: /_ingest/pipeline/{id}/_simulate
+    method: GET
+    parameters:
+      id: movies_pipeline
+      verbose: true
+    request:
+      payload:
+        docs:
+          - _index: movies
+            _id: '1'
+            _source:
+              title: The Cruise
+              director: Bennett Miller,
+              year: 1998
+    response:
+      status: 200
+      payload:
+        docs:
+          - processor_results: []
+  - synopsis: Simulate an existing ingest pipeline (POST).
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: movies_pipeline
+    request:
+      payload:
+        docs:
+          - _index: movies
+            _id: '1'
+            _source:
+              title: The Cruise
+              director: Bennett Miller,
+              year: 1998
+    response:
+      status: 200
+  - synopsis: Simulate an ingest pipeline with the pipeline in the request body (GET).
+    path: /_ingest/pipeline/_simulate
+    method: GET
+    request:
+      payload:
+        pipeline:
+          description: A movies pipeline that does nothing.
+          processors: []
+        docs:
+          - _index: movies
+            _id: '1'
+            _source:
+              title: The Cruise
+              director: Bennett Miller,
+              year: 1998
+    response:
+      status: 200
+  - synopsis: Simulate an ingest pipeline with the pipeline in the request body (POST).
+    path: /_ingest/pipeline/_simulate
+    method: POST
+    request:
+      payload:
+        pipeline:
+          description: A movies pipeline that does nothing.
+          processors: []
+        docs:
+          - _index: movies
+            _id: '1'
+            _source:
+              title: The Cruise
+              director: Bennett Miller,
+              year: 1998
+    response:
+      status: 200

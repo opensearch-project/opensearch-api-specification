@@ -1,0 +1,29 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test rolling over aliases.
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+  - path: /rollover
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: games
+    method: PUT
+  - path: /games/_alias/jeux
+    method: POST
+chapters:
+  - synopsis: Manually roll over an index.
+    path: /{alias}/_rollover/{new_index}
+    method: POST
+    parameters:
+      alias: jeux
+      new_index: rollover
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        old_index: games
+        new_index: rollover
+        rolled_over: true

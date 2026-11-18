@@ -1,0 +1,50 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the register of Agents.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+version: '>= 2.11'
+epilogues:
+  - path: /_plugins/_ml/agents/{agent_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      agent_id: ${register_agent.test_agent_id}
+chapters:
+  - synopsis: Register agent.
+    warnings:
+      multiple-paths-detected: false
+    id: register_agent
+    path: /_plugins/_ml/agents/_register
+    method: POST
+    request:
+      payload:
+        name: Test_Agent_For_RAG
+        type: flow
+        description: this is a test agent
+        tools:
+          - type: VectorDBTool
+            parameters:
+              model_id: YOUR_TEXT_EMBEDDING_MODEL_ID
+              index: my_test_data
+              embedding_field: embedding
+              source_field:
+                - text
+              input: test_question
+          - type: MLModelTool
+            description: A general tool to answer any question
+            parameters:
+              model_id: YOUR_LLM_MODEL_ID
+    response:
+      status: 200
+    output:
+      test_agent_id: payload.agent_id
+  - synopsis: Delete agent.
+    path: /_plugins/_ml/agents/{agent_id}
+    method: DELETE
+    parameters:
+      agent_id: ${register_agent.test_agent_id}
+    response:
+      status: 200

@@ -1,35 +1,43 @@
 openapi: 3.1.0
 info:
-  title: Schemas of indices.segments category
-  description: Schemas of indices.segments category
+  title: Schemas of `indices.segments` Category
+  description: Schemas of `indices.segments` category.
   version: 1.0.0
 paths: {}
 components:
   schemas:
     IndexSegment:
+      description: The segment information for an index.
       type: object
       properties:
         shards:
           type: object
+          description: The segment information for each shard.
           additionalProperties:
             oneOf:
-              - $ref: '#/components/schemas/ShardsSegment'
               - type: array
                 items:
                   $ref: '#/components/schemas/ShardsSegment'
+              - $ref: '#/components/schemas/ShardsSegment'
       required:
         - shards
     ShardsSegment:
+      description: The segment information for a shard.
       type: object
       properties:
         num_committed_segments:
-          type: number
+          type: integer
+          format: int32
+          description: The number of committed segments.
         routing:
           $ref: '#/components/schemas/ShardSegmentRouting'
         num_search_segments:
-          type: number
+          type: integer
+          format: int32
+          description: The number of segments available for search.
         segments:
           type: object
+          description: The detailed information for each segment.
           additionalProperties:
             $ref: '#/components/schemas/Segment'
       required:
@@ -38,41 +46,59 @@ components:
         - routing
         - segments
     ShardSegmentRouting:
+      description: The routing information for a shard segment.
       type: object
       properties:
         node:
           type: string
+          description: The node containing the segment.
         primary:
           type: boolean
+          description: Whether this is a primary shard.
         state:
           type: string
+          description: The current state of the shard.
       required:
         - node
         - primary
         - state
     Segment:
+      description: The detailed information about a segment.
       type: object
       properties:
-        attributes:
-          type: object
-          additionalProperties:
-            type: string
+        generation:
+          type: integer
+          description: The generation number of the segment.
+        num_docs:
+          type: integer
+          description: The number of documents in the segment.
+        deleted_docs:
+          type: integer
+          description: The number of deleted documents in the segment.
+        size:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        size_in_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        memory:
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+        memory_in_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         committed:
           type: boolean
-        compound:
-          type: boolean
-        deleted_docs:
-          type: number
-        generation:
-          type: number
+          description: Whether the segment is committed.
         search:
           type: boolean
-        size_in_bytes:
-          type: number
-        num_docs:
-          type: number
+          description: Whether the segment is searchable.
         version:
           $ref: '_common.yaml#/components/schemas/VersionString'
+        compound:
+          type: boolean
+          description: Whether the segment is compound.
+        attributes:
+          type: object
+          description: The attributes of the segment.
+          additionalProperties:
+            type: string
       required:
         - attributes
         - committed

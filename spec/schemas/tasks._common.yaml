@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Schemas of tasks._common category
-  description: Schemas of tasks._common category
+  title: Schemas of `tasks._common` Category
+  description: Schemas of `tasks._common` category.
   version: 1.0.0
 paths: {}
 components:
@@ -21,35 +21,21 @@ components:
           description: Task information grouped by node, if `group_by` was set to `node` (the default).
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/NodeTasks'
+            $ref: '#/components/schemas/TaskExecutingNode'
         tasks:
           $ref: '#/components/schemas/TaskInfos'
-    NodeTasks:
-      type: object
-      properties:
-        name:
-          $ref: '_common.yaml#/components/schemas/NodeId'
-        transport_address:
-          $ref: '_common.yaml#/components/schemas/TransportAddress'
-        host:
-          $ref: '_common.yaml#/components/schemas/Host'
-        ip:
-          $ref: '_common.yaml#/components/schemas/Ip'
-        roles:
-          type: array
-          items:
-            type: string
-        attributes:
-          type: object
-          additionalProperties:
-            type: string
-        tasks:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/TaskInfo'
-      required:
-        - tasks
-    TaskInfo:
+    TaskExecutingNode:
+      allOf:
+        - $ref: '_common.yaml#/components/schemas/BaseNode'
+        - type: object
+          properties:
+            tasks:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/TaskInfo'
+          required:
+            - tasks
+    TaskInfoBase:
       type: object
       properties:
         action:
@@ -58,6 +44,8 @@ components:
           type: boolean
         cancellable:
           type: boolean
+        cancellation_time_millis:
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
         description:
           type: string
         headers:
@@ -65,7 +53,8 @@ components:
           additionalProperties:
             type: string
         id:
-          type: number
+          type: integer
+          format: int64
         node:
           $ref: '_common.yaml#/components/schemas/NodeId'
         running_time:
@@ -75,12 +64,13 @@ components:
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
         status:
-          description: Task status information can vary wildly from task to task.
-          type: object
+          $ref: '#/components/schemas/Status'
         type:
           type: string
         parent_task_id:
           $ref: '_common.yaml#/components/schemas/TaskId'
+        resource_stats:
+          $ref: '_common.yaml#/components/schemas/ResourceStats'          
       required:
         - action
         - cancellable
@@ -90,26 +80,61 @@ components:
         - running_time_in_nanos
         - start_time_in_millis
         - type
+    TaskInfo:
+      allOf:
+        - $ref: '#/components/schemas/TaskInfoBase'
+        - type: object
+          properties: {}
     TaskInfos:
       oneOf:
-        - type: array
+        - title: grouped_by_none
+          type: array
           items:
             $ref: '#/components/schemas/TaskInfo'
-        - type: object
+        - title: grouped_by_parents
+          type: object
           additionalProperties:
-            $ref: '#/components/schemas/ParentTaskInfo'
-    ParentTaskInfo:
+            $ref: '#/components/schemas/TaskGroup'
+    TaskGroup:
       allOf:
-        - $ref: '#/components/schemas/TaskInfo'
+        - $ref: '#/components/schemas/TaskInfoBase'
         - type: object
           properties:
             children:
               type: array
               items:
-                $ref: '#/components/schemas/TaskInfo'
+                $ref: '#/components/schemas/TaskGroup'
     GroupBy:
       type: string
       enum:
         - nodes
         - none
         - parents
+    Status:
+      description: Task status information can vary wildly from task to task.
+      anyOf:
+        - $ref: '#/components/schemas/ReplicationTaskStatus'
+        - $ref: '_common.yaml#/components/schemas/BulkByScrollTaskStatus'
+        - $ref: '#/components/schemas/PersistentTaskStatus'
+        - $ref: '#/components/schemas/RawTaskStatus'
+    ReplicationTaskStatus:
+      type: object
+      properties:
+        phase:
+          type: string
+      required:
+        - phase
+    PersistentTaskStatus:
+      type: object
+      properties:
+        state:
+          type: string
+      required:
+        - state
+    RawTaskStatus:
+      type: object
+      additionalProperties:
+        title: metadata
+    TaskResponse:
+      anyOf:
+        - $ref: '_common.yaml#/components/schemas/BulkByScrollResponseBase'

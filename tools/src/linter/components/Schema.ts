@@ -8,16 +8,16 @@
 */
 
 import ValidatorBase from './base/ValidatorBase'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { type ValidationError } from 'types'
 
 const NAME_REGEX = /^[A-Za-z0-9]+$/
 
 export default class Schema extends ValidatorBase {
   name: string
-  spec: OpenAPIV3.SchemaObject
+  spec: OpenAPIV3_1.SchemaObject
 
-  constructor (error_file: string, name: string, spec: OpenAPIV3.SchemaObject) {
+  constructor (error_file: string, name: string, spec: OpenAPIV3_1.SchemaObject) {
     super(error_file, `#/components/schemas/${name}`)
     this.name = name
     this.spec = spec

@@ -1,0 +1,43 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of model groups.
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+version: '>= 2.11'
+epilogues:
+  - path: /_plugins/_ml/model_groups/{model_group_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+chapters:
+  - synopsis: Create model group.
+    warnings:
+      multiple-paths-detected: false
+    id: create_model_group
+    path: /_plugins/_ml/model_groups/_register
+    method: POST
+    request:
+      payload:
+        name: NLP_Group
+        description: Model group for NLP models.
+    response:
+      status: 200
+    output:
+      test_model_group_id: payload.model_group_id
+  - synopsis: Query model group.
+    path: /_plugins/_ml/model_groups/{model_group_id}
+    method: GET
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+    response:
+      status: 200
+  - synopsis: Delete model group.
+    path: /_plugins/_ml/model_groups/{model_group_id}
+    method: DELETE
+    parameters:
+      model_group_id: ${create_model_group.test_model_group_id}
+    response:
+      status: 200

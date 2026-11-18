@@ -1,0 +1,240 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Observability API
+  description: The Observability API manages observability objects that monitor and analyze OpenSearch clusters.
+  version: 1.0.0
+paths:
+  /_plugins/_observability/_local/stats:
+    get:
+      operationId: observability.get_localstats.0
+      x-operation-group: observability.get_localstats
+      tags:
+        - Observability
+      x-version-added: '2.5'
+      description: Retrieves local stats of all observability objects.
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.get_localstats@200'
+  /_plugins/_observability/object:
+    get:
+      operationId: observability.list_objects.0
+      x-operation-group: observability.list_objects
+      tags:
+        - Observability
+      x-version-added: '1.1'
+      description: Retrieves list of all observability objects.
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.list_objects@200'
+    post:
+      operationId: observability.create_object.0
+      x-operation-group: observability.create_object
+      tags:
+        - Observability
+      x-version-added: '1.1'
+      description: Creates a new observability object.
+      requestBody:
+        $ref: '#/components/requestBodies/observability.create_object'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.create_object@200'
+    delete:
+      operationId: observability.delete_objects.0
+      x-operation-group: observability.delete_objects
+      tags:
+        - Observability
+      x-version-added: '1.1'
+      description: Deletes specific observability objects specified by ID or a list of IDs.
+      parameters:
+        - $ref: '#/components/parameters/observability.delete_objects::query.objectId'
+        - $ref: '#/components/parameters/observability.delete_objects::query.objectIdList'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.delete_objects@200'
+        '404':
+          $ref: '#/components/responses/observability.delete_objects@404'
+  /_plugins/_observability/object/{object_id}:
+    get:
+      operationId: observability.get_object.0
+      x-operation-group: observability.get_object
+      tags:
+        - Observability
+      x-version-added: '1.1'
+      description: Retrieves specific observability object specified by ID.
+      parameters:
+        - $ref: '#/components/parameters/observability.get_object::path.object_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.get_object@200'
+        '404':
+          $ref: '#/components/responses/observability.get_object@404'
+    put:
+      operationId: observability.update_object.0
+      x-operation-group: observability.update_object
+      tags:
+        - Observability
+      x-version-added: '1.1'
+      description: Updates an existing observability object.
+      parameters:
+        - $ref: '#/components/parameters/observability.update_object::path.object_id'
+      requestBody:
+        $ref: '#/components/requestBodies/observability.update_object'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.update_object@200'
+        '404':
+          $ref: '#/components/responses/observability.update_object@404'
+    delete:
+      operationId: observability.delete_object.0
+      x-operation-group: observability.delete_object
+      tags:
+        - Observability
+      x-version-added: '1.1'
+      description: Deletes specific observability object specified by ID.
+      parameters:
+        - $ref: '#/components/parameters/observability.delete_object::path.object_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/observability.delete_object@200'
+        '404':
+          $ref: '#/components/responses/observability.delete_object@404'
+components:
+  requestBodies:
+    observability.create_object:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObject'
+    observability.update_object:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObject'
+  responses:
+    observability.list_objects@200:
+      description: The API successfully retrieved all observability objects.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObjectList'
+    observability.create_object@200:
+      description: The API successfully created the observability object.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              objectId:
+                type: string
+    observability.get_object@200:
+      description: The API successfully retrieved the specified observability object.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/observability._common.yaml#/components/schemas/ObservabilityObjectList'
+    observability.get_object@404:
+      description: The API could not find the specified observability object.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    observability.update_object@200:
+      description: The API successfully updated the observability object.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              objectId:
+                type: string
+                description: The unique identifier of the updated observability object.
+    observability.update_object@404:
+      description: The API could not find the observability object to update.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    observability.delete_object@200:
+      description: The API successfully deleted the observability object.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              deleteResponseList:
+                description: The list of deletion response for each object.
+                type: object
+                additionalProperties:
+                  type: string
+    observability.delete_object@404:
+      description: The API could not find the observability object to delete.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    observability.delete_objects@200:
+      description: The API successfully deleted the specified observability objects.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              deleteResponseList:
+                description: The list of deletion responses for each object.
+                type: object
+                additionalProperties:
+                  type: string
+                  # example: OK
+    observability.delete_objects@404:
+      description: The API could not find one or more observability objects to delete.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    observability.get_localstats@200:
+      description: The API successfully retrieved local statistics.
+      content:
+        text/plain:
+          schema:
+            type: string
+  parameters:
+    observability.get_object::path.object_id:
+      in: path
+      name: object_id
+      description: The ID of the observability object to retrieve.
+      required: true
+      schema:
+        type: string
+      style: simple
+    observability.update_object::path.object_id:
+      in: path
+      name: object_id
+      description: The ID of the observability object to update.
+      required: true
+      schema:
+        type: string
+      style: simple
+    observability.delete_object::path.object_id:
+      in: path
+      name: object_id
+      description: The ID of the observability object to delete.
+      required: true
+      schema:
+        type: string
+      style: simple
+    observability.delete_objects::query.objectId:
+      in: query
+      name: objectId
+      description: The ID of a single observability object to delete.
+      required: false
+      schema:
+        type: string
+      style: form
+    observability.delete_objects::query.objectIdList:
+      in: query
+      name: objectIdList
+      description: A comma-separated list of observability object IDs to delete.
+      required: false
+      schema:
+        type: string
+      style: form

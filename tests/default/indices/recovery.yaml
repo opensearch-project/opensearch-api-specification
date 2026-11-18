@@ -1,0 +1,32 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _recovery endpoint.
+prologues:
+  - path: /movies
+    method: PUT
+    status: [200]
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get information about any completed or ongoing shard recoveries for an index.
+    path: /{index}/_recovery
+    warnings:
+      multiple-paths-detected: false
+    method: GET
+    parameters:
+      index: movies
+    response:
+      status: 200
+      payload:
+        movies:
+          shards:
+            - stage: DONE
+              index:
+                size:
+                  total_in_bytes: 0
+              translog:
+                total: 0
+              verify_index:
+                total_time_in_millis: 0

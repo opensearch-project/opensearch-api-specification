@@ -1,0 +1,25 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test limiting certain operations on a specified index.
+prologues:
+  - path: /movies
+    method: PUT
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Disable any write operations made to the index.
+    path: /{index}/_block/{block}
+    method: PUT
+    parameters:
+      index: movies
+      block: write
+    response:
+      status: 200
+      payload:
+        shards_acknowledged: true
+        acknowledged: true
+        indices:
+          - name: movies
+            blocked: true

@@ -1,0 +1,66 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test rank evaluation API using both GET and POST methods.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Quentin Tarantino, title: Pulp Fiction, year: 1994}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Christopher Nolan, title: Inception, year: 2010}
+
+chapters:
+  - synopsis: Perform rank evaluation using GET.
+    path: /{index}/_rank_eval
+    method: GET
+    parameters:
+      index: movies
+    request:
+      payload:
+        metric:
+          precision:
+            k: 10
+        requests:
+          - id: query_1
+            request: 
+              query: 
+                match: 
+                  title: Pulp Fiction
+            ratings: 
+              - _id: movie1
+                rating: 1
+                _index: movies
+    response:
+      status: 200
+
+  - synopsis: Perform rank evaluation using POST.
+    path: /{index}/_rank_eval
+    method: POST
+    parameters:
+      index: [movies]
+    request:
+      payload:
+        metric:
+          mean_reciprocal_rank:
+            k: 10
+        requests:
+          - id: query_2
+            request: 
+              query: 
+                match: 
+                  director: Christopher Nolan
+            ratings: 
+              - _id: movie2
+                _index: movies
+                rating: 1
+    response:
+      status: 200

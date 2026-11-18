@@ -7,7 +7,7 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import fs from 'fs'
 import _ from 'lodash'
 import { read_yaml, write_yaml } from '../helpers'
@@ -23,15 +23,17 @@ export default class OpenApiMerger {
   protected _spec: Record<string, any>
   protected _merged: boolean = false
 
-  paths: Record<string, Record<string, OpenAPIV3.PathItemObject>> = {} // namespace -> path -> path_item_object
-  schemas: Record<string, Record<string, OpenAPIV3.SchemaObject>> = {} // category -> schema -> schema_object
+  paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
+  schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.root_folder = fs.realpathSync(root_folder)
+    const tags_file = `${this.root_folder}/_tags.yaml`
     this._spec = {
       openapi: '3.1.0',
       info: read_yaml(`${this.root_folder}/_info.yaml`, true),
+      ...(fs.existsSync(tags_file) ? { tags: read_yaml(tags_file, true).tags } : {}),
       paths: {},
       components: {
         parameters: {},
@@ -48,17 +50,19 @@ export default class OpenApiMerger {
     return this
   }
 
-  spec(): OpenAPIV3.Document {
+  spec(): OpenAPIV3_1.Document {
     if (!this._merged) {
       this.#merge_schemas()
       this.#merge_namespaces()
       this.#sort_spec_keys()
+      this.#add_defaults()
       this.#generate_global_params()
       this.#generate_superseded_ops()
+      this.#normalize_fields()
       this._merged = true
     }
 
-    return this._spec as OpenAPIV3.Document
+    return this._spec as OpenAPIV3_1.Document
   }
 
   // Merge files from <spec_root>/namespaces folder.
@@ -131,6 +135,43 @@ export default class OpenApiMerger {
     this._spec.paths = _.fromPairs(Object.entries(this._spec.paths as Document).sort((a, b) => a[0].localeCompare(b[0])))
     Object.entries(this._spec.paths as Document).forEach(([path, path_item]) => {
       this._spec.paths[path] = _.fromPairs(Object.entries(path_item as Document).sort((a, b) => a[0].localeCompare(b[0])))
+    })
+  }
+
+  #normalize_key(key: string): string {
+    return key
+      .replaceAll('::', '___')
+      .replaceAll('@', '___')
+      .replaceAll(':', '___')
+  }
+
+  #normalize_fields(obj: any = this._spec): void {
+    for (const key in obj) {
+      const item = obj[key]
+
+      if (item?.$ref !== undefined) {
+        const renamed_ref = this.#normalize_key(item.$ref as string)
+        if (renamed_ref != item.$ref) {
+          item.$ref = renamed_ref
+        }
+      }
+
+      const renamed_key = this.#normalize_key(key)
+      if (renamed_key != key) {
+        obj[renamed_key] = obj[key]
+        delete obj[key]
+      }
+
+      if (_.isObject(item) || _.isArray(item)) {
+        this.#normalize_fields(item)
+      }
+    }
+  }
+
+  #add_defaults(): void {
+    // Add default descriptions
+    Object.entries(this._spec.components.responses as Document).forEach(([_path, response_item]) => {
+      if (response_item.description === undefined) response_item.description = ''
     })
   }
 

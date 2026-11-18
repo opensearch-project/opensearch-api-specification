@@ -7,75 +7,68 @@
 * compatible open source license.
 */
 
-import _ from "lodash";
-import { ChapterOutput } from "./ChapterOutput";
-import ChapterReader from "./ChapterReader";
-import { StoryOutputs } from "./StoryOutputs";
-import { overall_result } from "./helpers";
-import { ChapterEvaluation, Result } from "./types/eval.types";
-import { SupplementalChapter } from "./types/story.types";
+import _ from "lodash"
+import { ChapterOutput } from "./ChapterOutput"
+import ChapterReader from "./ChapterReader"
+import { StoryOutputs } from "./StoryOutputs"
+import { overall_result } from "./helpers"
+import { ChapterEvaluation, EvaluationWithOutput, Result } from './types/eval.types'
+import { Logger } from "../Logger"
+import { sleep, to_json } from "../helpers"
+import { Payload, SupplementalChapter } from "./types/story.types"
+import ResponsePayloadEvaluator from './ResponsePayloadEvaluator'
 
 export default class SupplementalChapterEvaluator {
-  private readonly _chapter_reader: ChapterReader;
+  private readonly _chapter_reader: ChapterReader
+  private readonly logger: Logger
 
-  constructor(chapter_reader: ChapterReader) {
-    this._chapter_reader = chapter_reader;
+  constructor(chapter_reader: ChapterReader, logger: Logger) {
+    this._chapter_reader = chapter_reader
+    this.logger = logger
   }
 
-  async evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<{ evaluation: ChapterEvaluation, evaluation_error: boolean }> {
+  async evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<ChapterEvaluation> {
     const title = `${chapter.method} ${chapter.path}`
+
+    let tries = chapter.retry && chapter.retry?.count > 0 ? chapter.retry.count + 1 : 1
+    let chapter_evaluation: EvaluationWithOutput
+
+    do {
+      chapter_evaluation = await this.#evaluate(chapter, story_outputs)
+      if (chapter_evaluation.evaluation.result === Result.PASSED) break
+      if (--tries == 0) break
+      this.logger.info(`Failed, retrying, ${tries == 1 ? '1 retry left' : `${tries} retries left`} ...`)
+      await sleep(chapter.retry?.wait ?? 1000)
+    } while (tries > 0)
+
+    const result: ChapterEvaluation = { title, overall: chapter_evaluation.evaluation }
+    if (chapter_evaluation.output) result.output = chapter_evaluation.output
+    return result
+  }
+
+  async #evaluate(chapter: SupplementalChapter, story_outputs: StoryOutputs): Promise<EvaluationWithOutput> {
     const response = await this._chapter_reader.read(chapter, story_outputs)
-    const status = chapter.status ?? [200, 201]
     const output_values_evaluation = ChapterOutput.extract_output_values(response, chapter.output)
-    let response_evaluation: ChapterEvaluation
-    const passed_evaluation = { title, overall: { result: Result.PASSED } }
-    if (status.includes(response.status)) {
-      response_evaluation = passed_evaluation
-    } else {
-      response_evaluation = {
-        title,
-        overall: {
-          result: Result.ERROR,
-          message: response.message,
-          error: response.error as Error
-        }
-      }
-    }
+    if (output_values_evaluation.output) this.logger.info(`$ ${to_json(output_values_evaluation.output)}`)
+    const status = chapter.status ?? [200, 201]
+    const overall = status.includes(response.status) ? { result: Result.PASSED } : { result: Result.ERROR, message: response.message, error: response.error as Error }
+    const response_payload: Payload | undefined = overall.result === Result.PASSED ? story_outputs.resolve_value(chapter.response?.payload) : chapter.response?.payload
+    const payload_body_evaluation = overall.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload) : { result: Result.SKIPPED }
+    const result: Result = overall_result(_.compact([overall, payload_body_evaluation, output_values_evaluation.evaluation]))
 
-    if (output_values_evaluation.output) {
-      response_evaluation.output = output_values_evaluation.output
-    }
+    const evaluation_result: EvaluationWithOutput = { evaluation: { result } }
+    if (output_values_evaluation.output) { evaluation_result.output = output_values_evaluation.output }
 
-    const result = overall_result(_.compact([
-      response_evaluation.overall,
-      output_values_evaluation.evaluation
-    ]))
-
-    if (result === Result.PASSED) {
-      return { evaluation: passed_evaluation, evaluation_error: false }
-    } else {
+    if (result !== Result.PASSED) {
       const message_segments = []
-
-      if (response_evaluation.overall.result === Result.ERROR) {
-        message_segments.push(`${response_evaluation.overall.message}`)
-      }
-
-      if (output_values_evaluation.evaluation.message !== undefined && output_values_evaluation.evaluation.result === Result.ERROR) {
+      if (response.message !== undefined) { message_segments.push(`${response.message}`) }
+      if (output_values_evaluation.evaluation.result === Result.ERROR) {
         message_segments.push(`${output_values_evaluation.evaluation.message}`)
       }
-
-      const message = message_segments.join('\n')
-
-      var evaluation: ChapterEvaluation = {
-        title,
-        overall: { result: Result.ERROR, message, error: response.error as Error }
-      }
-
-      if (output_values_evaluation.output) {
-        evaluation.output = output_values_evaluation.output
-      }
-
-      return { evaluation, evaluation_error: true }
+      if (message_segments.length > 0) evaluation_result.evaluation.message = message_segments.join('\n')
+      if (response.error) { evaluation_result.evaluation.error = response.error as Error }
     }
+
+    return evaluation_result
   }
 }

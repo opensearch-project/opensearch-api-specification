@@ -1,0 +1,37 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+description: Test flow_framework provision endpoints.
+version: '>= 2.12'
+prologues:
+  - path: /_plugins/_flow_framework/workflow
+    id: workflow
+    method: POST
+    parameters:
+      use_case: semantic_search_with_cohere_embedding_query_enricher
+    request:
+      payload:
+        create_connector.credential.key: test_api_key
+    output:
+      workflow_id: payload.workflow_id
+epilogues:
+  - path: /_plugins/_flow_framework/workflow/{workflow_id}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      workflow_id: ${workflow.workflow_id}
+chapters:
+  - synopsis: Get workflow status.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
+    method: GET
+    parameters:
+      workflow_id: ${workflow.workflow_id}
+    response:
+      status: 200
+      payload:
+        state: NOT_STARTED
+  - synopsis: Get workflow status using an invalid ID.
+    path: /_plugins/_flow_framework/workflow/{workflow_id}/_status
+    method: GET
+    parameters:
+      workflow_id: invalid
+    response:
+      status: 404

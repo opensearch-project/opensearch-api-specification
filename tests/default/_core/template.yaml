@@ -1,0 +1,73 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test templates.
+epilogues:
+  - path: /_template/daily_logs
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a template.
+    path: /_template/{name}
+    method: POST
+    parameters:
+      name: daily_logs
+    request:
+      payload:
+        index_patterns:
+          - 'logs*'
+        settings:
+          number_of_shards: 2
+          number_of_replicas: 2
+    response:
+      status: 200
+  - synopsis: Update a template.
+    path: /_template/{name}
+    method: PUT
+    parameters:
+      name: daily_logs
+    request:
+      payload:
+        index_patterns:
+          - 'logs*'
+        aliases:
+          my_logs: {}
+        settings:
+          number_of_shards: 4
+          number_of_replicas: 4
+        mappings:
+          properties:
+            timestamp:
+              type: date
+              format: yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis
+            value:
+              type: double
+    response:
+      status: 200
+  - synopsis: Retrieve templates.
+    path: /_template
+    method: GET
+  - synopsis: Retrieve a template.
+    path: /_template/{name}
+    method: GET
+    parameters:
+      name: daily_logs
+    response:
+      status: 200
+      payload:
+        daily_logs:
+          index_patterns:
+            - logs*
+          settings:
+            index:
+              number_of_shards: '4'
+              number_of_replicas: '4'
+  - synopsis: Check that a template exists.
+    path: /_template/{name}
+    method: HEAD
+    parameters:
+      name: daily_logs
+  - synopsis: Delete a template.
+    path: /_template/{name}
+    method: DELETE
+    parameters:
+      name: daily_logs

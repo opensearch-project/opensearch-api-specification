@@ -1,37 +1,50 @@
 openapi: 3.1.0
 info:
-  title: Schemas of indices.shard_stores category
-  description: Schemas of indices.shard_stores category
+  title: Schemas of `indices.shard_stores` Category
+  description: Schemas of `indices.shard_stores` category.
   version: 1.0.0
 paths: {}
 components:
   schemas:
     ShardStoreStatus:
-      type: string
-      enum:
-        - all
-        - green
-        - red
-        - yellow
+      description: The status of shard stores.
+      oneOf:
+        - type: string
+          const: all
+          description: Return all shards, regardless of health status.
+        - type: string
+          const: green
+          description: The primary shard and all replica shards are assigned.
+        - type: string
+          const: red
+          description: The primary shard is unassigned.
+        - type: string
+          const: yellow
+          description: One or more replica shards are unassigned.
     IndicesShardStores:
+      description: The shard store information for indices.
       type: object
       properties:
         shards:
           type: object
+          description: The store information for each shard.
           additionalProperties:
             $ref: '#/components/schemas/ShardStoreWrapper'
       required:
         - shards
     ShardStoreWrapper:
+      description: The wrapper containing store information for a shard.
       type: object
       properties:
         stores:
           type: array
+          description: The list of stores for the shard.
           items:
             $ref: '#/components/schemas/ShardStore'
       required:
         - stores
     ShardStore:
+      description: The store information for a shard.
       type: object
       properties:
         allocation:
@@ -40,21 +53,33 @@ components:
           $ref: '_common.yaml#/components/schemas/Id'
         store_exception:
           $ref: '#/components/schemas/ShardStoreException'
+      additionalProperties:
+        title: nodes
+        $ref: '_common.yaml#/components/schemas/NodeAttributes'
       required:
         - allocation
     ShardStoreAllocation:
-      type: string
-      enum:
-        - primary
-        - replica
-        - unused
+      description: The allocation type of the shard store.
+      oneOf:
+        - description: The store is for a primary shard.
+          const: primary
+          type: string
+        - description: The store is for a replica shard.
+          const: replica
+          type: string
+        - description: The store is not currently in use.
+          const: unused
+          type: string
     ShardStoreException:
+      description: The exception information for a shard store.
       type: object
       properties:
         reason:
           type: string
+          description: The reason for the store exception.
         type:
           type: string
+          description: The type of store exception.
       required:
         - reason
         - type

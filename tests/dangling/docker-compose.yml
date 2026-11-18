@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  opensearch-cluster:
+    build:
+      context: .
+      args:
+        - OPENSEARCH_DOCKER_HUB_PROJECT=${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}
+        - OPENSEARCH_DOCKER_REF=${OPENSEARCH_DOCKER_REF}
+        - OPENSEARCH_VERSION=${OPENSEARCH_VERSION:-latest}
+    ports:
+      - 9200:9200
+      - 9600:9600
+    environment:
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - discovery.type=single-node

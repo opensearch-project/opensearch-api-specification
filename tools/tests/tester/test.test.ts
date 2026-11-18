@@ -9,11 +9,10 @@
 
 import { spawnSync } from 'child_process'
 import * as ansi from 'tester/Ansi'
-import * as path from 'path'
-import { type Chapter, type ChapterRequest, type Output, type Request, type ActualResponse, Story } from 'tester/types/story.types'
-import { type EvaluationWithOutput, Result, ChapterEvaluation, StoryEvaluation } from 'tester/types/eval.types'
-import { ChapterOutput } from 'tester/ChapterOutput'
+import { Chapter, ChapterRequest, type Output, type Request } from 'tester/types/story.types'
+import { ChapterEvaluation, Result, StoryEvaluation } from 'tester/types/eval.types'
 import StoryEvaluator from 'tester/StoryEvaluator'
+import { ParsedStory } from 'tester/types/parsed_story.types'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/tester/test.ts'].concat(args), {
@@ -45,54 +44,6 @@ test('invalid story', () => {
   )
 })
 
-function create_response(payload: any): ActualResponse {
-  return {
-    status: 200,
-    content_type: 'application/json',
-    payload
-  }
-}
-
-function passed_output(output: Record<string, any>): EvaluationWithOutput {
-  return {
-    evaluation: { result: Result.PASSED },
-    output: new ChapterOutput(output)
-  }
-}
-
-test('extract_output_values', () => {
-  const response: ActualResponse = create_response({
-    a: {
-      b: {
-        c: 1
-      },
-      arr: [
-        { d: 2 },
-        { e: 3 }
-      ]
-    }
-  })
-  const output1 = {
-    c: 'payload.a.b.c',
-    d: 'payload.a.arr[0].d',
-    e: 'payload.a.arr[1].e'
-  }
-  expect(ChapterOutput.extract_output_values(response, output1)).toEqual(passed_output({
-    c: 1,
-    d: 2,
-    e: 3
-  }))
-  expect(ChapterOutput.extract_output_values(response, { x: 'payload' })).toEqual(
-    passed_output({ x: response.payload })
-  )
-  expect(ChapterOutput.extract_output_values(response, { x: 'payload.a.b.x[0]' })).toEqual({
-    evaluation: {
-      result: Result.ERROR,
-      message: 'Expected to find non undefined value at `payload.a.b.x[0]`.'
-    }
-  })
-})
-
 function dummy_chapter_request(id?: string, output?: Output): ChapterRequest {
   return {
     id,
@@ -112,14 +63,14 @@ function dummy_chapter_request_with_input(parameters?: Record<string, any>, requ
 
 function chapter(synopsis: string, request: ChapterRequest): Chapter {
   return {
-    synopsis,
-    ...request
+    ...request,
+    synopsis
   }
 }
 
 
 test('check_story_variables', () => {
-  const check_story_variables = (s: Story): StoryEvaluation | undefined => StoryEvaluator.check_story_variables(s, 'display_path', 'full_path')
+  const check_story_variables = (s: ParsedStory): StoryEvaluation | undefined => StoryEvaluator.check_story_variables(s, 'display_path', 'full_path')
   const failed = (prologues: ChapterEvaluation[] = [], chapters: ChapterEvaluation[] = []): StoryEvaluation => ({
     result: Result.ERROR,
     description: 'story1',
@@ -207,11 +158,10 @@ test.todo('--tab-width')
 test('--dry-run', () => {
   const test_yaml = 'tools/tests/tester/fixtures/empty_with_all_the_parts.yaml'
   const s = spec(['--dry-run', '--tests', test_yaml]).stdout
-  const full_path = path.join(__dirname, '../../../' + test_yaml)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} CHAPTERS`)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} EPILOGUES`)
   expect(s).not.toContain(`${ansi.yellow('SKIPPED')} PROLOGUES`)
-  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('empty_with_all_the_parts.yaml'))} ${ansi.gray('(' + full_path + ')')}`)
+  expect(s).toContain(`${ansi.yellow('SKIPPED')} ${ansi.cyan(ansi.b('empty_with_all_the_parts.yaml'))} ${ansi.gray('(' + test_yaml + ')')}`)
 })
 
 test('--dry-run --verbose', () => {

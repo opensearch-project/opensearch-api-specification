@@ -1,0 +1,82 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test updating a document.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /movies/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 1990
+chapters:
+  - synopsis: Update a document in the index.
+    path: /{index}/_update/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: '1'
+      refresh: true
+    request:
+      payload:
+        doc:
+          title: Beauty and the Beast
+          year: 1991
+    response:
+      status: 200
+      payload:
+        result: updated
+  - synopsis: Update a document in the index using a script.
+    path: /{index}/_update/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: '1'
+    request:
+      payload:
+        script:
+          source: ctx._source.year += params.value
+          lang: painless
+          params:
+            value: 10
+    response:
+      status: 200
+      payload:
+        result: updated
+  - synopsis: Upsert a document.
+    path: /{index}/_update/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: '1'
+    request:
+      payload:
+        doc:
+          title: Drive
+        upsert:
+          title: Drive
+    response:
+      status: 200
+      payload:
+        result: updated
+  - synopsis: Upsert a document (doc_as_upsert).
+    path: /{index}/_update/{id}
+    method: POST
+    parameters:
+      index: movies
+      id: '1'
+    request:
+      payload:
+        doc:
+          title: Drive
+          year: 2011
+        doc_as_upsert: true
+    response:
+      status: 200
+      payload:
+        result: updated

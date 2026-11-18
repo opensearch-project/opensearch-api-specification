@@ -1,0 +1,196 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test terms aggregation with various order options to verify order field functionality.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /products
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            category:
+              type: keyword
+            price:
+              type: integer
+            sales:
+              type: integer
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: products}}
+        - {category: electronics, price: 500, sales: 100}
+        - {create: {_index: products}}
+        - {category: electronics, price: 600, sales: 150}
+        - {create: {_index: products}}
+        - {category: electronics, price: 700, sales: 200}
+        - {create: {_index: products}}
+        - {category: clothing, price: 50, sales: 300}
+        - {create: {_index: products}}
+        - {category: clothing, price: 75, sales: 250}
+        - {create: {_index: products}}
+        - {category: books, price: 20, sales: 500}
+        - {create: {_index: products}}
+        - {category: books, price: 25, sales: 400}
+        - {create: {_index: products}}
+        - {category: books, price: 30, sales: 450}
+        - {create: {_index: products}}
+        - {category: books, price: 35, sales: 350}
+
+chapters:
+  - synopsis: Test terms aggregation ordered by count descending (default).
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              order:
+                _count: desc
+    response:
+      status: 200
+      payload:
+        aggregations:
+          categories:
+            buckets:
+              - key: books
+                doc_count: 4
+              - key: electronics
+                doc_count: 3
+              - key: clothing
+                doc_count: 2
+
+  - synopsis: Test terms aggregation ordered by count ascending.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              order:
+                _count: asc
+    response:
+      status: 200
+      payload:
+        aggregations:
+          categories:
+            buckets:
+              - key: clothing
+                doc_count: 2
+              - key: electronics
+                doc_count: 3
+              - key: books
+                doc_count: 4
+
+  - synopsis: Test terms aggregation ordered by key descending.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              order:
+                _key: desc
+    response:
+      status: 200
+      payload:
+        aggregations:
+          categories:
+            buckets:
+              - key: electronics
+                doc_count: 3
+              - key: clothing
+                doc_count: 2
+              - key: books
+                doc_count: 4
+
+  - synopsis: Test terms aggregation ordered by key ascending.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              order:
+                _key: asc
+    response:
+      status: 200
+      payload:
+        aggregations:
+          categories:
+            buckets:
+              - key: books
+                doc_count: 4
+              - key: clothing
+                doc_count: 2
+              - key: electronics
+                doc_count: 3
+
+  - synopsis: Test terms aggregation ordered by sub-aggregation metric.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              order:
+                avg_sales: desc
+            aggregations:
+              avg_sales:
+                avg:
+                  field: sales
+    response:
+      status: 200
+
+  - synopsis: Test terms aggregation with multiple order criteria.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              order:
+                - _count: desc
+                - _key: asc
+    response:
+      status: 200
+
+epilogues:
+  - path: /products
+    method: DELETE
+    status: [200, 404]

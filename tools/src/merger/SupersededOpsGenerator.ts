@@ -7,14 +7,15 @@
 * compatible open source license.
 */
 
-import { type OperationSpec, type SupersededOperationMap } from 'types'
+import { type OperationSpec } from 'types'
 import _ from 'lodash'
 import { read_yaml } from '../helpers'
 import { type Logger } from '../Logger'
+import { SupersededOperations } from "../types/superseded_operations.types";
 
 export default class SupersededOpsGenerator {
   logger: Logger
-  superseded_ops: SupersededOperationMap
+  superseded_ops: SupersededOperations
 
   constructor (root_path: string, logger: Logger) {
     this.logger = logger

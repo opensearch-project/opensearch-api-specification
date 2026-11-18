@@ -1,0 +1,56 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _count endpoint.
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload: {}
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book_1392214}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book_1392215}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Count the number of documents in an index.
+    path: /{index}/_count
+    method: GET
+    parameters:
+      index: books
+    response:
+      status: 200
+      payload:
+        count: 2  
+  - synopsis: Count the number of documents in an index that match a query.
+    path: /{index}/_count
+    method: POST
+    parameters:
+      index: books
+      allow_no_indices: true
+      expand_wildcards: closed
+      ignore_unavailable: true
+      min_score: 0
+      routing: zone
+      preference: none
+      terminate_after: 1
+    request:
+      payload:
+        query:
+          term:
+            year: 1960
+    response:
+      status: 200
+      payload:
+        count: 1

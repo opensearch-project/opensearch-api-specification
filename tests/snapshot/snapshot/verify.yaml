@@ -1,0 +1,25 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test verifying a snapshot repository.
+prologues:
+  - path: /_snapshot/my-fs-repository
+    method: POST
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+epilogues:
+  - path: /_snapshot/my-fs-repository
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Verify snapshot repository.
+    path: /_snapshot/{repository}/_verify
+    method: POST
+    parameters:
+      repository: my-fs-repository
+    response:
+      status: 200
+      payload:
+        nodes: {}

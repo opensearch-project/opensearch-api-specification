@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  opensearch-cluster:
+    image: ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
+    ports:
+      - 9200:9200
+      - 9600:9600
+    environment:
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD:-myStrongPassword123!}
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - cluster.remote_store.state.enabled=true
+      - discovery.type=single-node
+      - node.attr.remote_store.repository.fs-segment-store.settings.location=/tmp/opensearch/repo/segment
+      - node.attr.remote_store.repository.fs-segment-store.type=fs
+      - node.attr.remote_store.repository.fs-state-store.settings.location=/tmp/opensearch/repo/state
+      - node.attr.remote_store.repository.fs-state-store.type=fs
+      - node.attr.remote_store.repository.fs-translog-store.settings.location=/tmp/opensearch/repo/translog
+      - node.attr.remote_store.repository.fs-translog-store.type=fs
+      - node.attr.remote_store.segment.repository=fs-segment-store
+      - node.attr.remote_store.state.repository=fs-state-store
+      - node.attr.remote_store.translog.repository=fs-translog-store
+      - path.repo=/tmp/opensearch/repo

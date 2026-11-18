@@ -1,0 +1,59 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test agentic search pipeline processors schema validation.
+version: '>= 3.2'
+warnings:
+  invalid-path-detected: false
+epilogues:
+  - path: /_search/pipeline/agentic-pipeline
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create search pipeline with agentic_query_translator request processor.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: agentic-pipeline
+    request:
+      payload:
+        request_processors:
+          - agentic_query_translator:
+              agent_id: test-agent-id
+              tag: agentic_translator
+              description: Translates natural language to DSL
+              ignore_failure: true
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  - synopsis: Delete agentic pipeline before recreating with response processor.
+    path: /_search/pipeline/{id}
+    method: DELETE
+    parameters:
+      id: agentic-pipeline
+    response:
+      status: 200
+
+  - synopsis: Create search pipeline with agentic_query_translator and agentic_context processors.
+    version: '>= 3.3'
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: agentic-pipeline
+    request:
+      payload:
+        request_processors:
+          - agentic_query_translator:
+              agent_id: test-agent-id
+        response_processors:
+          - agentic_context:
+              agent_steps_summary: true
+              dsl_query: true
+              tag: agentic_ctx
+              description: Adds agent context to response
+              ignore_failure: true
+    response:
+      status: 200
+      payload:
+        acknowledged: true

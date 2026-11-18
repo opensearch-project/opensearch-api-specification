@@ -1,0 +1,66 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test document multi-get.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies, _id: movie1}}
+        - {director: Bennett Miller, title: The Cruise, year: 1998}
+        - {create: {_index: movies, _id: movie2}}
+        - {director: Nicolas Winding Refn, title: Drive, year: 1960}
+chapters:
+  - synopsis: Retrieve documents from multiple indexes (GET).
+    path: /{index}/_mget
+    method: GET
+    parameters:
+      index: movies
+    request:
+      payload:
+        docs:
+          - _id: movie1
+            _source:
+              excludes:
+                - title
+          - _id: movie1
+            _source: false
+          - _id: movie2
+            _source:
+              includes:
+                - title
+    response:
+      status: 200
+      payload:
+        docs:
+          - _index: movies
+            _id: movie1
+          - _index: movies
+            _id: movie1
+          - _index: movies
+            _id: movie2
+  - synopsis: Retrieve documents from multiple indexes (POST).
+    path: /{index}/_mget
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        docs:
+          - _id: movie1
+          - _id: movie2
+    response:
+      status: 200
+      payload:
+        docs:
+          - _index: movies
+            _id: movie1
+          - _index: movies
+            _id: movie2

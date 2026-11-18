@@ -1,0 +1,7 @@
+ARG OPENSEARCH_DOCKER_HUB_PROJECT
+ARG OPENSEARCH_VERSION
+ARG OPENSEARCH_DOCKER_REF
+
+FROM ${OPENSEARCH_DOCKER_HUB_PROJECT}/opensearch:${OPENSEARCH_VERSION}${OPENSEARCH_DOCKER_REF}
+RUN ./bin/opensearch-plugin install -b analysis-icu
+RUN ./bin/opensearch-plugin install -b analysis-phonenumber

@@ -1,0 +1,39 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test tasks endpoint.
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+  - path: /books/_delete_by_query
+    id: task
+    method: POST
+    parameters:
+      refresh: true
+      conflicts: proceed
+      wait_for_completion: false
+    request:
+      payload:
+        query:
+          match_all: {}
+    output:
+      id: payload.task
+chapters:
+  - synopsis: Cancel all tasks.
+    path: /_tasks/_cancel
+    method: POST
+  - synopsis: Cancel a task.
+    path: /_tasks/{task_id}/_cancel
+    method: POST
+    parameters:
+      task_id: ${task.id}

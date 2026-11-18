@@ -7,11 +7,18 @@
 * compatible open source license.
 */
 
-import { is_array_schema, is_ref, type KeysMatching, type MaybeRef, type SpecificationContext } from './index'
-import { OpenAPIV3 } from 'openapi-types'
+import {
+  HTTP_METHODS,
+  is_array_schema,
+  is_ref,
+  type KeysMatching,
+  type MaybeRef,
+  type SpecificationContext
+} from './index'
+import { OpenAPIV3_1 } from 'openapi-types'
 
 type VisitorCallback<T> = (ctx: SpecificationContext, o: NonNullable<T>) => void
-type SchemaVisitorCallback = VisitorCallback<MaybeRef<OpenAPIV3.SchemaObject>>
+type SchemaVisitorCallback = VisitorCallback<MaybeRef<OpenAPIV3_1.SchemaObject>>
 
 function visit<Parent, Key extends keyof Parent> (
   ctx: SpecificationContext,
@@ -43,55 +50,55 @@ function visit_each<Parent extends object, Key extends EnumerableKeys<Parent>> (
 }
 
 export class SpecificationVisitor {
-  visit_specification (ctx: SpecificationContext, specification: OpenAPIV3.Document): void {
+  visit_specification (ctx: SpecificationContext, specification: OpenAPIV3_1.Document): void {
     visit_each(ctx, specification, 'paths', this.visit_path.bind(this))
     visit(ctx, specification, 'components', this.visit_components.bind(this))
   }
 
-  visit_path (ctx: SpecificationContext, path: OpenAPIV3.PathItemObject): void {
+  visit_path (ctx: SpecificationContext, path: OpenAPIV3_1.PathItemObject): void {
     visit_each(ctx, path, 'parameters', this.visit_parameter.bind(this))
 
-    for (const method of Object.values(OpenAPIV3.HttpMethods)) {
+    for (const method of HTTP_METHODS) {
       visit(ctx, path, method, this.visit_operation.bind(this))
     }
   }
 
-  visit_operation (ctx: SpecificationContext, operation: OpenAPIV3.OperationObject): void {
+  visit_operation (ctx: SpecificationContext, operation: OpenAPIV3_1.OperationObject): void {
     visit_each(ctx, operation, 'parameters', this.visit_parameter.bind(this))
     visit(ctx, operation, 'requestBody', this.visit_request.bind(this))
     visit_each(ctx, operation, 'responses', this.visit_response.bind(this))
   }
 
-  visit_components (ctx: SpecificationContext, components: OpenAPIV3.ComponentsObject): void {
+  visit_components (ctx: SpecificationContext, components: OpenAPIV3_1.ComponentsObject): void {
     visit_each(ctx, components, 'parameters', this.visit_parameter.bind(this))
     visit_each(ctx, components, 'requestBodies', this.visit_request.bind(this))
     visit_each(ctx, components, 'responses', this.visit_response.bind(this))
     visit_each(ctx, components, 'schemas', this.visit_schema.bind(this))
   }
 
-  visit_parameter (ctx: SpecificationContext, parameter: MaybeRef<OpenAPIV3.ParameterObject>): void {
+  visit_parameter (ctx: SpecificationContext, parameter: MaybeRef<OpenAPIV3_1.ParameterObject>): void {
     if (is_ref(parameter)) return
 
     visit(ctx, parameter, 'schema', this.visit_schema.bind(this))
   }
 
-  visit_request (ctx: SpecificationContext, request: MaybeRef<OpenAPIV3.RequestBodyObject>): void {
+  visit_request (ctx: SpecificationContext, request: MaybeRef<OpenAPIV3_1.RequestBodyObject>): void {
     if (is_ref(request)) return
 
     visit_each(ctx, request, 'content', this.visit_media_type.bind(this))
   }
 
-  visit_response (ctx: SpecificationContext, response: MaybeRef<OpenAPIV3.ResponseObject>): void {
+  visit_response (ctx: SpecificationContext, response: MaybeRef<OpenAPIV3_1.ResponseObject>): void {
     if (is_ref(response)) return
 
     visit_each(ctx, response, 'content', this.visit_media_type.bind(this))
   }
 
-  visit_media_type (ctx: SpecificationContext, media_type: OpenAPIV3.MediaTypeObject): void {
+  visit_media_type (ctx: SpecificationContext, media_type: OpenAPIV3_1.MediaTypeObject): void {
     visit(ctx, media_type, 'schema', this.visit_schema.bind(this))
   }
 
-  visit_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3.SchemaObject>): void {
+  visit_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3_1.SchemaObject>): void {
     if (is_ref(schema)) return
 
     if (is_array_schema(schema)) {
@@ -119,7 +126,7 @@ export class SchemaVisitor extends SpecificationVisitor {
     this._callback = callback
   }
 
-  visit_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3.SchemaObject>): void {
+  visit_schema (ctx: SpecificationContext, schema: MaybeRef<OpenAPIV3_1.SchemaObject>): void {
     super.visit_schema(ctx, schema)
     this._callback(ctx, schema)
   }

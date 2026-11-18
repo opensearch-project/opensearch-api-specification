@@ -1,0 +1,153 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test _snapshot/{repository}/snapshot endpoints.
+prologues:
+  # An index whose only primary shard can never be allocated. A partial snapshot skips that shard
+  # and records it in `failures`, so the snapshot responses carry a populated `failures` array.
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: unallocatable-index
+    request:
+      payload:
+        settings:
+          index:
+            number_of_shards: 1
+            number_of_replicas: 0
+            routing:
+              allocation:
+                enable: none
+epilogues:
+  - path: /{index}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      index: unallocatable-index
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-second-snapshot
+  - path: /_snapshot/{repository}
+    method: DELETE
+    status: [200, 404]
+    parameters:
+      repository: my-fs-repository
+chapters:
+  - synopsis: Create and update a snapshot repository.
+    path: /_snapshot/{repository}
+    method:
+      - POST
+      - PUT
+    parameters:
+      repository: my-fs-repository
+    request:
+      payload:
+        type: fs
+        settings:
+          location: /tmp/opensearch/repo
+  - synopsis: Get all snapshot repositories.
+    path: /_snapshot
+    method: GET
+    response:
+      status: 200
+      payload:
+        my-fs-repository:
+          type: fs
+          settings:
+            location: /tmp/opensearch/repo
+  - synopsis: Get information about a repository.
+    path: /_snapshot/{repository}
+    method: GET
+    parameters:
+      repository: my-fs-repository
+    response:
+      status: 200
+      payload:
+        my-fs-repository:
+          type: fs
+          settings:
+            location: /tmp/opensearch/repo
+  - synopsis: Create a snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: PUT
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: '*'
+        ignore_unavailable: true
+        include_global_state: false
+        partial: true
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-test-snapshot
+  - synopsis: Delete the index with the unassigned primary shard so that later snapshots are not partial.
+    path: /{index}
+    method: DELETE
+    parameters:
+      index: unallocatable-index
+  - synopsis: Create a second snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: POST
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-second-snapshot
+      wait_for_completion: true
+    request:
+      payload:
+        indices: '*'
+    response:
+      status: 200
+      payload:
+        snapshot:
+          snapshot: my-second-snapshot
+  - synopsis: Get information about a snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: GET
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-test-snapshot
+            failures:
+              - index: unallocatable-index
+                index_uuid: unallocatable-index
+                shard_id: 0
+  - synopsis: Get information about a snapshot with human-readable parameter.
+    path: /_snapshot/{repository}/{snapshot}
+    method: GET
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-second-snapshot
+      human: true
+    response:
+      status: 200
+      payload:
+        snapshots:
+          - snapshot: my-second-snapshot
+  - synopsis: Delete a snapshot.
+    path: /_snapshot/{repository}/{snapshot}
+    method: DELETE
+    parameters:
+      repository: my-fs-repository
+      snapshot: my-test-snapshot
+  - synopsis: Delete a snapshot repository.
+    path: /_snapshot/{repository}
+    method: DELETE
+    parameters:
+      repository: my-fs-repository

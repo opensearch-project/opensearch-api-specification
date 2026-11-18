@@ -1,46 +1,59 @@
 openapi: 3.1.0
 info:
-  title: Schemas of nodes.info category
-  description: Schemas of nodes.info category
+  title: Schemas of `nodes.info` Category
+  description: Schemas of `nodes.info` category.
   version: 1.0.0
 paths: {}
 components:
   schemas:
     Metric:
-      type: string
-      enum:
-        - _all
-        - aggregations
-        - http
-        - indices
-        - ingest
-        - jvm
-        - os
-        - plugins
-        - process
-        - search_pipelines
-        - settings
-        - thread_pool
-        - transport
-    ResponseBase:
-      allOf:
-        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
-        - type: object
-          properties:
-            cluster_name:
-              $ref: '_common.yaml#/components/schemas/Name'
-            nodes:
-              type: object
-              additionalProperties:
-                $ref: '#/components/schemas/NodeInfo'
-          required:
-            - cluster_name
-            - nodes
+      description: The nodes metrics to retrieve.
+      oneOf:
+        - description: Returns all metrics.
+          const: _all
+          type: string
+        - description: Returns aggregation information.
+          const: aggregations
+          type: string
+        - description: Returns HTTP connection information.
+          const: http
+          type: string
+        - description: Returns indices stats and settings.
+          const: indices
+          type: string
+        - description: Returns ingest pipeline information.
+          const: ingest
+          type: string
+        - description: Returns JVM stats, process information, and memory usage.
+          const: jvm
+          type: string
+        - description: Returns operating system information and stats.
+          const: os
+          type: string
+        - description: Returns installed plugins information.
+          const: plugins
+          type: string
+        - description: Returns process statistics.
+          const: process
+          type: string
+        - description: Returns search pipeline configurations.
+          const: search_pipelines
+          type: string
+        - description: Returns node settings information.
+          const: settings
+          type: string
+        - description: Returns thread pool information.
+          const: thread_pool
+          type: string
+        - description: Returns transport layer information.
+          const: transport
+          type: string
     NodeInfo:
       type: object
       properties:
         attributes:
           type: object
+          description: The custom attributes of the node.
           additionalProperties:
             type: string
         build_flavor:
@@ -50,6 +63,7 @@ components:
           type: string
         build_type:
           type: string
+          description: The type of build, such as `tar`, `docker`, `rpm`.
         host:
           $ref: '_common.yaml#/components/schemas/Host'
         http:
@@ -66,6 +80,7 @@ components:
           $ref: '#/components/schemas/NodeOperatingSystemInfo'
         plugins:
           type: array
+          description: The list of plugins installed on the node.
           items:
             $ref: '_common.yaml#/components/schemas/PluginStats'
         process:
@@ -76,13 +91,22 @@ components:
           $ref: '#/components/schemas/NodeInfoSettings'
         thread_pool:
           type: object
+          description: Information about thread pool configurations.
           additionalProperties:
             $ref: '#/components/schemas/NodeThreadPoolInfo'
         total_indexing_buffer:
           description: Total heap allowed to be used to hold recently indexed documents before they must be written to disk. This size is a shared pool across all shards on this node, and is controlled by Indexing Buffer settings.
-          type: number
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/ByteCount'
+              x-version-removed: '3.0'
+            - $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+              x-version-added: '3.0'
         total_indexing_buffer_in_bytes:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          oneOf:
+            - $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+              x-version-removed: '3.0'
+            - $ref: '_common.yaml#/components/schemas/ByteCount'
+              x-version-added: '3.0'
         transport:
           $ref: '#/components/schemas/NodeInfoTransport'
         transport_address:
@@ -91,58 +115,66 @@ components:
           $ref: '_common.yaml#/components/schemas/VersionString'
         modules:
           type: array
+          description: The list of modules installed on the node.
           items:
             $ref: '_common.yaml#/components/schemas/PluginStats'
         ingest:
           $ref: '#/components/schemas/NodeInfoIngest'
         aggregations:
           type: object
+          description: Information about available aggregation types.
           additionalProperties:
             $ref: '#/components/schemas/NodeInfoAggregation'
         search_pipelines:
           $ref: '#/components/schemas/NodeInfoSearchPipelines'
       required:
-        - attributes
         - build_hash
         - build_type
-        - host
-        - ip
         - name
         - roles
-        - transport_address
         - version
     NodeInfoHttp:
       type: object
+      description: Provides HTTP connection information for the node.
       properties:
         bound_address:
           type: array
+          description: The addresses the node is bound to for HTTP traffic.
           items:
             type: string
         max_content_length:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         max_content_length_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         publish_address:
           type: string
+          description: The HTTP address published to other nodes.
       required:
         - bound_address
         - max_content_length_in_bytes
         - publish_address
     NodeJvmInfo:
       type: object
+      description: Provides JVM-specific information for the node.
       properties:
         gc_collectors:
           type: array
+          description: The garbage collectors enabled in the JVM.
           items:
             type: string
         mem:
           $ref: '#/components/schemas/NodeInfoJvmMemory'
         memory_pools:
           type: array
+          description: The memory pools available to the JVM.
           items:
             type: string
         pid:
-          type: number
+          type: integer
+          description: The process identifier of the JVM.
+          format: int32
+        start_time:
+          $ref: '_common.yaml#/components/schemas/DateTime'
         start_time_in_millis:
           $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
         version:
@@ -151,55 +183,51 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
         vm_vendor:
           type: string
+          description: The vendor of the JVM.
         vm_version:
           $ref: '_common.yaml#/components/schemas/VersionString'
         bundled_jdk:
           type: boolean
+          description: Whether the JDK is bundled with OpenSearch.
         using_bundled_jdk:
-          type: boolean
+          type: [boolean, 'null']
+          description: Whether the node is using the bundled JDK.
         using_compressed_ordinary_object_pointers:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         input_arguments:
           type: array
+          description: The command line arguments passed to the JVM.
           items:
             type: string
       required:
         - bundled_jdk
-        - gc_collectors
-        - input_arguments
         - mem
-        - memory_pools
         - pid
         - start_time_in_millis
-        - version
-        - vm_name
-        - vm_vendor
-        - vm_version
     NodeInfoJvmMemory:
       type: object
+      description: Provides JVM memory settings and statistics.
       properties:
         direct_max:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         direct_max_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         heap_init:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         heap_init_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         heap_max:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         heap_max_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         non_heap_init:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         non_heap_init_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         non_heap_max:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         non_heap_max_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
         - direct_max_in_bytes
         - heap_init_in_bytes
@@ -208,21 +236,27 @@ components:
         - non_heap_max_in_bytes
     NodeInfoNetwork:
       type: object
+      description: Provides network-related information for the node.
       properties:
         primary_interface:
           $ref: '#/components/schemas/NodeInfoNetworkInterface'
         refresh_interval:
-          type: number
+          type: integer
+          format: int32
+          description: The interval for refreshing network information.
       required:
         - primary_interface
         - refresh_interval
     NodeInfoNetworkInterface:
       type: object
+      description: Describes a network interface on the node.
       properties:
         address:
           type: string
+          description: The IP address of the interface.
         mac_address:
           type: string
+          description: The MAC address of the interface.
         name:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
@@ -231,20 +265,25 @@ components:
         - name
     NodeOperatingSystemInfo:
       type: object
+      description: Provides operating system information for the node.
       properties:
         arch:
-          description: 'Name of the JVM architecture (ex: amd64, x86)'
+          description: Name of the JVM architecture, for example `amd64` or `x86`.
           type: string
         available_processors:
-          description: Number of processors available to the Java virtual machine
-          type: number
+          description: The number of processors available to the Java virtual machine.
+          type: integer
+          format: int32
         allocated_processors:
-          description: The number of processors actually used to calculate thread pool size. This number can be set with the node.processors setting of a node and defaults to the number of processors reported by the OS.
-          type: number
+          description: The number of processors actually used to calculate thread pool size. This number can be set with the `node.processors` setting of a node and defaults to the number of processors reported by the OS.
+          type: integer
+          format: int32
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         pretty_name:
           $ref: '_common.yaml#/components/schemas/Name'
+        refresh_interval:
+          $ref: '_common.yaml#/components/schemas/Duration'
         refresh_interval_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         version:
@@ -256,31 +295,38 @@ components:
         swap:
           $ref: '#/components/schemas/NodeInfoMemory'
       required:
-        - arch
         - available_processors
-        - name
-        - pretty_name
         - refresh_interval_in_millis
-        - version
     NodeInfoOSCPU:
       type: object
+      description: Provides CPU information for the node.
       properties:
         cache_size:
-          type: string
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         cache_size_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         cores_per_socket:
-          type: number
+          type: integer
+          format: int32
+          description: The number of cores per CPU socket.
         mhz:
-          type: number
+          type: integer
+          format: int32
+          description: The CPU clock speed in MHz.
         model:
           type: string
+          description: The CPU model name.
         total_cores:
-          type: number
+          type: integer
+          format: int32
+          description: The total number of CPU cores.
         total_sockets:
-          type: number
+          type: integer
+          format: int32
+          description: The total number of CPU sockets.
         vendor:
           type: string
+          description: The CPU vendor name.
       required:
         - cache_size
         - cache_size_in_bytes
@@ -292,23 +338,28 @@ components:
         - vendor
     NodeInfoMemory:
       type: object
+      description: Provides memory information for the node.
       properties:
         total:
-          type: string
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         total_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
         - total
         - total_in_bytes
     NodeProcessInfo:
       type: object
+      description: Provides process-related information for the node.
       properties:
         id:
-          description: Process identifier (PID)
-          type: number
+          description: The process identifier (PID)
+          type: integer
+          format: int64
         mlockall:
-          description: Indicates if the process address space has been successfully locked in memory
+          description: Indicates if the process address space has been successfully locked in memory.
           type: boolean
+        refresh_interval:
+          $ref: '_common.yaml#/components/schemas/Duration'
         refresh_interval_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
       required:
@@ -317,6 +368,7 @@ components:
         - refresh_interval_in_millis
     NodeInfoSettings:
       type: object
+      description: The configuration settings for the node.
       properties:
         cluster:
           $ref: '#/components/schemas/NodeInfoSettingsCluster'
@@ -358,69 +410,117 @@ components:
         - path
         - transport
     NodeInfoSettingsCluster:
+      description: Provides cluster-level settings information.
       type: object
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         routing:
-          $ref: 'indices._common.yaml#/components/schemas/IndexRouting'
+          $ref: '#/components/schemas/NodeInfoSettingsClusterRouting'
         election:
           $ref: '#/components/schemas/NodeInfoSettingsClusterElection'
         initial_cluster_manager_nodes:
-          type: string
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
         initial_master_nodes:
-          type: string
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
         deprecation_indexing:
-          $ref: '#/components/schemas/DeprecationIndexing'
+          $ref: '#/components/schemas/NodeInfoSettingsDeprecationIndexing'
       required:
         - name
+    NodeInfoSettingsClusterRouting:
+      type: object
+      description: The cluster-level routing configuration.
+      properties:
+        allocation:
+          $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocation'
+        rebalance:
+          $ref: 'indices._common.yaml#/components/schemas/IndexRoutingRebalance'
+    NodeInfoSettingsClusterRoutingAllocation:
+      description: The cluster-level shard allocation configuration.
+      allOf:
+        - $ref: 'indices._common.yaml#/components/schemas/IndexRoutingAllocation'
+        - type: object
+          properties:
+            awareness:
+              $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocationAwareness'
+    NodeInfoSettingsClusterRoutingAllocationAwareness:
+      type: object
+      description: The shard allocation awareness configuration.
+      properties:
+        attributes:
+          description: The node attributes used for shard allocation awareness.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        force:
+          type: object
+          description: The forced awareness configuration, keyed by node attribute name.
+          additionalProperties:
+            $ref: '#/components/schemas/NodeInfoSettingsClusterRoutingAllocationAwarenessForce'
+    NodeInfoSettingsClusterRoutingAllocationAwarenessForce:
+      type: object
+      description: The forced awareness values for a node attribute.
+      properties:
+        values:
+          description: The attribute values across which shards are forced to be spread.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoSettingsClusterElection:
       type: object
+      description: The cluster election strategy configuration.
       properties:
         strategy:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
         - strategy
-    DeprecationIndexing:
+    NodeInfoSettingsDeprecationIndexing:
       type: object
+      description: Controls deprecation notice indexing behavior.
       properties:
         enabled:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
       required:
         - enabled
     NodeInfoSettingsNode:
       type: object
+      description: The node-specific configuration settings.
       properties:
         name:
           $ref: '_common.yaml#/components/schemas/Name'
         attr:
-          $ref: '#/components/schemas/NodeInfoShardIndexingPressureEnabled'
+          type: object
+          description: The custom attributes assigned to the node.
+          additionalProperties: true
         max_local_storage_nodes:
           type: string
+          description: The maximum number of nodes allowed to store data locally
+        roles:
+          description: The roles assigned to the node.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
       required:
-        - attr
         - name
     NodeInfoPath:
       type: object
+      description: The `filesystem` path configurations for the node.
       properties:
         logs:
           type: string
+          description: The path to node log files.
         home:
           type: string
+          description: The OpenSearch home directory path.
         repo:
           type: array
+          description: The paths configured for snapshot repositories.
           items:
             type: string
         data:
           type: array
+          description: The paths configured for data storage.
           items:
             type: string
       required:
         - home
         - logs
     NodeInfoRepositories:
+      description: The repository configuration information.
       type: object
       properties:
         url:
@@ -428,106 +528,178 @@ components:
       required:
         - url
     NodeInfoRepositoriesUrl:
+      description: Specifies allowed repository URLs.
       type: object
       properties:
         allowed_urls:
           type: string
+          description: The pattern for allowed repository URLs.
       required:
         - allowed_urls
-    NodeInfoShardIndexingPressureEnabled:
-      type: object
-      properties:
-        shard_indexing_pressure_enabled:
-          type: string
-      required:
-        - shard_indexing_pressure_enabled
     NodeInfoDiscovery:
+      description: The node discovery configuration.
       type: object
       properties:
         type:
           type: string
+          description: The discovery mechanism type.
         seed_hosts:
-          type: string
+          description: The configured seed hosts for node discovery.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoAction:
       type: object
+      description: The action-related configuration settings.
       properties:
         destructive_requires_name:
           type: string
+          description: Whether destructive actions require explicit names.
       required:
         - destructive_requires_name
     NodeInfoClient:
       type: object
+      description: The client node configuration.
       properties:
         type:
           type: string
+          description: The type of client node configuration.
       required:
         - type
     NodeInfoSettingsHttp:
       type: object
+      description: The HTTP server configuration.
       properties:
         type:
-          type: string
+          $ref: '#/components/schemas/NodeInfoSettingsHttpType'
         type.default:
           type: string
+          description: The default HTTP server type.
         compression:
-          oneOf:
-            - type: boolean
-            - type: string
+          $ref: '_common.yaml#/components/schemas/StringifiedBoolean'
         port:
-          oneOf:
-            - type: number
-            - type: string
+          type: string
+          description: The port or port range (for example, `9200-9300`) the HTTP server binds to.
+        host:
+          description: The host addresses the HTTP server binds to and publishes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the HTTP server binds to.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the HTTP server publishes to clients.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_port:
+          description: The port the HTTP server publishes to clients.
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
+    NodeInfoSettingsHttpType:
+      description: The HTTP server type configuration.
+      oneOf:
+        - title: type
+          type: string
+        - title: config
+          $ref: '#/components/schemas/NodeInfoSettingsHttpTypeConfig'
+    NodeInfoSettingsHttpTypeConfig:
+      type: object
+      description: The HTTP server type configuration details.
+      properties:
+        default:
+          type: string
+          description: The default HTTP server implementation.
     NodeInfoBootstrap:
       type: object
+      description: The bootstrap configuration settings for the node.
       properties:
         memory_lock:
           type: string
+          description: The memory lock setting for the bootstrap process.
       required:
         - memory_lock
     NodeInfoSettingsTransport:
       type: object
+      description: The transport layer configuration settings.
       properties:
         type:
-          type: string
+          $ref: '#/components/schemas/NodeInfoSettingsTransportType'
         type.default:
           type: string
+          description: The default transport type.
+        ssl:
+          type: object
+          description: The transport-layer SSL settings.
+        host:
+          description: The host addresses the transport layer binds to and publishes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the transport layer binds to.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the transport layer publishes to other nodes.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        port:
+          type: string
+          description: The port or port range (for example, `9300-9400`) the transport layer binds to.
+        publish_port:
+          description: The port the transport layer publishes to other nodes.
+          $ref: '_common.yaml#/components/schemas/StringifiedInteger'
       required:
         - type
-    NodeInfoSettingsNetwork:
+    NodeInfoSettingsTransportType:
+      description: The transport layer type configuration.
+      oneOf:
+        - title: type
+          type: string
+        - title: config
+          $ref: '#/components/schemas/NodeInfoSettingsTransportTypeConfig'
+    NodeInfoSettingsTransportTypeConfig:
+      description: The detailed transport type configuration.
       type: object
       properties:
+        default:
+          type: string
+          description: The default transport implementation.
+    NodeInfoSettingsNetwork:
+      type: object
+      description: The network configuration settings.
+      properties:
         host:
-          $ref: '_common.yaml#/components/schemas/Host'
-      required:
-        - host
+          description: The host addresses the node binds to and publishes for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        bind_host:
+          description: The host addresses the node binds to for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
+        publish_host:
+          description: The host addresses the node publishes for all network services.
+          $ref: '_common.yaml#/components/schemas/StringOrStringArray'
     NodeInfoScript:
       type: object
+      description: The script execution configuration.
       properties:
         allowed_types:
           type: string
+          description: The types of scripts allowed.
         disable_max_compilations_rate:
           type: string
+          description: The setting to disable maximum script compilation rate.
       required:
         - allowed_types
         - disable_max_compilations_rate
     NodeInfoSearch:
       type: object
+      description: The search operation configuration.
       properties:
         remote:
           $ref: '#/components/schemas/NodeInfoSearchRemote'
-      required:
-        - remote
     NodeInfoSearchRemote:
+      description: The remote search connection configuration.
       type: object
       properties:
         connect:
           type: string
-      required:
-        - connect
+          description: The remote connection settings.
     NodeInfoSettingsIngest:
       type: object
+      description: The ingest processor configurations.
       properties:
         attachment:
           $ref: '#/components/schemas/NodeInfoIngestInfo'
@@ -598,6 +770,7 @@ components:
         inference:
           $ref: '#/components/schemas/NodeInfoIngestInfo'
     NodeInfoIngestInfo:
+      description: The ingest processor configuration details.
       type: object
       properties:
         downloader:
@@ -605,67 +778,88 @@ components:
       required:
         - downloader
     NodeInfoIngestDownloader:
+      description: The ingest processor download configuration.
       type: object
       properties:
         enabled:
           type: string
+          description: Whether the downloader is enabled.
       required:
         - enabled
     NodeInfoSettingsIndex:
+      description: The index-level settings configuration.
       type: object
       properties:
         store:
           $ref: '#/components/schemas/NodeInfoSettingsIndexStore'
     NodeInfoSettingsIndexStore:
+      description: The index store configuration.
       type: object
       properties:
         hybrid:
           $ref: '#/components/schemas/NodeInfoSettingsIndexHybrid'
     NodeInfoSettingsIndexHybrid:
+      description: The hybrid store configuration.
       type: object
       properties:
         mmap:
           $ref: '#/components/schemas/NodeInfoSettingsIndexStoreMmap'
     NodeInfoSettingsIndexStoreMmap:
+      description: The memory-mapped store configuration.
       type: object
       properties:
         extensions:
           type: array
+          description: The file extensions configured for memory mapping.
           items:
             type: string
     NodeInfoSettingsPlugins:
+      description: The plugin-specific settings.
       type: object
-      additionalProperties:
-        $ref: '_common.yaml#/components/schemas/FieldValue'
+      additionalProperties: true
     NodeThreadPoolInfo:
+      description: The thread pool configuration details.
       type: object
       properties:
         core:
-          type: number
+          type: integer
+          format: int32
+          description: The core number of threads.
         keep_alive:
           $ref: '_common.yaml#/components/schemas/Duration'
         max:
-          type: number
+          type: integer
+          format: int32
+          description: The maximum number of threads.
         queue_size:
-          type: number
+          type: integer
+          format: int32
+          description: The size of the task queue.
         size:
-          type: number
+          type: integer
+          format: int32
+          description: The current size of the thread pool.
         type:
           type: string
+          description: The type of thread pool executor.
       required:
         - queue_size
         - type
     NodeInfoTransport:
+      description: The transport layer information.
       type: object
       properties:
         bound_address:
           type: array
+          description: The addresses the node is bound to for transport traffic.
           items:
             type: string
         publish_address:
           type: string
+          description: The published transport address.
         profiles:
           type: object
+          description: The configured transport profiles.
           additionalProperties:
             type: string
       required:
@@ -674,40 +868,61 @@ components:
         - publish_address
     NodeInfoIngest:
       type: object
+      description: The ingest pipeline configuration.
       properties:
         processors:
           type: array
+          description: The list of configured ingest processors.
           items:
             $ref: '#/components/schemas/NodeInfoIngestProcessor'
       required:
         - processors
     NodeInfoIngestProcessor:
       type: object
+      description: The ingest processor configuration.
       properties:
         type:
           type: string
+          description: The type of ingest processor.
       required:
         - type
     NodeInfoAggregation:
+      description: The aggregation configuration.
       type: object
       properties:
         types:
           type: array
+          description: The list of supported aggregation types.
           items:
             type: string
       required:
         - types
     NodeInfoSearchPipelines:
       type: object
+      description: The search pipeline configuration.
       properties:
         response_processors:
           type: array
+          description: The list of response processors in the pipeline.
           items:
-            $ref: '#/components/schemas/NodeInfoIngestProcessor'
+            $ref: '#/components/schemas/NodeInfoSearchPipelineProcessor'
         request_processors:
           type: array
+          description: The list of request processors in the pipeline.
           items:
-            $ref: '#/components/schemas/NodeInfoIngestProcessor'
+            $ref: '#/components/schemas/NodeInfoSearchPipelineProcessor'
+        phase_results_processors:
+          type: array
+          description: The list of phase results processors in the pipeline.
+          items:
+            $ref: '#/components/schemas/NodeInfoSearchPipelineProcessor'
+          x-version-added: '3.1'
+    NodeInfoSearchPipelineProcessor:
+      type: object
+      description: The search pipeline processor configuration.
+      properties:
+        type:
+          type: string
+          description: The type of search pipeline processor.
       required:
-        - request_processors
-        - response_processors
+        - type

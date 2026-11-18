@@ -1,0 +1,65 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the creation of an ingest pipeline.
+epilogues:
+  - path: /_ingest/pipeline/books_pipeline
+    method: DELETE
+    status: [200, 404]
+  - path: /_ingest/pipeline/movies_pipeline
+    method: DELETE
+    status: [200, 404]
+version: '>= 2.11'
+chapters:
+  - synopsis: Create a books ingest pipeline.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: books_pipeline
+    request:
+      payload:
+        description: A books pipeline that does nothing.
+        processors: []
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Create a movies ingest pipeline.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: movies_pipeline
+    request:
+      payload:
+        description: A movies pipeline that does nothing.
+        processors: []
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Query created books pipeline.
+    path: /_ingest/pipeline/{id}
+    method: GET
+    parameters:
+      id: books_pipeline
+    response:
+      status: 200
+      payload:
+        books_pipeline:
+          description: A books pipeline that does nothing.
+  - synopsis: Query all pipelines.
+    path: /_ingest/pipeline
+    method: GET
+    response:
+      status: 200
+      payload:
+        books_pipeline:
+          description: A books pipeline that does nothing.
+        movies_pipeline:
+          description: A movies pipeline that does nothing.
+  - synopsis: Delete the books pipeline.
+    path: /_ingest/pipeline/{id}
+    method: DELETE
+    parameters:
+      id: books_pipeline
+    response:
+      status: 200

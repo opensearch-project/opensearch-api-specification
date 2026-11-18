@@ -1,0 +1,51 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test /{index}/_analyze.
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        settings:
+          analysis:
+            analyzer:
+              default:
+                type: stop
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Analyze text.
+    path: /{index}/_analyze
+    method: POST
+    parameters:
+      index: movies
+    request:
+      payload:
+        text: a movie directed by Bennett Miller
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: movie
+            start_offset: 2
+            end_offset: 7
+            position: 1
+  - synopsis: Analyze text specifying an analyzer.
+    path: /{index}/_analyze
+    method: GET
+    parameters:
+      index: movies
+    request:
+      payload:
+        analyzer: standard
+        text: a movie directed by Bennett Miller
+    response:
+      status: 200
+      payload:
+        tokens:
+          - token: a
+            start_offset: 0
+            end_offset: 1
+            position: 0

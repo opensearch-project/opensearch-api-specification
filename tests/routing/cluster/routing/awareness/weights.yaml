@@ -1,0 +1,59 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test cluster routing settings.
+version: '>= 2.16'
+epilogues:
+  - id: epilogue_weights
+    path: /_cluster/routing/awareness/zone/weights
+    method: GET
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - path: /_cluster/routing/awareness/weights
+    method: DELETE
+    request:
+      payload:
+        _version: ${epilogue_weights.version}
+chapters:
+  - synopsis: Get zone routing weights.
+    id: weights
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: GET
+    parameters:
+      attribute: zone
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - synopsis: Update zone routing weights.
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: PUT
+    parameters:
+      attribute: zone
+    request:
+      payload:
+        weights:
+          zoneA: '2'
+          zoneB: '1'
+        _version: ${weights.version}
+    response:
+      status: 200
+  - synopsis: Get updated zone routing weights version.
+    id: updated_weights
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: GET
+    parameters:
+      attribute: zone
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - synopsis: Delete zone routing weights.
+    path: /_cluster/routing/awareness/weights
+    method: DELETE
+    request:
+      payload:
+        _version: ${updated_weights.version}
+    response:
+      status: 200

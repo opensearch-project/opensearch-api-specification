@@ -1,0 +1,84 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test /_alias variants.
+epilogues:
+  - path: /movies/_alias/film*
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: movies
+chapters:
+  - synopsis: Create an alias (index in body).
+    path: /_alias/{name}
+    method: PUT
+    parameters:
+      name: film1
+    request:
+      payload:
+        index: movies
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Create an alias (index in body).
+    path: /_alias/{name}
+    method: POST
+    parameters:
+      name: film2
+    request:
+      payload:
+        index: movies
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Create an alias (index & alias in body).
+    path: /_alias
+    method: PUT
+    request:
+      payload:
+        index: movies
+        alias: film3
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Get all aliases.
+    path: /_alias
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get an alias by name.
+    path: /_alias/{name}
+    parameters:
+      name: film1
+    method: GET
+    response:
+      status: 200
+  - synopsis: Get an alias by name.
+    path: /_alias/{name}
+    parameters:
+      name: invalid
+    method: GET
+    response:
+      status: 404
+  - synopsis: Check that an alias exists.
+    path: /_alias/{name}
+    parameters:
+      name: film1
+    method: HEAD
+    response:
+      status: 200
+  - synopsis: Check that an alias exists.
+    path: /_alias/{name}
+    parameters:
+      name: invalid
+    method: HEAD
+    response:
+      status: 404

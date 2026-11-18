@@ -7,15 +7,15 @@
 * compatible open source license.
 */
 
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import { type ValidationError } from 'types'
 import ValidatorBase from './base/ValidatorBase'
 
 export default class Info extends ValidatorBase {
   path: string
-  spec: OpenAPIV3.InfoObject
+  spec: OpenAPIV3_1.InfoObject
 
-  constructor (file: string, path: string, spec: OpenAPIV3.InfoObject) {
+  constructor (file: string, path: string, spec: OpenAPIV3_1.InfoObject) {
     super(file, 'Info')
     this.path = path
     this.spec = spec

@@ -1,0 +1,44 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test changing the number of requests per second for a particular reindex operation.
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /videos
+    method: DELETE
+    status: [200, 404]
+prologues:
+  - path: /{index}/_doc
+    method: POST
+    parameters:
+      index: movies
+      refresh: true
+    request:
+      payload:
+        title: Beauty and the Beast
+        year: 91
+    status: [201]
+  - id: task
+    path: /_reindex
+    method: POST
+    parameters:
+      wait_for_completion: false
+      requests_per_second: 1
+    request:
+      payload:
+        source:
+          index: movies
+        dest:
+          index: videos
+    output:
+      task_id: payload.task
+chapters:
+  - synopsis: Change the value of `requests_per_second` on a running reindex.
+    path: /_reindex/{task_id}/_rethrottle
+    method: POST
+    parameters:
+      task_id: ${task.task_id}
+      requests_per_second: 2
+    response:
+      status: 200

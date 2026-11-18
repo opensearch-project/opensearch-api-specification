@@ -1,0 +1,213 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: LTR create model from feature set operations.
+version: '>= 2.19'
+prologues:
+  - path: /_ltr
+    method: PUT
+    status: [200]
+  - path: /_ltr/{store}
+    method: PUT
+    parameters:
+      store: mystore
+    status: [200]
+  # Create feature sets for testing model creation
+  - path: /_ltr/_featureset/{id}
+    method: PUT
+    parameters:
+      id: my_featureset
+    request:
+      payload:
+        featureset:
+          name: my_featureset
+          features:
+            - name: feature1
+              params: query_string
+              template:
+                match:
+                  field_test1: '{{query_string}}'
+            - name: feature2
+              params: query_string
+              template:
+                match:
+                  field_test2: '{{query_string}}'
+    status: [200, 201]
+  - path: /_ltr/{store}/_featureset/{id}
+    method: PUT
+    parameters:
+      store: mystore
+      id: my_featureset
+    request:
+      payload:
+        featureset:
+          name: my_featureset
+          features:
+            - name: feature1
+              params: query_string
+              template:
+                match:
+                  field_test1: '{{query_string}}'
+            - name: feature2
+              params: query_string
+              template:
+                match:
+                  field_test2: '{{query_string}}'
+    status: [200, 201]
+
+epilogues:
+  # Clean up models first
+  - path: /_ltr/_model/{id}
+    method: DELETE
+    parameters:
+      id: my_model
+    status: [200, 404]
+  - path: /_ltr/_model/{id}
+    method: DELETE
+    parameters:
+      id: my_model_routing
+    status: [200, 404]
+  - path: /_ltr/{store}/_model/{id}
+    method: DELETE
+    parameters:
+      store: mystore
+      id: my_model
+    status: [200, 404]
+  - path: /_ltr/{store}/_model/{id}
+    method: DELETE
+    parameters:
+      store: mystore
+      id: my_model_routing
+    status: [200, 404]
+  # Clean up feature sets
+  - path: /_ltr/_featureset/{id}
+    method: DELETE
+    parameters:
+      id: my_featureset
+    status: [200, 404]
+  - path: /_ltr/{store}/_featureset/{id}
+    method: DELETE
+    parameters:
+      store: mystore
+      id: my_featureset
+    status: [200, 404]
+  # Clean up stores
+  - path: /_ltr
+    method: DELETE
+    status: [200, 404]
+  - path: /_ltr/{store}
+    method: DELETE
+    parameters:
+      store: mystore
+    status: [200, 404]
+
+chapters:
+  # Test create model from set in default store
+  - synopsis: Create a model from feature set in the default store.
+    method: POST
+    path: /_ltr/_featureset/{name}/_createmodel
+    parameters:
+      name: my_featureset
+    request:
+      payload:
+        model:
+          name: my_model
+          model:
+            type: model/linear
+            definition:
+              feature1: 1.3
+              feature2: 0.3
+    response:
+      status: [200, 201]
+
+  - synopsis: Create a model from feature set with routing in the default store.
+    method: POST
+    path: /_ltr/_featureset/{name}/_createmodel
+    parameters:
+      name: my_featureset
+      routing: test_routing_value
+    request:
+      payload:
+        model:
+          name: my_model_routing
+          model:
+            type: model/linear
+            definition:
+              feature1: 1
+              feature2: 0.5
+    response:
+      status: [200, 201]
+
+  # Try to update/recreate the model (should fail)
+  - synopsis: Try to recreate a model from feature set (should fail).
+    method: POST
+    path: /_ltr/_featureset/{name}/_createmodel
+    parameters:
+      name: my_featureset
+    request:
+      payload:
+        model:
+          name: my_model
+          model:
+            type: model/linear
+            definition:
+              feature1: 1.5
+              feature2: 0.5
+    response:
+      status: [405]
+
+  # Test create model from set in named store
+  - synopsis: Create a model from feature set in a named store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_createmodel
+    parameters:
+      store: mystore
+      name: my_featureset
+    request:
+      payload:
+        model:
+          name: my_model
+          model:
+            type: model/linear
+            definition:
+              feature1: 1.3
+              feature2: 0.3
+    response:
+      status: [200, 201]
+
+  - synopsis: Create a model from feature set with routing in a named store.
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_createmodel
+    parameters:
+      store: mystore
+      name: my_featureset
+      routing: test_routing_value
+    request:
+      payload:
+        model:
+          name: my_model_routing
+          model:
+            type: model/linear
+            definition:
+              feature1: 1
+              feature2: 0.5
+    response:
+      status: [200, 201]
+
+  # Try to update/recreate the model in named store (should fail)
+  - synopsis: Try to recreate a model from feature set in named store (should fail).
+    method: POST
+    path: /_ltr/{store}/_featureset/{name}/_createmodel
+    parameters:
+      store: mystore
+      name: my_featureset
+    request:
+      payload:
+        model:
+          name: my_model
+          model:
+            type: model/linear
+            definition:
+              feature1: 1.5
+              feature2: 0.5
+    response:
+      status: [405]

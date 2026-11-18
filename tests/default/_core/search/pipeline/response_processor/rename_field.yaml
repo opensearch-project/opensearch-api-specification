@@ -1,0 +1,57 @@
+$schema: ../../../../../../json_schemas/test_story.schema.yaml
+
+description: |-
+  Test the creation of a search pipeline with a response processor.
+warnings:
+  invalid-path-detected: false
+version: '>= 2.8'
+prologues:
+  - path: /movies/_doc/1
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      payload:
+        name: Drive
+    status: [201]
+epilogues:
+  - path: /_search/pipeline/rename-field
+    method: DELETE
+    status: [200, 404]
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create search pipeline.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: rename-field
+    request:
+      payload:
+        response_processors:
+          - rename_field:
+              field: name
+              target_field: title
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Search.
+    warnings:
+      multiple-paths-detected: false
+    path: /{index}/_search
+    method: GET
+    parameters:
+      index: movies
+      search_pipeline: rename-field
+    response:
+      status: 200
+      payload:
+        hits:
+          total:
+            value: 1
+          hits:
+            - _index: movies
+              _source:
+                title: Drive

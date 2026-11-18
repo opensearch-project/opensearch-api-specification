@@ -1,3 +1,4 @@
+# eslint-disable yml/sort-sequence-values
 display_path: error/chapter_error.yaml
 full_path: tools/tests/tester/fixtures/stories/error/chapter_error.yaml
 
@@ -5,11 +6,13 @@ result: ERROR
 description: This story should failed due to missing info in the spec.
 
 warnings:
-  - |
+  - >-
     Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.
       /{index}/settings
       /{index}
       /_cat/indices
+  - Invalid path detected, please move /tools/tests/tester/fixtures/stories/error/chapter_error.yaml to /settings.yaml.
+  - Invalid path detected, please move /tools/tests/tester/fixtures/stories/error/chapter_error.yaml to /cat/indices.yaml.
 prologues:
   - title: PUT /books
     overall:
@@ -24,6 +27,9 @@ chapters:
     overall:
       result: ERROR
     path: DELETE /{index}
+    operation:
+      method: DELETE
+      path: /{index}
     request:
       parameters: {}
       request:
@@ -33,7 +39,6 @@ chapters:
         result: ERROR
         message: 'Expected status 200, but received 404: application/json. no such index
           [undefined]'
-        error: Request failed with status code 404
       payload_body:
         result: SKIPPED
       payload_schema:

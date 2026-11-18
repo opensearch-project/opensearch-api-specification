@@ -1,0 +1,128 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the _scripts endpoint.
+
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960, ratings: [1, 2, 3]}
+        - {create: {_index: books}}
+        - {author: Elizabeth Rudnick, title: Beauty and the Beast, year: 1991, ratings: [3, 4, 5]}
+epilogues:
+  - path: /books
+    method: DELETE
+    status: [200, 404]
+  - path: /_scripts/add_ratings
+    method: DELETE
+    status: [200, 404]
+  - path: /_scripts/average_ratings
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a painless script that sums the ratings (PUT).
+    path: /_scripts/{id}
+    method: PUT
+    parameters:
+      id: add_ratings
+    request:
+      payload:
+        script:
+          lang: painless
+          source: |-
+            int total = 0;
+            for (int i = 0; i < doc['ratings'].length; ++i) {
+              total += doc['ratings'][i];
+            }
+            return total;
+    response:
+      status: 200
+  - synopsis: Get ratings sum (PUT).
+    path: /{index}/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    parameters:
+      index: books
+    request:
+      payload:
+        query:
+          match_all: {}
+        script_fields:
+          ratings_sum:
+            script:
+              id: add_ratings
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - fields:
+                ratings_sum:
+                  - 6
+            - fields:
+                ratings_sum:
+                  - 12
+  - synopsis: Create a painless script that calculates a ratings average (POST).
+    path: /_scripts/{id}
+    method: POST
+    parameters:
+      id: average_ratings
+    request:
+      payload:
+        script:
+          lang: painless
+          source: |-
+            if (doc['ratings'].length > 0) {
+              int total = 0;
+              for (int i = 0; i < doc['ratings'].length; ++i) {
+                total += doc['ratings'][i];
+              }
+              return total / doc['ratings'].length;
+            } else {
+              return 0;
+            }
+    response:
+      status: 200
+  - synopsis: Score results by ratings average (POST).
+    path: /{index}/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    parameters:
+      index: books
+    request:
+      payload:
+        query:
+          script_score:
+            query:
+              match_all: {}
+            script:
+              id: average_ratings
+    response:
+      status: 200
+      payload:
+        hits:
+          hits:
+            - _score: 4
+            - _score: 2
+  - synopsis: Get a script.
+    path: /_scripts/{id}
+    method: GET
+    parameters:
+      id: add_ratings
+    response:
+      status: 200
+      payload:
+        _id: add_ratings
+        found: true
+  - synopsis: Delete script.
+    path: /_scripts/{id}
+    method: DELETE
+    parameters:
+      id: add_ratings

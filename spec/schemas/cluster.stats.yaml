@@ -1,36 +1,11 @@
 openapi: 3.1.0
 info:
-  title: Schemas of cluster.stats category
-  description: Schemas of cluster.stats category
+  title: Schemas of `cluster.stats` Category
+  description: Schemas of `cluster.stats` category.
   version: 1.0.0
 paths: {}
 components:
   schemas:
-    StatsResponseBase:
-      allOf:
-        - $ref: 'nodes._common.yaml#/components/schemas/NodesResponseBase'
-        - type: object
-          properties:
-            cluster_name:
-              $ref: '_common.yaml#/components/schemas/Name'
-            cluster_uuid:
-              $ref: '_common.yaml#/components/schemas/Uuid'
-            indices:
-              $ref: '#/components/schemas/ClusterIndices'
-            nodes:
-              $ref: '#/components/schemas/ClusterNodes'
-            status:
-              $ref: '_common.yaml#/components/schemas/HealthStatus'
-            timestamp:
-              description: Unix timestamp, in milliseconds, for the last time the cluster statistics were refreshed.
-              type: number
-          required:
-            - cluster_name
-            - cluster_uuid
-            - indices
-            - nodes
-            - status
-            - timestamp
     ClusterIndices:
       type: object
       properties:
@@ -39,8 +14,9 @@ components:
         completion:
           $ref: '_common.yaml#/components/schemas/CompletionStats'
         count:
-          description: Total number of indices with shards assigned to selected nodes.
-          type: number
+          description: Total number of indexes with shards assigned to selected nodes.
+          type: integer
+          format: int64
         docs:
           $ref: '_common.yaml#/components/schemas/DocStats'
         fielddata:
@@ -60,17 +36,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IndicesVersions'
-      required:
-        - analysis
-        - completion
-        - count
-        - docs
-        - fielddata
-        - mappings
-        - query_cache
-        - segments
-        - shards
-        - store
     CharFilterTypes:
       type: object
       properties:
@@ -130,22 +95,12 @@ components:
           $ref: '_common.yaml#/components/schemas/Name'
         count:
           description: The number of occurrences of the field type in selected nodes.
-          type: number
+          type: integer
+          format: int32
         index_count:
-          description: The number of indices containing the field type in selected nodes.
-          type: number
-        indexed_vector_count:
-          description: For dense_vector field types, number of indexed vector types in selected nodes.
-          type: number
-        indexed_vector_dim_max:
-          description: For dense_vector field types, the maximum dimension of all indexed vector types in selected nodes.
-          type: number
-        indexed_vector_dim_min:
-          description: For dense_vector field types, the minimum dimension of all indexed vector types in selected nodes.
-          type: number
-        script_count:
-          description: The number of fields that declare a script.
-          type: number
+          description: The number of indexes containing the field type in selected nodes.
+          type: integer
+          format: int32
       required:
         - count
         - index_count
@@ -157,21 +112,27 @@ components:
           $ref: '#/components/schemas/ClusterIndicesShardsIndex'
         primaries:
           description: Number of primary shards assigned to selected nodes.
-          type: number
+          type: integer
+          format: int32
         replication:
           description: Ratio of replica shards to primary shards across all selected nodes.
-          type: number
+          type: integer
+          format: int32
         total:
           description: Total number of shards assigned to selected nodes.
-          type: number
+          type: integer
+          format: int32
     ClusterIndicesShardsIndex:
       type: object
       properties:
         primaries:
+          description: Contains statistics about the number of primary shards assigned to selected nodes.
           $ref: '#/components/schemas/ClusterShardMetrics'
         replication:
+          description: Contains statistics about the number of replication shards assigned to selected nodes.
           $ref: '#/components/schemas/ClusterShardMetrics'
         shards:
+          description: Contains statistics about the number of shards assigned to selected nodes.
           $ref: '#/components/schemas/ClusterShardMetrics'
       required:
         - primaries
@@ -183,12 +144,15 @@ components:
         avg:
           description: Mean number of shards in an index, counting only shards assigned to selected nodes.
           type: number
+          format: double
         max:
           description: Maximum number of shards in an index, counting only shards assigned to selected nodes.
           type: number
+          format: double
         min:
           description: Minimum number of shards in an index, counting only shards assigned to selected nodes.
           type: number
+          format: double
       required:
         - avg
         - max
@@ -201,94 +165,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldTypes'
-        runtime_field_types:
-          description: Contains statistics about runtime field data types used in selected nodes.
-          type: array
-          items:
-            $ref: '#/components/schemas/RuntimeFieldTypes'
-        total_field_count:
-          description: Total number of fields in all non-system indices.
-          type: number
-        total_deduplicated_field_count:
-          description: Total number of fields in all non-system indices, accounting for mapping deduplication.
-          type: number
-        total_deduplicated_mapping_size:
-          $ref: '_common.yaml#/components/schemas/ByteSize'
-        total_deduplicated_mapping_size_in_bytes:
-          description: Total size of all mappings, in bytes, after deduplication and compression.
-          type: number
       required:
         - field_types
-    RuntimeFieldTypes:
-      type: object
-      properties:
-        chars_max:
-          description: Maximum number of characters for a single runtime field script.
-          type: number
-        chars_total:
-          description: Total number of characters for the scripts that define the current runtime field data type.
-          type: number
-        count:
-          description: Number of runtime fields mapped to the field data type in selected nodes.
-          type: number
-        doc_max:
-          description: Maximum number of accesses to doc_values for a single runtime field script
-          type: number
-        doc_total:
-          description: Total number of accesses to doc_values for the scripts that define the current runtime field data type.
-          type: number
-        index_count:
-          description: Number of indices containing a mapping of the runtime field data type in selected nodes.
-          type: number
-        lang:
-          description: Script languages used for the runtime fields scripts.
-          type: array
-          items:
-            type: string
-        lines_max:
-          description: Maximum number of lines for a single runtime field script.
-          type: number
-        lines_total:
-          description: Total number of lines for the scripts that define the current runtime field data type.
-          type: number
-        name:
-          $ref: '_common.yaml#/components/schemas/Name'
-        scriptless_count:
-          description: Number of runtime fields that don't declare a script.
-          type: number
-        shadowed_count:
-          description: Number of runtime fields that shadow an indexed field.
-          type: number
-        source_max:
-          description: Maximum number of accesses to _source for a single runtime field script.
-          type: number
-        source_total:
-          description: Total number of accesses to _source for the scripts that define the current runtime field data type.
-          type: number
-      required:
-        - chars_max
-        - chars_total
-        - count
-        - doc_max
-        - doc_total
-        - index_count
-        - lang
-        - lines_max
-        - lines_total
-        - name
-        - scriptless_count
-        - shadowed_count
-        - source_max
-        - source_total
     IndicesVersions:
       type: object
       properties:
         index_count:
-          type: number
+          type: integer
+          format: int32
         primary_shard_count:
-          type: number
+          type: integer
+          format: int32
         total_primary_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         version:
           $ref: '_common.yaml#/components/schemas/VersionString'
       required:
@@ -300,23 +189,29 @@ components:
       type: object
       properties:
         count:
+          description: Contains counts for nodes selected by the request's node filters.
           $ref: '#/components/schemas/ClusterNodeCount'
         discovery_types:
           description: Contains statistics about the discovery types used by selected nodes.
           type: object
           additionalProperties:
-            type: number
+            type: integer
+            format: int32
         fs:
+          description: Contains statistics about file stores by selected nodes.
           $ref: '#/components/schemas/ClusterFileSystem'
         indexing_pressure:
           $ref: '#/components/schemas/IndexingPressure'
         ingest:
           $ref: '#/components/schemas/ClusterIngest'
         jvm:
+          description: Contains statistics about the Java Virtual Machines (JVMs) used by selected nodes.
           $ref: '#/components/schemas/ClusterJvm'
         network_types:
+          description: Contains statistics about the transport and HTTP networks used by selected nodes.
           $ref: '#/components/schemas/ClusterNetworkTypes'
         os:
+          description: Contains statistics about the operating systems used by selected nodes.
           $ref: '#/components/schemas/ClusterOperatingSystem'
         packaging_types:
           description: Contains statistics about OpenSearch distributions installed on selected nodes.
@@ -331,85 +226,112 @@ components:
           items:
             $ref: '_common.yaml#/components/schemas/PluginStats'
         process:
+          description: Contains statistics about processes used by selected nodes.
           $ref: '#/components/schemas/ClusterProcess'
         versions:
           description: Array of OpenSearch versions used on selected nodes.
           type: array
           items:
             $ref: '_common.yaml#/components/schemas/VersionString'
-      required:
-        - count
-        - discovery_types
-        - fs
-        - indexing_pressure
-        - ingest
-        - jvm
-        - network_types
-        - os
-        - packaging_types
-        - plugins
-        - process
-        - versions
     ClusterNodeCount:
       type: object
       properties:
         coordinating_only:
-          type: number
+          type: integer
+          format: int32
         data:
-          type: number
+          type: integer
+          format: int32
         data_cold:
-          type: number
+          type: integer
+          format: int32
         data_content:
-          type: number
+          type: integer
+          format: int32
         data_frozen:
-          type: number
+          type: integer
+          format: int32
         data_hot:
-          type: number
+          type: integer
+          format: int32
         data_warm:
-          type: number
+          type: integer
+          format: int32
         ingest:
-          type: number
+          type: integer
+          format: int32
         master:
-          type: number
+          type: integer
+          format: int32
+        cluster_manager:
+          type: integer
+          format: int32
+          x-version-added: '2.0'
         ml:
-          type: number
+          type: integer
+          format: int32
         remote_cluster_client:
-          type: number
+          type: integer
+          format: int32
+        search:
+          type: integer
+          format: int32
+          x-version-added: '2.4'
         total:
-          type: number
+          type: integer
+          format: int32
         transform:
-          type: number
+          type: integer
+          format: int32
         voting_only:
-          type: number
+          type: integer
+          format: int32
+        warm:
+          type: integer
+          format: int32
+          x-version-added: '3.0'
       required:
         - coordinating_only
         - data
-        - data_cold
-        - data_content
-        - data_hot
-        - data_warm
         - ingest
         - master
-        - ml
         - remote_cluster_client
         - total
-        - transform
-        - voting_only
     ClusterFileSystem:
       type: object
       properties:
+        available:
+          description: |-
+            Total number of bytes available to JVM in file stores across all selected nodes.
+            Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
+            This is the actual amount of free disk space the selected OpenSearch nodes can use.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         available_in_bytes:
           description: |-
             Total number of bytes available to JVM in file stores across all selected nodes.
             Depending on operating system or process-level restrictions, this number may be less than `nodes.fs.free_in_byes`.
             This is the actual amount of free disk space the selected OpenSearch nodes can use.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        free:
+          description: Total number of unallocated bytes in file stores across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         free_in_bytes:
           description: Total number of unallocated bytes in file stores across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        total:
+          description: Total size, of all file stores across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         total_in_bytes:
           description: Total size, in bytes, of all file stores across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        cache_reserved:
+          description: Total size, of all cache reserved across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
+          x-version-added: '2.7'
+        cache_reserved_in_bytes:
+          description: Total size, in bytes, of all cache reserved across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+          x-version-added: '2.7'
       required:
         - available_in_bytes
         - free_in_bytes
@@ -427,7 +349,7 @@ components:
         current:
           $ref: '#/components/schemas/IndexingPressureMemorySummary'
         limit_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         total:
           $ref: '#/components/schemas/IndexingPressureMemorySummary'
       required:
@@ -438,19 +360,19 @@ components:
       type: object
       properties:
         all_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         combined_coordinating_and_primary_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         coordinating_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         coordinating_rejections:
           type: number
         primary_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         primary_rejections:
           type: number
         replica_in_bytes:
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         replica_rejections:
           type: number
       required:
@@ -463,7 +385,8 @@ components:
       type: object
       properties:
         number_of_pipelines:
-          type: number
+          type: integer
+          format: int32
         processor_stats:
           type: object
           additionalProperties:
@@ -475,11 +398,14 @@ components:
       type: object
       properties:
         count:
-          type: number
+          type: integer
+          format: int64
         current:
-          type: number
+          type: integer
+          format: int64
         failed:
-          type: number
+          type: integer
+          format: int64
         time:
           $ref: '_common.yaml#/components/schemas/Duration'
         time_in_millis:
@@ -492,13 +418,16 @@ components:
     ClusterJvm:
       type: object
       properties:
+        max_uptime:
+          $ref: '_common.yaml#/components/schemas/Duration'
         max_uptime_in_millis:
           $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         mem:
           $ref: '#/components/schemas/ClusterJvmMemory'
         threads:
           description: Number of active threads in use by JVM across all selected nodes.
-          type: number
+          type: integer
+          format: int64
         versions:
           description: Contains statistics about the JVM versions used by selected nodes.
           type: array
@@ -508,16 +437,21 @@ components:
         - max_uptime_in_millis
         - mem
         - threads
-        - versions
     ClusterJvmMemory:
       type: object
       properties:
+        heap_max:
+          description: Maximum amount of memory available for use by the heap across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         heap_max_in_bytes:
           description: Maximum amount of memory, in bytes, available for use by the heap across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        heap_used:
+          description: Memory currently in use by the heap across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         heap_used_in_bytes:
           description: Memory, in bytes, currently in use by the heap across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
       required:
         - heap_max_in_bytes
         - heap_used_in_bytes
@@ -529,7 +463,8 @@ components:
           type: boolean
         count:
           description: Total number of selected nodes using JVM.
-          type: number
+          type: integer
+          format: int32
         using_bundled_jdk:
           description: If `true`, a bundled JDK is in use by JVM.
           type: boolean
@@ -558,12 +493,14 @@ components:
           description: Contains statistics about the HTTP network types used by selected nodes.
           type: object
           additionalProperties:
-            type: number
+            type: integer
+            format: int32
         transport_types:
           description: Contains statistics about the transport network types used by selected nodes.
           type: object
           additionalProperties:
-            type: number
+            type: integer
+            format: int32
       required:
         - http_types
         - transport_types
@@ -575,7 +512,8 @@ components:
             Number of processors used to calculate thread pool size across all selected nodes.
             This number can be set with the processors setting of a node and defaults to the number of processors reported by the operating system.
             In both cases, this number will never be larger than 32.
-          type: number
+          type: integer
+          format: int32
         architectures:
           description: Contains statistics about processor architectures (for example, x86_64 or aarch64) used by selected nodes.
           type: array
@@ -583,7 +521,8 @@ components:
             $ref: '#/components/schemas/ClusterOperatingSystemArchitecture'
         available_processors:
           description: Number of processors available to JVM across all selected nodes.
-          type: number
+          type: integer
+          format: int32
         mem:
           $ref: '#/components/schemas/OperatingSystemMemoryInfo'
         names:
@@ -610,7 +549,8 @@ components:
           type: string
         count:
           description: Number of selected nodes using the architecture.
-          type: number
+          type: integer
+          format: int32
       required:
         - arch
         - count
@@ -619,22 +559,31 @@ components:
       properties:
         adjusted_total_in_bytes:
           description: Total amount, in bytes, of memory across all selected nodes, but using the value specified using the `es.total_memory_bytes` system property instead of measured total memory for those nodes where that system property was set.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        free:
+          description: Amount, in bytes, of free physical memory across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         free_in_bytes:
           description: Amount, in bytes, of free physical memory across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         free_percent:
           description: Percentage of free physical memory across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/PercentageNumber'
+        total:
+          description: Total amount of physical memory across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         total_in_bytes:
           description: Total amount, in bytes, of physical memory across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        used:
+          description: Amount of physical memory in use across all selected nodes.
+          $ref: '_common.yaml#/components/schemas/HumanReadableByteCount'
         used_in_bytes:
           description: Amount, in bytes, of physical memory in use across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/ByteCount'
         used_percent:
           description: Percentage of physical memory in use across all selected nodes.
-          type: number
+          $ref: '_common.yaml#/components/schemas/PercentageNumber'
       required:
         - free_in_bytes
         - free_percent
@@ -646,29 +595,30 @@ components:
       properties:
         count:
           description: Number of selected nodes using the operating system.
-          type: number
+          type: integer
+          format: int32
         name:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
         - count
-        - name
     ClusterOperatingSystemPrettyName:
       type: object
       properties:
         count:
           description: Number of selected nodes using the operating system.
-          type: number
+          type: integer
+          format: int32
         pretty_name:
           $ref: '_common.yaml#/components/schemas/Name'
       required:
         - count
-        - pretty_name
     NodePackagingType:
       type: object
       properties:
         count:
           description: Number of selected nodes using the distribution flavor and file type.
-          type: number
+          type: integer
+          format: int32
         flavor:
           description: Type of OpenSearch distribution. This is always `default`.
           type: string
@@ -677,7 +627,6 @@ components:
           type: string
       required:
         - count
-        - flavor
         - type
     ClusterProcess:
       type: object
@@ -696,7 +645,7 @@ components:
           description: |-
             Percentage of CPU used across all selected nodes.
             Returns `-1` if not supported.
-          type: number
+          $ref: '_common.yaml#/components/schemas/PercentageNumber'
       required:
         - percent
     ClusterProcessOpenFileDescriptors:
@@ -706,18 +655,48 @@ components:
           description: |-
             Average number of concurrently open file descriptors.
             Returns `-1` if not supported.
-          type: number
+          type: integer
+          format: int64
         max:
           description: |-
             Maximum number of concurrently open file descriptors allowed across all selected nodes.
             Returns `-1` if not supported.
-          type: number
+          type: integer
+          format: int64
         min:
           description: |-
             Minimum number of concurrently open file descriptors across all selected nodes.
             Returns -1 if not supported.
-          type: number
+          type: integer
+          format: int64
       required:
         - avg
         - max
         - min
+    Metric:
+      type: string
+      enum:
+        - _all
+        - discovery_type
+        - fs
+        - indices
+        - ingest
+        - jvm
+        - network_types
+        - os
+        - packaging_types
+        - plugins
+        - process
+    IndexMetric:
+      type: string
+      enum:
+        - _all
+        - analysis
+        - completion
+        - docs
+        - fielddata
+        - mappings
+        - query_cache
+        - segments
+        - shards
+        - store

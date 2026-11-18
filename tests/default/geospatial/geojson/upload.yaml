@@ -1,0 +1,93 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the API endpoints of geospatial plugin.
+version: '>= 2.11'
+prologues: []
+epilogues:
+  - path: /national_parks
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Successfully upload geojson to a non-exist index via POST.
+    path: /_plugins/geospatial/geojson/_upload
+    method: POST
+    request:
+      payload:
+        index: national_parks
+        field: boundary
+        type: geo_shape
+        data: 
+          - type: Feature
+            geometry: 
+              type: Polygon
+              coordinates: 
+                - 
+                  - [0,100]
+                  - [0,101]
+                  - [1,101]
+                  - [1,100]
+                  - [0,100]
+            properties:
+              name: Yosemite Valley
+              type: National Park
+              state: California
+          - type: Feature
+            geometry: 
+              type: LineString
+              coordinates: 
+                - [6,106]
+                - [6.1,106.1]
+                - [6.2,106.2]
+                - [6.3,106.3]
+            properties:
+              name: Grand Canyon Trail
+              type: Hiking Trail
+              difficulty: Moderate
+    response:
+      status: 200
+  - synopsis: Upload geojson to an exist index via POST.
+    path: /_plugins/geospatial/geojson/_upload
+    method: POST
+    request:
+      payload:
+        index: national_parks
+        field: boundary
+        type: geo_shape
+        data: 
+          - type: Feature
+            geometry: 
+              type: LineString
+              coordinates: 
+                - [6,106]
+                - [6.1,106.1]
+                - [6.2,106.2]
+                - [6.3,106.3]
+            properties:
+              name: Grand Canyon Trail
+              type: Hiking Trail
+              difficulty: Moderate
+    response:
+      status: 400
+  - synopsis: Upload geojson to an exist index via PUT.
+    path: /_plugins/geospatial/geojson/_upload
+    method: PUT
+    request:
+      payload:
+        index: national_parks
+        field: boundary
+        type: geo_shape
+        data: 
+          - type: Feature
+            geometry: 
+              type: LineString
+              coordinates: 
+                - [6,106]
+                - [6.1,106.1]
+                - [6.2,106.2]
+                - [6.3,106.3]
+            properties:
+              name: Grand Canyon Trail
+              type: Hiking Trail
+              difficulty: Moderate
+    response:
+      status: 200

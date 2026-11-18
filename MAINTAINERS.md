@@ -10,18 +10,23 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Maintainer           | GitHub ID                                     | Affiliation |
 |----------------------|-----------------------------------------------|-------------|
 | Alen Abeshov         | [aabeshov](https://github.com/aabeshov)       |             |
-| Daniel Doubrovkine   | [dblock](https://github.com/dblock)           | Amazon      |
 | Harsha Vamsi Kalluri | [harshavamsi](https://github.com/harshavamsi) | Amazon      |
+| Karen Xu             | [karenyrx](https://github.com/karenyrx)       | Uber        |
+| Michael Froh         | [msfroh](https://github.com/msfroh)           | Apple       |
+| Ryan Yuan            | [ryanyuan](https://github.com/ryanyuan)       | CrowdStrike |
 | Sachet Alva          | [sachetalva](https://github.com/sachetalva)   | Amazon      |
-| Theo Truong          | [nhtruong](https://github.com/nhtruong)       | Amazon      |
-| Thomas Farr          | [Xtansia](https://github.com/Xtansia)         | Amazon      |
+| Sean Chittenden      | [sean-](https://github.com/sean-)             | CrowdStrike |
+| Thomas Farr          | [Xtansia](https://github.com/Xtansia)         | Independent |
 | Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
 | Vacha Shah           | [VachaShah](https://github.com/VachaShah)     | Amazon      |
+| Xi Lu                | [lucy66hw](https://github.com/lucy66hw)       | Uber        |
 
 
 ## Emeritus
 
-| Maintainer  | GitHub ID                               | Affiliation |
-|-------------|-----------------------------------------|-------------|
-| Abhi Kalra  | [abhivka7](https://github.com/abhivka7) | Amazon      |
-| Pranav Garg | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
+| Maintainer         | GitHub ID                               | Affiliation |
+| ------------------ | --------------------------------------- | ----------- |
+| Abhi Kalra         | [abhivka7](https://github.com/abhivka7) | Amazon      |
+| Daniel Doubrovkine | [dblock](https://github.com/dblock)     | Independent |
+| Pranav Garg        | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
+| Theo Truong        | [nhtruong](https://github.com/nhtruong) | Independent |

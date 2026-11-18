@@ -7,15 +7,18 @@
 * compatible open source license.
 */
 
-import { ChapterRequest, Parameter, type Chapter, type Story, type SupplementalChapter } from './types/story.types'
-import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation, OutputReference } from './types/eval.types'
+import { ChapterRequest, Parameter, SupplementalChapter } from './types/story.types'
+import { type StoryFile, type ChapterEvaluation, Result, type StoryEvaluation } from './types/eval.types'
 import type ChapterEvaluator from './ChapterEvaluator'
 import { overall_result } from './helpers'
 import { StoryOutputs } from './StoryOutputs'
 import SupplementalChapterEvaluator from './SupplementalChapterEvaluator'
 import { ChapterOutput } from './ChapterOutput'
-import * as semver from 'semver'
+import * as semver from '../_utils/semver'
 import _ from 'lodash'
+import { ParsedChapter, ParsedStory } from './types/parsed_story.types'
+import { OutputReference } from './OutputReference'
+import * as path from 'path'
 
 export default class StoryEvaluator {
   private readonly _chapter_evaluator: ChapterEvaluator
@@ -26,8 +29,28 @@ export default class StoryEvaluator {
     this._supplemental_chapter_evaluator = supplemental_chapter_evaluator
   }
 
-  async evaluate({ story, display_path, full_path }: StoryFile, version?: string, dry_run: boolean = false): Promise<StoryEvaluation> {
-    if (version != undefined && story.version !== undefined && !semver.satisfies(version, story.version)) {
+  async evaluate({ story, display_path, full_path }: StoryFile, version?: string, distribution?: string, dry_run: boolean = false): Promise<StoryEvaluation> {
+    if (distribution != undefined && story.distributions?.included !== undefined && story.distributions?.included.length > 0 && !story.distributions.included.includes(distribution)) {
+      return {
+        result: Result.SKIPPED,
+        display_path,
+        full_path,
+        description: story.description,
+        message: `Skipped because distribution ${distribution} is not ${story.distributions.included.length > 1 ? 'one of ' : ''}${story.distributions.included.join(', ')}.`
+      }
+    }
+
+    if (distribution != undefined && story.distributions?.excluded !== undefined && story.distributions?.excluded.length > 0 && story.distributions.excluded.includes(distribution)) {
+      return {
+        result: Result.SKIPPED,
+        display_path,
+        full_path,
+        description: story.description,
+        message: `Skipped because distribution ${distribution} is ${story.distributions.excluded.length > 1 ? 'one of ' : ''}${story.distributions.excluded.join(', ')}.`
+      }
+    }
+
+    if (version !== undefined && story.version !== undefined && !semver.satisfies(version, story.version)) {
       return {
         result: Result.SKIPPED,
         display_path,
@@ -41,11 +64,13 @@ export default class StoryEvaluator {
     if (variables_error !== undefined) {
       return variables_error
     }
+
     const story_outputs = new StoryOutputs()
     const { evaluations: prologues, has_errors: prologue_errors } = await this.#evaluate_supplemental_chapters(story.prologues ?? [], dry_run, story_outputs)
-    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version)
+    const chapters = await this.#evaluate_chapters(story.chapters, prologue_errors, dry_run, story_outputs, version, distribution)
     const { evaluations: epilogues } = await this.#evaluate_supplemental_chapters(story.epilogues ?? [], dry_run, story_outputs)
-    return {
+
+    const result: StoryEvaluation = {
       display_path,
       full_path,
       description: story.description,
@@ -53,38 +78,77 @@ export default class StoryEvaluator {
       prologues,
       epilogues,
       result: overall_result(prologues.concat(chapters).concat(epilogues).concat(prologues).map(e => e.overall)),
-      warnings: this.#chapter_warnings(story.chapters)
     }
+
+    const warnings = this.#chapter_warnings(story, full_path)
+    if (warnings !== undefined) {
+      result.warnings = warnings
+    }
+
+    return result
   }
 
-  #chapter_warnings(chapters: Chapter[]): string[] | undefined {
-    const result = _.compact([
-      this.#warning_if_mismatched_chapter_paths(chapters)
-    ])
+  #chapter_warnings(story: ParsedStory, full_path: string): string[] | undefined {
+    const result = _.compact(_.flattenDeep([
+      [this.#warning_if_mismatched_chapter_paths(story)],
+      this.#warning_if_invalid_path(story, full_path)
+    ]))
     return result.length > 0 ? result : undefined
   }
 
-  #warning_if_mismatched_chapter_paths(chapters: Chapter[]): string | undefined {
-    const paths = _.compact(_.map(chapters, (chapter) => {
-      const multiple_paths_detected = chapter.warnings?.['multiple-paths-detected'] ?? true
-      if (multiple_paths_detected) return chapter.path
+  #warning_if_mismatched_chapter_paths(story: ParsedStory): string | undefined {
+    if (story.warnings?.['multiple-paths-detected'] === false) return
+    const paths = _.compact(_.map(story.chapters, (chapter) => {
+      if (chapter.warnings?.['multiple-paths-detected'] === false) return
+      return chapter.path
     }))
     const normalized_paths = _.map(paths, (path) => path.replaceAll(/\/\{[^}]+}/g, '').replaceAll('//', '/'))
-    const paths_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
-    if (paths_counts.length > 1) {
-      return `Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.\n  ${_.join(_.uniq(paths), "\n  ")}\n`
+    const operations_counts: Record<string, number> = Object.assign((_.values(_.groupBy(normalized_paths)).map(p => { return { [p[0]] : p.length } })))
+    if (operations_counts.length > 1) {
+      return `Multiple paths detected, please group similar tests together and move paths not being tested to prologues or epilogues.\n  ${_.join(_.uniq(paths), "\n  ")}`
     }
   }
 
-  async #evaluate_chapters(chapters: Chapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string): Promise<ChapterEvaluation[]> {
+  #warning_if_invalid_path(story: ParsedStory, full_path: string): string[] | undefined {
+    if (story.warnings?.['invalid-path-detected'] === false) return
+    const paths = _.compact(_.map(story.chapters, (chapter) => {
+      if (chapter.warnings?.['multiple-paths-detected'] === false) return // not the path being tested
+      return chapter.path
+    }))
+    const normalized_paths = _.uniq(_.map(paths, (path) =>
+      path
+        .replaceAll('/_plugins/', '')
+        .replaceAll(/\/\{[^}]+}/g, '')
+        .replaceAll('/_', '/')
+        .replace(/^_/, '')
+        .replaceAll('//', '/')
+      + '.yaml'
+    ))
+
+    return _.compact(_.map(normalized_paths, (normalized_path) => {
+      if (!full_path.endsWith(normalized_path)) {
+        const relative_path = path.relative('.', full_path)
+        return `Invalid path detected, please move /${relative_path} to ${normalized_path}.`
+      }
+    }))
+  }
+
+  async #evaluate_chapters(chapters: ParsedChapter[], has_errors: boolean, dry_run: boolean, story_outputs: StoryOutputs, version?: string, distribution?: string): Promise<ChapterEvaluation[]> {
     const evaluations: ChapterEvaluation[] = []
     for (const chapter of chapters) {
+      const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
+
       if (dry_run) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
+      } else if (distribution != undefined && chapter.distributions?.included !== undefined && chapter.distributions?.included.length > 0 && !chapter.distributions.included.includes(distribution)) {
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is not ${chapter.distributions.included.length > 1 ? 'one of ' : ''}${chapter.distributions.included.join(', ')}.` } })
+      } else if (distribution != undefined && chapter.distributions?.excluded !== undefined && chapter.distributions?.excluded.length > 0 && chapter.distributions.excluded.includes(distribution)) {
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because distribution ${distribution} is ${chapter.distributions.excluded.length > 1 ? 'one of ' : ''}${chapter.distributions.excluded.join(', ')}.` } })
       } else if (version != undefined && chapter.version !== undefined && !semver.satisfies(version, chapter.version)) {
-        const title = chapter.synopsis || `${chapter.method} ${chapter.path}`
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.`, error: undefined } })
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: `Skipped because version ${version} does not satisfy ${chapter.version}.` } })
+      } else if (chapter.pending != null && chapter.pending) {
+        evaluations.push({ title, overall: { result: Result.IGNORED, message:  chapter.pending } })
+        continue
       } else {
         const evaluation = await this._chapter_evaluator.evaluate(chapter, has_errors, story_outputs)
         has_errors = has_errors || evaluation.overall.result === Result.ERROR
@@ -103,10 +167,10 @@ export default class StoryEvaluator {
     for (const chapter of chapters) {
       const title = `${chapter.method} ${chapter.path}`
       if (dry_run) {
-        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run', error: undefined } })
+        evaluations.push({ title, overall: { result: Result.SKIPPED, message: 'Dry Run' } })
       } else {
-        const { evaluation, evaluation_error } = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
-        has_errors = has_errors || evaluation_error
+        const evaluation = await this._supplemental_chapter_evaluator.evaluate(chapter, story_outputs)
+        has_errors = has_errors || (evaluation.overall.result !== Result.PASSED && evaluation.overall.result !== Result.SKIPPED)
         if (evaluation.output !== undefined && chapter.id !== undefined) {
           story_outputs.set_chapter_output(chapter.id, evaluation.output)
         }
@@ -117,7 +181,7 @@ export default class StoryEvaluator {
   }
 
   // TODO: Refactor and move this logic into StoryValidator
-  static check_story_variables(story: Story, display_path: string, full_path: string): StoryEvaluation | undefined {
+  static check_story_variables(story: ParsedStory, display_path: string, full_path: string): StoryEvaluation | undefined {
     const story_outputs = new StoryOutputs()
     const prologues = (story.prologues ?? []).map((prologue) => {
       return StoryEvaluator.#check_chapter_variables(prologue, story_outputs)
@@ -184,10 +248,7 @@ export default class StoryEvaluator {
   static #extract_params_variables(parameters: Record<string, Parameter>, variables: Set<OutputReference>): void {
     Object.values(parameters ?? {}).forEach((param) => {
       if (typeof param === 'string') {
-        const ref = OutputReference.parse(param)
-        if (ref) {
-          variables.add(ref)
-        }
+        OutputReference.parse(param).forEach((ref) => variables.add(ref))
       }
     })
   }
@@ -196,10 +257,7 @@ export default class StoryEvaluator {
     const request_type = typeof request
     switch (request_type) {
       case 'string': {
-        const ref = OutputReference.parse(request as string)
-        if (ref !== undefined) {
-          variables.add(ref)
-        }
+        OutputReference.parse(request as string).forEach((ref) => variables.add(ref))
         break
       }
       case 'object': {

@@ -9,12 +9,17 @@
 
 import { type ChapterOutput } from '../ChapterOutput'
 import { StoryOutputs } from '../StoryOutputs'
-import type { Story } from "./story.types";
+import { ParsedStory } from './parsed_story.types';
 
 export interface StoryFile {
   display_path: string
   full_path: string
-  story: Story
+  story: ParsedStory
+}
+
+export interface Operation {
+  method: string
+  path: string
 }
 
 export interface StoryEvaluation {
@@ -36,7 +41,9 @@ export interface StoryEvaluations {
 export interface ChapterEvaluation {
   title: string,
   overall: Evaluation,
+  operation?: Operation,
   path?: string,
+  pending?: string,
   request?: {
     parameters?: Record<string, Evaluation>
     request?: Evaluation
@@ -73,24 +80,8 @@ export type EvaluationWithOutput = {
 
 export enum Result {
   PASSED = 'PASSED',
+  IGNORED = 'IGNORED',
   FAILED = 'FAILED',
   SKIPPED = 'SKIPPED',
   ERROR = 'ERROR',
-}
-
-export class OutputReference {
-  chapter_id: string
-  output_name: string
-  private constructor (chapter_id: string, output_name: string) {
-    this.chapter_id = chapter_id
-    this.output_name = output_name
-  }
-
-  static parse (str: string): OutputReference | undefined {
-    if (str.startsWith('${') && str.endsWith('}')) {
-      const spl = str.slice(2, -1).split('.', 2)
-      return { chapter_id: spl[0], output_name: spl[1] }
-    }
-    return undefined
-  }
 }

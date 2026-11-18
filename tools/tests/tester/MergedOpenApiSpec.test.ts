@@ -21,7 +21,9 @@ describe('merged API spec', () => {
 
     test('paths', () => {
       expect(spec.paths()).toEqual({
+        '/_cluster/nodes/hot_threads': ['get'],
         '/_nodes/{id}': ['get', 'post'],
+        '/_superseded/nodes/{id}': ['get'],
         '/cluster_manager': ['get', 'post'],
         '/index': ['get'],
         '/nodes': ['get']
@@ -29,8 +31,8 @@ describe('merged API spec', () => {
     })
 
     test('has all responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
-        '200', '201', '404', '500','503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1'
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
+        '200', '201', '404', '500', '503', 'added-2.0', 'removed-2.0', 'added-1.3-removed-2.0', 'added-2.1'
       ])
     })
 
@@ -38,27 +40,27 @@ describe('merged API spec', () => {
       const responses: any = spec.spec().components?.responses
 
       test('is added with required fields', () => {
-        const schema = responses['info@200'].content['application/json'].schema
+        const schema = responses.info___200.content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual({ not: true, errorMessage: 'property is not defined in the spec' })
       })
 
       test('is added when no required fields', () => {
-        const schema = responses['info@500'].content['application/json'].schema
+        const schema = responses.info___500.content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual({ not: true, errorMessage: 'property is not defined in the spec' })
       })
 
       test('is not added to empty object schema', () => {
-        const schema = responses['info@503'].content['application/json'].schema
+        const schema = responses.info___503.content['application/json'].schema
         expect(schema.unevaluatedProperties).toBeUndefined()
       })
 
       test('is not added when true', () => {
-        const schema = responses['info@201'].content['application/json'].schema
+        const schema = responses.info___201.content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual(true)
       })
 
       test('is not added when object', () => {
-        const schema = responses['info@404'].content['application/json'].schema
+        const schema = responses.info___404.content['application/json'].schema
         expect(schema.unevaluatedProperties).toEqual({ type: 'object' })
       })
     })
@@ -68,7 +70,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '1.3', new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'removed-2.0', 'added-1.3-removed-2.0'
       ])
     })
@@ -78,7 +80,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.0', new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0'
       ])
     })
@@ -88,7 +90,7 @@ describe('merged API spec', () => {
     const spec = new MergedOpenApiSpec('tools/tests/tester/fixtures/specs/complete', '2.1', new Logger())
 
     test('has matching responses', () => {
-      expect(_.keys(spec.spec().paths['/index']?.get?.responses)).toEqual([
+      expect(_.keys(spec.spec().paths?.['/index']?.get?.responses)).toEqual([
         '200', '201', '404', '500', '503', 'added-2.0', 'added-2.1'
       ])
     })

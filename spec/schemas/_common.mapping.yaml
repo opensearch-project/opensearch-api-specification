@@ -1,58 +1,11 @@
 openapi: 3.1.0
 info:
-  title: Schemas of _common.mapping category
-  description: Schemas of _common.mapping category
+  title: Schemas of `_common.mapping` Category
+  description: Schemas of `_common.mapping` category.
   version: 1.0.0
 paths: {}
 components:
   schemas:
-    RuntimeFields:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/RuntimeField'
-    RuntimeField:
-      type: object
-      properties:
-        fetch_fields:
-          description: For type `lookup`
-          type: array
-          items:
-            $ref: '#/components/schemas/RuntimeFieldFetchFields'
-        format:
-          description: A custom format for `date` type runtime fields.
-          type: string
-        input_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        target_field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        target_index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-        script:
-          $ref: '_common.yaml#/components/schemas/Script'
-        type:
-          $ref: '#/components/schemas/RuntimeFieldType'
-      required:
-        - type
-    RuntimeFieldFetchFields:
-      type: object
-      properties:
-        field:
-          $ref: '_common.yaml#/components/schemas/Field'
-        format:
-          type: string
-      required:
-        - field
-    RuntimeFieldType:
-      type: string
-      enum:
-        - boolean
-        - date
-        - double
-        - geo_point
-        - ip
-        - keyword
-        - long
-        - lookup
     TypeMapping:
       type: object
       properties:
@@ -90,10 +43,6 @@ components:
           $ref: '#/components/schemas/SizeField'
         _source:
           $ref: '#/components/schemas/SourceField'
-        runtime:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/RuntimeField'
         enabled:
           type: boolean
         _data_stream_timestamp:
@@ -133,12 +82,15 @@ components:
         - store_term_vector_positions
         - store_term_vectors
     DynamicMapping:
-      type: string
-      enum:
-        - 'false'
-        - strict
-        - strict_allow_templates
-        - 'true'
+      oneOf:
+        - type: string
+          enum:
+            - 'false'
+            - false_allow_templates
+            - strict
+            - strict_allow_templates
+            - 'true'
+        - type: boolean
     DynamicTemplate:
       type: object
       properties:
@@ -156,14 +108,64 @@ components:
           type: string
         unmatch:
           type: string
+    FieldType:
+      type: string
+      enum:
+        - aggregate_metric_double
+        - alias
+        - binary
+        - boolean
+        - byte
+        - completion
+        - constant_keyword
+        - date
+        - date_nanos
+        - date_range
+        - double
+        - double_range
+        - flat_object
+        - float
+        - float_range
+        - geo_point
+        - geo_shape
+        - half_float
+        - histogram
+        - icu_collation_keyword
+        - integer
+        - integer_range
+        - ip
+        - ip_range
+        - join
+        - keyword
+        - knn_vector
+        - long
+        - long_range
+        - match_only_text
+        - murmur3
+        - nested
+        - object
+        - percolator
+        - rank_feature
+        - rank_features
+        - scaled_float
+        - search_as_you_type
+        - semantic
+        - short
+        - text
+        - token_count
+        - unsigned_long
+        - version
+        - wildcard
+        - xy_point
+        - xy_shape
     Property:
       type: object
       discriminator:
         propertyName: type
+        x-default: object
       oneOf:
         - $ref: '#/components/schemas/BinaryProperty'
         - $ref: '#/components/schemas/BooleanProperty'
-        - $ref: '#/components/schemas/DynamicProperty'
         - $ref: '#/components/schemas/JoinProperty'
         - $ref: '#/components/schemas/KeywordProperty'
         - $ref: '#/components/schemas/MatchOnlyTextProperty'
@@ -177,9 +179,7 @@ components:
         - $ref: '#/components/schemas/DateNanosProperty'
         - $ref: '#/components/schemas/DateProperty'
         - $ref: '#/components/schemas/AggregateMetricDoubleProperty'
-        - $ref: '#/components/schemas/DenseVectorProperty'
-        - $ref: '#/components/schemas/SparseVectorProperty'
-        - $ref: '#/components/schemas/FlattenedProperty'
+        - $ref: '#/components/schemas/FlatObjectProperty'
         - $ref: '#/components/schemas/NestedProperty'
         - $ref: '#/components/schemas/ObjectProperty'
         - $ref: '#/components/schemas/CompletionProperty'
@@ -191,8 +191,8 @@ components:
         - $ref: '#/components/schemas/TokenCountProperty'
         - $ref: '#/components/schemas/GeoPointProperty'
         - $ref: '#/components/schemas/GeoShapeProperty'
-        - $ref: '#/components/schemas/PointProperty'
-        - $ref: '#/components/schemas/ShapeProperty'
+        - $ref: '#/components/schemas/XyPointProperty'
+        - $ref: '#/components/schemas/XyShapeProperty'
         - $ref: '#/components/schemas/ByteNumberProperty'
         - $ref: '#/components/schemas/DoubleNumberProperty'
         - $ref: '#/components/schemas/FloatNumberProperty'
@@ -200,6 +200,7 @@ components:
         - $ref: '#/components/schemas/IntegerNumberProperty'
         - $ref: '#/components/schemas/LongNumberProperty'
         - $ref: '#/components/schemas/ScaledFloatNumberProperty'
+        - $ref: '#/components/schemas/SemanticProperty'
         - $ref: '#/components/schemas/ShortNumberProperty'
         - $ref: '#/components/schemas/UnsignedLongNumberProperty'
         - $ref: '#/components/schemas/DateRangeProperty'
@@ -208,6 +209,8 @@ components:
         - $ref: '#/components/schemas/IntegerRangeProperty'
         - $ref: '#/components/schemas/IpRangeProperty'
         - $ref: '#/components/schemas/LongRangeProperty'
+        - $ref: '#/components/schemas/KnnVectorProperty'
+        - $ref: '#/components/schemas/IcuCollationKeywordProperty'
     BinaryProperty:
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
@@ -250,7 +253,7 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/Property'
         ignore_above:
-          type: number
+          type: integer
         dynamic:
           $ref: '#/components/schemas/DynamicMapping'
         fields:
@@ -264,6 +267,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             fielddata:
               $ref: 'indices._common.yaml#/components/schemas/NumericFielddata'
             index:
@@ -276,74 +280,6 @@ components:
                 - boolean
           required:
             - type
-    DynamicProperty:
-      allOf:
-        - $ref: '#/components/schemas/DocValuesPropertyBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - '{dynamic_property}'
-            enabled:
-              type: boolean
-            null_value:
-              $ref: '_common.yaml#/components/schemas/FieldValue'
-            boost:
-              type: number
-            coerce:
-              type: boolean
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            on_script_error:
-              $ref: '#/components/schemas/OnScriptError'
-            ignore_malformed:
-              type: boolean
-            time_series_metric:
-              $ref: '#/components/schemas/TimeSeriesMetricType'
-            analyzer:
-              type: string
-            eager_global_ordinals:
-              type: boolean
-            index:
-              type: boolean
-            index_options:
-              $ref: '#/components/schemas/IndexOptions'
-            index_phrases:
-              type: boolean
-            index_prefixes:
-              $ref: '#/components/schemas/TextIndexPrefixes'
-            norms:
-              type: boolean
-            position_increment_gap:
-              type: number
-            search_analyzer:
-              type: string
-            search_quote_analyzer:
-              type: string
-            term_vector:
-              $ref: '#/components/schemas/TermVectorOption'
-            format:
-              type: string
-            precision_step:
-              type: number
-            locale:
-              type: string
-          required:
-            - type
-    OnScriptError:
-      type: string
-      enum:
-        - continue
-        - fail
-    TimeSeriesMetricType:
-      type: string
-      enum:
-        - counter
-        - gauge
-        - histogram
-        - position
-        - summary
     IndexOptions:
       type: string
       enum:
@@ -355,9 +291,9 @@ components:
       type: object
       properties:
         max_chars:
-          type: number
+          type: integer
         min_chars:
-          type: number
+          type: integer
       required:
         - max_chars
         - min_chars
@@ -399,6 +335,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             eager_global_ordinals:
               type: boolean
             index:
@@ -413,9 +350,6 @@ components:
               type: string
             split_queries_on_whitespace:
               type: boolean
-            time_series_dimension:
-              description: For internal use by OpenSearch only. Marks the field as a time series dimension. Defaults to false.
-              type: boolean
             type:
               type: string
               enum:
@@ -429,6 +363,25 @@ components:
           type: string
           enum:
             - match_only_text
+        analyzer:
+          type: string
+        boost:
+          type: number
+          format: double
+        eager_global_ordinals:
+          type: boolean
+        fielddata:
+          type: boolean
+        fielddata_frequency_filter:
+          $ref: 'indices._common.yaml#/components/schemas/FielddataFrequencyFilter'
+        position_increment_gap:
+          type: integer
+        search_analyzer:
+          type: string
+        term_vector:
+          $ref: '#/components/schemas/TermVectorOption'
+        index:
+          type: boolean
         fields:
           description: |-
             Multi-fields allow the same string value to be indexed in multiple ways for different purposes, such as one
@@ -492,7 +445,7 @@ components:
             index_options:
               $ref: '#/components/schemas/IndexOptions'
             max_shingle_size:
-              type: number
+              type: integer
             norms:
               type: boolean
             search_analyzer:
@@ -516,6 +469,7 @@ components:
               type: string
             boost:
               type: number
+              format: double
             eager_global_ordinals:
               type: boolean
             fielddata:
@@ -533,7 +487,7 @@ components:
             norms:
               type: boolean
             position_increment_gap:
-              type: number
+              type: integer
             search_analyzer:
               type: string
             search_quote_analyzer:
@@ -568,6 +522,8 @@ components:
                 - wildcard
             null_value:
               type: string
+            normalizer:
+              type: string
           required:
             - type
     DateNanosProperty:
@@ -577,6 +533,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             format:
               type: string
             ignore_malformed:
@@ -586,7 +543,7 @@ components:
             null_value:
               $ref: '_common.yaml#/components/schemas/DateTime'
             precision_step:
-              type: number
+              type: integer
             type:
               type: string
               enum:
@@ -600,6 +557,7 @@ components:
           properties:
             boost:
               type: number
+              format: double
             fielddata:
               $ref: 'indices._common.yaml#/components/schemas/NumericFielddata'
             format:
@@ -611,7 +569,7 @@ components:
             null_value:
               $ref: '_common.yaml#/components/schemas/DateTime'
             precision_step:
-              type: number
+              type: integer
             locale:
               type: string
             type:
@@ -635,83 +593,23 @@ components:
               type: array
               items:
                 type: string
-            time_series_metric:
-              $ref: '#/components/schemas/TimeSeriesMetricType'
           required:
             - default_metric
             - metrics
             - type
-    DenseVectorProperty:
+    FlatObjectProperty:
       allOf:
         - $ref: '#/components/schemas/PropertyBase'
         - type: object
           properties:
-            type:
-              type: string
-              enum:
-                - dense_vector
-            dims:
-              type: number
-            similarity:
-              type: string
-            index:
+            searchable:
               type: boolean
-            index_options:
-              $ref: '#/components/schemas/DenseVectorIndexOptions'
-          required:
-            - dims
-            - type
-    DenseVectorIndexOptions:
-      type: object
-      properties:
-        type:
-          type: string
-        m:
-          type: number
-        ef_construction:
-          type: number
-      required:
-        - ef_construction
-        - m
-        - type
-    SparseVectorProperty:
-      allOf:
-        - $ref: '#/components/schemas/PropertyBase'
-        - type: object
-          properties:
-            type:
-              type: string
-              enum:
-                - sparse_vector
-          required:
-            - type
-    FlattenedProperty:
-      allOf:
-        - $ref: '#/components/schemas/PropertyBase'
-        - type: object
-          properties:
-            boost:
-              type: number
-            depth_limit:
-              type: number
-            doc_values:
-              type: boolean
-            eager_global_ordinals:
-              type: boolean
-            index:
-              type: boolean
-            index_options:
-              $ref: '#/components/schemas/IndexOptions'
-            null_value:
-              type: string
-            similarity:
-              type: string
-            split_queries_on_whitespace:
+            aggregatable:
               type: boolean
             type:
               type: string
               enum:
-                - flattened
+                - flat_object
           required:
             - type
     NestedProperty:
@@ -754,7 +652,7 @@ components:
               items:
                 $ref: '#/components/schemas/SuggestContext'
             max_input_length:
-              type: number
+              type: integer
             preserve_position_increments:
               type: boolean
             preserve_separators:
@@ -788,8 +686,7 @@ components:
         - $ref: '#/components/schemas/PropertyBase'
         - type: object
           properties:
-            value:
-              type: object
+            value: {}
             type:
               type: string
               enum:
@@ -829,19 +726,13 @@ components:
           properties:
             boost:
               type: number
+              format: double
             index:
               type: boolean
             ignore_malformed:
               type: boolean
             null_value:
               type: string
-            on_script_error:
-              $ref: '#/components/schemas/OnScriptError'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            time_series_dimension:
-              description: For internal use by OpenSearch only. Marks the field as a time series dimension. Defaults to false.
-              type: boolean
             type:
               type: string
               enum:
@@ -868,10 +759,12 @@ components:
               type: string
             boost:
               type: number
+              format: double
             index:
               type: boolean
             null_value:
               type: number
+              format: double
             enable_position_increments:
               type: boolean
             type:
@@ -912,6 +805,11 @@ components:
               $ref: '#/components/schemas/GeoOrientation'
             strategy:
               $ref: '#/components/schemas/GeoStrategy'
+              deprecated: true
+            distance_error_pct:
+              type: number
+              format: double
+              deprecated: true
             type:
               type: string
               enum:
@@ -919,16 +817,30 @@ components:
           required:
             - type
     GeoOrientation:
-      type: string
-      enum:
-        - left
-        - right
+      oneOf:
+        # eslint-disable yml/sort-sequence-values
+        - title: left
+          type: string
+          enum:
+            - left
+            - LEFT
+            - clockwise
+            - cw
+        - title: right
+          type: string
+          enum:
+            - right
+            - RIGHT
+            - counterclockwise
+            - ccw
+        # eslint-enable yml/sort-sequence-values
     GeoStrategy:
       type: string
       enum:
         - recursive
         - term
-    PointProperty:
+    XyPointProperty:
+      x-version-added: '2.4'
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
@@ -938,14 +850,15 @@ components:
             ignore_z_value:
               type: boolean
             null_value:
-              type: string
+              $ref: '_common.yaml#/components/schemas/XyLocation'
             type:
               type: string
               enum:
-                - point
+                - xy_point
           required:
             - type
-    ShapeProperty:
+    XyShapeProperty:
+      x-version-added: '2.4'
       allOf:
         - $ref: '#/components/schemas/DocValuesPropertyBase'
         - type: object
@@ -961,7 +874,7 @@ components:
             type:
               type: string
               enum:
-                - shape
+                - xy_shape
           required:
             - type
     ByteNumberProperty:
@@ -984,20 +897,12 @@ components:
           properties:
             boost:
               type: number
+              format: double
             coerce:
               type: boolean
             ignore_malformed:
               type: boolean
             index:
-              type: boolean
-            on_script_error:
-              $ref: '#/components/schemas/OnScriptError'
-            script:
-              $ref: '_common.yaml#/components/schemas/Script'
-            time_series_metric:
-              $ref: '#/components/schemas/TimeSeriesMetricType'
-            time_series_dimension:
-              description: For internal use by OpenSearch only. Marks the field as a time series dimension. Defaults to false.
               type: boolean
     DoubleNumberProperty:
       allOf:
@@ -1010,6 +915,7 @@ components:
                 - double
             null_value:
               type: number
+              format: double
           required:
             - type
     FloatNumberProperty:
@@ -1023,6 +929,7 @@ components:
                 - float
             null_value:
               type: number
+              format: float
           required:
             - type
     HalfFloatNumberProperty:
@@ -1036,6 +943,7 @@ components:
                 - half_float
             null_value:
               type: number
+              format: float
           required:
             - type
     IntegerNumberProperty:
@@ -1048,7 +956,7 @@ components:
               enum:
                 - integer
             null_value:
-              type: number
+              type: integer
           required:
             - type
     LongNumberProperty:
@@ -1061,7 +969,8 @@ components:
               enum:
                 - long
             null_value:
-              type: number
+              type: integer
+              format: int64
           required:
             - type
     ScaledFloatNumberProperty:
@@ -1075,10 +984,67 @@ components:
                 - scaled_float
             null_value:
               type: number
+              format: double
             scaling_factor:
               type: number
+              format: double
           required:
             - type
+    SemanticProperty:
+      x-version-added: '3.1'
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - semantic
+        raw_field_type:
+          type: string
+        model_id:
+          type: string
+        model_selection:
+          $ref: '#/components/schemas/SemanticModelSelection'
+          x-version-added: '3.9'
+        search_model_id:
+          type: string
+        semantic_info_field_name:
+          type: string
+        chunking:
+          oneOf:
+            - type: boolean
+            - type: array
+              items:
+                $ref: '#/components/schemas/SemanticChunkingStrategy'
+        semantic_field_search_analyzer:
+          type: string
+        dense_embedding_config:
+          $ref: '#/components/schemas/SemanticDenseEmbeddingConfig'
+        sparse_encoding_config:
+          $ref: '#/components/schemas/SemanticSparseEncodingConfig'
+        skip_existing_embedding:
+          type: boolean
+          default: false
+      required:
+        - type
+      # A semantic field requires at least one of model_id or model_selection.
+      # neural-search rejects a field with neither ("model_id is required"). The anyOf is
+      # wrapped in allOf so the spec tester does not inject unevaluatedProperties into the
+      # branches (which would reject sibling properties like `type`).
+      allOf:
+        - anyOf:
+            - type: object
+              properties:
+                model_id:
+                  type: string
+              required:
+                - model_id
+            - type: object
+              x-version-added: '3.9'
+              properties:
+                model_selection:
+                  $ref: '#/components/schemas/SemanticModelSelection'
+              required:
+                - model_selection
     ShortNumberProperty:
       allOf:
         - $ref: '#/components/schemas/NumberPropertyBase'
@@ -1125,10 +1091,25 @@ components:
           properties:
             boost:
               type: number
+              format: double
             coerce:
               type: boolean
             index:
               type: boolean
+    KnnVectorMethod:
+      type: object
+      properties:
+        name:
+          type: string
+        space_type:
+          type: string
+        engine:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: {}
+      required:
+        - name
     DoubleRangeProperty:
       allOf:
         - $ref: '#/components/schemas/RangePropertyBase'
@@ -1184,6 +1165,69 @@ components:
                 - long_range
           required:
             - type
+    KnnVectorProperty:
+      allOf:
+        - $ref: '#/components/schemas/DocValuesPropertyBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - knn_vector
+            dimension:
+              type: integer
+            space_type:
+              type: string
+            data_type:
+              type: string
+            mode:
+              type: string
+            compression_level:
+              type: string
+            method:
+              $ref: '#/components/schemas/KnnVectorMethod'
+            model_id:
+              type: string
+          required:
+            - dimension
+            - type
+    IcuCollationKeywordProperty:
+      allOf:
+        - $ref: '#/components/schemas/DocValuesPropertyBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - icu_collation_keyword
+            index:
+              type: boolean
+            null_value:
+              type: string
+            alternate:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationAlternate'
+            case_level:
+              type: boolean
+            case_first:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationCaseFirst'
+            decomposition:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationDecomposition'
+            hiragana_quaternary_mode:
+              type: boolean
+            numeric:
+              type: boolean
+            strength:
+              $ref: '_common.analysis.yaml#/components/schemas/IcuCollationStrength'
+            variable_top:
+              type: string
+            country:
+              type: string
+            language:
+              type: string
+            variant:
+              type: string
+          required:
+            - type
     MatchType:
       type: string
       enum:
@@ -1234,14 +1278,6 @@ components:
           type: array
           items:
             type: string
-        mode:
-          $ref: '#/components/schemas/SourceFieldMode'
-    SourceFieldMode:
-      type: string
-      enum:
-        - disabled
-        - stored
-        - synthetic
     DataStreamTimestamp:
       type: object
       properties:
@@ -1263,3 +1299,56 @@ components:
       required:
         - full_name
         - mapping
+    SemanticChunkingStrategy:
+      type: object
+      properties:
+        algorithm:
+          type: string
+        parameters:
+          type: object
+          additionalProperties: {}
+      required:
+        - algorithm
+    SemanticDenseEmbeddingConfig:
+      type: object
+      properties:
+        data_type:
+          type: string
+        mode:
+          type: string
+        compression_level:
+          type: string
+        method:
+          $ref: '#/components/schemas/KnnVectorMethod'
+    SemanticSparseEncodingConfig:
+      type: object
+      properties:
+        prune_type:
+          type: string
+        prune_ratio:
+          type: number
+    SemanticModelSelection:
+      x-version-added: '3.9'
+      type: object
+      description: |-
+        Resolves the model to use for a semantic field from cluster settings instead of a hard-coded `model_id`.
+        The `model_type` and `language_option` pair maps to the cluster setting
+        `plugins.neural_search.model_selection.model_id.<model_type>.<language_option>` (lower-cased),
+        whose value is the resolved model id.
+      properties:
+        language_option:
+          $ref: '#/components/schemas/SemanticModelLanguageOption'
+        model_type:
+          $ref: '#/components/schemas/SemanticModelType'
+    SemanticModelLanguageOption:
+      x-version-added: '3.9'
+      type: string
+      enum:
+        - ENGLISH
+        - MULTILINGUAL
+    SemanticModelType:
+      x-version-added: '3.9'
+      type: string
+      enum:
+        - DENSE
+        - SPARSE

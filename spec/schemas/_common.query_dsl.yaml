@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Schemas of _common.query_dsl category
-  description: Schemas of _common.query_dsl category
+  title: Schemas of `_common.query_dsl` Category
+  description: Schemas of `_common.query_dsl` category.
   version: 1.0.0
 paths: {}
 components:
@@ -9,11 +9,17 @@ components:
     Operator:
       type: string
       enum:
+        # eslint-disable yml/sort-sequence-values
         - and
+        - AND
         - or
+        - OR
+        # eslint-enable yml/sort-sequence-values
     QueryContainer:
       type: object
       properties:
+        agentic:
+          $ref: '#/components/schemas/AgenticQuery'
         bool:
           $ref: '#/components/schemas/BoolQuery'
         boosting:
@@ -21,6 +27,8 @@ components:
         common:
           deprecated: true
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/CommonTermsQuery'
           minProperties: 1
@@ -40,6 +48,8 @@ components:
         fuzzy:
           description: Returns documents that contain terms similar to the search term, as measured by a Levenshtein edit distance.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/FuzzyQuery'
           minProperties: 1
@@ -56,24 +66,36 @@ components:
           $ref: '#/components/schemas/HasChildQuery'
         has_parent:
           $ref: '#/components/schemas/HasParentQuery'
+        hybrid:
+          $ref: '#/components/schemas/HybridQuery'
         ids:
           $ref: '#/components/schemas/IdsQuery'
         intervals:
           description: Returns documents based on the order and proximity of matching terms.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/IntervalsQuery'
           minProperties: 1
           maxProperties: 1
+        knn:
+          type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
+          additionalProperties:
+            $ref: '#/components/schemas/KnnQuery'
+          minProperties: 1
+          maxProperties: 1
         match:
           description: |-
-            Returns documents that match a provided text, number, date or boolean value.
+            Returns documents that match a provided text, number, date or Boolean value.
             The provided text is analyzed before matching.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
-            anyOf:
-              - $ref: '#/components/schemas/MatchQuery'
-              - { }
+            $ref: '#/components/schemas/MatchQuery'
           minProperties: 1
           maxProperties: 1
         match_all:
@@ -84,6 +106,8 @@ components:
             Each term except the last is used in a `term` query.
             The last term is used in a prefix query.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/MatchBoolPrefixQuery'
           minProperties: 1
@@ -93,6 +117,8 @@ components:
         match_phrase:
           description: Analyzes the text and creates a phrase query out of the analyzed text.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/MatchPhraseQuery'
           minProperties: 1
@@ -102,6 +128,8 @@ components:
             Returns documents that contain the words of a provided text, in the same order as provided.
             The last term of the provided text is treated as a prefix, matching any words that begin with that term.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/MatchPhrasePrefixQuery'
           minProperties: 1
@@ -112,15 +140,31 @@ components:
           $ref: '#/components/schemas/MultiMatchQuery'
         nested:
           $ref: '#/components/schemas/NestedQuery'
+        neural:
+          type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
+          additionalProperties:
+            $ref: '#/components/schemas/NeuralQuery'
+          minProperties: 1
+          maxProperties: 1
+        neural_sparse:
+          type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
+          additionalProperties:
+            $ref: '#/components/schemas/NeuralSparseQuery'
+          minProperties: 1
+          maxProperties: 1
         parent_id:
           $ref: '#/components/schemas/ParentIdQuery'
         percolate:
           $ref: '#/components/schemas/PercolateQuery'
-        pinned:
-          $ref: '#/components/schemas/PinnedQuery'
         prefix:
           description: Returns documents that contain a specific prefix in a provided field.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/PrefixQuery'
           minProperties: 1
@@ -130,6 +174,8 @@ components:
         range:
           description: Returns documents that contain terms within a provided range.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/RangeQuery'
           minProperties: 1
@@ -139,20 +185,20 @@ components:
         regexp:
           description: Returns documents that contain terms matching a regular expression.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/RegexpQuery'
           minProperties: 1
           maxProperties: 1
-        rule_query:
-          $ref: '#/components/schemas/RuleQuery'
         script:
           $ref: '#/components/schemas/ScriptQuery'
         script_score:
           $ref: '#/components/schemas/ScriptScoreQuery'
-        shape:
-          $ref: '#/components/schemas/ShapeQuery'
         simple_query_string:
           $ref: '#/components/schemas/SimpleQueryStringQuery'
+        sltr:
+          $ref: '#/components/schemas/StoredLtrQuery'
         span_containing:
           $ref: '#/components/schemas/SpanContainingQuery'
         field_masking_span:
@@ -170,61 +216,81 @@ components:
         span_term:
           description: Matches spans containing a term.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/SpanTermQuery'
           minProperties: 1
           maxProperties: 1
         span_within:
           $ref: '#/components/schemas/SpanWithinQuery'
+        template:
+          description: Return documents using a template query contains placeholders that are resolved by search request processors during query execution.
+          type: object
+          additionalProperties: true
+          x-protobuf-excluded: true
         term:
           description: |-
             Returns documents that contain an exact term in a provided field.
-            To return a document, the query term must exactly match the queried field's value, including whitespace and capitalization.
+            To return a document, the query term must exactly match the queried field's value, including white space and capitalization.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
-            anyOf:
-              - $ref: '#/components/schemas/TermQuery'
-              - $ref: '_common.yaml#/components/schemas/FieldValue'
+            $ref: '#/components/schemas/TermQuery'
           minProperties: 1
           maxProperties: 1
         terms:
+          description: |-
+            Returns documents that contain one or more exact terms in a provided field.
           $ref: '#/components/schemas/TermsQuery'
         terms_set:
           description: |-
             Returns documents that contain a minimum number of exact terms in a provided field.
-            To return a document, a required number of terms must exactly match the field values, including whitespace and capitalization.
+            To return a document, a required number of terms must exactly match the field values, including white space and capitalization.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/TermsSetQuery'
           minProperties: 1
           maxProperties: 1
-        text_expansion:
-          description: Uses a natural language processing model to convert the query text into a list of token-weight pairs which are then used in a query against a sparse vector or rank features field.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/TextExpansionQuery'
-          minProperties: 1
-          maxProperties: 1
-        weighted_tokens:
-          description: Supports returning text_expansion query results by sending in precomputed tokens with the query.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/WeightedTokensQuery'
-          minProperties: 1
-          maxProperties: 1
+        type:
+          $ref: '#/components/schemas/TypeQuery'
         wildcard:
           description: Returns documents that contain terms matching a wildcard pattern.
           type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
           additionalProperties:
             $ref: '#/components/schemas/WildcardQuery'
           minProperties: 1
           maxProperties: 1
         wrapper:
           $ref: '#/components/schemas/WrapperQuery'
-        type:
-          $ref: '#/components/schemas/TypeQuery'
+        xy_shape:
+          $ref: '#/components/schemas/XyShapeQuery'
       minProperties: 1
       maxProperties: 1
+    AgenticQuery:
+      x-version-added: '3.2'
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The natural language question to be answered by the agent.
+              type: string
+            query_fields:
+              description: A list of index fields that the agent should consider when generating the search query.
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/Field'
+            memory_id:
+              description: The memory ID from a previous response, used to continue a conversation with prior context. Applicable for conversational agents only.
+              type: string
+          required:
+            - query_text
     BoolQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -264,6 +330,13 @@ components:
                 - type: array
                   items:
                     $ref: '#/components/schemas/QueryContainer'
+            adjust_pure_negative:
+              description: |-
+                Ensures correct behavior when a query contains only `must_not` clauses.
+                By default set to true, OpenSearch adds a match-all clause to ensure results are returned from Lucene, with the `must_not` conditions applied as filters.
+                If set to false, the query may return no results, as Lucene typically requires at least one positive condition.
+              type: boolean
+              default: true
     QueryBase:
       type: object
       properties:
@@ -274,6 +347,7 @@ components:
             A boost value between 0 and 1.0 decreases the relevance score.
             A value greater than 1.0 increases the relevance score.
           type: number
+          format: float
         _name:
           type: string
     BoostingQuery:
@@ -284,6 +358,7 @@ components:
             negative_boost:
               description: Floating point number between 0 and 1.0 used to decrease the relevance scores of documents matching the `negative` query.
               type: number
+              format: float
             negative:
               $ref: '#/components/schemas/QueryContainer'
             positive:
@@ -293,24 +368,28 @@ components:
             - negative_boost
             - positive
     CommonTermsQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              type: string
-            cutoff_frequency:
-              type: number
-            high_freq_operator:
-              $ref: '#/components/schemas/Operator'
-            low_freq_operator:
-              $ref: '#/components/schemas/Operator'
-            minimum_should_match:
-              $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
-            query:
-              type: string
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  type: string
+                cutoff_frequency:
+                  type: number
+                  format: float
+                high_freq_operator:
+                  $ref: '#/components/schemas/Operator'
+                low_freq_operator:
+                  $ref: '#/components/schemas/Operator'
+                minimum_should_match:
+                  $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
+                query:
+                  type: string
+              required:
+                - query
     CombinedFieldsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -327,7 +406,7 @@ components:
                 The `combined_fields` query analyzes the provided text before performing a search.
               type: string
             auto_generate_synonyms_phrase_query:
-              description: If true, match phrase queries are automatically created for multi-term synonyms.
+              description: If `true`, match phrase queries are automatically created for multi-term synonyms.
               type: boolean
             operator:
               $ref: '#/components/schemas/CombinedFieldsOperator'
@@ -373,50 +452,39 @@ components:
             tie_breaker:
               description: Floating point number between 0 and 1.0 used to increase the relevance scores of documents matching multiple query clauses.
               type: number
+              format: float
           required:
             - queries
     DistanceFeatureQuery:
       oneOf:
-        - $ref: '#/components/schemas/GeoDistanceFeatureQuery'
-        - $ref: '#/components/schemas/DateDistanceFeatureQuery'
-    GeoDistanceFeatureQuery:
-      allOf:
-        - $ref: '#/components/schemas/DistanceFeatureQueryBaseGeoLocationDistance'
-        - type: object
-    DistanceFeatureQueryBaseGeoLocationDistance:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            origin:
-              $ref: '_common.yaml#/components/schemas/GeoLocation'
-            pivot:
-              $ref: '_common.yaml#/components/schemas/Distance'
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-          required:
-            - field
-            - origin
-            - pivot
-    DateDistanceFeatureQuery:
-      allOf:
-        - $ref: '#/components/schemas/DistanceFeatureQueryBaseDateMathDuration'
-        - type: object
-    DistanceFeatureQueryBaseDateMathDuration:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            origin:
-              $ref: '_common.yaml#/components/schemas/DateMath'
-            pivot:
-              $ref: '_common.yaml#/components/schemas/Duration'
-            field:
-              $ref: '_common.yaml#/components/schemas/Field'
-          required:
-            - field
-            - origin
-            - pivot
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                origin:
+                  $ref: '_common.yaml#/components/schemas/GeoLocation'
+                pivot:
+                  $ref: '_common.yaml#/components/schemas/Distance'
+                field:
+                  $ref: '_common.yaml#/components/schemas/Field'
+              required:
+                - field
+                - origin
+                - pivot
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                origin:
+                  $ref: '_common.yaml#/components/schemas/DateMath'
+                pivot:
+                  $ref: '_common.yaml#/components/schemas/Duration'
+                field:
+                  $ref: '_common.yaml#/components/schemas/Field'
+              required:
+                - field
+                - origin
+                - pivot
     ExistsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -441,9 +509,11 @@ components:
             max_boost:
               description: Restricts the new score to not exceed the provided limit.
               type: number
+              format: float
             min_score:
               description: Excludes documents that do not meet the provided score threshold.
               type: number
+              format: float
             query:
               $ref: '#/components/schemas/QueryContainer'
             score_mode:
@@ -465,6 +535,7 @@ components:
               $ref: '#/components/schemas/QueryContainer'
             weight:
               type: number
+              format: float
         - type: object
           properties:
             exp:
@@ -479,17 +550,19 @@ components:
               $ref: '#/components/schemas/RandomScoreFunction'
             script_score:
               $ref: '#/components/schemas/ScriptScoreFunction'
-          minProperties: 1
+          minProperties: 0
           maxProperties: 1
     DecayFunction:
-      oneOf:
-        - $ref: '#/components/schemas/DateDecayFunction'
-        - $ref: '#/components/schemas/NumericDecayFunction'
-        - $ref: '#/components/schemas/GeoDecayFunction'
-    DateDecayFunction:
       allOf:
         - $ref: '#/components/schemas/DecayFunctionBase'
         - type: object
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: placement
+            $ref: '#/components/schemas/DecayPlacement'
+          minProperties: 1
     DecayFunctionBase:
       type: object
       properties:
@@ -502,14 +575,58 @@ components:
         - max
         - min
         - sum
-    NumericDecayFunction:
-      allOf:
-        - $ref: '#/components/schemas/DecayFunctionBase'
-        - type: object
-    GeoDecayFunction:
-      allOf:
-        - $ref: '#/components/schemas/DecayFunctionBase'
-        - type: object
+    DecayPlacement:
+      oneOf:
+        - $ref: '#/components/schemas/DateDecayPlacement'
+        - $ref: '#/components/schemas/GeoDecayPlacement'
+        - $ref: '#/components/schemas/NumericDecayPlacement'
+    DateDecayPlacement:
+      type: object
+      properties:
+        decay:
+          type: number
+          format: double
+        offset:
+          $ref: '_common.yaml#/components/schemas/Duration'
+        origin:
+          $ref: '_common.yaml#/components/schemas/DateTime'
+        scale:
+          $ref: '_common.yaml#/components/schemas/Duration'
+      required:
+        - scale
+    GeoDecayPlacement:
+      type: object
+      properties:
+        decay:
+          type: number
+          format: double
+        offset:
+          $ref: '_common.yaml#/components/schemas/Distance'
+        origin:
+          $ref: '_common.yaml#/components/schemas/GeoLocation'
+        scale:
+          $ref: '_common.yaml#/components/schemas/Distance'
+      required:
+        - origin
+        - scale
+    NumericDecayPlacement:
+      type: object
+      properties:
+        decay:
+          type: number
+          format: double
+        offset:
+          type: number
+          format: double
+        origin:
+          type: number
+          format: double
+        scale:
+          type: number
+          format: double
+      required:
+        - origin
+        - scale
     FieldValueFactorScoreFunction:
       type: object
       properties:
@@ -518,11 +635,13 @@ components:
         factor:
           description: Optional factor to multiply the field value with.
           type: number
+          format: float
         missing:
           description: |-
             Value used if the document doesn't have that field.
             The modifier and factor are still applied to it as though it were read from the document.
           type: number
+          format: double
         modifier:
           $ref: '#/components/schemas/FieldValueFactorModifier'
       required:
@@ -547,7 +666,10 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
         seed:
           oneOf:
-            - type: number
+            - type: integer
+              format: int32
+            - type: integer
+              format: int64
             - type: string
     ScriptScoreFunction:
       type: object
@@ -566,31 +688,39 @@ components:
         - multiply
         - sum
     FuzzyQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            max_expansions:
-              description: Maximum number of variations created.
-              type: number
-            prefix_length:
-              description: Number of beginning characters left unchanged when creating expansions.
-              type: number
-            rewrite:
-              $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
-            transpositions:
-              description: Indicates whether edits include transpositions of two adjacent characters (for example `ab` to `ba`).
-              type: boolean
-            fuzziness:
-              $ref: '_common.yaml#/components/schemas/Fuzziness'
-            value:
-              description: Term you wish to find in the provided field.
-              oneOf:
-                - type: string
-                - type: number
-                - type: boolean
-          required:
-            - value
+      oneOf:
+        - title: value
+          $ref: '_common.yaml#/components/schemas/FieldValue'
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                max_expansions:
+                  description: Maximum number of variations created.
+                  type: integer
+                  format: int32
+                prefix_length:
+                  description: Number of beginning characters left unchanged when creating expansions.
+                  type: integer
+                  format: int32
+                rewrite:
+                  $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
+                transpositions:
+                  description: Indicates whether edits include transpositions of two adjacent characters (for example, `ab` to `ba`).
+                  type: boolean
+                fuzziness:
+                  $ref: '_common.yaml#/components/schemas/Fuzziness'
+                value:
+                  description: Term you wish to find in the provided field.
+                  $ref: '_common.yaml#/components/schemas/FieldValue'
+              required:
+                - value
+    IgnoreUnmapped:
+      type: boolean
+      default: false
+      description: |-
+        Set to `true` to ignore an unmapped field and not match any documents for this query.
+        Set to `false` to throw an exception if the field is not mapped.
     GeoBoundingBoxQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -601,10 +731,14 @@ components:
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
-              description: |-
-                Set to `true` to ignore an unmapped field and not match any documents for this query.
-                Set to `false` to throw an exception if the field is not mapped.
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: bounding_box
+            $ref: '_common.yaml#/components/schemas/GeoBounds'
+          minProperties: 1
     GeoExecution:
       type: string
       enum:
@@ -628,16 +762,19 @@ components:
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
-              description: |-
-                Set to `true` to ignore an unmapped field and not match any documents for this query.
-                Set to `false` to throw an exception if the field is not mapped.
-              type: boolean
-              default: false
-            field:
-              type: object
+              $ref: '#/components/schemas/IgnoreUnmapped'
+            unit:
+              description: The unit of distance measurement.
+              $ref: '_common.yaml#/components/schemas/DistanceUnit'
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: location
+            $ref: '_common.yaml#/components/schemas/GeoLocation'
+          minProperties: 2
           required:
             - distance
-            - field
     GeoPolygonQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -646,37 +783,77 @@ components:
             validation_method:
               $ref: '#/components/schemas/GeoValidationMethod'
             ignore_unmapped:
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: polygon
+            $ref: '#/components/schemas/GeoPolygonPoints'
+          minProperties: 1
+    GeoPolygonPoints:
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/GeoLocation'
+      required:
+        - points
+    GeoShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    GeoShapeQueryField:
+      type: object
+      properties:
+        indexed_shape:
+          $ref: '#/components/schemas/FieldLookup'
+        shape:
+          $ref: '#/components/schemas/GeoShape'
+        relation:
+          $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+      required:
+        - shape
     GeoShapeQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
             ignore_unmapped:
-              description: |-
-                Set to `true` to ignore an unmapped field and not match any documents for this query.
-                Set to `false` to throw an exception if the field is not mapped.
-              type: boolean
+              $ref: '#/components/schemas/IgnoreUnmapped'
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: shape
+            $ref: '#/components/schemas/GeoShapeQueryField'
+          minProperties: 1
     HasChildQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: Indicates whether to ignore an unmapped `type` and not return any documents instead of an error.
-              type: boolean
             inner_hits:
               $ref: '_core.search.yaml#/components/schemas/InnerHits'
             max_children:
               description: |-
                 Maximum number of child documents that match the query allowed for a returned parent document.
                 If the parent document exceeds this limit, it is excluded from the search results.
-              type: number
+              type: integer
+              format: int32
             min_children:
               description: |-
                 Minimum number of child documents that match the query required to match the query for a returned parent document.
                 If the parent document does not meet this limit, it is excluded from the search results.
-              type: number
+              type: integer
+              format: int32
             query:
               $ref: '#/components/schemas/QueryContainer'
             score_mode:
@@ -687,17 +864,18 @@ components:
             - query
             - type
     FieldAndFormat:
-      type: object
-      properties:
-        field:
+      oneOf:
+        - title: field
           $ref: '_common.yaml#/components/schemas/Field'
-        format:
-          description: Format in which the values are returned.
-          type: string
-        include_unmapped:
-          type: boolean
-      required:
-        - field
+        - type: object
+          properties:
+            field:
+              $ref: '_common.yaml#/components/schemas/Field'
+            format:
+              description: Format in which the values are returned.
+              type: string
+          required:
+            - field
     ChildScoreMode:
       type: string
       enum:
@@ -712,10 +890,10 @@ components:
         - type: object
           properties:
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: |-
                 Indicates whether to ignore an unmapped `parent_type` and not return any documents instead of an error.
-                You can use this parameter to query multiple indices that may not contain the `parent_type`.
-              type: boolean
+                You can use this parameter to query multiple indexes that may not contain the `parent_type`.
             inner_hits:
               $ref: '_core.search.yaml#/components/schemas/InnerHits'
             parent_type:
@@ -728,6 +906,21 @@ components:
           required:
             - parent_type
             - query
+    HybridQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            queries:
+              type: array
+              items:
+                $ref: '#/components/schemas/QueryContainer'
+            pagination_depth:
+              type: integer
+              format: int32
+            filter:
+              $ref: '#/components/schemas/QueryContainer'
+              x-version-added: '3.0'
     IdsQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -766,7 +959,8 @@ components:
           description: |-
             Maximum number of positions between the matching terms.
             Intervals produced by the rules further apart than this are not considered matches.
-          type: number
+          type: integer
+          format: int32
         ordered:
           description: If `true`, intervals produced by the rules should appear in the order in which they are specified.
           type: boolean
@@ -836,7 +1030,8 @@ components:
           $ref: '_common.yaml#/components/schemas/Fuzziness'
         prefix_length:
           description: Number of beginning characters left unchanged when creating expansions.
-          type: number
+          type: integer
+          format: int32
         term:
           description: The term to match.
           type: string
@@ -857,7 +1052,8 @@ components:
           description: |-
             Maximum number of positions between the matching terms.
             Terms further apart than this are not considered matches.
-          type: number
+          type: integer
+          format: int32
         ordered:
           description: If `true`, matching terms must appear in their specified order.
           type: boolean
@@ -898,140 +1094,215 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
       required:
         - pattern
-    MatchQuery:
+    QueryVector:
+      type: array
+      items:
+        type: number
+        format: float
+    KnnQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
-            analyzer:
-              description: Analyzer used to convert the text in the query value into tokens.
-              type: string
-            auto_generate_synonyms_phrase_query:
-              description: If `true`, match phrase queries are automatically created for multi-term synonyms.
-              type: boolean
-            cutoff_frequency:
-              deprecated: true
+            vector:
+              $ref: '#/components/schemas/QueryVector'
+            k:
+              description: The total number of nearest neighbors to return as top hits.
+              type: integer
+              format: int32
+            min_score:
+              description: The minimum similarity score required in order for a neighbor to be considered a hit.
               type: number
-            fuzziness:
-              $ref: '_common.yaml#/components/schemas/Fuzziness'
-            fuzzy_rewrite:
-              $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
-            fuzzy_transpositions:
-              description: If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
-              type: boolean
-            lenient:
-              description: If `true`, format-based errors, such as providing a text query value for a numeric field, are ignored.
-              type: boolean
-            max_expansions:
-              description: Maximum number of terms to which the query will expand.
+              format: float
+              x-version-added: '2.14'
+            max_distance:
+              description: The maximum physical vector space distance required in order for a neighbor to be considered a hit.
               type: number
-            minimum_should_match:
-              $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
-            operator:
-              $ref: '#/components/schemas/Operator'
-            prefix_length:
-              description: Number of beginning characters left unchanged for fuzzy matching.
-              type: number
-            query:
-              description: Text, number, boolean value or date you wish to find in the provided field.
-              oneOf:
-                - type: string
-                - type: number
-                - type: boolean
-            zero_terms_query:
-              $ref: '#/components/schemas/ZeroTermsQuery'
+              format: float
+              x-version-added: '2.14'
+            filter:
+              description: The filter for the k-NN search query.
+              $ref: '#/components/schemas/QueryContainer'
+            method_parameters:
+              type: object
+              x-version-added: '2.16'
+              additionalProperties: true
+            rescore:
+              $ref: '#/components/schemas/KnnQueryRescore'
+              x-version-added: '2.17'
+            expand_nested_docs:
+              type: boolean
+              x-version-added: '2.19'
           required:
-            - query
+            - vector
+    KnnQueryRescore:
+      oneOf:
+        - title: enable
+          type: boolean
+        - title: context
+          $ref: '#/components/schemas/RescoreContext'
+    RescoreContext:
+      type: object
+      properties:
+        oversample_factor:
+          type: number
+          format: float
+    MatchQuery:
+      oneOf:
+        - title: query
+          $ref: '_common.yaml#/components/schemas/FieldValue'
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert the text in the query value into tokens.
+                  type: string
+                auto_generate_synonyms_phrase_query:
+                  description: If `true`, match phrase queries are automatically created for multi-term synonyms.
+                  type: boolean
+                cutoff_frequency:
+                  x-version-deprecated: '2.0'
+                  type: number
+                  format: float
+                fuzziness:
+                  $ref: '_common.yaml#/components/schemas/Fuzziness'
+                fuzzy_rewrite:
+                  $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
+                fuzzy_transpositions:
+                  description: If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
+                  type: boolean
+                lenient:
+                  description: If `true`, format-based errors, such as providing a text query value for a numeric field, are ignored.
+                  type: boolean
+                max_expansions:
+                  description: Maximum number of terms to which the query will expand.
+                  type: integer
+                  format: int32
+                minimum_should_match:
+                  $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
+                operator:
+                  $ref: '#/components/schemas/Operator'
+                prefix_length:
+                  description: Number of beginning characters left unchanged for fuzzy matching.
+                  type: integer
+                  format: int32
+                query:
+                  description: Text, number, Boolean value or date you wish to find in the provided field.
+                  $ref: '_common.yaml#/components/schemas/FieldValue'
+                zero_terms_query:
+                  $ref: '#/components/schemas/ZeroTermsQuery'
+              required:
+                - query
     ZeroTermsQuery:
       type: string
       enum:
+        # eslint-disable yml/sort-sequence-values
         - all
+        - ALL
         - none
+        - NONE
+        # eslint-enable yml/sort-sequence-values
     MatchAllQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
+          properties: {}
     MatchBoolPrefixQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert the text in the query value into tokens.
-              type: string
-            fuzziness:
-              $ref: '_common.yaml#/components/schemas/Fuzziness'
-            fuzzy_rewrite:
-              $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
-            fuzzy_transpositions:
-              description: |-
-                If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
-                Can be applied to the term subqueries constructed for all terms but the final term.
-              type: boolean
-            max_expansions:
-              description: |-
-                Maximum number of terms to which the query will expand.
-                Can be applied to the term subqueries constructed for all terms but the final term.
-              type: number
-            minimum_should_match:
-              $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
-            operator:
-              $ref: '#/components/schemas/Operator'
-            prefix_length:
-              description: |-
-                Number of beginning characters left unchanged for fuzzy matching.
-                Can be applied to the term subqueries constructed for all terms but the final term.
-              type: number
-            query:
-              description: |-
-                Terms you wish to find in the provided field.
-                The last term is used in a prefix query.
-              type: string
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert the text in the query value into tokens.
+                  type: string
+                fuzziness:
+                  $ref: '_common.yaml#/components/schemas/Fuzziness'
+                fuzzy_rewrite:
+                  $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
+                fuzzy_transpositions:
+                  description: |-
+                    If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
+                    Can be applied to the term subqueries constructed for all terms but the final term.
+                  type: boolean
+                max_expansions:
+                  description: |-
+                    Maximum number of terms to which the query will expand.
+                    Can be applied to the term subqueries constructed for all terms but the final term.
+                  type: integer
+                  format: int32
+                minimum_should_match:
+                  $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
+                operator:
+                  $ref: '#/components/schemas/Operator'
+                prefix_length:
+                  description: |-
+                    Number of beginning characters left unchanged for fuzzy matching.
+                    Can be applied to the term subqueries constructed for all terms but the final term.
+                  type: integer
+                  format: int32
+                query:
+                  description: |-
+                    Terms you wish to find in the provided field.
+                    The last term is used in a prefix query.
+                  type: string
+              required:
+                - query
     MatchNoneQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
     MatchPhraseQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert the text in the query value into tokens.
-              type: string
-            query:
-              description: Query terms that are analyzed and turned into a phrase query.
-              type: string
-            slop:
-              description: Maximum number of positions allowed between matching tokens.
-              type: number
-            zero_terms_query:
-              $ref: '#/components/schemas/ZeroTermsQuery'
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert the text in the query value into tokens.
+                  type: string
+                query:
+                  description: Query terms that are analyzed and turned into a phrase query.
+                  type: string
+                slop:
+                  description: Maximum number of positions allowed between matching tokens.
+                  type: integer
+                  format: int32
+                zero_terms_query:
+                  $ref: '#/components/schemas/ZeroTermsQuery'
+              required:
+                - query
     MatchPhrasePrefixQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            analyzer:
-              description: Analyzer used to convert text in the query value into tokens.
-              type: string
-            max_expansions:
-              description: Maximum number of terms to which the last provided term of the query value will expand.
-              type: number
-            query:
-              description: Text you wish to find in the provided field.
-              type: string
-            slop:
-              description: Maximum number of positions allowed between matching tokens.
-              type: number
-            zero_terms_query:
-              $ref: '#/components/schemas/ZeroTermsQuery'
-          required:
-            - query
+      oneOf:
+        - title: query
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                analyzer:
+                  description: Analyzer used to convert text in the query value into tokens.
+                  type: string
+                max_expansions:
+                  description: Maximum number of terms to which the last provided term of the query value will expand.
+                  type: integer
+                  format: int32
+                query:
+                  description: Text you wish to find in the provided field.
+                  type: string
+                slop:
+                  description: Maximum number of positions allowed between matching tokens.
+                  type: integer
+                  format: int32
+                zero_terms_query:
+                  $ref: '#/components/schemas/ZeroTermsQuery'
+              required:
+                - query
     MoreLikeThisQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1048,6 +1319,7 @@ components:
                 This sets the boost factor to use when using this feature.
                 Defaults to deactivated (0).
               type: number
+              format: float
             fail_on_unsupported_field:
               description: Controls whether the query should fail (throw an exception) if any of the specified fields are not of the supported types (`text` or `keyword`).
               type: boolean
@@ -1070,26 +1342,32 @@ components:
                     $ref: '#/components/schemas/Like'
             max_doc_freq:
               description: The maximum document frequency above which the terms are ignored from the input document.
-              type: number
+              type: integer
+              format: int32
             max_query_terms:
               description: The maximum number of query terms that can be selected.
-              type: number
+              type: integer
+              format: int32
             max_word_length:
               description: |-
                 The maximum word length above which the terms are ignored.
                 Defaults to unbounded (`0`).
-              type: number
+              type: integer
+              format: int32
             min_doc_freq:
               description: The minimum document frequency below which the terms are ignored from the input document.
-              type: number
+              type: integer
+              format: int32
             minimum_should_match:
               $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
             min_term_freq:
               description: The minimum term frequency below which the terms are ignored from the input document.
-              type: number
+              type: integer
+              format: int32
             min_word_length:
               description: The minimum word length below which the terms are ignored.
-              type: number
+              type: integer
+              format: int32
             per_field_analyzer:
               description: Overrides the default analyzer.
               type: object
@@ -1115,14 +1393,15 @@ components:
     Like:
       description: Text that we want similar documents for or a lookup to a document's field for the text.
       oneOf:
-        - type: string
-        - $ref: '#/components/schemas/LikeDocument'
+        - title: text
+          type: string
+        - title: document
+          $ref: '#/components/schemas/LikeDocument'
     LikeDocument:
       type: object
       properties:
         doc:
           description: A document not present in the index.
-          type: object
         fields:
           type: array
           items:
@@ -1131,6 +1410,8 @@ components:
           $ref: '_common.yaml#/components/schemas/Id'
         _index:
           $ref: '_common.yaml#/components/schemas/IndexName'
+        _type:
+          $ref: '_common.yaml#/components/schemas/Type'
         per_field_analyzer:
           type: object
           additionalProperties:
@@ -1153,8 +1434,9 @@ components:
               description: If `true`, match phrase queries are automatically created for multi-term synonyms.
               type: boolean
             cutoff_frequency:
-              deprecated: true
+              x-version-deprecated: '2.0'
               type: number
+              format: float
             fields:
               $ref: '_common.yaml#/components/schemas/Fields'
             fuzziness:
@@ -1171,23 +1453,27 @@ components:
               type: boolean
             max_expansions:
               description: Maximum number of terms to which the query will expand.
-              type: number
+              type: integer
+              format: int32
             minimum_should_match:
               $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
             operator:
               $ref: '#/components/schemas/Operator'
             prefix_length:
               description: Number of beginning characters left unchanged for fuzzy matching.
-              type: number
+              type: integer
+              format: int32
             query:
-              description: Text, number, boolean value or date you wish to find in the provided field.
+              description: Text, number, Boolean value or date you wish to find in the provided field.
               type: string
             slop:
               description: Maximum number of positions allowed between matching tokens.
-              type: number
+              type: integer
+              format: int32
             tie_breaker:
               description: Determines how scores for each per-term blended query and scores across groups are combined.
               type: number
+              format: float
             type:
               $ref: '#/components/schemas/TextQueryType'
             zero_terms_query:
@@ -1209,8 +1495,8 @@ components:
         - type: object
           properties:
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: Indicates whether to ignore an unmapped path and not return any documents instead of an error.
-              type: boolean
             inner_hits:
               $ref: '_core.search.yaml#/components/schemas/InnerHits'
             path:
@@ -1222,6 +1508,57 @@ components:
           required:
             - path
             - query
+    NeuralQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              type: string
+            query_image:
+              type: string
+              contentEncoding: base64
+            model_id:
+              type: string
+            k:
+              type: integer
+            min_score:
+              type: number
+              format: float
+            method_parameters:
+              type: object
+              x-version-added: '2.16'
+              additionalProperties: true
+            max_distance:
+              type: number
+              format: float
+            filter:
+              $ref: '#/components/schemas/QueryContainer'
+    NeuralSparseQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The query text to be encoded into sparse tokens by the model.
+              type: string
+            model_id:
+              description: The ID of the sparse encoding model or tokenizer model at the ML node.
+              type: string
+            query_tokens:
+              description: Pre-computed sparse tokens and their weights. Use instead of query_text+model_id when tokens are already available.
+              type: object
+              additionalProperties:
+                type: number
+                format: float
+            max_token_score:
+              description: The maximum score threshold for sparse tokens. Deprecated since OpenSearch 2.12.
+              type: number
+              format: float
+              deprecated: true
+            analyzer:
+              description: The analyzer to use for tokenization instead of an ML model.
+              type: string
     ParentIdQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1230,8 +1567,8 @@ components:
             id:
               $ref: '_common.yaml#/components/schemas/Id'
             ignore_unmapped:
+              $ref: '#/components/schemas/IgnoreUnmapped'
               description: Indicates whether to ignore an unmapped `type` and not return any documents instead of an error.
-              type: boolean
             type:
               $ref: '_common.yaml#/components/schemas/RelationName'
     PercolateQuery:
@@ -1241,12 +1578,10 @@ components:
           properties:
             document:
               description: The source of the document being percolated.
-              type: object
             documents:
               description: An array of sources of the documents being percolated.
               type: array
-              items:
-                type: object
+              items: {}
             field:
               $ref: '_common.yaml#/components/schemas/Field'
             id:
@@ -1265,61 +1600,26 @@ components:
               $ref: '_common.yaml#/components/schemas/VersionNumber'
           required:
             - field
-    PinnedQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - allOf:
-            - type: object
-              properties:
-                organic:
-                  $ref: '#/components/schemas/QueryContainer'
-              required:
-                - organic
-            - type: object
-              properties:
-                ids:
-                  description: |-
-                    Document IDs listed in the order they are to appear in results.
-                    Required if `docs` is not specified.
-                  type: array
-                  items:
-                    $ref: '_common.yaml#/components/schemas/Id'
-                docs:
-                  description: |-
-                    Documents listed in the order they are to appear in results.
-                    Required if `ids` is not specified.
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PinnedDoc'
-              minProperties: 1
-              maxProperties: 1
-    PinnedDoc:
-      type: object
-      properties:
-        _id:
-          $ref: '_common.yaml#/components/schemas/Id'
-        _index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-      required:
-        - _id
-        - _index
     PrefixQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            rewrite:
-              $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
-            value:
-              description: Beginning characters of terms you wish to find in the provided field.
-              type: string
-            case_insensitive:
-              description: |-
-                Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
-                Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-          required:
-            - value
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                rewrite:
+                  $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
+                value:
+                  description: Beginning characters of terms you wish to find in the provided field.
+                  type: string
+                case_insensitive:
+                  description: |-
+                    Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
+                    Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+              required:
+                - value
     QueryStringQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1355,10 +1655,12 @@ components:
               $ref: '_common.yaml#/components/schemas/Fuzziness'
             fuzzy_max_expansions:
               description: Maximum number of terms to which the query expands for fuzzy matching.
-              type: number
+              type: integer
+              format: int32
             fuzzy_prefix_length:
               description: Number of beginning characters left unchanged for fuzzy matching.
-              type: number
+              type: integer
+              format: int32
             fuzzy_rewrite:
               $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
             fuzzy_transpositions:
@@ -1369,12 +1671,14 @@ components:
               type: boolean
             max_determinized_states:
               description: Maximum number of automaton states required for the query.
-              type: number
+              type: integer
+              format: int32
             minimum_should_match:
               $ref: '_common.yaml#/components/schemas/MinimumShouldMatch'
             phrase_slop:
               description: Maximum number of positions allowed between matching tokens for phrases.
-              type: number
+              type: integer
+              format: int32
             query:
               description: Query string you wish to parse and use for search.
               type: string
@@ -1393,6 +1697,7 @@ components:
             tie_breaker:
               description: How to combine the queries generated from the individual search terms in the resulting `dis_max` query.
               type: number
+              format: float
             time_zone:
               $ref: '_common.yaml#/components/schemas/TimeZone'
             type:
@@ -1401,8 +1706,8 @@ components:
             - query
     RangeQuery:
       oneOf:
-        - $ref: '#/components/schemas/DateRangeQuery'
         - $ref: '#/components/schemas/NumberRangeQuery'
+        - $ref: '#/components/schemas/DateRangeQuery'
     DateRangeQuery:
       allOf:
         - $ref: '#/components/schemas/RangeQueryBase'
@@ -1428,6 +1733,51 @@ components:
               $ref: '_common.yaml#/components/schemas/DateFormat'
             time_zone:
               $ref: '_common.yaml#/components/schemas/TimeZone'
+            include_lower:
+              description: Include the lower bound
+              type: boolean
+            include_upper:
+              description: Include the upper bound
+              type: boolean
+    NumberRangeQuery:
+      allOf:
+        - $ref: '#/components/schemas/RangeQueryBase'
+        - type: object
+          properties:
+            gt:
+              description: Greater than.
+              type: number
+              format: double
+            gte:
+              description: Greater than or equal to.
+              type: number
+              format: double
+            lt:
+              description: Less than.
+              type: number
+              format: double
+            lte:
+              description: Less than or equal to.
+              type: number
+              format: double
+            from:
+              oneOf:
+                - type: number
+                  format: double
+                - type: string
+                - type: 'null'
+            to:
+              oneOf:
+                - type: number
+                  format: double
+                - type: string
+                - type: 'null'
+            include_lower:
+              description: Include the lower bound
+              type: boolean
+            include_upper:
+              description: Include the upper bound
+              type: boolean
     RangeQueryBase:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1441,27 +1791,6 @@ components:
         - contains
         - intersects
         - within
-    NumberRangeQuery:
-      allOf:
-        - $ref: '#/components/schemas/RangeQueryBase'
-        - type: object
-          properties:
-            gt:
-              description: Greater than.
-              type: number
-            gte:
-              description: Greater than or equal to.
-              type: number
-            lt:
-              description: Less than.
-              type: number
-            lte:
-              description: Less than or equal to.
-              type: number
-            from:
-              type: ['null', number, string]
-            to:
-              type: ['null', number, string]
     RankFeatureQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1487,6 +1816,7 @@ components:
             pivot:
               description: Configurable pivot value so that the result will be less than 0.5.
               type: number
+              format: float
     RankFeatureFunction:
       type: object
     RankFeatureFunctionLogarithm:
@@ -1497,6 +1827,7 @@ components:
             scaling_factor:
               description: Configurable scaling factor.
               type: number
+              format: float
           required:
             - scaling_factor
     RankFeatureFunctionLinear:
@@ -1511,50 +1842,41 @@ components:
             pivot:
               description: Configurable pivot value so that the result will be less than 0.5.
               type: number
+              format: float
             exponent:
               description: Configurable Exponent.
               type: number
+              format: float
           required:
             - exponent
             - pivot
     RegexpQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            case_insensitive:
-              description: |-
-                Allows case insensitive matching of the regular expression value with the indexed field values when set to `true`.
-                When `false`, case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-            flags:
-              description: Enables optional operators for the regular expression.
-              type: string
-            max_determinized_states:
-              description: Maximum number of automaton states required for the query.
-              type: number
-            rewrite:
-              $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
-            value:
-              description: Regular expression for terms you wish to find in the provided field.
-              type: string
-          required:
-            - value
-    RuleQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            organic:
-              $ref: '#/components/schemas/QueryContainer'
-            ruleset_id:
-              $ref: '_common.yaml#/components/schemas/Id'
-            match_criteria:
-              type: object
-          required:
-            - match_criteria
-            - organic
-            - ruleset_id
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                case_insensitive:
+                  description: |-
+                    Allows case insensitive matching of the regular expression value with the indexed field values when set to `true`.
+                    When `false`, case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+                flags:
+                  description: Enables optional operators for the regular expression.
+                  type: string
+                max_determinized_states:
+                  description: Maximum number of automaton states required for the query.
+                  type: integer
+                  format: int32
+                rewrite:
+                  $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
+                value:
+                  description: Regular expression for terms you wish to find in the provided field.
+                  type: string
+              required:
+                - value
     ScriptQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1572,6 +1894,7 @@ components:
             min_score:
               description: Documents with a score lower than this floating point number are excluded from the search results.
               type: number
+              format: float
             query:
               $ref: '#/components/schemas/QueryContainer'
             script:
@@ -1579,14 +1902,6 @@ components:
           required:
             - query
             - script
-    ShapeQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            ignore_unmapped:
-              description: When set to `true` the query ignores an unmapped field and will not match any documents.
-              type: boolean
     SimpleQueryStringQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1599,7 +1914,7 @@ components:
               description: If `true`, the query attempts to analyze wildcard terms in the query string.
               type: boolean
             auto_generate_synonyms_phrase_query:
-              description: If `true`, the parser creates a match_phrase query for each multi-position token.
+              description: If `true`, the parser creates a `match_phrase` query for each multi-position token.
               type: boolean
             default_operator:
               $ref: '#/components/schemas/Operator'
@@ -1616,10 +1931,12 @@ components:
               $ref: '#/components/schemas/SimpleQueryStringFlags'
             fuzzy_max_expansions:
               description: Maximum number of terms to which the query expands for fuzzy matching.
-              type: number
+              type: integer
+              format: int32
             fuzzy_prefix_length:
               description: Number of beginning characters left unchanged for fuzzy matching.
-              type: number
+              type: integer
+              format: int32
             fuzzy_transpositions:
               description: If `true`, edits for fuzzy matching include transpositions of two adjacent characters (for example, `ab` to `ba`).
               type: boolean
@@ -1637,9 +1954,12 @@ components:
           required:
             - query
     SimpleQueryStringFlags:
-      description: Query flags can be either a single flag or a combination of flags, e.g. `OR|AND|PREFIX`.
-      allOf:
-        - $ref: '_common.yaml#/components/schemas/PipeSeparatedFlagsSimpleQueryStringFlag'
+      description: Query flags can be either a single flag or a combination of flags (e.g. `OR|AND|PREFIX`).
+      oneOf:
+        - title: single
+          $ref: '_common.query_dsl.yaml#/components/schemas/SimpleQueryStringFlag'
+        - title: multiple
+          type: string
     SimpleQueryStringFlag:
       type: string
       enum:
@@ -1656,6 +1976,31 @@ components:
         - PREFIX
         - SLOP
         - WHITESPACE
+    StoredLtrQuery:
+      type: object
+      properties:
+        _name:
+          type: string
+        active_features:
+          type: array
+          items:
+            type: string
+        boost:
+          type: number
+          format: float
+        cache:
+          type: boolean
+        featureset:
+          type: string
+        model:
+          type: string
+        params:
+          type: object
+          additionalProperties: true
+        store:
+          type: string
+      required:
+        - params
     SpanContainingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1717,17 +2062,22 @@ components:
           properties:
             end:
               description: Controls the maximum end position permitted in a match.
-              type: number
+              type: integer
+              format: int32
             match:
               $ref: '#/components/schemas/SpanQuery'
           required:
             - end
             - match
     SpanGapQuery:
-      description: Can only be used as a clause in a span_near query.
+      description: Can only be used as a clause in a `span_near` query.
       type: object
+      propertyNames:
+        $ref: '_common.yaml#/components/schemas/Field'
       additionalProperties:
-        type: number
+        title: span_width
+        type: integer
+        format: int32
       minProperties: 1
       maxProperties: 1
     SpanMultiTermQuery:
@@ -1754,7 +2104,8 @@ components:
               type: boolean
             slop:
               description: Controls the maximum number of intervening unmatched positions permitted.
-              type: number
+              type: integer
+              format: int32
           required:
             - clauses
     SpanNotQuery:
@@ -1766,17 +2117,20 @@ components:
               description: |-
                 The number of tokens from within the include span that can't have overlap with the exclude span.
                 Equivalent to setting both `pre` and `post`.
-              type: number
+              type: integer
+              format: int32
             exclude:
               $ref: '#/components/schemas/SpanQuery'
             include:
               $ref: '#/components/schemas/SpanQuery'
             post:
               description: The number of tokens after the include span that can't have overlap with the exclude span.
-              type: number
+              type: integer
+              format: int32
             pre:
               description: The number of tokens before the include span that can't have overlap with the exclude span.
-              type: number
+              type: integer
+              format: int32
           required:
             - exclude
             - include
@@ -1793,14 +2147,17 @@ components:
           required:
             - clauses
     SpanTermQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            value:
-              type: string
-          required:
-            - value
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                value:
+                  type: string
+              required:
+                - value
     SpanWithinQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1814,23 +2171,88 @@ components:
             - big
             - little
     TermQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            value:
-              $ref: '_common.yaml#/components/schemas/FieldValue'
-            case_insensitive:
-              description: |-
-                Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
-                When `false`, the case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-          required:
-            - value
+      oneOf:
+        - title: value
+          $ref: '_common.yaml#/components/schemas/FieldValue'
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                value:
+                  $ref: '_common.yaml#/components/schemas/FieldValue'
+                case_insensitive:
+                  description: |-
+                    Allows ASCII case insensitive matching of the value with the indexed field values when set to `true`.
+                    When `false`, the case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+              required:
+                - value
+    TermsQueryValueType:
+      type: string
+      enum:
+        - bitmap
+        - default
     TermsQuery:
+      type: object
+      properties:
+        _name:
+          type: string
+        boost:
+          type: number
+          format: float
+        value_type:
+          description: |-
+            Specifies the types of values used for filtering. Valid values are `default` and `bitmap`. Default is `default`.
+          $ref: '#/components/schemas/TermsQueryValueType'
+      propertyNames:
+        title: field
+        type: string
+      additionalProperties:
+        title: terms
+        $ref: '#/components/schemas/TermsQueryField'
+      minProperties: 1
+    TermsQueryField:
+      oneOf:
+        - title: value
+          type: array
+          items:
+            $ref: '_common.yaml#/components/schemas/FieldValue'
+        - title: lookup
+          $ref: '#/components/schemas/TermsLookup'
+    TermsLookup:
+      type: object
+      properties:
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        path:
+          $ref: '_common.yaml#/components/schemas/Field'
+        routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+        query:
+          $ref: '#/components/schemas/QueryContainer'
+          x-version-added: 3.2.0
+        store:
+          type: boolean
+      required:
+        - index
+        - path
       allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
+        - oneOf:
+            - type: object
+              properties:
+                id:
+                  $ref: '_common.yaml#/components/schemas/Id'
+              required:
+                - id
+            - type: object
+              properties:
+                query:
+                  $ref: '#/components/schemas/QueryContainer'
+              required:
+                - query
+              x-version-added: 3.2.0
     TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1841,70 +2263,39 @@ components:
             minimum_should_match_script:
               $ref: '_common.yaml#/components/schemas/Script'
             terms:
-              description: Array of terms you wish to find in the provided field.
               type: array
               items:
                 type: string
           required:
             - terms
-    TextExpansionQuery:
+    TypeQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
-            model_id:
-              description: The text expansion NLP model to use
-              type: string
-            model_text:
-              description: The query text
-              type: string
-            pruning_config:
-              $ref: '#/components/schemas/TokenPruningConfig'
-          required:
-            - model_id
-            - model_text
-    TokenPruningConfig:
-      type: object
-      properties:
-        tokens_freq_ratio_threshold:
-          description: Tokens whose frequency is more than this threshold times the average frequency of all tokens in the specified field are considered outliers and pruned.
-          type: number
-        tokens_weight_threshold:
-          description: Tokens whose weight is less than this threshold are considered nonsignificant and pruned.
-          type: number
-        only_score_pruned_tokens:
-          description: Whether to only score pruned tokens, vs only scoring kept tokens.
-          type: boolean
-    WeightedTokensQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            tokens:
-              description: The tokens representing this query
-              type: object
-              additionalProperties:
-                type: number
-            pruning_config:
-              $ref: '#/components/schemas/TokenPruningConfig'
-          required:
-            - tokens
-    WildcardQuery:
-      allOf:
-        - $ref: '#/components/schemas/QueryBase'
-        - type: object
-          properties:
-            case_insensitive:
-              description: Allows case insensitive matching of the pattern with the indexed field values when set to `true`. Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
-              type: boolean
-            rewrite:
-              $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
             value:
-              description: Wildcard pattern for terms you wish to find in the provided field. Required, when wildcard is not set.
               type: string
-            wildcard:
-              description: Wildcard pattern for terms you wish to find in the provided field. Required, when value is not set.
-              type: string
+          required:
+            - value
+    WildcardQuery:
+      oneOf:
+        - title: value
+          type: string
+        - allOf:
+            - $ref: '#/components/schemas/QueryBase'
+            - type: object
+              properties:
+                case_insensitive:
+                  description: Allows case insensitive matching of the pattern with the indexed field values when set to `true`. Default is `false` which means the case sensitivity of matching depends on the underlying field's mapping.
+                  type: boolean
+                rewrite:
+                  $ref: '_common.yaml#/components/schemas/MultiTermQueryRewrite'
+                value:
+                  description: Wildcard pattern for terms you wish to find in the provided field. Required, when wildcard is not set.
+                  type: string
+                wildcard:
+                  description: Wildcard pattern for terms you wish to find in the provided field. Required, when value is not set.
+                  type: string
     WrapperQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1917,12 +2308,49 @@ components:
               type: string
           required:
             - query
-    TypeQuery:
+    XyShape:
+      type: object
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+    XyShapeQueryField:
+      type: object
+      properties:
+        indexed_shape:
+          $ref: '#/components/schemas/FieldLookup'
+        shape:
+          $ref: '#/components/schemas/XyShape'
+        relation:
+          $ref: '_common.yaml#/components/schemas/GeoShapeRelation'
+      required:
+        - shape
+    XyShapeQuery:
+      x-version-added: '2.4'
       allOf:
         - $ref: '#/components/schemas/QueryBase'
         - type: object
           properties:
-            value:
-              type: string
-          required:
-            - value
+            ignore_unmapped:
+              type: boolean
+          propertyNames:
+            title: field
+            type: string
+          additionalProperties:
+            title: xy_shape
+            $ref: '#/components/schemas/XyShapeQueryField'
+          minProperties: 1
+    FieldLookup:
+      type: object
+      properties:
+        id:
+          $ref: '_common.yaml#/components/schemas/Id'
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        path:
+          $ref: '_common.yaml#/components/schemas/Field'
+        routing:
+          $ref: '_common.yaml#/components/schemas/Routing'
+      required:
+        - id

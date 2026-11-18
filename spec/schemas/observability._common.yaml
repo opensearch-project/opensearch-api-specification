@@ -1,0 +1,293 @@
+openapi: 3.1.0
+info:
+  title: Schemas for OpenSearch Observability Object API
+  description: This document defines schemas for the OpenSearch Observability Object API.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ObservabilityObjectList:
+      type: object
+      description: A list of observability objects with pagination details.
+      properties:
+        startIndex:
+          type: integer
+          format: int64
+          description: The starting index of the returned objects.
+        totalHits:
+          type: integer
+          format: int64
+          description: The total number of matching objects.
+        totalHitRelation:
+          $ref: '_common.yaml#/components/schemas/TotalHitsRelation'
+          description: The relationship of total hits to the query.
+        observabilityObjectList:
+          type: array
+          description: The list of observability objects.
+          items:
+            $ref: '#/components/schemas/ObservabilityObject'
+      required:
+        - observabilityObjectList
+        - startIndex
+        - totalHitRelation
+        - totalHits
+
+    ObservabilityObject:
+      type: object
+      description: The core observability object containing visualization and query data.
+      properties:
+        objectId:
+          type: string
+          description: The unique identifier of the observability object.
+        lastUpdatedTimeMs:
+          type: integer
+          format: int64
+          description: When the object was last updated in milliseconds.
+        createdTimeMs:
+          type: integer
+          format: int64
+          description: When the object was created in milliseconds.
+        tenant:
+          type: string
+          description: The tenant associated with the observability object.
+        access:
+          type: array
+          items:
+            type: string
+          description: The access control list for the observability object.
+          x-version-added: 1.2.0
+        operationalPanel:
+          $ref: '#/components/schemas/OperationalPanel'
+        savedVisualization:
+          $ref: '#/components/schemas/SavedVisualization'
+        savedQuery:
+          $ref: '#/components/schemas/SavedQuery'
+      required:
+        - objectId
+
+    OperationalPanel:
+      type: object
+      description: The panel configuration for operational visualizations.
+      properties:
+        name:
+          type: string
+          description: The name of the operational panel.
+        visualizations:
+          type: array
+          description: The list of visualizations in the panel.
+          items:
+            $ref: '#/components/schemas/Visualization'
+        timeRange:
+          $ref: '#/components/schemas/TimeRange'
+        queryFilter:
+          $ref: '#/components/schemas/QueryFilter'
+        applicationId:
+          type: string
+          description: The identifier of the associated application.
+      required:
+        - applicationId
+        - name
+        - queryFilter
+        - timeRange
+        - visualizations
+
+    Visualization:
+      type: object
+      description: The configuration for a single visualization.
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the visualization.
+        savedVisualizationId:
+          type: string
+          description: The identifier of the saved visualization.
+        x:
+          type: integer
+          description: The x-coordinate position of the visualization.
+        y:
+          type: integer
+          description: The y-coordinate position of the visualization.
+        w:
+          type: integer
+          description: The width of the visualization.
+        h:
+          type: integer
+          description: The height of the visualization.
+      required:
+        - h
+        - id
+        - savedVisualizationId
+        - w
+        - x
+        - y
+
+    TimeRange:
+      type: object
+      description: The time range configuration for queries and visualizations.
+      properties:
+        to:
+          type: string
+          description: The end time of the range.
+        from:
+          type: string
+          description: The start time of the range.
+      required:
+        - from
+        - to
+
+    QueryFilter:
+      type: object
+      description: The filter configuration for queries.
+      properties:
+        query:
+          type: string
+          description: The query string.
+        language:
+          type: string
+          description: The query language used.
+      required:
+        - language
+        - query
+
+    SavedVisualization:
+      type: object
+      description: The configuration for a saved visualization.
+      properties:
+        name:
+          type: string
+          description: The name of the saved visualization.
+        description:
+          type: string
+          description: The description of the saved visualization.
+        query:
+          type: string
+          description: The query associated with the visualization.
+        type:
+          type: string
+          description: The type of visualization.
+        selected_date_range:
+          $ref: '#/components/schemas/SelectedDateRange'
+        selected_timestamp:
+          $ref: '#/components/schemas/SelectedTimestamp'
+        selected_fields:
+          $ref: '#/components/schemas/SelectedFields'
+        application_id:
+          type: string
+          description: The identifier of the associated application.
+          x-version-added: 1.3.0
+        user_configs:
+          type: string
+          description: User-specific configuration for the visualization.
+          x-version-added: 1.3.0
+        sub_type:
+          type: string
+          description: The sub-type of the visualization.
+          x-version-added: 1.3.0
+        metric_type:
+          type: string
+          description: The metric type for the visualization.
+          x-version-added: 1.3.0
+        units_of_measure:
+          type: string
+          description: The units of measure for the visualization.
+          x-version-added: 1.3.0
+        selected_labels:
+          $ref: '#/components/schemas/SelectedFields'
+          x-version-added: 1.3.0
+      required:
+        - description
+        - name
+        - query
+        - selected_date_range
+        - selected_fields
+        - selected_timestamp
+        - type
+
+    SelectedDateRange:
+      type: object
+      description: The date range selection configuration.
+      properties:
+        start:
+          type: string
+          description: The start date of the range.
+        end:
+          type: string
+          description: The end date of the range.
+        text:
+          type: string
+          description: The text representation of the date range.
+      required:
+        - end
+        - start
+        - text
+
+    SelectedTimestamp:
+      type: object
+      description: The timestamp field selection configuration.
+      properties:
+        name:
+          type: string
+          description: The name of the selected timestamp field.
+        type:
+          type: string
+          description: The type of the timestamp field.
+      required:
+        - name
+        - type
+
+    SelectedFields:
+      type: object
+      description: The field selection configuration.
+      properties:
+        text:
+          type: string
+          description: The text representation of selected fields.
+        tokens:
+          type: array
+          description: The list of field tokens.
+          items:
+            $ref: '#/components/schemas/Token'
+      required:
+        - text
+        - tokens
+
+    Token:
+      type: object
+      description: The configuration for a field token.
+      properties:
+        name:
+          type: string
+          description: The name of the token.
+        type:
+          type: string
+          description: The type of the token.
+      required:
+        - name
+        - type
+
+    SavedQuery:
+      type: object
+      description: The configuration for a saved query.
+      properties:
+        name:
+          type: string
+          description: The name of the saved query.
+        description:
+          type: string
+          description: The description of the saved query.
+        query:
+          type: string
+          description: The query string.
+        selected_date_range:
+          $ref: '#/components/schemas/SelectedDateRange'
+        selected_timestamp:
+          $ref: '#/components/schemas/SelectedTimestamp'
+        selected_fields:
+          $ref: '#/components/schemas/SelectedFields'
+      required:
+        - description
+        - name
+        - query
+        - selected_date_range
+        - selected_fields
+        - selected_timestamp

@@ -16,7 +16,7 @@ import ChapterReader from 'tester/ChapterReader'
 import SchemaValidator from 'tester/SchemaValidator'
 import ChapterEvaluator from 'tester/ChapterEvaluator'
 import { OpenSearchHttpClient } from 'OpenSearchHttpClient'
-import { type OpenAPIV3 } from 'openapi-types'
+import { type OpenAPIV3_1 } from 'openapi-types'
 import TestRunner from 'tester/TestRunner'
 import { NoOpResultLogger, type ResultLogger } from 'tester/ResultLogger'
 import * as process from 'node:process'
@@ -25,34 +25,37 @@ import { Logger } from 'Logger'
 import StoryValidator from "../../src/tester/StoryValidator";
 
 export function construct_tester_components (spec_path: string): {
-  specification: OpenAPIV3.Document
+  specification: OpenAPIV3_1.Document
   operation_locator: OperationLocator
   opensearch_http_client: OpenSearchHttpClient
   chapter_reader: ChapterReader
   schema_validator: SchemaValidator
-  chapter_evaluator: ChapterEvaluator
+  chapter_evaluator: ChapterEvaluator,
+  supplemental_chapter_evaluator: SupplementalChapterEvaluator,
   story_validator: StoryValidator
   story_evaluator: StoryEvaluator
   result_logger: ResultLogger
   test_runner: TestRunner
 } {
   const logger = new Logger()
-  const specification: OpenAPIV3.Document = read_yaml(spec_path)
+  const specification: OpenAPIV3_1.Document = read_yaml(spec_path)
   const operation_locator = new OperationLocator(specification)
   const opensearch_http_client = new OpenSearchHttpClient({
     insecure: true,
-    username: process.env.OPENSEARCH_USERNAME ?? 'admin',
-    password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!',
+    basic_auth: {
+      username: process.env.OPENSEARCH_USERNAME ?? 'admin',
+      password: process.env.OPENSEARCH_PASSWORD ?? 'myStrongPassword123!'
+    },
     responseType: 'arraybuffer'
   })
   const chapter_reader = new ChapterReader(opensearch_http_client, logger)
   const schema_validator = new SchemaValidator(specification, logger)
   const chapter_evaluator = new ChapterEvaluator(operation_locator, chapter_reader, schema_validator, logger)
-  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader)
+  const supplemental_chapter_evaluator = new SupplementalChapterEvaluator(chapter_reader, logger)
   const story_validator = new StoryValidator()
   const story_evaluator = new StoryEvaluator(chapter_evaluator, supplemental_chapter_evaluator)
   const result_logger = new NoOpResultLogger()
-  const test_runner = new TestRunner(opensearch_http_client, story_validator, story_evaluator, result_logger)
+  const test_runner = new TestRunner(opensearch_http_client, story_validator, story_evaluator, result_logger, logger)
   return {
     specification,
     operation_locator,
@@ -60,6 +63,7 @@ export function construct_tester_components (spec_path: string): {
     chapter_reader,
     schema_validator,
     chapter_evaluator,
+    supplemental_chapter_evaluator,
     story_validator,
     story_evaluator,
     result_logger,
@@ -74,7 +78,7 @@ export function print_yaml (obj: any): void {
 export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
   const flatten = <T extends Evaluation | undefined>(e: T): T => {
 
-    var result = e
+    const result = e
 
     if (e !== undefined && result !== undefined) {
       if (typeof e.error === 'object' && e.error.message !== undefined) {
@@ -90,7 +94,7 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
   const flatten_chapters = <T extends ChapterEvaluation[] | undefined> (chapters: T): T => {
     if (chapters === undefined) return undefined as T
     return chapters.map((c: ChapterEvaluation): ChapterEvaluation => {
-      var result = {
+      const result = {
         ...c,
         overall: flatten(c.overall),
       }
@@ -120,12 +124,13 @@ export function flatten_errors (evaluation: StoryEvaluation): StoryEvaluation {
     }) as T
   }
 
-  return {
-    ...evaluation,
-    chapters: flatten_chapters(evaluation.chapters),
-    epilogues: flatten_chapters(evaluation.epilogues),
-    prologues: flatten_chapters(evaluation.prologues)
-  }
+  const result = evaluation
+
+  if (evaluation.chapters !== undefined) result.chapters = flatten_chapters(evaluation.chapters)
+  if (evaluation.epilogues !== undefined) result.epilogues = flatten_chapters(evaluation.epilogues)
+  if (evaluation.prologues !== undefined) result.prologues = flatten_chapters(evaluation.prologues)
+
+  return result
 }
 
 export function load_expected_evaluation (name: string, exclude_full_path: boolean = false): Omit<StoryEvaluation, 'full_path'> & { full_path?: string } {
@@ -139,5 +144,5 @@ export async function load_actual_evaluation (evaluator: StoryEvaluator, name: s
     full_path,
     display_path: `${name}.yaml`,
     story: read_yaml(full_path)
-  }, process.env.OPENSEARCH_VERSION ?? '2.15.0'))
+  }, process.env.OPENSEARCH_VERSION ?? '3.9.0', process.env.OPENSEARCH_DISTRIBUTION ?? 'opensearch.org'))
 }

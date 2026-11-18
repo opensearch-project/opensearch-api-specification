@@ -1,0 +1,342 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `replication._common` Category
+  description: Schemas of the `replication._common` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Replication:
+      type: object
+      properties:
+        leader_alias:
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
+        leader_index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        use_roles:
+          $ref: '#/components/schemas/UseRoles'
+    UseRoles:
+      type: object
+      properties:
+        leader_cluster_role:
+          type: string
+          description: The role used for the leader cluster during replication.
+        follower_cluster_role:
+          type: string
+          description: The role used for the follower cluster during replication.
+    ReplicationStatus:
+      type: string
+      enum:
+        - BOOTSTRAPPING
+        - PAUSED
+        - REPLICATION NOT IN PROGRESS
+        - RUNNING
+        - SYNCING
+    Status:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ReplicationStatus'
+          description: The current status of the replication process.
+        reason:
+          type: string
+          description: The reason for the current replication status.
+        leader_alias:
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
+        leader_index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        follower_index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        syncing_details:
+          $ref: '#/components/schemas/SyncingDetails'
+        bootstrap_details:
+          $ref: '#/components/schemas/RestoreDetails'
+        shard_replication_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShardInfoResponse'
+          description: Per-shard replication details. Only present in verbose status responses.
+    SyncingDetails:
+      type: object
+      properties:
+        leader_checkpoint:
+          type: integer
+          format: int64
+          description: The checkpoint of the leader index in the replication process.
+        follower_checkpoint:
+          type: integer
+          format: int64
+          description: The checkpoint of the follower index in the replication process.
+        seq_no:
+          $ref: '_common.yaml#/components/schemas/SequenceNumber'
+    RestoreDetails:
+      type: object
+      properties:
+        bytes_total:
+          type: integer
+          format: int64
+          description: The total number of bytes to restore.
+        bytes_recovered:
+          type: integer
+          format: int64
+          description: The number of bytes recovered so far.
+        bytes_percent:
+          type: number
+          format: float
+          description: The percentage of bytes recovered.
+        files_total:
+          type: integer
+          format: int32
+          description: The total number of files to restore.
+        files_recovered:
+          type: integer
+          format: int32
+          description: The number of files recovered so far.
+        files_percent:
+          type: number
+          format: float
+          description: The percentage of files recovered.
+        start_time:
+          type: integer
+          format: int64
+          description: When the restore started, in epoch milliseconds.
+        running_time:
+          type: integer
+          format: int64
+          description: The elapsed restore time in milliseconds.
+    ShardInfoResponse:
+      type: object
+      properties:
+        shard_id:
+          type: string
+          description: The shard identifier.
+        syncing_task_details:
+          $ref: '#/components/schemas/SyncingDetails'
+        bootstrap_task_details:
+          $ref: '#/components/schemas/RestoreDetails'
+    LeaderStatus:
+      type: object
+      properties:
+        num_replicated_indices:
+          type: number
+          description: The number of indexes being replicated.
+        operations_read:
+          type: number
+          description: The total number of operations read during replication.
+        translog_size_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        operations_read_lucene:
+          type: number
+          description: The number of operations read from Lucene during replication.
+        operations_read_translog:
+          type: number
+          description: The number of operations read from the translog during replication.
+        total_read_time_lucene_millis:
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
+        total_read_time_translog_millis:
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
+        bytes_read:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        index_stats:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IndexStatus'
+    IndexStatus:
+      type: object
+      properties:
+        operations_read:
+          type: number
+          description: The number of operations read for this index during replication.
+        translog_size_bytes:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+        operations_read_lucene:
+          type: number
+          description: The number of operations read from Lucene for this index during replication.
+        operations_read_translog:
+          type: number
+          description: The number of operations read from the translog for this index during replication.
+        total_read_time_lucene_millis:
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
+        total_read_time_translog_millis:
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
+        bytes_read:
+          $ref: '_common.yaml#/components/schemas/ByteCount'
+    FollowerStatus:
+      type: object
+      properties:
+        num_syncing_indices:
+          type: number
+          description: The number of indexes currently syncing.
+        num_bootstrapping_indices:
+          type: number
+          description: The number of indexes currently bootstrapping.
+        num_paused_indices:
+          type: number
+          description: The number of indexes currently paused.
+        num_failed_indices:
+          type: number
+          description: The number of indexes that have failed replication.
+        num_shard_tasks:
+          type: number
+          description: The number of active shard-level replication tasks.
+        num_index_tasks:
+          type: number
+          description: The number of active index-level replication tasks.
+        operations_written:
+          type: number
+          description: The total number of operations written during replication.
+        operations_read:
+          type: number
+          description: The total number of operations read during replication.
+        failed_read_requests:
+          type: number
+          description: The number of failed read requests during replication.
+        throttled_read_requests:
+          type: number
+          description: The number of throttled read requests during replication.
+        failed_write_requests:
+          type: number
+          description: The number of failed write requests during replication.
+        throttled_write_requests:
+          type: number
+          description: The number of throttled write requests during replication.
+        follower_checkpoint:
+          type: number
+          description: The current checkpoint of the follower index.
+        leader_checkpoint:
+          type: number
+          description: The current checkpoint of the leader index.
+        total_write_time_millis:
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
+        index_stats:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IndexFollowerStatus'
+    IndexFollowerStatus:
+      type: object
+      properties:
+        operations_written:
+          type: number
+          description: The number of operations written for this index during replication.
+        operations_read:
+          type: number
+          description: The number of operations read for this index during replication.
+        failed_read_requests:
+          type: number
+          description: The number of failed read requests for this index during replication.
+        throttled_read_requests:
+          type: number
+          description: The number of throttled read requests for this index during replication.
+        failed_write_requests:
+          type: number
+          description: The number of failed write requests for this index during replication.
+        throttled_write_requests:
+          type: number
+          description: The number of throttled write requests for this index during replication.
+        follower_checkpoint:
+          type: number
+          description: The current checkpoint of the follower index.
+        leader_checkpoint:
+          type: number
+          description: The current checkpoint of the leader index.
+        total_write_time_millis:
+          $ref: '_common.yaml#/components/schemas/StringifiedEpochTimeUnitMillis'
+    AutoFollowStatus:
+      type: object
+      properties:
+        num_success_start_replication:
+          type: number
+          description: The number of successful replication starts.
+        num_failed_start_replication:
+          type: number
+          description: The number of failed replication starts.
+        num_failed_leader_calls:
+          type: number
+          description: The number of failed calls to the leader cluster.
+        failed_indices:
+          type: array
+          items:
+            type: string
+          description: The list of indices that failed to replicate.
+        autofollow_stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutoFollowStats'
+    AutoFollowStats:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the auto-follow pattern.
+        leader_alias:
+          type: string
+          description: The alias of the leader cluster for this pattern.
+        pattern:
+          type: string
+          description: The pattern used for auto-following indices.
+        num_success_start_replication:
+          type: number
+          description: The number of successful replication starts for this pattern.
+        num_failed_start_replication:
+          type: number
+          description: The number of failed replication starts for this pattern.
+        num_failed_leader_calls:
+          type: number
+          description: The number of failed calls to the leader cluster for this pattern.
+        failed_indices:
+          type: array
+          items:
+            type: string
+          description: The list of indices that failed to replicate for this pattern.
+        last_execution_time:
+          type: number
+          description: When the last execution of this auto-follow pattern occurred.
+    SettingsBody:
+      type: object
+      properties:
+        index:
+          $ref: '#/components/schemas/IndexSchema'
+    UpdateSettings:
+      type: object
+      properties:
+        settings:
+          allOf:
+            - type: object
+              properties:
+                index.number_of_shards:
+                  type: integer
+                  description: The number of shards for the index.
+                index.number_of_replicas:
+                  type: integer
+                  description: The number of replicas for the index.
+            - $ref: '#/components/schemas/SettingsBody'
+    IndexSchema:
+      type: object
+      properties:
+        number_of_shards:
+          type: integer
+          description: The number of shards for the index.
+        number_of_replicas:
+          type: integer
+          description: The number of replicas for the index.
+    CreateReplicationRule:
+      type: object
+      properties:
+        leader_alias:
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
+        name:
+          type: string
+          description: The name of the replication rule.
+        pattern:
+          type: string
+          description: The pattern used to match indices for replication.
+        use_roles:
+          $ref: '#/components/schemas/UseRoles'
+    DeleteReplicationRule:
+      type: object
+      properties:
+        leader_alias:
+          $ref: '_common.yaml#/components/schemas/IndexAlias'
+        name:
+          type: string
+          description: The name of the replication rule to delete.
