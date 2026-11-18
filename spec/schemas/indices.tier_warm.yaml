@@ -19,13 +19,16 @@ components:
         - error
         - index
     TieringIndicesResponse:
-      allOf:
-        - $ref: '_common.yaml#/components/schemas/AcknowledgedResponseBase'
-        - type: object
-          properties:
-            failed_indices:
-              description: The indexes that could not be tiered. Returned only in versions 2.16 to 3.0, where it is always present.
-              type: array
-              items:
-                $ref: '#/components/schemas/TieringFailedIndex'
-              x-version-removed: '3.1'
+      type: object
+      properties:
+        acknowledged:
+          description: In versions 2.16 to 3.0, `true` if at least one index was accepted for tiering and `false` if every index was rejected. In version 3.7 and later, always `true`; a failure returns an error instead.
+          type: boolean
+        failed_indices:
+          description: The indexes that could not be tiered. Returned only in versions 2.16 to 3.0, where it is always present.
+          type: array
+          items:
+            $ref: '#/components/schemas/TieringFailedIndex'
+          x-version-removed: '3.1'
+      required:
+        - acknowledged

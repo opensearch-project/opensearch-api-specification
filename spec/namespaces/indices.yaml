@@ -2125,6 +2125,10 @@ paths:
           $ref: '#/components/responses/indices.tier_hot@200'
         '400':
           $ref: '#/components/responses/indices.tier_hot@400'
+        '429':
+          $ref: '#/components/responses/indices.tier_hot@429'
+        '500':
+          $ref: '#/components/responses/indices.tier_hot@500'
   /{index}/_tier/warm:
     post:
       operationId: indices.tier_warm.0
@@ -2143,6 +2147,7 @@ paths:
         - $ref: '#/components/parameters/indices.tier_warm::query.allow_no_indices'
         - $ref: '#/components/parameters/indices.tier_warm::query.cluster_manager_timeout'
         - $ref: '#/components/parameters/indices.tier_warm::query.expand_wildcards'
+        - $ref: '#/components/parameters/indices.tier_warm::query.ignore_throttled'
         - $ref: '#/components/parameters/indices.tier_warm::query.ignore_unavailable'
         - $ref: '#/components/parameters/indices.tier_warm::query.timeout'
         - $ref: '#/components/parameters/indices.tier_warm::query.wait_for_completion'
@@ -2153,6 +2158,10 @@ paths:
           $ref: '#/components/responses/indices.tier_warm@400'
         '404':
           $ref: '#/components/responses/indices.tier_warm@404'
+        '429':
+          $ref: '#/components/responses/indices.tier_warm@429'
+        '500':
+          $ref: '#/components/responses/indices.tier_warm@500'
   /{index}/_upgrade:
     get:
       operationId: indices.get_upgrade.1
@@ -3165,6 +3174,18 @@ components:
         application/json:
           schema:
             $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_hot@429:
+      description: Too many requests error, returned when the cluster is already running the maximum number of concurrent tiering operations.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_hot@500:
+      description: Internal server error, for example when the index fails a tiering check that the server does not translate into a client error.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
     indices.tier_warm@200:
       content:
         application/json:
@@ -3179,6 +3200,20 @@ components:
     indices.tier_warm@404:
       description: Index not found error. Versions 3.7 and later return a 400 error instead.
       x-version-removed: '3.1'
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_warm@429:
+      description: Too many requests error, returned when the cluster is already running the maximum number of concurrent tiering operations.
+      x-version-added: '3.7'
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_warm@500:
+      description: Internal server error, for example when the index fails a tiering check that the server does not translate into a client error.
+      x-version-added: '3.7'
       content:
         application/json:
           schema:
@@ -5683,9 +5718,7 @@ components:
     indices.tier_hot::query.timeout:
       in: query
       name: timeout
-      description: |-
-        Period to wait for a response.
-        If no response is received before the timeout expires, the request fails and returns an error.
+      description: Accepted for compatibility but has no effect. Use `cluster_manager_timeout` to limit how long the request waits for the cluster state update.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
@@ -5728,6 +5761,14 @@ components:
         default: open
       style: form
       x-version-removed: '3.1'
+    indices.tier_warm::query.ignore_throttled:
+      in: query
+      name: ignore_throttled
+      description: If `true`, concrete, expanded or aliased indexes are ignored when frozen.
+      schema:
+        type: boolean
+      style: form
+      x-version-removed: '3.1'
     indices.tier_warm::query.ignore_unavailable:
       in: query
       name: ignore_unavailable
@@ -5740,16 +5781,14 @@ components:
     indices.tier_warm::query.timeout:
       in: query
       name: timeout
-      description: |-
-        Period to wait for a response.
-        If no response is received before the timeout expires, the request fails and returns an error.
+      description: Accepted for compatibility but has no effect. Use `cluster_manager_timeout` to limit how long the request waits for the cluster state update.
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Duration'
       style: form
     indices.tier_warm::query.wait_for_completion:
       in: query
       name: wait_for_completion
-      description: Wait until the operation has completed before returning.
+      description: Accepted but has no effect, because these versions only validate the request.
       schema:
         type: boolean
         default: false
