@@ -1,0 +1,59 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test moving indexes to the warm tier in versions 2.16 to 3.0.
+version: '>= 2.16 < 3.1'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload:
+        settings:
+          number_of_replicas: 0
+  - path: /{index}/_close
+    method: POST
+    parameters:
+      index: books
+epilogues:
+  - path: /{index}
+    method: DELETE
+    parameters:
+      index: books
+    status: [200, 404]
+chapters:
+  - synopsis: Move indexes matching a wildcard that matches no index to the warm tier.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: movies*
+      allow_no_indices: true
+      expand_wildcards: open
+      timeout: 30s
+      cluster_manager_timeout: 30s
+      wait_for_completion: false
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        failed_indices: []
+  - synopsis: Move an index that cannot be tiered to the warm tier.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: books
+      expand_wildcards: all
+      ignore_unavailable: false
+    response:
+      status: 200
+      payload:
+        acknowledged: false
+        failed_indices:
+          - index: books
+  - synopsis: Move a missing index to the warm tier.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: movies
+    response:
+      status: 404

@@ -1,0 +1,30 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `indices.tier_warm` Category.
+  description: Schemas of `indices.tier_warm` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    TieringFailedIndex:
+      type: object
+      properties:
+        index:
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        error:
+          description: The reason the index could not be tiered.
+          type: string
+      required:
+        - error
+        - index
+    TieringIndicesResponse:
+      allOf:
+        - $ref: '_common.yaml#/components/schemas/AcknowledgedResponseBase'
+        - type: object
+          properties:
+            failed_indices:
+              description: The indexes that could not be tiered. Returned only in versions 2.16 to 3.0, where it is always present.
+              type: array
+              items:
+                $ref: '#/components/schemas/TieringFailedIndex'
+              x-version-removed: '3.1'
