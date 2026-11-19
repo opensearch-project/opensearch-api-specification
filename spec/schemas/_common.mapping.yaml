@@ -993,44 +993,45 @@ components:
     SemanticProperty:
       x-version-added: '3.1'
       type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - semantic
-        raw_field_type:
-          type: string
-        model_id:
-          type: string
-        model_selection:
-          $ref: '#/components/schemas/SemanticModelSelection'
-          x-version-added: '3.9'
-        search_model_id:
-          type: string
-        semantic_info_field_name:
-          type: string
-        chunking:
-          oneOf:
-            - type: boolean
-            - type: array
-              items:
-                $ref: '#/components/schemas/SemanticChunkingStrategy'
-        semantic_field_search_analyzer:
-          type: string
-        dense_embedding_config:
-          $ref: '#/components/schemas/SemanticDenseEmbeddingConfig'
-        sparse_encoding_config:
-          $ref: '#/components/schemas/SemanticSparseEncodingConfig'
-        skip_existing_embedding:
-          type: boolean
-          default: false
-      required:
-        - type
       # A semantic field requires at least one of model_id or model_selection.
       # neural-search rejects a field with neither ("model_id is required"). The anyOf is
       # wrapped in allOf so the spec tester does not inject unevaluatedProperties into the
       # branches (which would reject sibling properties like `type`).
       allOf:
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - semantic
+            raw_field_type:
+              type: string
+            model_id:
+              type: string
+            model_selection:
+              $ref: '#/components/schemas/SemanticModelSelection'
+              x-version-added: '3.9'
+            search_model_id:
+              type: string
+            semantic_info_field_name:
+              type: string
+            chunking:
+              oneOf:
+                - type: boolean
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/SemanticChunkingStrategy'
+            semantic_field_search_analyzer:
+              type: string
+            dense_embedding_config:
+              $ref: '#/components/schemas/SemanticDenseEmbeddingConfig'
+            sparse_encoding_config:
+              $ref: '#/components/schemas/SemanticSparseEncodingConfig'
+            skip_existing_embedding:
+              type: boolean
+              default: false
+          required:
+            - type
         - anyOf:
             - type: object
               properties:

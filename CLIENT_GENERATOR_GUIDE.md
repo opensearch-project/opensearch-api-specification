@@ -161,15 +161,21 @@ After normalization, classify each `oneOf`/`anyOf` with the first rule that matc
 | **U5a, one or many** | Two branches: `T` and an array of the same `T`, where `T` is not a scalar. | `BoolQuery.must` (`QueryContainer` or `QueryContainer[]`), `Sort` |
 | **U5b, keyed or list** | Two branches: a map of `T` (only `additionalProperties`) and an array of the same `T`. | the `buckets` of every multi-bucket aggregate |
 | **U5c, shorthand** | Exactly one branch is not a scalar: a short scalar form and one full object form. | `TermQuery` (a value, or `{ value, boost, … }`), `InlineScript` |
-| **U6, unclassified** | None of the above, typically untitled, untagged unions of objects. | `RangeQuery`, `GeoShapes` |
+| **U6, unclassified** | None of the above, typically untitled, untagged unions of objects. The bundled spec has none: the spec linter rejects them. | `oneOf: [$ref DateRangeQuery, $ref NumberRangeQuery]` without titles |
 
-For U6, the generator MUST report the schema at generation time. It MAY fall back to a raw JSON type, but MUST NOT silently drop the union. Spec authors SHOULD avoid new U6 unions by giving every branch a `title` or adding a `discriminator`. A U3 union whose branches require nothing is equivalent to plain optional fields, so it MAY be emitted as one flat object.
+For U6, which only appears in specs other than the bundled one, the generator MUST report the schema at generation time. It MAY fall back to a raw JSON type, but MUST NOT silently drop the union. Spec authors SHOULD avoid new U6 unions by giving every branch a `title` or adding a `discriminator`. A U3 union whose branches require nothing is equivalent to plain optional fields, so it MAY be emitted as one flat object.
 
 ### What the Published Spec Does for You
-The bundled spec (`opensearch-openapi.yaml`, built by `npm run merge`) applies part of these rules once, so that every generator gets the same answers.
+The bundled spec (`opensearch-openapi.yaml`, built by `npm run merge`) applies these rules once, so that every generator gets the same answers, and the spec linter keeps it that way. A generator that reads the bundled spec only needs three rules:
 
-- **N1 is already applied.** Properties, `required`, `additionalProperties` and `patternProperties` declared next to `allOf`/`oneOf`/`anyOf` are moved into an `allOf` member, together with any `discriminator` of a moved `oneOf`. The rewrite is lossless. Generators still MUST read `allOf: [object, union, …]` correctly, because that is the canonical form.
-- **Unions are labeled.** Every `oneOf`/`anyOf` that matches one of the classes above carries `x-union-kind`, set to `tagged` (U1), `container` (U2), `presence` (U3), `titled` (U4), `scalar` (U5), `one-or-many` (U5a), `keyed-or-list` (U5b) or `shorthand` (U5c). Branches are resolved before classifying (N3). Unclassified unions (U6) have no label, and the merge reports them.
+1. **An object** is `allOf: [ $ref Base…, { its own properties }, { constraint }… ]` (C1), or a plain object without `allOf`. Bases come first, own properties are in at most one member, and nothing is declared next to `allOf`. Merge the members as M1 and M2 say; the declarations never conflict (M3).
+2. **A union** carries `x-union-kind` (and `x-variant-keys` for a container). Every `oneOf`/`anyOf` does; read the label instead of classifying, and represent each kind as in [Representation per Language](#representation-per-language). A branch of a union is never a union itself, except a presence constraint inside a presence constraint (C2).
+3. **A generic instantiation** carries `x-type-arguments` (C3).
+
+The rest of this section is how the labels are computed. It matters for spec authors, and for generators that read a spec other than the bundled one.
+
+- **N1 never applies.** The source spec writes properties in an `allOf` member, never next to `allOf`/`oneOf`/`anyOf`; the spec linter rejects them. (`npm run merge` would still move them into an `allOf` member, losslessly, together with any `discriminator` of a moved `oneOf`.) Generators MUST read `allOf: [object, union, …]` correctly, because that is the canonical form.
+- **Unions are labeled.** Every `oneOf`/`anyOf` that matches one of the classes above carries `x-union-kind`, set to `tagged` (U1), `container` (U2), `presence` (U3), `titled` (U4), `scalar` (U5), `one-or-many` (U5a), `keyed-or-list` (U5b) or `shorthand` (U5c). Branches are resolved before classifying (N3). There are no unclassified unions (U6).
 - **Containers list their variant keys.** A `container` also carries `x-variant-keys`: the property that selects each branch, in branch order.
 - **Generic instantiations name their type arguments.** A generic type is a schema that uses a generic type parameter (a schema marked `x-is-generic-type-parameter`, such as `TDocument` or `TBucket`). The spec instantiates one in a single way, `allOf: [ $ref Generic, { the same shape with each parameter replaced } ]`, and the bundled spec labels every such `allOf` with `x-type-arguments`, mapping each parameter to the schema that takes its place:
 
@@ -204,7 +210,8 @@ Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implemen
 
 The spec linter (`npm run lint:spec`) keeps the bundled spec in this form, so that problems are caught on the spec pull request, before any generator sees them. It fails on:
 
-- a new unclassified union (U6). Known ones are listed in `spec/_unclassified_unions.yaml`, which may only shrink. This also covers a presence constraint that lists a key the object doesn't declare: it isn't classified as `presence`.
+- properties next to `allOf`/`oneOf`/`anyOf` (N1).
+- an unclassified union (U6). Give every branch a `title` naming the variant, or add a `discriminator`. This also covers a presence constraint that lists a key the object doesn't declare: it isn't classified as `presence`.
 - conflicting `allOf` property types (M3).
 - **C1, objects.** An `allOf` is written as its bases (`$ref` members) first, then at most one member with its own properties, then its constraints: unions, or a container written as `properties` with `maxProperties: 1` (`QueryContainer`). An `allOf` member is never an `allOf` itself.
 - **C2, flat unions.** A branch of a labeled union is never a union itself (inline, or through an inline `allOf` member); name it, or flatten its branches into the outer union. The one exception is a presence constraint inside a presence constraint ("with `script`, also `type` or `lang`").

@@ -7,13 +7,11 @@
 * compatible open source license.
 */
 
-import fs from 'fs'
 import _ from 'lodash'
 import OpenApiMerger from '../merger/OpenApiMerger'
 import GenericLabeler from '../merger/GenericLabeler'
 import UnionClassifier from '../merger/UnionClassifier'
 import UnionLabeler from '../merger/UnionLabeler'
-import { read_yaml } from '../helpers'
 import { type ValidationError } from '../types'
 import { Logger, LogLevel } from '../Logger'
 
@@ -22,34 +20,29 @@ const PRIMITIVE_TYPES = new Set(['string', 'number', 'integer', 'boolean', 'null
 
 // Checks schema composition in the bundled spec, so that shapes client generators can't handle are caught on the
 // spec pull request instead of in a client release. See the Schema Composition section of CLIENT_GENERATOR_GUIDE.md.
-// - error: a oneOf/anyOf that can't be classified (no x-union-kind), unless it is on the allow-list of known ones
-// - error: an allow-listed union that is now classified, so the allow-list only shrinks
+// - error: properties next to allOf/oneOf/anyOf (rule N1); write them as an allOf member
+// - error: a oneOf/anyOf that can't be classified (no x-union-kind)
 // - error: allOf members that declare the same property with different primitive types (rule M3)
 // - error: an allOf that isn't `[ $ref Base..., { own properties }, { constraint }... ]` (rule C1)
 // - error: a union branch that is itself a union, other than a presence constraint inside a presence constraint (rule C2)
 // - error: a generic instantiation that gives one type parameter two different arguments (rule C3)
 // A presence constraint may only list keys the object declares; one that doesn't isn't classified, so the first error
 // above reports it.
-// - warning: properties next to allOf/oneOf/anyOf (rule N1); the bundled spec rewrites them, but allOf is clearer
 export default class CompositionValidator {
   logger: Logger
   root_folder: string
-  allowlist_file: string | undefined
 
-  constructor (root_folder: string, logger: Logger, allowlist_file?: string) {
+  constructor (root_folder: string, logger: Logger) {
     this.logger = logger
     this.root_folder = root_folder
-    this.allowlist_file = allowlist_file
   }
 
   validate (): ValidationError[] {
     const merger = new OpenApiMerger(this.root_folder, new Logger(LogLevel.error))
     const spec = merger.spec() as Record<string, any>
-    for (const location of merger.normalized_compositions) {
-      const { file, location: source_location } = this.source_of(location.replaceAll(':', '___'))
-      this.logger.warn(`${file} ${source_location}: properties next to a composition keyword. Write them as an allOf member instead (${GUIDE}).`)
-    }
     return [
+      ...merger.normalized_compositions.map((location) => this.error(location.replaceAll(':', '___'),
+        `Properties next to a composition keyword. Write them as an allOf member instead (${GUIDE}).`)),
       ...this.validate_unions(spec),
       ...this.validate_conflicts(spec),
       ...this.validate_shapes(spec),
@@ -58,15 +51,8 @@ export default class CompositionValidator {
   }
 
   validate_unions (spec: Record<string, any>): ValidationError[] {
-    const { unclassified } = new UnionLabeler().label(spec)
-    const allowed = new Set(this.allowlist())
-    const errors = unclassified
-      .filter((location) => !allowed.has(location))
+    return new UnionLabeler().label(spec).unclassified
       .map((location) => this.error(location, `This oneOf/anyOf can't be classified for client generators. Give every branch a title, or add a discriminator (${GUIDE}).`))
-    const still_unclassified = new Set(unclassified)
-    const fixed = [...allowed].filter((location) => !still_unclassified.has(location))
-      .map((location) => this.error(location, `This union is now classified. Remove it from ${this.allowlist_file} (${GUIDE}).`))
-    return [...errors, ...fixed]
   }
 
   validate_conflicts (spec: Record<string, any>): ValidationError[] {
@@ -169,12 +155,6 @@ export default class CompositionValidator {
   primitive_type (schema: any): string | undefined {
     if (typeof schema?.type !== 'string' || !PRIMITIVE_TYPES.has(schema.type as string)) return undefined
     return schema.type === 'integer' ? 'number' : schema.type
-  }
-
-  allowlist (): string[] {
-    if (this.allowlist_file === undefined || !fs.existsSync(this.allowlist_file)) return []
-    const allowlist: { unclassified_unions?: string[] } = read_yaml(this.allowlist_file)
-    return allowlist.unclassified_unions ?? []
   }
 
   // Maps a location in the bundled spec to the source file and location, like SchemasValidator does.

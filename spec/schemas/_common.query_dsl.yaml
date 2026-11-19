@@ -457,7 +457,8 @@ components:
             - queries
     DistanceFeatureQuery:
       oneOf:
-        - allOf:
+        - title: geo
+          allOf:
             - $ref: '#/components/schemas/QueryBase'
             - type: object
               properties:
@@ -471,7 +472,8 @@ components:
                 - field
                 - origin
                 - pivot
-        - allOf:
+        - title: date
+          allOf:
             - $ref: '#/components/schemas/QueryBase'
             - type: object
               properties:
@@ -577,9 +579,12 @@ components:
         - sum
     DecayPlacement:
       oneOf:
-        - $ref: '#/components/schemas/DateDecayPlacement'
-        - $ref: '#/components/schemas/GeoDecayPlacement'
-        - $ref: '#/components/schemas/NumericDecayPlacement'
+        - title: date
+          $ref: '#/components/schemas/DateDecayPlacement'
+        - title: geo
+          $ref: '#/components/schemas/GeoDecayPlacement'
+        - title: numeric
+          $ref: '#/components/schemas/NumericDecayPlacement'
     DateDecayPlacement:
       type: object
       properties:
@@ -1702,8 +1707,10 @@ components:
             - query
     RangeQuery:
       oneOf:
-        - $ref: '#/components/schemas/NumberRangeQuery'
-        - $ref: '#/components/schemas/DateRangeQuery'
+        - title: number
+          $ref: '#/components/schemas/NumberRangeQuery'
+        - title: date
+          $ref: '#/components/schemas/DateRangeQuery'
     DateRangeQuery:
       allOf:
         - $ref: '#/components/schemas/RangeQueryBase'
@@ -2217,24 +2224,25 @@ components:
           $ref: '#/components/schemas/TermsLookup'
     TermsLookup:
       type: object
-      properties:
-        index:
-          $ref: '_common.yaml#/components/schemas/IndexName'
-        id:
-          $ref: '_common.yaml#/components/schemas/Id'
-        path:
-          $ref: '_common.yaml#/components/schemas/Field'
-        routing:
-          $ref: '_common.yaml#/components/schemas/Routing'
-        query:
-          $ref: '#/components/schemas/QueryContainer'
-          x-version-added: 3.2.0
-        store:
-          type: boolean
-      required:
-        - index
-        - path
       allOf:
+        - type: object
+          properties:
+            index:
+              $ref: '_common.yaml#/components/schemas/IndexName'
+            id:
+              $ref: '_common.yaml#/components/schemas/Id'
+            path:
+              $ref: '_common.yaml#/components/schemas/Field'
+            routing:
+              $ref: '_common.yaml#/components/schemas/Routing'
+            query:
+              $ref: '#/components/schemas/QueryContainer'
+              x-version-added: 3.2.0
+            store:
+              type: boolean
+          required:
+            - index
+            - path
         - oneOf:
             - type: object
               properties:
