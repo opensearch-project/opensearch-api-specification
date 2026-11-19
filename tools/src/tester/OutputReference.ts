@@ -27,7 +27,7 @@ export class OutputReference {
   static parse(str: string): OutputReference[] {
     const pattern = /\$\{([^}]+)\}/g
     let match
-    var result = []
+    const result = []
     while ((match = pattern.exec(str)) !== null) {
       const spl = split(match[1], '.', 2)
       result.push(new OutputReference(spl[0], spl[1]))
@@ -44,7 +44,7 @@ export class OutputReference {
    * @returns a string with output references replaced by their values
    */
   static replace(str: string, callback: (chapter_id: any, variable: any) => string): any {
-    let full_match = str.match(/^\$\{([^}]+)\}$/)
+    const full_match = str.match(/^\$\{([^}]+)\}$/)
     if (full_match) {
       // the entire string is a reference, preserve the type of the returned value
       const spl = split(full_match[1], '.', 2)

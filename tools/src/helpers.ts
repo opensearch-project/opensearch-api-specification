@@ -66,7 +66,7 @@ export function sort_array_by_keys (values: any[], priorities: string[] = []): s
 
 export function delete_matching_keys(obj: any, condition: (obj: any) => boolean): void {
   for (const key in obj) {
-    var item = obj[key]
+    const item = obj[key]
 
     if (_.isObject(item)) {
       if (condition(item)) {
@@ -82,7 +82,7 @@ export function delete_matching_keys(obj: any, condition: (obj: any) => boolean)
 }
 
 export function find_refs (current: Record<string, any>, root?: Record<string, any>, call_stack: string[] = []): Set<string> {
-  var results = new Set<string>()
+  const results = new Set<string>()
 
   if (root === undefined) {
     root = current

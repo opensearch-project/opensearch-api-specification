@@ -33,9 +33,9 @@ export default class KeepDescriptions {
 
   process_file(filename: string): void {
     const contents = fs.readFileSync(filename, 'utf-8')
-    var writer = fs.openSync(filename, 'w+')
+    const writer = fs.openSync(filename, 'w+')
 
-    var inside_text = false
+    let inside_text = false
     contents.split(/\r?\n/).forEach((line) => {
       if (line.match(/^\s+((description|x-deprecation-message): \|)/)) {
         inside_text = true

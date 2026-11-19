@@ -9,7 +9,13 @@ components:
     NeuralStatName:
       type: string
       enum:
+        - agentic_context_executions
+        - agentic_context_processors
+        - agentic_query_requests
+        - agentic_query_translator_executions
+        - agentic_query_translator_processors
         - cluster_version
+        - clustered_posting_usage
         - comb_arithmetic_executions
         - comb_arithmetic_processors
         - comb_geometric_executions
@@ -18,10 +24,12 @@ components:
         - comb_harmonic_processors
         - comb_rrf_executions
         - comb_rrf_processors
+        - forward_index_usage
         - hybrid_query_requests
         - hybrid_query_with_filter_requests
         - hybrid_query_with_inner_hits_requests
         - hybrid_query_with_pagination_requests
+        - mmr_neural_query_transformer_executions
         - neural_query_against_knn_requests
         - neural_query_against_semantic_dense_requests
         - neural_query_against_semantic_sparse_requests
@@ -45,13 +53,18 @@ components:
         - rerank_by_field_processors
         - rerank_ml_executions
         - rerank_ml_processors
+        - seismic_query_requests
         - semantic_field_chunking_executions
         - semantic_field_executions
+        - semantic_highlighting_batch_request_count
         - semantic_highlighting_request_count
         - skip_existing_executions
         - skip_existing_processors
         - sparse_encoding_executions
         - sparse_encoding_processors
+        - sparse_encoding_seismic_executions
+        - sparse_memory_usage
+        - sparse_memory_usage_percentage
         - text_chunking_delimiter_executions
         - text_chunking_delimiter_processors
         - text_chunking_executions
@@ -181,6 +194,13 @@ components:
         processors.search.neural_query_enricher_processors:
           $ref: '#/components/schemas/InfoCounterStat'
           x-version-added: '3.1'
+        # Search processors - agentic related
+        processors.search.agentic.agentic_query_translator_processors:
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: 3.2.0
+        processors.search.agentic.agentic_context_processors:
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: 3.3.0
     NestedNeuralInfoStats:
       type: object  
       properties:
@@ -233,6 +253,8 @@ components:
       properties:
         hybrid:
           $ref: '#/components/schemas/NestedNeuralInfoStatsProcessorsSearchHybrid'
+        agentic:
+          $ref: '#/components/schemas/NestedNeuralInfoStatsProcessorsSearchAgentic'
           
         # Search processors - rerank related
         rerank_ml_processors:
@@ -283,7 +305,15 @@ components:
         comb_arithmetic_processors:
           $ref: '#/components/schemas/InfoCounterStat'
           x-version-added: '3.1'
-
+    NestedNeuralInfoStatsProcessorsSearchAgentic:
+      type: object
+      properties:
+        agentic_query_translator_processors:
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: 3.2.0
+        agentic_context_processors:
+          $ref: '#/components/schemas/InfoCounterStat'
+          x-version-added: 3.3.0
     FlatNeuralNodeStats:
       type: object
       properties:
@@ -322,6 +352,9 @@ components:
         processors.ingest.semantic_field_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        processors.ingest.sparse_encoding_seismic_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.5.0
           
         # Search executions - normalization related
         processors.search.hybrid.normalization_processor_executions:
@@ -361,6 +394,10 @@ components:
         processors.search.rerank_by_field_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        # Search executions - MMR related
+        processors.search.mmr_neural_query_transformer_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
           
         # Search executions - neural related
         processors.search.neural_sparse_two_phase_executions:
@@ -369,6 +406,13 @@ components:
         processors.search.neural_query_enricher_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        # Search executions - agentic related
+        processors.search.agentic.agentic_query_translator_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.2.0
+        processors.search.agentic.agentic_context_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
           
         # Query stats - hybrid
         query.hybrid.hybrid_query_requests:
@@ -383,6 +427,10 @@ components:
         query.hybrid.hybrid_query_with_inner_hits_requests:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        # Query stats - agentic
+        query.agentic.agentic_query_requests:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.2.0
           
         # Query stats - neural
         query.neural.neural_query_requests:
@@ -402,11 +450,30 @@ components:
         query.neural_sparse.neural_sparse_query_requests:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        query.neural_sparse.seismic_query_requests:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
           
         # Semantic highlighting
         semantic_highlighting.semantic_highlighting_request_count:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        semantic_highlighting.semantic_highlighting_batch_request_count:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
+        # Memory stats - sparse
+        memory.sparse.sparse_memory_usage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
+        memory.sparse.sparse_memory_usage_percentage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
+        memory.sparse.forward_index_usage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
+        memory.sparse.clustered_posting_usage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
     NestedNeuralNodeStats:
       type: object
       properties:
@@ -416,6 +483,8 @@ components:
           $ref: '#/components/schemas/NestedNeuralNodeStatsSemanticHighlighting'
         processors:
           $ref: '#/components/schemas/NestedNeuralNodeStatsProcessors'
+        memory:
+          $ref: '#/components/schemas/NestedNeuralNodeStatsMemory'
     NestedNeuralNodeStatsQuery:
       type: object
       properties:
@@ -425,6 +494,8 @@ components:
           $ref: '#/components/schemas/NestedNeuralNodeStatsQueryNeural'
         neural_sparse:
           $ref: '#/components/schemas/NestedNeuralNodeStatsQueryNeuralSparse'
+        agentic:
+          $ref: '#/components/schemas/NestedNeuralNodeStatsQueryAgentic'
 
     NestedNeuralNodeStatsQueryHybrid:
       type: object
@@ -464,6 +535,15 @@ components:
         neural_sparse_query_requests:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        seismic_query_requests:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
+    NestedNeuralNodeStatsQueryAgentic:
+      type: object
+      properties:
+        agentic_query_requests:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.2.0
 
     NestedNeuralNodeStatsSemanticHighlighting:
       type: object
@@ -471,6 +551,9 @@ components:
         semantic_highlighting_request_count:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        semantic_highlighting_batch_request_count:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
 
     NestedNeuralNodeStatsProcessors:
       type: object
@@ -517,13 +600,16 @@ components:
         semantic_field_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
-
+        sparse_encoding_seismic_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.5.0
     NestedNeuralNodeStatsProcessorsSearch:
       type: object
       properties:
         hybrid:
           $ref: '#/components/schemas/NestedNeuralNodeStatsProcessorsSearchHybrid'
-          
+        agentic:
+          $ref: '#/components/schemas/NestedNeuralNodeStatsProcessorsSearchAgentic'
         # Search executions - neural related
         neural_sparse_two_phase_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
@@ -531,7 +617,6 @@ components:
         neural_query_enricher_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
-          
         # Search executions - rerank related
         rerank_by_field_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
@@ -539,6 +624,10 @@ components:
         rerank_ml_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+        # Search executions - MMR related
+        mmr_neural_query_transformer_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
 
     NestedNeuralNodeStatsProcessorsSearchHybrid:
       type: object
@@ -573,6 +662,35 @@ components:
         comb_arithmetic_executions:
           $ref: '#/components/schemas/TimestampedEventCounterStat'
           x-version-added: '3.1'
+    NestedNeuralNodeStatsProcessorsSearchAgentic:
+      type: object
+      properties:
+        agentic_query_translator_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.2.0
+        agentic_context_executions:
+          $ref: '#/components/schemas/TimestampedEventCounterStat'
+          x-version-added: 3.3.0
+    NestedNeuralNodeStatsMemory:
+      type: object
+      properties:
+        sparse:
+          $ref: '#/components/schemas/NestedNeuralNodeStatsMemorySparse'
+    NestedNeuralNodeStatsMemorySparse:
+      type: object
+      properties:
+        sparse_memory_usage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
+        sparse_memory_usage_percentage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
+        forward_index_usage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
+        clustered_posting_usage:
+          $ref: '#/components/schemas/MemoryStat'
+          x-version-added: 3.3.0
     StatMetadata:
       type: object
       required:
@@ -582,6 +700,7 @@ components:
         value:
           oneOf:
             - type: integer
+            - type: number
             - type: string
         stat_type:
           type: string
@@ -620,3 +739,13 @@ components:
                   type: integer
                 minutes_since_last_event:
                   type: integer
+    MemoryStat:
+      oneOf:
+        - type: number
+        - allOf:
+            - $ref: '#/components/schemas/StatMetadata'
+            - type: object
+              properties:
+                stat_type:
+                  type: string
+                  const: memory

@@ -1,0 +1,95 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test Terms aggregate response with doc_count_error_upper_bound field.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /products
+    method: PUT
+    request:
+      payload:
+        settings:
+          number_of_shards: 3
+        mappings:
+          properties:
+            category:
+              type: keyword
+            price:
+              type: float
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: products}}
+        - {category: electronics, price: 299.99}
+        - {create: {_index: products}}
+        - {category: electronics, price: 499.99}
+        - {create: {_index: products}}
+        - {category: electronics, price: 199.99}
+        - {create: {_index: products}}
+        - {category: books, price: 19.99}
+        - {create: {_index: products}}
+        - {category: books, price: 29.99}
+        - {create: {_index: products}}
+        - {category: clothing, price: 59.99}
+chapters:
+  - synopsis: Aggregate with terms and show_term_doc_count_error to verify doc_count_error_upper_bound field.
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+              show_term_doc_count_error: true
+    response:
+      status: 200
+      payload:
+        aggregations:
+          categories:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
+            buckets:
+              - key: electronics
+                doc_count: 3
+                doc_count_error_upper_bound: 0
+              - key: books
+                doc_count: 2
+                doc_count_error_upper_bound: 0
+              - key: clothing
+                doc_count: 1
+                doc_count_error_upper_bound: 0
+
+  - synopsis: Aggregate with terms without show_term_doc_count_error (doc_count_error_upper_bound should not be in buckets).
+    path: /{index}/_search
+    parameters:
+      index: products
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          categories:
+            terms:
+              field: category
+    response:
+      status: 200
+      payload:
+        aggregations:
+          categories:
+            doc_count_error_upper_bound: 0
+            sum_other_doc_count: 0
+            buckets:
+              - key: electronics
+                doc_count: 3
+epilogues:
+  - path: /products
+    method: DELETE
+    status: [200, 404]

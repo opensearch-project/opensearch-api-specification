@@ -16,9 +16,12 @@ components:
           type: boolean
           description: Indicates if the pause request has been acknowledged by individual shards.
         failures:
-          type: array
-          items:
-            $ref: '#/components/schemas/IngestionStateShardFailure'
+          type: object
+          description: Shard-level failures grouped by index name.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/IngestionStateShardFailure'
         error:
           type: string
       required:
@@ -42,9 +45,12 @@ components:
           type: boolean
           description: Indicates if the resume request has been acknowledged by individual shards.
         failures:
-          type: array
-          items:
-            $ref: '#/components/schemas/IngestionStateShardFailure'
+          type: object
+          description: Shard-level failures grouped by index name.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/IngestionStateShardFailure'
         error:
           type: string
       required:
@@ -117,6 +123,12 @@ components:
         batch_start_pointer:
           type: string
           description: Indicates the shard pointer from where the poller will resume during shard recovery.
+        is_primary:
+          type: boolean
+          description: Indicates whether this is the primary shard.
+        node:
+          type: string
+          description: The node on which the shard is located.
     GetIngestionStateResponse:
       type: object
       properties:

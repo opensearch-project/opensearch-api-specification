@@ -40,13 +40,13 @@ describe('helpers', () => {
 
   describe('delete_matching_keys', () => {
     test('empty collection', () => {
-      var obj = {}
+      const obj = {}
       delete_matching_keys(obj, (_obj) => false)
       expect(obj).toEqual({})
     })
 
     describe('an object', () => {
-      var obj: object
+      let obj: object
 
       beforeEach(() => {
         obj = {
@@ -86,7 +86,7 @@ describe('helpers', () => {
     })
 
     describe('an object with arrays', () => {
-      var obj: object
+      let obj: object
 
       beforeEach(() => {
         obj = {
@@ -124,7 +124,7 @@ describe('helpers', () => {
     })
 
     describe('an object with an array where some items are removed', () => {
-      var obj: object
+      let obj: object
 
       beforeEach(() => {
         obj = {

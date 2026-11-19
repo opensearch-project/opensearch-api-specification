@@ -1,0 +1,136 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test terms aggregation with min_doc_count and shard_min_doc_count (int64 format).
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /movies
+    method: PUT
+    request:
+      payload:
+        mappings:
+          properties:
+            director:
+              type: text
+              fielddata: true
+              fields:
+                raw:
+                  type: keyword
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Moneyball}
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: The Cruise}
+        - {create: {_index: movies}}
+        - {director: Bennett Miller, title: Capote}
+        - {create: {_index: movies}}
+        - {director: Nicolas Winding Refn, title: Drive}
+        - {create: {_index: movies}}
+        - {director: Denis Villeneuve, title: Arrival}
+chapters:
+  - synopsis: Aggregate with terms using min_doc_count to filter buckets.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              min_doc_count: 2
+    response:
+      status: 200
+      payload:
+        aggregations:
+          directors:
+            buckets:
+              - key: Bennett Miller
+                doc_count: 3
+
+  - synopsis: Aggregate with terms using min_doc_count with value 1.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              min_doc_count: 1
+    response:
+      status: 200
+
+  - synopsis: Aggregate with terms using shard_min_doc_count.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              shard_min_doc_count: 1
+    response:
+      status: 200
+
+  - synopsis: Aggregate with terms using both min_doc_count and shard_min_doc_count.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              min_doc_count: 2
+              shard_min_doc_count: 1
+    response:
+      status: 200
+      payload:
+        aggregations:
+          directors:
+            buckets:
+              - key: Bennett Miller
+                doc_count: 3
+
+  - synopsis: Aggregate with terms using large int64 value for min_doc_count.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggregations:
+          directors:
+            terms:
+              field: director.raw
+              min_doc_count: 2147483648
+    response:
+      status: 200
+      payload:
+        aggregations:
+          directors:
+            buckets: []
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]

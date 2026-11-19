@@ -41,7 +41,7 @@ export default class SupplementalChapterEvaluator {
       await sleep(chapter.retry?.wait ?? 1000)
     } while (tries > 0)
 
-    var result: ChapterEvaluation = { title, overall: chapter_evaluation.evaluation }
+    const result: ChapterEvaluation = { title, overall: chapter_evaluation.evaluation }
     if (chapter_evaluation.output) result.output = chapter_evaluation.output
     return result
   }
@@ -56,7 +56,7 @@ export default class SupplementalChapterEvaluator {
     const payload_body_evaluation = overall.result === Result.PASSED ? new ResponsePayloadEvaluator(this.logger).evaluate(response, response_payload) : { result: Result.SKIPPED }
     const result: Result = overall_result(_.compact([overall, payload_body_evaluation, output_values_evaluation.evaluation]))
 
-    var evaluation_result: EvaluationWithOutput = { evaluation: { result } }
+    const evaluation_result: EvaluationWithOutput = { evaluation: { result } }
     if (output_values_evaluation.output) { evaluation_result.output = output_values_evaluation.output }
 
     if (result !== Result.PASSED) {

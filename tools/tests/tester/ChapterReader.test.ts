@@ -17,7 +17,7 @@ jest.mock('axios');
 const mocked_axios = axios as jest.Mocked<typeof axios>;
 
 describe('ChapterReader', () => {
-  var reader: ChapterReader
+  let reader: ChapterReader
 
   beforeEach(() => {
     mocked_axios.create.mockReturnThis()

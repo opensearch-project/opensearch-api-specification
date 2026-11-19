@@ -50,7 +50,7 @@ export default class FileValidator<Spec = OpenAPIV3_1.Document> extends Validato
   validate_yaml (): ValidationError | undefined {
     try {
       this.spec()
-    } catch (e: any) {
+    } catch {
       return this.error('Unable to read or parse YAML.', 'File Content')
     }
   }

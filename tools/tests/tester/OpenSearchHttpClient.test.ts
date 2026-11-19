@@ -12,14 +12,14 @@ import { OpenSearchHttpClient } from "OpenSearchHttpClient"
 import AxiosMockAdapter from "axios-mock-adapter";
 
 describe('OpenSearchHttpClient', () => {
-  var mock = new AxiosMockAdapter(axios)
+  const mock = new AxiosMockAdapter(axios)
 
   afterEach(() => {
     mock.reset()
   })
 
   it('adds a Basic auth header', async () => {
-    let client = new OpenSearchHttpClient({
+    const client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       basic_auth: {
         username: 'u',
@@ -36,7 +36,7 @@ describe('OpenSearchHttpClient', () => {
   })
 
   it('allows to overwrite Authorization', async () => {
-    let client = new OpenSearchHttpClient({
+    const client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       basic_auth: {
         username: 'u',
@@ -53,7 +53,7 @@ describe('OpenSearchHttpClient', () => {
   })
 
   it('adds a Sigv4 header', async () => {
-    let client = new OpenSearchHttpClient({
+    const client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       aws_auth: {
         aws_access_key_id: 'key id',
@@ -75,7 +75,7 @@ describe('OpenSearchHttpClient', () => {
   })
 
   it('defaults to rejectUnauthorized', async () => {
-    let client = new OpenSearchHttpClient({
+    const client = new OpenSearchHttpClient({
       url: 'https://localhost:9200'
     })
 
@@ -88,7 +88,7 @@ describe('OpenSearchHttpClient', () => {
   })
 
   it('sets rejectUnauthorized to false', async () => {
-    let client = new OpenSearchHttpClient({
+    const client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       insecure: true
     })
@@ -102,7 +102,7 @@ describe('OpenSearchHttpClient', () => {
   })
 
   it('adds a certificate file and key', async () => {
-    let client = new OpenSearchHttpClient({
+    const client = new OpenSearchHttpClient({
       url: 'https://localhost:9200',
       cert: './tools/tests/tester/fixtures/keys/kirk.pem',
       key: './tools/tests/tester/fixtures/keys/kirk-key.pem'

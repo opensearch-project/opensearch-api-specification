@@ -12,7 +12,7 @@ import fs from 'fs'
 import tmp from 'tmp'
 
 describe('OpenApiMerger', () => {
-  var merger: OpenApiMerger
+  let merger: OpenApiMerger
 
   describe('defaults', () => {
     beforeEach(() => {
@@ -30,8 +30,8 @@ describe('OpenApiMerger', () => {
     })
 
     describe('write_to()', () => {
-      var temp: tmp.DirResult
-      var filename: string
+      let temp: tmp.DirResult
+      let filename: string
 
       beforeEach(() => {
         temp = tmp.dirSync()

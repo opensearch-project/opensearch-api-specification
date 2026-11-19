@@ -29,9 +29,11 @@ export default class OpenApiMerger {
   constructor (root_folder: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.root_folder = fs.realpathSync(root_folder)
+    const tags_file = `${this.root_folder}/_tags.yaml`
     this._spec = {
       openapi: '3.1.0',
       info: read_yaml(`${this.root_folder}/_info.yaml`, true),
+      ...(fs.existsSync(tags_file) ? { tags: read_yaml(tags_file, true).tags } : {}),
       paths: {},
       components: {
         parameters: {},
@@ -145,16 +147,16 @@ export default class OpenApiMerger {
 
   #normalize_fields(obj: any = this._spec): void {
     for (const key in obj) {
-      var item = obj[key]
+      const item = obj[key]
 
       if (item?.$ref !== undefined) {
-        var renamed_ref = this.#normalize_key(item.$ref as string)
+        const renamed_ref = this.#normalize_key(item.$ref as string)
         if (renamed_ref != item.$ref) {
           item.$ref = renamed_ref
         }
       }
 
-      var renamed_key = this.#normalize_key(key)
+      const renamed_key = this.#normalize_key(key)
       if (renamed_key != key) {
         obj[renamed_key] = obj[key]
         delete obj[key]

@@ -49,7 +49,7 @@ export default class CoverageCalculator {
       for (const method of [...methods]) {
         if (!specified_but_not_provided[path].delete(method)) continue
 
-        if (covered[path] === undefined) covered[path] = new Set()
+        covered[path] ??= new Set()
         covered[path].add(method)
         uncovered[path].delete(method)
       }

@@ -242,7 +242,7 @@ components:
         Although "void" is generally used for a unit type that has only one value, this is interpreted as
         the bottom type, which has no value. Most languages have a unit type, but few have a bottom type.
 
-        See https://en.m.wikipedia.org/wiki/Unit_type and https://en.m.wikipedia.org/wiki/Bottom_type.
+        See https://en.wikipedia.org/wiki/Unit_type and https://en.wikipedia.org/wiki/Bottom_type.
       type: object
     GeoTile:
       description: A map tile reference, represented as `{zoom}/{x}/{y}`.
@@ -281,6 +281,14 @@ components:
         - total
     DurationValueUnitMillis:
       $ref: '#/components/schemas/UnitMillis'
+    TotalHitsRelation:
+      oneOf:
+        - type: string
+          const: eq
+          description: Accurate.
+        - type: string
+          const: gte
+          description: Lower bound, including returned events or sequences.
     ShardStatistics:
       type: object
       properties:
@@ -293,7 +301,7 @@ components:
         failures:
           type: array
           items:
-            $ref: '#/components/schemas/ShardFailure'
+            $ref: '#/components/schemas/ShardSearchFailure'
         skipped:
           $ref: '#/components/schemas/uint'
       required:
@@ -338,37 +346,140 @@ components:
         - primary
         - reason
         - shard
+    ShardSearchFailure:
+      type: object
+      description: Represents a failure to search on a specific shard. Used in search responses.
+      properties:
+        shard:
+          type: integer
+          description: The shard id where the failure occurred.
+        index:
+          type: string
+          description: The index name where the failure occurred.
+        node:
+          type: string
+          description: The node id where the failure occurred.
+        reason:
+          $ref: '#/components/schemas/ErrorCause'
+      required:
+        - reason
+        - shard
     ErrorCause:
       type: object
       properties:
-        type:
-          description: The type of error.
-          type: string
-        reason:
-          description: A human-readable explanation of the error, in English.
-          type: string
-        stack_trace:
-          description: The server stack trace, present only if the `error_trace=true` parameter was sent with the request.
-          type: string
+        bytes_limit:
+          description: The circuit breaker memory limit. Present in `circuit_breaking_exception` responses.
+          type: integer
+          format: int64
+        bytes_wanted:
+          description: The number of bytes that were requested. Present in `circuit_breaking_exception` responses.
+          type: integer
+          format: int64
         caused_by:
           $ref: '#/components/schemas/ErrorCause'
-        root_cause:
+        col:
+          description: The column number of the parsing error. Present in `parsing_exception` and `search_parse_exception` responses.
+          type: integer
+          format: int32
+        durability:
+          description: The circuit breaker durability. Present in `circuit_breaking_exception` responses.
+          $ref: '#/components/schemas/CircuitBreakerDurability'
+        failed_shards:
+          description: The shard failures. Present in `search_phase_execution_exception` responses.
           type: array
           items:
-            $ref: '#/components/schemas/ErrorCause'
-        suppressed:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorCause'
+            $ref: '#/components/schemas/ShardSearchFailure'
+        grouped:
+          description: Whether shard failures are grouped. Present in `search_phase_execution_exception` responses.
+          type: boolean
         header:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/StringOrStringArray'
+        lang:
+          description: The scripting language. Present in `script_exception` responses.
+          type: string
+        limit_entity:
+          x-version-added: 2.18.0
+          description: The type of entity that breached the response limit. Present in `response_limit_breached_exception` responses.
+          $ref: '#/components/schemas/ResponseLimitEntity'
+        line:
+          description: The line number of the parsing error. Present in `parsing_exception` and `search_parse_exception` responses.
+          type: integer
+          format: int32
+        max_buckets:
+          description: The maximum number of buckets allowed. Present in `too_many_buckets_exception` responses.
+          type: integer
+          format: int32
+        node_id:
+          $ref: '#/components/schemas/NodeId'
+          description: The node ID where the error occurred. Present in `failed_node_exception` responses.
+        phase:
+          description: The search phase that failed. Present in `search_phase_execution_exception` responses.
+          type: string
+        position:
+          description: The position of the error in the script. Present in `script_exception` responses.
+          $ref: '#/components/schemas/ScriptExceptionPosition'
+        reason:
+          description: A human-readable explanation of the error, in English.
+          type: string
+        response_limit:
+          x-version-added: 2.18.0
+          description: The response limit that was breached. Present in `response_limit_breached_exception` responses.
+          type: integer
+          format: int32
+        root_cause:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        script:
+          description: The script that caused the error. Present in `script_exception` responses.
+          type: string
+        script_stack:
+          description: The script stack trace. Present in `script_exception` responses.
+          type: array
+          items:
+            type: string
+        stack_trace:
+          description: The server stack trace, present only if the `error_trace=true` parameter was sent with the request.
+          type: string
+        suppressed:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorCause'
+        type:
+          description: The type of error.
+          type: string
       required:
         - type
       additionalProperties:
         title: metadata
         description: Any additional information about the error.
+    CircuitBreakerDurability:
+      type: string
+      description: Whether the condition that tripped the circuit breaker fixes itself eventually (`TRANSIENT`) or requires manual intervention (`PERMANENT`).
+      enum:
+        - PERMANENT
+        - TRANSIENT
+    ResponseLimitEntity:
+      type: string
+      description: The type of entity a response limit applies to.
+      enum:
+        - INDICES
+        - SHARDS
+    ScriptExceptionPosition:
+      type: object
+      description: The location of the error within the script source.
+      properties:
+        offset:
+          type: integer
+          format: int32
+        start:
+          type: integer
+          format: int32
+        end:
+          type: integer
+          format: int32
     DurationValueUnitNanos:
       $ref: '#/components/schemas/UnitNanos'
     UnitNanos:
@@ -383,6 +494,12 @@ components:
       format: int64
     ScrollId:
       type: string
+    PitId:
+      type: string
+      description: |-
+        Identifies a point in time (PIT): an opaque token returned by the create PIT response and by every search against the PIT.
+        Requests send it in the body, never in a path, query parameter, or header.
+        Don't expose it outside the service that uses it.
     Routing:
       type: string
       description: The routing value for the document.
@@ -802,9 +919,6 @@ components:
           const: external_gte
           description: The version number must be greater than or equal to the current version.
         - type: string
-          const: force
-          description: The version number is forced to be the given value.
-        - type: string
           const: internal
           description: The version number is managed internally by OpenSearch.
     TimeZone:
@@ -902,7 +1016,7 @@ components:
           $ref: '#/components/schemas/Routing'
         _source:
           type: object
-          x-protobuf-type: bytes
+          x-protobuf-data-type: bytes
           description: The source of the document.
           additionalProperties: true
       additionalProperties:
@@ -918,7 +1032,7 @@ components:
           items:
             $ref: '#/components/schemas/Name'
     NodeIds:
-      description: A comma-separated list of node IDs used to filter results. Supports [node filters](https://opensearch.org/docs/latest/api-reference/nodes-apis/index/#node-filters).
+      description: A comma-separated list of node IDs used to filter results. Supports [node filters](https://docs.opensearch.org/latest/api-reference/nodes-apis/index/#node-filters).
       oneOf:
         - $ref: '#/components/schemas/NodeId'
         - type: array
@@ -1001,7 +1115,7 @@ components:
       description: Time of day, expressed as HH:MM:SS.
       type: string
     TimeUnit:
-      description: Specifies the time units, for example, `5d` or `7h`. For more information, see [Supported units](https://opensearch.org/docs/latest/api-reference/units/).
+      description: Specifies the time units, for example, `5d` or `7h`. For more information, see [Supported units](https://docs.opensearch.org/latest/api-reference/units/).
       oneOf:
         - title: nanoseconds
           type: string
@@ -1079,19 +1193,19 @@ components:
         - type: integer
         - type: string
           pattern: '^[+-]?\d+$'
-      x-protobuf-type: int32
+      x-protobuf-data-type: int32
     StringifiedLong:
       oneOf:
         - type: integer
           format: int64
         - type: string
-      x-protobuf-type: int64
+      x-protobuf-data-type: int64
     StringifiedDouble:
       oneOf:
         - type: number
           format: double
         - type: string
-      x-protobuf-type: double
+      x-protobuf-data-type: double
     StringifiedBoolean:
       description: |-
         Certain APIs may return values, including numbers such as epoch timestamps, as strings. This setting captures
@@ -1102,7 +1216,7 @@ components:
       oneOf:
         - type: boolean
         - type: string
-      x-protobuf-type: bool
+      x-protobuf-data-type: bool
     PipelineName:
       type: string
     StringifiedEpochTimeUnitMillis:
@@ -2046,6 +2160,10 @@ components:
           type: integer
           format: int64
           description: The total number of noop update operations.
+        max_last_index_request_timestamp:
+          type: integer
+          format: int64
+          description: The epoch timestamp, in milliseconds, of the most recent indexing request. A value of -9223372036854775808 (`Long.MIN_VALUE`) indicates that no request has been recorded.
         is_throttled:
           type: boolean
           description: Whether indexing is currently throttled.
@@ -2133,6 +2251,8 @@ components:
           type: integer
           format: int64
           description: The number of unreferenced file cleanups performed.
+        warmer:
+          $ref: '#/components/schemas/MergesWarmerStats'
       required:
         - current
         - current_docs
@@ -2227,6 +2347,52 @@ components:
         - hit_count
         - memory_size_in_bytes
         - miss_count
+    MergesWarmerStats:
+      type: object
+      description: The statistics about segment-replication merge warmer operations.
+      properties:
+        ongoing_count:
+          type: integer
+          format: int64
+          description: The number of currently ongoing merge warmer operations.
+        total_invocations_count:
+          type: integer
+          format: int64
+          description: The total number of merge warmer invocations.
+        total_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent on merge warmer operations.
+        total_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent on merge warmer operations, in milliseconds.
+        total_failure_count:
+          type: integer
+          format: int64
+          description: The total number of failed merge warmer operations.
+        total_sent_size:
+          $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total number of bytes sent during merge warmer operations, in a human-readable format.
+        total_bytes_sent:
+          $ref: '#/components/schemas/ByteCount'
+          description: The total number of bytes sent during merge warmer operations.
+        total_received_size:
+          $ref: '#/components/schemas/HumanReadableByteCount'
+          description: The total number of bytes received during merge warmer operations, in a human-readable format.
+        total_bytes_received:
+          $ref: '#/components/schemas/ByteCount'
+          description: The total number of bytes received during merge warmer operations.
+        total_send_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent sending data during merge warmer operations.
+        total_send_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent sending data during merge warmer operations, in milliseconds.
+        total_receive_time:
+          $ref: '#/components/schemas/Duration'
+          description: The total amount of time spent receiving data during merge warmer operations.
+        total_receive_time_millis:
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+          description: The total amount of time spent receiving data during merge warmer operations, in milliseconds.
     SearchStats:
       type: object
       description: The statistics about search operations.
@@ -2321,10 +2487,32 @@ components:
           description: The total number of shard suggest operations.
           type: integer
           format: int64
+        query_failed:
+          description: The total number of failed shard query operations.
+          type: integer
+          format: int64
+        startree_query_current:
+          description: The number of currently running shard star-tree query operations.
+          type: integer
+          format: int64
+        startree_query_time:
+          description: The total amount of time taken to complete all shard star-tree query operations.
+          $ref: '#/components/schemas/Duration'
+        startree_query_time_in_millis:
+          description: The total amount of time taken to complete all shard star-tree query operations, in milliseconds.
+          $ref: '#/components/schemas/DurationValueUnitMillis'
+        startree_query_total:
+          description: The total number of shard star-tree query operations.
+          type: integer
+          format: int64
+        startree_query_failed:
+          description: The total number of failed shard star-tree query operations.
+          type: integer
+          format: int64
         search_idle_reactivate_count_total:
           type: integer
           format: int64
-          description: The total number of idle search reactivations.
+          description: The total number of times an idle search shard was reactivated.
         request:
           type: object
           description: Statistics related to coordinator search operations for the node.
@@ -2543,6 +2731,19 @@ components:
           const: cluster_manager
           description: The node can act as a cluster manager.
           x-version-added: '2.0'
+        - type: string
+          const: search
+          description: The node was dedicated to provide search capability for searchable snapshots. Renamed to `warm` in 3.0.
+          x-version-added: '2.4'
+          x-version-removed: '3.0'
+        - type: string
+          const: search
+          description: The node can host search replicas (search-only shards). This role must not be combined with any other role on a node. Introduced in 3.0; not to be confused with the pre-3.0 `search` role that was renamed to `warm`.
+          x-version-added: '3.0'
+        - type: string
+          const: warm
+          description: The node can hold warm indexes for searchable snapshots. Before 3.0 this role was named `search`.
+          x-version-added: '3.0'
     HttpHeaders:
       type: object
       description: The HTTP headers.

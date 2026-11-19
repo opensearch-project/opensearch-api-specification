@@ -2,7 +2,7 @@
 
 ## OpenSearch API Specification
 
-[![Code Covergage](https://codecov.io/github/opensearch-project/opensearch-api-specification/graph/badge.svg?token=TO9YMAKSHH)](https://codecov.io/github/opensearch-project/opensearch-api-specification)
+[![Code Covergage](https://codecov.io/github/opensearch-project/opensearch-api-specification/graph/badge.svg?token=TO9YMAKSHH)](https://app.codecov.io/github/opensearch-project/opensearch-api-specification)
 [![Test Tools (Unit)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-unit.yml)
 [![Test Tools (Integration)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-tools-integ.yml)
 [![Test Spec](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-spec.yml/badge.svg)](https://github.com/opensearch-project/opensearch-api-specification/actions/workflows/test-spec.yml)
@@ -28,18 +28,18 @@ This repo aims to be the complete source of truth for OpenSearch and OpenSearch 
 
 ### Working in this Repo
 
-Because of our legacy, the specification is produced by reading the [OpenSearch documentation](https://opensearch.org/docs/latest/) and reverse-engineering code. Thus, a good place to start contributing to this repo is to [identify a missing API and to add it](https://github.com/opensearch-project/opensearch-api-specification/issues/168) by following the [developer guide](DEVELOPER_GUIDE.md). This repo also contains a set of [test tools](TESTING_GUIDE.md) that ensure the correctness of this API and infrastructure that evaluates the gap between the OpenSearch server and this API spec by comparing REST routes registered in a running OpenSearch to the list of the APIs in this repo. You can see the latest API and test coverage numbers in the comments automatically added to any [recently merged pull requests](https://github.com/opensearch-project/opensearch-api-specification/pulls?q=is%3Apr+is%3Aclosed).
+Because of our legacy, the specification is produced by reading the [OpenSearch documentation](https://docs.opensearch.org/latest/) and reverse-engineering code. Thus, a good place to start contributing to this repo is to [identify a missing API and to add it](https://github.com/opensearch-project/opensearch-api-specification/issues/168) by following the [developer guide](DEVELOPER_GUIDE.md). This repo also contains a set of [test tools](TESTING_GUIDE.md) that ensure the correctness of this API and infrastructure that evaluates the gap between the OpenSearch server and this API spec by comparing REST routes registered in a running OpenSearch to the list of the APIs in this repo. You can see the latest API and test coverage numbers in the comments automatically added to any [recently merged pull requests](https://github.com/opensearch-project/opensearch-api-specification/pulls?q=is%3Apr+is%3Aclosed).
 
 ## Project Resources
 
-* [Current Release](https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml)
+* [Current Release](https://api-spec.opensearch.org/opensearch-openapi.yaml)
 * [Developer Guide](DEVELOPER_GUIDE.md).
 * [Client Generator Guide](CLIENT_GENERATOR_GUIDE.md).
 * [Spec Publishing Guide](PUBLISHING_GUIDE.md).
 * [Project Website](https://opensearch.org/)
-* [API Playground](https://opensearch-project.github.io/opensearch-api-specification/)
-* [Downloads](https://opensearch.org/downloads.html)
-* [Documentation](https://opensearch.org/docs/)
+* [API Playground](https://api-spec.opensearch.org/)
+* [Downloads](https://opensearch.org/downloads/)
+* [Documentation](https://docs.opensearch.org/latest/)
 * Need help? Try [Forums](https://forum.opensearch.org/)
 * [Project Principles](https://opensearch.org/#principles)
 * [Contributing Guidelines](CONTRIBUTING.md)

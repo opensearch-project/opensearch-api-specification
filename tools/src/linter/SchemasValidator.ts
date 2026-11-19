@@ -17,12 +17,10 @@ const ADDITIONAL_KEYWORDS = [
   'x-version-deprecated',
   'x-version-removed',
   'x-deprecation-message',
-  'x-distributions-included',
-  'x-distributions-excluded',
   'x-supports-typed-keys',
   'x-is-generic-type-parameter',
   'x-protobuf-excluded',
-  'x-protobuf-type',
+  'x-protobuf-data-type',
   'x-protobuf-name',
   'x-protobuf-required'
 ]

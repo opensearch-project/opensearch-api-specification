@@ -103,9 +103,9 @@ describe('Logger', () => {
   })
 
   describe('with a log file', () => {
-    var temp: tmp.DirResult
-    var filename: string
-    var logger: Logger
+    let temp: tmp.DirResult
+    let filename: string
+    let logger: Logger
 
     beforeEach(() => {
       temp = tmp.dirSync()

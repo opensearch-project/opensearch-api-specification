@@ -12,7 +12,10 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Alen Abeshov         | [aabeshov](https://github.com/aabeshov)       |             |
 | Harsha Vamsi Kalluri | [harshavamsi](https://github.com/harshavamsi) | Amazon      |
 | Karen Xu             | [karenyrx](https://github.com/karenyrx)       | Uber        |
+| Michael Froh         | [msfroh](https://github.com/msfroh)           | Apple       |
+| Ryan Yuan            | [ryanyuan](https://github.com/ryanyuan)       | CrowdStrike |
 | Sachet Alva          | [sachetalva](https://github.com/sachetalva)   | Amazon      |
+| Sean Chittenden      | [sean-](https://github.com/sean-)             | CrowdStrike |
 | Thomas Farr          | [Xtansia](https://github.com/Xtansia)         | Independent |
 | Torekeldi Niyazbek   | [Tokesh](https://github.com/Tokesh)           |             |
 | Vacha Shah           | [VachaShah](https://github.com/VachaShah)     | Amazon      |
@@ -26,4 +29,4 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Abhi Kalra         | [abhivka7](https://github.com/abhivka7) | Amazon      |
 | Daniel Doubrovkine | [dblock](https://github.com/dblock)     | Independent |
 | Pranav Garg        | [pgtgrly](https://github.com/pgtgrly)   | Amazon      |
-| Theo Truong        | [nhtruong](https://github.com/nhtruong)       | Independent |
+| Theo Truong        | [nhtruong](https://github.com/nhtruong) | Independent |

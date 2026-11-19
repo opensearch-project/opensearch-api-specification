@@ -20,23 +20,21 @@ export default class MergedOpenApiSpec {
   logger: Logger
   file_path: string
   target_version?: string
-  target_distribution?: string
 
   protected _spec: OpenAPIV3_1.Document | undefined
 
-  constructor (spec_path: string, target_version?: string, target_distribution?: string, logger: Logger = new Logger()) {
+  constructor (spec_path: string, target_version?: string, logger: Logger = new Logger()) {
     this.logger = logger
     this.file_path = spec_path
     this.target_version = target_version
-    this.target_distribution = target_distribution
   }
 
   spec (): OpenAPIV3_1.Document {
     if (this._spec) return this._spec
     const merger = new OpenApiMerger(this.file_path, this.logger)
-    var spec = merger.spec()
-    if (this.target_version !== undefined || this.target_distribution !== undefined) {
-      const version_extractor = new OpenApiVersionExtractor(spec, this.target_version, this.target_distribution)
+    let spec = merger.spec()
+    if (this.target_version !== undefined) {
+      const version_extractor = new OpenApiVersionExtractor(spec, this.target_version)
       spec = version_extractor.extract()
     }
     const ctx = new SpecificationContext(this.file_path)
@@ -50,7 +48,7 @@ export default class MergedOpenApiSpec {
   }
 
   paths(): Record<string, string[]> {
-    var obj: Record<string, string[]> = {}
+    const obj: Record<string, string[]> = {}
     _.entries(this.spec().paths).forEach(([path, ops]) => {
       obj[path] = _.entries(_.pick(ops, HTTP_METHODS)).map(([verb, _]) => {
         return verb

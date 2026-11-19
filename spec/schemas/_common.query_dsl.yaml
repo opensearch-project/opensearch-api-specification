@@ -18,6 +18,8 @@ components:
     QueryContainer:
       type: object
       properties:
+        agentic:
+          $ref: '#/components/schemas/AgenticQuery'
         bool:
           $ref: '#/components/schemas/BoolQuery'
         boosting:
@@ -146,6 +148,14 @@ components:
             $ref: '#/components/schemas/NeuralQuery'
           minProperties: 1
           maxProperties: 1
+        neural_sparse:
+          type: object
+          propertyNames:
+            $ref: '_common.yaml#/components/schemas/Field'
+          additionalProperties:
+            $ref: '#/components/schemas/NeuralSparseQuery'
+          minProperties: 1
+          maxProperties: 1
         parent_id:
           $ref: '#/components/schemas/ParentIdQuery'
         percolate:
@@ -187,6 +197,8 @@ components:
           $ref: '#/components/schemas/ScriptScoreQuery'
         simple_query_string:
           $ref: '#/components/schemas/SimpleQueryStringQuery'
+        sltr:
+          $ref: '#/components/schemas/StoredLtrQuery'
         span_containing:
           $ref: '#/components/schemas/SpanContainingQuery'
         field_masking_span:
@@ -216,6 +228,7 @@ components:
           description: Return documents using a template query contains placeholders that are resolved by search request processors during query execution.
           type: object
           additionalProperties: true
+          x-protobuf-excluded: true
         term:
           description: |-
             Returns documents that contain an exact term in a provided field.
@@ -259,6 +272,25 @@ components:
           $ref: '#/components/schemas/XyShapeQuery'
       minProperties: 1
       maxProperties: 1
+    AgenticQuery:
+      x-version-added: '3.2'
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The natural language question to be answered by the agent.
+              type: string
+            query_fields:
+              description: A list of index fields that the agent should consider when generating the search query.
+              type: array
+              items:
+                $ref: '_common.yaml#/components/schemas/Field'
+            memory_id:
+              description: The memory ID from a previous response, used to continue a conversation with prior context. Applicable for conversational agents only.
+              type: string
+          required:
+            - query_text
     BoolQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1493,11 +1525,40 @@ components:
             min_score:
               type: number
               format: float
+            method_parameters:
+              type: object
+              x-version-added: '2.16'
+              additionalProperties: true
             max_distance:
               type: number
               format: float
             filter:
               $ref: '#/components/schemas/QueryContainer'
+    NeuralSparseQuery:
+      allOf:
+        - $ref: '#/components/schemas/QueryBase'
+        - type: object
+          properties:
+            query_text:
+              description: The query text to be encoded into sparse tokens by the model.
+              type: string
+            model_id:
+              description: The ID of the sparse encoding model or tokenizer model at the ML node.
+              type: string
+            query_tokens:
+              description: Pre-computed sparse tokens and their weights. Use instead of query_text+model_id when tokens are already available.
+              type: object
+              additionalProperties:
+                type: number
+                format: float
+            max_token_score:
+              description: The maximum score threshold for sparse tokens. Deprecated since OpenSearch 2.12.
+              type: number
+              format: float
+              deprecated: true
+            analyzer:
+              description: The analyzer to use for tokenization instead of an ML model.
+              type: string
     ParentIdQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -1915,6 +1976,31 @@ components:
         - PREFIX
         - SLOP
         - WHITESPACE
+    StoredLtrQuery:
+      type: object
+      properties:
+        _name:
+          type: string
+        active_features:
+          type: array
+          items:
+            type: string
+        boost:
+          type: number
+          format: float
+        cache:
+          type: boolean
+        featureset:
+          type: string
+        model:
+          type: string
+        params:
+          type: object
+          additionalProperties: true
+        store:
+          type: string
+      required:
+        - params
     SpanContainingQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'
@@ -2144,12 +2230,29 @@ components:
           $ref: '_common.yaml#/components/schemas/Field'
         routing:
           $ref: '_common.yaml#/components/schemas/Routing'
+        query:
+          $ref: '#/components/schemas/QueryContainer'
+          x-version-added: 3.2.0
         store:
           type: boolean
       required:
-        - id
         - index
         - path
+      allOf:
+        - oneOf:
+            - type: object
+              properties:
+                id:
+                  $ref: '_common.yaml#/components/schemas/Id'
+              required:
+                - id
+            - type: object
+              properties:
+                query:
+                  $ref: '#/components/schemas/QueryContainer'
+              required:
+                - query
+              x-version-added: 3.2.0
     TermsSetQuery:
       allOf:
         - $ref: '#/components/schemas/QueryBase'

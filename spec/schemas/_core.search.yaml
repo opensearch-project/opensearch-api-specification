@@ -31,6 +31,7 @@ components:
               format: float
       required:
         - hits
+        - max_score
     HitsMetadataJsonValue:
       allOf:
         - $ref: '#/components/schemas/HitsMetadata'
@@ -39,31 +40,25 @@ components:
             hits:
               type: array
               items:
-                type: object
-                properties:
-                  _source: {}
+                allOf:
+                  - $ref: '#/components/schemas/Hit'
+                  - type: object
+                    properties:
+                      _source: {}
     TotalHits:
       type: object
       properties:
         relation:
-          $ref: '#/components/schemas/TotalHitsRelation'
+          $ref: '_common.yaml#/components/schemas/TotalHitsRelation'
         value:
           type: integer
           format: int64
       required:
         - relation
         - value
-    TotalHitsRelation:
-      oneOf:
-        - type: string
-          const: eq
-          description: Accurate.
-        - type: string
-          const: gte
-          description: Lower bound, including returned events or sequences.
     TDocument:
       x-is-generic-type-parameter: true
-      x-protobuf-type: bytes
+      x-protobuf-data-type: bytes
     Hit:
       type: object
       properties:
@@ -77,7 +72,7 @@ components:
           oneOf:
             - type: 'null'
             - type: number
-              format: double
+              format: float
         _explanation:
           $ref: '_core.explain.yaml#/components/schemas/Explanation'
         fields:
@@ -94,9 +89,19 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/InnerHitsResult'
         matched_queries:
-          type: array
-          items:
-            type: string
+          description: The names of queries that matched the document. When `include_named_queries_score` is false (default), returns an array of query names. When true, returns an object mapping query names to their scores.
+          oneOf:
+            - title: names
+              description: An array of matched query names (default behavior when `include_named_queries_score` is false).
+              type: array
+              items:
+                type: string
+            - title: scores
+              description: A map of matched query names to their scores (when `include_named_queries_score` is true).
+              type: object
+              additionalProperties:
+                type: number
+                format: float
         _nested:
           $ref: '#/components/schemas/NestedIdentity'
         _ignored:
@@ -104,6 +109,9 @@ components:
           items:
             type: string
         ignored_field_values:
+          deprecated: true
+          x-version-deprecated: 1.0.0
+          description: 'Elasticsearch-only field: not present in OpenSearch server responses.'
           type: object
           additionalProperties:
             type: array
@@ -183,12 +191,21 @@ components:
             $ref: '#/components/schemas/AggregationProfile'
         id:
           type: string
+        inbound_network_time_in_millis:
+          x-version-added: '2.0'
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
+        outbound_network_time_in_millis:
+          x-version-added: '2.0'
+          $ref: '_common.yaml#/components/schemas/DurationValueUnitMillis'
         searches:
           type: array
           items:
             $ref: '#/components/schemas/SearchProfile'
         fetch:
-          $ref: '#/components/schemas/FetchProfile'
+          x-version-added: '3.2'
+          type: array
+          items:
+            $ref: '#/components/schemas/FetchProfile'
       required:
         - aggregations
         - id
@@ -520,30 +537,48 @@ components:
     FetchProfileBreakdown:
       type: object
       properties:
+        build_sub_phase_processors:
+          type: integer
+          format: int64
+        build_sub_phase_processors_count:
+          type: integer
+          format: int64
+        create_stored_fields_visitor:
+          type: integer
+          format: int64
+        create_stored_fields_visitor_count:
+          type: integer
+          format: int64
+        get_next_reader:
+          type: integer
+          format: int64
+        get_next_reader_count:
+          type: integer
+          format: int64
         load_source:
           type: integer
-          format: int32
+          format: int64
         load_source_count:
           type: integer
-          format: int32
+          format: int64
         load_stored_fields:
           type: integer
-          format: int32
+          format: int64
         load_stored_fields_count:
           type: integer
-          format: int32
-        next_reader:
-          type: integer
-          format: int32
-        next_reader_count:
-          type: integer
-          format: int32
-        process_count:
-          type: integer
-          format: int32
+          format: int64
         process:
           type: integer
-          format: int32
+          format: int64
+        process_count:
+          type: integer
+          format: int64
+        set_next_reader:
+          type: integer
+          format: int64
+        set_next_reader_count:
+          type: integer
+          format: int64
     FetchProfileDebug:
       type: object
       properties:
@@ -679,7 +714,7 @@ components:
           type: string
         score:
           type: number
-          format: double
+          format: float
         highlighted:
           type: string
         collate_match:
@@ -707,10 +742,10 @@ components:
           type: string
         score:
           type: number
-          format: double
+          format: float
         freq:
           type: integer
-          format: int64
+          format: int32
         highlighted:
           type: string
         collate_match:
@@ -1316,7 +1351,7 @@ components:
       type: object
       properties:
         id:
-          $ref: '_common.yaml#/components/schemas/Id'
+          $ref: '_common.yaml#/components/schemas/PitId'
         keep_alive:
           $ref: '_common.yaml#/components/schemas/Duration'
       required:
@@ -1340,7 +1375,20 @@ components:
           x-version-added: '2.12'
           $ref: '_common.yaml#/components/schemas/PhaseTook'
         hits:
-          $ref: '#/components/schemas/HitsMetadata'
+          allOf:
+            - $ref: '#/components/schemas/HitsMetadata'
+            - type: object
+              x-protobuf-excluded: true
+              properties:
+                hits:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source:
+                            $ref: '#/components/schemas/TDocument'
         processor_results:
           x-version-added: '3.0'
           type: array
@@ -1352,16 +1400,13 @@ components:
             $ref: '_common.aggregations.yaml#/components/schemas/Aggregate'
         _clusters:
           $ref: '_common.yaml#/components/schemas/ClusterStatistics'
-        fields:
-          type: object
-          additionalProperties: true
         num_reduce_phases:
           type: integer
           format: int32
         profile:
           $ref: '#/components/schemas/Profile'
         pit_id:
-          $ref: '_common.yaml#/components/schemas/Id'
+          $ref: '_common.yaml#/components/schemas/PitId'
         _scroll_id:
           $ref: '_common.yaml#/components/schemas/ScrollId'
         suggest:
@@ -1388,9 +1433,11 @@ components:
                 hits:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      _source: {}
+                    allOf:
+                      - $ref: '#/components/schemas/Hit'
+                      - type: object
+                        properties:
+                          _source: {}
             suggest:
               type: object
               additionalProperties:
@@ -1398,18 +1445,24 @@ components:
                 items:
                   oneOf:
                     - title: completion
-                      type: object
-                      properties:
-                        options:
-                          oneOf:
-                            - type: object
-                              properties:
-                                _source: {}
-                            - type: array
-                              items:
-                                type: object
-                                properties:
-                                  _source: {}
+                      allOf:
+                        - $ref: '#/components/schemas/CompletionSuggest'
+                        - type: object
+                          properties:
+                            options:
+                              oneOf:
+                                - allOf:
+                                    - $ref: '#/components/schemas/CompletionSuggestOption'
+                                    - type: object
+                                      properties:
+                                        _source: {}
+                                - type: array
+                                  items:
+                                    allOf:
+                                      - $ref: '#/components/schemas/CompletionSuggestOption'
+                                      - type: object
+                                        properties:
+                                          _source: {}
                     - title: phrase
                       $ref: '#/components/schemas/PhraseSuggest'
                     - title: term
