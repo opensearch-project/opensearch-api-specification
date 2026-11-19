@@ -35,22 +35,12 @@ components:
             type: string
 
     ActionGroup:
-      type: object
-      properties:
-        reserved:
-          type: boolean
-        hidden:
-          type: boolean
-        allowed_actions:
-          type: array
-          items:
-            type: string
-        type:
-          type: string
-        description:
-          type: string
-        static:
-          type: boolean
+      allOf:
+        - $ref: '#/components/schemas/CreateActionGroupParams'
+        - type: object
+          properties:
+            static:
+              type: boolean
 
     ActionGroupsMap:
       type: object
@@ -318,11 +308,79 @@ components:
           items:
             type: string
 
+    CreateActionGroupParams:
+      type: object
+      properties:
+        reserved:
+          type: boolean
+          description: Whether the action group is reserved. Only accepted from an admin user.
+        hidden:
+          type: boolean
+          description: Whether the action group is hidden. Only accepted from an admin user, on version 2.16 and later.
+        allowed_actions:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+        description:
+          type: string
+
+    CreateRoleParams:
+      type: object
+      properties:
+        reserved:
+          type: boolean
+          description: Whether the role is reserved. Only accepted from an admin user.
+        hidden:
+          type: boolean
+          description: Whether the role is hidden. Only accepted from an admin user, on version 2.16 and later.
+        description:
+          type: string
+        cluster_permissions:
+          type: array
+          items:
+            type: string
+        index_permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndexPermission'
+        tenant_permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TenantPermission'
+
     CreateTenantParams:
       type: object
       properties:
         description:
           type: string
+
+    CreateUserParams:
+      type: object
+      properties:
+        password:
+          type: string
+        hash:
+          type: string
+        reserved:
+          type: boolean
+          description: Whether the user is reserved. Only accepted from an admin user.
+        hidden:
+          type: boolean
+          description: Whether the user is hidden. Only accepted from an admin user, on version 2.16 and later.
+        backend_roles:
+          type: array
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/UserAttributes'
+        description:
+          type: string
+        opendistro_security_roles:
+          type: array
+          items:
+            type: string
 
     DashboardsInfo:
       type: object
@@ -616,28 +674,12 @@ components:
               type: string
 
     Role:
-      type: object
-      properties:
-        reserved:
-          type: boolean
-        hidden:
-          type: boolean
-        description:
-          type: string
-        cluster_permissions:
-          type: array
-          items:
-            type: string
-        index_permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/IndexPermission'
-        tenant_permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantPermission'
-        static:
-          type: boolean
+      allOf:
+        - $ref: '#/components/schemas/CreateRoleParams'
+        - type: object
+          properties:
+            static:
+              type: boolean
 
     RoleMapping:
       type: object
@@ -808,30 +850,12 @@ components:
                 type: string
 
     User:
-      type: object
-      properties:
-        password:
-          type: string
-        hash:
-          type: string
-        reserved:
-          type: boolean
-        hidden:
-          type: boolean
-        backend_roles:
-          type: array
-          items:
-            type: string
-        attributes:
-          $ref: '#/components/schemas/UserAttributes'
-        description:
-          type: string
-        opendistro_security_roles:
-          type: array
-          items:
-            type: string
-        static:
-          type: boolean
+      allOf:
+        - $ref: '#/components/schemas/CreateUserParams'
+        - type: object
+          properties:
+            static:
+              type: boolean
 
     UserAttributes:
       type: object
