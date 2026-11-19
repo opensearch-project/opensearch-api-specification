@@ -188,7 +188,7 @@ The bundled spec (`opensearch-openapi.yaml`, built by `npm run merge`) applies p
   x-type-arguments: { _common.aggregations___TBucket: { $ref: '#/components/schemas/_common.aggregations___StringTermsBucket' } }
   ```
 
-  An argument that is a parameter itself passes it on (the instantiating type is generic too); `{}` means any JSON value. A type whose arguments are all concrete is not generic, and neither are its subtypes. A plain `$ref` to a generic type is not an instantiation. Generators SHOULD read `x-type-arguments` instead of comparing the two shapes; the label is additive, so a generator that ignores it keeps working. Instantiations whose arguments can't be determined (one parameter given two different schemas) are left unlabeled and reported when merging.
+  An argument that is a parameter itself passes it on (the instantiating type is generic too); `{}` means any JSON value. A type whose arguments are all concrete is not generic, and neither are its subtypes. A plain `$ref` to a generic type is not an instantiation. Generators SHOULD read `x-type-arguments` instead of comparing the two shapes; the label is additive, so a generator that ignores it keeps working. Instantiations whose arguments can't be determined (one parameter given two different schemas) are left unlabeled, and fail the spec linter (C3 below).
 
 ```yaml
 # _common.aggregations___AggregationContainer in the bundled spec
@@ -202,7 +202,13 @@ allOf:
 
 Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implementing the classifier. The labels are additive, so a generator that ignores them keeps working. Specs extracted for one OpenSearch version (`--opensearch-version`) are labeled again after branches for other versions are removed.
 
-The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
+The spec linter (`npm run lint:spec`) keeps the bundled spec in this form, so that problems are caught on the spec pull request, before any generator sees them. It fails on:
+
+- a new unclassified union (U6). Known ones are listed in `spec/_unclassified_unions.yaml`, which may only shrink. This also covers a presence constraint that lists a key the object doesn't declare: it isn't classified as `presence`.
+- conflicting `allOf` property types (M3).
+- **C1, objects.** An `allOf` is written as its bases (`$ref` members) first, then at most one member with its own properties, then its constraints: unions, or a container written as `properties` with `maxProperties: 1` (`QueryContainer`). An `allOf` member is never an `allOf` itself.
+- **C2, flat unions.** A branch of a labeled union is never a union itself (inline, or through an inline `allOf` member); name it, or flatten its branches into the outer union. The one exception is a presence constraint inside a presence constraint ("with `script`, also `type` or `lang`").
+- **C3, generics.** Every generic instantiation can be labeled with `x-type-arguments`.
 
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.

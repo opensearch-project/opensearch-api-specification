@@ -63,4 +63,40 @@ describe('CompositionValidator', () => {
     expect(warn).toHaveBeenCalledTimes(1)
     expect(warn).toHaveBeenCalledWith(`schemas/animals.yaml #/components/schemas/Lookup: properties next to a composition keyword. Write them as an allOf member instead (${GUIDE}).`)
   })
+
+  test('reports allOfs, unions and generic instantiations that are not in the canonical form', () => {
+    const validator = new CompositionValidator('./tools/tests/linter/fixtures/composition_shapes', new Logger(LogLevel.error))
+    expect(validator.validate()).toEqual([
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/UndeclaredKey/allOf/1',
+        message: `This oneOf/anyOf can't be classified for client generators. Give every branch a title, or add a discriminator (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/BaseLast',
+        message: `A $ref follows an inline allOf member. List the bases ($ref members) first (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/NestedAllOf',
+        message: `An allOf member is itself an allOf. Merge its members into the outer allOf (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/TwoOwn',
+        message: `Several allOf members declare their own properties. Declare them in one member (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/UnionInUnion/oneOf/0',
+        message: `This union branch is itself a union. Give it a name, or flatten its branches into the outer union (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/MixedPair',
+        message: `This instantiation of a generic type gives one type parameter two different schemas (${GUIDE}).`
+      }
+    ])
+  })
 })

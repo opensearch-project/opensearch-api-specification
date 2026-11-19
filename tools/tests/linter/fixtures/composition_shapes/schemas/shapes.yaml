@@ -1,0 +1,129 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch API
+  description: OpenSearch API
+  version: 1.0.0
+components:
+  schemas:
+    Base:
+      type: object
+      properties:
+        name:
+          type: string
+    Dog:
+      type: object
+      properties:
+        bark:
+          type: string
+    Cat:
+      type: object
+      properties:
+        meow:
+          type: string
+    # Canonical: bases, own properties, a presence constraint, and a container written with maxProperties: 1.
+    Canonical:
+      allOf:
+        - $ref: '#/components/schemas/Base'
+        - type: object
+          properties:
+            id:
+              type: string
+            query:
+              type: string
+        - oneOf:
+            - required: [id]
+            - required: [query]
+        - type: object
+          properties:
+            dog:
+              $ref: '#/components/schemas/Dog'
+            cat:
+              $ref: '#/components/schemas/Cat'
+          minProperties: 1
+          maxProperties: 1
+    # C1: two members with their own properties.
+    TwoOwn:
+      allOf:
+        - type: object
+          properties:
+            a:
+              type: string
+        - type: object
+          properties:
+            b:
+              type: string
+    # C1: a base after an inline member.
+    BaseLast:
+      allOf:
+        - type: object
+          properties:
+            a:
+              type: string
+        - $ref: '#/components/schemas/Base'
+    # C1: an allOf inside an allOf.
+    NestedAllOf:
+      allOf:
+        - $ref: '#/components/schemas/Base'
+        - allOf:
+            - type: object
+              properties:
+                a:
+                  type: string
+    # C2: a titled union with an inline union branch.
+    UnionInUnion:
+      oneOf:
+        - title: animal
+          oneOf:
+            - title: dog
+              $ref: '#/components/schemas/Dog'
+            - title: cat
+              $ref: '#/components/schemas/Cat'
+        - title: name
+          type: string
+    # Rule 4: a presence constraint on a key the object doesn't declare isn't classified.
+    UndeclaredKey:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+        - oneOf:
+            - required: [id]
+            - required: [query]
+    # C3: TValue is bound to both string and integer.
+    TValue:
+      type: object
+      x-is-generic-type-parameter: true
+    Pair:
+      type: object
+      properties:
+        first:
+          $ref: '#/components/schemas/TValue'
+        second:
+          $ref: '#/components/schemas/TValue'
+    MixedPair:
+      allOf:
+        - $ref: '#/components/schemas/Pair'
+        - type: object
+          properties:
+            first:
+              type: string
+            second:
+              type: integer
+    Shapes:
+      type: object
+      properties:
+        canonical:
+          $ref: '#/components/schemas/Canonical'
+        two_own:
+          $ref: '#/components/schemas/TwoOwn'
+        base_last:
+          $ref: '#/components/schemas/BaseLast'
+        nested_all_of:
+          $ref: '#/components/schemas/NestedAllOf'
+        union_in_union:
+          $ref: '#/components/schemas/UnionInUnion'
+        undeclared_key:
+          $ref: '#/components/schemas/UndeclaredKey'
+        mixed_pair:
+          $ref: '#/components/schemas/MixedPair'

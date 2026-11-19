@@ -10,6 +10,7 @@
 import fs from 'fs'
 import _ from 'lodash'
 import OpenApiMerger from '../merger/OpenApiMerger'
+import GenericLabeler from '../merger/GenericLabeler'
 import UnionClassifier from '../merger/UnionClassifier'
 import UnionLabeler from '../merger/UnionLabeler'
 import { read_yaml } from '../helpers'
@@ -24,6 +25,11 @@ const PRIMITIVE_TYPES = new Set(['string', 'number', 'integer', 'boolean', 'null
 // - error: a oneOf/anyOf that can't be classified (no x-union-kind), unless it is on the allow-list of known ones
 // - error: an allow-listed union that is now classified, so the allow-list only shrinks
 // - error: allOf members that declare the same property with different primitive types (rule M3)
+// - error: an allOf that isn't `[ $ref Base..., { own properties }, { constraint }... ]` (rule C1)
+// - error: a union branch that is itself a union, other than a presence constraint inside a presence constraint (rule C2)
+// - error: a generic instantiation that gives one type parameter two different arguments (rule C3)
+// A presence constraint may only list keys the object declares; one that doesn't isn't classified, so the first error
+// above reports it.
 // - warning: properties next to allOf/oneOf/anyOf (rule N1); the bundled spec rewrites them, but allOf is clearer
 export default class CompositionValidator {
   logger: Logger
@@ -45,7 +51,9 @@ export default class CompositionValidator {
     }
     return [
       ...this.validate_unions(spec),
-      ...this.validate_conflicts(spec)
+      ...this.validate_conflicts(spec),
+      ...this.validate_shapes(spec),
+      ...this.validate_generics(spec)
     ]
   }
 
@@ -78,6 +86,67 @@ export default class CompositionValidator {
     visit(spec.components, '#/components')
     visit(spec.paths, '#/paths')
     return errors
+  }
+
+  // Rules C1 and C2, on every allOf and every labeled union.
+  validate_shapes (spec: Record<string, any>): ValidationError[] {
+    const errors: ValidationError[] = []
+    const visit = (node: any, location: string): void => {
+      if (Array.isArray(node)) { node.forEach((item, index) => { visit(item, `${location}/${index}`) }); return }
+      if (!_.isPlainObject(node)) return
+      if (Array.isArray(node.allOf)) {
+        const problem = this.find_object_problem(node.allOf as any[])
+        if (problem !== undefined) errors.push(this.error(location, problem))
+      }
+      const kind = node['x-union-kind']
+      const branches = (node.oneOf ?? node.anyOf) as any[] | undefined
+      if (typeof kind === 'string' && kind !== 'presence' && Array.isArray(branches)) {
+        const keyword = node.oneOf !== undefined ? 'oneOf' : 'anyOf'
+        branches.forEach((branch, index) => {
+          if (this.is_union(branch)) {
+            errors.push(this.error(`${location}/${keyword}/${index}`, `This union branch is itself a union. Give it a name, or flatten its branches into the outer union (${GUIDE}).`))
+          }
+        })
+      }
+      for (const [key, value] of Object.entries(node as Record<string, any>)) {
+        visit(value, `${location}/${key.replaceAll('~', '~0').replaceAll('/', '~1')}`)
+      }
+    }
+    visit(spec.components, '#/components')
+    visit(spec.paths, '#/paths')
+    return errors
+  }
+
+  // Rule C3: every generic instantiation can be labeled with x-type-arguments.
+  validate_generics (spec: Record<string, any>): ValidationError[] {
+    return new GenericLabeler().label(_.cloneDeep(spec)).unresolved
+      .map((location) => this.error(location, `This instantiation of a generic type gives one type parameter two different schemas (${GUIDE}).`))
+  }
+
+  // Returns a message if an allOf isn't written as its bases ($refs), then at most one member with its own properties,
+  // then its constraints (unions, or a container written as properties with maxProperties: 1).
+  find_object_problem (members: any[]): string | undefined {
+    const kinds = members.map((member) => this.member_kind(member))
+    if (kinds.includes('nested')) return `An allOf member is itself an allOf. Merge its members into the outer allOf (${GUIDE}).`
+    if (kinds.filter((kind) => kind === 'own').length > 1) return `Several allOf members declare their own properties. Declare them in one member (${GUIDE}).`
+    if (kinds.lastIndexOf('ref') > kinds.findIndex((kind) => kind !== 'ref') && kinds.some((kind) => kind !== 'ref')) {
+      return `A $ref follows an inline allOf member. List the bases ($ref members) first (${GUIDE}).`
+    }
+    return undefined
+  }
+
+  member_kind (member: any): 'ref' | 'own' | 'constraint' | 'nested' {
+    if (typeof member?.$ref === 'string') return 'ref'
+    if (member?.allOf !== undefined) return 'nested'
+    if (member?.oneOf !== undefined || member?.anyOf !== undefined || member?.maxProperties === 1) return 'constraint'
+    return 'own'
+  }
+
+  // Whether an inline schema is a union, directly or through an inline allOf member.
+  is_union (schema: any): boolean {
+    if (!_.isPlainObject(schema) || typeof schema.$ref === 'string') return false
+    if (schema.oneOf !== undefined || schema.anyOf !== undefined) return true
+    return ((schema.allOf ?? []) as any[]).some((member) => this.is_union(member))
   }
 
   // Returns a message if two allOf members declare a property with different primitive types.
