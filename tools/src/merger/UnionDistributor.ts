@@ -178,6 +178,10 @@ export default class UnionDistributor {
     // A branch that is itself an allOf (the branch of a base that was rewritten) is spliced in, so that no allOf nests.
     const members = [...parts, ...branches.map((branch) => _.omit(branch, ['title']))]
       .flatMap((member) => _.isPlainObject(member) && Array.isArray(member.allOf) && Object.keys(member as object).length === 1 ? member.allOf as any[] : [member])
+    // An empty object member (`{ type: object }`, a subtype without properties of its own) adds nothing to a branch
+    // that has other members, so it isn't copied into every branch.
+    const empty = (member: any): boolean => _.isEqual(member, { type: 'object' })
+    if (members.some((member) => !empty(member))) _.remove(members, empty)
     const title = branches.map((branch) => branch?.title).filter((t) => t !== undefined)
     const combined: Record<string, any> = members.length === 1 ? _.cloneDeep(members[0]) : { allOf: _.cloneDeep(members) }
     if (title.length === branches.length && title.length > 0) combined.title = title.join('_')

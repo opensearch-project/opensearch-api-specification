@@ -84,6 +84,20 @@ describe('UnionDistributor', () => {
     expect(result).toEqual({ rewritten: [], skipped: [{ location: '#/components/schemas/BBuckets', reason: 'specializes a generic union' }], branches: 0 })
   })
 
+  test('drops an empty object member from the branches', () => {
+    const s = spec({
+      Base: { allOf: [{ properties: { a: { type: 'string' } } }, { anyOf: [{ properties: { f: { type: 'string' } } }, { properties: { g: { type: 'string' } } }] }] },
+      Empty: { allOf: [ref('Base'), { type: 'object' }] }
+    })
+    new UnionDistributor().distribute(s)
+    expect(s.components.schemas.Empty).toEqual({
+      anyOf: [
+        { allOf: [{ properties: { a: { type: 'string' } } }, { properties: { f: { type: 'string' } } }], title: 'f' },
+        { allOf: [{ properties: { a: { type: 'string' } } }, { properties: { g: { type: 'string' } } }], title: 'g' }
+      ]
+    })
+  })
+
   test('leaves a presence constraint on properties the object declares', () => {
     const lookup = {
       allOf: [
