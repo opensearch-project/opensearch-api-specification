@@ -171,6 +171,24 @@ The bundled spec (`opensearch-openapi.yaml`, built by `npm run merge`) applies p
 - **N1 is already applied.** Properties, `required`, `additionalProperties` and `patternProperties` declared next to `allOf`/`oneOf`/`anyOf` are moved into an `allOf` member, together with any `discriminator` of a moved `oneOf`. The rewrite is lossless. Generators still MUST read `allOf: [object, union, …]` correctly, because that is the canonical form.
 - **Unions are labeled.** Every `oneOf`/`anyOf` that matches one of the classes above carries `x-union-kind`, set to `tagged` (U1), `container` (U2), `presence` (U3), `titled` (U4), `scalar` (U5), `one-or-many` (U5a), `keyed-or-list` (U5b) or `shorthand` (U5c). Branches are resolved before classifying (N3). Unclassified unions (U6) have no label, and the merge reports them.
 - **Containers list their variant keys.** A `container` also carries `x-variant-keys`: the property that selects each branch, in branch order.
+- **Generic instantiations name their type arguments.** A generic type is a schema that uses a generic type parameter (a schema marked `x-is-generic-type-parameter`, such as `TDocument` or `TBucket`). The spec instantiates one in a single way, `allOf: [ $ref Generic, { the same shape with each parameter replaced } ]`, and the bundled spec labels every such `allOf` with `x-type-arguments`, mapping each parameter to the schema that takes its place:
+
+  ```yaml
+  # _core.search___HitsMetadata, property hits: Hit<TDocument>, passing its own parameter on
+  items:
+    allOf:
+      - $ref: '#/components/schemas/_core.search___Hit'
+      - { type: object, properties: { _source: { $ref: '#/components/schemas/_core.search___TDocument' } } }
+    x-type-arguments: { _core.search___TDocument: { $ref: '#/components/schemas/_core.search___TDocument' } }
+
+  # _common.aggregations___TermsAggregateBaseStringTermsBucket: TermsAggregateBase<StringTermsBucket>
+  allOf:
+    - $ref: '#/components/schemas/_common.aggregations___TermsAggregateBase'
+    - { type: object, properties: { buckets: { type: array, items: { $ref: '#/components/schemas/_common.aggregations___StringTermsBucket' } } } }
+  x-type-arguments: { _common.aggregations___TBucket: { $ref: '#/components/schemas/_common.aggregations___StringTermsBucket' } }
+  ```
+
+  An argument that is a parameter itself passes it on (the instantiating type is generic too); `{}` means any JSON value. A type whose arguments are all concrete is not generic, and neither are its subtypes. A plain `$ref` to a generic type is not an instantiation. Generators SHOULD read `x-type-arguments` instead of comparing the two shapes; the label is additive, so a generator that ignores it keeps working. Instantiations whose arguments can't be determined (one parameter given two different schemas) are left unlabeled and reported when merging.
 
 ```yaml
 # _common.aggregations___AggregationContainer in the bundled spec

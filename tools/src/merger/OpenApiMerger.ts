@@ -15,6 +15,7 @@ import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import CompositionNormalizer from './CompositionNormalizer'
 import UnionLabeler from './UnionLabeler'
+import GenericLabeler from './GenericLabeler'
 import { Logger } from '../Logger'
 
 // Create a single-file OpenAPI spec from multiple files for OpenAPI validation and programmatic consumption
@@ -64,6 +65,7 @@ export default class OpenApiMerger {
       this.#normalize_compositions()
       this.#normalize_fields()
       this.#label_unions()
+      this.#label_generics()
       this._merged = true
     }
 
@@ -199,6 +201,13 @@ export default class OpenApiMerger {
     this.logger.info(`Labeled unions: ${JSON.stringify(counts)}`)
     unclassified.forEach(location => { this.logger.info(`Unclassified union at ${location}`) })
     if (unclassified.length > 0) this.logger.warn(`${unclassified.length} unions could not be classified; run with --verbose to list them.`)
+  }
+
+  // Label every instantiation of a generic type with its type arguments (x-type-arguments).
+  #label_generics (): void {
+    const { sites, unresolved } = new GenericLabeler().label(this._spec)
+    this.logger.info(`Labeled ${sites} generic instantiations`)
+    unresolved.forEach(location => { this.logger.info(`Unresolved generic instantiation at ${location}`) })
   }
 
   // Generate superseded operations from _superseded_operations.yaml file.

@@ -13,6 +13,7 @@ import { Logger } from '../Logger'
 import { type OpenAPIV3_1 } from 'openapi-types'
 import * as semver from '../_utils/semver'
 import UnionLabeler from './UnionLabeler'
+import GenericLabeler from './GenericLabeler'
 
 // Extract a versioned API
 export default class OpenApiVersionExtractor {
@@ -50,10 +51,12 @@ export default class OpenApiVersionExtractor {
     this.#relabel_unions()
   }
 
-  // Removing version-specific branches can change what kind of union a schema is, so label the unions again.
+  // Removing version-specific branches can change what kind of union a schema is, and which parts of a generic type
+  // are instantiated, so label the unions and the generic instantiations again.
   #relabel_unions(): void {
     if (this._spec === undefined) return
     new UnionLabeler().label(this._spec)
+    new GenericLabeler().label(this._spec)
   }
 
   #exclude_per_semver(obj: any): boolean {
