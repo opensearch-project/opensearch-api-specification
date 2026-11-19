@@ -7,13 +7,14 @@
 * compatible open source license.
 */
 
+import _ from 'lodash'
 import UnionDistributor from 'merger/UnionDistributor'
 
 const ref = (name: string): Record<string, string> => ({ $ref: `#/components/schemas/${name}` })
 const spec = (schemas: Record<string, any>): Record<string, any> => ({ components: { schemas }, paths: {} })
 
 describe('UnionDistributor', () => {
-  test('rewrites an object with a union member into a union of complete objects', () => {
+  test('rewrites an object with a union member into a union of complete objects, titled after the property each adds', () => {
     const s = spec({
       Metric: {
         description: 'A metric.',
@@ -27,8 +28,8 @@ describe('UnionDistributor', () => {
     expect(s.components.schemas.Metric).toEqual({
       description: 'A metric.',
       anyOf: [
-        { allOf: [{ type: 'object', properties: { missing: { type: 'string' } } }, { properties: { field: { type: 'string' } } }] },
-        { allOf: [{ type: 'object', properties: { missing: { type: 'string' } } }, { properties: { script: { type: 'string' } } }] }
+        { allOf: [{ type: 'object', properties: { missing: { type: 'string' } } }, { properties: { field: { type: 'string' } } }], title: 'field' },
+        { allOf: [{ type: 'object', properties: { missing: { type: 'string' } } }, { properties: { script: { type: 'string' } } }], title: 'script' }
       ]
     })
     expect(result).toEqual({ rewritten: ['#/components/schemas/Metric'], skipped: [], branches: 2 })
@@ -81,6 +82,19 @@ describe('UnionDistributor', () => {
     expect(s.components.schemas.BBuckets).toEqual(instantiation)
     expect(s.components.schemas.Plain).toEqual(plain)
     expect(result).toEqual({ rewritten: [], skipped: [{ location: '#/components/schemas/BBuckets', reason: 'specializes a generic union' }], branches: 0 })
+  })
+
+  test('leaves a presence constraint on properties the object declares', () => {
+    const lookup = {
+      allOf: [
+        { type: 'object', properties: { id: { type: 'string' }, query: { type: 'object' } } },
+        { oneOf: [{ type: 'object', required: ['id'] }, { type: 'object', required: ['query'] }] }
+      ]
+    }
+    const s = spec({ Lookup: _.cloneDeep(lookup) })
+    const result = new UnionDistributor().distribute(s)
+    expect(s.components.schemas.Lookup).toEqual(lookup)
+    expect(result).toEqual({ rewritten: [], skipped: [{ location: '#/components/schemas/Lookup', reason: 'presence constraint' }], branches: 0 })
   })
 
   test('is idempotent', () => {

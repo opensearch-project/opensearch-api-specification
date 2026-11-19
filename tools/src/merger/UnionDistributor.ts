@@ -83,6 +83,14 @@ export default class UnionDistributor {
       unions.push(union)
     }
     if (unions.length === 0) return node
+    // A presence constraint only requires properties the object declares: a generator that drops it keeps every field
+    // and loses the constraint only, so it stays a labeled allOf member instead of a union of near-identical objects.
+    const declared = this.declared(parts)
+    const constraints = unions.filter((union) => this.is_constraint(union.branches, declared))
+    if (constraints.length > 0) {
+      this._result.skipped.push({ location, reason: constraints.length === unions.length ? 'presence constraint' : 'presence constraint with other unions' })
+      return node // with other unions too: left as it is, see `skipped`
+    }
     if (refined_base && unions.length > 1) {
       this._result.skipped.push({ location, reason: 'specializes a generic union' })
       return node
@@ -93,6 +101,7 @@ export default class UnionDistributor {
       return node
     }
 
+    for (const union of unions) union.branches = this.titled(union.branches, declared)
     let combinations: any[][] = [[]]
     for (const union of unions) {
       combinations = combinations.flatMap((combination) => union.branches.map((branch) => [...combination, branch]))
@@ -121,6 +130,42 @@ export default class UnionDistributor {
     if (keyword === undefined || target.allOf !== undefined || !Array.isArray(target[keyword])) return undefined
     if (Object.keys(target as object).some((key) => !this.is_union_keyword(key))) return undefined
     return { keyword, branches: target[keyword] as any[], discriminator: target.discriminator }
+  }
+
+  // The properties the object parts declare, following $refs and allOf members.
+  declared (parts: any[], depth: number = 0): Set<string> {
+    const names = new Set<string>()
+    if (depth > MAX_DEPTH) return names
+    for (const part of parts) {
+      let target = part
+      if (typeof part?.$ref === 'string') target = this._schemas[(part.$ref as string).split('/').pop() as string]
+      if (!_.isPlainObject(target)) continue
+      Object.keys((target.properties ?? {}) as object).forEach((name) => names.add(name))
+      if (Array.isArray(target.allOf)) this.declared(target.allOf as any[], depth + 1).forEach((name) => names.add(name))
+    }
+    return names
+  }
+
+  // Whether every branch only requires (and perhaps redeclares) properties the object declares.
+  is_constraint (branches: any[], declared: Set<string>): boolean {
+    return branches.every((branch) => _.isPlainObject(branch) && typeof branch.$ref !== 'string' &&
+      Object.keys(branch as object).every((key) => ['type', 'required', 'properties', 'description', 'title'].includes(key) || key.startsWith('x-')) &&
+      Object.keys((branch.properties ?? {}) as object).every((name) => declared.has(name)) &&
+      ((branch.required ?? []) as string[]).every((name) => declared.has(name)))
+  }
+
+  // The branches with a title each, so that the union they become can be labeled: a branch without one is named after
+  // the one property it adds to the object (`field`, `script`). Branches are left as they are unless every one gets a
+  // distinct title.
+  titled (branches: any[], declared: Set<string>): any[] {
+    const titles = branches.map((branch) => {
+      if (typeof branch?.title === 'string') return branch.title as string
+      if (!_.isPlainObject(branch) || typeof branch.$ref === 'string') return undefined
+      const added = Object.keys((branch.properties ?? {}) as object).filter((name) => !declared.has(name))
+      return added.length === 1 ? added[0] : undefined
+    })
+    if (titles.some((title) => title === undefined) || new Set(titles).size !== titles.length) return branches
+    return branches.map((branch, index) => ({ ...branch, title: titles[index] }))
   }
 
   // Keywords that may sit next to oneOf/anyOf in a union member: annotations, and `type: object`.

@@ -195,7 +195,7 @@ allOf:                                        # oneOf/anyOf of complete objects
       - { properties: { script: … } }
 ```
 
-Several union members multiply out (`X ∧ (A ∨ B) ∧ (C ∨ D)` has four branches), and a schema that extends a rewritten one (`AverageAggregation` extends `MetricAggregationBase`) is rewritten too, with the base's branches in place of the `$ref`, so it no longer has a base type. The specialization of a generic union (`allOf: [ $ref Buckets, { oneOf: […] } ]`) is left as it is. The trade-off: presence constraints become unions of near-identical objects, which the classifier can't label, so the published spec doesn't do this by default.
+Several union members multiply out (`X ∧ (A ∨ B) ∧ (C ∨ D)` has four branches), and a schema that extends a rewritten one (`AverageAggregation` extends `MetricAggregationBase`) is rewritten too, with the base's branches in place of the `$ref`, so it no longer has a base type. Each branch is titled after the one property it adds (`field`, `script`), so the union is labeled `titled`. Left as they are: a presence constraint that only requires properties the object declares (`TermsLookup`: `id` or `query`), since a generator that drops it keeps every field and loses only the check, and the specialization of a generic union (`allOf: [ $ref Buckets, { oneOf: […] } ]`). The trade-off is that rewritten schemas lose their base type, so the published spec doesn't do this by default yet.
 
 The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
 
