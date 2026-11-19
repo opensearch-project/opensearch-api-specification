@@ -110,6 +110,29 @@ components:
               type: string
             second:
               type: integer
+    # C4: a single value written as const outside a union branch.
+    SingleConst:
+      type: string
+      const: only
+    # const in the branches of a documented enum is fine.
+    DocumentedEnum:
+      oneOf:
+        - const: a
+          description: The first value.
+        - const: b
+          description: The second value.
+    # C5: a nullable scalar written as a oneOf.
+    NullableOneOf:
+      oneOf:
+        - type: number
+          format: double
+        - type: 'null'
+    # Canonical nullable scalar.
+    NullFirst:
+      type: ['null', string]
+    # C6: several types in a type array.
+    TypeArray:
+      type: [number, string]
     Shapes:
       type: object
       properties:
@@ -127,3 +150,13 @@ components:
           $ref: '#/components/schemas/UndeclaredKey'
         mixed_pair:
           $ref: '#/components/schemas/MixedPair'
+        single_const:
+          $ref: '#/components/schemas/SingleConst'
+        documented_enum:
+          $ref: '#/components/schemas/DocumentedEnum'
+        nullable_one_of:
+          $ref: '#/components/schemas/NullableOneOf'
+        null_first:
+          $ref: '#/components/schemas/NullFirst'
+        type_array:
+          $ref: '#/components/schemas/TypeArray'

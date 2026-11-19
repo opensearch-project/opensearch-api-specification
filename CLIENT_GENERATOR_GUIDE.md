@@ -216,6 +216,9 @@ The spec linter (`npm run lint:spec`) keeps the bundled spec in this form, so th
 - **C1, objects.** An `allOf` is written as its bases (`$ref` members) first, then at most one member with its own properties, then its constraints: unions, or a container written as `properties` with `maxProperties: 1` (`QueryContainer`). An `allOf` member is never an `allOf` itself.
 - **C2, flat unions.** A branch of a labeled union is never a union itself (inline, or through an inline `allOf` member); name it, or flatten its branches into the outer union. The one exception is a presence constraint inside a presence constraint ("with `script`, also `type` or `lang`").
 - **C3, generics.** Every generic instantiation can be labeled with `x-type-arguments`.
+- **C4, a single value** is `enum: [value]`. `const` is only used in the branches of a `oneOf` that documents each value of an enum (`oneOf: [ { const: a, description: … }, … ]`).
+- **C5, a nullable type** is a type array with `'null'`, such as `type: ['null', string]` (the YAML lint keeps it sorted). `oneOf: [ X, { type: 'null' } ]` is only used when `X` isn't a plain scalar (a `$ref`, or a scalar with annotations such as a `description` on the `null` branch).
+- **C6, a union of scalar types** is a `oneOf` with one `type` per branch (`oneOf: [ { type: number }, { type: string } ]`). A type array only adds `'null'`.
 
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.

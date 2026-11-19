@@ -40,7 +40,7 @@ describe('CompositionValidator', () => {
     ])
   })
 
-  test('reports allOfs, unions and generic instantiations that are not in the canonical form', () => {
+  test('reports allOfs, unions, generic instantiations and values that are not in the canonical form', () => {
     const validator = new CompositionValidator('./tools/tests/linter/fixtures/composition_shapes', new Logger(LogLevel.error))
     expect(validator.validate()).toEqual([
       {
@@ -60,8 +60,23 @@ describe('CompositionValidator', () => {
       },
       {
         file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/NullableOneOf',
+        message: `A nullable scalar is written as a oneOf. Write it as a type array with 'null' (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/SingleConst',
+        message: `A single value is written as const. Write it as enum: [value]; const is for the documented values of a oneOf (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
         location: '#/components/schemas/TwoOwn',
         message: `Several allOf members declare their own properties. Declare them in one member (${GUIDE}).`
+      },
+      {
+        file: 'schemas/shapes.yaml',
+        location: '#/components/schemas/TypeArray',
+        message: `Several types are written as a type array. Write them as a oneOf of one type each; a type array only adds 'null' (${GUIDE}).`
       },
       {
         file: 'schemas/shapes.yaml',

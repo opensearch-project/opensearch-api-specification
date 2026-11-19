@@ -26,6 +26,9 @@ const PRIMITIVE_TYPES = new Set(['string', 'number', 'integer', 'boolean', 'null
 // - error: an allOf that isn't `[ $ref Base..., { own properties }, { constraint }... ]` (rule C1)
 // - error: a union branch that is itself a union, other than a presence constraint inside a presence constraint (rule C2)
 // - error: a generic instantiation that gives one type parameter two different arguments (rule C3)
+// - error: a single value written as const outside a union branch, instead of enum: [x] (rule C4)
+// - error: a nullable scalar written as a oneOf/anyOf with {type: null}, instead of type: [T, 'null'] (rule C5)
+// - error: a union of scalar types written as a type array, instead of a oneOf (rule C6)
 // A presence constraint may only list keys the object declares; one that doesn't isn't classified, so the first error
 // above reports it.
 export default class CompositionValidator {
@@ -84,6 +87,8 @@ export default class CompositionValidator {
         const problem = this.find_object_problem(node.allOf as any[])
         if (problem !== undefined) errors.push(this.error(location, problem))
       }
+      const value_problem = this.find_value_problem(node as Record<string, any>, location)
+      if (value_problem !== undefined) errors.push(this.error(location, value_problem))
       const kind = node['x-union-kind']
       const branches = (node.oneOf ?? node.anyOf) as any[] | undefined
       if (typeof kind === 'string' && kind !== 'presence' && Array.isArray(branches)) {
@@ -101,6 +106,27 @@ export default class CompositionValidator {
     visit(spec.components, '#/components')
     visit(spec.paths, '#/paths')
     return errors
+  }
+
+  // Rules C4 to C6: one way to write a single value, a nullable scalar and a union of scalar types.
+  find_value_problem (node: Record<string, any>, location: string): string | undefined {
+    if ('const' in node && !/\/(oneOf|anyOf)\/\d+$/.test(location)) {
+      return `A single value is written as const. Write it as enum: [value]; const is for the documented values of a oneOf (${GUIDE}).`
+    }
+    for (const keyword of ['oneOf', 'anyOf']) {
+      const branches = node[keyword]
+      if (!Array.isArray(branches) || branches.length !== 2) continue
+      const is_null = (b: any): boolean => _.isEqual(b, { type: 'null' })
+      const is_plain_scalar = (b: any): boolean => _.isPlainObject(b) && Object.keys(b as object).every((k) => k === 'type' || k === 'format') &&
+        typeof b.type === 'string' && PRIMITIVE_TYPES.has(b.type as string) && b.type !== 'null'
+      if ((is_null(branches[0]) && is_plain_scalar(branches[1])) || (is_null(branches[1]) && is_plain_scalar(branches[0]))) {
+        return `A nullable scalar is written as a ${keyword}. Write it as a type array with 'null' (${GUIDE}).`
+      }
+    }
+    if (Array.isArray(node.type) && node.type.filter((type: string) => type !== 'null').length > 1) {
+      return `Several types are written as a type array. Write them as a oneOf of one type each; a type array only adds 'null' (${GUIDE}).`
+    }
+    return undefined
   }
 
   // Rule C3: every generic instantiation can be labeled with x-type-arguments.

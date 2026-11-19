@@ -215,6 +215,7 @@ The linter also checks how schemas combine `allOf`, `oneOf` and `anyOf`, so that
 - **Error:** `allOf` members that declare the same property with different types, e.g. `integer` in one and `string` in another.
 - **Error:** properties declared next to `allOf`/`oneOf`/`anyOf`. Write them as an `allOf` member.
 - **Error:** an `allOf` that isn't written as its bases (`$ref`s) first, then at most one member with its own properties, then its constraints; a union branch that is itself a union; a generic instantiation that gives one type parameter two different schemas.
+- **Error:** a value written in a second way: a single value as `const` instead of `enum: [value]` (except in the branches of a documented enum), a nullable scalar as `oneOf: [{type: T}, {type: 'null'}]` instead of a type array such as `type: ['null', T]`, or several types in a type array instead of a `oneOf`.
 
 ### Spec Tester
 
