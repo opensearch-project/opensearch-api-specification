@@ -184,6 +184,19 @@ allOf:
 
 Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implementing the classifier. The labels are additive, so a generator that ignores them keeps working. Specs extracted for one OpenSearch version (`--opensearch-version`) are labeled again after branches for other versions are removed.
 
+**Flattened unions (experimental, `npm run merge -- --flatten-unions`).** This builds a bundled spec without union members in an `allOf` (N2), so a generator can't drop one. Each such `allOf` is multiplied out into a union of complete objects, `X ∧ (A ∨ B)` into `(X ∧ A) ∨ (X ∧ B)`, which is lossless:
+
+```yaml
+# MetricAggregationBase
+allOf:                                        # oneOf/anyOf of complete objects
+  - { properties: { missing: … } }            anyOf:
+  - anyOf:                              =>      - allOf: [ { properties: { missing: … } }, { properties: { field: … } } ]
+      - { properties: { field: … } }            - allOf: [ { properties: { missing: … } }, { properties: { script: … } } ]
+      - { properties: { script: … } }
+```
+
+Several union members multiply out (`X ∧ (A ∨ B) ∧ (C ∨ D)` has four branches), and a schema that extends a rewritten one (`AverageAggregation` extends `MetricAggregationBase`) is rewritten too, with the base's branches in place of the `$ref`, so it no longer has a base type. The specialization of a generic union (`allOf: [ $ref Buckets, { oneOf: […] } ]`) is left as it is. The trade-off: presence constraints become unions of near-identical objects, which the classifier can't label, so the published spec doesn't do this by default.
+
 The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
 
 ### Representation per Language

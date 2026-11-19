@@ -14,6 +14,7 @@ import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import CompositionNormalizer from './CompositionNormalizer'
+import UnionDistributor, { type DistributedUnions } from './UnionDistributor'
 import UnionLabeler from './UnionLabeler'
 import { Logger } from '../Logger'
 
@@ -27,6 +28,8 @@ export default class OpenApiMerger {
 
   paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
   normalized_compositions: string[] = [] // locations of schemas rewritten by CompositionNormalizer
+  flatten_unions: boolean = false // rewrite every allOf with a union member into a union of complete objects
+  distributed_unions: DistributedUnions | undefined
   schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
@@ -63,6 +66,7 @@ export default class OpenApiMerger {
       this.#generate_superseded_ops()
       this.#normalize_compositions()
       this.#normalize_fields()
+      if (this.flatten_unions) this.#distribute_unions()
       this.#label_unions()
       this._merged = true
     }
@@ -191,6 +195,15 @@ export default class OpenApiMerger {
     const rewritten = new CompositionNormalizer().normalize(this._spec)
     this.normalized_compositions = rewritten
     rewritten.forEach(location => { this.logger.info(`Normalized composition at ${location}`) })
+  }
+
+  // Rewrite every allOf with a union member into a union of complete objects (opt-in, --flatten-unions).
+  #distribute_unions (): void {
+    const result = new UnionDistributor().distribute(this._spec)
+    this.distributed_unions = result
+    this.logger.info(`Flattened ${result.rewritten.length} allOfs with a union member into unions of ${result.branches} branches`)
+    result.rewritten.forEach(location => { this.logger.info(`Flattened union at ${location}`) })
+    result.skipped.forEach(({ location, reason }) => { this.logger.info(`Left union at ${location} (${reason})`) })
   }
 
   // Label every oneOf/anyOf with its kind (x-union-kind) and, for containers, the key of each variant (x-variant-keys).
