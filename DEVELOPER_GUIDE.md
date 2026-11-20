@@ -142,10 +142,10 @@ This repository includes several OpenAPI Specification Extensions to fill in any
 - `x-ignorable`: Denotes that the operation should be ignored by the client generator. This is used in operation groups where some operations have been replaced by newer ones, but we still keep them in the specs because the server still supports them.
 - `x-global`: Denotes that the parameter is a global parameter that is included in every operation. These parameters are listed in the [spec/_global_parameters.yaml](spec/_global_parameters.yaml).
 - `x-default`: Contains the default value of a parameter. This is often used to override the default value specified in the schema, or to avoid accidentally changing the default value when updating a shared schema.
-- `x-distributions-included`: Contains a list of distributions known to include the API.
-- `x-distributions-excluded`: Contains a list of distributions known to exclude the API.
 
-Use `opensearch.org` for the official distribution in `x-distributions-*`, `amazon-managed` for Amazon Managed OpenSearch, and `amazon-serverless` for Amazon OpenSearch Serverless.
+### Distribution-Specific API Filtering
+
+Distribution-specific API surface differences (for example, APIs excluded from Amazon Managed OpenSearch or Amazon OpenSearch Serverless) are managed via [OpenAPI Overlay](https://spec.openapis.org/overlay/latest.html) files in the [`overlays/`](overlays/) directory. The spec source files themselves are vendor-neutral. See [`overlays/README.md`](overlays/README.md) for details.
 
 ## Writing Spec Tests
 
@@ -217,7 +217,7 @@ The spec test framework validates the OpenSearch spec against a running OpenSear
 
 ### Spec Style
 
-This repo runs [Vale](https://github.com/errata-ai/vale) on the text contents of the spec, such as descriptions.
+This repo runs [Vale](https://github.com/vale-cli/vale) on the text contents of the spec, such as descriptions.
 
 The [Style prepare tool](tools/src/prepare-for-vale/) clears YAML files from all markup and leaves text in-place in the [style workflow](.github/workflows/style.yml), allowing for comments to appear in pull requests on GitHub.
 
@@ -366,11 +366,21 @@ This workflow uses the [coverage](#coverage) tool and [openapi-changes](https://
 
 ### [Build](.github/workflows/build.yml)
 
-This workflow runs on pushes to the `main` branch and will [merge](#merger) the specification and publish it to [GitHub Releases](https://github.com/opensearch-project/opensearch-api-specification/releases).
+This workflow runs on pushes to the `main` branch. It [merges](#merger) the specification and deploys the [Swagger docs](index.html), `opensearch-openapi.yaml`, and `main-latest.zip` to [GitHub Pages](https://api-spec.opensearch.org/).
 
-### [Deploy GitHub Pages](.github/workflows/deploy-gh-pages.yml)
+### Deploy GitHub Pages
 
-This workflow performs a [Jekyll](https://jekyllrb.com/) build of the `main` branch to generate the [Swagger docs](index.html) and publish it to [GitHub Pages](https://opensearch-project.github.io/opensearch-api-specification/).
+The [Build](#build) workflow uses [Jekyll](https://jekyllrb.com/) to build the [Swagger docs](index.html) and deploys them to [GitHub Pages](https://api-spec.opensearch.org/) on every push to `main`.
+
+To preview the playground locally, merge the spec and copy it next to `index.html` so it is served from the same origin, then start Jekyll:
+
+```
+npm run merge
+cp build/opensearch-openapi.yaml opensearch-openapi.yaml
+bundle exec jekyll serve
+```
+
+Then open http://localhost:4000.
 
 ### [Comment on PR](.github/workflows/pr-comment.yml)
 

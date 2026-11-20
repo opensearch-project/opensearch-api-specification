@@ -10,6 +10,16 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/SearchPipelineStructure'
+    SearchPipelineRef:
+      description: |-
+        A search pipeline specified either as the name of a stored pipeline
+        or as an inline pipeline definition.
+      oneOf:
+        - title: pipeline_name
+          type: string
+          x-version-added: '2.18'
+        - title: pipeline_definition
+          $ref: '#/components/schemas/SearchPipelineStructure'
     SearchPipelineStructure:
       type: object
       properties:
@@ -68,6 +78,14 @@ components:
               $ref: '#/components/schemas/OversampleRequestProcessor'
           required:
             - oversample
+        - x-version-added: '2.16'
+          type: object
+          title: ml_inference
+          properties:
+            ml_inference:
+              $ref: '#/components/schemas/MLInferenceRequestProcessor'
+          required:
+            - ml_inference
     AgenticQueryTranslatorRequestProcessor:
       x-version-added: '3.2'
       type: object
@@ -83,6 +101,38 @@ components:
           type: string
       required:
         - agent_id
+    MLInferenceRequestProcessor:
+      x-version-added: '2.16'
+      type: object
+      properties:
+        tag:
+          type: string
+        description:
+          type: string
+        ignore_failure:
+          type: boolean
+        model_id:
+          type: string
+        function_name:
+          type: string
+        model_config:
+          type: object
+        model_input:
+          type: string
+        input_map:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+        output_map:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      required:
+        - model_id
     FilterQueryRequestProcessor:
       type: object
       properties:

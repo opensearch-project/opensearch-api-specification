@@ -6,6 +6,19 @@ distributions:
     - amazon-managed
     - amazon-serverless
 
+epilogues:
+  - path: /_plugins/_security/api/actiongroups/{action_group}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      action_group: test_bulk_read
+    status: [200, 404]
+  - path: /_plugins/_security/api/actiongroups/{action_group}
+    method: DELETE
+    version: '>=3.10'
+    parameters:
+      action_group: test_bulk_write
+    status: [200, 404]
 chapters:
   - synopsis: Create action group.
     path: /_plugins/_security/api/actiongroups/{action_group}
@@ -61,3 +74,77 @@ chapters:
       action_group: test
     response:
       status: 200
+  - synopsis: Create multiple action groups, one referencing another defined in the same request.
+    path: /_plugins/_security/api/actiongroups
+    method: PUT
+    version: '>=3.10'
+    request:
+      payload:
+        test_bulk_write:
+          allowed_actions: ['indices:data/write/index*',test_bulk_read]
+          type: index
+        test_bulk_read:
+          allowed_actions: ['indices:data/read/search*']
+          type: index
+    response:
+      status: 200
+      payload:
+        status: OK
+        message: Resources updated.
+  - synopsis: Verify an action group created in bulk.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      action_group: test_bulk_write
+    response:
+      status: 200
+      payload:
+        test_bulk_write:
+          allowed_actions: ['indices:data/write/index*',test_bulk_read]
+  - synopsis: Replace an action group without changing omitted action groups.
+    path: /_plugins/_security/api/actiongroups
+    method: PUT
+    version: '>=3.10'
+    request:
+      payload:
+        test_bulk_read:
+          allowed_actions: ['indices:data/read/get*']
+          type: index
+    response:
+      status: 200
+      payload:
+        status: OK
+        message: Resources updated.
+  - synopsis: Verify the supplied action group was replaced.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      action_group: test_bulk_read
+    response:
+      status: 200
+      payload:
+        test_bulk_read:
+          allowed_actions: ['indices:data/read/get*']
+  - synopsis: Verify the omitted action group is unchanged.
+    path: /_plugins/_security/api/actiongroups/{action_group}
+    method: GET
+    version: '>=3.10'
+    parameters:
+      action_group: test_bulk_write
+    response:
+      status: 200
+      payload:
+        test_bulk_write:
+          allowed_actions: ['indices:data/write/index*',test_bulk_read]
+  - synopsis: Reject an action group that lists itself in allowed_actions.
+    path: /_plugins/_security/api/actiongroups
+    method: PUT
+    version: '>=3.10'
+    request:
+      payload:
+        test_bulk_self:
+          allowed_actions: [test_bulk_self]
+    response:
+      status: 400

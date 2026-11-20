@@ -41,9 +41,9 @@ We have devised our own test framework to test the spec against an OpenSearch cl
 
 #### Prerequisites 
 
-Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and run `npm install`.
+Download and install the latest version of Node.js and npm from [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/) and run `npm install`.
 
-Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
+Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop/).
 
 #### OpenSearch Cluster 
 
@@ -282,21 +282,9 @@ The test tool will fetch the server version when it starts and use it automatica
 
 ### Managing Distributions
 
-OpenSearch consists of plugins that may or may not be present in various distributions. When adding a new API in the spec, you can specify `x-distributions-included` or `x-distributions-excluded` with a list of distributions that have a particular feature. For example, the Amazon Managed OpenSearch supports `GET /`, but Amazon Serverless OpenSearch does not.
+OpenSearch consists of plugins that may or may not be present in various distributions. Distribution-specific API surface differences are managed via [OpenAPI Overlay](https://spec.openapis.org/overlay/latest.html) files in the [`overlays/`](overlays/) directory, not in the spec source files. See [`overlays/README.md`](overlays/README.md) for details.
 
-```yaml
-/:
-  get:
-    operationId: info.0
-    x-distributions-included:
-      - opensearch.org
-      - amazon-managed
-    x-distributions-excluded:
-      - amazon-serverless
-    description: Returns basic information about the cluster.
-```
-
-Similarly, skip tests that are not applicable to a distribution by listing the distributions that support or do not support it.
+To skip tests that are not applicable to a distribution, list the distributions that support or do not support it in the test story.
 
 ```yaml
 description: Test root endpoint.

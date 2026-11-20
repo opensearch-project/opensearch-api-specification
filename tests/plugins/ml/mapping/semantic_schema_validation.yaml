@@ -81,3 +81,24 @@ chapters:
     response:
       status: [200, 400, 500]
 
+  # Test 4: Verify model_selection is accepted without model_id (3.9+)
+  # The cluster may still return 400 if plugins.neural_search.model_selection.model_id.sparse.english
+  # is unset, same as the placeholder-model_id chapters above.
+  - synopsis: Create semantic field with model_selection instead of model_id.
+    version: '>= 3.9'
+    path: /{index}
+    method: PUT
+    parameters:
+      index: semantic_schema_test
+    request:
+      payload:
+        mappings:
+          properties:
+            selected:
+              type: semantic
+              model_selection:
+                language_option: ENGLISH
+                model_type: SPARSE
+    response:
+      status: [200, 400, 500]
+
