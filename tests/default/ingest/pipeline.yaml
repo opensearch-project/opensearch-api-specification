@@ -36,6 +36,26 @@ chapters:
       status: 200
       payload:
         acknowledged: true
+  - synopsis: Create a pipeline whose `set` processor is missing the required `value` property.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: invalid_pipeline
+    request:
+      payload:
+        processors:
+          - set:
+              tag: set_title
+              field: title
+    response:
+      status: 400
+      payload:
+        error:
+          type: parse_exception
+          processor_type: set
+          processor_tag: set_title
+          property_name: value
+        status: 400
   - synopsis: Query created books pipeline.
     path: /_ingest/pipeline/{id}
     method: GET
