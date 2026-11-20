@@ -12,6 +12,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
 
 ### Added
+- Added WKT (Well-Known Text) string support to the `GeoShape` schema for `geo_shape` queries, constrained the `type` property of its GeoJSON variant via a new `GeoShapeType` enum, and modeled `radius`, `geometries`, and `orientation` so `Circle` and `GeometryCollection` shapes are supported ([#1277](https://github.com/opensearch-project/opensearch-api-specification/pull/1277))
 - Added `search_pipeline` (a pipeline name or an inline definition) and `verbose_pipeline` to the `_msearch` `MultisearchBody` schema, mirroring the `_search` request body, with spec tests ([#1275](https://github.com/opensearch-project/opensearch-api-specification/pull/1275))
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
 - Added the bulk Create or Update Action Groups API (`PUT /_plugins/_security/api/actiongroups`), introduced in OpenSearch 3.10 ([#1309](https://github.com/opensearch-project/opensearch-api-specification/pull/1309))
