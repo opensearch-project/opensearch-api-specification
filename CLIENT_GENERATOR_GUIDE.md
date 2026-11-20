@@ -186,6 +186,28 @@ Generators SHOULD use `x-union-kind` and `x-variant-keys` instead of re-implemen
 
 The spec linter (`npm run lint:spec`) keeps this from getting worse: it fails on new unclassified unions and on conflicting `allOf` property types, so these are caught on the spec pull request, before any generator sees them.
 
+### Client Model (experimental)
+The bundled spec carries a resolved client model of its own types, next to the JSON Schema it is built from: `npm run merge` builds it and writes it into `opensearch-openapi.yaml` as `x-model` extensions, so there is no second file. Every schema in `components/schemas` has `x-model` with its model entry; every response and request body component has `x-model` with its body (`media_type` and `type`); `components` has `x-model` with the format `version`. The JSON Schema is not changed, so validators, the spec tester and generators that read JSON Schema keep working; a generator that reads `x-model` reads fields and constraints instead. The model only describes types: operations, paths and parameters are read from the spec as before. Specs extracted for one OpenSearch version (`--opensearch-version`) carry the model of that version. In the model, every `$ref` of an `allOf` is followed, every `allOf` merged and every labeled union turned into a type or a constraint, so a generator reads fields and constraints instead of applying N1–N3, M1–M4 and U1–U6 itself. The format is versioned (`version`, currently `0.2.0`) and may still change.
+
+Each named schema's `x-model` is one entry, with a `type_kind`; a `ref` in it names another component schema, whose `x-model` describes it:
+
+- `object`: `fields` (each with `type` and `required`), optional `additional_fields` (the value type of other keys, e.g. the field-name map of `TermsQuery`) and `constraints`.
+- `union`: `union_kind` (the `x-union-kind` label, or `unclassified`), `exclusive` (`oneOf` rather than `anyOf`), and either `variants` by tag value (`tagged`, with `discriminator` and `default_variant`) or by title (`titled`), or `members`.
+- `alias`: a `type` such as an array, a map or a scalar. A generic type parameter (`x-is-generic-type-parameter`, e.g. `TDocument`) is an alias of `any` with `generic_parameter: true`.
+
+Object entries list the named types merged in through `allOf` in `bases`, and each inherited field names the base it comes through in `declared_in`, so a generator can emit inheritance or embedding instead of flat types. Entries, fields and union branches (`branch_versions`) carry `versions` (`added`, `removed`, `deprecated`, `deprecation_message`) from `x-version-*` and `x-deprecation-message`. A bare `type: object` is an object without declared fields; only `additionalProperties` makes a map.
+
+Unions keep each branch's own title in `titles`, by position (`null` where a branch has none). The `x-model` of a response or request body component holds its JSON body (`media_type`, `type`), so inline bodies don't have to be read from the JSON Schema either.
+
+Types are `{ ref }`, `{ scalar, format? }`, `{ enum }`, `{ array }`, `{ map }`, `{ union, union_kind, exclusive }`, `{ object }` or `{ any }`. Constraints are:
+
+- `presence`: `one_of` or `any_of`, a list of key sets; the object sets exactly one / at least one of them (`TermsLookup`: `one_of: [[id], [query]]`). `nested`, by position, holds the constraints a key set brings along (a sort on `script` also needs `type` or `lang`: `one_of: [[field], [script]]`, `nested: [null, [{ any_of: [[type], [lang]] }]]`); the fields of every branch are optional fields of the object.
+- `container`: `variants` by variant key, each with the key's `value` type, the `extra_fields` allowed only with that variant and its `extra_constraints` (`AggregationContainer`: `aggs`/`aggregations` only on bucket variants).
+- `not_all`: `keys` that must not all be set together (from `not: { required: [...] }`).
+- Any other union kind inside an `allOf`: `matches` (`one_of`/`any_of`) and `types`; the object must also match those types.
+
+Some rules go beyond JSON Schema validity. A field declared by several `allOf` members keeps one type: arrays merge their item types, objects merge field by field (a partial redeclaration only adds fields), and any other later declaration replaces the earlier one (a specialization narrows a generic base). An `allOf` made only of unions (`allOf: [ $ref Buckets, { oneOf: [...] } ]`) is the later union, which inherits the earlier branches' titles by position. A container variant allows only the fields its branch declares. `diagnostics` lists what the model couldn't resolve, such as two scalar types for one field.
+
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.
 

@@ -38,6 +38,7 @@ export default class CompositionValidator {
 
   validate (): ValidationError[] {
     const merger = new OpenApiMerger(this.root_folder, new Logger(LogLevel.error))
+    merger.include_model = false // the spec as written
     const spec = merger.spec() as Record<string, any>
     for (const location of merger.normalized_compositions) {
       const { file, location: source_location } = this.source_of(location.replaceAll(':', '___'))

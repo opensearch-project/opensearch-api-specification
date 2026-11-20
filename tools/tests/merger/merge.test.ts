@@ -8,6 +8,8 @@
 */
 
 import { spawnSync } from 'child_process'
+import fs from 'fs'
+import tmp from 'tmp'
 
 const spec = (args: string[]): any => {
   const start = spawnSync('ts-node', ['tools/src/merger/merge.ts'].concat(args))
@@ -20,3 +22,12 @@ const spec = (args: string[]): any => {
 test('--help', () => {
   expect(spec(['--help']).stdout).toContain('Usage: merge [options]')
 })
+
+test('writes one file, with the client model in it', () => {
+  const temp = tmp.dirSync({ unsafeCleanup: true })
+  spec(['--source', './tools/tests/merger/fixtures/specs/animals', '--output', `${temp.name}/opensearch-openapi.yaml`])
+  expect(fs.readdirSync(temp.name)).toEqual(['opensearch-openapi.yaml'])
+  expect(fs.readFileSync(`${temp.name}/opensearch-openapi.yaml`, 'utf8')).toContain('x-model:')
+  temp.removeCallback()
+})
+

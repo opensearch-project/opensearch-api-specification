@@ -14,6 +14,7 @@ import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import CompositionNormalizer from './CompositionNormalizer'
+import ModelAnnotator from './ModelAnnotator'
 import UnionLabeler from './UnionLabeler'
 import { Logger } from '../Logger'
 
@@ -27,6 +28,8 @@ export default class OpenApiMerger {
 
   paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
   normalized_compositions: string[] = [] // locations of schemas rewritten by CompositionNormalizer
+  // Write the resolved client model into the spec (x-model), as published. The linters turn this off.
+  include_model: boolean = true
   schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
@@ -64,6 +67,7 @@ export default class OpenApiMerger {
       this.#normalize_compositions()
       this.#normalize_fields()
       this.#label_unions()
+      if (this.include_model) OpenApiMerger.annotate_model(this._spec, this.logger)
       this._merged = true
     }
 
@@ -191,6 +195,16 @@ export default class OpenApiMerger {
     const rewritten = new CompositionNormalizer().normalize(this._spec)
     this.normalized_compositions = rewritten
     rewritten.forEach(location => { this.logger.info(`Normalized composition at ${location}`) })
+  }
+
+  // Write the resolved client model into a merged spec: x-model on every schema, response and request body.
+  static annotate_model (spec: Record<string, any>, logger: Logger): void {
+    const model = new ModelAnnotator().annotate(spec)
+    const kinds: Record<string, number> = {}
+    for (const entry of Object.values(model.types)) kinds[entry.type_kind] = (kinds[entry.type_kind] ?? 0) + 1
+    logger.info(`Client model (x-model): ${Object.keys(model.types).length} types ${JSON.stringify(kinds)}, ${Object.keys(model.responses).length} responses, ${Object.keys(model.request_bodies).length} request bodies`)
+    model.diagnostics.forEach(d => { logger.info(`Client model diagnostic, ${d.type}: ${d.message}`) })
+    if (model.diagnostics.length > 0) logger.warn(`The client model has ${model.diagnostics.length} diagnostics; run with --verbose to list them.`)
   }
 
   // Label every oneOf/anyOf with its kind (x-union-kind) and, for containers, the key of each variant (x-variant-keys).

@@ -167,7 +167,7 @@ To be able to use or develop the tools, some setup is required:
 npm run merge -- --help
 ```
 
-The merger tool merges the multi-file OpenSearch spec into a single file for programmatic use.
+The merger tool merges the multi-file OpenSearch spec into a single file for programmatic use. It also builds the resolved client model of that file and writes it into it, as `x-model` on every schema, response and request body (see [Client Model](CLIENT_GENERATOR_GUIDE.md#client-model-experimental)); the JSON Schema itself is not changed. The spec linter checks the spec without the model.
 
 **Arguments**
 

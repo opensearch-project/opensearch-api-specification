@@ -12,6 +12,7 @@ import { delete_matching_keys, find_refs, write_yaml } from '../helpers'
 import { Logger } from '../Logger'
 import { type OpenAPIV3_1 } from 'openapi-types'
 import * as semver from '../_utils/semver'
+import ModelAnnotator from './ModelAnnotator'
 import UnionLabeler from './UnionLabeler'
 
 // Extract a versioned API
@@ -50,10 +51,12 @@ export default class OpenApiVersionExtractor {
     this.#relabel_unions()
   }
 
-  // Removing version-specific branches can change what kind of union a schema is, so label the unions again.
+  // Removing version-specific branches can change what kind of union a schema is, so label the unions again, and
+  // build the client model (x-model) of this version's spec, if the source spec has one.
   #relabel_unions(): void {
     if (this._spec === undefined) return
     new UnionLabeler().label(this._spec)
+    if (this._spec.components?.['x-model'] !== undefined) new ModelAnnotator().annotate(this._spec)
   }
 
   #exclude_per_semver(obj: any): boolean {

@@ -15,6 +15,7 @@ import tmp from 'tmp'
 
 describe('extract() from a merged API spec', () => {
   const merger = new OpenApiMerger('tools/tests/merger/fixtures/specs/opensearch')
+  merger.include_model = false // the model has its own tests (ModelAnnotator)
 
   describe('1.3', () => {
     const extractor = new OpenApiVersionExtractor(merger.spec(), '1.3')

@@ -17,6 +17,7 @@ describe('OpenApiMerger', () => {
   describe('defaults', () => {
     beforeEach(() => {
       merger = new OpenApiMerger('./tools/tests/merger/fixtures/specs/animals')
+      merger.include_model = false // the model has its own tests (ModelAnnotator)
     })
 
     describe('merge()', () => {
