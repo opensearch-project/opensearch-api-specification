@@ -93,6 +93,9 @@ components:
           $ref: '#/components/schemas/PipelineProcessor'
         drop:
           $ref: '#/components/schemas/DropProcessor'
+        terminate:
+          $ref: '#/components/schemas/TerminateProcessor'
+          x-version-added: '3.11'
         circle:
           $ref: '#/components/schemas/CircleProcessor'
         text_embedding:
@@ -754,6 +757,14 @@ components:
           required:
             - name
     DropProcessor:
+      allOf:
+        - $ref: '#/components/schemas/ProcessorBase'
+        - type: object
+    TerminateProcessor:
+      description: |-
+        Ends the pipeline that it runs in: the processors that follow it in that pipeline are skipped, and the document is indexed as if the pipeline had finished.
+        Unlike `drop`, the document is not discarded, and unlike `fail`, this is not an error.
+        A pipeline that called this one with the `pipeline` processor carries on, and the `final_pipeline` of the index still runs.
       allOf:
         - $ref: '#/components/schemas/ProcessorBase'
         - type: object

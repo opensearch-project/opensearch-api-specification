@@ -1,0 +1,88 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the terminate ingest processor.
+version: '>= 3.11'
+epilogues:
+  - path: /_ingest/pipeline/terminate_pipeline
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create a pipeline that ends early for some documents.
+    path: /_ingest/pipeline/{id}
+    method: PUT
+    parameters:
+      id: terminate_pipeline
+    request:
+      payload:
+        description: A pipeline that stops when a document asks for it.
+        processors:
+          - set:
+              field: stage
+              value: first
+          - terminate:
+              if: ctx.stop == true
+              tag: stop-here
+              description: Stop when the document asks for it.
+          - set:
+              field: stage
+              value: last
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+
+  - synopsis: Simulate the pipeline, which skips the processors after terminate when its condition matches.
+    path: /_ingest/pipeline/{id}/_simulate
+    method: POST
+    parameters:
+      id: terminate_pipeline
+    request:
+      payload:
+        docs:
+          - _source:
+              stop: true
+          - _source:
+              stop: false
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                stop: true
+                stage: first
+          - doc:
+              _source:
+                stop: false
+                stage: last
+
+  - synopsis: Simulate a pipeline with verbose output, which lists terminate and not the processors after it.
+    path: /_ingest/pipeline/_simulate
+    method: POST
+    parameters:
+      verbose: true
+    request:
+      payload:
+        pipeline:
+          processors:
+            - set:
+                field: stage
+                value: first
+            - terminate:
+                tag: stop-here
+            - set:
+                field: stage
+                value: last
+        docs:
+          - _source:
+              stop: true
+    response:
+      status: 200
+      payload:
+        docs:
+          - processor_results:
+              - processor_type: set
+                status: success
+              - processor_type: terminate
+                tag: stop-here
+                status: success
