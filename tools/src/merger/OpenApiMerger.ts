@@ -14,6 +14,8 @@ import { read_yaml, write_yaml } from '../helpers'
 import SupersededOpsGenerator from './SupersededOpsGenerator'
 import GlobalParamsGenerator from './GlobalParamsGenerator'
 import CompositionNormalizer from './CompositionNormalizer'
+import ClientModelBuilder from '../model/ClientModelBuilder'
+import ModelLowering from '../model/ModelLowering'
 import UnionLabeler from './UnionLabeler'
 import { Logger } from '../Logger'
 
@@ -27,6 +29,8 @@ export default class OpenApiMerger {
 
   paths: Record<string, Record<string, OpenAPIV3_1.PathItemObject>> = {} // namespace -> path -> path_item_object
   normalized_compositions: string[] = [] // locations of schemas rewritten by CompositionNormalizer
+  resolve_types: boolean = false // write every type in the form of its client model type (see ModelLowering)
+  model_diagnostics: number = 0
   schemas: Record<string, Record<string, OpenAPIV3_1.SchemaObject>> = {} // category -> schema -> schema_object
 
   constructor (root_folder: string, logger: Logger = new Logger()) {
@@ -64,6 +68,7 @@ export default class OpenApiMerger {
       this.#normalize_compositions()
       this.#normalize_fields()
       this.#label_unions()
+      if (this.resolve_types) this.#resolve_types()
       this._merged = true
     }
 
@@ -191,6 +196,17 @@ export default class OpenApiMerger {
     const rewritten = new CompositionNormalizer().normalize(this._spec)
     this.normalized_compositions = rewritten
     rewritten.forEach(location => { this.logger.info(`Normalized composition at ${location}`) })
+  }
+
+  // Write every type in the form of its client model type: allOfs merged, presence fields declared, unions flat.
+  #resolve_types (): void {
+    const model = new ClientModelBuilder(this._spec).build()
+    const lowering = new ModelLowering(model)
+    const lowered = lowering.lower(this._spec)
+    this.model_diagnostics = model.diagnostics.length
+    this.logger.info(`Resolved ${lowered} types, kept ${lowering.kept.length} generic types as written (${model.diagnostics.length} model diagnostics)`)
+    model.diagnostics.forEach(d => { this.logger.info(`${d.type}: ${d.message}`) })
+    this.#label_unions() // the labels of the written unions, from the same classifier
   }
 
   // Label every oneOf/anyOf with its kind (x-union-kind) and, for containers, the key of each variant (x-variant-keys).

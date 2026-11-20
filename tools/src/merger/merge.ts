@@ -19,12 +19,14 @@ const command = new Command()
   .addOption(new Option('-o, --output <path>', 'output file name').default(resolve(__dirname, '../../../build/opensearch-openapi.yaml')))
   .addOption(new Option('--verbose', 'show merge details').default(false))
   .addOption(new Option('--opensearch-version <number>', 'target OpenSearch schema version').default(undefined))
+  .addOption(new Option('--resolve-types', 'write every type in the form of its client model type').default(false))
   .allowExcessArguments(false)
   .parse()
 
 const opts = command.opts()
 const logger = new Logger(opts.verbose ? LogLevel.info : LogLevel.warn)
 const merger = new OpenApiMerger(opts.source, logger)
+merger.resolve_types = opts.resolveTypes
 if (opts.opensearchVersion === undefined) {
   logger.log(`Merging ${opts.source} into ${opts.output} ...`)
   merger.write_to(opts.output)

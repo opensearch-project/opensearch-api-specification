@@ -210,6 +210,17 @@ Some rules go beyond JSON Schema validity. A field declared by several `allOf` m
 
 `npm run model -- --typescript <file>` renders the model as TypeScript, as a reference for generator authors: the renderer has no composition logic, and it turns constraints into checked types (other variant keys become `?: never`), so for example two aggregation variants at once, or `id` together with `query` in `TermsLookup`, don't compile.
 
+### Resolved Bundle (experimental)
+`npm run merge -- --resolve-types` builds the client model while merging and writes every type back into `opensearch-openapi.yaml` in the form of its model type, so the one published spec is already resolved and there is no second file to read. It is still OpenAPI 3.1:
+
+- **An object** is `allOf: [ $ref Base…, { type: object, its own properties, required, additionalProperties }, { constraint }… ]`, or just its own part when it has neither bases nor constraints. A subtype without fields of its own is `allOf: [ $ref Base ]`, without an empty member.
+- **Fields a presence constraint adds are the object's own optional fields.** `MetricAggregationBase` is `{ missing, field, script }`; a constraint whose branches require nothing (as there) is not written. One that does (`TermsLookup`: `id` or `query`) stays a labeled `oneOf`/`anyOf` member whose branches require declared fields, so a generator that drops it keeps every field and loses only the check.
+- **A container** stays a labeled `oneOf` member, with its named variants (`$ref AdjacencyMatrixAggregation`).
+- **A union** is a plain `oneOf`/`anyOf` of its members, with their titles and its `x-union-kind`; a nullable scalar is a type array.
+- **Generic types and their instantiations** are written as the source spec writes them, since the model resolves an instantiation to the generic type.
+
+Annotations, validation keywords, `x-*` extensions, `propertyNames` and the titles of map values are kept from the source schemas.
+
 ### Representation per Language
 These are the recommended representations. Each generator chooses what fits its language, as long as the [conformance levels](#conformance-levels) hold.
 
