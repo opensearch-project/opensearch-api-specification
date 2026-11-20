@@ -1,0 +1,47 @@
+$schema: ../../json_schemas/test_story.schema.yaml
+
+description: Test the views APIs.
+chapters:
+  - synopsis: List all views.
+    version: '>= 3.0'
+    path: /views
+    method: GET
+    response:
+      status: 200
+      payload:
+        views: []
+  - synopsis: Create a view.
+    pending: In OpenSearch 3.x, the view is created but the request never returns because the cluster state update task does not complete the response listener.
+    version: '>= 3.0'
+    path: /views
+    method: POST
+    request:
+      payload:
+        name: movies_view
+        targets:
+          - indexPattern: movies
+  - synopsis: Get a view.
+    pending: Requires a view, which cannot be created reliably because `POST /views` never returns.
+    version: '>= 3.0'
+    path: /views/{view_name}
+    method: GET
+    parameters:
+      view_name: movies_view
+  - synopsis: Update a view.
+    pending: In OpenSearch 3.x, the view is updated but the request never returns because the cluster state update task does not complete the response listener.
+    version: '>= 3.0'
+    path: /views/{view_name}
+    method: PUT
+    parameters:
+      view_name: movies_view
+    request:
+      payload:
+        targets:
+          - indexPattern: movies*
+  - synopsis: Delete a view.
+    pending: Requires a view, which cannot be created reliably because `POST /views` never returns.
+    version: '>= 3.0'
+    path: /views/{view_name}
+    method: DELETE
+    parameters:
+      view_name: movies_view

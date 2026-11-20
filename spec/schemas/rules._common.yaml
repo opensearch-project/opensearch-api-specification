@@ -1,0 +1,96 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Rules API Schemas
+  description: Schemas for automatic tagging rules.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    CreateRuleRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 256
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
+      required:
+        - description
+        - index_pattern
+        - workload_group
+    UpdateRuleRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 256
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
+    Rule:
+      type: object
+      description: An automatic tagging rule for a workload group.
+      properties:
+        id:
+          type: string
+          description: The computed rule ID.
+        description:
+          type: string
+          maxLength: 256
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
+        updated_at:
+          type: string
+          format: date-time
+          description: The time at which the rule was last updated.
+      required:
+        - description
+        - id
+        - index_pattern
+        - updated_at
+        - workload_group
+    GetRulesResponse:
+      type: object
+      properties:
+        rules:
+          type: array
+          description: The matching rules.
+          items:
+            $ref: '#/components/schemas/Rule'
+        search_after:
+          type: array
+          description: The sort value to pass to a subsequent request.
+          items:
+            type: string
+          maxItems: 1
+      required:
+        - rules

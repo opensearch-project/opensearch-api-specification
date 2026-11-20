@@ -1,0 +1,41 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test the remote store stats API.
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: games, _id: game1}}
+        - {title: Pong, year: 1972}
+epilogues:
+  - path: /games
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Get remote store stats for an index.
+    version: '>= 2.8'
+    path: /_remotestore/stats/{index}
+    method: GET
+    parameters:
+      index: games
+    response:
+      status: 200
+      payload:
+        _shards:
+          failed: 0
+  - synopsis: Get remote store stats for a shard.
+    version: '>= 2.8'
+    path: /_remotestore/stats/{index}/{shard_id}
+    method: GET
+    parameters:
+      index: games
+      shard_id: '0'
+    response:
+      status: 200
+      payload:
+        _shards:
+          failed: 0

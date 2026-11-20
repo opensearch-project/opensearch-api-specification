@@ -1,0 +1,39 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test index APIs exposed under the OpenSearch Dashboards system index prefix.
+epilogues:
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Create an index.
+    path: /_opensearch_dashboards/{index}
+    method: PUT
+    parameters:
+      index: .kibana_spec_test
+    request:
+      payload:
+        settings:
+          number_of_replicas: 0
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+        index: .kibana_spec_test
+  - synopsis: Check whether an index exists.
+    path: /_opensearch_dashboards/{index}
+    method: HEAD
+    parameters:
+      index: .kibana_spec_test
+  - synopsis: Get an index.
+    path: /_opensearch_dashboards/{index}
+    method: GET
+    parameters:
+      index: .kibana_spec_test
+    response:
+      status: 200
+      payload:
+        .kibana_spec_test:
+          settings:
+            index:
+              number_of_replicas: '0'

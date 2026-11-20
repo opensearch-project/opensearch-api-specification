@@ -6,6 +6,61 @@ info:
 paths: {}
 components:
   schemas:
+    RemoteStoreMetadataResponse:
+      allOf:
+        - $ref: '_common.yaml#/components/schemas/ShardsOperationResponseBase'
+        - type: object
+          properties:
+            indices:
+              type: object
+              description: Remote store metadata grouped by index name.
+              additionalProperties:
+                $ref: '#/components/schemas/RemoteStoreMetadataIndex'
+          required:
+            - indices
+    RemoteStoreMetadataIndex:
+      type: object
+      properties:
+        shards:
+          type: object
+          description: Remote store metadata grouped by shard ID.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/RemoteStoreShardMetadata'
+      required:
+        - shards
+    RemoteStoreShardMetadata:
+      type: object
+      properties:
+        index:
+          type: string
+          description: The index name.
+        shard:
+          type: integer
+          format: int32
+          description: The shard ID.
+        latest_segment_metadata_filename:
+          type: string
+          description: The latest segment metadata file name.
+        latest_translog_metadata_filename:
+          type: string
+          description: The latest translog metadata file name.
+        available_segment_metadata_files:
+          $ref: '#/components/schemas/RemoteStoreMetadataFiles'
+        available_translog_metadata_files:
+          $ref: '#/components/schemas/RemoteStoreMetadataFiles'
+      required:
+        - available_segment_metadata_files
+        - available_translog_metadata_files
+        - index
+        - shard
+    RemoteStoreMetadataFiles:
+      type: object
+      description: Metadata files keyed by file name. Each value contains the metadata fields read from the remote repository.
+      additionalProperties:
+        type: object
+        additionalProperties: true
     RemoteStoreRestoreInfo:
       type: object
       properties:
@@ -29,3 +84,225 @@ components:
         successful:
           type: integer
           format: int32
+    RemoteStoreStatsResponse:
+      allOf:
+        - $ref: '_common.yaml#/components/schemas/ShardsOperationResponseBase'
+        - type: object
+          properties:
+            indices:
+              type: object
+              description: Remote store statistics grouped by index name.
+              additionalProperties:
+                $ref: '#/components/schemas/RemoteStoreStatsIndex'
+          required:
+            - indices
+    RemoteStoreStatsIndex:
+      type: object
+      properties:
+        shards:
+          type: object
+          description: Remote store statistics grouped by shard ID.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/RemoteStoreShardStats'
+      required:
+        - shards
+    RemoteStoreShardStats:
+      type: object
+      properties:
+        routing:
+          $ref: '#/components/schemas/RemoteStoreShardRouting'
+        segment:
+          $ref: '#/components/schemas/RemoteStoreSegmentStats'
+        translog:
+          $ref: '#/components/schemas/RemoteStoreTranslogStats'
+      required:
+        - routing
+        - segment
+        - translog
+    RemoteStoreShardRouting:
+      type: object
+      properties:
+        state:
+          type: string
+          description: The current shard routing state.
+        primary:
+          type: boolean
+          description: Whether this shard copy is the primary.
+        node:
+          type: string
+          description: The ID of the node that holds the shard copy.
+      required:
+        - node
+        - primary
+        - state
+    RemoteStoreSegmentStats:
+      type: object
+      properties:
+        download:
+          $ref: '#/components/schemas/RemoteStoreSegmentDownloadStats'
+        upload:
+          $ref: '#/components/schemas/RemoteStoreSegmentUploadStats'
+      required:
+        - download
+        - upload
+    RemoteStoreSegmentDownloadStats:
+      type: object
+      properties:
+        last_sync_timestamp:
+          type: integer
+          format: int64
+        total_download_size:
+          $ref: '#/components/schemas/RemoteStoreTransferBytes'
+        download_size_in_bytes:
+          $ref: '#/components/schemas/RemoteStoreTransferAverage'
+        download_speed_in_bytes_per_sec:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+    RemoteStoreSegmentUploadStats:
+      type: object
+      properties:
+        local_refresh_timestamp_in_millis:
+          type: integer
+          format: int64
+        remote_refresh_timestamp_in_millis:
+          type: integer
+          format: int64
+        refresh_time_lag_in_millis:
+          type: integer
+          format: int64
+        refresh_lag:
+          type: integer
+          format: int64
+        bytes_lag:
+          type: integer
+          format: int64
+        backpressure_rejection_count:
+          type: integer
+          format: int64
+        consecutive_failure_count:
+          type: integer
+          format: int64
+        total_uploads:
+          $ref: '#/components/schemas/RemoteStoreTransferCounts'
+        total_upload_size:
+          $ref: '#/components/schemas/RemoteStoreTransferBytes'
+        remote_refresh_size_in_bytes:
+          $ref: '#/components/schemas/RemoteStoreTransferAverage'
+        upload_speed_in_bytes_per_sec:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+        remote_refresh_latency_in_millis:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+    RemoteStoreTranslogStats:
+      type: object
+      properties:
+        upload:
+          $ref: '#/components/schemas/RemoteStoreTranslogUploadStats'
+        download:
+          $ref: '#/components/schemas/RemoteStoreTranslogDownloadStats'
+      required:
+        - download
+        - upload
+    RemoteStoreTranslogUploadStats:
+      type: object
+      properties:
+        last_successful_upload_timestamp:
+          type: integer
+          format: int64
+        total_uploads:
+          $ref: '#/components/schemas/RemoteStoreTransferCounts'
+        total_upload_size:
+          $ref: '#/components/schemas/RemoteStoreTransferBytes'
+        total_upload_time_in_millis:
+          type: integer
+          format: int64
+        upload_size_in_bytes:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+        upload_speed_in_bytes_per_sec:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+        upload_time_in_millis:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+    RemoteStoreTranslogDownloadStats:
+      type: object
+      properties:
+        last_successful_download_timestamp:
+          type: integer
+          format: int64
+        total_downloads:
+          $ref: '#/components/schemas/RemoteStoreSuccessfulCount'
+        total_download_size:
+          $ref: '#/components/schemas/RemoteStoreSuccessfulBytes'
+        total_download_time_in_millis:
+          type: integer
+          format: int64
+        download_size_in_bytes:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+        download_speed_in_bytes_per_sec:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+        download_time_in_millis:
+          $ref: '#/components/schemas/RemoteStoreMovingAverage'
+    RemoteStoreTransferCounts:
+      type: object
+      properties:
+        started:
+          type: integer
+          format: int64
+        succeeded:
+          type: integer
+          format: int64
+        failed:
+          type: integer
+          format: int64
+      required:
+        - failed
+        - started
+        - succeeded
+    RemoteStoreTransferBytes:
+      type: object
+      properties:
+        started_bytes:
+          type: integer
+          format: int64
+        succeeded_bytes:
+          type: integer
+          format: int64
+        failed_bytes:
+          type: integer
+          format: int64
+      required:
+        - failed_bytes
+        - started_bytes
+        - succeeded_bytes
+    RemoteStoreTransferAverage:
+      type: object
+      properties:
+        last_successful:
+          type: integer
+          format: int64
+        moving_avg:
+          type: number
+          format: double
+    RemoteStoreMovingAverage:
+      type: object
+      properties:
+        moving_avg:
+          type: number
+          format: double
+      required:
+        - moving_avg
+    RemoteStoreSuccessfulCount:
+      type: object
+      properties:
+        succeeded:
+          type: integer
+          format: int64
+      required:
+        - succeeded
+    RemoteStoreSuccessfulBytes:
+      type: object
+      properties:
+        succeeded_bytes:
+          type: integer
+          format: int64
+      required:
+        - succeeded_bytes
