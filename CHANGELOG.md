@@ -76,6 +76,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `false_allow_templates` as a `dynamic` mapping option ([#944](https://github.com/opensearch-project/opensearch-api-specification/pull/944))
 - Added exception metadata properties to `ErrorCause` for `failed_node_exception`, `circuit_breaking_exception`, `parsing_exception`, `search_parse_exception`, `response_limit_breached_exception`, `script_exception`, `search_phase_execution_exception`, and `too_many_buckets_exception` ([#1108](https://github.com/opensearch-project/opensearch-api-specification/pull/1108))
 - Added the `index`, `index_uuid`, `shard`, `resource.id`, `resource.type`, `processor_type`, `processor_tag`, and `property_name` exception metadata properties to `ErrorCause`, and the `400` response to `ingest.put_pipeline` ([#1109](https://github.com/opensearch-project/opensearch-api-specification/pull/1109))
+- Added the `native_memory` and `native_memory_usage_tracker` fields to `nodes.stats`, `x-version-added` to `native_memory_utilization_percent` and `global_native_memory_usage`, and the `native_allocator`, `native_memory`, and `remote_store` values to the `nodes.stats` `metric` enum ([#1145](https://github.com/opensearch-project/opensearch-api-specification/pull/1145))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
