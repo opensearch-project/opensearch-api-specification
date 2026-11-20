@@ -155,7 +155,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fix `AggregationContainer`  for all bucket aggregations so that `aggs`/`aggregations` are siblings of the aggregation type([#1069](https://github.com/opensearch-project/opensearch-api-specification/pull/1069))
 
 ### Changed
-- Bumped the `3.x` CI OpenSearch test version to `3.10.0` and added the `3.10` `index.translog.batch_append` settings
+- Bumped the `3.x` CI OpenSearch test version to `3.10.0` and added the `3.10` `index.translog.batch_append` settings ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Use a shared `PitId` schema for every point-in-time ID, so client generators can tell that the ID from create PIT is the one search and delete take, and document PIT `keep_alive` limits and deletes that return `successful: false` ([#1290](https://github.com/opensearch-project/opensearch-api-specification/pull/1290))
 - Bumped the `test-tools-integ` workflow OpenSearch version from 2.17.0 to 3.8.0 and updated the tester golden fixtures for the 2.x→3.x version-gate boundary ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Replaced the speakeasy overlay CLI with the [openapi-overlaykit](https://www.npmjs.com/package/openapi-overlaykit) npm dependency for building the distribution specs ([#1278](https://github.com/opensearch-project/opensearch-api-specification/pull/1278))
