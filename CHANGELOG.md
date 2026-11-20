@@ -93,6 +93,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Removed unused dependencies: `eslint-config-standard-with-typescript`, `eslint-plugin-import`, `eslint-plugin-n`, `eslint-plugin-promise`, `@eslint/eslintrc`
 
 ### Fixed
+- Fixed `NodeAttributes` to make `attributes` and `transport_address` optional: managed OpenSearch distributions (e.g. Amazon OpenSearch Service) omit them in `search_shards` and `shard_stores` responses, which made those responses unparseable in generated clients ([#2145](https://github.com/opensearch-project/opensearch-java/issues/2145))
 - Fixed `SnapshotShardFailure` to match the server: typed `shard_id` as an integer instead of a string, since the server writes the shard ordinal with `ShardId.id()` and parses it with `declareInt`, and added the missing `index_uuid` property ([#1263](https://github.com/opensearch-project/opensearch-api-specification/issues/1263))
 - Fixed `test-spec` failures introduced by #1091: corrected the `$schema` path in `inline_pipeline.yaml`, gated the `ml_inference` search request processor on 2.16 (was 2.17), and added `x-version-added` to `search_pipeline` in the search request body (2.9, pipeline name form 2.18) ([#1336](https://github.com/opensearch-project/opensearch-api-specification/pull/1336))
 - Fixed ISM `Action.timeout` to be a duration string and `ActionAlias.actions` to be an array of alias actions; this changes the generated client types (`ActionTimeout` is removed) ([#1339](https://github.com/opensearch-project/opensearch-api-specification/pull/1339))
