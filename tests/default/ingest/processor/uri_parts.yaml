@@ -1,0 +1,84 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test the uri_parts ingest processor.
+version: '>= 3.11'
+chapters:
+  - synopsis: Split a URI into its parts.
+    path: /_ingest/pipeline/_simulate
+    method: POST
+    request:
+      payload:
+        pipeline:
+          processors:
+            - uri_parts:
+                field: link
+        docs:
+          - _source:
+              link: https://user:pass@www.example.com:8443/docs/index.html?lang=en#intro
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                link: https://user:pass@www.example.com:8443/docs/index.html?lang=en#intro
+                url:
+                  original: https://user:pass@www.example.com:8443/docs/index.html?lang=en#intro
+                  scheme: https
+                  domain: www.example.com
+                  port: 8443
+                  path: /docs/index.html
+                  extension: html
+                  query: lang=en
+                  fragment: intro
+                  user_info: user:pass
+                  username: user
+                  password: pass
+
+  - synopsis: Split a URI into another field, without the original, and remove the source field.
+    path: /_ingest/pipeline/_simulate
+    method: POST
+    request:
+      payload:
+        pipeline:
+          processors:
+            - uri_parts:
+                field: link
+                target_field: parts
+                keep_original: false
+                remove_if_successful: true
+        docs:
+          - _source:
+              link: http://example.com/images/logo.png
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                parts:
+                  scheme: http
+                  domain: example.com
+                  path: /images/logo.png
+                  extension: png
+
+  - synopsis: Ignore a document that has no such field.
+    path: /_ingest/pipeline/_simulate
+    method: POST
+    request:
+      payload:
+        pipeline:
+          processors:
+            - uri_parts:
+                field: link
+                ignore_missing: true
+        docs:
+          - _source:
+              other: 1
+    response:
+      status: 200
+      payload:
+        docs:
+          - doc:
+              _source:
+                other: 1
