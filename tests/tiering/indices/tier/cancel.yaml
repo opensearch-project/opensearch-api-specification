@@ -1,0 +1,29 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test cancelling the tiering operation of an index.
+version: '>= 3.7'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: authors
+    request:
+      payload:
+        settings:
+          number_of_replicas: 0
+epilogues:
+  - path: /{index}
+    method: DELETE
+    parameters:
+      index: authors
+    status: [200, 404]
+chapters:
+  - synopsis: Cancel tiering of an index that is not being tiered.
+    path: /_tier/_cancel/{index}
+    method: POST
+    parameters:
+      index: authors
+      timeout: 30s
+      cluster_manager_timeout: 30s
+    response:
+      status: 400

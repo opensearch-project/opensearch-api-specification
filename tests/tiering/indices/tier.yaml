@@ -1,0 +1,35 @@
+$schema: ../../../json_schemas/test_story.schema.yaml
+
+description: Test getting the tiering status of an index.
+version: '>= 3.7'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: games
+    request:
+      payload:
+        settings:
+          number_of_replicas: 0
+epilogues:
+  - path: /{index}
+    method: DELETE
+    parameters:
+      index: games
+    status: [200, 404]
+chapters:
+  - synopsis: Get the tiering status of an index that is not being tiered.
+    path: /{index}/_tier
+    method: GET
+    parameters:
+      index: games
+    response:
+      status: 400
+  - synopsis: Get the detailed tiering status of an index that is not being tiered.
+    path: /{index}/_tier
+    method: GET
+    parameters:
+      index: games
+      detailed: true
+    response:
+      status: 400

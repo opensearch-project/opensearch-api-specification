@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: Schemas of `indices.get_tier_status` Category.
+  description: Schemas of `indices.get_tier_status` category.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    TieringShardRelocationStatus:
+      type: object
+      properties:
+        source_shard_id:
+          description: The number of the shard being relocated.
+          type: integer
+        relocating_node_id:
+          description: The ID of the node that the shard is relocating to.
+          type: string
+      required:
+        - relocating_node_id
+        - source_shard_id
+    TieringShardLevelStatus:
+      type: object
+      description: Shard-level counters of a tiering operation.
+      properties:
+        succeeded:
+          description: The number of shards that have completed tiering.
+          type: integer
+        running:
+          description: The number of shards that are tiering.
+          type: integer
+        pending:
+          description: The number of shards waiting to be tiered.
+          type: integer
+        total:
+          description: The total number of shards in the index.
+          type: integer
+        shard_relocation_status:
+          description: The shards that are relocating. Returned only when `detailed` is `true` and at least one shard is relocating.
+          type: array
+          items:
+            $ref: '#/components/schemas/TieringShardRelocationStatus'
+      required:
+        - pending
+        - running
+        - succeeded
+        - total
+    TieringStatus:
+      type: object
+      properties:
+        index:
+          description: The name of the index being tiered.
+          $ref: '_common.yaml#/components/schemas/IndexName'
+        state:
+          description: The current state of the tiering operation.
+          $ref: 'indices._common.yaml#/components/schemas/TieringState'
+        source:
+          description: The tier the index is moving from.
+          $ref: 'indices._common.yaml#/components/schemas/TieringTier'
+        target:
+          description: The tier the index is moving to.
+          $ref: 'indices._common.yaml#/components/schemas/TieringTier'
+        start_time:
+          description: The time the tiering operation started.
+          $ref: '_common.yaml#/components/schemas/EpochTimeUnitMillis'
+        shard_level_status:
+          description: The progress of the tiering operation across the index's shards.
+          $ref: '#/components/schemas/TieringShardLevelStatus'
+      required:
+        - index
+        - shard_level_status
+        - source
+        - start_time
+        - state
+        - target

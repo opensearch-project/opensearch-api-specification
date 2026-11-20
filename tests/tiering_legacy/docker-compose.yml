@@ -1,0 +1,61 @@
+version: '3'
+
+# Versions 2.16 to 3.0 reject tiering requests unless the cluster has a node
+# that can hold warm indexes: the search role in 2.x, the warm role in 3.0.
+# Each version reads only the feature flag it knows, so both are set.
+x-opensearch-environment: &opensearch-environment
+  OPENSEARCH_INITIAL_ADMIN_PASSWORD: ${OPENSEARCH_PASSWORD:-myStrongPassword123!}
+  OPENSEARCH_JAVA_OPTS: ${OPENSEARCH_JAVA_OPTS} -Xms2g -Xmx2g -Dopensearch.experimental.feature.tiered_remote_index.enabled=true -Dopensearch.experimental.feature.writable_warm_index.enabled=true
+  cluster.name: opensearch-tiering-legacy
+  cluster.initial_cluster_manager_nodes: opensearch-hot
+  discovery.seed_hosts: opensearch-hot,opensearch-warm
+  cluster.remote_store.state.enabled: 'true'
+  node.attr.remote_store.repository.fs-segment-store.settings.location: /tmp/opensearch/repo/segment
+  node.attr.remote_store.repository.fs-segment-store.type: fs
+  node.attr.remote_store.repository.fs-state-store.settings.location: /tmp/opensearch/repo/state
+  node.attr.remote_store.repository.fs-state-store.type: fs
+  node.attr.remote_store.repository.fs-translog-store.settings.location: /tmp/opensearch/repo/translog
+  node.attr.remote_store.repository.fs-translog-store.type: fs
+  node.attr.remote_store.segment.repository: fs-segment-store
+  node.attr.remote_store.state.repository: fs-state-store
+  node.attr.remote_store.translog.repository: fs-translog-store
+  path.repo: /tmp/opensearch/repo
+
+x-opensearch-node: &opensearch-node
+  image: &opensearch-image ${OPENSEARCH_DOCKER_HUB_PROJECT:-opensearchproject}/opensearch:${OPENSEARCH_VERSION:-latest}${OPENSEARCH_DOCKER_REF}
+  volumes:
+    - remote-store:/tmp/opensearch/repo
+  depends_on:
+    remote-store-init:
+      condition: service_completed_successfully
+
+services:
+  # The nodes share one filesystem remote store; the named volume is created
+  # root-owned, so hand it to the opensearch user (uid 1000) before they start.
+  remote-store-init:
+    image: *opensearch-image
+    user: root
+    entrypoint: chown -R 1000:1000 /tmp/opensearch/repo
+    volumes:
+      - remote-store:/tmp/opensearch/repo
+
+  opensearch-hot:
+    <<: *opensearch-node
+    ports:
+      - 9200:9200
+      - 9600:9600
+    environment:
+      <<: *opensearch-environment
+      node.name: opensearch-hot
+      node.roles: cluster_manager,data,ingest
+
+  opensearch-warm:
+    <<: *opensearch-node
+    environment:
+      <<: *opensearch-environment
+      node.name: opensearch-warm
+      node.roles: ${OPENSEARCH_WARM_NODE_ROLE:-search}
+      node.search.cache.size: 1gb
+
+volumes:
+  remote-store: {}

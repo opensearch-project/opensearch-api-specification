@@ -1,0 +1,47 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test moving an index from the hot tier to the warm tier.
+version: '>= 3.7'
+prologues:
+  - path: /{index}
+    method: PUT
+    parameters:
+      index: books
+    request:
+      payload:
+        settings:
+          number_of_replicas: 0
+epilogues:
+  - path: /{index}
+    method: DELETE
+    parameters:
+      index: books
+    status: [200, 404]
+chapters:
+  - synopsis: Move an index to the warm tier.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: books
+      timeout: 30s
+      cluster_manager_timeout: 30s
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+  - synopsis: Move an index that is already warm to the warm tier.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: books
+    response:
+      status: 400
+    retry:
+      count: 10
+  - synopsis: Move more than one index to the warm tier.
+    path: /{index}/_tier/warm
+    method: POST
+    parameters:
+      index: [books, movies]
+    response:
+      status: 400
