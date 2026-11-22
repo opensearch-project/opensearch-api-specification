@@ -9,6 +9,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
+- Fixed `ScoreNormalizationTechnique` to include `z_score`, supported by the normalization processor since OpenSearch 3.0 ([#1364](https://github.com/opensearch-project/opensearch-api-specification/pull/1364))
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
 
 ### Added
