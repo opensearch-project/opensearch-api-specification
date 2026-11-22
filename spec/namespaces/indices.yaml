@@ -949,6 +949,47 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.delete_template@200'
+  /_tier/_cancel/{index}:
+    post:
+      operationId: indices.tier_cancel.0
+      x-operation-group: indices.tier_cancel
+      tags:
+        - Index
+      x-version-added: '3.7'
+      description: |-
+        Cancels an in-progress tiering operation on an index.
+        This is an experimental API. It requires the `opensearch.experimental.feature.writable_warm_index.enabled` feature flag.
+      parameters:
+        - $ref: '#/components/parameters/indices.tier_cancel::path.index'
+        - $ref: '#/components/parameters/indices.tier_cancel::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.tier_cancel::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.tier_cancel@200'
+        '400':
+          $ref: '#/components/responses/indices.tier_cancel@400'
+  /_tier/all:
+    get:
+      operationId: indices.list_tier_status.0
+      x-operation-group: indices.list_tier_status
+      tags:
+        - Index
+      x-version-added: '3.7'
+      description: |-
+        Lists the in-progress tiering operations in the cluster.
+        This is an experimental API. It requires the `opensearch.experimental.feature.writable_warm_index.enabled` feature flag.
+      parameters:
+        - $ref: '#/components/parameters/indices.list_tier_status::query.format'
+        - $ref: '#/components/parameters/indices.list_tier_status::query.h'
+        - $ref: '#/components/parameters/indices.list_tier_status::query.help'
+        - $ref: '#/components/parameters/indices.list_tier_status::query.s'
+        - $ref: '#/components/parameters/indices.list_tier_status::query.target'
+        - $ref: '#/components/parameters/indices.list_tier_status::query.v'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.list_tier_status@200'
+        '400':
+          $ref: '#/components/responses/indices.list_tier_status@400'
   /_upgrade:
     get:
       operationId: indices.get_upgrade.0
@@ -2047,6 +2088,80 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/indices.stats@200'
+  /{index}/_tier:
+    get:
+      operationId: indices.get_tier_status.0
+      x-operation-group: indices.get_tier_status
+      tags:
+        - Index
+      x-version-added: '3.7'
+      description: |-
+        Returns the tiering status of an index.
+        This is an experimental API. It requires the `opensearch.experimental.feature.writable_warm_index.enabled` feature flag.
+      parameters:
+        - $ref: '#/components/parameters/indices.get_tier_status::path.index'
+        - $ref: '#/components/parameters/indices.get_tier_status::query.detailed'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.get_tier_status@200'
+        '400':
+          $ref: '#/components/responses/indices.get_tier_status@400'
+  /{index}/_tier/hot:
+    post:
+      operationId: indices.tier_hot.0
+      x-operation-group: indices.tier_hot
+      tags:
+        - Index
+      x-version-added: '3.7'
+      description: |-
+        Moves an index from the warm tier to the hot tier.
+        This is an experimental API. It requires the `opensearch.experimental.feature.writable_warm_index.enabled` feature flag.
+      parameters:
+        - $ref: '#/components/parameters/indices.tier_hot::path.index'
+        - $ref: '#/components/parameters/indices.tier_hot::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.tier_hot::query.timeout'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.tier_hot@200'
+        '400':
+          $ref: '#/components/responses/indices.tier_hot@400'
+        '429':
+          $ref: '#/components/responses/indices.tier_hot@429'
+        '500':
+          $ref: '#/components/responses/indices.tier_hot@500'
+  /{index}/_tier/warm:
+    post:
+      operationId: indices.tier_warm.0
+      x-operation-group: indices.tier_warm
+      tags:
+        - Index
+      x-version-added: '2.16'
+      description: |-
+        Moves an index from the hot tier to the warm tier.
+        This is an experimental API. It requires the `opensearch.experimental.feature.tiered_remote_index.enabled` feature flag in versions 2.16 to 2.19, and the `opensearch.experimental.feature.writable_warm_index.enabled` feature flag in version 3.0 and later.
+        In versions 2.16 to 3.0, the request only validates the indexes: it responds when no index matches or every index is rejected, and doesn't respond if it accepts an index.
+        Not available in versions 3.1 to 3.6.
+        Starting with version 3.7, the request accepts exactly one index.
+      parameters:
+        - $ref: '#/components/parameters/indices.tier_warm::path.index'
+        - $ref: '#/components/parameters/indices.tier_warm::query.allow_no_indices'
+        - $ref: '#/components/parameters/indices.tier_warm::query.cluster_manager_timeout'
+        - $ref: '#/components/parameters/indices.tier_warm::query.expand_wildcards'
+        - $ref: '#/components/parameters/indices.tier_warm::query.ignore_throttled'
+        - $ref: '#/components/parameters/indices.tier_warm::query.ignore_unavailable'
+        - $ref: '#/components/parameters/indices.tier_warm::query.timeout'
+        - $ref: '#/components/parameters/indices.tier_warm::query.wait_for_completion'
+      responses:
+        '200':
+          $ref: '#/components/responses/indices.tier_warm@200'
+        '400':
+          $ref: '#/components/responses/indices.tier_warm@400'
+        '404':
+          $ref: '#/components/responses/indices.tier_warm@404'
+        '429':
+          $ref: '#/components/responses/indices.tier_warm@429'
+        '500':
+          $ref: '#/components/responses/indices.tier_warm@500'
   /{index}/_upgrade:
     get:
       operationId: indices.get_upgrade.1
@@ -2787,11 +2902,43 @@ components:
             type: object
             additionalProperties:
               $ref: '../schemas/indices._common.yaml#/components/schemas/TemplateMapping'
+    indices.get_tier_status@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              tiering_status:
+                $ref: '../schemas/indices.get_tier_status.yaml#/components/schemas/TieringStatus'
+            required:
+              - tiering_status
+    indices.get_tier_status@400:
+      description: Bad request error, for example when the index is not being tiered.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
     indices.get_upgrade@200:
       content:
         application/json:
           schema:
             $ref: '../schemas/indices._common.yaml#/components/schemas/IndexGetUpgradeStatus'
+    indices.list_tier_status@200:
+      content:
+        text/plain:
+          schema:
+            type: string
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/indices.list_tier_status.yaml#/components/schemas/TieringStatusRecord'
+    indices.list_tier_status@400:
+      description: Bad request error, for example when the target tier is not valid.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
     indices.modify_data_stream@200:
       content:
         application/json:
@@ -3005,6 +3152,72 @@ components:
             required:
               - _all
               - _shards
+    indices.tier_cancel@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    indices.tier_cancel@400:
+      description: Bad request error, for example when the index is not being tiered.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_hot@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/AcknowledgedResponseBase'
+    indices.tier_hot@400:
+      description: Bad request error, for example when the index is not in the warm tier or the hot tier lacks capacity.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_hot@429:
+      description: Too many requests error, returned when the cluster is already running the maximum number of concurrent tiering operations.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_hot@500:
+      description: Internal server error, for example when the index fails a tiering check that the server does not translate into a client error.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_warm@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/indices.tier_warm.yaml#/components/schemas/TieringIndicesResponse'
+    indices.tier_warm@400:
+      description: Bad request error, for example when the index is not in the hot tier or more than one index is specified.
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_warm@404:
+      description: Index not found error. Versions 3.7 and later return a 400 error instead.
+      x-version-removed: '3.1'
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_warm@429:
+      description: Too many requests error, returned when the cluster is already running the maximum number of concurrent tiering operations.
+      x-version-added: '3.7'
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
+    indices.tier_warm@500:
+      description: Internal server error, for example when the index fails a tiering check that the server does not translate into a client error.
+      x-version-added: '3.7'
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_common.yaml#/components/schemas/ErrorResponseBase'
     indices.update_aliases@200:
       content:
         application/json:
@@ -4408,6 +4621,22 @@ components:
       style: form
       x-version-deprecated: '2.0'
       x-deprecation-message: To promote inclusive language, use `cluster_manager_timeout` instead.
+    indices.get_tier_status::path.index:
+      in: path
+      name: index
+      description: The name of the index.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: simple
+    indices.get_tier_status::query.detailed:
+      in: query
+      name: detailed
+      description: When `true`, includes the shards that are relocating (`shard_relocation_status`) in the response.
+      schema:
+        type: boolean
+        default: false
+      style: form
     indices.get_upgrade::path.index:
       name: index
       in: path
@@ -4439,6 +4668,56 @@ components:
       schema:
         type: boolean
         description: Whether specified concrete indexes should be ignored when unavailable (missing or closed).
+    indices.list_tier_status::query.format:
+      in: query
+      name: format
+      description: A short version of the `Accept` header, such as `json` or `yaml`.
+      schema:
+        $ref: '../schemas/cat._common.yaml#/components/schemas/ResponseFormat'
+      style: form
+    indices.list_tier_status::query.h:
+      in: query
+      name: h
+      description: A comma-separated list of column names to display.
+      schema:
+        type: array
+        items:
+          type: string
+      explode: true
+      style: form
+    indices.list_tier_status::query.help:
+      in: query
+      name: help
+      description: Returns help information.
+      schema:
+        type: boolean
+        default: false
+      style: form
+    indices.list_tier_status::query.s:
+      in: query
+      name: s
+      description: A comma-separated list of column names or column aliases to sort by.
+      schema:
+        type: array
+        items:
+          type: string
+      explode: true
+      style: form
+    indices.list_tier_status::query.target:
+      in: query
+      name: target
+      description: Lists only the tiering operations that move indexes to this tier. When omitted, lists tiering operations to all tiers.
+      schema:
+        $ref: '../schemas/indices.list_tier_status.yaml#/components/schemas/TieringTargetTierFilter'
+      style: form
+    indices.list_tier_status::query.v:
+      in: query
+      name: v
+      description: Enables verbose mode, which displays column headers.
+      schema:
+        type: boolean
+        default: false
+      style: form
     indices.modify_data_stream::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
@@ -5397,6 +5676,124 @@ components:
       schema:
         $ref: '../schemas/_common.yaml#/components/schemas/Level'
       style: form
+    indices.tier_cancel::path.index:
+      in: path
+      name: index
+      description: The name of the index whose tiering operation to cancel.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: simple
+    indices.tier_cancel::query.cluster_manager_timeout:
+      in: query
+      name: cluster_manager_timeout
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_cancel::query.timeout:
+      in: query
+      name: timeout
+      description: |-
+        Period to wait for a response.
+        If no response is received before the timeout expires, the request fails and returns an error.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_hot::path.index:
+      in: path
+      name: index
+      description: The name of the index to move to the hot tier.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/IndexName'
+      style: simple
+    indices.tier_hot::query.cluster_manager_timeout:
+      in: query
+      name: cluster_manager_timeout
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_hot::query.timeout:
+      in: query
+      name: timeout
+      description: Accepted for compatibility but has no effect. Use `cluster_manager_timeout` to limit how long the request waits for the cluster state update.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_warm::path.index:
+      in: path
+      name: index
+      description: |-
+        A comma-separated list or wildcard expression of index names to move to the warm tier.
+        Starting with version 3.7, exactly one index name is accepted.
+      required: true
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Indices'
+      style: simple
+    indices.tier_warm::query.allow_no_indices:
+      in: query
+      name: allow_no_indices
+      description: |-
+        If `false`, the request returns an error if any wildcard expression, index alias, or `_all` value targets only missing or closed indexes.
+        This behavior applies even if the request targets other open indexes.
+      schema:
+        type: boolean
+        default: false
+      style: form
+      x-version-removed: '3.1'
+    indices.tier_warm::query.cluster_manager_timeout:
+      in: query
+      name: cluster_manager_timeout
+      description: Operation timeout for connection to cluster-manager node.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_warm::query.expand_wildcards:
+      in: query
+      name: expand_wildcards
+      description: |-
+        Type of index that wildcard patterns can match.
+        Supports comma-separated values, such as `open,hidden`.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/ExpandWildcards'
+        default: open
+      style: form
+      x-version-removed: '3.1'
+    indices.tier_warm::query.ignore_throttled:
+      in: query
+      name: ignore_throttled
+      description: If `true`, concrete, expanded or aliased indexes are ignored when frozen.
+      schema:
+        type: boolean
+      style: form
+      x-version-removed: '3.1'
+    indices.tier_warm::query.ignore_unavailable:
+      in: query
+      name: ignore_unavailable
+      description: If `false`, the request returns an error if it targets a missing or closed index.
+      schema:
+        type: boolean
+        default: false
+      style: form
+      x-version-removed: '3.1'
+    indices.tier_warm::query.timeout:
+      in: query
+      name: timeout
+      description: Accepted for compatibility but has no effect. Use `cluster_manager_timeout` to limit how long the request waits for the cluster state update.
+      schema:
+        $ref: '../schemas/_common.yaml#/components/schemas/Duration'
+      style: form
+    indices.tier_warm::query.wait_for_completion:
+      in: query
+      name: wait_for_completion
+      description: Accepted but has no effect, because these versions only validate the request.
+      schema:
+        type: boolean
+        default: false
+      style: form
+      x-version-removed: '3.1'
     indices.update_aliases::query.cluster_manager_timeout:
       name: cluster_manager_timeout
       in: query
