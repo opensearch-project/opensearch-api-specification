@@ -37,22 +37,62 @@ describe('UnionDistributor', () => {
 
   test('multiplies several union members out, as a oneOf when every member is one', () => {
     const s = spec({
-      Range: {
+      Pair: {
         allOf: [
-          { oneOf: [{ required: ['gt'] }, { required: ['gte'] }] },
-          { oneOf: [{ required: ['lt'] }, { required: ['lte'] }] }
+          { oneOf: [{ properties: { gt: { type: 'string' } } }, { properties: { gte: { type: 'string' } } }] },
+          { oneOf: [{ properties: { lt: { type: 'string' } } }, { properties: { lte: { type: 'string' } } }] }
         ]
       }
     })
     new UnionDistributor().distribute(s)
-    expect(s.components.schemas.Range).toEqual({
+    const b = (name: string): Record<string, any> => ({ properties: { [name]: { type: 'string' } } })
+    expect(s.components.schemas.Pair).toEqual({
       oneOf: [
-        { allOf: [{ required: ['gt'] }, { required: ['lt'] }] },
-        { allOf: [{ required: ['gt'] }, { required: ['lte'] }] },
-        { allOf: [{ required: ['gte'] }, { required: ['lt'] }] },
-        { allOf: [{ required: ['gte'] }, { required: ['lte'] }] }
+        { allOf: [b('gt'), b('lt')], title: 'gt_lt' },
+        { allOf: [b('gt'), b('lte')], title: 'gt_lte' },
+        { allOf: [b('gte'), b('lt')], title: 'gte_lt' },
+        { allOf: [b('gte'), b('lte')], title: 'gte_lte' }
       ]
     })
+  })
+
+  test('multiplies out nested unions to any depth, inline and through $refs', () => {
+    const p = (name: string): Record<string, any> => ({ type: 'object', properties: { [name]: { type: 'string' } } })
+    const s = spec({
+      // allOf -> oneOf -> allOf -> anyOf -> allOf -> oneOf
+      Inline: { allOf: [p('x'), { oneOf: [p('a'), { allOf: [p('b'), { anyOf: [p('c'), { allOf: [p('d'), { oneOf: [p('e'), p('f')] }] }] }] }] }] },
+      // Top extends Mid, whose union has a branch that is Leaf, which has a union member
+      Leaf: { allOf: [p('l'), { anyOf: [p('c'), p('d')] }] },
+      Mid: { allOf: [p('m'), { oneOf: [p('a'), ref('Leaf')] }] },
+      Top: { allOf: [ref('Mid'), p('t')] }
+    })
+    new UnionDistributor().distribute(s)
+    const parts = (schema: any): string[][] => (schema.oneOf ?? schema.anyOf).map((branch: any) =>
+      (branch.allOf as any[]).map((member) => Object.keys(member.properties as object)[0]))
+    // X ∧ (A ∨ (B ∧ (C ∨ (D ∧ (E ∨ F))))), an anyOf because one level is
+    expect(s.components.schemas.Inline.anyOf).toBeDefined()
+    expect(parts(s.components.schemas.Inline)).toEqual([['x', 'a'], ['x', 'b', 'c'], ['x', 'b', 'd', 'e'], ['x', 'b', 'd', 'f']])
+    expect(parts(s.components.schemas.Mid)).toEqual([['m', 'a'], ['m', 'l', 'c'], ['m', 'l', 'd']])
+    expect(parts(s.components.schemas.Top)).toEqual([['t', 'm', 'a'], ['t', 'm', 'l', 'c'], ['t', 'm', 'l', 'd']])
+    // no union is left inside an allOf, inline or behind a $ref
+    const nested = JSON.stringify(s.components.schemas, (key, value) =>
+      key === 'allOf' && (value as any[]).some((m) => m.oneOf !== undefined || m.anyOf !== undefined || m.$ref !== undefined) ? 'NESTED' : value)
+    expect(nested).not.toContain('NESTED')
+  })
+
+  test('leaves presence constraints, also nested and on keys the object does not declare', () => {
+    const sort = {
+      allOf: [
+        { type: 'object', properties: { field: {}, script: {}, type: {}, lang: {} } },
+        { oneOf: [{ required: ['field'] }, { allOf: [{ required: ['script'] }, { anyOf: [{ required: ['type'] }, { required: ['lang'] }] }] }] }
+      ]
+    }
+    const range = { allOf: [{ oneOf: [{ required: ['gt'] }, { required: ['gte'] }] }, { oneOf: [{ required: ['lt'] }, { required: ['lte'] }] }] }
+    const s = spec({ Sort: _.cloneDeep(sort), Range: _.cloneDeep(range) })
+    const result = new UnionDistributor().distribute(s)
+    expect(s.components.schemas.Sort).toEqual(sort)
+    expect(s.components.schemas.Range).toEqual(range)
+    expect(result.rewritten).toEqual([])
   })
 
   test('rewrites a schema that extends a rewritten one, and keeps titles and discriminators', () => {

@@ -25,7 +25,11 @@ const MAX_DEPTH = 32
 // combination matches), and an anyOf otherwise.
 // A schema that refers to a rewritten schema as a base (allOf: [ $ref MetricAggregationBase, {...} ]) now extends a
 // union, so it is rewritten too, with the base's branches in place of the $ref.
-// Left as they are: an allOf that specializes a generic union (allOf: [ $ref Buckets, { oneOf: [...] } ], the
+// Nesting multiplies out to any depth: a branch that is again an object with a union member, inline or through a
+// $ref, is rewritten and its branches take its place, so X ∧ (A ∨ (B ∧ (C ∨ D))) becomes
+// (X ∧ A) ∨ (X ∧ B ∧ C) ∨ (X ∧ B ∧ D). The result is a oneOf only if every union it multiplies out is one.
+// Left as they are: a presence constraint, which only requires properties the object declares (also nested:
+// "with `script`, also `type` or `lang`"); an allOf that specializes a generic union (allOf: [ $ref Buckets, { oneOf: [...] } ], the
 // union member refines the base's branches instead of adding a constraint), and an allOf whose product would have
 // more than MAX_BRANCHES branches.
 export default class UnionDistributor {
@@ -71,7 +75,9 @@ export default class UnionDistributor {
     return Array.isArray(node.allOf) ? this.rewrite(node as Record<string, any>, location) : node
   }
 
-  rewrite (node: Record<string, any>, location: string): Record<string, any> {
+  // Rewrites an allOf with union members into a union of complete objects. `record`: report it in the result (a
+  // branch rewritten while multiplying out an outer allOf is part of that one).
+  rewrite (node: Record<string, any>, location: string, depth: number = 0, record: boolean = true): Record<string, any> {
     const members = node.allOf as any[]
     const unions: Array<{ keyword: 'oneOf' | 'anyOf', branches: any[], discriminator?: any }> = []
     const parts: any[] = []
@@ -83,21 +89,21 @@ export default class UnionDistributor {
       unions.push(union)
     }
     if (unions.length === 0) return node
-    // A presence constraint only requires properties the object declares: a generator that drops it keeps every field
-    // and loses the constraint only, so it stays a labeled allOf member instead of a union of near-identical objects.
+    // A presence constraint adds no properties: a generator that drops it keeps every field and loses the constraint
+    // only, so it stays a labeled allOf member instead of a union of near-identical objects.
     const declared = this.declared(parts)
     const constraints = unions.filter((union) => this.is_constraint(union.branches, declared))
     if (constraints.length > 0) {
-      this._result.skipped.push({ location, reason: constraints.length === unions.length ? 'presence constraint' : 'presence constraint with other unions' })
+      if (record) this._result.skipped.push({ location, reason: constraints.length === unions.length ? 'presence constraint' : 'presence constraint with other unions' })
       return node // with other unions too: left as it is, see `skipped`
     }
     if (refined_base && unions.length > 1) {
-      this._result.skipped.push({ location, reason: 'specializes a generic union' })
+      if (record) this._result.skipped.push({ location, reason: 'specializes a generic union' })
       return node
     }
     const size = unions.reduce((product, union) => product * union.branches.length, 1)
     if (size > MAX_BRANCHES) {
-      this._result.skipped.push({ location, reason: `${size} branches` })
+      if (record) this._result.skipped.push({ location, reason: `${size} branches` })
       return node
     }
 
@@ -106,14 +112,46 @@ export default class UnionDistributor {
     for (const union of unions) {
       combinations = combinations.flatMap((combination) => union.branches.map((branch) => [...combination, branch]))
     }
-    const branches = combinations.map((combination) => this.combine(parts, combination))
-    const keyword = unions.every((union) => union.keyword === 'oneOf') ? 'oneOf' : 'anyOf'
+    let exclusive = unions.every((union) => union.keyword === 'oneOf')
+    const branches: any[] = []
+    for (const combined of combinations.map((combination) => this.combine(parts, combination))) {
+      const nested = this.multiply_out(combined, location, depth)
+      if (nested === undefined) { branches.push(combined); continue }
+      exclusive = exclusive && nested.keyword === 'oneOf'
+      branches.push(...nested.branches)
+    }
+    if (branches.length > MAX_BRANCHES) {
+      if (record) this._result.skipped.push({ location, reason: `${branches.length} branches` })
+      return node
+    }
+    const keyword = exclusive ? 'oneOf' : 'anyOf'
     const result: Record<string, any> = _.omit(node, ['allOf'])
     result[keyword] = branches
     if (unions.length === 1 && unions[0].discriminator !== undefined) result.discriminator = unions[0].discriminator
-    this._result.rewritten.push(location)
-    this._result.branches += branches.length
+    if (record) {
+      this._result.rewritten.push(location)
+      this._result.branches += branches.length
+    }
     return result
+  }
+
+  // A combined branch that is again an object with a union member (an inline union, or a $ref to a schema that is a
+  // union after distribution), rewritten into the branches that replace it, with the branch's title in front of
+  // theirs. Undefined when it is none, or is left as it is (a presence constraint, a generic specialization).
+  multiply_out (branch: any, location: string, depth: number): { keyword: 'oneOf' | 'anyOf', branches: any[] } | undefined {
+    if (depth >= MAX_DEPTH || !_.isPlainObject(branch) || !Array.isArray(branch.allOf)) return undefined
+    if (!(branch.allOf as any[]).some((member) => this.union_of(member) !== undefined)) return undefined
+    const rewritten = this.rewrite(_.omit(branch, ['title']), location, depth + 1, false)
+    const keyword = rewritten.oneOf !== undefined ? 'oneOf' : rewritten.anyOf !== undefined ? 'anyOf' : undefined
+    if (keyword === undefined || rewritten.allOf !== undefined) return undefined
+    const title = branch.title as string | undefined
+    const branches = (rewritten[keyword] as any[]).map((nested) => {
+      if (title === undefined) return nested
+      return { ...nested, title: typeof nested.title === 'string' ? `${title}_${nested.title as string}` : title }
+    })
+    // titles repeated across the spliced branches don't name them apart
+    if (title !== undefined && new Set(branches.map((b) => b.title)).size !== branches.length) branches.forEach((b) => { delete b.title })
+    return { keyword, branches }
   }
 
   // The union a member stands for: an inline oneOf/anyOf (with nothing that isn't an annotation next to it), or a $ref
@@ -146,12 +184,15 @@ export default class UnionDistributor {
     return names
   }
 
-  // Whether every branch only requires (and perhaps redeclares) properties the object declares.
-  is_constraint (branches: any[], declared: Set<string>): boolean {
+  // Whether the branches add no properties to the object: they only require keys, and perhaps redeclare properties
+  // the object declares, also through a nested presence constraint ("with `script`, also `type` or `lang`"). Dropping
+  // such a union loses a check, never a field.
+  is_constraint (branches: any[], declared: Set<string>, depth: number = 0): boolean {
+    if (depth > MAX_DEPTH) return false
     return branches.every((branch) => _.isPlainObject(branch) && typeof branch.$ref !== 'string' &&
-      Object.keys(branch as object).every((key) => ['type', 'required', 'properties', 'description', 'title'].includes(key) || key.startsWith('x-')) &&
+      Object.keys(branch as object).every((key) => ['type', 'required', 'properties', 'description', 'title', 'allOf', 'oneOf', 'anyOf'].includes(key) || key.startsWith('x-')) &&
       Object.keys((branch.properties ?? {}) as object).every((name) => declared.has(name)) &&
-      ((branch.required ?? []) as string[]).every((name) => declared.has(name)))
+      ['allOf', 'oneOf', 'anyOf'].every((key) => branch[key] === undefined || (Array.isArray(branch[key]) && this.is_constraint(branch[key] as any[], declared, depth + 1))))
   }
 
   // The branches with a title each, so that the union they become can be labeled: a branch without one is named after
