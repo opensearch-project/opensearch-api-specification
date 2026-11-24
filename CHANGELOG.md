@@ -9,9 +9,12 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
+- Fixed `cluster.describe_settings` to declare a `400` error response ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
+- Fixed `ScoreNormalizationTechnique` to include `z_score`, supported by the normalization processor since OpenSearch 3.0 ([#1364](https://github.com/opensearch-project/opensearch-api-specification/pull/1364))
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
 
 ### Added
+- Added the `3.10` `index.translog.batch_append` settings and the workload group `total_throttled` and `total_would_throttle` stats ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Added `search_pipeline` (a pipeline name or an inline definition) and `verbose_pipeline` to the `_msearch` `MultisearchBody` schema, mirroring the `_search` request body, with spec tests ([#1275](https://github.com/opensearch-project/opensearch-api-specification/pull/1275))
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
 - Added the bulk Create or Update Action Groups API (`PUT /_plugins/_security/api/actiongroups`), introduced in OpenSearch 3.10 ([#1309](https://github.com/opensearch-project/opensearch-api-specification/pull/1309))
@@ -76,6 +79,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added `false_allow_templates` as a `dynamic` mapping option ([#944](https://github.com/opensearch-project/opensearch-api-specification/pull/944))
 - Added exception metadata properties to `ErrorCause` for `failed_node_exception`, `circuit_breaking_exception`, `parsing_exception`, `search_parse_exception`, `response_limit_breached_exception`, `script_exception`, `search_phase_execution_exception`, and `too_many_buckets_exception` ([#1108](https://github.com/opensearch-project/opensearch-api-specification/pull/1108))
 - Added the `index`, `index_uuid`, `shard`, `resource.id`, `resource.type`, `processor_type`, `processor_tag`, and `property_name` exception metadata properties to `ErrorCause`, and the `400` response to `ingest.put_pipeline` ([#1109](https://github.com/opensearch-project/opensearch-api-specification/pull/1109))
+- Added the `native_memory` and `native_memory_usage_tracker` fields to `nodes.stats`, `x-version-added` to `native_memory_utilization_percent` and `global_native_memory_usage`, and the `native_allocator`, `native_memory`, and `remote_store` values to the `nodes.stats` `metric` enum ([#1145](https://github.com/opensearch-project/opensearch-api-specification/pull/1145))
+- Added `x-non-exhaustive` vendor extension to mark plugin-extensible union types (`Property`, `Analyzer`, `TokenizerDefinition`, `TokenFilterDefinition`, `CharFilterDefinition`, `QueryContainer`, `SpanQuery`, `AggregationContainer`, `Aggregate`, `ProcessorContainer`, `FieldSuggester`) ([#1182](https://github.com/opensearch-project/opensearch-api-specification/pull/1182))
 
 ### Deprecated
 - Marked the plural `_aliases` URL forms of `put_alias` and `delete_alias` as deprecated; the singular `_alias` form is the canonical path ([#1131](https://github.com/opensearch-project/opensearch-api-specification/pull/1131))
@@ -158,6 +163,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fix `AggregationContainer`  for all bucket aggregations so that `aggs`/`aggregations` are siblings of the aggregation type([#1069](https://github.com/opensearch-project/opensearch-api-specification/pull/1069))
 
 ### Changed
+- Bumped the `3.x` CI OpenSearch test version to `3.10.0` ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Use a shared `PitId` schema for every point-in-time ID, so client generators can tell that the ID from create PIT is the one search and delete take, and document PIT `keep_alive` limits and deletes that return `successful: false` ([#1290](https://github.com/opensearch-project/opensearch-api-specification/pull/1290))
 - Bumped the `test-tools-integ` workflow OpenSearch version from 2.17.0 to 3.8.0 and updated the tester golden fixtures for the 2.x→3.x version-gate boundary ([#1234](https://github.com/opensearch-project/opensearch-api-specification/pull/1234))
 - Replaced the speakeasy overlay CLI with the [openapi-overlaykit](https://www.npmjs.com/package/openapi-overlaykit) npm dependency for building the distribution specs ([#1278](https://github.com/opensearch-project/opensearch-api-specification/pull/1278))
