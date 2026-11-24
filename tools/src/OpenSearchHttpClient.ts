@@ -222,34 +222,34 @@ export class OpenSearchHttpClient {
   }
 
   async request<T = any, R = AxiosResponse<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.request(config)
+    return await this._axios.request(config) as R
   }
 
   async get<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.get(url, config)
+    return await this._axios.get(url, config) as R
   }
 
   async delete<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.delete(url, config)
+    return await this._axios.delete(url, config) as R
   }
 
   async head<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.head(url, config)
+    return await this._axios.head(url, config) as R
   }
 
   async options<T = any, R = AxiosResponse<T>, D = any>(url: string, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.options(url, config)
+    return await this._axios.options(url, config) as R
   }
 
   async post<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.post(url, data, config)
+    return await this._axios.post(url, data, config) as R
   }
 
   async put<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.put(url, data, config)
+    return await this._axios.put(url, data, config) as R
   }
 
   async patch<T = any, R = AxiosResponse<T>, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<R> {
-    return await this._axios.patch(url, data, config)
+    return await this._axios.patch(url, data, config) as R
   }
 }

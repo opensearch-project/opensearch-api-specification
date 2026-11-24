@@ -1,0 +1,98 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test multi-search with a per-sub-request search pipeline, by name or inline.
+version: '>= 2.9'
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: books, _id: book1}}
+        - {author: Harper Lee, title: To Kill a Mockingbird, year: 1960}
+        - {create: {_index: books, _id: book2}}
+        - {author: F. Scott Fitzgerald, title: The Great Gatsby, year: 1925}
+  - path: /_search/pipeline/msearch_pipeline_test
+    method: PUT
+    request:
+      payload:
+        description: No-op pipeline for the msearch search_pipeline test
+        request_processors: []
+    response:
+      status: 200
+      payload:
+        acknowledged: true
+chapters:
+  - synopsis: Run msearch with search_pipeline set on the first sub-request body line.
+    version: '>= 2.18'
+    path: /_msearch
+    method:
+      - GET
+      - POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: books}
+        - {query: {match_all: {}}, search_pipeline: msearch_pipeline_test}
+        - {index: books}
+        - {query: {match_all: {}}}
+    response:
+      status: 200
+      payload:
+        responses:
+          - hits:
+              total:
+                value: 2
+                relation: eq
+          - hits:
+              total:
+                value: 2
+                relation: eq
+  - synopsis: Run msearch with an inline search_pipeline definition on the first sub-request body line.
+    path: /_msearch
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: books}
+        - {query: {match_all: {}}, search_pipeline: {request_processors: [{filter_query: {query: {range: {year: {lte: 1950}}}}}]}}
+        - {index: books}
+        - {query: {match_all: {}}}
+    response:
+      status: 200
+      payload:
+        responses:
+          - hits:
+              total:
+                value: 1
+                relation: eq
+          - hits:
+              total:
+                value: 2
+                relation: eq
+  - synopsis: Run msearch with verbose_pipeline enabled on a sub-request that uses a search pipeline.
+    version: '>= 3.0'
+    path: /_msearch
+    method: POST
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: books}
+        - {query: {match_all: {}}, search_pipeline: msearch_pipeline_test, verbose_pipeline: true}
+    response:
+      status: 200
+      payload:
+        responses:
+          - hits:
+              total:
+                value: 2
+                relation: eq
+epilogues:
+  - path: /_search/pipeline/msearch_pipeline_test
+    method: DELETE
+    status: [200, 404]
+  - path: /books
+    method: DELETE
+    status: [200, 404]

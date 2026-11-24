@@ -48,6 +48,36 @@ chapters:
       index: books
     request:
       payload: {}
+  - synopsis: Get the managed indexes with pagination, sorting and a query string.
+    version: '>= 1.3'
+    path: /_plugins/_ism/explain
+    method: GET
+    parameters:
+      size: 10
+      from: 0
+      sortField: managed_index.index
+      sortOrder: desc
+      queryString: '*'
+      local: false
+      type: _default
+  - synopsis: Get the current policy for an index with its policy and validation result.
+    version: '>= 2.4'
+    path: /_plugins/_ism/explain/{index}
+    method: GET
+    parameters:
+      index: books
+      show_policy: true
+      validate_action: true
+      cluster_manager_timeout: 30s
+  - synopsis: Get the managed indexes that match a filter.
+    version: '>= 2.12'
+    path: /_plugins/_ism/explain
+    method: POST
+    request:
+      payload:
+        filter:
+          policy_id: ${policy.id}
+          failed: false
 epilogues:
   - path: /_plugins/_ism/policies/rollover
     method: DELETE

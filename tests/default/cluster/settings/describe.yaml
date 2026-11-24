@@ -1,0 +1,104 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test describing cluster setting definitions.
+version: '>= 3.10'
+chapters:
+  - synopsis: Describes whether a dynamic setting is dynamic.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.max_shards_per_node
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.max_shards_per_node:
+            dynamic: true
+  - synopsis: Describes multiple settings in a single request.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.max_shards_per_node,cluster.blocks.read_only
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.blocks.read_only:
+            dynamic: true
+          cluster.max_shards_per_node:
+            dynamic: true
+  - synopsis: Omits unknown settings from the response.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.this_setting_does_not_exist
+    response:
+      status: 200
+      payload:
+        settings: {}
+  - synopsis: Describes the declared default and validation of a bounded integer setting.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.max_shards_per_node
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.max_shards_per_node:
+            dynamic: true
+            default: '1000'
+            validation:
+              type: integer
+              min: '1'
+  - synopsis: Describes a static setting that declares a description and no validation.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.name
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.name:
+            dynamic: false
+            default: opensearch
+            description: The cluster name.
+  - synopsis: Expands a prefix to every setting registered under it.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.routing.allocation.disk.watermark.*
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.routing.allocation.disk.watermark.flood_stage:
+            dynamic: true
+            default: 95%
+          cluster.routing.allocation.disk.watermark.high:
+            dynamic: true
+            default: 90%
+          cluster.routing.allocation.disk.watermark.low:
+            dynamic: true
+            default: 85%
+  - synopsis: Mixes exact names and a prefix in one request.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: cluster.name,cluster.routing.allocation.disk.watermark.*
+    response:
+      status: 200
+      payload:
+        settings:
+          cluster.name:
+            dynamic: false
+          cluster.routing.allocation.disk.watermark.low:
+            dynamic: true
+  - synopsis: Rejects a wildcard that is not a trailing prefix.
+    path: /_cluster/settings/_describe
+    method: GET
+    parameters:
+      settings: '*'
+    response:
+      status: 400

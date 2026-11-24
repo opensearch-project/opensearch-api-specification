@@ -76,10 +76,16 @@ components:
           $ref: '#/components/schemas/DiskUsage'
         most_available:
           $ref: '#/components/schemas/DiskUsage'
+        node_resource_usage_stats:
+          $ref: '#/components/schemas/NodeResourceUsageStats'
       required:
         - least_available
         - most_available
         - node_name
+    NodeResourceUsageStats:
+      type: object
+      description: Per-node resource usage statistics. Structure is version-dependent.
+      additionalProperties: true
     DiskUsage:
       type: object
       properties:
@@ -194,14 +200,14 @@ components:
         matching_sync_id:
           type: boolean
         store_exception:
-          type: string
+          description: The exception raised when the node failed to open the shard's on-disk index.
+          $ref: '_common.yaml#/components/schemas/ErrorCause'
       required:
         - allocation_id
         - found
         - in_sync
         - matching_size_in_bytes
         - matching_sync_id
-        - store_exception
     UnassignedInformation:
       type: object
       properties:
