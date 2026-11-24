@@ -118,7 +118,7 @@ export default class UnionDistributor {
       const nested = this.multiply_out(combined, location, depth)
       if (nested === undefined) { branches.push(combined); continue }
       exclusive = exclusive && nested.keyword === 'oneOf'
-      branches.push(...nested.branches)
+      branches.push(...(nested.branches as unknown[]))
     }
     if (branches.length > MAX_BRANCHES) {
       if (record) this._result.skipped.push({ location, reason: `${branches.length} branches` })
