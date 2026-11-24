@@ -14,6 +14,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
 
 ### Added
+- Added per-index skip status to the k-NN warmup response. `indices.<index>.skip_reasons` is `warm_tier_index`, `no_off_heap_warmup`, or `unknown`, and `indices.<index>.skipped_fields` lists k-NN fields that were not loaded ([#1245](https://github.com/opensearch-project/opensearch-api-specification/pull/1245))
 - Added the `3.10` `index.translog.batch_append` settings and the workload group `total_throttled` and `total_would_throttle` stats ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Added `search_pipeline` (a pipeline name or an inline definition) and `verbose_pipeline` to the `_msearch` `MultisearchBody` schema, mirroring the `_search` request body, with spec tests ([#1275](https://github.com/opensearch-project/opensearch-api-specification/pull/1275))
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
