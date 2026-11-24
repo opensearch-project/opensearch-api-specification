@@ -1,0 +1,46 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test search pipeline endpoints with a z_score normalization processor.
+
+version: '>= 3.0'
+
+prologues: []
+
+epilogues:
+  - path: /_search/pipeline/{id}
+    parameters:
+      id: spec-test-z-score-normalization-pipeline
+    method: DELETE
+    status: [200, 404]
+
+chapters:
+  - synopsis: Create a pipeline with a z_score normalization processor.
+    path: /_search/pipeline/{id}
+    method: PUT
+    parameters:
+      id: spec-test-z-score-normalization-pipeline
+    request:
+      payload:
+        description: Example pipeline for testing z_score normalization with hybrid queries.
+        phase_results_processors:
+          - normalization-processor:
+              normalization:
+                technique: z_score
+              combination:
+                technique: arithmetic_mean
+  - synopsis: Get the pipeline with a z_score normalization processor.
+    path: /_search/pipeline/{id}
+    method: GET
+    parameters:
+      id: spec-test-z-score-normalization-pipeline
+    response:
+      status: 200
+      payload:
+        spec-test-z-score-normalization-pipeline:
+          description: Example pipeline for testing z_score normalization with hybrid queries.
+          phase_results_processors:
+            - normalization-processor:
+                normalization:
+                  technique: z_score
+                combination:
+                  technique: arithmetic_mean
