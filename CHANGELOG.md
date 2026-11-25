@@ -9,7 +9,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
-- Fixed `delete_by_query` and `update_by_query` `scroll_size` default (`1000`) and `refresh` type (Boolean; `wait_for` is rejected), `indices.delete` `allow_no_indices` default (`true`) and wildcard description, and `cluster.get_settings` parameters (removed `timeout`, which is rejected; added `local`)
+- Fixed `delete_by_query` and `update_by_query` `scroll_size` default (`1000`) and `refresh` type (Boolean; `wait_for` is rejected), `indices.delete` `allow_no_indices` default (`true`) and wildcard description, and `cluster.get_settings` parameters (removed `timeout`, which is rejected; added `local`) ([#1368](https://github.com/opensearch-project/opensearch-api-specification/pull/1368))
 - Fixed `cluster.describe_settings` to declare a `400` error response ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Fixed `ScoreNormalizationTechnique` to include `z_score`, supported by the normalization processor since OpenSearch 3.0 ([#1364](https://github.com/opensearch-project/opensearch-api-specification/pull/1364))
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
