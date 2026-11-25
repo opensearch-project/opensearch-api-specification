@@ -12,7 +12,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `cluster.describe_settings` to declare a `400` error response ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Fixed `ScoreNormalizationTechnique` to include `z_score`, supported by the normalization processor since OpenSearch 3.0 ([#1364](https://github.com/opensearch-project/opensearch-api-specification/pull/1364))
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
-- Introduce `IndexRoutingAllocationBase` as a parent one for `IndexRoutingAllocation` and `NodeInfoSettingsClusterRoutingAllocation` ([#1370](https://github.com/opensearch-project/opensearch-api-specification/pull/1370))
+- Introduced `IndexRoutingAllocationBase` as a parent one for `IndexRoutingAllocation` and `NodeInfoSettingsClusterRoutingAllocation` ([#1370](https://github.com/opensearch-project/opensearch-api-specification/pull/1370))
 
 ### Added
 - Added the `3.10` `index.translog.batch_append` settings and the workload group `total_throttled` and `total_would_throttle` stats ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
