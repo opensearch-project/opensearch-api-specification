@@ -312,7 +312,59 @@ components:
       content:
         application/json:
           schema:
-            $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
+            allOf:
+              - $ref: '../schemas/_common.yaml#/components/schemas/ShardsOperationResponseBase'
+              - type: object
+                properties:
+                  indices:
+                    description: |-
+                      Per-index warmup details, keyed by index name. Present when at least one
+                      targeted index produced a shard result. `_shards.skipped` on an index is a
+                      subset of that index's `_shards.successful`. `skip_reasons` is returned only
+                      when at least one of the index's shards was skipped. `skipped_fields` lists
+                      the k-NN fields that were not loaded, and is also returned for a mixed-engine
+                      index whose warmup itself ran.
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        _shards:
+                          description: Shard counts for this index.
+                          type: object
+                          properties:
+                            total:
+                              $ref: '../schemas/_common.yaml#/components/schemas/uint'
+                            successful:
+                              $ref: '../schemas/_common.yaml#/components/schemas/uint'
+                            skipped:
+                              $ref: '../schemas/_common.yaml#/components/schemas/uint'
+                            failed:
+                              $ref: '../schemas/_common.yaml#/components/schemas/uint'
+                          required:
+                            - total
+                            - successful
+                            - skipped
+                            - failed
+                        skip_reasons:
+                          description: |-
+                            Distinct reasons this index's shards were skipped. Returned only when
+                            at least one shard was skipped.
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                              - warm_tier_index
+                              - no_off_heap_warmup
+                              - unknown
+                        skipped_fields:
+                          description: |-
+                            Names of the k-NN fields that were not loaded. An engine that does not
+                            create custom segment files, currently Lucene, has nothing to load
+                            off-heap. Present for a fully skipped index and for a mixed-engine index
+                            whose warmup was executed.
+                          type: array
+                          items:
+                            type: string
   parameters:
     knn.delete_model::path.model_id:
       name: model_id

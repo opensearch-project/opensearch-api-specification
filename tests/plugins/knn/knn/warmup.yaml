@@ -15,8 +15,27 @@ prologues:
               type: knn_vector
               dimension: 8
     status: [200]
+  - method: PUT
+    path: /lucene-movies
+    request:
+      payload:
+        settings:
+          index:
+            knn: true
+        mappings:
+          properties:
+            recommendation_vector:
+              type: knn_vector
+              dimension: 8
+              method:
+                name: hnsw
+                engine: lucene
+    status: [200]
 epilogues:
   - path: /movies
+    method: DELETE
+    status: [200, 404]
+  - path: /lucene-movies
     method: DELETE
     status: [200, 404]
 chapters:
@@ -28,3 +47,29 @@ chapters:
         - movies
     response:
       status: 200
+  - synopsis: Warmup an index whose k-NN fields all use the Lucene engine, which is skipped.
+    version: '>= 3.11.0'
+    method: GET
+    path: /_plugins/_knn/warmup/{index}
+    parameters:
+      index:
+        - lucene-movies
+    response:
+      status: 200
+      payload:
+        _shards:
+          total: 1
+          successful: 1
+          skipped: 1
+          failed: 0
+        indices:
+          lucene-movies:
+            _shards:
+              total: 1
+              successful: 1
+              skipped: 1
+              failed: 0
+            skip_reasons:
+              - no_off_heap_warmup
+            skipped_fields:
+              - recommendation_vector
