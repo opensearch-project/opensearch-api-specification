@@ -1,0 +1,105 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test scroll APIs exposed under the OpenSearch Dashboards system index prefix.
+prologues:
+  - path: /_opensearch_dashboards/_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {index: {_index: .kibana_spec_test, _id: '1'}}
+        - {title: Moneyball}
+        - {index: {_index: .kibana_spec_test, _id: '2'}}
+        - {title: Drive}
+        - {index: {_index: .kibana_spec_test, _id: '3'}}
+        - {title: Interstellar}
+epilogues:
+  - path: /_search/scroll/_all
+    method: DELETE
+  - path: /.kibana_spec_test
+    method: DELETE
+    status: [200, 404]
+chapters:
+  - synopsis: Search an index and open a scroll context (POST).
+    id: scroll1
+    path: /_opensearch_dashboards/{index}/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    parameters:
+      index: .kibana_spec_test
+      scroll: 10m
+    request:
+      payload:
+        size: 1
+    response:
+      status: 200
+    output:
+      scroll_id: payload._scroll_id
+  - synopsis: Continue a scroll (GET).
+    path: /_opensearch_dashboards/_search/scroll
+    method: GET
+    request:
+      payload:
+        scroll: 10m
+        scroll_id: ${scroll1.scroll_id}
+    response:
+      status: 200
+  - synopsis: Continue a scroll (POST).
+    path: /_opensearch_dashboards/_search/scroll
+    method: POST
+    request:
+      payload:
+        scroll: 10m
+        scroll_id: ${scroll1.scroll_id}
+    response:
+      status: 200
+  - synopsis: Continue a scroll using the scroll ID in the path (GET).
+    path: /_opensearch_dashboards/_search/scroll/{scroll_id}
+    method: GET
+    parameters:
+      scroll_id: ${scroll1.scroll_id}
+      scroll: 10m
+    response:
+      status: 200
+  - synopsis: Continue a scroll using the scroll ID in the path (POST).
+    path: /_opensearch_dashboards/_search/scroll/{scroll_id}
+    method: POST
+    parameters:
+      scroll_id: ${scroll1.scroll_id}
+      scroll: 10m
+    response:
+      status: 200
+  - synopsis: Open another scroll context.
+    id: scroll2
+    path: /_opensearch_dashboards/{index}/_search
+    method: POST
+    warnings:
+      multiple-paths-detected: false
+    parameters:
+      index: .kibana_spec_test
+      scroll: 10m
+    request:
+      payload:
+        size: 1
+    output:
+      scroll_id: payload._scroll_id
+  - synopsis: Clear a scroll using the scroll ID in the path.
+    path: /_opensearch_dashboards/_search/scroll/{scroll_id}
+    method: DELETE
+    parameters:
+      scroll_id: ${scroll1.scroll_id}
+    response:
+      status: 200
+  - synopsis: Clear a scroll.
+    path: /_opensearch_dashboards/_search/scroll
+    method: DELETE
+    request:
+      payload:
+        scroll_id: ${scroll2.scroll_id}
+    response:
+      status: 200
+      payload:
+        succeeded: true
