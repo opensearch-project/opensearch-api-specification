@@ -8,12 +8,14 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Fixed
+- Fixed `indices.close` and `indices.open` to document the `400` response returned when no index is specified ([#1235](https://github.com/opensearch-project/opensearch-api-specification/pull/1235))
 
 - Fixed `cluster.describe_settings` to declare a `400` error response ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Fixed `ScoreNormalizationTechnique` to include `z_score`, supported by the normalization processor since OpenSearch 3.0 ([#1364](https://github.com/opensearch-project/opensearch-api-specification/pull/1364))
 - Fixed `search_pipeline` in `SearchRequestBody` to accept either a pipeline name (string) or an inline pipeline definition (`SearchPipelineStructure` object) ([#1091](https://github.com/opensearch-project/opensearch-api-specification/pull/1091))
 
 ### Added
+- Added missing OpenSearch core APIs: the Views API (`views.*`, removed in OpenSearch 3.10), the Rules API (`rules.*`), file cache and block cache prune (`file_cache.prune`, `block_cache.prune`), `indices.scale`, `indices.synced_flush`, remote store stats and metadata (`remote_store.stats`, `remote_store.metadata`), `scripts_painless_context`, `favicon`, and missing routes for existing operations, including `GET /_aliases`, `/_mappings`, `/{index}/_setting/{name}`, `HEAD /{index}/_alias`, `/_nodes/{node_id}/info/{metric}`, `DELETE /_cluster/routing/awareness/{attribute}/weights`, `POST /_cluster/voting_config_exclusions/{node_name}`, and `GET /_snapshot/{repository}/{snapshot}/{index}/_status` ([#1235](https://github.com/opensearch-project/opensearch-api-specification/pull/1235))
 - Added the `3.10` `index.translog.batch_append` settings and the workload group `total_throttled` and `total_would_throttle` stats ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Added `search_pipeline` (a pipeline name or an inline definition) and `verbose_pipeline` to the `_msearch` `MultisearchBody` schema, mirroring the `_search` request body, with spec tests ([#1275](https://github.com/opensearch-project/opensearch-api-specification/pull/1275))
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
