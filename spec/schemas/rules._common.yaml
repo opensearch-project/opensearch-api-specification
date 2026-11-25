@@ -24,9 +24,10 @@ components:
         workload_group:
           type: string
           description: The workload group ID assigned by the rule.
+        principal:
+          $ref: '#/components/schemas/RulePrincipal'
       required:
         - description
-        - index_pattern
         - workload_group
     UpdateRuleRequest:
       type: object
@@ -46,6 +47,8 @@ components:
         workload_group:
           type: string
           description: The workload group ID assigned by the rule.
+        principal:
+          $ref: '#/components/schemas/RulePrincipal'
     Rule:
       type: object
       description: An automatic tagging rule for a workload group.
@@ -72,10 +75,11 @@ components:
           type: string
           format: date-time
           description: The time at which the rule was last updated.
+        principal:
+          $ref: '#/components/schemas/RulePrincipal'
       required:
         - description
         - id
-        - index_pattern
         - updated_at
         - workload_group
     GetRulesResponse:
@@ -94,3 +98,18 @@ components:
           maxItems: 1
       required:
         - rules
+    RulePrincipal:
+      type: object
+      description: The principal attribute of a rule, added by the Security plugin. A request matches the rule when it is made by one of the listed users or roles.
+      x-version-added: '3.3'
+      properties:
+        username:
+          type: array
+          description: The usernames matched by the rule.
+          items:
+            type: string
+        role:
+          type: array
+          description: The roles matched by the rule.
+          items:
+            type: string
