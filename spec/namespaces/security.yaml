@@ -653,6 +653,29 @@ paths:
           $ref: '#/components/responses/security.generate_user_token@200'
         '400':
           $ref: '#/components/responses/security.generate_user_token@400'
+  /_plugins/_security/api/internalusers/{username}/_rename:
+    post:
+      operationId: security.rename_user.0
+      x-operation-group: security.rename_user
+      tags:
+        - Security
+      x-version-added: '3.11'
+      description: Renames an internal user and updates explicit references to the user in role mappings. All changes are validated before any are written.
+      parameters:
+        - $ref: '#/components/parameters/security.rename_user::path.username'
+      requestBody:
+        $ref: '#/components/requestBodies/security.rename_user'
+      responses:
+        '200':
+          $ref: '#/components/responses/security.rename_user@200'
+        '400':
+          $ref: '#/components/responses/security.rename_user@400'
+        '403':
+          $ref: '#/components/responses/security.rename_user@403'
+        '404':
+          $ref: '#/components/responses/security.rename_user@404'
+        '409':
+          $ref: '#/components/responses/security.rename_user@409'
   /_plugins/_security/api/migrate:
     post:
       operationId: security.migrate.0
@@ -1533,6 +1556,18 @@ components:
             items:
               $ref: '../schemas/security._common.yaml#/components/schemas/PatchOperation'
       required: true
+    security.rename_user:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              new_username:
+                type: string
+                description: The new name for the user. Must not already exist and must be a valid username.
+            required:
+              - new_username
+      required: true
     security.update_audit_configuration:
       content:
         application/json:
@@ -2222,6 +2257,47 @@ components:
         application/json:
           schema:
             $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.rename_user@200:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+              previous_username:
+                type: string
+                description: The name of the user before the rename.
+              username:
+                type: string
+                description: The name of the user after the rename.
+              updated_roles_mapping:
+                type: array
+                description: The role mappings whose `users` list was updated.
+                items:
+                  type: string
+    security.rename_user@400:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.rename_user@403:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.rename_user@404:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
+    security.rename_user@409:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/security._common.yaml#/components/schemas/Error'
     security.tenant_info@200:
       content:
         application/json:
@@ -2595,6 +2671,13 @@ components:
       name: username
       in: path
       description: The name of the user to update.
+      schema:
+        type: string
+      required: true
+    security.rename_user::path.username:
+      name: username
+      in: path
+      description: The current name of the user to rename.
       schema:
         type: string
       required: true

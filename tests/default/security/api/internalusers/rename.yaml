@@ -1,0 +1,75 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test internalusers/_rename endpoint.
+version: '>= 3.11'
+distributions:
+  excluded:
+    - amazon-managed
+    - amazon-serverless
+
+prologues:
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: PUT
+    parameters:
+      username: test_rename_src
+    request:
+      payload:
+        password: myStrongPassword123!
+    status: [201]
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: PUT
+    parameters:
+      username: test_rename_taken
+    request:
+      payload:
+        password: myStrongPassword123!
+    status: [201]
+
+chapters:
+  - synopsis: Rename an internal user.
+    path: /_plugins/_security/api/internalusers/{username}/_rename
+    method: POST
+    parameters:
+      username: test_rename_src
+    request:
+      payload:
+        new_username: test_rename_dst
+    response:
+      status: 200
+  - synopsis: Rename a user that does not exist.
+    path: /_plugins/_security/api/internalusers/{username}/_rename
+    method: POST
+    parameters:
+      username: test_rename_src
+    request:
+      payload:
+        new_username: test_rename_other
+    response:
+      status: 404
+  - synopsis: Rename to a name that is already taken.
+    path: /_plugins/_security/api/internalusers/{username}/_rename
+    method: POST
+    parameters:
+      username: test_rename_dst
+    request:
+      payload:
+        new_username: test_rename_taken
+    response:
+      status: 409
+
+epilogues:
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: test_rename_dst
+    status: [200, 404]
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: test_rename_src
+    status: [200, 404]
+  - path: /_plugins/_security/api/internalusers/{username}
+    method: DELETE
+    parameters:
+      username: test_rename_taken
+    status: [200, 404]
