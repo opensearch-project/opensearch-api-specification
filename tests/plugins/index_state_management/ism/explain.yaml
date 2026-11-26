@@ -1,0 +1,98 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Test explaining an index after the ISM job has initialized and run its policy.
+prologues:
+  - path: /ism-explain-books
+    method: PUT
+    request:
+      payload:
+        settings:
+          index:
+            number_of_replicas: 0
+  - path: /_plugins/_ism/policies/{policy_id}
+    method: PUT
+    parameters:
+      policy_id: ism-explain
+    request:
+      payload:
+        policy:
+          description: A policy with a single state and action.
+          default_state: hot
+          states:
+            - name: hot
+              actions:
+                - replica_count:
+                    number_of_replicas: 0
+              transitions: []
+    status: [201]
+  - path: /_plugins/_ism/add/{index}
+    method: POST
+    parameters:
+      index: ism-explain-books
+    request:
+      payload:
+        policy_id: ism-explain
+chapters:
+  - synopsis: Wait for the ISM job to initialize the managed index.
+    path: /_plugins/_ism/explain/{index}
+    method: GET
+    parameters:
+      index: ism-explain-books
+    retry:
+      count: 30
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        ism-explain-books:
+          policy_id: ism-explain
+          state:
+            name: hot
+  - synopsis: Explain an index with action metadata, its policy and the validation result.
+    version: '>= 2.4'
+    path: /_plugins/_ism/explain/{index}
+    method: GET
+    parameters:
+      index: ism-explain-books
+      show_policy: true
+      validate_action: true
+    retry:
+      count: 30
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        ism-explain-books:
+          action:
+            failed: false
+  - synopsis: Explain the managed indexes that match a filter.
+    version: '>= 2.12'
+    path: /_plugins/_ism/explain
+    method: POST
+    request:
+      payload:
+        filter:
+          policy_id: ism-explain
+          state: hot
+          failed: false
+    retry:
+      count: 6
+      wait: 10000
+    response:
+      status: 200
+      payload:
+        total_managed_indices: 1
+epilogues:
+  - path: /_plugins/_ism/remove/{index}
+    method: POST
+    parameters:
+      index: ism-explain-books
+    status: [200, 404]
+  - path: /ism-explain-books
+    method: DELETE
+    status: [200, 404]
+  - path: /_plugins/_ism/policies/{policy_id}
+    method: DELETE
+    parameters:
+      policy_id: ism-explain
+    status: [200, 404]

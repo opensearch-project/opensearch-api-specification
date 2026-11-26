@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Views API Schemas
+  description: Schemas for experimental views APIs.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ViewTarget:
+      type: object
+      properties:
+        indexPattern:
+          type: string
+          maxLength: 64
+          description: An index pattern included in the view.
+      required:
+        - indexPattern
+    CreateViewRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          description: The view name.
+        description:
+          type: string
+          maxLength: 256
+          default: ''
+          description: A description of the view.
+        targets:
+          type: array
+          minItems: 1
+          maxItems: 25
+          items:
+            $ref: '#/components/schemas/ViewTarget'
+      required:
+        - name
+        - targets
+    UpdateViewRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 256
+          default: ''
+          description: A description of the view.
+        targets:
+          type: array
+          minItems: 1
+          maxItems: 25
+          items:
+            $ref: '#/components/schemas/ViewTarget'
+      required:
+        - targets
+    View:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The view name.
+        description:
+          type: string
+          description: A description of the view.
+        createdAt:
+          type: integer
+          format: int64
+          description: The view creation time in milliseconds since the Unix epoch.
+        modifiedAt:
+          type: integer
+          format: int64
+          description: The last modification time in milliseconds since the Unix epoch.
+        targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ViewTarget'
+      required:
+        - createdAt
+        - description
+        - modifiedAt
+        - name
+        - targets
+    GetViewResponse:
+      type: object
+      properties:
+        view:
+          $ref: '#/components/schemas/View'
+      required:
+        - view
+    ListViewsResponse:
+      type: object
+      properties:
+        views:
+          type: array
+          items:
+            type: string
+      required:
+        - views

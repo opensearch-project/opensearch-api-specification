@@ -1,0 +1,56 @@
+$schema: ../../../../json_schemas/test_story.schema.yaml
+
+description: Verify that the rules APIs return 404 for a feature type that is not registered.
+version: '>= 3.1'
+# See rules.yaml: the list and create routes have a trailing slash, so the tester cannot map them to a file name.
+warnings:
+  invalid-path-detected: false
+  multiple-paths-detected: false
+chapters:
+  - synopsis: List rules for an unregistered feature type.
+    path: /_rules/{feature_type}/
+    method: GET
+    parameters:
+      feature_type: unregistered_feature
+    response:
+      status: 404
+  - synopsis: Create a rule for an unregistered feature type.
+    path: /_rules/{feature_type}/
+    method: PUT
+    parameters:
+      feature_type: unregistered_feature
+    request:
+      payload:
+        description: A rule for a feature type that does not exist.
+        index_pattern:
+          - missing-*
+        workload_group: missing
+    response:
+      status: 404
+  - synopsis: Get a rule for an unregistered feature type.
+    path: /_rules/{feature_type}/{id}
+    method: GET
+    parameters:
+      feature_type: unregistered_feature
+      id: missing
+    response:
+      status: 404
+  - synopsis: Update a rule for an unregistered feature type.
+    path: /_rules/{feature_type}/{id}
+    method: PUT
+    parameters:
+      feature_type: unregistered_feature
+      id: missing
+    request:
+      payload:
+        description: A rule for a feature type that does not exist.
+    response:
+      status: 404
+  - synopsis: Delete a rule for an unregistered feature type.
+    path: /_rules/{feature_type}/{id}
+    method: DELETE
+    parameters:
+      feature_type: unregistered_feature
+      id: missing
+    response:
+      status: 404
