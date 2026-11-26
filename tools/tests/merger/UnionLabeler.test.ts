@@ -169,6 +169,38 @@ describe('UnionLabeler: nested and branch-owned presence constraints', () => {
     expect(sort.allOf[1].oneOf[1].allOf[1]['x-union-kind']).toBe('presence')
   })
 
+  test('variants that each require several properties they declare are not a presence constraint', () => {
+    // GeoJSON-like variants: each requires its `type` and coordinates, so the union is a set of variants, not a
+    // constraint on which fields are set, and stays unclassified (with or without an object part next to it)
+    const shapes = (object_part: any[]): Record<string, any> => {
+      const variant = (kind: string, field: string): Record<string, any> => ({
+        type: 'object',
+        properties: { type: { type: 'string', enum: [kind] }, [field]: { type: 'array' } },
+        required: ['type', field]
+      })
+      const spec: Record<string, any> = { components: { schemas: {
+        Point: variant('Point', 'coordinates'),
+        LineString: variant('LineString', 'coordinates'),
+        Circle: variant('Circle', 'radius'),
+        Shape: { allOf: [...object_part, { oneOf: [ref('Point'), ref('LineString'), ref('Circle')] }] }
+      } } }
+      new UnionLabeler().label(spec)
+      return spec.components.schemas.Shape
+    }
+    expect(shapes([]).allOf[0]['x-union-kind']).toBeUndefined()
+    expect(shapes([{ type: 'object' }]).allOf[1]['x-union-kind']).toBeUndefined()
+  })
+
+  test('branches that each require the same declared property are not a presence constraint', () => {
+    const sort = label({
+      allOf: [
+        { type: 'object' },
+        { oneOf: [{ properties: { a: { type: 'string' } }, required: ['a'] }, { properties: { a: { type: 'integer' } }, required: ['a'] }] }
+      ]
+    })
+    expect(sort.allOf[1]['x-union-kind']).not.toBe('presence')
+  })
+
   test('with every property declared on the object, both unions are presence', () => {
     const sort = label({
       allOf: [

@@ -36,7 +36,9 @@ export default class CompositionNormalizer {
   normalize_schema (schema: Record<string, any>): boolean {
     if (!this.has_object_part(schema) || !this.has_composition(schema)) return false
 
-    const object_part: Record<string, any> = { type: 'object' }
+    // The object part only says it is an object if the schema does: a schema without `type` stays one that also
+    // accepts non-objects (`{ properties: {...}, oneOf: [ { type: string }, ... ] }` accepts a string).
+    const object_part: Record<string, any> = schema.type === 'object' ? { type: 'object' } : {}
     for (const keyword of OBJECT_KEYWORDS) {
       if (schema[keyword] === undefined) continue
       object_part[keyword] = schema[keyword]

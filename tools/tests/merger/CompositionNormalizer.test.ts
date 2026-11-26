@@ -79,7 +79,7 @@ describe('CompositionNormalizer', () => {
       normalizer.normalize_schema(schema)
       expect(schema).toEqual({
         allOf: [
-          { type: 'object', properties: { name: { type: 'string' } } },
+          { properties: { name: { type: 'string' } } },
           { oneOf: [{ $ref: '#/components/schemas/A' }, { $ref: '#/components/schemas/B' }], discriminator: { propertyName: 'type' } }
         ]
       })
@@ -93,7 +93,7 @@ describe('CompositionNormalizer', () => {
       normalizer.normalize_schema(schema)
       expect(schema).toEqual({
         allOf: [
-          { type: 'object', properties: { missing: { type: 'string' } } },
+          { properties: { missing: { type: 'string' } } },
           { anyOf: [{ properties: { field: { type: 'string' } } }, { properties: { script: { type: 'object' } } }] }
         ]
       })
@@ -113,7 +113,7 @@ describe('CompositionNormalizer', () => {
         title: 'Map',
         'x-version-added': '2.0',
         allOf: [
-          { type: 'object', properties: { a: { type: 'string' } }, patternProperties: { '^x-': { type: 'string' } }, additionalProperties: false },
+          { properties: { a: { type: 'string' } }, patternProperties: { '^x-': { type: 'string' } }, additionalProperties: false },
           { $ref: '#/components/schemas/Base' }
         ]
       })
@@ -122,7 +122,7 @@ describe('CompositionNormalizer', () => {
     test('moves a sibling required list even without properties', () => {
       const schema: Record<string, any> = { required: ['a'], allOf: [{ $ref: '#/components/schemas/Base' }] }
       normalizer.normalize_schema(schema)
-      expect(schema).toEqual({ allOf: [{ type: 'object', required: ['a'] }, { $ref: '#/components/schemas/Base' }] })
+      expect(schema).toEqual({ allOf: [{ required: ['a'] }, { $ref: '#/components/schemas/Base' }] })
     })
 
     test.each([
@@ -135,6 +135,19 @@ describe('CompositionNormalizer', () => {
       const schema = _.cloneDeep(original)
       expect(normalizer.normalize_schema(schema)).toBe(false)
       expect(schema).toEqual(original)
+    })
+
+    test('adds no type to the object part of a schema without one, so it still accepts what it accepted', () => {
+      const schema: Record<string, any> = { properties: { a: { type: 'string' } }, oneOf: [{ type: 'string' }, { type: 'object', required: ['a'] }] }
+      const original = _.cloneDeep(schema)
+      new CompositionNormalizer().normalize_schema(schema)
+      expect(schema).toEqual({
+        allOf: [{ properties: { a: { type: 'string' } } }, { oneOf: [{ type: 'string' }, { type: 'object', required: ['a'] }] }]
+      })
+      const ajv = new Ajv2020({ strict: false })
+      for (const document of ['plain string', { a: 'x' }, { b: 1 }, 42]) {
+        expect([document, ajv.validate(schema, document)]).toEqual([document, ajv.validate(original, document)])
+      }
     })
 
     test('is idempotent', () => {

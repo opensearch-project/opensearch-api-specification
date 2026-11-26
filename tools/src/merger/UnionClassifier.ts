@@ -96,7 +96,11 @@ export default class UnionClassifier {
       if (branch.is_scalar) return false
       const declared = (key: string): boolean => own[key] !== undefined || (branch_owned && branch.properties[key] !== undefined)
       if (!branch.required.every(declared)) return false
-      if (branch_owned && branch.required.length === 0) return false
+      // Branches that declare what they require are a presence constraint only if each requires exactly one
+      // property and no two the same one (SortSource: `field` or `script`); otherwise they are variants of their own
+      // (`oneOf: [Point, LineString, Circle]`, each requiring its `type` and coordinates), not a constraint.
+      if (branch_owned && (branch.required.length !== 1 ||
+        branches.some((other, i) => i !== index && other.required.length === 1 && other.required[0] === branch.required[0]))) return false
       if (!branch.has_composition) return true
       const scope = { properties: { ...own, ...branch.properties } }
       const nested = this.unions_in(raw[index])

@@ -26,7 +26,9 @@ const ADDITIONAL_KEYWORDS = [
   'x-protobuf-data-type',
   'x-protobuf-name',
   'x-protobuf-required',
-  'x-non-exhaustive'
+  'x-non-exhaustive',
+  'x-union-kind',
+  'x-variant-keys'
 ]
 
 export default class SchemaValidator {
