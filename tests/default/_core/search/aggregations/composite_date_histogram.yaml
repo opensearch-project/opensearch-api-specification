@@ -1,0 +1,80 @@
+$schema: ../../../../../json_schemas/test_story.schema.yaml
+
+description: Test composite aggregation with a date_histogram source.
+warnings:
+  invalid-path-detected: false
+prologues:
+  - path: /_bulk
+    method: POST
+    parameters:
+      refresh: true
+    request:
+      content_type: application/x-ndjson
+      payload:
+        - {create: {_index: movies}}
+        - {title: Moneyball, released: '2011-09-23'}
+        - {create: {_index: movies}}
+        - {title: Drive, released: '2011-09-30'}
+        - {create: {_index: movies}}
+        - {title: Hugo, released: '2012-01-05'}
+chapters:
+  - synopsis: Aggregate with a date_histogram source using the deprecated `interval`.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          by_month:
+            composite:
+              sources:
+                - released_month:
+                    date_histogram:
+                      field: released
+                      interval: month
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_month:
+            buckets:
+              - key:
+                  released_month: 1314835200000
+                doc_count: 2
+              - key:
+                  released_month: 1325376000000
+                doc_count: 1
+  - synopsis: Aggregate with a date_histogram source using `calendar_interval`.
+    path: /{index}/_search
+    parameters:
+      index: movies
+    method: POST
+    request:
+      payload:
+        size: 0
+        aggs:
+          by_month:
+            composite:
+              sources:
+                - released_month:
+                    date_histogram:
+                      field: released
+                      calendar_interval: month
+    response:
+      status: 200
+      payload:
+        aggregations:
+          by_month:
+            buckets:
+              - key:
+                  released_month: 1314835200000
+                doc_count: 2
+              - key:
+                  released_month: 1325376000000
+                doc_count: 1
+epilogues:
+  - path: /movies
+    method: DELETE
+    status: [200, 404]
