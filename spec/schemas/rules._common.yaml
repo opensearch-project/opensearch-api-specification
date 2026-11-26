@@ -1,0 +1,115 @@
+openapi: 3.1.0
+info:
+  title: OpenSearch Rules API Schemas
+  description: Schemas for automatic tagging rules.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    CreateRuleRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 256
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
+        principal:
+          $ref: '#/components/schemas/RulePrincipal'
+      required:
+        - description
+        - workload_group
+    UpdateRuleRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 256
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
+        principal:
+          $ref: '#/components/schemas/RulePrincipal'
+    Rule:
+      type: object
+      description: An automatic tagging rule for a workload group.
+      properties:
+        id:
+          type: string
+          description: The computed rule ID.
+        description:
+          type: string
+          maxLength: 256
+          description: A description of the rule.
+        index_pattern:
+          type: array
+          description: Index patterns matched by the rule.
+          items:
+            type: string
+            maxLength: 100
+          minItems: 1
+          maxItems: 10
+        workload_group:
+          type: string
+          description: The workload group ID assigned by the rule.
+        updated_at:
+          type: string
+          format: date-time
+          description: The time at which the rule was last updated.
+        principal:
+          $ref: '#/components/schemas/RulePrincipal'
+      required:
+        - description
+        - id
+        - updated_at
+        - workload_group
+    GetRulesResponse:
+      type: object
+      properties:
+        rules:
+          type: array
+          description: The matching rules.
+          items:
+            $ref: '#/components/schemas/Rule'
+        search_after:
+          type: array
+          description: The sort value to pass to a subsequent request.
+          items:
+            type: string
+          maxItems: 1
+      required:
+        - rules
+    RulePrincipal:
+      type: object
+      description: The principal attribute of a rule, added by the Security plugin. A request matches the rule when it is made by one of the listed users or roles.
+      x-version-added: '3.3'
+      properties:
+        username:
+          type: array
+          description: The usernames matched by the rule.
+          items:
+            type: string
+        role:
+          type: array
+          description: The roles matched by the rule.
+          items:
+            type: string

@@ -8,6 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added specs for UBI plugin endpoints ([#845](https://github.com/opensearch-project/opensearch-api-specification/pull/845))
 
 ### Fixed
+- Fixed `indices.close` and `indices.open` to document the `400` response returned when no index is specified ([#1235](https://github.com/opensearch-project/opensearch-api-specification/pull/1235))
 
 - Fixed `cluster.describe_settings` to declare a `400` error response ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Fixed `ScoreNormalizationTechnique` to include `z_score`, supported by the normalization processor since OpenSearch 3.0 ([#1364](https://github.com/opensearch-project/opensearch-api-specification/pull/1364))
@@ -15,6 +16,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed `CompositeDateHistogramAggregationSource` to include the deprecated `interval` parameter, which the server still accepts ([#1367](https://github.com/opensearch-project/opensearch-api-specification/pull/1367))
 
 ### Added
+- Added missing OpenSearch core APIs: the Views API (`views.*`, removed in OpenSearch 3.10), the Rules API (`rules.*`), file cache and block cache prune (`file_cache.prune`, `block_cache.prune`), `indices.scale`, `indices.synced_flush`, remote store stats and metadata (`remote_store.stats`, `remote_store.metadata`), `scripts_painless_context`, `favicon`, and missing routes for existing operations, including `GET /_aliases`, `/_mappings`, `/{index}/_setting/{name}`, `HEAD /{index}/_alias`, `/_nodes/{node_id}/info/{metric}`, `DELETE /_cluster/routing/awareness/{attribute}/weights`, `POST /_cluster/voting_config_exclusions/{node_name}`, and `GET /_snapshot/{repository}/{snapshot}/{index}/_status` ([#1235](https://github.com/opensearch-project/opensearch-api-specification/pull/1235))
 - Added the `3.10` `index.translog.batch_append` settings and the workload group `total_throttled` and `total_would_throttle` stats ([#1361](https://github.com/opensearch-project/opensearch-api-specification/pull/1361))
 - Added `search_pipeline` (a pipeline name or an inline definition) and `verbose_pipeline` to the `_msearch` `MultisearchBody` schema, mirroring the `_search` request body, with spec tests ([#1275](https://github.com/opensearch-project/opensearch-api-specification/pull/1275))
 - Added `default`, `validation` (`type`, `min`, `max`), and `description` to the Describe Cluster Settings API response, prefix (`name.*`) support for its `settings` parameter, and removed its `cluster_manager_timeout` parameter, matching OpenSearch 3.10 ([#1311](https://github.com/opensearch-project/opensearch-api-specification/pull/1311))
@@ -147,6 +149,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed the type of `Hit`'s `matched_queries` to be either an array or a map to support when `include_named_queries_score` is `true` ([#1015](https://github.com/opensearch-project/opensearch-api-specification/pull/1015))
 - Fixed aggregation schema strict mode compliance: restructured `MetricAggregationBase` and `TermsAggregation` by moving `field` and `script` into optional `anyOf` branches; added `value_type` to `MinAggregation` and `MaxAggregation`; updated `ValueType` enum (added `byte`, `float`, `integer`, `range`, `short`, `unsigned_long`; removed `date_nanos`); changed `min_doc_count` and `shard_min_doc_count` in `TermsAggregation` from int32 to int64 ([#1056](https://github.com/opensearch-project/opensearch-api-specification/pull/1056))
 - Fixed field_caps to exclude 'fields' from request body since those are passed as query parameters ([#1216](https://github.com/opensearch-project/opensearch-api-specification/pull/1216))
+- Fixed `tests/plugins/security/_core/settings.yaml` failing when no index existed by creating one in a prologue ([#1365](https://github.com/opensearch-project/opensearch-api-specification/pull/1365))
 
 ### Security
 - Upgraded `axios` 1.18.1 → 1.20.0 and `qs` 6.16.0 → 6.16.1, and pinned transitive `handlebars` to 4.7.10, to fix newly disclosed CVEs. Added `as R` casts in `OpenSearchHttpClient` for the axios 1.19+ response-type change ([#1282](https://github.com/opensearch-project/opensearch-api-specification/pull/1282))

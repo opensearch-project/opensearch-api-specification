@@ -57,3 +57,46 @@ chapters:
         _version: ${updated_weights.version}
     response:
       status: 200
+  - synopsis: Get zone routing weights version after deletion.
+    id: weights_again
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: GET
+    parameters:
+      attribute: zone
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - synopsis: Recreate zone routing weights.
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: PUT
+    parameters:
+      attribute: zone
+    request:
+      payload:
+        weights:
+          zoneA: '1'
+          zoneB: '1'
+        _version: ${weights_again.version}
+    response:
+      status: 200
+  - synopsis: Get recreated zone routing weights version.
+    id: recreated_weights
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: GET
+    parameters:
+      attribute: zone
+    output:
+      version:
+        path: payload._version
+        default: -1
+  - synopsis: Delete zone routing weights for an attribute.
+    path: /_cluster/routing/awareness/{attribute}/weights
+    method: DELETE
+    parameters:
+      attribute: zone
+    request:
+      payload:
+        _version: ${recreated_weights.version}
+    response:
+      status: 200

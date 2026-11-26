@@ -4,6 +4,17 @@ info:
   description: OpenSearch core API.
   version: 1.0.0
 paths:
+  /favicon.ico:
+    get:
+      operationId: favicon.0
+      x-operation-group: favicon
+      x-ignorable: true
+      x-version-added: '1.0'
+      description: Returns the OpenSearch favicon.
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/favicon@200'
   /:
     get:
       operationId: info.0
@@ -620,6 +631,17 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/get_script_languages@200'
+  /_scripts/painless/_context:
+    get:
+      operationId: scripts_painless_context.0
+      x-operation-group: scripts_painless_context
+      x-version-added: '1.0'
+      description: Returns Painless allowlist information for all script contexts or for a specified context.
+      parameters:
+        - $ref: '#/components/parameters/scripts_painless_context::query.context'
+      responses:
+        '200':
+          $ref: '#/components/responses/scripts_painless_context@200'
   /_scripts/painless/_execute:
     get:
       operationId: scripts_painless_execute.0
@@ -3023,6 +3045,13 @@ components:
                 $ref: '../schemas/_common.yaml#/components/schemas/Conflicts'
             description: The search definition using the Query DSL
   responses:
+    favicon@200:
+      description: The OpenSearch favicon.
+      content:
+        image/x-icon:
+          schema:
+            type: string
+            format: binary
     bulk@200:
       content:
         application/json:
@@ -3415,6 +3444,11 @@ components:
                 additionalProperties: true
             required:
               - template_output
+    scripts_painless_context@200:
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/_core.scripts_painless_context.yaml#/components/schemas/PainlessContextResponse'
     scripts_painless_execute@200:
       content:
         application/json:
@@ -6295,6 +6329,13 @@ components:
       description: If `true`, the response prefixes aggregation and suggester names with their respective types.
       schema:
         type: boolean
+      style: form
+    scripts_painless_context::query.context:
+      in: query
+      name: context
+      description: The script context for which to return detailed Painless allowlist information. If omitted, returns the names of all contexts.
+      schema:
+        type: string
       style: form
     termvectors::path.id:
       in: path
